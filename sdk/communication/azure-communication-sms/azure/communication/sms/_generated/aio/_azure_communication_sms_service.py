@@ -17,6 +17,7 @@ from .. import models
 from ._configuration import AzureCommunicationSMSServiceConfiguration
 from .operations import DeliveryReportsOperations, OptOutsOperations, SmsOperations
 
+
 class AzureCommunicationSMSService:
     """Azure Communication SMS Service.
 
@@ -31,12 +32,8 @@ class AzureCommunicationSMSService:
     :type endpoint: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{endpoint}'
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        _base_url = "{endpoint}"
         self._config = AzureCommunicationSMSServiceConfiguration(endpoint, **kwargs)
         self._client = AsyncPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
@@ -46,14 +43,11 @@ class AzureCommunicationSMSService:
         self._serialize.client_side_validation = False
         self.sms = SmsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.opt_outs = OptOutsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.delivery_reports = DeliveryReportsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.delivery_reports = DeliveryReportsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -73,7 +67,7 @@ class AzureCommunicationSMSService:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

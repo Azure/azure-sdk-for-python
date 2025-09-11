@@ -9,7 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
-from ._generated.models import OptOutRequest, OptOutRecipient
+from ._generated.models import OptOutRequest, OptOutRecipient, OptOutResponseItem
 from ._models import OptOutResult, OptOutCheckResult
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
@@ -138,16 +138,16 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         request = OptOutRequest(from_property=from_, recipients=recipients)
         
         response = self._sms_service_client.opt_outs.add(
-            body=request,
+            body=request.serialize(),
             **kwargs
         )
 
         return [
             OptOutResult(
-                to=item.to,
-                http_status_code=item.http_status_code,
-                error_message=item.error_message
-            ) for item in response.value
+                to=item["to"],
+                http_status_code=item["httpStatusCode"],
+                error_message=item.get("errorMessage")
+            ) for item in response["value"]
         ]
 
     @distributed_trace
@@ -185,16 +185,16 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         request = OptOutRequest(from_property=from_, recipients=recipients)
         
         response = self._sms_service_client.opt_outs.remove(
-            body=request,
+            body=request.serialize(),
             **kwargs
         )
 
         return [
             OptOutResult(
-                to=item.to,
-                http_status_code=item.http_status_code,
-                error_message=item.error_message
-            ) for item in response.value
+                to=item["to"],
+                http_status_code=item["httpStatusCode"],
+                error_message=item.get("errorMessage")
+            ) for item in response["value"]
         ]
 
     @distributed_trace
@@ -232,15 +232,15 @@ class OptOutsClient(object):  # pylint: disable=client-accepts-api-version-keywo
         request = OptOutRequest(from_property=from_, recipients=recipients)
         
         response = self._sms_service_client.opt_outs.check(
-            body=request,
+            body=request.serialize(),
             **kwargs
         )
 
         return [
             OptOutCheckResult(
-                to=item.to,
-                http_status_code=item.http_status_code,
-                is_opted_out=item.is_opted_out or False,
-                error_message=item.error_message
-            ) for item in response.value
+                to=item["to"],
+                http_status_code=item["httpStatusCode"],
+                is_opted_out=item.get("isOptedOut", False),
+                error_message=item.get("errorMessage")
+            ) for item in response["value"]
         ]

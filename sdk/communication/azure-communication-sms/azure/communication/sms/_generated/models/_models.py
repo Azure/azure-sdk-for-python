@@ -24,21 +24,18 @@ class DeliveryAttempt(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'required': True},
-        'segments_succeeded': {'required': True, 'minimum': 0},
-        'segments_failed': {'required': True, 'minimum': 0},
+        "timestamp": {"required": True},
+        "segments_succeeded": {"required": True, "minimum": 0},
+        "segments_failed": {"required": True, "minimum": 0},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'segments_succeeded': {'key': 'segmentsSucceeded', 'type': 'int'},
-        'segments_failed': {'key': 'segmentsFailed', 'type': 'int'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "segments_succeeded": {"key": "segmentsSucceeded", "type": "int"},
+        "segments_failed": {"key": "segmentsFailed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword timestamp: Required. The timestamp of the delivery attempt.
         :paramtype timestamp: ~datetime.datetime
@@ -49,9 +46,9 @@ class DeliveryAttempt(msrest.serialization.Model):
         :paramtype segments_failed: int
         """
         super(DeliveryAttempt, self).__init__(**kwargs)
-        self.timestamp = kwargs['timestamp']
-        self.segments_succeeded = kwargs['segments_succeeded']
-        self.segments_failed = kwargs['segments_failed']
+        self.timestamp = kwargs["timestamp"]
+        self.segments_succeeded = kwargs["segments_succeeded"]
+        self.segments_failed = kwargs["segments_failed"]
 
 
 class DeliveryReport(msrest.serialization.Model):
@@ -79,27 +76,24 @@ class DeliveryReport(msrest.serialization.Model):
     """
 
     _validation = {
-        'delivery_status': {'required': True},
-        'message_id': {'required': True},
-        'from_property': {'required': True},
-        'to': {'required': True},
+        "delivery_status": {"required": True},
+        "message_id": {"required": True},
+        "from_property": {"required": True},
+        "to": {"required": True},
     }
 
     _attribute_map = {
-        'delivery_status': {'key': 'deliveryStatus', 'type': 'str'},
-        'delivery_status_details': {'key': 'deliveryStatusDetails', 'type': 'str'},
-        'delivery_attempts': {'key': 'deliveryAttempts', 'type': '[DeliveryAttempt]'},
-        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'iso-8601'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'from_property': {'key': 'from', 'type': 'str'},
-        'to': {'key': 'to', 'type': 'str'},
+        "delivery_status": {"key": "deliveryStatus", "type": "str"},
+        "delivery_status_details": {"key": "deliveryStatusDetails", "type": "str"},
+        "delivery_attempts": {"key": "deliveryAttempts", "type": "[DeliveryAttempt]"},
+        "received_timestamp": {"key": "receivedTimestamp", "type": "iso-8601"},
+        "tag": {"key": "tag", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "from_property": {"key": "from", "type": "str"},
+        "to": {"key": "to", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword delivery_status: Required. The delivery status of the message. Possible values
          include: "Delivered", "Failed".
@@ -120,14 +114,14 @@ class DeliveryReport(msrest.serialization.Model):
         :paramtype to: str
         """
         super(DeliveryReport, self).__init__(**kwargs)
-        self.delivery_status = kwargs['delivery_status']
-        self.delivery_status_details = kwargs.get('delivery_status_details', None)
-        self.delivery_attempts = kwargs.get('delivery_attempts', None)
-        self.received_timestamp = kwargs.get('received_timestamp', None)
-        self.tag = kwargs.get('tag', None)
-        self.message_id = kwargs['message_id']
-        self.from_property = kwargs['from_property']
-        self.to = kwargs['to']
+        self.delivery_status = kwargs["delivery_status"]
+        self.delivery_status_details = kwargs.get("delivery_status_details", None)
+        self.delivery_attempts = kwargs.get("delivery_attempts", None)
+        self.received_timestamp = kwargs.get("received_timestamp", None)
+        self.tag = kwargs.get("tag", None)
+        self.message_id = kwargs["message_id"]
+        self.from_property = kwargs["from_property"]
+        self.to = kwargs["to"]
 
 
 class ErrorResponse(msrest.serialization.Model):
@@ -146,22 +140,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'title': {'required': True},
-        'status': {'required': True},
+        "type": {"required": True},
+        "title": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'int'},
-        'trace_id': {'key': 'traceId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "status": {"key": "status", "type": "int"},
+        "trace_id": {"key": "traceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword type: Required. A URI reference that identifies the problem type.
         :paramtype type: str
@@ -173,10 +164,10 @@ class ErrorResponse(msrest.serialization.Model):
         :paramtype trace_id: str
         """
         super(ErrorResponse, self).__init__(**kwargs)
-        self.type = kwargs['type']
-        self.title = kwargs['title']
-        self.status = kwargs['status']
-        self.trace_id = kwargs.get('trace_id', None)
+        self.type = kwargs["type"]
+        self.title = kwargs["title"]
+        self.status = kwargs["status"]
+        self.trace_id = kwargs.get("trace_id", None)
 
 
 class MessagingConnectOptions(msrest.serialization.Model):
@@ -192,19 +183,16 @@ class MessagingConnectOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'api_key': {'required': True},
-        'partner': {'required': True},
+        "api_key": {"required": True},
+        "partner": {"required": True},
     }
 
     _attribute_map = {
-        'api_key': {'key': 'apiKey', 'type': 'str'},
-        'partner': {'key': 'partner', 'type': 'str'},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "partner": {"key": "partner", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword api_key: Required. Represents the API key associated with the customer's account in
          the Messaging Connect Partner portal.
@@ -213,8 +201,8 @@ class MessagingConnectOptions(msrest.serialization.Model):
         :paramtype partner: str
         """
         super(MessagingConnectOptions, self).__init__(**kwargs)
-        self.api_key = kwargs['api_key']
-        self.partner = kwargs['partner']
+        self.api_key = kwargs["api_key"]
+        self.partner = kwargs["partner"]
 
 
 class OptOutRecipient(msrest.serialization.Model):
@@ -227,23 +215,20 @@ class OptOutRecipient(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True, 'min_length': 1},
+        "to": {"required": True, "min_length": 1},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword to: Required. The recipient's phone number (in E.164 format).
         :paramtype to: str
         """
         super(OptOutRecipient, self).__init__(**kwargs)
-        self.to = kwargs['to']
+        self.to = kwargs["to"]
 
 
 class OptOutRequest(msrest.serialization.Model):
@@ -259,19 +244,16 @@ class OptOutRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True, 'min_length': 1},
-        'recipients': {'required': True, 'max_items': 100, 'min_items': 1},
+        "from_property": {"required": True, "min_length": 1},
+        "recipients": {"required": True, "max_items": 100, "min_items": 1},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'str'},
-        'recipients': {'key': 'recipients', 'type': '[OptOutRecipient]'},
+        "from_property": {"key": "from", "type": "str"},
+        "recipients": {"key": "recipients", "type": "[OptOutRecipient]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword from_property: Required. The sender's identifier (typically phone number in E.164
          format) that is owned by the authenticated account.
@@ -280,8 +262,8 @@ class OptOutRequest(msrest.serialization.Model):
         :paramtype recipients: list[~azure.communication.sms.models.OptOutRecipient]
         """
         super(OptOutRequest, self).__init__(**kwargs)
-        self.from_property = kwargs['from_property']
-        self.recipients = kwargs['recipients']
+        self.from_property = kwargs["from_property"]
+        self.recipients = kwargs["recipients"]
 
 
 class OptOutResponse(msrest.serialization.Model):
@@ -294,23 +276,20 @@ class OptOutResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OptOutResponseItem]'},
+        "value": {"key": "value", "type": "[OptOutResponseItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.sms.models.OptOutResponseItem]
         """
         super(OptOutResponse, self).__init__(**kwargs)
-        self.value = kwargs['value']
+        self.value = kwargs["value"]
 
 
 class OptOutResponseItem(msrest.serialization.Model):
@@ -329,21 +308,18 @@ class OptOutResponseItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True, 'min_length': 1},
-        'http_status_code': {'required': True},
+        "to": {"required": True, "min_length": 1},
+        "http_status_code": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'is_opted_out': {'key': 'isOptedOut', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "is_opted_out": {"key": "isOptedOut", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword to: Required. The recipient phone number (in E.164 format).
         :paramtype to: str
@@ -356,10 +332,10 @@ class OptOutResponseItem(msrest.serialization.Model):
         :paramtype error_message: str
         """
         super(OptOutResponseItem, self).__init__(**kwargs)
-        self.to = kwargs['to']
-        self.http_status_code = kwargs['http_status_code']
-        self.is_opted_out = kwargs.get('is_opted_out', None)
-        self.error_message = kwargs.get('error_message', None)
+        self.to = kwargs["to"]
+        self.http_status_code = kwargs["http_status_code"]
+        self.is_opted_out = kwargs.get("is_opted_out", None)
+        self.error_message = kwargs.get("error_message", None)
 
 
 class SendMessageRequest(msrest.serialization.Model):
@@ -381,22 +357,19 @@ class SendMessageRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'sms_recipients': {'required': True},
-        'message': {'required': True, 'max_length': 2048, 'min_length': 0},
+        "from_property": {"required": True},
+        "sms_recipients": {"required": True},
+        "message": {"required": True, "max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'str'},
-        'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
+        "from_property": {"key": "from", "type": "str"},
+        "sms_recipients": {"key": "smsRecipients", "type": "[SmsRecipient]"},
+        "message": {"key": "message", "type": "str"},
+        "sms_send_options": {"key": "smsSendOptions", "type": "SmsSendOptions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword from_property: Required. The sender's phone number in E.164 format that is owned by
          the authenticated account.
@@ -411,10 +384,10 @@ class SendMessageRequest(msrest.serialization.Model):
         :paramtype sms_send_options: ~azure.communication.sms.models.SmsSendOptions
         """
         super(SendMessageRequest, self).__init__(**kwargs)
-        self.from_property = kwargs['from_property']
-        self.sms_recipients = kwargs['sms_recipients']
-        self.message = kwargs['message']
-        self.sms_send_options = kwargs.get('sms_send_options', None)
+        self.from_property = kwargs["from_property"]
+        self.sms_recipients = kwargs["sms_recipients"]
+        self.message = kwargs["message"]
+        self.sms_send_options = kwargs.get("sms_send_options", None)
 
 
 class SmsRecipient(msrest.serialization.Model):
@@ -438,19 +411,16 @@ class SmsRecipient(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
+        "to": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
-        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "repeatability_request_id": {"key": "repeatabilityRequestId", "type": "str"},
+        "repeatability_first_sent": {"key": "repeatabilityFirstSent", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword to: Required. The recipient's phone number in E.164 format.
         :paramtype to: str
@@ -467,9 +437,9 @@ class SmsRecipient(msrest.serialization.Model):
         :paramtype repeatability_first_sent: str
         """
         super(SmsRecipient, self).__init__(**kwargs)
-        self.to = kwargs['to']
-        self.repeatability_request_id = kwargs.get('repeatability_request_id', None)
-        self.repeatability_first_sent = kwargs.get('repeatability_first_sent', None)
+        self.to = kwargs["to"]
+        self.repeatability_request_id = kwargs.get("repeatability_request_id", None)
+        self.repeatability_first_sent = kwargs.get("repeatability_first_sent", None)
 
 
 class SmsSendOptions(msrest.serialization.Model):
@@ -492,21 +462,18 @@ class SmsSendOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'enable_delivery_report': {'required': True},
-        'delivery_report_timeout_in_seconds': {'maximum': 43200, 'minimum': 60},
+        "enable_delivery_report": {"required": True},
+        "delivery_report_timeout_in_seconds": {"maximum": 43200, "minimum": 60},
     }
 
     _attribute_map = {
-        'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'delivery_report_timeout_in_seconds': {'key': 'deliveryReportTimeoutInSeconds', 'type': 'int'},
-        'messaging_connect': {'key': 'messagingConnect', 'type': 'MessagingConnectOptions'},
+        "enable_delivery_report": {"key": "enableDeliveryReport", "type": "bool"},
+        "tag": {"key": "tag", "type": "str"},
+        "delivery_report_timeout_in_seconds": {"key": "deliveryReportTimeoutInSeconds", "type": "int"},
+        "messaging_connect": {"key": "messagingConnect", "type": "MessagingConnectOptions"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword enable_delivery_report: Required. Enable this flag to receive a delivery report for
          this message on the Azure Resource EventGrid.
@@ -522,10 +489,10 @@ class SmsSendOptions(msrest.serialization.Model):
         :paramtype messaging_connect: ~azure.communication.sms.models.MessagingConnectOptions
         """
         super(SmsSendOptions, self).__init__(**kwargs)
-        self.enable_delivery_report = kwargs['enable_delivery_report']
-        self.tag = kwargs.get('tag', None)
-        self.delivery_report_timeout_in_seconds = kwargs.get('delivery_report_timeout_in_seconds', None)
-        self.messaging_connect = kwargs.get('messaging_connect', None)
+        self.enable_delivery_report = kwargs["enable_delivery_report"]
+        self.tag = kwargs.get("tag", None)
+        self.delivery_report_timeout_in_seconds = kwargs.get("delivery_report_timeout_in_seconds", None)
+        self.messaging_connect = kwargs.get("messaging_connect", None)
 
 
 class SmsSendResponse(msrest.serialization.Model):
@@ -538,23 +505,20 @@ class SmsSendResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
+        "value": {"key": "value", "type": "[SmsSendResponseItem]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.sms.models.SmsSendResponseItem]
         """
         super(SmsSendResponse, self).__init__(**kwargs)
-        self.value = kwargs['value']
+        self.value = kwargs["value"]
 
 
 class SmsSendResponseItem(msrest.serialization.Model):
@@ -580,24 +544,21 @@ class SmsSendResponseItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
-        'http_status_code': {'required': True},
-        'successful': {'required': True},
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+        "successful": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
-        'successful': {'key': 'successful', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "repeatability_result": {"key": "repeatabilityResult", "type": "str"},
+        "successful": {"key": "successful", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, **kwargs):
         """
         :keyword to: Required. The recipient's phone number in E.164 format.
         :paramtype to: str
@@ -616,9 +577,9 @@ class SmsSendResponseItem(msrest.serialization.Model):
         :paramtype error_message: str
         """
         super(SmsSendResponseItem, self).__init__(**kwargs)
-        self.to = kwargs['to']
-        self.message_id = kwargs.get('message_id', None)
-        self.http_status_code = kwargs['http_status_code']
-        self.repeatability_result = kwargs.get('repeatability_result', None)
-        self.successful = kwargs['successful']
-        self.error_message = kwargs.get('error_message', None)
+        self.to = kwargs["to"]
+        self.message_id = kwargs.get("message_id", None)
+        self.http_status_code = kwargs["http_status_code"]
+        self.repeatability_result = kwargs.get("repeatability_result", None)
+        self.successful = kwargs["successful"]
+        self.error_message = kwargs.get("error_message", None)

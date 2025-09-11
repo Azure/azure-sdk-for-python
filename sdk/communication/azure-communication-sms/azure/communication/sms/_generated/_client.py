@@ -7,23 +7,21 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
 from ._configuration import AzureCommunicationSMSServiceConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import DeliveryReportsOperations, OptOutsOperations, SmsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
-    from azure.core.rest import HttpRequest, HttpResponse
+    from typing import Dict
 
 
-class AzureCommunicationSMSService(object):
+class AzureCommunicationSMSService:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication SMS Service.
 
     :ivar sms: SmsOperations operations
@@ -33,23 +31,22 @@ class AzureCommunicationSMSService(object):
     :ivar delivery_reports: DeliveryReportsOperations operations
     :vartype delivery_reports: azure.communication.sms.operations.DeliveryReportsOperations
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com.
+     https://my-resource.communication.azure.com. Required.
     :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2026-01-23". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _base_url = "{endpoint}"
-        self._config = AzureCommunicationSMSServiceConfiguration(endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Any
+    ) -> None:
+        _endpoint = "{endpoint}"
+        self._config = AzureCommunicationSMSServiceConfiguration(endpoint=endpoint, **kwargs)
+        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.sms = SmsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.opt_outs = OptOutsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -57,21 +54,16 @@ class AzureCommunicationSMSService(object):
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
+        >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

@@ -29,25 +29,18 @@ class DeliveryAttempt(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'required': True},
-        'segments_succeeded': {'required': True, 'minimum': 0},
-        'segments_failed': {'required': True, 'minimum': 0},
+        "timestamp": {"required": True},
+        "segments_succeeded": {"required": True, "minimum": 0},
+        "segments_failed": {"required": True, "minimum": 0},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'segments_succeeded': {'key': 'segmentsSucceeded', 'type': 'int'},
-        'segments_failed': {'key': 'segmentsFailed', 'type': 'int'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "segments_succeeded": {"key": "segmentsSucceeded", "type": "int"},
+        "segments_failed": {"key": "segmentsFailed", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        timestamp: datetime.datetime,
-        segments_succeeded: int,
-        segments_failed: int,
-        **kwargs
-    ):
+    def __init__(self, *, timestamp: datetime.datetime, segments_succeeded: int, segments_failed: int, **kwargs):
         """
         :keyword timestamp: Required. The timestamp of the delivery attempt.
         :paramtype timestamp: ~datetime.datetime
@@ -88,21 +81,21 @@ class DeliveryReport(msrest.serialization.Model):
     """
 
     _validation = {
-        'delivery_status': {'required': True},
-        'message_id': {'required': True},
-        'from_property': {'required': True},
-        'to': {'required': True},
+        "delivery_status": {"required": True},
+        "message_id": {"required": True},
+        "from_property": {"required": True},
+        "to": {"required": True},
     }
 
     _attribute_map = {
-        'delivery_status': {'key': 'deliveryStatus', 'type': 'str'},
-        'delivery_status_details': {'key': 'deliveryStatusDetails', 'type': 'str'},
-        'delivery_attempts': {'key': 'deliveryAttempts', 'type': '[DeliveryAttempt]'},
-        'received_timestamp': {'key': 'receivedTimestamp', 'type': 'iso-8601'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'from_property': {'key': 'from', 'type': 'str'},
-        'to': {'key': 'to', 'type': 'str'},
+        "delivery_status": {"key": "deliveryStatus", "type": "str"},
+        "delivery_status_details": {"key": "deliveryStatusDetails", "type": "str"},
+        "delivery_attempts": {"key": "deliveryAttempts", "type": "[DeliveryAttempt]"},
+        "received_timestamp": {"key": "receivedTimestamp", "type": "iso-8601"},
+        "tag": {"key": "tag", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "from_property": {"key": "from", "type": "str"},
+        "to": {"key": "to", "type": "str"},
     }
 
     def __init__(
@@ -164,27 +157,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'title': {'required': True},
-        'status': {'required': True},
+        "type": {"required": True},
+        "title": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'int'},
-        'trace_id': {'key': 'traceId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "status": {"key": "status", "type": "int"},
+        "trace_id": {"key": "traceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: str,
-        title: str,
-        status: int,
-        trace_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: str, title: str, status: int, trace_id: Optional[str] = None, **kwargs):
         """
         :keyword type: Required. A URI reference that identifies the problem type.
         :paramtype type: str
@@ -215,22 +200,16 @@ class MessagingConnectOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'api_key': {'required': True},
-        'partner': {'required': True},
+        "api_key": {"required": True},
+        "partner": {"required": True},
     }
 
     _attribute_map = {
-        'api_key': {'key': 'apiKey', 'type': 'str'},
-        'partner': {'key': 'partner', 'type': 'str'},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "partner": {"key": "partner", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_key: str,
-        partner: str,
-        **kwargs
-    ):
+    def __init__(self, *, api_key: str, partner: str, **kwargs):
         """
         :keyword api_key: Required. Represents the API key associated with the customer's account in
          the Messaging Connect Partner portal.
@@ -253,19 +232,14 @@ class OptOutRecipient(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True, 'min_length': 1},
+        "to": {"required": True, "min_length": 1},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        to: str,
-        **kwargs
-    ):
+    def __init__(self, *, to: str, **kwargs):
         """
         :keyword to: Required. The recipient's phone number (in E.164 format).
         :paramtype to: str
@@ -287,22 +261,16 @@ class OptOutRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True, 'min_length': 1},
-        'recipients': {'required': True, 'max_items': 100, 'min_items': 1},
+        "from_property": {"required": True, "min_length": 1},
+        "recipients": {"required": True, "max_items": 100, "min_items": 1},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'str'},
-        'recipients': {'key': 'recipients', 'type': '[OptOutRecipient]'},
+        "from_property": {"key": "from", "type": "str"},
+        "recipients": {"key": "recipients", "type": "[OptOutRecipient]"},
     }
 
-    def __init__(
-        self,
-        *,
-        from_property: str,
-        recipients: List["OptOutRecipient"],
-        **kwargs
-    ):
+    def __init__(self, *, from_property: str, recipients: List["OptOutRecipient"], **kwargs):
         """
         :keyword from_property: Required. The sender's identifier (typically phone number in E.164
          format) that is owned by the authenticated account.
@@ -325,19 +293,14 @@ class OptOutResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OptOutResponseItem]'},
+        "value": {"key": "value", "type": "[OptOutResponseItem]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["OptOutResponseItem"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["OptOutResponseItem"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.sms.models.OptOutResponseItem]
@@ -362,15 +325,15 @@ class OptOutResponseItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True, 'min_length': 1},
-        'http_status_code': {'required': True},
+        "to": {"required": True, "min_length": 1},
+        "http_status_code": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'is_opted_out': {'key': 'isOptedOut', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "is_opted_out": {"key": "isOptedOut", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(
@@ -419,16 +382,16 @@ class SendMessageRequest(msrest.serialization.Model):
     """
 
     _validation = {
-        'from_property': {'required': True},
-        'sms_recipients': {'required': True},
-        'message': {'required': True, 'max_length': 2048, 'min_length': 0},
+        "from_property": {"required": True},
+        "sms_recipients": {"required": True},
+        "message": {"required": True, "max_length": 2048, "min_length": 0},
     }
 
     _attribute_map = {
-        'from_property': {'key': 'from', 'type': 'str'},
-        'sms_recipients': {'key': 'smsRecipients', 'type': '[SmsRecipient]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'sms_send_options': {'key': 'smsSendOptions', 'type': 'SmsSendOptions'},
+        "from_property": {"key": "from", "type": "str"},
+        "sms_recipients": {"key": "smsRecipients", "type": "[SmsRecipient]"},
+        "message": {"key": "message", "type": "str"},
+        "sms_send_options": {"key": "smsSendOptions", "type": "SmsSendOptions"},
     }
 
     def __init__(
@@ -481,13 +444,13 @@ class SmsRecipient(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
+        "to": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'repeatability_request_id': {'key': 'repeatabilityRequestId', 'type': 'str'},
-        'repeatability_first_sent': {'key': 'repeatabilityFirstSent', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "repeatability_request_id": {"key": "repeatabilityRequestId", "type": "str"},
+        "repeatability_first_sent": {"key": "repeatabilityFirstSent", "type": "str"},
     }
 
     def __init__(
@@ -539,15 +502,15 @@ class SmsSendOptions(msrest.serialization.Model):
     """
 
     _validation = {
-        'enable_delivery_report': {'required': True},
-        'delivery_report_timeout_in_seconds': {'maximum': 43200, 'minimum': 60},
+        "enable_delivery_report": {"required": True},
+        "delivery_report_timeout_in_seconds": {"maximum": 43200, "minimum": 60},
     }
 
     _attribute_map = {
-        'enable_delivery_report': {'key': 'enableDeliveryReport', 'type': 'bool'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'delivery_report_timeout_in_seconds': {'key': 'deliveryReportTimeoutInSeconds', 'type': 'int'},
-        'messaging_connect': {'key': 'messagingConnect', 'type': 'MessagingConnectOptions'},
+        "enable_delivery_report": {"key": "enableDeliveryReport", "type": "bool"},
+        "tag": {"key": "tag", "type": "str"},
+        "delivery_report_timeout_in_seconds": {"key": "deliveryReportTimeoutInSeconds", "type": "int"},
+        "messaging_connect": {"key": "messagingConnect", "type": "MessagingConnectOptions"},
     }
 
     def __init__(
@@ -590,19 +553,14 @@ class SmsSendResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SmsSendResponseItem]'},
+        "value": {"key": "value", "type": "[SmsSendResponseItem]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["SmsSendResponseItem"],
-        **kwargs
-    ):
+    def __init__(self, *, value: List["SmsSendResponseItem"], **kwargs):
         """
         :keyword value: Required.
         :paramtype value: list[~azure.communication.sms.models.SmsSendResponseItem]
@@ -634,18 +592,18 @@ class SmsSendResponseItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'to': {'required': True},
-        'http_status_code': {'required': True},
-        'successful': {'required': True},
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+        "successful": {"required": True},
     }
 
     _attribute_map = {
-        'to': {'key': 'to', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'int'},
-        'repeatability_result': {'key': 'repeatabilityResult', 'type': 'str'},
-        'successful': {'key': 'successful', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
+        "to": {"key": "to", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "repeatability_result": {"key": "repeatabilityResult", "type": "str"},
+        "successful": {"key": "successful", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
     }
 
     def __init__(
