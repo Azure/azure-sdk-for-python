@@ -9,7 +9,7 @@
         "Content-Length": "207",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
-        "User-Agent": "azsdk-python-ai-language-questionanswering/1.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "question": "How long should my Surface battery last?",

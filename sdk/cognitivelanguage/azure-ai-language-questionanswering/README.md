@@ -12,7 +12,7 @@ Question Answering lets you build a conversational Q&A layer over your existing 
     - [API key](#api-key)
     - [Azure Active Directory (AAD)](#azure-active-directory-aad)
 - [Key concepts](#key-concepts)
-- [Usage examples](#usage-examples)
+- [Examples](#examples)     
   - [Ask a question (knowledge base)](#ask-a-question-knowledge-base)
   - [Ask a follow-up question](#ask-a-follow-up-question)
   - [Alternate input forms (dict / kwargs / model)](#alternate-input-forms-dict--kwargs--model)
@@ -78,8 +78,7 @@ Environment variables needed by `DefaultAzureCredential`: `AZURE_CLIENT_ID`, `AZ
 - Answer object: includes `answer`, `confidence`, optional `short_answer` span, metadata, source, and dialog prompts.
 - Context / Follow-up: you can narrow subsequent queries using the `previous_qna_id` (and optionally previous question text).
 
-## Usage examples
-
+## Examples      
 ### Ask a question (knowledge base)
 
 ```python
@@ -203,7 +202,7 @@ This project is licensed under the [MIT License](https://github.com/Azure/azure-
 [azure_core_ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html
 [contrib]: https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md
 
-> Default service API version: `2025-05-15-preview` (this package release `1.0.0b1` is a preview; surface or models can change).
+> Default service API version: `2025-05-15-preview` (this package release `2.0.0b1` is a preview; surface or models can change).
 
 ## Service API version
 

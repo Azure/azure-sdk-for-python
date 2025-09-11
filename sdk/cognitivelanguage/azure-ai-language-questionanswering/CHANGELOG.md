@@ -1,35 +1,24 @@
 # Release History
 
-## 1.0.0b1 (1970-01-01)
-
-### Other Changes
-
-## 1.0.0b1 (2025-09-01)
+## 2.0.0b1 (2025-09-11)
 ### Features Added
-- Initial release of `azure-ai-language-questionanswering` generated from TypeSpec (API version 2025-05-15-preview).
+- Re-generated client from TypeSpec (service API 2025-05-15-preview).
+- Convenience normalization for `AnswersFromTextOptions.text_documents` (accepts `List[str]`).
 
 ### Breaking Changes
-- N/A
+- Removed legacy public `operations` / `aio.operations` namespaces.
+- Renamed (migration summary):
+  * `QueryTextOptions` -> `AnswersFromTextOptions`
+  * `QueryTextOptions.records` -> `AnswersFromTextOptions.text_documents`
+- Dropped dependency on `msrest`.
+- Minimum supported Python now 3.7+ (per repo policy).
 
 ### Bugs Fixed
-- N/A
+- Fixed formatting of `MetadataFilter.metadata` when empty.
+- Docstring indentation issue that broke Sphinx build.
 
 ### Other Changes
-- Added README, samples, and update basic tests.
-
-## 1.0.0b1 (2025-09-01)
-### Features Added
-- Initial release of `azure-ai-language-questionanswering` generated from TypeSpec (API version 2025-05-15-preview).
-
-### Breaking Changes
-- N/A
-
-### Bugs Fixed
-- N/A
-
-### Other Changes
-* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
-* Dropped dependency on `msrest`.
+- Added README, samples, basic tests.
 
 ## 1.1.0b2 (2022-07-19)
 
