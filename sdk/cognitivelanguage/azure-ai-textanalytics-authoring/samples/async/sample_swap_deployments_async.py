@@ -30,8 +30,8 @@ import os
 import asyncio
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.ai.language.text.authoring.aio import TextAuthoringClient
-from azure.ai.language.text.authoring.models import SwapDeploymentsDetails
+from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
+from azure.ai.textanalytics.authoring.models import SwapDeploymentsDetails
 
 
 async def sample_swap_deployments_async():

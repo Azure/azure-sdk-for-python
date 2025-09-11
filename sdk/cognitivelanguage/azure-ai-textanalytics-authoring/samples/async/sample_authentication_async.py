@@ -36,7 +36,7 @@ import asyncio
 async def sample_authentication_api_key_async():
     # [START create_text_client_with_key_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.text.authoring.aio import TextAuthoringClient
+    from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     key = os.environ["AZURE_TEXT_KEY"]
@@ -50,7 +50,7 @@ async def sample_authentication_with_azure_active_directory():
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
     print("\n.. authentication_with_azure_active_directory")
-    from azure.ai.language.text.authoring.aio import TextAuthoringClient
+    from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
     from azure.identity.aio import DefaultAzureCredential
 
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]

@@ -28,8 +28,8 @@ import os
 import asyncio
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.ai.language.text.authoring.aio import TextAuthoringClient
-from azure.ai.language.text.authoring.models import StringIndexType
+from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
+from azure.ai.textanalytics.authoring.models import StringIndexType
 
 
 async def sample_export_project_async():

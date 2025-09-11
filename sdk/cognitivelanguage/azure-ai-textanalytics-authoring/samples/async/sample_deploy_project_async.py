@@ -30,8 +30,8 @@ import os
 import asyncio
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.ai.language.text.authoring.aio import TextAuthoringClient
-from azure.ai.language.text.authoring.models import CreateDeploymentDetails
+from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
+from azure.ai.textanalytics.authoring.models import CreateDeploymentDetails
 
 
 async def sample_deploy_project_async():

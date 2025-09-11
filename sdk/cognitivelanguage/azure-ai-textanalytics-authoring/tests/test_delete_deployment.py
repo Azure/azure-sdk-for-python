@@ -4,8 +4,8 @@ import functools
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
-from azure.ai.language.text.authoring import TextAuthoringClient
-from azure.ai.language.text.authoring.models import DeploymentState
+from azure.ai.textanalytics.authoring import TextAuthoringClient
+from azure.ai.textanalytics.authoring.models import DeploymentState
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,

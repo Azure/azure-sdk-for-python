@@ -28,7 +28,7 @@ OPTIONAL ENV VARS:
 import os
 import asyncio
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text.authoring.aio import TextAuthoringClient
+from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 
 
 async def sample_delete_trained_model_async():

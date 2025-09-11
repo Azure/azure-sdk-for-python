@@ -27,7 +27,7 @@ OPTIONAL ENV VARS:
 # [START text_authoring_get_deployment]
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text.authoring import TextAuthoringClient
+from azure.ai.textanalytics.authoring import TextAuthoringClient
 
 
 def sample_get_deployment():

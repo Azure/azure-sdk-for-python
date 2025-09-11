@@ -29,8 +29,8 @@ OPTIONAL ENV VARS:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.ai.language.text.authoring import TextAuthoringClient
-from azure.ai.language.text.authoring.models import (
+from azure.ai.textanalytics.authoring import TextAuthoringClient
+from azure.ai.textanalytics.authoring.models import (
     TrainingJobDetails,
     EvaluationDetails,
     EvaluationKind,

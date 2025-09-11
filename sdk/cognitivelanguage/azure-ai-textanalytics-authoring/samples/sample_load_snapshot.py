@@ -28,7 +28,7 @@ OPTIONAL ENV VARS:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
-from azure.ai.language.text.authoring import TextAuthoringClient
+from azure.ai.textanalytics.authoring import TextAuthoringClient
 
 
 def sample_load_snapshot():

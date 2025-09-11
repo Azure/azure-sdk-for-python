@@ -5,7 +5,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.text.authoring.aio import TextAuthoringClient
+from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,

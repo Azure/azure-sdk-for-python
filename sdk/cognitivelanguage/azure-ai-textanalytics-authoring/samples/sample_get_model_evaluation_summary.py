@@ -28,8 +28,8 @@ OPTIONAL ENV VARS:
 # [START text_authoring_get_model_evaluation_summary]
 import os
 from azure.identity import DefaultAzureCredential
-from azure.ai.language.text.authoring import TextAuthoringClient
-from azure.ai.language.text.authoring.models import (
+from azure.ai.textanalytics.authoring import TextAuthoringClient
+from azure.ai.textanalytics.authoring.models import (
     CustomSingleLabelClassificationEvalSummary,
 )
 
