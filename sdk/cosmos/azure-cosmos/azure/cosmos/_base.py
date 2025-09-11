@@ -335,8 +335,7 @@ def _is_session_token_request(
     # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
     # configured to use multiple write regions. Batch requests are special-cased because they can contain both read and
     # write operations, and we want to use session consistency for the read operations.
-    return (is_session_consistency is True and cosmos_client_connection.session is not None
-            and not IsMasterResource(request_object.resource_type)
+    return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
             and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
                  or request_object.operation_type == "Batch"
                  or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)))
@@ -349,28 +348,28 @@ def set_session_token_header(
         request_object: "RequestObject",
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None) -> None:
-    # If a session token is explicitly provided in options, use it. This allows manual override
-    # even when client-side session management is disabled.
-    if options.get("sessionToken"):
-        headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
-    # If no manual token is provided, check if we should use the client's session management.
-    elif _is_session_token_request(cosmos_client_connection, headers, request_object):
-        # check if the client's default consistency is session (and request consistency level is same),
-        # then update from session container
-        if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
-                cosmos_client_connection.session:
-            # urllib_unquote is used to decode the path, as it may contain encoded characters
-            path = urllib_unquote(path)
-            # populate session token from the client's session container
-            session_token = (
-                cosmos_client_connection.session.get_session_token(path,
-                                                                   options.get('partitionKey'),
-                                                                   cosmos_client_connection._container_properties_cache,
-                                                                   cosmos_client_connection._routing_map_provider,
-                                                                   partition_key_range_id,
-                                                                   options))
-            if session_token != "":
-                headers[http_constants.HttpHeaders.SessionToken] = session_token
+    # set session token if required
+    if _is_session_token_request(cosmos_client_connection, headers, request_object):
+        # if there is a token set via option, then use it to override default
+        if options.get("sessionToken"):
+            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
+        else:
+            # check if the client's default consistency is session (and request consistency level is same),
+            # then update from session container
+            if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
+                    cosmos_client_connection.session:
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
+                # populate session token from the client's session container
+                session_token = (
+                    cosmos_client_connection.session.get_session_token(path,
+                                                                options.get('partitionKey'),
+                                                                cosmos_client_connection._container_properties_cache,
+                                                                cosmos_client_connection._routing_map_provider,
+                                                                partition_key_range_id,
+                                                                options))
+                if session_token != "":
+                    headers[http_constants.HttpHeaders.SessionToken] = session_token
 
 async def set_session_token_header_async(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
@@ -379,28 +378,28 @@ async def set_session_token_header_async(
         request_object: "RequestObject",
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None) -> None:
-    # If a session token is explicitly provided in options, use it. This allows manual override
-    # even when client-side session management is disabled.
-    if options.get("sessionToken"):
-        headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
-    # If no manual token is provided, check if we should use the client's session management.
-    elif _is_session_token_request(cosmos_client_connection, headers, request_object):
-        # check if the client's default consistency is session (and request consistency level is same),
-        # then update from session container
-        if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
-                cosmos_client_connection.session:
-            # populate session token from the client's session container
-            # urllib_unquote is used to decode the path, as it may contain encoded characters
-            path = urllib_unquote(path)
-            session_token = \
-                await cosmos_client_connection.session.get_session_token_async(path,
-                                                                               options.get('partitionKey'),
-                                                                               cosmos_client_connection._container_properties_cache,
-                                                                               cosmos_client_connection._routing_map_provider,
-                                                                               partition_key_range_id,
-                                                                               options)
-            if session_token != "":
-                headers[http_constants.HttpHeaders.SessionToken] = session_token
+    # set session token if required
+    if _is_session_token_request(cosmos_client_connection, headers, request_object):
+        # if there is a token set via option, then use it to override default
+        if options.get("sessionToken"):
+            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
+        else:
+            # check if the client's default consistency is session (and request consistency level is same),
+            # then update from session container
+            if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
+                    cosmos_client_connection.session:
+                # populate session token from the client's session container
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
+                session_token = \
+                    await cosmos_client_connection.session.get_session_token_async(path,
+                                                                options.get('partitionKey'),
+                                                                cosmos_client_connection._container_properties_cache,
+                                                                cosmos_client_connection._routing_map_provider,
+                                                                partition_key_range_id,
+                                                                options)
+                if session_token != "":
+                    headers[http_constants.HttpHeaders.SessionToken] = session_token
 
 def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
