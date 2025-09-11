@@ -7,6 +7,9 @@ extends:
       Location: eastus2
       BuildTargetingString: azure-ai-voicelive*
       EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
-        AZURE_OPENAI_ENDPOINT: $(OPENAI_ENDPOINT)
-        AZURE_OPENAI_KEY: $(API_KEY)
+        VOICELIVE_OPENAI_ENDPOINT: $(VOICELIVE_OPENAI_ENDPOINT)
+        VOICELIVE_OPENAI_KEY: $(VOICELIVE_OPENAI_KEY)
+      TestResourceDirectories:
+        - ai/azure-ai-voicelive/tests

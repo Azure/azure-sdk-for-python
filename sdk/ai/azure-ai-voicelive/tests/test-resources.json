@@ -11,82 +11,82 @@
       "defaultValue": "eastus2"
     },
     "defaultProjectName": {
-      "type": "string",
+      "type": "string"
     },
     "hasRoleAssignment": {
-      "type": "bool",
+      "type": "bool"
     },
     "identity": {
-      "type": "object",
+      "type": "object"
     },
     "identityType": {
-      "type": "string",
+      "type": "string"
     },
     "userAssignedIdentityName": {
-      "type": "string",
+      "type": "string"
     },
     "userIdentityResourceGroupName": {
-      "type": "string",
+      "type": "string"
     },
     "encryption_status": {
-      "type": "string",
+      "type": "string"
     },
     "keyVaultName": {
-      "type": "string",
+      "type": "string"
     },
     "keyVaultLocation": {
-      "type": "string",
+      "type": "string"
     },
     "keyVaultResourceGroupName": {
-      "type": "string",
+      "type": "string"
     },
     "cmk_keyvault": {
-      "type": "string",
+      "type": "string"
     },
     "keyVersion": {
-      "type": "string",
+      "type": "string"
     },
     "userAssignedIdentityId": {
-      "type": "string",
+      "type": "string"
     },
     "resource_cmk_uri": {
-      "type": "string",
+      "type": "string"
     },
     "roleDefinitionId": {
-      "type": "string",
+      "type": "string"
     },
     "keyName": {
-      "type": "string",
+      "type": "string"
     },
     "tagValues": {
-      "type": "object",
+      "type": "object"
     },
     "resourceGroupId": {
-      "type": "string",
+      "type": "string"
     },
     "resourceGroupName": {
-      "type": "string",
+      "type": "string"
     },
     "vnet": {
-      "type": "object",
+      "type": "object"
     },
     "ipRules": {
-      "type": "array",
+      "type": "array"
     },
     "virtualNetworkType": {
-      "type": "string",
+      "type": "string"
     },
     "privateEndpoints": {
-      "type": "array",
+      "type": "array"
     },
     "privateDnsZone": {
-      "type": "string",
+      "type": "string"
     },
     "allowProjectManagement": {
-      "type": "bool",
+      "type": "bool"
     },
     "enableRbac": {
-      "type": "bool",
+      "type": "bool"
     },
     "cryptoUserRoleAssignmentName": {
       "type": "string",
@@ -499,11 +499,11 @@
         }
     ],
     "outputs": {
-	  "API_KEY": {
+	  "VOICELIVE_OPENAI_KEY": {
 		"type": "securestring",
 		"value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('name')), '2023-05-01').key1]"
 	  },
-	  "OPENAI_ENDPOINT": {
+	  "VOICELIVE_OPENAI_ENDPOINT": {
 		"type": "string",
 		"value": "[concat('https://', parameters('name'), '.openai.azure.com')]"
 	  }
