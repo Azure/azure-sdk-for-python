@@ -98,7 +98,6 @@ class TestConfigurationWorker(unittest.TestCase):
         finally:
             worker.shutdown()
 
-
     def test_configuration_refresh_called(self):
         """Test that configuration refresh is called with correct parameters."""
         with patch('random.uniform', return_value=0.001):  # Very short delay
