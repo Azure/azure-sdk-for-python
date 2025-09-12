@@ -48,7 +48,7 @@ class TestOptOutsClientAsync(aiounittest.AsyncTestCase):
             ]
         }
 
-        with patch("azure.communication.sms._generated.aio.operations._operations.OptOutsOperations.add") as mock_add:
+        with patch("azure.communication.sms._generated.aio.operations.OptOutsOperations.add") as mock_add:
             mock_add.return_value = mock_response_data
             
             client = OptOutsClient(self.endpoint, self.credential)
@@ -76,7 +76,7 @@ class TestOptOutsClientAsync(aiounittest.AsyncTestCase):
             ]
         }
         
-        with patch("azure.communication.sms._generated.aio.operations._operations.OptOutsOperations.add") as mock_add:
+        with patch("azure.communication.sms._generated.aio.operations.OptOutsOperations.add") as mock_add:
             mock_add.return_value = mock_response_data
             
             client = OptOutsClient(self.endpoint, self.credential)
@@ -98,7 +98,7 @@ class TestOptOutsClientAsync(aiounittest.AsyncTestCase):
             ]
         }
         
-        with patch("azure.communication.sms._generated.aio.operations._operations.OptOutsOperations.remove") as mock_remove:
+        with patch("azure.communication.sms._generated.aio.operations.OptOutsOperations.remove") as mock_remove:
             mock_remove.return_value = mock_response_data
             
             client = OptOutsClient(self.endpoint, self.credential)
@@ -121,7 +121,7 @@ class TestOptOutsClientAsync(aiounittest.AsyncTestCase):
             ]
         }
         
-        with patch("azure.communication.sms._generated.aio.operations._operations.OptOutsOperations.check") as mock_check:
+        with patch("azure.communication.sms._generated.aio.operations.OptOutsOperations.check") as mock_check:
             mock_check.return_value = mock_response_data
             
             client = OptOutsClient(self.endpoint, self.credential)

@@ -23,11 +23,10 @@ class TestOptOutsClient(unittest.TestCase):
     def setUp(self):
         self.endpoint = "https://endpoint"
         self.credential = FakeTokenCredential()
-        # Create a mock OptOutRequest-like object for testing
-        self.opt_out_request = Mock()
-        self.opt_out_request.from_property = "+1234567890"
-        self.opt_out_request.recipients = [Mock()]
-        self.opt_out_request.recipients[0].to = "+0987654321"
+        # Test phone numbers for opt-out operations
+        self.from_phone = "+1234567890"
+        self.to_phone = "+0987654321"
+        self.to_phones = ["+0987654321", "+0987654322"]
 
     def test_invalid_url(self):
         with self.assertRaises(ValueError) as context:
@@ -43,79 +42,104 @@ class TestOptOutsClient(unittest.TestCase):
 
     def test_add_opt_out_success(self):
         """Test successful opt-out addition"""
-        with patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.add") as mock_add:
-            mock_add.return_value = Mock()
+        with patch("azure.communication.sms._generated.operations.OptOutsOperations.add") as mock_add:
+            mock_add.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 202}]}
             
             client = OptOutsClient(self.endpoint, self.credential)
-            result = client.add_opt_out(self.opt_out_request)
+            result = client.add_opt_out(from_=self.from_phone, to=self.to_phone)
             
             self.assertIsNotNone(result)
+            self.assertEqual(len(result), 1)
             mock_add.assert_called_once()
 
     def test_remove_opt_out_success(self):
         """Test successful opt-out removal"""
-        with patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.remove") as mock_remove:
-            mock_remove.return_value = Mock()
+        with patch("azure.communication.sms._generated.operations.OptOutsOperations.remove") as mock_remove:
+            mock_remove.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 202}]}
             
             client = OptOutsClient(self.endpoint, self.credential)
-            result = client.remove_opt_out(self.opt_out_request)
+            result = client.remove_opt_out(from_=self.from_phone, to=self.to_phone)
             
             self.assertIsNotNone(result)
+            self.assertEqual(len(result), 1)
             mock_remove.assert_called_once()
 
     def test_check_opt_out_success(self):
         """Test successful opt-out status check"""
-        with patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.check") as mock_check:
-            mock_check.return_value = Mock()
+        with patch("azure.communication.sms._generated.operations.OptOutsOperations.check") as mock_check:
+            mock_check.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 200, "isOptedOut": True}]}
             
             client = OptOutsClient(self.endpoint, self.credential)
-            result = client.check_opt_out(self.opt_out_request)
+            result = client.check_opt_out(from_=self.from_phone, to=self.to_phone)
             
             self.assertIsNotNone(result)
+            self.assertEqual(len(result), 1)
+            self.assertTrue(result[0].is_opted_out)
+            self.assertEqual(result[0].http_status_code, 200)
             mock_check.assert_called_once()
 
-    @patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.add")
+    @patch("azure.communication.sms._generated.operations.OptOutsOperations.add")
     def test_add_opt_out_parameters(self, mock_add):
         """Test that add_opt_out passes correct parameters to generated operations"""
+        mock_add.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 202}]}
+        
         client = OptOutsClient(self.endpoint, self.credential)
-        client.add_opt_out(self.opt_out_request)
+        client.add_opt_out(from_=self.from_phone, to=self.to_phone)
         
         # Verify the generated operation was called with correct parameters
         mock_add.assert_called_once()
         call_args = mock_add.call_args
-        self.assertEqual(call_args[1]['body'], self.opt_out_request)
+        # Check that the request was created with correct from_ and recipients
+        request_dict = call_args.kwargs['body']
+        self.assertEqual(request_dict["from"], self.from_phone)
+        self.assertEqual(len(request_dict["recipients"]), 1)
+        self.assertEqual(request_dict["recipients"][0]["to"], self.to_phone)
 
-    @patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.remove")
+    @patch("azure.communication.sms._generated.operations.OptOutsOperations.remove")
     def test_remove_opt_out_parameters(self, mock_remove):
         """Test that remove_opt_out passes correct parameters to generated operations"""
+        mock_remove.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 202}]}
+        
         client = OptOutsClient(self.endpoint, self.credential)
-        client.remove_opt_out(self.opt_out_request)
+        client.remove_opt_out(from_=self.from_phone, to=self.to_phone)
         
         # Verify the generated operation was called with correct parameters
         mock_remove.assert_called_once()
         call_args = mock_remove.call_args
-        self.assertEqual(call_args[1]['body'], self.opt_out_request)
+        # Check that the request was created with correct from_ and recipients
+        request_dict = call_args.kwargs['body']
+        self.assertEqual(request_dict["from"], self.from_phone)
+        self.assertEqual(len(request_dict["recipients"]), 1)
+        self.assertEqual(request_dict["recipients"][0]["to"], self.to_phone)
 
-    @patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.check")
+    @patch("azure.communication.sms._generated.operations.OptOutsOperations.check")
     def test_check_opt_out_parameters(self, mock_check):
         """Test that check_opt_out passes correct parameters to generated operations"""
+        mock_check.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 200, "isOptedOut": True}]}
+        
         client = OptOutsClient(self.endpoint, self.credential)
-        client.check_opt_out(self.opt_out_request)
+        client.check_opt_out(from_=self.from_phone, to=self.to_phone)
         
         # Verify the generated operation was called with correct parameters
         mock_check.assert_called_once()
         call_args = mock_check.call_args
-        self.assertEqual(call_args[1]['body'], self.opt_out_request)
+        # Check that the request was created with correct from_ and recipients
+        request_dict = call_args.kwargs['body']
+        self.assertEqual(request_dict["from"], self.from_phone)
+        self.assertEqual(len(request_dict["recipients"]), 1)
+        self.assertEqual(request_dict["recipients"][0]["to"], self.to_phone)
 
     def test_opt_out_error_response(self):
         """Test opt-out operation with error response"""
-        with patch("azure.communication.sms._generated.operations._opt_outs_operations.OptOutsOperations.add") as mock_add:
-            mock_add.return_value = Mock()
+        with patch("azure.communication.sms._generated.operations.OptOutsOperations.add") as mock_add:
+            mock_add.return_value = {"value": [{"to": self.to_phone, "httpStatusCode": 400}]}
             
             client = OptOutsClient(self.endpoint, self.credential)
-            result = client.add_opt_out(self.opt_out_request)
+            result = client.add_opt_out(from_=self.from_phone, to=self.to_phone)
             
             self.assertIsNotNone(result)
+            self.assertEqual(len(result), 1)
+            self.assertEqual(result[0].http_status_code, 400)
             mock_add.assert_called_once()
 
     def test_from_connection_string(self):
