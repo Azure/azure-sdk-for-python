@@ -3,10 +3,11 @@
 
 from typing import TYPE_CHECKING
 
+from ._state import get_customer_stats_manager
+
 if TYPE_CHECKING:
     from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
 
-from ._state import get_customer_stats_manager
 
 # pylint: disable=protected-access
 def collect_customer_sdkstats(exporter: "BaseExporter") -> None:  # type: ignore
@@ -17,7 +18,7 @@ def collect_customer_sdkstats(exporter: "BaseExporter") -> None:  # type: ignore
     # Check if already initialized (thread-safe check)
     if not customer_stats.is_initialized:
         # The initialize method is thread-safe and handles double-initialization
-        customer_stats.initialize(connection_string=exporter._connection_string)
+        customer_stats.initialize(connection_string=exporter._connection_string)  # type: ignore
 
 def shutdown_customer_sdkstats_metrics() -> None:
     # Shutdown customer SDKStats metrics collection.
