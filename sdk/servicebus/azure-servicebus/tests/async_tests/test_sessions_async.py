@@ -1545,7 +1545,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     async def test_async_session_partition_batch(self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs):
 
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
-        credential = get_credential()
+        credential = get_credential(is_async=True)
         messages = [
             ServiceBusMessage("Message 1", session_id="mySessionId", message_id=uuid.uuid4(), partition_key="mySessionId"),
             ServiceBusMessage("Message 2", session_id="mySessionId", message_id=uuid.uuid4(), partition_key="mySessionId")
@@ -1561,7 +1561,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
             async with sender:
                 await sender.send_messages(messages)
 
-            await asyncio.sleep(5)  # wait for messages to be available
+            await asyncio.sleep(20)  # wait for messages to be available
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id="mySessionId", max_wait_time=10)
             async with receiver:
                 messages = await receiver.receive_messages(max_wait_time=10)
