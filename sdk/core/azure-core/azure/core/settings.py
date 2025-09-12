@@ -169,20 +169,32 @@ def convert_azure_cloud(value: Union[str, AzureClouds]) -> AzureClouds:
     raise ValueError("Cannot convert {} to Azure Cloud".format(value))
 
 
+_has_oc_ext: Optional[bool] = None
+
+
 def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
     """Returns the OpenCensusSpan if the opencensus tracing plugin is installed else returns None.
 
     :rtype: type[AbstractSpan] or None
     :returns: OpenCensusSpan type or None
     """
+    global _has_oc_ext
+    if _has_oc_ext is False:
+        return None
+
     try:
         from azure.core.tracing.ext.opencensus_span import (
             OpenCensusSpan,
         )
 
+        _has_oc_ext = True
         return OpenCensusSpan
     except ImportError:
+        _has_oc_ext = False
         return None
+
+
+_has_otel_ext: Optional[bool] = None
 
 
 def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
@@ -191,13 +203,19 @@ def _get_opentelemetry_span() -> Optional[Type[AbstractSpan]]:
     :rtype: type[AbstractSpan] or None
     :returns: OpenTelemetrySpan type or None
     """
+    global _has_otel_ext
+    if _has_otel_ext is False:
+        return None
+
     try:
         from azure.core.tracing.ext.opentelemetry_span import (
             OpenTelemetrySpan,
         )
 
+        _has_otel_ext = True
         return OpenTelemetrySpan
     except ImportError:
+        _has_otel_ext = False
         return None
 
 
