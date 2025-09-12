@@ -33,9 +33,9 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         # Enable customer SDK stats for testing
         os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
         
-        # Reset the singleton instance for each test
-        if hasattr(CustomerSdkStatsManager, '_instances'):
-            CustomerSdkStatsManager._instances = {}
+        # Reset singleton state - only clear CustomerSdkStatsManager instances
+        if CustomerSdkStatsManager in CustomerSdkStatsManager._instances:
+            del CustomerSdkStatsManager._instances[CustomerSdkStatsManager]
         
         # Get a fresh manager instance
         self.manager = CustomerSdkStatsManager()
@@ -51,9 +51,9 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         except:
             pass
         
-        # Reset singleton instances
-        if hasattr(CustomerSdkStatsManager, '_instances'):
-            CustomerSdkStatsManager._instances = {}
+        # Reset singleton state - only clear CustomerSdkStatsManager instances
+        if CustomerSdkStatsManager in CustomerSdkStatsManager._instances:
+            del CustomerSdkStatsManager._instances[CustomerSdkStatsManager]
 
     def test_manager_initialization_enabled(self):
         """Test manager initialization when customer SDK stats is enabled."""

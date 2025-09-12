@@ -19,6 +19,9 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TrackResponse,
     TelemetryErrorDetails,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat.customer._manager import (
+    CustomerSdkStatsManager,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_customer_stats_manager,
 )
@@ -59,8 +62,18 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
         os.environ["APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"] = "true"
         
-        # Initialize the shared customer stats manager
-        cls._shared_manager = get_customer_stats_manager()
+        # Patch _should_collect_customer_sdkstats instance method to always return True for all tests
+        cls._should_collect_patch = mock.patch(
+            'azure.monitor.opentelemetry.exporter.export._base.BaseExporter._should_collect_customer_sdkstats',
+            return_value=True
+        )
+        cls._should_collect_patch.start()
+        
+        # Patch collect_customer_sdkstats to prevent actual initialization
+        cls._collect_customer_sdkstats_patch = mock.patch(
+            'azure.monitor.opentelemetry.exporter.statsbeat.customer.collect_customer_sdkstats'
+        )
+        cls._collect_customer_sdkstats_patch.start()
             
         # Create reusable test data structure for TelemetryItem
         base_data = TelemetryEventData(
@@ -81,6 +94,16 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
                 instrumentation_key="test_key",
             )
         ]
+
+    @classmethod
+    def tearDownClass(cls):
+        """Clean up class-level resources"""
+        # Stop the patches
+        cls._should_collect_patch.stop()
+        cls._collect_customer_sdkstats_patch.stop()
+        
+        # Clean up environment
+        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
 
     def _create_exporter_with_customer_sdkstats_enabled(self, disable_offline_storage=True):
         """Helper method to create an exporter with customer sdkstats enabled"""
@@ -110,12 +133,6 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
         track_successful_mock.assert_called_once_with(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.SUCCESS)
 
-    @mock.patch.dict(
-        os.environ,
-        {
-            "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW": "true",
-        },
-    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.track_retry_items")
     def test_transmit_206_customer_sdkstats_track_retry_items(self, track_retry_mock):
         """Test that _track_retry_items is called on 206 partial success with retryable errors"""
@@ -167,6 +184,9 @@ class TestBaseExporterCustomerSdkStats(unittest.TestCase):
     def test_transmit_throttle_http_error_customer_sdkstats_track_dropped_items(self, track_dropped_mock):
         """Test that _track_dropped_items is called on throttle HTTP errors (e.g., 402, 439)"""
         exporter = self._create_exporter_with_customer_sdkstats_enabled()
+
+        # Verify that _should_collect_customer_sdkstats is properly patched
+        self.assertTrue(exporter._should_collect_customer_sdkstats())
 
         # Simulate a throttle HTTP error using HttpResponseError
         with mock.patch.object(AzureMonitorClient, "track") as track_mock:
