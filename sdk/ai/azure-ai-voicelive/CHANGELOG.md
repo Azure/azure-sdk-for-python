@@ -12,6 +12,7 @@
 - Async function call
 
 ### Bugs Fixed
+
 - Fixed function calling: ensure `FunctionCallOutputItem.output` is properly serialized as a JSON string before sending to the service.
 
 ## 1.0.0b1 (2025-08-28)
