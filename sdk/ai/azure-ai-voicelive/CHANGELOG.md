@@ -1,10 +1,5 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
-
-### Features Added
-- Phrase list
-
 ## 1.0.0b2 (2025-09-10)
 
 ### Features Added
