@@ -831,6 +831,10 @@
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
+      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
       "words": [ "unassigning" ],
       "caseSensitive": false
