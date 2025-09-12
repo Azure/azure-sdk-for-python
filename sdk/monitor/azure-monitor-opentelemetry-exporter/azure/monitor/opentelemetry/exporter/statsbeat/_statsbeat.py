@@ -3,13 +3,14 @@
 import logging
 from typing import Dict, TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
-
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
     StatsbeatConfig,
     StatsbeatManager,
 )
+
+if TYPE_CHECKING:
+    from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
+
 # from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 
 logger = logging.getLogger(__name__)
