@@ -984,13 +984,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         Returns:
             CosmosDict: The reranking results, typically including the reranked documents and their scores.
-
-        Example:
-            >>> container = client.get_container_client("mycontainer")
-            >>> context = "What is the capital of France?"
-            >>> docs = ["Paris is the capital of France.", "Berlin is the capital of Germany."]
-            >>> result = container.semantic_rerank(context, docs)
-            >>> print(result)
         """
         
         reranker = self.client_connection._get_semantic_reranker()
