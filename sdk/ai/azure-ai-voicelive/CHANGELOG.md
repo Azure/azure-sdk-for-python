@@ -7,8 +7,7 @@
 - Phrase list
 
 ### Breaking Changes
-
-- Deleted 'custom_model' and 'enabled' in 'AudioInputTranscriptionSettings'
+- Deleted `custom_model` and `enabled` in `AudioInputTranscriptionSettings`
 
 ## 1.0.0b2 (2025-09-10)
 
