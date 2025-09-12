@@ -962,6 +962,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         return items
+    
+    @distributed_trace
+    def semantic_rerank(
+        self,
+        reranking_context: str,
+        documents: List[str],
+        semantic_reranking_options: Optional[Dict[str, Any]] = None
+    ) -> CosmosDict:
+        """rerank a list of documents using semantic reranking."""
+        
+        reranker = self.client_connection._get_semantic_reranker()
+        
+        result = reranker.rerank(
+            reranking_context=reranking_context,
+            documents=documents,
+            semantic_reranking_options=semantic_reranking_options
+        )
+
+        return result
+    
 
     @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param
