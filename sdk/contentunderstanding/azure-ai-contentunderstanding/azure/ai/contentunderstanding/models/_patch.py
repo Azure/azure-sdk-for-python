@@ -97,6 +97,23 @@ def _object_field_value(self) -> Optional[dict[str, Any]]:
 setattr(ObjectField, 'value', property(_object_field_value))
 
 
+# Monkey-patch ContentField to add a generic value property for IntelliSense
+def _content_field_value(self) -> Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]:
+    """Get the value of this field regardless of its type.
+    
+    This property automatically returns the appropriate value based on the field type.
+    IntelliSense will show this property as available on all ContentField instances.
+    
+    :return: The field value, type depends on the specific field type
+    :rtype: Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]
+    """
+    # This will work because we've monkey-patched all the individual field types
+    # with their own .value properties above
+    return getattr(self, 'value', None)
+
+setattr(ContentField, 'value', property(_content_field_value))
+
+
 # Example usage:
 # Instead of:
 #   if field.type == "string":
@@ -107,6 +124,13 @@ setattr(ObjectField, 'value', property(_object_field_value))
 #
 # You can now use:
 #   value = field.value  # Works for any ContentField type
+#   # IntelliSense will now show .value as available on ContentField instances!
+#
+# Example with type checking:
+#   if isinstance(field, StringField):
+#       string_value: Optional[str] = field.value  # Type is known
+#   elif isinstance(field, NumberField):
+#       number_value: Optional[float] = field.value  # Type is known
 
 
 # Extended AnalyzeInput with mutually exclusive url/data parameters
