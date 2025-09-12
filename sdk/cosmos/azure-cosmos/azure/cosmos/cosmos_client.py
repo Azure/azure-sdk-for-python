@@ -394,8 +394,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
         offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
         if len(args) > 3:
-            extra_args = args[3:]
-            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
+            raise TypeError(f"Unexpected positional arguments: {args[3:]}")
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
 
@@ -534,8 +533,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
         offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
         if len(args) > 3:
-            extra_args = args[3:]
-            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
+            raise TypeError(f"Unexpected positional arguments: {args[3:]}")
         return_properties = kwargs.pop("return_properties", False)
         try:
             database_proxy = self.get_database_client(id)

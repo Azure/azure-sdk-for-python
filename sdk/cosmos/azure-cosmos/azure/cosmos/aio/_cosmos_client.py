@@ -337,12 +337,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def create_database(
         self,
-        id: str,
+        *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
         """
         Create a new database with the given ID (name).
 
+        :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -367,6 +368,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
+        id = args[0] if args else kwargs.pop("id")
+        if len(args) > 1:
+            raise TypeError(f"Unexpected positional parameters: {args[1:]}")
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -425,9 +429,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    async def create_database_if_not_exists( # pylint: disable=redefined-builtin
+    async def create_database_if_not_exists(
         self,
-        id: str,
+        *args: Any,
         **kwargs: Any
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
 
@@ -439,7 +443,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
-
+        :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -454,6 +458,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             and CosmosDict with the response headers
         :rtype: ~azure.cosmos.aio.DatabaseProxy or tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
         """
+
+        id = args[0] if args else kwargs.pop("id")
+        if len(args) > 1:
+            raise TypeError(f"Unexpected positional parameters: {args[1:]}")
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(

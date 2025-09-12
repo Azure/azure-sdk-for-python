@@ -315,6 +315,14 @@ class DatabaseProxy(object):
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
         :param Any args: args
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -363,8 +371,7 @@ class DatabaseProxy(object):
         unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
         conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
         if len(args) > 8:
-            extra_args = args[8:]
-            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
+            raise TypeError(f"Unexpected positional parameters: {args[8:]}")
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
         computed_properties = kwargs.pop('computed_properties', None)
@@ -564,6 +571,14 @@ class DatabaseProxy(object):
         if they differ from what was passed into the method.
 
         :param Any args: args
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
@@ -597,8 +612,7 @@ class DatabaseProxy(object):
         unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
         conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
         if len(args) > 8:
-            extra_args = args[8:]
-            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
+            raise TypeError(f"Unexpected positional parameters: {args[8:]}")
         initial_headers = kwargs.pop('initial_headers', None)
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
@@ -972,6 +986,14 @@ class DatabaseProxy(object):
         will be reset to their default values.
 
         :param Any args: args
+        :param container: The ID (name), dict representing the properties or
+            :class:`~azure.cosmos.ContainerProxy` instance of the container to be replaced.
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container.
+            If unspecified, items do not expire.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
@@ -1008,8 +1030,7 @@ class DatabaseProxy(object):
         conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop('conflict_resolution_policy', None)
         populate_query_metrics = args[5] if len(args) > 5 else kwargs.pop('populate_query_metrics', None)
         if len(args) > 6:
-            extra_args = args[6:]
-            raise TypeError(f"Unexpected positional arguments: {', '.join(map(str, extra_args))}")
+            raise TypeError(f"Unexpected positional parameters: {args[6:]}")
         initial_headers = kwargs.pop('initial_headers', None)
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         computed_properties = kwargs.pop('computed_properties', None)

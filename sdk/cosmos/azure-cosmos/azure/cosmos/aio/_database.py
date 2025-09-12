@@ -326,6 +326,9 @@ class DatabaseProxy(object):
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
         :param Any args: args
+        :param str id: ID (name) of container to create.
+        :param partition_key: The partition key to use for the container.
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword bool return_properties: Specifies function to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
@@ -378,6 +381,8 @@ class DatabaseProxy(object):
 
         id = args[0] if len(args) > 0 else kwargs.pop('id', None)
         partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        if len(args) > 2:
+            raise TypeError(f"Unexpected positional parameters: {args[2:]}")
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
@@ -580,6 +585,9 @@ class DatabaseProxy(object):
         if they differ from what was passed into the method.
 
         :param Any args: args
+        :param str id: ID (name) of container to create.
+        :param partition_key: The partition key to use for the container.
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword bool return_properties: Specifies function to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
@@ -614,6 +622,8 @@ class DatabaseProxy(object):
 
         id = args[0] if len(args) > 0 else kwargs.pop('id', None)
         partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        if len(args) > 2:
+            raise TypeError(f"Unexpected positional parameters: {args[2:]}")
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
@@ -931,6 +941,11 @@ class DatabaseProxy(object):
         will be reset to their default values.
 
         :param Any args: args
+        :param container: The ID (name), dict representing the properties or
+            :class:`ContainerProxy` instance of the container to be replaced.
+        :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
+        :param partition_key: The partition key to use for the container.
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -971,6 +986,8 @@ class DatabaseProxy(object):
 
         container = args[0] if len(args) > 0 else kwargs.pop('container', None)
         partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        if len(args) > 2:
+            raise TypeError(f"Unexpected positional parameters: {args[2:]}")
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
