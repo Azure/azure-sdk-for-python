@@ -83,15 +83,6 @@ class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
         language: Optional[str] = None,
         **kwargs: Any
     ) -> None:
-        """
-        :keyword question: Required. User question to query against the given text records.
-        :paramtype question: str
-        :keyword text_documents: Required. Text records to be searched for given question.
-        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
-    :keyword language: Language of the text records (BCP-47). If not provided, no implicit 'en'
-     is injected; the service decides the default.
-        :paramtype language: str
-        """
         # Normalize text_documents: allow passing plain strings for convenience
         # by converting them to TextDocument(id=str(index), text=value).
         normalized_docs: List[TextDocument] = []
