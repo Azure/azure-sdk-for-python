@@ -44,16 +44,25 @@ def main():
         if delivery_report:
             print(f"Delivery report retrieved successfully for message ID: {message_id}")
             
-            # Access delivery report properties (these may vary based on the actual model)
-            delivery_status = getattr(delivery_report, 'delivery_status', 'Unknown')
-            delivery_timestamp = getattr(delivery_report, 'delivery_timestamp', 'Unknown')
-            error_code = getattr(delivery_report, 'error_code', None)
+            # Access delivery report properties
+            print(f"Message ID: {delivery_report.message_id}")
+            print(f"From: {delivery_report.from_property}")
+            print(f"To: {delivery_report.to}")
+            print(f"Delivery status: {delivery_report.delivery_status}")
             
-            print(f"Delivery status: {delivery_status}")
-            print(f"Delivery timestamp: {delivery_timestamp}")
-            
-            if error_code:
-                print(f"Error code: {error_code}")
+            if delivery_report.delivery_status_details:
+                print(f"Delivery status details: {delivery_report.delivery_status_details}")
+                
+            if delivery_report.received_timestamp:
+                print(f"Received timestamp: {delivery_report.received_timestamp}")
+                
+            if delivery_report.tag:
+                print(f"Tag: {delivery_report.tag}")
+                
+            if delivery_report.delivery_attempts:
+                print(f"Number of delivery attempts: {len(delivery_report.delivery_attempts)}")
+                for i, attempt in enumerate(delivery_report.delivery_attempts):
+                    print(f"  Attempt {i+1}: {attempt}")
                 
         else:
             print(f"No delivery report found for message ID: {message_id}")
