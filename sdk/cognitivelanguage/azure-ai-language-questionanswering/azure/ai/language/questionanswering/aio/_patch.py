@@ -8,7 +8,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Union, Any, Optional, Mapping, TYPE_CHECKING
-from io import IOBase
+from io import IOBase, BytesIO
+from typing import IO
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
@@ -225,10 +226,15 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
                 opts, project_name=project_name, deployment_name=deployment_name, **kwargs
             )
 
-        # Binary / stream: pass through directly
+        # Binary / stream body
         if isinstance(options, (bytes, IOBase)):
+            kb_body: IO[bytes]
+            if isinstance(options, bytes):
+                kb_body = BytesIO(options)
+            else:
+                kb_body = options  # type: ignore[assignment]
             return await self.question_answering.get_answers(
-                options, project_name=project_name, deployment_name=deployment_name, **kwargs
+                kb_body, project_name=project_name, deployment_name=deployment_name, **kwargs
             )
 
         # Model instance or JSON-serializable object: minimal attribute validation

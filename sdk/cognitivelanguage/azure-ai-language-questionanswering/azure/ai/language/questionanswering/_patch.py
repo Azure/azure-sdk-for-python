@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from typing import Union, Any, Optional, Mapping, TYPE_CHECKING
-from io import IOBase
+from io import IOBase, BytesIO
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
@@ -217,8 +217,17 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
                 opts, project_name=project_name, deployment_name=deployment_name, **kwargs
             )
 
+        # Binary / stream body
         if isinstance(options, (bytes, IOBase)):
-            return self.question_answering.get_answers(options, ...)
+            kb_body: IO[bytes]
+            if isinstance(options, bytes):
+                kb_body = BytesIO(options)
+            else:
+                kb_body = options  # type: ignore[assignment]  # IOBase 实例被视作 IO[bytes] 用于发送
+            return self.question_answering.get_answers(
+                kb_body, project_name=project_name, deployment_name=deployment_name, **kwargs
+            )
+
         try:
             question_value = getattr(options, "question", None)
             qna_value = getattr(options, "qna_id", None) or getattr(options, "qnaId", None)
