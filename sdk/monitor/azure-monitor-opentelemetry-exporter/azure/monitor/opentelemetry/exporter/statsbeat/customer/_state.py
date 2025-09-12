@@ -7,6 +7,7 @@ _customer_stats_manager = None
 
 def get_customer_stats_manager():  # type: ignore
     # Get the global CustomerSdkStatsManager singleton instance.
+
     # This provides a single access point to the manager and handles lazy initialization
     # to avoid circular import issues.
 

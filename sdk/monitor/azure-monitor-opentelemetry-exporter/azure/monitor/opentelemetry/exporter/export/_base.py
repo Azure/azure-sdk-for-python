@@ -163,7 +163,7 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
 
-        self.client = AzureMonitorClient(
+        self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
         self.storage: Optional[LocalFileStorage] = None
