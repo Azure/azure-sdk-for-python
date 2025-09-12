@@ -18,6 +18,8 @@ from .mypy import mypy
 from .pylint import pylint
 from .sphinx import sphinx
 from .black import black
+from .pyright import pyright
+from .next_pyright import next_pyright
 
 from ci_tools.logging import configure_logging, logger
 
@@ -78,6 +80,8 @@ def build_parser() -> argparse.ArgumentParser:
     pylint().register(subparsers, [common])
     sphinx().register(subparsers, [common])
     black().register(subparsers, [common])
+    pyright().register(subparsers, [common])
+    next_pyright().register(subparsers, [common])
 
     return parser
 
