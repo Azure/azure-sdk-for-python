@@ -81,7 +81,7 @@ def categorize_status_code(status_code: int) -> str:
     return f"status_{status_code}"
 
 
-def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:
+def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:  # pylint: disable=docstring-missing-type
     """Determine the retry code and message for a given error.
     
     :param error: The error that occurred

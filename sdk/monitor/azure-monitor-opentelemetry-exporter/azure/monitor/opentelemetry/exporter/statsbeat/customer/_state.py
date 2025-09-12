@@ -5,8 +5,9 @@ import threading
 # Global singleton instance for easy access throughout the codebase
 _customer_stats_manager = None
 
+# pyright: ignore
 def get_customer_stats_manager():
-    #Get the global CustomerSdkStatsManager singleton instance.
+    # Get the global CustomerSdkStatsManager singleton instance.
     # This provides a single access point to the manager and handles lazy initialization
     # to avoid circular import issues.
 

@@ -81,14 +81,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         """Test that CustomerSdkStatsManager follows singleton pattern."""
         manager1 = CustomerSdkStatsManager()
         manager2 = CustomerSdkStatsManager()
-        
-        self.assertIs(manager1, manager2)
-
-    def test_get_customer_stats_manager(self):
-        """Test that get_customer_stats_manager returns the singleton instance."""
-        manager1 = get_customer_stats_manager()
-        manager2 = get_customer_stats_manager()
-        manager3 = CustomerSdkStatsManager()
+        manager3 = get_customer_stats_manager()
         
         self.assertIs(manager1, manager2)
         self.assertIs(manager1, manager3)
