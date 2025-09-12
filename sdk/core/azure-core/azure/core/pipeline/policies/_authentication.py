@@ -45,7 +45,7 @@ class _BearerTokenCredentialPolicyBase:
     :type credential: ~azure.core.credentials.TokenProvider
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
-        tokens. Defaults to False.
+        tokens. Defaults to True.
     """
 
     def __init__(self, credential: TokenProvider, *scopes: str, **kwargs: Any) -> None:
@@ -53,7 +53,7 @@ class _BearerTokenCredentialPolicyBase:
         self._scopes = scopes
         self._credential = credential
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
-        self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._enable_cae: bool = kwargs.get("enable_cae", True)
 
     @staticmethod
     def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
