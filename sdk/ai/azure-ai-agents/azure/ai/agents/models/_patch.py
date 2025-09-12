@@ -1735,7 +1735,7 @@ class BaseToolSet(ABC):
 
     @overload
     def remove(self, tool_type: Type[Tool]) -> None:
-        """Remove any tool from the toolset.
+        """Remove a tool by from the toolset.
 
         :param tool_type: The tool class to target.
         :type tool_type: Type[Tool]
@@ -1743,7 +1743,7 @@ class BaseToolSet(ABC):
         """
         ...
 
-    def remove(self, tool_type: Type[Tool], **kwargs) -> None:
+    def remove(self, tool_type: Type[Tool], *, name: Optional[str] = None, server_label: Optional[str] = None) -> None:
         """
         Remove a tool of the specified type from the tool set.
         For OpenApiTool, if 'name' is provided, removes a specific API definition by name.
@@ -1753,17 +1753,20 @@ class BaseToolSet(ABC):
 
         :param tool_type: The type of tool to remove.
         :type tool_type: Type[Tool]
+        :keyword name: The name of the OpenAPI definition to remove from the tool.
+        :paramtype name: str
+        :keyword server_label: The unique server label identifying the MCP tool to remove.
+        :paramtype server_label: Optional[str]
         :return: None
         :rtype: None
         :raises ValueError: If a tool of the specified type is not found.
         """
         # Special handling for OpenApiTool with name parameter
-        if tool_type == OpenApiTool and "name" in kwargs:
-            definition_name = kwargs["name"]
+        if tool_type == OpenApiTool and name:
             for i, tool in enumerate(self._tools):
                 if isinstance(tool, OpenApiTool):
-                    tool.remove_definition(definition_name)  # This will raise ValueError if definition not found
-                    logger.info("API definition '%s' removed from OpenApiTool.", definition_name)
+                    tool.remove_definition(name)  # This will raise ValueError if definition not found
+                    logger.info("API definition '%s' removed from OpenApiTool.", name)
                     # Check if OpenApiTool has any definitions left
                     if not tool.definitions:
                         del self._tools[i]
@@ -1772,39 +1775,40 @@ class BaseToolSet(ABC):
             raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
         # Special handling for McpTool with server_label parameter
-        if tool_type == McpTool and "server_label" in kwargs:
-            server_label = kwargs["server_label"]
-            for i, tool in enumerate(self._tools):
-                if isinstance(tool, McpTool) and tool.server_label == server_label:
-                    del self._tools[i]
-                    logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
-                    return
-            raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
-
-        # Special handling for McpTool without server_label - remove ALL MCP tools
         if tool_type == McpTool:
-            removed_count = 0
-            # Iterate backwards to avoid index issues when removing items
-            for i in range(len(self._tools) - 1, -1, -1):
-                if isinstance(self._tools[i], McpTool):
-                    mcp_tool = cast(McpTool, self._tools[i])
-                    server_label = mcp_tool.server_label
-                    del self._tools[i]
-                    logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
-                    removed_count += 1
+            
+            if  server_label:
+                for i, tool in enumerate(self._tools):
+                    if isinstance(tool, McpTool) and tool.server_label == server_label:
+                        del self._tools[i]
+                        logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
+                        return
+                raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
 
-            if removed_count == 0:
-                raise ValueError(f"No tools of type {tool_type.__name__} found in the ToolSet.")
-            logger.info("Removed %d MCP tools from the ToolSet.", removed_count)
-            return
+            # Special handling for McpTool without server_label - remove ALL MCP tools
+            else:
+                removed_count = 0
+                # Iterate backwards to avoid index issues when removing items
+                for i in range(len(self._tools) - 1, -1, -1):
+                    if isinstance(self._tools[i], McpTool):
+                        mcp_tool = cast(McpTool, self._tools[i])
+                        server_label = mcp_tool.server_label
+                        del self._tools[i]
+                        logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
+                        removed_count += 1
 
-        # Standard tool removal
-        for i, tool in enumerate(self._tools):
-            if isinstance(tool, tool_type):
-                del self._tools[i]
-                logger.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
+                if removed_count == 0:
+                    raise ValueError(f"No tools of type {tool_type.__name__} found in the ToolSet.")
+                logger.info("Removed %d MCP tools from the ToolSet.", removed_count)
                 return
-        raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+
+            # Standard tool removal
+            for i, tool in enumerate(self._tools):
+                if isinstance(tool, tool_type):
+                    del self._tools[i]
+                    logger.info("Tool of type %s removed from the ToolSet.", tool_type.__name__)
+                    return
+            raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
 
     @property
     def definitions(self) -> List[ToolDefinition]:
