@@ -1735,7 +1735,7 @@ class BaseToolSet(ABC):
 
     @overload
     def remove(self, tool_type: Type[Tool]) -> None:
-        """Remove a tool by from the toolset.
+        """Remove a tool by name from the toolset.
 
         :param tool_type: The tool class to target.
         :type tool_type: Type[Tool]
