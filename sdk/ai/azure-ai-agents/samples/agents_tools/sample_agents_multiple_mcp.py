@@ -28,7 +28,6 @@ USAGE:
     6) MCP_SERVER_LABEL_2 - A label for your second MCP server.
 """
 
-from ast import List
 import os, time
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
