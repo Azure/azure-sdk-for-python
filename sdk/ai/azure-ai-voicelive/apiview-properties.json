@@ -91,6 +91,8 @@
         "azure.ai.voicelive.models.ServerEventResponseContentPartDone": "VoiceLive.ServerEventResponseContentPartDone",
         "azure.ai.voicelive.models.ServerEventResponseCreated": "VoiceLive.ServerEventResponseCreated",
         "azure.ai.voicelive.models.ServerEventResponseDone": "VoiceLive.ServerEventResponseDone",
+        "azure.ai.voicelive.models.ServerEventResponseFunctionCallArgumentsDelta": "VoiceLive.ServerEventResponseFunctionCallArgumentsDelta",
+        "azure.ai.voicelive.models.ServerEventResponseFunctionCallArgumentsDone": "VoiceLive.ServerEventResponseFunctionCallArgumentsDone",
         "azure.ai.voicelive.models.ServerEventResponseOutputItemAdded": "VoiceLive.ServerEventResponseOutputItemAdded",
         "azure.ai.voicelive.models.ServerEventResponseOutputItemDone": "VoiceLive.ServerEventResponseOutputItemDone",
         "azure.ai.voicelive.models.ServerEventResponseTextDelta": "VoiceLive.ServerEventResponseTextDelta",

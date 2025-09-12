@@ -112,14 +112,6 @@ class TestLiveMetrics(unittest.TestCase):
             resource=mock_resource,
             custom_param="custom_value"  # Test that additional kwargs are passed through
         )
-        
-        # Verify manager was created with all arguments
-        manager_mock.assert_called_once_with(
-            connection_string="InstrumentationKey=test-key;EndpointSuffix=applicationinsights.azure.cn",
-            credential=mock_credential,
-            resource=mock_resource,
-            custom_param="custom_value"
-        )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics._ConfigurationManager")

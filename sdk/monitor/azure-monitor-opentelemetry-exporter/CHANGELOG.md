@@ -17,6 +17,11 @@
   ([#42695](https://github.com/Azure/azure-sdk-for-python/pull/42695))
 - Customer Facing SDKStats: Added logic for race conditions and updated the implementation to use a global instance for customer SDKStats metrics
   ([#42655](https://github.com/Azure/azure-sdk-for-python/pull/42655))
+- Customer Facing SDKStats: Added telemetry_success field to dropped items as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/606
+  ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
+- Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
+  ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
+
 ### Breaking Changes
 
 ### Bugs Fixed
