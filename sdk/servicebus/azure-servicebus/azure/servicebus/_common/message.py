@@ -678,7 +678,7 @@ class ServiceBusMessageBatch(object):
         self._messages.append(outgoing_sb_message)
         
         if self._count == 1:  # Populate properties on the batch envelope from the first message
-            if outgoing_sb_message.message_id or outgoing_sb_message.session_id :
+            if outgoing_sb_message.message_id or outgoing_sb_message.session_id:
                 properties: List[Optional[str]] = [None] * 13
                 properties[0] = outgoing_sb_message.message_id
                 properties[10] = outgoing_sb_message.session_id
@@ -686,8 +686,6 @@ class ServiceBusMessageBatch(object):
 
             if outgoing_sb_message.partition_key:
                 set_message_annotations(self._message, {_X_OPT_PARTITION_KEY: outgoing_sb_message.partition_key})
-
-
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
