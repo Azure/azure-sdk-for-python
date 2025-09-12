@@ -85,13 +85,14 @@ def new_simple_classifier_schema(
 
 async def main():
     """
-    Classify document from URL using begin_classify API.
+    Classify document using the new begin_classify URL and data parameter overrides.
 
     High-level steps:
     1. Create a custom classifier
-    2. Classify a document from a remote URL
-    3. Save the classification result to a file
-    4. Clean up the created classifier
+    2. Classify a document from a remote URL using the new URL parameter
+    3. Classify a document from binary data using the new data parameter
+    4. Save the classification results to files
+    5. Clean up the created classifier
     """
     endpoint = os.getenv("AZURE_CONTENT_UNDERSTANDING_ENDPOINT") or ""
     # Return AzureKeyCredential if AZURE_CONTENT_UNDERSTANDING_KEY is set, otherwise DefaultAzureCredential
@@ -108,8 +109,8 @@ async def main():
 
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
-            description=f"Custom classifier for URL classification demo: {classifier_id}",
-            tags={"demo_type": "url_classification"},
+            description=f"Custom classifier for URL and data classification demo: {classifier_id}",
+            tags={"demo_type": "url_and_data_classification"},
         )
 
         # Start the classifier creation operation
@@ -123,37 +124,78 @@ async def main():
         await poller.result()
         print(f"✅ Classifier '{classifier_id}' created successfully!")
 
-        # Use the provided URL for the mixed financial docs PDF
+        # Demonstrate URL classification using the new URL parameter
+        print("\n" + "="*60)
+        print("🌐 CLASSIFYING WITH URL PARAMETER")
+        print("="*60)
+        
         mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
         print(f"🌐 Classifying document from URL: {mixed_docs_url}")
 
-        # Begin classification operation with URL
+        # Begin classification operation with URL using the new URL parameter
         print(f"🔍 Starting URL classification with classifier '{classifier_id}'...")
-        classification_poller = await client.content_classifiers.begin_classify(
+        url_classification_poller = await client.content_classifiers.begin_classify(
             classifier_id=classifier_id,
             url=mixed_docs_url,
         )
 
         # Wait for classification completion
-        print(f"⏳ Waiting for classification to complete...")
-        classification_result = await classification_poller.result()
-        print(f"✅ Classification completed successfully!")
+        print(f"⏳ Waiting for URL classification to complete...")
+        url_classification_result = await url_classification_poller.result()
+        print(f"✅ URL Classification completed successfully!")
 
-        # Display classification results
-        print(f"📊 Classification Results:")
-        for content in classification_result.contents:
+        # Display URL classification results
+        print(f"📊 URL Classification Results:")
+        for content in url_classification_result.contents:
             document_content: DocumentContent = content
             print(f"   Category: {document_content.category}")
             print(f"       Start Page Number: {document_content.start_page_number}")
             print(f"       End Page Number: {document_content.end_page_number}")
 
-
-        # Save the classification result to a file
-        saved_file_path = save_json_to_file(
-            result=classification_result.as_dict(),
-            filename_prefix="content_classifiers_classify",
+        # Save the URL classification result to a file
+        url_saved_file_path = save_json_to_file(
+            result=url_classification_result.as_dict(),
+            filename_prefix="content_classifiers_classify_url",
         )
-        print(f"💾 Classification result saved to: {saved_file_path}")
+        print(f"💾 URL Classification result saved to: {url_saved_file_path}")
+
+        # Demonstrate data classification using the new data parameter
+        print("\n" + "="*60)
+        print("📄 CLASSIFYING WITH DATA PARAMETER")
+        print("="*60)
+        
+        # Read the mixed financial docs PDF file
+        pdf_path = "sample_files/mixed_financial_docs.pdf"
+        print(f"📄 Reading document file: {pdf_path}")
+        with open(pdf_path, "rb") as pdf_file:
+            pdf_content = pdf_file.read()
+
+        # Begin classification operation with data using the new data parameter
+        print(f"🔍 Starting data classification with classifier '{classifier_id}'...")
+        data_classification_poller = await client.content_classifiers.begin_classify(
+            classifier_id=classifier_id,
+            data=pdf_content,
+        )
+
+        # Wait for classification completion
+        print(f"⏳ Waiting for data classification to complete...")
+        data_classification_result = await data_classification_poller.result()
+        print(f"✅ Data Classification completed successfully!")
+
+        # Display data classification results
+        print(f"📊 Data Classification Results:")
+        for content in data_classification_result.contents:
+            document_content: DocumentContent = content
+            print(f"   Category: {document_content.category}")
+            print(f"       Start Page Number: {document_content.start_page_number}")
+            print(f"       End Page Number: {document_content.end_page_number}")
+
+        # Save the data classification result to a file
+        data_saved_file_path = save_json_to_file(
+            result=data_classification_result.as_dict(),
+            filename_prefix="content_classifiers_classify_data",
+        )
+        print(f"💾 Data Classification result saved to: {data_saved_file_path}")
 
         # Clean up the created classifier (demo cleanup)
         print(f"🗑️  Deleting classifier '{classifier_id}' (demo cleanup)...")

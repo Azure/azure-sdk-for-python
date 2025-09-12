@@ -80,12 +80,12 @@ def new_simple_classifier_schema(
 
 async def main():
     """
-    Classify binary document using begin_classify_binary API.
+    Classify binary document using the new begin_classify data parameter override.
 
     High-level steps:
     1. Create a custom classifier
     2. Read a binary document file
-    3. Classify the document using the classifier
+    3. Classify the document using the new data parameter override
     4. Save the classification result to a file
     5. Clean up the created classifier
     """
@@ -125,12 +125,11 @@ async def main():
         with open(pdf_path, "rb") as pdf_file:
             pdf_content = pdf_file.read()
 
-        # Begin binary classification operation
-        print(f"🔍 Starting binary classification with classifier '{classifier_id}'...")
-        classification_poller = await client.content_classifiers.begin_classify_binary(
+        # Begin binary classification operation using the new data parameter override
+        print(f"🔍 Starting binary classification with classifier '{classifier_id}' using new data parameter...")
+        classification_poller = await client.content_classifiers.begin_classify(
             classifier_id=classifier_id,
-            input=pdf_content,
-            content_type="application/pdf",
+            data=pdf_content,
         )
 
         # Wait for classification completion

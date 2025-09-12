@@ -671,3 +671,127 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         finally:
             # Always clean up the created classifier, even if the test fails
             await delete_classifier_and_assert(client, classifier_id, created_classifier)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_content_classifiers_begin_classify_url_overload(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create classifier for URL classification test using new overload
+        - Classify content using URL parameter with new overload
+        - Verify classification result properties
+        """
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_url_overload")
+        created_classifier = False
+
+        try:
+            # Create classifier for classification test
+            created_classifier, _ = await create_classifier_and_assert_async(client, classifier_id, new_simple_classifier_schema(classifier_id))
+
+            # Test URL classification using new overload
+            mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
+            print(f"Testing URL classification with new overload: {mixed_docs_url}")
+
+            # Begin classification operation with URL using new overload
+            classify_poller = await client.content_classifiers.begin_classify(
+                classifier_id=classifier_id,
+                url=mixed_docs_url,
+            )
+
+            # Verify poller properties
+            assert_poller_properties(classify_poller, "Classification poller")
+
+            # Wait for classification completion
+            classify_result = await classify_poller.result()
+            assert_classifier_result(classify_result, "URL classification result with new overload")
+
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            output_filename = save_classifier_result_to_file(classify_result, "test_content_classifiers_begin_classify_url_overload_async", test_file_dir, classifier_id)
+            print(f"URL classification result saved to: {output_filename}")
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            await delete_classifier_and_assert(client, classifier_id, created_classifier)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_content_classifiers_begin_classify_data_overload(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create classifier for data classification test using new overload
+        - Classify content using data (bytes) parameter with new overload
+        - Verify classification result properties
+        """
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_data_overload")
+        created_classifier = False
+
+        try:
+            # Create classifier for classification test
+            created_classifier, _ = await create_classifier_and_assert_async(client, classifier_id, new_simple_classifier_schema(classifier_id))
+
+            # Read the mixed financial docs PDF file
+            pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "mixed_financial_docs.pdf")
+            print(f"Testing data classification with new overload: {pdf_path}")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            # Begin classification operation with data using new overload
+            classify_poller = await client.content_classifiers.begin_classify(
+                classifier_id=classifier_id,
+                data=pdf_content,
+            )
+
+            # Verify poller properties
+            assert_poller_properties(classify_poller, "Classification poller")
+
+            # Wait for classification completion
+            classify_result = await classify_poller.result()
+            assert_classifier_result(classify_result, "Data classification result with new overload")
+
+            # Get test file directory for saving output
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            output_filename = save_classifier_result_to_file(classify_result, "test_content_classifiers_begin_classify_data_overload_async", test_file_dir, classifier_id)
+            print(f"Data classification result saved to: {output_filename}")
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            await delete_classifier_and_assert(client, classifier_id, created_classifier)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy_async
+    async def test_content_classifiers_begin_classify_url_data_mutual_exclusivity(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Create classifier for mutual exclusivity test
+        - Test that providing both url and data parameters raises ValueError
+        - Verify error handling
+        """
+        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_url_data_mutual_exclusivity")
+        created_classifier = False
+
+        try:
+            # Create classifier for classification test
+            created_classifier, _ = await create_classifier_and_assert_async(client, classifier_id, new_simple_classifier_schema(classifier_id))
+
+            # Read the mixed financial docs PDF file
+            pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "mixed_financial_docs.pdf")
+            with open(pdf_path, "rb") as pdf_file:
+                pdf_content = pdf_file.read()
+
+            mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
+
+            # Test that providing both url and data raises ValueError
+            with pytest.raises(ValueError, match="Cannot provide both 'url' and 'data' parameters simultaneously"):
+                await client.content_classifiers.begin_classify(
+                    classifier_id=classifier_id,
+                    url=mixed_docs_url,
+                    data=pdf_content,
+                )
+
+        finally:
+            # Always clean up the created classifier, even if the test fails
+            await delete_classifier_and_assert(client, classifier_id, created_classifier)

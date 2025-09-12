@@ -11,7 +11,7 @@ from typing import List, Optional, Any, Union, overload
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import LROPoller
 
-__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -216,4 +216,108 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         
         # Call the original method for all other cases
         return super().begin_analyze(analyzer_id, *args, **kwargs)
+
+
+# Make ContentClassifiersOperations available for import
+from ._operations import ContentClassifiersOperations as ContentClassifiersOperationsGenerated
+
+
+class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
+    """Extended ContentClassifiersOperations with url/data mutual exclusivity enforcement."""
+    
+    @overload
+    def begin_classify(
+        self,
+        classifier_id: str,
+        *,
+        url: str,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:
+        """Classify content using URL.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :keyword url: The URL of the document to classify. Required.
+        :paramtype url: str
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @overload
+    def begin_classify(
+        self,
+        classifier_id: str,
+        *,
+        data: bytes,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.ClassifyResult]:
+        """Classify content using binary data.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :keyword data: Binary content of the document to classify. Will be automatically base64-encoded. Required.
+        :paramtype data: bytes
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @distributed_trace
+    def begin_classify(self, classifier_id: str, *args: Any, **kwargs: Any) -> LROPoller[_models.ClassifyResult]:  # type: ignore[override]
+        """Classify content with url/data mutual exclusivity.
+
+        This method enforces that url and data cannot be provided simultaneously,
+        while allowing all other original behaviors including body parameters.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Validate that url and data are not provided together
+        if 'url' in kwargs and kwargs['url'] is not None and 'data' in kwargs and kwargs['data'] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
+        
+        # Handle bytes data by calling begin_classify_binary for better efficiency
+        if 'data' in kwargs and kwargs['data'] is not None and isinstance(kwargs['data'], bytes):
+            data_bytes = kwargs.pop('data')
+            # Extract parameters that begin_classify_binary supports
+            string_encoding = kwargs.pop('string_encoding', None)
+            processing_location = kwargs.pop('processing_location', None)
+            content_type = kwargs.pop('content_type', 'application/octet-stream')
+            
+            return super().begin_classify_binary(
+                classifier_id=classifier_id,
+                input=data_bytes,
+                string_encoding=string_encoding,
+                processing_location=processing_location,
+                content_type=content_type,
+                **kwargs
+            )
+        
+        # Call the original method for all other cases
+        return super().begin_classify(classifier_id, *args, **kwargs)
 
