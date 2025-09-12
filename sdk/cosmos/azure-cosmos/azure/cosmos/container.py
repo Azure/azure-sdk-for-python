@@ -59,6 +59,10 @@ from .partition_key import (
 )
 from .scripts import ScriptsProxy
 
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
+
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=too-many-lines,disable=protected-access
@@ -109,8 +113,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
-        if options and "excludedLocations" in options:
-            kwargs['excluded_locations'] = options['excludedLocations']
+        if options and _InternalOptions.EXCLUDED_LOCATIONS in options:
+            kwargs[_Kwargs.EXCLUDED_LOCATIONS] = options[_InternalOptions.EXCLUDED_LOCATIONS]
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -187,18 +191,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: Dict representing the retrieved container.
         :rtype: dict[str, Any]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
         if populate_query_metrics:
             warnings.warn(
@@ -206,9 +210,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning,
             )
         if populate_partition_key_range_statistics is not None:
-            request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
+            request_options[
+                _InternalOptions.POPULATE_PARTITION_KEY_RANGE_STATISTICS
+            ] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
-            request_options["populateQuotaInfo"] = populate_quota_info
+            request_options[_InternalOptions.POPULATE_QUOTA_INFO] = populate_quota_info
         container = self.client_connection.ReadContainer(self.container_link, options=request_options, **kwargs)
         # Only cache Container Properties that will not change in the lifetime of the container
         self.client_connection._set_container_properties_cache(self.container_link,  # pylint: disable=protected-access
@@ -271,30 +277,38 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         doc_link = self._get_document_link(item)
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
+            request_options[_InternalOptions.POST_TRIGGER_INCLUDE] = post_trigger_include
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            request_options[
+
+                _InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+
+            ] = max_integrated_cache_staleness_in_ms
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -337,22 +351,22 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
 
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if consistency_level is not None:
-            kwargs['consistencyLevel'] = consistency_level
+            kwargs[_Kwargs.CONSISTENCY_LEVEL] = consistency_level
         if excluded_locations is not None:
-            kwargs['excludedLocations'] = excluded_locations
+            kwargs[_Kwargs.EXCLUDED_LOCATIONS] = excluded_locations
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
-        query_options["enableCrossPartitionQuery"] = True
+        query_options[_InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = True
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
@@ -401,32 +415,40 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Iterable[Dict[str, Any]]
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            feed_options["populateQueryMetrics"] = populate_query_metrics
+            feed_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            feed_options[
+
+                _InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+
+            ] = max_integrated_cache_staleness_in_ms
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
         self._get_properties_with_options(feed_options)
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        feed_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -653,20 +675,24 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["startTime"] = kwargs.pop("start_time")
 
         container_properties = self._get_properties_with_options(feed_options)
-        if "partition_key" in kwargs:
-            partition_key = kwargs.pop("partition_key")
+        if _Kwargs.PARTITION_KEY in kwargs:
+            partition_key = kwargs.pop(_Kwargs.PARTITION_KEY)
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
                 get_epk_range_for_partition_key(container_properties, partition_key)
-        if "feed_range" in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
+        if _Kwargs.FEED_RANGE in kwargs:
+            change_feed_state_context["feedRange"] = kwargs.pop(_Kwargs.FEED_RANGE)
         if "continuation" in feed_options:
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
-        feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerRID"] = container_properties["_rid"]
+        feed_options[_InternalOptions.CHANGE_FEED_STATE_CONTEXT] = change_feed_state_context
+        feed_options[
 
-        response_hook = kwargs.pop("response_hook", None)
+            _InternalOptions.CONTAINER_RID
+
+        ] = container_properties["_rid"]
+
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -928,23 +954,39 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Update 'feed_options' from 'kwargs'
         if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
-            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
+            feed_options[
+
+                _InternalOptions.ENABLE_CROSS_PARTITION_QUERY
+
+            ] = kwargs.pop("enable_cross_partition_query")
         if utils.valid_key_value_exist(kwargs, "max_item_count"):
-            feed_options["maxItemCount"] = kwargs.pop("max_item_count")
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = kwargs.pop("max_item_count")
         if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
-            feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
+            feed_options[_InternalOptions.POPULATE_QUERY_METRICS] = kwargs.pop("populate_query_metrics")
         if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
-            feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
+            feed_options[_InternalOptions.POPULATE_INDEX_METRICS] = kwargs.pop("populate_index_metrics")
         if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
-            feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
+            feed_options[_InternalOptions.ENABLE_SCAN_IN_QUERY] = kwargs.pop("enable_scan_in_query")
         if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
             max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-            feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
+            feed_options[
+
+                _InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
+
+            ] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
-            feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
-        feed_options["correlatedActivityId"] = GenerateGuidId()
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+
+                _InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
+
+            ] = kwargs.pop("continuation_token_limit")
+        feed_options[_InternalOptions.CORRELATED_ACTIVITY_ID] = GenerateGuidId()
+        feed_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
         if utils.valid_key_value_exist(kwargs, "parameters"):
@@ -958,18 +1000,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key_value = self._set_partition_key(kwargs["partition_key"])
             partition_key_obj = _build_partition_key_from_properties(container_properties)
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
-                kwargs["prefix_partition_key_object"] = partition_key_obj
-                kwargs["prefix_partition_key_value"] = cast(_SequentialPartitionKeyType, partition_key_value)
+                kwargs[_Kwargs.PREFIX_PARTITION_KEY_OBJECT] = partition_key_obj
+                kwargs[_Kwargs.PREFIX_PARTITION_KEY_VALUE] = cast(_SequentialPartitionKeyType, partition_key_value)
             else:
                 # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
-                feed_options["partitionKey"] = partition_key_value
-        kwargs.pop("partition_key", None)
+                feed_options[_InternalOptions.PARTITION_KEY] = partition_key_value
+        kwargs.pop(_Kwargs.PARTITION_KEY, None)
 
         # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
-        partition_key = feed_options.get("partitionKey")
+        partition_key = feed_options.get(_InternalOptions.PARTITION_KEY)
 
         # Set 'response_hook'
-        response_hook = kwargs.pop("response_hook", None)
+        response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
         if response_hook and hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -1042,38 +1084,42 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[_Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[_Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[_Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+            kwargs[_Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
+        request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
@@ -1135,37 +1181,41 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[_Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[_Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[_Kwargs.NO_RESPONSE] = no_response
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+            kwargs[_Kwargs.RETRY_WRITE] = retry_write
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
+        request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
@@ -1243,35 +1293,39 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[_Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+            kwargs[_Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
+        request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = not enable_automatic_id_generation
         if populate_query_metrics:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if indexing_directive is not None:
-            request_options["indexingDirective"] = indexing_directive
+            request_options[_InternalOptions.INDEXING_DIRECTIVE] = indexing_directive
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result
@@ -1341,33 +1395,37 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[_Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[_Kwargs.MATCH_CONDITION] = match_condition
         if no_response is not None:
-            kwargs['no_response'] = no_response
+            kwargs[_Kwargs.NO_RESPONSE] = no_response
         if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+            kwargs[_Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["disableAutomaticIdGeneration"] = True
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if filter_predicate is not None:
-            request_options["filterPredicate"] = filter_predicate
+            request_options[_InternalOptions.FILTER_PREDICATE] = filter_predicate
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
             document_link=item_link,
@@ -1431,22 +1489,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
-        request_options["disableAutomaticIdGeneration"] = True
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
+        request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         container_properties = self._get_properties_with_options(request_options)
-        request_options["containerRID"] = container_properties["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = container_properties["_rid"]
 
         return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
@@ -1507,35 +1569,39 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if etag is not None:
-            kwargs['etag'] = etag
+            kwargs[_Kwargs.ETAG] = etag
         if match_condition is not None:
-            kwargs['match_condition'] = match_condition
+            kwargs[_Kwargs.MATCH_CONDITION] = match_condition
         if priority is not None:
-            kwargs['priority'] = priority
+            kwargs[_Kwargs.PRIORITY] = priority
         if retry_write is not None:
-            kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
+            kwargs[_Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
-            request_options["populateQueryMetrics"] = populate_query_metrics
+            request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
         if pre_trigger_include is not None:
-            request_options["preTriggerInclude"] = pre_trigger_include
+            request_options[_InternalOptions.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            request_options["postTriggerInclude"] = post_trigger_include
+            request_options[_InternalOptions.POST_TRIGGER_INCLUDE] = post_trigger_include
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -1639,9 +1705,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+
+                _InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1683,13 +1753,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+            feed_options[
+
+                _InternalOptions.ENABLE_CROSS_PARTITION_QUERY
+
+            ] = enable_cross_partition_query
         if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            feed_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            feed_options[
+
+                _InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1724,9 +1802,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            request_options[
+
+                _InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1757,9 +1840,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: None
         """
         request_options = build_options(kwargs)
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            request_options[
+
+                _InternalOptions.CONTAINER_RID
+
+            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1814,20 +1902,24 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 DeprecationWarning)
 
         if pre_trigger_include is not None:
-            kwargs['pre_trigger_include'] = pre_trigger_include
+            kwargs[_Kwargs.PRE_TRIGGER_INCLUDE] = pre_trigger_include
         if post_trigger_include is not None:
-            kwargs['post_trigger_include'] = post_trigger_include
+            kwargs[_Kwargs.POST_TRIGGER_INCLUDE] = post_trigger_include
         if session_token is not None:
-            kwargs['session_token'] = session_token
+            kwargs[_Kwargs.SESSION_TOKEN] = session_token
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if response_hook is not None:
-            kwargs['response_hook'] = response_hook
+            kwargs[_Kwargs.RESPONSE_HOOK] = response_hook
         request_options = build_options(kwargs)
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
-        request_options["partitionKey"] = self._set_partition_key(partition_key)
+        request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[
+
+            _InternalOptions.CONTAINER_RID
+
+        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
