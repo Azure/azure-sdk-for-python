@@ -33,11 +33,8 @@ from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
     delay_failure,
     sdk_allowed_kwargs,
-    process_load_arguments,
-    process_key_vault_options,
     update_correlation_context_header,
 )
-
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper
 from ._user_agent import USER_AGENT
 
@@ -174,12 +171,53 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
 
 
 def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
+    endpoint: Optional[str] = kwargs.pop("endpoint", None)	
+    credential: Optional["TokenCredential"] = kwargs.pop("credential", None)	
+    connection_string: Optional[str] = kwargs.pop("connection_string", None)	
+    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
     start_time = datetime.datetime.now()
 
-    kwargs = process_load_arguments(*args, **kwargs)
-    kwargs = process_key_vault_options(**kwargs)
+    # Update endpoint and credential if specified positionally.
+    if len(args) > 2:
+        raise TypeError(
+            "Unexpected positional parameters. Please pass either endpoint and credential, or a connection string."
+        )
+    if len(args) == 1:
+        if endpoint is not None:
+            raise TypeError("Received multiple values for parameter 'endpoint'.")
+        endpoint = args[0]
+        if endpoint is not None:	
+            raise TypeError("Received multiple values for parameter 'endpoint'.")	
+        endpoint = args[0]	
+    elif len(args) == 2:	
+        if credential is not None:	
+            raise TypeError("Received multiple values for parameter 'credential'.")	
+        endpoint, credential = args	
 
-    provider = AzureAppConfigurationProvider(**kwargs)
+    if (endpoint or credential) and connection_string:	
+        raise ValueError("Please pass either endpoint and credential, or a connection string.")	
+
+    # Removing use of AzureAppConfigurationKeyVaultOptions	
+    if key_vault_options:	
+        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:	
+            raise ValueError(	
+                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."	
+            )	
+        kwargs["keyvault_credential"] = key_vault_options.credential	
+        kwargs["secret_resolver"] = key_vault_options.secret_resolver	
+        kwargs["keyvault_client_configs"] = key_vault_options.client_configs	
+
+    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:	
+        raise ValueError("A keyvault credential and secret resolver can't both be configured.")	
+
+    uses_key_vault = (	
+        "keyvault_credential" in kwargs	
+        or "keyvault_client_configs" in kwargs	
+        or "secret_resolver" in kwargs	
+        or kwargs.get("uses_key_vault", False)	
+    )
+
+    provider = _buildprovider(connection_string, endpoint, credential, uses_key_vault=uses_key_vault, **kwargs)
     kwargs = sdk_allowed_kwargs(kwargs)
 
     try:
@@ -189,6 +227,20 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise e
     return provider
 
+def _buildprovider(	
+    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["TokenCredential"], **kwargs	
+) -> "AzureAppConfigurationProvider":	
+    # pylint:disable=protected-access	
+    if connection_string:	
+        endpoint = connection_string.split(";")[0].split("=")[1]	
+    if not endpoint:	
+        raise ValueError("No endpoint specified.")	
+
+    kwargs["endpoint"] = endpoint	
+    kwargs["connection_string"] = connection_string	
+    kwargs["credential"] = credential	
+
+    return AzureAppConfigurationProvider(**kwargs)
 
 def _resolve_keyvault_reference(
     config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider"

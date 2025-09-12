@@ -89,32 +89,6 @@ def update_correlation_context_header(
     uses_ai_configuration,
     uses_aicc_configuration,
 ) -> Dict[str, str]:
-    """
-    Updates the correlation context header with telemetry information.
-
-    :param headers: The headers dictionary to update.
-    :type headers: Dict[str, str]
-    :param request_type: The type of request being made.
-    :type request_type: str
-    :param replica_count: The number of replicas.
-    :type replica_count: int
-    :param uses_feature_flags: Whether feature flags are being used.
-    :type uses_feature_flags: bool
-    :param feature_filters_used: Dictionary of feature filters being used.
-    :type feature_filters_used: Dict[str, bool]
-    :param uses_key_vault: Whether Key Vault is being used.
-    :type uses_key_vault: bool
-    :param uses_load_balancing: Whether load balancing is enabled.
-    :type uses_load_balancing: bool
-    :param is_failover_request: Whether this is a failover request.
-    :type is_failover_request: bool
-    :param uses_ai_configuration: Whether AI configuration is being used.
-    :type uses_ai_configuration: bool
-    :param uses_aicc_configuration: Whether AI Chat Completion configuration is being used.
-    :type uses_aicc_configuration: bool
-    :return: The updated headers dictionary.
-    :rtype: Dict[str, str]
-    """
     if os.environ.get(REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE, default="").lower() == "true":
         return headers
     correlation_context = "RequestType=" + request_type
@@ -174,14 +148,6 @@ def update_correlation_context_header(
 
 
 def _uses_feature_flags(uses_feature_flags):
-    """
-    Determines the feature management version if feature flags are being used.
-
-    :param uses_feature_flags: Whether feature flags are being used.
-    :type uses_feature_flags: bool
-    :return: Version string for feature management or empty string.
-    :rtype: str
-    """
     if not uses_feature_flags:
         return ""
     package_name = "featuremanagement"
@@ -195,14 +161,6 @@ def _uses_feature_flags(uses_feature_flags):
 
 
 def is_json_content_type(content_type: str) -> bool:
-    """
-    Determines if the given content type indicates JSON content.
-
-    :param content_type: The content type string to check.
-    :type content_type: str
-    :return: True if the content type indicates JSON, False otherwise.
-    :rtype: bool
-    """
     if not content_type:
         return False
 
@@ -225,15 +183,6 @@ def is_json_content_type(content_type: str) -> bool:
 
 
 def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
-    """
-    Builds a sentinel tuple from a setting specification.
-
-    :param setting: Either a string key or a tuple of (key, label).
-    :type setting: Union[str, Tuple[str, str]]
-    :return: A tuple of (key, label).
-    :rtype: Tuple[str, str]
-    :raises ValueError: If wildcard characters are used in key or label.
-    """
     try:
         key, label = setting  # type:ignore
     except (IndexError, ValueError):
@@ -245,14 +194,6 @@ def _build_sentinel(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
 
 
 def sdk_allowed_kwargs(kwargs):
-    """
-    Filters kwargs to only include those allowed by the Azure SDK.
-
-    :param kwargs: The keyword arguments to filter.
-    :type kwargs: Dict[str, Any]
-    :return: A dictionary containing only allowed keyword arguments.
-    :rtype: Dict[str, Any]
-    """
     allowed_kwargs = [
         "headers",
         "request_id",
@@ -284,103 +225,12 @@ def sdk_allowed_kwargs(kwargs):
     ]
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
 
-
-def process_load_arguments(*args, **kwargs) -> dict:
-    """
-    Common validation logic for load function arguments.
-
-    :param args: Positional arguments (endpoint and optionally credential).
-    :type args: Tuple[Any, ...]
-    :return: Updated kwargs with validated arguments.
-    :rtype: dict
-    :raises TypeError: If unexpected positional parameters are provided.
-    :raises ValueError: If both endpoint/credential and connection_string are provided, or if neither is provided.
-    """
-    endpoint = kwargs.get("endpoint", None)
-    credential = kwargs.get("credential", None)
-    connection_string = kwargs.get("connection_string", None)
-
-    # Update endpoint and credential if specified positionally.
-    if len(args) > 2:
-        raise TypeError(
-            "Unexpected positional parameters. Please pass either endpoint and credential, or a connection string."
-        )
-    if len(args) == 1:
-        if endpoint is not None:
-            raise TypeError("Received multiple values for argument 'endpoint'")
-        kwargs["endpoint"] = args[0]
-        endpoint = args[0]  # Update local variable for validation
-    elif len(args) == 2:
-        if credential is not None:
-            raise TypeError("Received multiple values for argument 'credential'")
-        kwargs["endpoint"], kwargs["credential"] = args
-        endpoint, credential = args  # Update local variables for validation
-
-    # Validate that either endpoint or connection_string is provided
-    if not endpoint and not connection_string:
-        raise ValueError("Either 'endpoint' or 'connection_string' must be provided.")
-
-    if (endpoint or credential) and connection_string:
-        raise ValueError("Please pass either endpoint and credential, or a connection string.")
-
-    # Grabbing the endpoint for future use
-    connection_string = kwargs.get("connection_string")
-
-    if connection_string:
-        kwargs["endpoint"] = connection_string.split(";")[0].split("=")[1]
-    if not kwargs["endpoint"]:
-        raise ValueError("No endpoint specified.")
-
-    return kwargs
-
-
-def process_key_vault_options(**kwargs):
-    """
-    Process key vault options and update kwargs accordingly.
-
-    :return: Updated kwargs with processed key vault options.
-    :rtype: Dict[str, Any]
-    :raises ValueError: If conflicting key vault options are specified.
-    """
-    key_vault_options = kwargs.pop("key_vault_options", None)
-
-    # Removing use of AzureAppConfigurationKeyVaultOptions
-    if key_vault_options:
-        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
-            raise ValueError(
-                "Cannot specify 'key_vault_options' along with 'keyvault_credential', "
-                "'secret_resolver', or 'keyvault_client_configs'."
-            )
-        kwargs["keyvault_credential"] = key_vault_options.credential
-        kwargs["secret_resolver"] = key_vault_options.secret_resolver
-        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
-
-    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
-        raise ValueError("A keyvault credential and secret resolver can't both be configured.")
-
-    kwargs["uses_key_vault"] = (
-        "keyvault_credential" in kwargs
-        or "keyvault_client_configs" in kwargs
-        or "secret_resolver" in kwargs
-        or kwargs.get("uses_key_vault", False)
-    )
-
-    return kwargs
-
-
 class _RefreshTimer:
     """
     A timer that tracks the next refresh time and the number of attempts.
     """
 
     def __init__(self, **kwargs):
-        """
-        Initialize the refresh timer with the specified configuration.
-
-        :keyword kwargs: Configuration options including refresh_interval, min_backoff, and max_backoff.
-        :paramtype kwargs: Dict[str, Any]
-        :raises ValueError: If refresh_interval is less than 1 second.
-        """
         self._interval: int = kwargs.pop("refresh_interval", 30)
         if self._interval < 1:
             raise ValueError("Refresh interval must be greater than or equal to 1 second.")
@@ -392,35 +242,17 @@ class _RefreshTimer:
         self._max_backoff: int = 600 if 600 <= self._interval else self._interval
 
     def reset(self) -> None:
-        """
-        Reset the refresh timer to its initial state.
-        """
         self._next_refresh_time = time.time() + self._interval
         self._attempts = 1
 
     def backoff(self) -> None:
-        """
-        Apply exponential backoff to the next refresh time.
-        """
         self._next_refresh_time = time.time() + self._calculate_backoff() / 1000
         self._attempts += 1
 
     def needs_refresh(self) -> bool:
-        """
-        Check if a refresh is needed based on the current time.
-
-        :return: True if a refresh is needed, False otherwise.
-        :rtype: bool
-        """
         return time.time() >= self._next_refresh_time
 
     def _calculate_backoff(self) -> float:
-        """
-        Calculate the exponential backoff time in milliseconds.
-
-        :return: The backoff time in milliseconds.
-        :rtype: float
-        """
         max_attempts = 63
         millisecond = 1000  # 1 Second in milliseconds
 
@@ -448,12 +280,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        Initialize the Azure App Configuration Provider.
-
-        :keyword kwargs: Configuration options for the provider.
-        :paramtype kwargs: Dict[str, Any]
-        """
         self._origin_endpoint: str = kwargs.get("endpoint", "")
         self._dict: Dict[str, Any] = {}
         self._selects: List[SettingSelector] = kwargs.pop(
@@ -487,14 +313,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._refresh_lock = Lock()
 
     def _process_key_name(self, config):
-        """
-        Process the configuration key name by trimming configured prefixes.
-
-        :param config: The configuration setting object.
-        :type config: Any
-        :return: The processed key name with trimmed prefix.
-        :rtype: str
-        """
         trimmed_key = config.key
         # Trim the key if it starts with one of the prefixes provided
         for trim in self._trim_prefixes:
