@@ -96,7 +96,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
 
         Call patterns:
           - get_answers_from_text(options_model)
-          - get_answers_from_text(question=..., text_documents=[...], language=..., **kwargs)
+          - get_answers_from_text(question=..., text_documents=[...], language=..., ``**kwargs``)
           - get_answers_from_text(dict_with_aliases)
 
         :param question: Question (required when an options object isn't provided).
