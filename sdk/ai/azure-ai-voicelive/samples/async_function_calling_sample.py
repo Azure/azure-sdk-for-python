@@ -37,7 +37,7 @@ import base64
 import signal
 import threading
 import queue
-from typing import Union, Optional, Dict, Any, Mapping, Callable, TYPE_CHECKING
+from typing import Union, Optional, Dict, Any, Mapping, Callable, TYPE_CHECKING, List, cast
 from concurrent.futures import ThreadPoolExecutor
 
 # Audio processing imports
@@ -74,6 +74,7 @@ from azure.ai.voicelive.models import (
     ServerEventConversationItemCreated,
     ServerEventResponseFunctionCallArgumentsDone,
     ServerEventResponseCreated,
+    Tool,
 )
 
 # Set up logging
@@ -351,14 +352,14 @@ class AsyncFunctionCallingClient:
         self.model = model
         self.voice = voice
         self.instructions = instructions
-        self.session_id = None
-        self.function_call_in_progress = False
-        self.active_call_id = None
+        self.session_id: Optional[str] = None
+        self.function_call_in_progress: bool = False
+        self.active_call_id: Optional[str] = None
         self.audio_processor: Optional[AudioProcessor] = None
-        self.session_ready = False
+        self.session_ready: bool = False
         
         # Define available functions
-        self.available_functions = {
+        self.available_functions: Dict[str, Callable[[Union[str, Mapping[str, Any]]], Mapping[str, Any]]] = {
             "get_current_time": self.get_current_time,
             "get_current_weather": self.get_current_weather,
         }
@@ -422,7 +423,7 @@ class AsyncFunctionCallingClient:
         turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500)
         
         # Define available function tools
-        function_tools = [
+        function_tools: List[Tool] = [
             FunctionTool(
                 name="get_current_time",
                 description="Get the current time",
@@ -468,7 +469,7 @@ class AsyncFunctionCallingClient:
             turn_detection=turn_detection_config,
             tools=function_tools,
             tool_choice=ToolChoiceLiteral.AUTO,  # Let the model decide when to call functions
-            input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1", language="en-US"),
+            input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
         )
         
         # Send session configuration asynchronously
@@ -635,7 +636,7 @@ class AsyncFunctionCallingClient:
             self.function_call_in_progress = False
             self.active_call_id = None
     
-    def get_current_time(self, arguments: Union[str, Mapping[str, Any]] = None):
+    def get_current_time(self, arguments: Optional[Union[str, Mapping[str, Any]]] = None) -> Dict[str, Any]:
         """Get the current time."""
         # Parse arguments if provided as string
         if isinstance(arguments, str):
@@ -775,13 +776,13 @@ if __name__ == "__main__":
         input_devices = [
             i
             for i in range(p.get_device_count())
-            if p.get_device_info_by_index(i).get("maxInputChannels", 0) > 0
+            if cast(Union[int, float], p.get_device_info_by_index(i).get("maxInputChannels", 0) or 0) > 0
         ]
         # Check for output devices
         output_devices = [
             i
             for i in range(p.get_device_count())
-            if p.get_device_info_by_index(i).get("maxOutputChannels", 0) > 0
+            if cast(Union[int, float], p.get_device_info_by_index(i).get("maxOutputChannels", 0) or 0) > 0
         ]
         p.terminate()
 

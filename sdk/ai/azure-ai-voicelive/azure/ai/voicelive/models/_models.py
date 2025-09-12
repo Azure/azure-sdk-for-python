@@ -252,47 +252,53 @@ class AudioEchoCancellation(_Model):
 class AudioInputTranscriptionSettings(_Model):
     """Configuration for input audio transcription.
 
-    :ivar model: The model used for transcription. E.g., 'whisper-1', 'azure-fast-transcription',
-     's2s-ingraph'. Required. Is one of the following types: Literal["whisper-1"],
-     Literal["azure-fast-transcription"], Literal["s2s-ingraph"]
+    :ivar model: The transcription model to use. Supported values:
+     "whisper-1", "gpt-4o-transcribe", "gpt-4o-mini-transcribe",
+     "azure-fast-transcription", "azure-speech". Required.
     :vartype model: str
-    :ivar language: The language code to use for transcription, if specified.
-    :vartype language: str
-    :ivar enabled: Whether transcription is enabled. Required.
-    :vartype enabled: bool
-    :ivar custom_model: Whether a custom model is being used. Required.
-    :vartype custom_model: bool
+    :ivar language: Optional BCP-47 language code (e.g., "en-US").
+    :vartype language: str | None
+    :ivar custom_speech: Optional configuration for custom speech models.
+    :vartype custom_speech: dict[str, str] | None
+    :ivar phrase_list: Optional list of phrase hints to bias recognition.
+    :vartype phrase_list: list[str] | None
     """
 
-    model: Literal["whisper-1", "azure-fast-transcription", "s2s-ingraph"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model used for transcription. E.g., 'whisper-1', 'azure-fast-transcription', 's2s-ingraph'.
-     Required. Is one of the following types: Literal[\"whisper-1\"],
-     Literal[\"azure-fast-transcription\"], Literal[\"s2s-ingraph\"]"""
+    model: Literal[
+        "whisper-1",
+        "gpt-4o-transcribe",
+        "gpt-4o-mini-transcribe",
+        "azure-fast-transcription",
+        "azure-speech",
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required transcription model."""
+
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The language code to use for transcription, if specified."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether transcription is enabled. Required."""
-    custom_model: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether a custom model is being used. Required."""
+    """Optional language code (e.g., 'en-US')."""
+
+    custom_speech: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional custom speech configuration."""
+
+    phrase_list: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional phrase hints."""
 
     @overload
     def __init__(
         self,
         *,
-        model: Literal["whisper-1", "azure-fast-transcription", "s2s-ingraph"],
-        enabled: bool,
-        custom_model: bool,
-        language: Optional[str] = None,
+        model: Literal[
+            "whisper-1",
+            "gpt-4o-transcribe",
+            "gpt-4o-mini-transcribe",
+            "azure-fast-transcription",
+            "azure-speech",
+        ],
+        language: Optional[str] = ...,
+        custom_speech: Optional[Dict[str, str]] = ...,
+        phrase_list: Optional[List[str]] = ...,
     ) -> None: ...
-
     @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
+    def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -3317,7 +3323,7 @@ class ServerEvent(_Model):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def deserialize(cls, payload: dict[str, Any]) -> "ServerEvent":
+    def deserialize(cls, payload: dict) -> "ServerEvent":
         # public, linter-friendly entrypoint
         # pylint: disable-next=protected-access
         return cls._deserialize(payload, [])
