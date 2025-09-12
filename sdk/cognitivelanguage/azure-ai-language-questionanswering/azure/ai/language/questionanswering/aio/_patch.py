@@ -7,7 +7,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Union, Any, Optional, Mapping
+from typing import List, Union, Any, Optional, Mapping, TYPE_CHECKING
+from io import IOBase
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
@@ -17,6 +18,10 @@ from .._normalization import (  # type: ignore  # noqa: F401
     _normalize_text_options,
     _normalize_answers_dict,
 )  # shared helpers
+
+if TYPE_CHECKING:
+    from .operations._operations import QuestionAnsweringOperations
+question_answering: "QuestionAnsweringOperations"  # narrowing for type checkers
 
 
 def _apply_default_language(obj: Any, default_lang: Optional[str]) -> None:
@@ -76,7 +81,10 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            authentication_policy=kwargs.pop(
+                "authentication_policy",
+                _authentication_policy(credential, **kwargs)
+            ),
             **kwargs
         )
 
@@ -84,6 +92,19 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
     # Placed in patch so regeneration does not remove user-friendly behaviors.
     @distributed_trace_async
     async def get_answers_from_text(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
+        """Get answers from ad-hoc text (async).
+
+        Call patterns:
+          - get_answers_from_text(options_model)
+          - get_answers_from_text(question=..., text_documents=[...], language=..., **kwargs)
+          - get_answers_from_text(dict_with_aliases)
+
+        :param question: Question (required when an options object isn't provided).
+        :param text_documents: List of texts (str or document objects) (required when an options object isn't provided).
+        :keyword language: Language (falls back to client's default_language if omitted).
+        :return: AnswersFromTextResult
+        """
+
         if "options" in kwargs:
             raise TypeError("'options' must be passed positionally, not as a keyword")
         if len(args) > 1:
@@ -120,6 +141,17 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
 
     @distributed_trace_async
     async def get_answers(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
+        """Get answers from a knowledge base (async).
+
+        Call patterns:
+          - get_answers(options_model, project_name=..., deployment_name=...)
+          - get_answers(question="...", project_name=..., deployment_name=..., [other keyword aliases])
+          - get_answers({"question": "...", "filters": {...}}, project_name=..., deployment_name=...)
+
+        :keyword project_name: Project name (required).
+        :keyword deployment_name: Deployment name (required).
+        :return: AnswersResult
+        """
         project_name: Optional[str] = kwargs.pop("project_name", None)
         deployment_name: Optional[str] = kwargs.pop("deployment_name", None)
         if project_name is None or deployment_name is None:
@@ -183,6 +215,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
             )
 
         if isinstance(options, Mapping):
+            # Dict style: normalize + validate
             opts = _normalize_answers_dict(options)
             question_value = opts.get("question")
             qna_value = opts.get("qnaId")
@@ -192,12 +225,20 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
                 opts, project_name=project_name, deployment_name=deployment_name, **kwargs
             )
 
+        # Binary / stream: pass through directly
+        if isinstance(options, (bytes, IOBase)):
+            return await self.question_answering.get_answers(
+                options, project_name=project_name, deployment_name=deployment_name, **kwargs
+            )
+
+        # Model instance or JSON-serializable object: minimal attribute validation
         try:
             question_value = getattr(options, "question", None)
             qna_value = getattr(options, "qna_id", None) or getattr(options, "qnaId", None)
             if (question_value in (None, "")) and qna_value is None:
                 raise TypeError("Either 'question' or 'qna_id' (or 'qnaId') must be provided")
         except AttributeError:
+            # Object without expected attributes; let service validate.
             pass
 
         return await self.question_answering.get_answers(

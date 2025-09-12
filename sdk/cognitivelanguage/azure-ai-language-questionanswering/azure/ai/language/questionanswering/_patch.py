@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 
-from typing import Union, Any, Optional, Mapping
+from typing import Union, Any, Optional, Mapping, TYPE_CHECKING
 from io import IOBase
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
@@ -14,6 +14,10 @@ from ._normalization import (  # type: ignore  # noqa: F401
     _normalize_text_options,
     _normalize_answers_dict,
 )  # internal shared helpers
+
+if TYPE_CHECKING:
+    from .operations._operations import QuestionAnsweringOperations
+question_answering: "QuestionAnsweringOperations"  # narrowing for type checkers
 
 
 def _apply_default_language(obj: Any, default_lang: Optional[str]) -> None:
@@ -213,14 +217,15 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
                 opts, project_name=project_name, deployment_name=deployment_name, **kwargs
             )
 
-        if not isinstance(options, (bytes, IOBase)):
-            try:
-                question_value = getattr(options, "question", None)
-                qna_value = getattr(options, "qna_id", None) or getattr(options, "qnaId", None)
-                if (question_value in (None, "")) and qna_value is None:
-                    raise TypeError("Either 'question' or 'qna_id' (or 'qnaId') must be provided")
-            except AttributeError:
-                pass  # object lacks expected attributes; let service decide
+        if isinstance(options, (bytes, IOBase)):
+            return self.question_answering.get_answers(options, ...)
+        try:
+            question_value = getattr(options, "question", None)
+            qna_value = getattr(options, "qna_id", None) or getattr(options, "qnaId", None)
+            if (question_value in (None, "")) and qna_value is None:
+                raise TypeError("Either 'question' or 'qna_id' (or 'qnaId') must be provided")
+        except AttributeError:
+            pass  # object lacks expected attributes; let service decide
 
         return self.question_answering.get_answers(
             options, project_name=project_name, deployment_name=deployment_name, **kwargs
