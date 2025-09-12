@@ -79,7 +79,7 @@ class QueryIterable(AsyncPageIterator):
             options['continuation'] = continuation_token
         # Capture timeout and start time
         self.timeout = options.get('timeout')
-        self.is_timeout_per_operation = options.get('is_timeout_per_operation')
+        self.use_operation_timeout = options.get(_Constants.UseOperationTimeout)
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -113,7 +113,7 @@ class QueryIterable(AsyncPageIterator):
 
         # Check timeout before fetching next block
 
-        if self.timeout and not self.is_timeout_per_operation:
+        if self.timeout and not self.use_operation_timeout:
             self._options[_Constants.OperationStartTime] = time.time()
 
         # Check timeout before fetching next block

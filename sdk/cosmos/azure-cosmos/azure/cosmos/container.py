@@ -358,7 +358,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
-        query_options['is_timeout_per_operation'] = True
+        query_options[Constants.UseOperationTimeout] = True
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 

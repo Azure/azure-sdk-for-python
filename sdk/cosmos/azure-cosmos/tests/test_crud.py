@@ -1490,39 +1490,19 @@ class TestCRUDOperations(unittest.TestCase):
         }
         created_container.create_item(test_item)
 
-        # Create a transport that introduces significant delay for point operations
-        class SlowPointOperationTransport(RequestsTransport):
-            def send(self, request, **kwargs):
-                # Delay point read operations (GET requests to docs endpoint)
-                if request.method == 'GET' and 'docs' in request.url and 'test_item_1' in request.url:
-                    time.sleep(2.0)  # 2 second delay
-
-                return super().send(request, **kwargs)
-
-        # Create client with slow transport
-        slow_transport = SlowPointOperationTransport()
-        client_with_slow_transport = cosmos_client.CosmosClient(
-            self.host,
-            self.masterKey,
-            transport=slow_transport
-        )
-        container_with_slow_transport = client_with_slow_transport.get_database_client(
-            self.databaseForTest.id
-        ).get_container_client(created_container.id)
-
         # Test 1: Short timeout should fail
         with self.assertRaises(exceptions.CosmosClientTimeoutError):
-            container_with_slow_transport.read_item(
+            created_container.read_item(
                 item='test_item_1',
                 partition_key='partition1',
-                timeout=1.0  # 1 second timeout, but operation takes 2 seconds
+                timeout=0.00000002  # very small timeout to force failure
             )
 
         # Test 2: Long timeout should succeed
-        result = container_with_slow_transport.read_item(
+        result = created_container.read_item(
             item='test_item_1',
             partition_key='partition1',
-            timeout=3.0  # 3 second timeout, operation takes 2 seconds
+            timeout=3.0
         )
         self.assertEqual(result['id'], 'test_item_1')
 

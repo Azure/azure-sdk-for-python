@@ -70,11 +70,10 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     """
     timeout = kwargs.get('timeout')
     operation_start_time = kwargs.get(_Constants.OperationStartTime)
-    print(f"_retry_utility_: in the top Execute method: timeout from kargs is {timeout} and operation_start_time from kargs is {operation_start_time}")
 
+    # this is just to satisfy python interpreter, operation_start_time will always be there
     if timeout and operation_start_time is None:
         operation_start_time = time.time()
-        # Also inject it into kwargs to be available for subsequent retries/calls if needed.
         kwargs[_Constants.OperationStartTime] = operation_start_time
 
     pk_range_wrapper = None

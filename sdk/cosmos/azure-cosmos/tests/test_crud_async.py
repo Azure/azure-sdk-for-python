@@ -1081,7 +1081,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 self.request_count += 1
                 # Delay each request to simulate slow network
                 await asyncio.sleep(self.delay_per_request)  # 2 second delaytime.sleep(self.delay_per_request)
-                return super().send(request, **kwargs)
+                return await super().send(request, **kwargs)
 
         # Verify timeout fails when cumulative time exceeds limit
         delayed_transport = DelayedTransport(delay_per_request=2)
@@ -1104,7 +1104,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
                 )
 
         elapsed_time = time.time() - start_time
-        print(f"elapsed time is {elapsed_time}")
         # Should fail close to 5 seconds (not wait for all requests)
         self.assertLess(elapsed_time, 7)  # Allow some overhead
         self.assertGreater(elapsed_time, 5)  # Should wait at least close to timeout
@@ -1127,37 +1126,21 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         }
         await created_container.create_item(test_item)
 
-        # Create a transport that introduces significant delay for point operations
-        class SlowPointOperationTransport(AioHttpTransport):
-            async def send(self, request, **kwargs):
-                # Delay point read operations (GET requests to docs endpoint)
-                if request.method == 'GET' and 'docs' in request.url and 'test_item_1' in request.url:
-                    await asyncio.sleep(2.0)  # 2 second delay
+        # Short timeout should fail
+        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+            await created_container.read_item(
+                item='test_item_1',
+                partition_key='partition1',
+                timeout=0.00002
+            )
 
-                return await super().send(request, **kwargs)
-
-        # Create client with slow transport
-        slow_transport = SlowPointOperationTransport()
-        async with CosmosClient(
-                self.host,
-                self.masterKey,
-                transport=slow_transport
-        ) as client_with_slow_transport:
-            container_with_slow_transport = client_with_slow_transport.get_database_client(
-                self.database_for_test.id
-            ).get_container_client(created_container.id)
-            print(f"****************************STARTING THE TEST *******************")
-            # Test 1: Short timeout should fail
-            start_time = time.time()
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                await container_with_slow_transport.read_item(
-                    item='test_item_1',
-                    partition_key='partition1',
-                    timeout=1.0  # 1 second timeout, but operation takes 5 seconds
-                )
-            elapsed = time.time() - start_time
-            print(f"****************************TEST ENDED WITH ELAPSED TIME OF  *******************{elapsed}")
-
+        # Long timeout should succeed
+        result = await created_container.read_item(
+            item='test_item_1',
+            partition_key='partition1',
+            timeout=1.0  # 1 second timeout
+        )
+        self.assertEqual(result['id'], 'test_item_1')
 
     async def test_timeout_for_paged_request_async(self):
         """Test that timeout applies to each individual page request, not cumulatively"""

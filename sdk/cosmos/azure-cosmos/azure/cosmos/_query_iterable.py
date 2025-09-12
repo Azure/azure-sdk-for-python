@@ -77,7 +77,7 @@ class QueryIterable(PageIterator):
             options['continuation'] = continuation_token
         # Capture timeout and start time
         self.timeout = options.get('timeout')
-        self.is_timeout_per_operation = options.get('is_timeout_per_operation')
+        self.use_operation_timeout = options.get(_Constants.UseOperationTimeout)
 
         self._fetch_function = fetch_function
         self._collection_link = collection_link
@@ -107,7 +107,8 @@ class QueryIterable(PageIterator):
         :return: List of results.
         :rtype: list
         """
-        if self.timeout and not self.is_timeout_per_operation:
+        # reset the operation start time if it's a paged request
+        if self.timeout and not self.use_operation_timeout:
             self._options[_Constants.OperationStartTime] = time.time()
 
         # Check timeout before fetching next block
