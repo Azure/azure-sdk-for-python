@@ -1,8 +1,8 @@
-# Azure Batch Data Plane Migration Guide from <= v14.x to v15.x
+# (WIP) Azure Batch Data Plane Migration Guide from <= v14.x to v15.x
 
 This guide assists you in the migration from [azure-batch](https://pypi.org/project/azure-batch/) v14.x to [azure-batch](https://pypi.org/project/azure-batch/15.0.0b1/) v15.x. Side-by-side comparisons are provided for similar operations between the two packages.
 
-Familiarity with the `azure-batch` v14.x package is assumed. If you're new to the Azure Batch client library for Python, see the [README for `azure-batch`](https://learn.microsoft.com/en-us/python/api/overview/azure/batch?view=azure-python) and samples instead of this guide.
+Familiarity with the `azure-batch` v14.x package is assumed. If you're new to the Azure Batch client library for Python, see the [README for `azure-batch`](https://learn.microsoft.com/python/api/overview/azure/batch?view=azure-python) and samples instead of this guide.
 
 ## Table of Contents
 
