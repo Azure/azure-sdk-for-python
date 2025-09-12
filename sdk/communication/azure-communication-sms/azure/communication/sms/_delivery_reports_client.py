@@ -9,6 +9,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._generated._azure_communication_sms_service import AzureCommunicationSMSService
+from ._generated.models import DeliveryReport
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
@@ -107,12 +108,12 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
             self,
             outgoing_message_id: str,
             **kwargs: Any
-    ) -> Any:
+    ) -> DeliveryReport:
         """Gets delivery report for a specific outgoing message.
 
         :param str outgoing_message_id: The identifier of the outgoing message.
-        :return: DeliveryReport if the message was found, ErrorResponse if not found or error occurred.
-        :rtype: Union[DeliveryReport, ErrorResponse]
+        :return: DeliveryReport containing the delivery status information.
+        :rtype: ~azure.communication.sms.models.DeliveryReport
 
         .. admonition:: Example:
 
@@ -128,4 +129,9 @@ class DeliveryReportsClient(object):  # pylint: disable=client-accepts-api-versi
             **kwargs
         )
 
-        return response
+        # Convert the raw JSON response to a DeliveryReport object
+        if isinstance(response, dict):
+            return DeliveryReport.from_dict(response)
+        
+        # This shouldn't happen with the current API, but handle it for safety
+        return DeliveryReport.from_dict(response)  # type: ignore
