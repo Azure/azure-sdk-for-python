@@ -52,15 +52,13 @@ class mypy(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
-            dev_requirements = os.path.join(package_dir, "dev_requirements.txt")
             additional_requirements = ADDITIONAL_LOCKED_DEPENDENCIES
 
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for mypy check")
 
             # # need to install dev_requirements to ensure that type-hints properly resolve
-            if os.path.exists(dev_requirements):
-                additional_requirements += ["-r", dev_requirements]
+            self.install_dev_reqs(executable, args, package_dir)
 
             # install mypy
             try:

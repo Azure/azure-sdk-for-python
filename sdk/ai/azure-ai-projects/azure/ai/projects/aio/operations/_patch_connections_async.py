@@ -39,7 +39,16 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
 
         if include_credentials:
-            return await super()._get_with_credentials(name, **kwargs)
+            connection = await super()._get_with_credentials(name, **kwargs)
+            if connection.type == ConnectionType.CUSTOM:
+                # Why do we do this? See comment in the sync version of this code (file _patch_connections.py).
+                setattr(
+                    connection.credentials,
+                    "credential_keys",
+                    {k: v for k, v in connection.credentials.as_dict().items() if k != "type"},
+                )
+
+            return connection
 
         return await super()._get(name, **kwargs)
 
@@ -60,7 +69,5 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
         connections = super().list(connection_type=connection_type, default_connection=True, **kwargs)
         async for connection in connections:
-            if include_credentials:
-                connection = await super()._get_with_credentials(connection.name, **kwargs)
-            return connection
+            return await self.get(connection.name, include_credentials=include_credentials, **kwargs)
         raise ValueError(f"No default connection found for type: {connection_type}.")

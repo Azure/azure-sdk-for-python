@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.14.0b4 (Unreleased)
+### 4.14.0b5 (Unreleased)
 
 #### Features Added
 
@@ -10,6 +10,11 @@
 
 #### Other Changes
 
+### 4.14.0b4 (2025-09-11)
+
+#### Bugs Fixed
+* Fixed bug where client provided session token was not respected when client-side session management was disabled. See [PR 42965](https://github.com/Azure/azure-sdk-for-python/pull/42965)
+ 
 ### 4.14.0b3 (2025-09-09)
 
 #### Features Added
