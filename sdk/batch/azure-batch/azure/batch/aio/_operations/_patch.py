@@ -12,7 +12,7 @@ import datetime
 import time
 import collections
 import logging
-from typing import Any, Callable, Deque, AsyncIterator, List, Iterable, MutableMapping, Optional, Union
+from typing import Any, cast, Callable, Deque, AsyncIterator, List, Iterable, MutableMapping, Optional, Union
 
 from azure.batch import models as _models
 from azure.core import MatchConditions
@@ -131,23 +131,27 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         """
 
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
-            return pipeline_response
+                return pipeline_response
 
-        pipeline_response = await self._delete_job_internal(
-            job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            force=force,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        # cast otherwise mypy complains about incompatible return type
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._delete_job_internal(
+                job_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = DeleteJobPollingMethodAsync(job_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_disable_job(
@@ -210,21 +214,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._disable_job_internal(
-            job_id,
-            disable_options=disable_options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._disable_job_internal(
+                job_id,
+                disable_options=disable_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = DisableJobPollingMethodAsync(job_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_enable_job(
@@ -281,20 +288,23 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._enable_job_internal(
-            job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._enable_job_internal(
+                job_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = EnableJobPollingMethodAsync(job_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_delete_job_schedule(
@@ -352,20 +362,23 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._delete_job_schedule_internal(
-            job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._delete_job_schedule_internal(
+                job_schedule_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = DeleteJobSchedulePollingMethodAsync(job_schedule_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_delete_pool(
@@ -429,20 +442,23 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._delete_pool_internal(
-            pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._delete_pool_internal(
+                pool_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = DeletePoolPollingMethodAsync(pool_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_delete_certificate(
@@ -488,17 +504,20 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._delete_certificate_internal(
-            thumbprint_algorithm,
-            thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+                await self._delete_certificate_internal(
+                thumbprint_algorithm,
+                thumbprint,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = DeleteCertificatePollingMethodAsync(thumbprint_algorithm, thumbprint, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_deallocate_node(
@@ -538,18 +557,21 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._deallocate_node_internal(
-            pool_id,
-            node_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._deallocate_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = DeallocateNodePollingMethodAsync(pool_id, node_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_reboot_node(
@@ -589,18 +611,21 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._reboot_node_internal(
-            pool_id,
-            node_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._reboot_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = RebootNodePollingMethodAsync(pool_id, node_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_reimage_node(
@@ -644,18 +669,21 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._reimage_node_internal(
-            pool_id,
-            node_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._reimage_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = ReimageNodePollingMethodAsync(pool_id, node_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_remove_nodes(
@@ -713,21 +741,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._remove_nodes_internal(
-            pool_id,
-            remove_options=remove_options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._remove_nodes_internal(
+                pool_id,
+                remove_options=remove_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = RemoveNodePollingMethodAsync(pool_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_resize_pool(
@@ -789,21 +820,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._resize_pool_internal(
-            pool_id,
-            resize_options=resize_options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._resize_pool_internal(
+                pool_id,
+                resize_options=resize_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = ResizePoolPollingMethodAsync(pool_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_start_node(
@@ -840,17 +874,20 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._start_node_internal(
-            pool_id,
-            node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._start_node_internal(
+                pool_id,
+                node_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = StartNodePollingMethodAsync(pool_id, node_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_stop_pool_resize(
@@ -909,20 +946,23 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._stop_pool_resize_internal(
-            pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._stop_pool_resize_internal(
+                pool_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = StopPoolResizePollingMethodAsync(pool_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_terminate_job(
@@ -987,22 +1027,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._terminate_job_internal(
-            job_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            force=force,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._terminate_job_internal(
+                job_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = TerminateJobPollingMethodAsync(job_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_terminate_job_schedule(
@@ -1058,21 +1101,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         def capture_pipeline_response(pipeline_response, deserialized, response_headers):
             return pipeline_response
 
-        pipeline_response = await self._terminate_job_schedule_internal(
-            job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            force=force,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            await self._terminate_job_schedule_internal(
+                job_schedule_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
         polling_method = TerminateJobSchedulePollingMethodAsync(job_schedule_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     # create_task_collection renamed
     @distributed_trace
