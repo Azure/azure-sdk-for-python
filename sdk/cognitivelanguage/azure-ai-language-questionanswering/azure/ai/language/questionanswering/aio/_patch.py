@@ -11,6 +11,7 @@ from typing import List, Union, Any, Optional, Mapping
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
+from azure.core.tracing.decorator_async import distributed_trace_async
 from ._client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 from .._normalization import (  # type: ignore  # noqa: F401
     _normalize_text_options,
@@ -81,6 +82,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
 
     # Async convenience wrappers adding the same normalization (aliases, span request, filters) as sync.
     # Placed in patch so regeneration does not remove user-friendly behaviors.
+    @distributed_trace_async
     async def get_answers_from_text(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
         if "options" in kwargs:
             raise TypeError("'options' must be passed positionally, not as a keyword")
@@ -116,6 +118,7 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
             pass
         return await self.question_answering.get_answers_from_text(options, **kwargs)
 
+    @distributed_trace_async
     async def get_answers(self, *args: Any, **kwargs: Any) -> Any:  # type: ignore[override]
         project_name: Optional[str] = kwargs.pop("project_name", None)
         deployment_name: Optional[str] = kwargs.pop("deployment_name", None)
@@ -181,18 +184,18 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
 
         if isinstance(options, Mapping):
             opts = _normalize_answers_dict(options)
-            has_question = bool(opts.get("question"))
-            has_qna = (opts.get("qnaId") is not None)
-            if not has_question and not has_qna:
+            question_value = opts.get("question")
+            qna_value = opts.get("qnaId")
+            if (question_value in (None, "")) and qna_value is None:
                 raise TypeError("Either 'question' or 'qna_id' must be provided")
             return await self.question_answering.get_answers(
                 opts, project_name=project_name, deployment_name=deployment_name, **kwargs
             )
 
         try:
-            has_question = getattr(options, "question", None)
-            has_qna_id = getattr(options, "qna_id", None) or getattr(options, "qnaId", None)
-            if has_question in (None, "") and has_qna_id is None:
+            question_value = getattr(options, "question", None)
+            qna_value = getattr(options, "qna_id", None) or getattr(options, "qnaId", None)
+            if (question_value in (None, "")) and qna_value is None:
                 raise TypeError("Either 'question' or 'qna_id' (or 'qnaId') must be provided")
         except AttributeError:
             pass
