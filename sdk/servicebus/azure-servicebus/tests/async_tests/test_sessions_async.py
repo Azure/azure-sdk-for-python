@@ -1567,3 +1567,4 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
                     received_messages.append(message)
             assert len(received_messages) == 2
             assert all(msg.session_id == "mySessionId" for msg in received_messages)
+            assert all(msg.partition_key == "mySessionId" for msg in received_messages)
