@@ -22,10 +22,6 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 | [Product documentation][language_product_documentation]
 | [Samples][ta_samples]
 
-## _Disclaimer_
-
-_This package supports the following service API versions: 3.0, 3.1, 2022-05-01 and 2023-04-01 (default). Service API version 2025-05-15-preview and later are supported in package `azure-ai-textanalytics` 6.0.0b1+. Please refer this [source code][new_source_code] to check the new location of `azure-ai-textanalytics`._
-
 ## Getting started
 
 ### Prerequisites
@@ -68,11 +64,12 @@ pip install azure-ai-textanalytics
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.ai.textanalytics import TextAnalysisClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+key = os.environ["AZURE_TEXT_KEY"]
+
+text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
 ```
 
 <!-- END SNIPPET -->
@@ -84,6 +81,7 @@ This table shows the relationship between SDK versions and supported API version
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
+| 6.0.0b1 - Latest preview release | 3.0, 3.1, 2022-05-01, 2023-04-01, 2024-11-01, 2024-11-15-preview, 2025-05-15-preview (default) |
 | 5.3.X - Latest stable release | 3.0, 3.1, 2022-05-01, 2023-04-01 (default) |
 | 5.2.X  | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
@@ -122,11 +120,12 @@ to authenticate the client:
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.ai.textanalytics import TextAnalysisClient
 
-text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
+endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+key = os.environ["AZURE_TEXT_KEY"]
+
+text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
 ```
 
 <!-- END SNIPPET -->
@@ -158,13 +157,13 @@ Use the returned token credential to authenticate the client:
 
 ```python
 import os
-from azure.ai.textanalytics import TextAnalyticsClient
+from azure.ai.textanalytics import TextAnalysisClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 credential = DefaultAzureCredential()
 
-text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
+text_client = TextAnalysisClient(endpoint, credential=credential)
 ```
 
 <!-- END SNIPPET -->
@@ -276,33 +275,68 @@ The following section provides several code snippets covering some of the most c
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
-
-text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-
-documents = [
-    """I had the best day of my life. I decided to go sky-diving and it made me appreciate my whole life so much more.
-    I developed a deep-connection with my instructor as well, and I feel as if I've made a life-long friend in her.""",
-    """This was a waste of my time. All of the views on this drop are extremely boring, all I saw was grass. 0/10 would
-    not recommend to any divers, even first timers.""",
-    """This was pretty good! The sights were ok, and I had fun with my instructors! Can't complain too much about my experience""",
-    """I only have one word for my experience: WOW!!! I can't believe I have had such a wonderful skydiving company right
-    in my backyard this whole time! I will definitely be a repeat customer, and I want to take my grandmother skydiving too,
-    I know she'll love it!"""
-]
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    TextSentimentAnalysisInput,
+    AnalyzeTextSentimentResult,
+)
 
 
-result = text_analytics_client.analyze_sentiment(documents, show_opinion_mining=True)
-docs = [doc for doc in result if not doc.is_error]
+def sample_analyze_sentiment():
+    # settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-print("Let's visualize the sentiment of each of these documents")
-for idx, doc in enumerate(docs):
-    print(f"Document text: {documents[idx]}")
-    print(f"Overall sentiment: {doc.sentiment}")
+    client = TextAnalysisClient(endpoint, credential=credential)
+
+    # input
+    text_a = (
+        "The food and service were unacceptable, but the concierge were nice. "
+        "After talking to them about the quality of the food and the process to get room service "
+        "they refunded the money we spent at the restaurant and gave us a voucher for nearby restaurants."
+    )
+
+    body = TextSentimentAnalysisInput(
+        text_input=MultiLanguageTextInput(
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+        )
+    )
+
+    # Sync (non-LRO) call
+    result = client.analyze_text(body=body)
+
+    # Print results
+    if isinstance(result, AnalyzeTextSentimentResult) and result.results and result.results.documents:
+        for doc in result.results.documents:
+            print(f"\nDocument ID: {doc.id}")
+            print(f"Overall sentiment: {doc.sentiment}")
+            if doc.confidence_scores:
+                print("Confidence scores:")
+                print(f"  positive={doc.confidence_scores.positive}")
+                print(f"  neutral={doc.confidence_scores.neutral}")
+                print(f"  negative={doc.confidence_scores.negative}")
+
+            if doc.sentences:
+                print("\nSentence sentiments:")
+                for s in doc.sentences:
+                    print(f"  Text: {s.text}")
+                    print(f"  Sentiment: {s.sentiment}")
+                    if s.confidence_scores:
+                        print(
+                            "  Scores: "
+                            f"pos={s.confidence_scores.positive}, "
+                            f"neu={s.confidence_scores.neutral}, "
+                            f"neg={s.confidence_scores.negative}"
+                        )
+                    print(f"  Offset: {s.offset}, Length: {s.length}\n")
+            else:
+                print("No sentence-level results returned.")
+    else:
+        print("No documents in the response or unexpected result type.")
 ```
 
 <!-- END SNIPPET -->
@@ -319,40 +353,61 @@ Please refer to the service documentation for a conceptual discussion of [sentim
 
 ```python
 import os
-import typing
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    TextEntityRecognitionInput,
+    EntitiesActionContent,
+    AnalyzeTextEntitiesResult,
+)
 
-text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-reviews = [
-    """I work for Foo Company, and we hired Contoso for our annual founding ceremony. The food
-    was amazing and we all can't say enough good words about the quality and the level of service.""",
-    """We at the Foo Company re-hired Contoso after all of our past successes with the company.
-    Though the food was still great, I feel there has been a quality drop since their last time
-    catering for us. Is anyone else running into the same problem?""",
-    """Bar Company is over the moon about the service we received from Contoso, the best sliders ever!!!!"""
-]
 
-result = text_analytics_client.recognize_entities(reviews)
-result = [review for review in result if not review.is_error]
-organization_to_reviews: typing.Dict[str, typing.List[str]] = {}
+def sample_recognize_entities():
+    # settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-for idx, review in enumerate(result):
-    for entity in review.entities:
-        print(f"Entity '{entity.text}' has category '{entity.category}'")
-        if entity.category == 'Organization':
-            organization_to_reviews.setdefault(entity.text, [])
-            organization_to_reviews[entity.text].append(reviews[idx])
+    client = TextAnalysisClient(endpoint, credential=credential)
 
-for organization, reviews in organization_to_reviews.items():
-    print(
-        "\n\nOrganization '{}' has left us the following review(s): {}".format(
-            organization, "\n\n".join(reviews)
-        )
+    # input
+    text_a = (
+        "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
+        "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was "
+        "amazing. Everyone in my family liked the trail although it was too challenging for the less "
+        "athletic among us. Not necessarily recommended for small children. A hotel close to the trail "
+        "offers services for childcare in case you want that."
     )
+
+    body = TextEntityRecognitionInput(
+        text_input=MultiLanguageTextInput(
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+        ),
+        action_content=EntitiesActionContent(model_version="latest"),
+    )
+
+    result = client.analyze_text(body=body)
+
+    # Print results
+    if isinstance(result, AnalyzeTextEntitiesResult) and result.results and result.results.documents:
+        for doc in result.results.documents:
+            print(f"\nDocument ID: {doc.id}")
+            if doc.entities:
+                print("Entities:")
+                for entity in doc.entities:
+                    print(f"  Text: {entity.text}")
+                    print(f"  Category: {entity.category}")
+                    if entity.subcategory:
+                        print(f"  Subcategory: {entity.subcategory}")
+                    print(f"  Offset: {entity.offset}")
+                    print(f"  Length: {entity.length}")
+                    print(f"  Confidence score: {entity.confidence_score}\n")
+            else:
+                print("No entities found for this document.")
+    else:
+        print("No documents in the response or unexpected result type.")
 ```
 
 <!-- END SNIPPET -->
@@ -372,38 +427,69 @@ Roman god of war). Recognized entities are associated with URLs to a well-known 
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
-
-text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-documents = [
-    """
-    Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends,
-    Steve Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped
-    down as CEO of Microsoft, and was succeeded by Satya Nadella.
-    Microsoft originally moved its headquarters to Bellevue, Washington in January 1979, but is now
-    headquartered in Redmond.
-    """
-]
-
-result = text_analytics_client.recognize_linked_entities(documents)
-docs = [doc for doc in result if not doc.is_error]
-
-print(
-    "Let's map each entity to it's Wikipedia article. I also want to see how many times each "
-    "entity is mentioned in a document\n\n"
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    TextEntityLinkingInput,
+    EntityLinkingActionContent,
+    AnalyzeTextEntityLinkingResult,
 )
-entity_to_url = {}
-for doc in docs:
-    for entity in doc.entities:
-        print("Entity '{}' has been mentioned '{}' time(s)".format(
-            entity.name, len(entity.matches)
-        ))
-        if entity.data_source == "Wikipedia":
-            entity_to_url[entity.name] = entity.url
+
+
+def sample_recognize_linked_entities():
+    # settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
+
+    client = TextAnalysisClient(endpoint, credential=credential)
+
+    # input
+    text_a = (
+        "Microsoft was founded by Bill Gates with some friends he met at Harvard. One of his friends, Steve "
+        "Ballmer, eventually became CEO after Bill Gates as well. Steve Ballmer eventually stepped down as "
+        "CEO of Microsoft, and was succeeded by Satya Nadella. Microsoft originally moved its headquarters "
+        "to Bellevue, Washington in January 1979, but is now headquartered in Redmond"
+    )
+
+    body = TextEntityLinkingInput(
+        text_input=MultiLanguageTextInput(
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+        ),
+        action_content=EntityLinkingActionContent(model_version="latest"),
+    )
+
+    # Sync (non-LRO) call
+    result = client.analyze_text(body=body)
+
+    # Print results
+    if isinstance(result, AnalyzeTextEntityLinkingResult) and result.results and result.results.documents:
+        for doc in result.results.documents:
+            print(f"\nDocument ID: {doc.id}")
+            if not doc.entities:
+                print("No linked entities found for this document.")
+                continue
+
+            print("Linked Entities:")
+            for linked in doc.entities:
+                print(f"  Name: {linked.name}")
+                print(f"  Language: {linked.language}")
+                print(f"  Data source: {linked.data_source}")
+                print(f"  URL: {linked.url}")
+                print(f"  ID: {linked.id}")
+
+                if linked.matches:
+                    print("  Matches:")
+                    for match in linked.matches:
+                        print(f"    Text: {match.text}")
+                        print(f"    Confidence score: {match.confidence_score}")
+                        print(f"    Offset: {match.offset}")
+                        print(f"    Length: {match.length}")
+                print()
+    else:
+        print("No documents in the response or unexpected result type.")
 ```
 
 <!-- END SNIPPET -->
@@ -422,35 +508,59 @@ Social Security Numbers, bank account information, credit card numbers, and more
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
-
-text_analytics_client = TextAnalyticsClient(
-    endpoint=endpoint, credential=AzureKeyCredential(key)
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    TextPiiEntitiesRecognitionInput,
+    AnalyzeTextPiiResult,
 )
-documents = [
-    """Parker Doe has repaid all of their loans as of 2020-04-25.
-    Their SSN is 859-98-0987. To contact them, use their phone number
-    555-555-5555. They are originally from Brazil and have Brazilian CPF number 998.214.865-68"""
-]
 
-result = text_analytics_client.recognize_pii_entities(documents)
-docs = [doc for doc in result if not doc.is_error]
 
-print(
-    "Let's compare the original document with the documents after redaction. "
-    "I also want to comb through all of the entities that got redacted"
-)
-for idx, doc in enumerate(docs):
-    print(f"Document text: {documents[idx]}")
-    print(f"Redacted document text: {doc.redacted_text}")
-    for entity in doc.entities:
-        print("...Entity '{}' with category '{}' got redacted".format(
-            entity.text, entity.category
-        ))
+def sample_recognize_pii_entities():
+    # settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
+
+    client = TextAnalysisClient(endpoint, credential=credential)
+
+    # input
+    text_a = (
+        "Parker Doe has repaid all of their loans as of 2020-04-25. Their SSN is 859-98-0987. "
+        "To contact them, use their phone number 800-102-1100. They are originally from Brazil and "
+        "have document ID number 998.214.865-68."
+    )
+
+    body = TextPiiEntitiesRecognitionInput(
+        text_input=MultiLanguageTextInput(
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+        )
+    )
+
+    # Sync (non-LRO) call
+    result = client.analyze_text(body=body)
+
+    # Print results
+    if isinstance(result, AnalyzeTextPiiResult) and result.results and result.results.documents:
+        for doc in result.results.documents:
+            print(f"\nDocument ID: {doc.id}")
+            if doc.entities:
+                print("PII Entities:")
+                for entity in doc.entities:
+                    print(f"  Text: {entity.text}")
+                    print(f"  Category: {entity.category}")
+                    # subcategory may be optional
+                    if entity.subcategory:
+                        print(f"  Subcategory: {entity.subcategory}")
+                    print(f"  Offset: {entity.offset}")
+                    print(f"  Length: {entity.length}")
+                    print(f"  Confidence score: {entity.confidence_score}\n")
+            else:
+                print("No PII entities found for this document.")
+    else:
+        print("No documents in the response or unexpected result type.")
 ```
 
 <!-- END SNIPPET -->
@@ -469,36 +579,64 @@ Note: The Recognize PII Entities service is available in API version v3.1 and ne
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    TextKeyPhraseExtractionInput,
+    KeyPhraseActionContent,
+    AnalyzeTextKeyPhraseResult,
+)
 
-text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-articles = [
-    """
-    Washington, D.C. Autumn in DC is a uniquely beautiful season. The leaves fall from the trees
-    in a city chock-full of forests, leaving yellow leaves on the ground and a clearer view of the
-    blue sky above...
-    """,
-    """
-    Redmond, WA. In the past few days, Microsoft has decided to further postpone the start date of
-    its United States workers, due to the pandemic that rages with no end in sight...
-    """,
-    """
-    Redmond, WA. Employees at Microsoft can be excited about the new coffee shop that will open on campus
-    once workers no longer have to work remotely...
-    """
-]
 
-result = text_analytics_client.extract_key_phrases(articles)
-for idx, doc in enumerate(result):
-    if not doc.is_error:
-        print("Key phrases in article #{}: {}".format(
-            idx + 1,
-            ", ".join(doc.key_phrases)
-        ))
+def sample_extract_key_phrases():
+    # get settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
+
+    client = TextAnalysisClient(endpoint, credential=credential)
+
+    # Build input
+    text_a = (
+        "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
+        "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was "
+        "amazing. Everyone in my family liked the trail although it was too challenging for the less "
+        "athletic among us. Not necessarily recommended for small children. A hotel close to the trail "
+        "offers services for childcare in case you want that."
+    )
+
+    body = TextKeyPhraseExtractionInput(
+        text_input=MultiLanguageTextInput(
+            multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
+        ),
+        action_content=KeyPhraseActionContent(model_version="latest"),
+    )
+
+    result = client.analyze_text(body=body)
+
+    # Validate and print results
+    if not isinstance(result, AnalyzeTextKeyPhraseResult):
+        print("Unexpected result type.")
+        return
+
+    if result.results is None:
+        print("No results returned.")
+        return
+
+    if result.results.documents is None or len(result.results.documents) == 0:
+        print("No documents in the response.")
+        return
+
+    for doc in result.results.documents:
+        print(f"\nDocument ID: {doc.id}")
+        if doc.key_phrases:
+            print("Key Phrases:")
+            for phrase in doc.key_phrases:
+                print(f"  - {phrase}")
+        else:
+            print("No key phrases found for this document.")
 ```
 
 <!-- END SNIPPET -->
@@ -515,33 +653,56 @@ Please refer to the service documentation for a conceptual discussion of [key ph
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    TextLanguageDetectionInput,
+    LanguageDetectionTextInput,
+    LanguageInput,
+    AnalyzeTextLanguageDetectionResult,
+)
 
-text_analytics_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-documents = [
-    """
-    The concierge Paulette was extremely helpful. Sadly when we arrived the elevator was broken, but with Paulette's help we barely noticed this inconvenience.
-    She arranged for our baggage to be brought up to our room with no extra charge and gave us a free meal to refurbish all of the calories we lost from
-    walking up the stairs :). Can't say enough good things about my experience!
-    """,
-    """
-    最近由于工作压力太大，我们决定去富酒店度假。那儿的温泉实在太舒服了，我跟我丈夫都完全恢复了工作前的青春精神！加油！
-    """
-]
 
-result = text_analytics_client.detect_language(documents)
-reviewed_docs = [doc for doc in result if not doc.is_error]
+def sample_detect_language():
+    # get settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-print("Let's see what language each review is in!")
+    client = TextAnalysisClient(endpoint, credential=credential)
 
-for idx, doc in enumerate(reviewed_docs):
-    print("Review #{} is in '{}', which has ISO639-1 name '{}'\n".format(
-        idx, doc.primary_language.name, doc.primary_language.iso6391_name
-    ))
+    # Build input
+    text_a = (
+        "Sentences in different languages."
+    )
+
+    body = TextLanguageDetectionInput(
+        text_input=LanguageDetectionTextInput(
+            language_inputs=[LanguageInput(id="A", text=text_a)]
+        )
+    )
+
+    # Sync (non-LRO) call
+    result = client.analyze_text(body=body)
+
+    # Validate and print results
+    if not isinstance(result, AnalyzeTextLanguageDetectionResult):
+        print("Unexpected result type.")
+        return
+
+    if not result.results or not result.results.documents:
+        print("No documents in the response.")
+        return
+
+    for doc in result.results.documents:
+
+        print(f"\nDocument ID: {doc.id}")
+        if doc.detected_language:
+            dl = doc.detected_language
+            print(f"Detected language: {dl.name} ({dl.iso6391_name})")
+            print(f"Confidence score: {dl.confidence_score}")
+        else:
+            print("No detected language returned for this document.")
 ```
 
 <!-- END SNIPPET -->
@@ -559,64 +720,113 @@ and [language and regional support][language_and_regional_support].
 
 ```python
 import os
-import typing
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import TextAnalyticsClient, HealthcareEntityRelation
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
-
-text_analytics_client = TextAnalyticsClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(key),
+from azure.identity import DefaultAzureCredential
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    AnalyzeTextOperationAction,
+    HealthcareLROTask,
+    HealthcareLROResult,
 )
 
-documents = [
-    """
-    Patient needs to take 100 mg of ibuprofen, and 3 mg of potassium. Also needs to take
-    10 mg of Zocor.
-    """,
-    """
-    Patient needs to take 50 mg of ibuprofen, and 2 mg of Coumadin.
-    """
-]
 
-poller = text_analytics_client.begin_analyze_healthcare_entities(documents)
-result = poller.result()
+def sample_analyze_healthcare_entities():
+    # get settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-docs = [doc for doc in result if not doc.is_error]
+    client = TextAnalysisClient(endpoint, credential=credential)
 
-print("Let's first visualize the outputted healthcare result:")
-for doc in docs:
-    for entity in doc.entities:
-        print(f"Entity: {entity.text}")
-        print(f"...Normalized Text: {entity.normalized_text}")
-        print(f"...Category: {entity.category}")
-        print(f"...Subcategory: {entity.subcategory}")
-        print(f"...Offset: {entity.offset}")
-        print(f"...Confidence score: {entity.confidence_score}")
-        if entity.data_sources is not None:
-            print("...Data Sources:")
-            for data_source in entity.data_sources:
-                print(f"......Entity ID: {data_source.entity_id}")
-                print(f"......Name: {data_source.name}")
-        if entity.assertion is not None:
-            print("...Assertion:")
-            print(f"......Conditionality: {entity.assertion.conditionality}")
-            print(f"......Certainty: {entity.assertion.certainty}")
-            print(f"......Association: {entity.assertion.association}")
-    for relation in doc.entity_relations:
-        print(f"Relation of type: {relation.relation_type} has the following roles")
-        for role in relation.roles:
-            print(f"...Role '{role.name}' with entity '{role.entity.text}'")
-    print("------------------------------------------")
+    # Build input
+    text_a = "Prescribed 100mg ibuprofen, taken twice daily."
 
-print("Now, let's get all of medication dosage relations from the documents")
-dosage_of_medication_relations = [
-    entity_relation
-    for doc in docs
-    for entity_relation in doc.entity_relations if entity_relation.relation_type == HealthcareEntityRelation.DOSAGE_OF_MEDICATION
-]
+    text_input = MultiLanguageTextInput(
+        multi_language_inputs=[
+            MultiLanguageInput(id="A", text=text_a, language="en"),
+        ]
+    )
+
+    actions: list[AnalyzeTextOperationAction] = [
+        HealthcareLROTask(
+            name="Healthcare Operation",
+        ),
+    ]
+
+    # Start long-running operation (sync) – poller returns ItemPaged[TextActions]
+    poller = client.begin_analyze_text_job(
+        text_input=text_input,
+        actions=actions,
+    )
+
+    # Operation metadata (pre-final)
+    print(f"Operation ID: {poller.details.get('operation_id')}")
+
+    # Wait for completion and get pageable of TextActions
+    paged_actions = poller.result()
+
+    # Final-state metadata
+    d = poller.details
+    print(f"Job ID: {d.get('job_id')}")
+    print(f"Status: {d.get('status')}")
+    print(f"Created: {d.get('created_date_time')}")
+    print(f"Last Updated: {d.get('last_updated_date_time')}")
+    if d.get("expiration_date_time"):
+        print(f"Expires: {d.get('expiration_date_time')}")
+    if d.get("display_name"):
+        print(f"Display Name: {d.get('display_name')}")
+
+    # Iterate results (sync pageable)
+    for actions_page in paged_actions:
+        print(
+            f"Completed: {actions_page.completed}, "
+            f"In Progress: {actions_page.in_progress}, "
+            f"Failed: {actions_page.failed}, "
+            f"Total: {actions_page.total}"
+        )
+
+        for op_result in actions_page.items_property or []:
+            if isinstance(op_result, HealthcareLROResult):
+                print(f"\nAction Name: {op_result.task_name}")
+                print(f"Action Status: {op_result.status}")
+                print(f"Kind: {op_result.kind}")
+
+                hc_result = op_result.results
+                for doc in (hc_result.documents or []):
+                    print(f"\nDocument ID: {doc.id}")
+
+                    # Entities
+                    print("Entities:")
+                    for entity in (doc.entities or []):
+                        print(f"  Text: {entity.text}")
+                        print(f"  Category: {entity.category}")
+                        print(f"  Offset: {entity.offset}")
+                        print(f"  Length: {entity.length}")
+                        print(f"  Confidence score: {entity.confidence_score}")
+                        if entity.links:
+                            for link in entity.links:
+                                print(f"    Link ID: {link.id}")
+                                print(f"    Data source: {link.data_source}")
+                        print()
+
+                    # Relations
+                    print("Relations:")
+                    for relation in (doc.relations or []):
+                        print(f"  Relation type: {relation.relation_type}")
+                        for rel_entity in (relation.entities or []):
+                            print(f"    Role: {rel_entity.role}")
+                            print(f"    Ref: {rel_entity.ref}")
+                        print()
+            else:
+                # Other action kinds, if present
+                try:
+                    print(
+                        f"\n[Non-healthcare action] name={op_result.task_name}, "
+                        f"status={op_result.status}, kind={op_result.kind}"
+                    )
+                except Exception:
+                    print("\n[Non-healthcare action present]")
 ```
 
 <!-- END SNIPPET -->
@@ -643,103 +853,110 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 
 ```python
 import os
+
+from azure.identity import DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.textanalytics import (
-    TextAnalyticsClient,
-    RecognizeEntitiesAction,
-    RecognizeLinkedEntitiesAction,
-    RecognizePiiEntitiesAction,
-    ExtractKeyPhrasesAction,
-    AnalyzeSentimentAction,
+from azure.ai.textanalytics import TextAnalysisClient
+from azure.ai.textanalytics.models import (
+    MultiLanguageTextInput,
+    MultiLanguageInput,
+    EntitiesLROTask,
+    KeyPhraseLROTask,
+    EntityRecognitionOperationResult,
+    KeyPhraseExtractionOperationResult,
+    EntityTag,
 )
 
-endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
-key = os.environ["AZURE_LANGUAGE_KEY"]
 
-text_analytics_client = TextAnalyticsClient(
-    endpoint=endpoint,
-    credential=AzureKeyCredential(key),
-)
+def sample_analyze():
+    # get settings
+    endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
+    credential = DefaultAzureCredential()
 
-documents = [
-    'We went to Contoso Steakhouse located at midtown NYC last week for a dinner party, and we adore the spot! '
-    'They provide marvelous food and they have a great menu. The chief cook happens to be the owner (I think his name is John Doe) '
-    'and he is super nice, coming out of the kitchen and greeted us all.'
-    ,
+    client = TextAnalysisClient(endpoint, credential=credential)
 
-    'We enjoyed very much dining in the place! '
-    'The Sirloin steak I ordered was tender and juicy, and the place was impeccably clean. You can even pre-order from their '
-    'online menu at www.contososteakhouse.com, call 312-555-0176 or send email to order@contososteakhouse.com! '
-    'The only complaint I have is the food didn\'t come fast enough. Overall I highly recommend it!'
-]
+    text_a = (
+        "We love this trail and make the trip every year. The views are breathtaking and well worth the hike!"
+        " Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was"
+        " amazing. Everyone in my family liked the trail although it was too challenging for the less"
+        " athletic among us. Not necessarily recommended for small children. A hotel close to the trail"
+        " offers services for childcare in case you want that."
+    )
 
-poller = text_analytics_client.begin_analyze_actions(
-    documents,
-    display_name="Sample Text Analysis",
-    actions=[
-        RecognizeEntitiesAction(),
-        RecognizePiiEntitiesAction(),
-        ExtractKeyPhrasesAction(),
-        RecognizeLinkedEntitiesAction(),
-        AnalyzeSentimentAction(),
-    ],
-)
+    text_b = (
+        "Sentences in different languages."
+    )
 
-document_results = poller.result()
-for doc, action_results in zip(documents, document_results):
-    print(f"\nDocument text: {doc}")
-    for result in action_results:
-        if result.kind == "EntityRecognition":
-            print("...Results of Recognize Entities Action:")
-            for entity in result.entities:
-                print(f"......Entity: {entity.text}")
-                print(f".........Category: {entity.category}")
-                print(f".........Confidence Score: {entity.confidence_score}")
-                print(f".........Offset: {entity.offset}")
+    text_c = (
+        "That was the best day of my life! We went on a 4 day trip where we stayed at Hotel Foo. They had"
+        " great amenities that included an indoor pool, a spa, and a bar. The spa offered couples massages"
+        " which were really good. The spa was clean and felt very peaceful. Overall the whole experience was"
+        " great. We will definitely come back."
+    )
 
-        elif result.kind == "PiiEntityRecognition":
-            print("...Results of Recognize PII Entities action:")
-            for pii_entity in result.entities:
-                print(f"......Entity: {pii_entity.text}")
-                print(f".........Category: {pii_entity.category}")
-                print(f".........Confidence Score: {pii_entity.confidence_score}")
+    text_d = ""
 
-        elif result.kind == "KeyPhraseExtraction":
-            print("...Results of Extract Key Phrases action:")
-            print(f"......Key Phrases: {result.key_phrases}")
+    # Prepare documents (you can batch multiple docs)
+    text_input = MultiLanguageTextInput(
+        multi_language_inputs=[
+            MultiLanguageInput(id="A", text=text_a, language="en"),
+            MultiLanguageInput(id="B", text=text_b, language="es"),
+            MultiLanguageInput(id="C", text=text_c, language="en"),
+            MultiLanguageInput(id="D", text=text_d),
+        ]
+    )
 
-        elif result.kind == "EntityLinking":
-            print("...Results of Recognize Linked Entities action:")
-            for linked_entity in result.entities:
-                print(f"......Entity name: {linked_entity.name}")
-                print(f".........Data source: {linked_entity.data_source}")
-                print(f".........Data source language: {linked_entity.language}")
-                print(
-                    f".........Data source entity ID: {linked_entity.data_source_entity_id}"
-                )
-                print(f".........Data source URL: {linked_entity.url}")
-                print(".........Document matches:")
-                for match in linked_entity.matches:
-                    print(f"............Match text: {match.text}")
-                    print(f"............Confidence Score: {match.confidence_score}")
-                    print(f"............Offset: {match.offset}")
-                    print(f"............Length: {match.length}")
+    actions = [
+        EntitiesLROTask(name="EntitiesOperationActionSample"),
+        KeyPhraseLROTask(name="KeyPhraseOperationActionSample"),
+    ]
 
-        elif result.kind == "SentimentAnalysis":
-            print("...Results of Analyze Sentiment action:")
-            print(f"......Overall sentiment: {result.sentiment}")
-            print(
-                f"......Scores: positive={result.confidence_scores.positive}; \
-                neutral={result.confidence_scores.neutral}; \
-                negative={result.confidence_scores.negative} \n"
-            )
+    # Submit a multi-action analysis job (LRO)
+    poller = client.begin_analyze_text_job(text_input=text_input, actions=actions)
+    paged_actions = poller.result()
 
-        elif result.is_error is True:
-            print(
-                f"...Is an error with code '{result.error.code}' and message '{result.error.message}'"
-            )
+    # Iterate through each action's results
+    for action_result in paged_actions:
+        print()  # spacing between action blocks
 
-    print("------------------------------------------")
+        # --- Entities ---
+        if isinstance(action_result, EntityRecognitionOperationResult):
+            print("=== Entity Recognition Results ===")
+            for ent_doc in action_result.results.documents:
+                print(f'Result for document with Id = "{ent_doc.id}":')
+                print(f"  Recognized {len(ent_doc.entities)} entities:")
+                for entity in ent_doc.entities:
+                    print(f"    Text: {entity.text}")
+                    print(f"    Offset: {entity.offset}")
+                    print(f"    Length: {entity.length}")
+                    print(f"    Category: {entity.category}")
+                    if hasattr(entity, "type") and entity.type is not None:
+                        print(f"    Type: {entity.type}")
+                    if hasattr(entity, "subcategory") and entity.subcategory:
+                        print(f"    Subcategory: {entity.subcategory}")
+                    if hasattr(entity, "tags") and entity.tags:
+                        print("    Tags:")
+                        for tag in entity.tags:
+                            if isinstance(tag, EntityTag):
+                                print(f"        TagName: {tag.name}")
+                                print(f"        TagConfidenceScore: {tag.confidence_score}")
+                    print(f"    Confidence score: {entity.confidence_score}")
+                    print()
+            for err in action_result.results.errors:
+                print(f'  Error in document: {err.id}!')
+                print(f"  Document error: {err.error}")
+
+        # --- Key Phrases ---
+        elif isinstance(action_result, KeyPhraseExtractionOperationResult):
+            print("=== Key Phrase Extraction Results ===")
+            for kp_doc in action_result.results.documents:
+                print(f'Result for document with Id = "{kp_doc.id}":')
+                for kp in kp_doc.key_phrases:
+                    print(f"    {kp}")
+                print()
+            for err in action_result.results.errors:
+                print(f'  Error in document: {err.id}!')
+                print(f"  Document error: {err.error}")
 ```
 
 <!-- END SNIPPET -->
@@ -825,10 +1042,6 @@ Common scenarios
 - Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
 - Abstractive text summarization: [sample_abstract_summary.py][abstract_summary_sample] ([async version][abstract_summary_sample_async])
 
-Advanced scenarios
-
-- Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
-
 ### Additional documentation
 
 For more extensive documentation on Azure Cognitive Service for Language, see the [Language Service documentation][language_product_documentation] on learn.microsoft.com.
@@ -843,11 +1056,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
-[new_source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics
 [ta_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [ta_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs
-[ta_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples
+[ta_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples
 [language_product_documentation]: https://learn.microsoft.com/azure/cognitive-services/language-service
 [azure_subscription]: https://azure.microsoft.com/free/
 [ta_or_cs_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
@@ -901,37 +1113,35 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
 [python_logging]: https://docs.python.org/3/library/logging.html
-[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_authentication.py
-[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
-[detect_language_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_detect_language.py
-[detect_language_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
-[analyze_sentiment_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
-[analyze_sentiment_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
-[extract_key_phrases_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
-[extract_key_phrases_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
-[recognize_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entities.py
-[recognize_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
-[recognize_linked_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
-[recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
-[recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
-[recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
-[analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
-[analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
-[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_actions.py
-[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
-[opinion_mining_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_sentiment_with_opinion_mining.py
-[opinion_mining_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_with_opinion_mining_async.py
-[recognize_custom_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_custom_entities.py
-[recognize_custom_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_custom_entities_async.py
-[single_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_single_label_classify.py
-[single_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_single_label_classify_async.py
-[multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_label_classify.py
-[multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
-[healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
-[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
-[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
-[abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstract_summary.py
-[abstract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstract_summary_async.py
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_authentication.py
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_authentication_async.py
+[detect_language_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_detect_language.py
+[detect_language_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_detect_language_async.py
+[analyze_sentiment_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_sentiment.py
+[analyze_sentiment_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_sentiment_async.py
+[extract_key_phrases_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_extract_key_phrases.py
+[extract_key_phrases_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_extract_key_phrases_async.py
+[recognize_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_entities.py
+[recognize_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_entities_async.py
+[recognize_linked_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_linked_entities.py
+[recognize_linked_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_linked_entities_async.py
+[recognize_pii_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_pii_entities.py
+[recognize_pii_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_pii_entities_async.py
+[analyze_healthcare_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_entities.py
+[analyze_healthcare_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_entities_async.py
+[analyze_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_actions.py
+[analyze_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_analyze_actions_async.py
+[recognize_custom_entities_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_recognize_custom_entities.py
+[recognize_custom_entities_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_recognize_custom_entities_async.py
+[single_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_single_label_classify.py
+[single_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_single_label_classify_async.py
+[multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_multi_label_classify.py
+[multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
+[healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
+[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_extract_summary.py
+[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
+[abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/sample_abstract_summary.py
+[abstract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cognitivelanguage/azure-ai-textanalytics/samples/async_samples/sample_abstract_summary_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
