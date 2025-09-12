@@ -20,7 +20,8 @@
         "ollama",
         "prompty",
 		"Likert",
-        "isna"
+        "isna",
+        "dtype"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",

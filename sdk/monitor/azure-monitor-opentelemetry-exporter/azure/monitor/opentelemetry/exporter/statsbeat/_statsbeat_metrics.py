@@ -9,6 +9,7 @@ import sys
 import threading
 from typing import Any, Dict, Optional, Iterable, List
 
+# mypy: disable-error-code="import-untyped"
 import requests  # pylint: disable=networking-import-outside-azure-core-transport
 
 from opentelemetry.metrics import CallbackOptions, Observation

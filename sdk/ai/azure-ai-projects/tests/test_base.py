@@ -10,6 +10,7 @@ from typing import Optional
 from azure.ai.projects.models import (
     Connection,
     ConnectionType,
+    CustomCredential,
     CredentialType,
     ApiKeyCredentials,
     Deployment,
@@ -41,8 +42,8 @@ class TestBase(AzureRecordedTestCase):
     }
 
     test_connections_params = {
-        "connection_name": "connection1",
-        "connection_type": ConnectionType.AZURE_OPEN_AI,
+        "connection_name": "custom_keys_connection",
+        "connection_type": ConnectionType.CUSTOM,
     }
 
     test_deployments_params = {
@@ -117,10 +118,15 @@ class TestBase(AzureRecordedTestCase):
         if expected_is_default is not None:
             assert connection.is_default == expected_is_default
 
-        if include_credentials:
-            if type(connection.credentials) == ApiKeyCredentials:
-                assert connection.credentials.type == CredentialType.API_KEY
+        if isinstance(connection.credentials, ApiKeyCredentials):
+            assert connection.credentials.type == CredentialType.API_KEY
+            if include_credentials:
                 assert connection.credentials.api_key is not None
+        elif isinstance(connection.credentials, CustomCredential):
+            assert connection.credentials.type == CredentialType.CUSTOM
+            if include_credentials:
+                assert TestBase.is_valid_dict(connection.credentials.credential_keys)
+
 
     @classmethod
     def validate_red_team_response(cls, response, expected_attack_strategies: int = -1, expected_risk_categories: int = -1):
