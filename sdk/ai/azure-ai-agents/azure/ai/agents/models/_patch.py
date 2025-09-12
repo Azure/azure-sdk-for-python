@@ -1684,6 +1684,16 @@ class BaseToolSet(ABC):
         self._tools.append(tool)
 
     @overload
+    def remove(self, tool_type: Type[Tool]) -> None:
+        """Remove a tool by name from the toolset.
+
+        :param tool_type: The tool class to target.
+        :type tool_type: Type[Tool]
+
+        """
+        ...
+
+    @overload
     def remove(self, tool_type: Type[OpenApiTool], *, name: str) -> None:
         """
         Remove a specific API definition from an OpenApiTool by name.
@@ -1697,19 +1707,6 @@ class BaseToolSet(ABC):
         ...
 
     @overload
-    def remove(self, tool_type: Type[OpenApiTool]) -> None:
-        """
-        Remove the OpenApiTool from the toolset.
-
-        If multiple definitions exist within the OpenApiTool, the entire tool is removed.
-
-        :param tool_type: The tool class to target. Must be OpenApiTool.
-        :type tool_type: Type[OpenApiTool]
-        :raises ValueError: If no OpenApiTool is found in the toolset.
-        """
-        ...
-
-    @overload
     def remove(self, tool_type: Type[McpTool], *, server_label: str) -> None:
         """
         Remove a specific McpTool from the toolset by its server label.
@@ -1719,27 +1716,6 @@ class BaseToolSet(ABC):
         :keyword server_label: The unique server label identifying the MCP tool to remove.
         :paramtype server_label: str
         :raises ValueError: If no McpTool with the given server label is found.
-        """
-        ...
-
-    @overload
-    def remove(self, tool_type: Type[McpTool]) -> None:
-        """
-        Remove all McpTool instances from the toolset.
-
-        :param tool_type: The tool class to target. Must be McpTool.
-        :type tool_type: Type[McpTool]
-        :raises ValueError: If there are no McpTool instances in the toolset.
-        """
-        ...
-
-    @overload
-    def remove(self, tool_type: Type[Tool]) -> None:
-        """Remove a tool by name from the toolset.
-
-        :param tool_type: The tool class to target.
-        :type tool_type: Type[Tool]
-
         """
         ...
 
