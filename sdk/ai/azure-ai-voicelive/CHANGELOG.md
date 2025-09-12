@@ -4,10 +4,13 @@
 
 ### Features Added
 
-- Phrase list
+- Phrase list.
 
 ### Breaking Changes
-- Deleted `custom_model` and `enabled` in `AudioInputTranscriptionSettings`
+
+- Removed `custom_model` and `enabled` from `AudioInputTranscriptionSettings`.
+  - `custom_model` → Use `customSpeech` key–value settings instead.
+  - `enabled` → Transcription is enabled by providing `AudioInputTranscriptionSettings` (or by specifying a `model`). Remove this flag.
 
 ## 1.0.0b2 (2025-09-10)
 
@@ -16,6 +19,7 @@
 - Async function call
 
 ### Bugs Fixed
+
 - Fixed function calling: ensure `FunctionCallOutputItem.output` is properly serialized as a JSON string before sending to the service.
 
 ## 1.0.0b1 (2025-08-28)
