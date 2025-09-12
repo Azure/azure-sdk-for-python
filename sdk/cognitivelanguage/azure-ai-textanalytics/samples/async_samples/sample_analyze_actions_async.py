@@ -45,7 +45,7 @@ from azure.ai.textanalytics.models import (
 
 
 async def sample_analyze_actions_async():
-     # get settings
+    # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
 
@@ -115,7 +115,7 @@ async def sample_analyze_actions_async():
                         print(f"    Confidence score: {entity.confidence_score}")
                         print()
                 for err in action_result.results.errors:
-                    print(f'  Error in document: {err.id}!')
+                    print(f"  Error in document: {err.id}!")
                     print(f"  Document error: {err.error}")
 
             # --- Key Phrases ---
@@ -127,8 +127,9 @@ async def sample_analyze_actions_async():
                         print(f"    {kp}")
                     print()
                 for err in action_result.results.errors:
-                    print(f'  Error in document: {err.id}!')
+                    print(f"  Error in document: {err.id}!")
                     print(f"  Document error: {err.error}")
+
 
 # [END analyze_async]
 

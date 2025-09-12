@@ -38,7 +38,9 @@ class TestConversationsCancelTrainingAsync(TestConversationsAsync):
 
             result = await poller.result()  # TrainingJobResult
 
-            assert result.training_status.status == "cancelled", f"Cancellation failed with status: {result.training_status.status}"
+            assert (
+                result.training_status.status == "cancelled"
+            ), f"Cancellation failed with status: {result.training_status.status}"
 
             print(f"Model Label: {result.model_label}")
             print(f"Training Config Version: {result.training_config_version}")

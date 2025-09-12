@@ -8,7 +8,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -52,9 +52,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models._models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models._models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models._models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models._models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -206,7 +206,7 @@ class Metric(_Model):
     """The unit of the metric. Required. Known values are: \"Count\", \"Bytes\", \"Seconds\",
      \"CountPerSecond\", \"BytesPerSecond\", \"Percent\", \"MilliSeconds\", \"ByteSeconds\",
      \"Unspecified\", \"Cores\", \"MilliCores\", \"NanoCores\", and \"BitsPerSecond\"."""
-    timeseries: List["_models._models.TimeSeriesElement"] = rest_field(
+    timeseries: list["_models._models.TimeSeriesElement"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The time series returned when a data query is performed. Required."""
@@ -219,7 +219,7 @@ class Metric(_Model):
         type: str,
         name: "_models._models.LocalizableString",
         unit: Union[str, "_models._enums.MetricUnit"],
-        timeseries: List["_models._models.TimeSeriesElement"],
+        timeseries: list["_models._models.TimeSeriesElement"],
         display_description: Optional[str] = None,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
@@ -244,7 +244,7 @@ class MetricResultsResponse(_Model):
      list[~azure.monitor.querymetrics.models._models.MetricResultsResponseValuesItem]
     """
 
-    values_property: Optional[List["_models._models.MetricResultsResponseValuesItem"]] = rest_field(
+    values_property: Optional[list["_models._models.MetricResultsResponseValuesItem"]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of metric data responses per resource, per metric."""
@@ -253,7 +253,7 @@ class MetricResultsResponse(_Model):
     def __init__(
         self,
         *,
-        values_property: Optional[List["_models._models.MetricResultsResponseValuesItem"]] = None,
+        values_property: Optional[list["_models._models.MetricResultsResponseValuesItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -307,7 +307,7 @@ class MetricResultsResponseValuesItem(_Model):
     """The region of the resource been queried for metrics."""
     resourceid: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The resource that has been queried for metrics."""
-    value: List["_models._models.Metric"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models._models.Metric"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The value of the collection. Required."""
 
     @overload
@@ -316,7 +316,7 @@ class MetricResultsResponseValuesItem(_Model):
         *,
         starttime: str,
         endtime: str,
-        value: List["_models._models.Metric"],
+        value: list["_models._models.Metric"],
         interval: Optional[str] = None,
         namespace: Optional[str] = None,
         resourceregion: Optional[str] = None,
@@ -398,14 +398,14 @@ class ResourceIdList(_Model):
     :vartype resourceids: list[str]
     """
 
-    resourceids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    resourceids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of resource IDs to query metrics for."""
 
     @overload
     def __init__(
         self,
         *,
-        resourceids: Optional[List[str]] = None,
+        resourceids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -430,11 +430,11 @@ class TimeSeriesElement(_Model):
     :vartype data: list[~azure.monitor.querymetrics.models._models.MetricValue]
     """
 
-    metadatavalues: Optional[List["_models._models.MetadataValue"]] = rest_field(
+    metadatavalues: Optional[list["_models._models.MetadataValue"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The metadata values returned if $filter was specified in the call."""
-    data: Optional[List["_models._models.MetricValue"]] = rest_field(
+    data: Optional[list["_models._models.MetricValue"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """An array of data points representing the metric values.  This is only returned
@@ -444,8 +444,8 @@ class TimeSeriesElement(_Model):
     def __init__(
         self,
         *,
-        metadatavalues: Optional[List["_models._models.MetadataValue"]] = None,
-        data: Optional[List["_models._models.MetricValue"]] = None,
+        metadatavalues: Optional[list["_models._models.MetadataValue"]] = None,
+        data: Optional[list["_models._models.MetricValue"]] = None,
     ) -> None: ...
 
     @overload

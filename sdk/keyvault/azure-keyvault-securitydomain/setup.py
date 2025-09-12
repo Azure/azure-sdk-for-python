@@ -14,9 +14,10 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-keyvault-securitydomain"
 PACKAGE_PPRINT_NAME = "Azure Keyvault Securitydomain"
+PACKAGE_NAMESPACE = "clientcustomizations"
 
-# a-b-c => a/b/c
-package_folder_path = PACKAGE_NAME.replace("-", "/")
+# a.b.c => a/b/c
+package_folder_path = PACKAGE_NAMESPACE.replace(".", "/")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
@@ -53,18 +54,15 @@ setup(
     packages=find_packages(
         exclude=[
             "tests",
-            # Exclude packages that will be covered by PEP420 or nspkg
-            "azure",
-            "azure.keyvault",
         ]
     ),
     include_package_data=True,
     package_data={
-        "azure.keyvault.securitydomain": ["py.typed"],
+        "clientcustomizations": ["py.typed"],
     },
     install_requires=[
         "isodate>=0.6.1",
-        "azure-core>=1.31.0",
+        "azure-core>=1.35.0",
         "typing-extensions>=4.6.0",
     ],
     python_requires=">=3.9",

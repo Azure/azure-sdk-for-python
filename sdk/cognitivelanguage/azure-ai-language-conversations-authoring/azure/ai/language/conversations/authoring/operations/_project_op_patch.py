@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
 
 from azure.core.paging import ItemPaged
@@ -47,9 +47,7 @@ from ._operations import ProjectOperations as ProjectOperationsGenerated
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ProjectOperations(ProjectOperationsGenerated):
@@ -223,7 +221,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_assign_deployment_resources(
-        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Assign new Azure resources to a project to allow deploying new deployments to them.
         This API is available only via AAD authentication and not supported via subscription key authentication.
@@ -291,7 +293,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_swap_deployments(
-        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Swaps two existing deployments with each other.
 
@@ -359,7 +365,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_unassign_deployment_resources(
-        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -377,13 +387,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace
     def begin_cancel_training_job(  # pylint: disable=function-redefined
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> LROPoller[TrainingJobResult]:
         """
         Cancel a training job without requiring project_name explicitly.
-        
+
         :param job_id: The identifier of the training job to cancel. Required.
         :type job_id: str
         :return: An instance of LROPoller that returns TrainingJobResult.
@@ -452,7 +460,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         # 6) Return the poller
         return LROPoller[TrainingJobResult](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,  # type: ignore
         )

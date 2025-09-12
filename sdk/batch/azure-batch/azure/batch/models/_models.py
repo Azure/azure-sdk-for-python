@@ -9,16 +9,15 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from ....client._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AffinityInfo(_model_base.Model):
+class AffinityInfo(_Model):
     """A locality hint that can be used by the Batch service to select a Compute Node
     on which to start a Task.
 
@@ -54,7 +53,7 @@ class AffinityInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthenticationTokenSettings(_model_base.Model):
+class AuthenticationTokenSettings(_Model):
     """The settings for an authentication token that the Task can use to perform Batch
     service operations.
 
@@ -65,7 +64,7 @@ class AuthenticationTokenSettings(_model_base.Model):
     :vartype access: list[str or ~azure.batch.models.AccessScope]
     """
 
-    access: Optional[List[Union[str, "_models.AccessScope"]]] = rest_field(
+    access: Optional[list[Union[str, "_models.AccessScope"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The Batch resources to which the token grants access. The authentication token grants access to
@@ -77,7 +76,7 @@ class AuthenticationTokenSettings(_model_base.Model):
     def __init__(
         self,
         *,
-        access: Optional[List[Union[str, "_models.AccessScope"]]] = None,
+        access: Optional[list[Union[str, "_models.AccessScope"]]] = None,
     ) -> None: ...
 
     @overload
@@ -91,7 +90,7 @@ class AuthenticationTokenSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomaticOsUpgradePolicy(_model_base.Model):
+class AutomaticOsUpgradePolicy(_Model):
     """The configuration parameters used for performing automatic OS upgrade.
 
     :ivar disable_automatic_rollback: Whether OS image rollback feature should be disabled.
@@ -154,7 +153,7 @@ class AutomaticOsUpgradePolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRun(_model_base.Model):
+class AutoScaleRun(_Model):
     """The results and errors from an execution of a Pool autoscale formula.
 
     :ivar timestamp: The time at which the autoscale formula was last evaluated. Required.
@@ -202,7 +201,7 @@ class AutoScaleRun(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleRunError(_model_base.Model):
+class AutoScaleRunError(_Model):
     """An error that occurred when executing or evaluating a Pool autoscale formula.
 
     :ivar code: An identifier for the autoscale error. Codes are invariant and are intended to be
@@ -221,7 +220,7 @@ class AutoScaleRunError(_model_base.Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the autoscale error, intended to be suitable for display in a user
      interface."""
-    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
+    values_property: Optional[list["_models.NameValuePair"]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional error details related to the autoscale error."""
@@ -232,7 +231,7 @@ class AutoScaleRunError(_model_base.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        values_property: Optional[List["_models.NameValuePair"]] = None,
+        values_property: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -246,7 +245,7 @@ class AutoScaleRunError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoUserSpecification(_model_base.Model):
+class AutoUserSpecification(_Model):
     """Specifies the options for the auto user that runs an Azure Batch Task.
 
     :ivar scope: The scope for the auto user. The default value is pool. If the pool is running
@@ -293,7 +292,7 @@ class AutoUserSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobFileSystemConfiguration(_model_base.Model):
+class AzureBlobFileSystemConfiguration(_Model):
     """Information used to connect to an Azure Storage Container using Blobfuse.
 
     :ivar account_name: The Azure Storage Account name. Required.
@@ -372,7 +371,7 @@ class AzureBlobFileSystemConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureFileShareConfiguration(_model_base.Model):
+class AzureFileShareConfiguration(_Model):
     """Information used to connect to an Azure Fileshare.
 
     :ivar account_name: The Azure Storage account name. Required.
@@ -431,7 +430,7 @@ class AzureFileShareConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchApplication(_model_base.Model):
+class BatchApplication(_Model):
     """Contains information about an application in an Azure Batch Account.
 
     :ivar id: A string that uniquely identifies the application within the Account. Required.
@@ -446,7 +445,7 @@ class BatchApplication(_model_base.Model):
     """A string that uniquely identifies the application within the Account. Required."""
     display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
     """The display name for the application. Required."""
-    versions: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    versions: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of available versions of the application. Required."""
 
     @overload
@@ -455,7 +454,7 @@ class BatchApplication(_model_base.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         display_name: str,
-        versions: List[str],
+        versions: list[str],
     ) -> None: ...
 
     @overload
@@ -469,7 +468,7 @@ class BatchApplication(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchApplicationPackageReference(_model_base.Model):
+class BatchApplicationPackageReference(_Model):
     """A reference to an Package to be deployed to Compute Nodes.
 
     :ivar application_id: The ID of the application to deploy. When creating a pool, the package's
@@ -516,7 +515,7 @@ class BatchApplicationPackageReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchAutoPoolSpecification(_model_base.Model):
+class BatchAutoPoolSpecification(_Model):
     """Specifies characteristics for a temporary 'auto pool'. The Batch service will
     create this auto Pool when the Job is submitted.
 
@@ -583,7 +582,7 @@ class BatchAutoPoolSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchCertificate(_model_base.Model):
+class BatchCertificate(_Model):
     """A Certificate that can be installed on Compute Nodes and can be used to
     authenticate operations on the machine.
 
@@ -686,7 +685,7 @@ class BatchCertificate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchCertificateReference(_model_base.Model):
+class BatchCertificateReference(_Model):
     """A reference to a Certificate to be installed on Compute Nodes in a Pool. Warning: This object
     is deprecated and will be removed after February, 2024. Please use the `Azure KeyVault
     Extension <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_
@@ -745,7 +744,7 @@ class BatchCertificateReference(_model_base.Model):
      Image reference). Common store names include: My, Root, CA, Trust, Disallowed, TrustedPeople,
      TrustedPublisher, AuthRoot, AddressBook, but any custom store name can also be used. The
      default value is My."""
-    visibility: Optional[List[Union[str, "_models.BatchCertificateVisibility"]]] = rest_field(
+    visibility: Optional[list[Union[str, "_models.BatchCertificateVisibility"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Which user Accounts on the Compute Node should have access to the private data of the
@@ -760,7 +759,7 @@ class BatchCertificateReference(_model_base.Model):
         thumbprint_algorithm: str,
         store_location: Optional[Union[str, "_models.BatchCertificateStoreLocation"]] = None,
         store_name: Optional[str] = None,
-        visibility: Optional[List[Union[str, "_models.BatchCertificateVisibility"]]] = None,
+        visibility: Optional[list[Union[str, "_models.BatchCertificateVisibility"]]] = None,
     ) -> None: ...
 
     @overload
@@ -774,7 +773,7 @@ class BatchCertificateReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchError(_model_base.Model):
+class BatchError(_Model):
     """An error response received from the Azure Batch service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -795,7 +794,7 @@ class BatchError(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A message describing the error, intended to be suitable for display in a user interface."""
-    values_property: Optional[List["_models.BatchErrorDetail"]] = rest_field(
+    values_property: Optional[list["_models.BatchErrorDetail"]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A collection of key-value pairs containing additional details about the error."""
@@ -806,7 +805,7 @@ class BatchError(_model_base.Model):
         *,
         code: str,
         message: Optional["_models.BatchErrorMessage"] = None,
-        values_property: Optional[List["_models.BatchErrorDetail"]] = None,
+        values_property: Optional[list["_models.BatchErrorDetail"]] = None,
     ) -> None: ...
 
     @overload
@@ -820,7 +819,7 @@ class BatchError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchErrorDetail(_model_base.Model):
+class BatchErrorDetail(_Model):
     """An item of additional information included in an Azure Batch error response.
 
     :ivar key: An identifier specifying the meaning of the Value property.
@@ -853,7 +852,7 @@ class BatchErrorDetail(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchErrorMessage(_model_base.Model):
+class BatchErrorMessage(_Model):
     """An error message received in an Azure Batch error response.
 
     :ivar lang: The language code of the error message.
@@ -886,7 +885,7 @@ class BatchErrorMessage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJob(_model_base.Model):
+class BatchJob(_Model):
     """An Azure Batch Job.
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID is
@@ -1048,7 +1047,7 @@ class BatchJob(_model_base.Model):
     job_release_task: Optional["_models.BatchJobReleaseTask"] = rest_field(name="jobReleaseTask", visibility=["read"])
     """The Job Release Task. The Job Release Task is a special Task run at the end of the Job on each
      Compute Node that has run any other Task of the Job."""
-    common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    common_environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="commonEnvironmentSettings", visibility=["read"]
     )
     """The list of common environment variable settings. These environment variables are set for all
@@ -1076,7 +1075,7 @@ class BatchJob(_model_base.Model):
         name="networkConfiguration", visibility=["read"]
     )
     """The network configuration for the Job."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Job as metadata. The Batch service does not
@@ -1099,7 +1098,7 @@ class BatchJob(_model_base.Model):
         max_parallel_tasks: Optional[int] = None,
         constraints: Optional["_models.BatchJobConstraints"] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -1113,7 +1112,7 @@ class BatchJob(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobConstraints(_model_base.Model):
+class BatchJobConstraints(_Model):
     """The execution constraints for a Job.
 
     :ivar max_wall_clock_time: The maximum elapsed time that the Job may run, measured from the
@@ -1169,7 +1168,7 @@ class BatchJobConstraints(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobCreateContent(_model_base.Model):
+class BatchJobCreateContent(_Model):
     """Parameters for creating an Azure Batch Job.
 
     :ivar id: A string that uniquely identifies the Job within the Account. The ID can contain any
@@ -1310,7 +1309,7 @@ class BatchJobCreateContent(_model_base.Model):
      have run the Job Preparation Task. The primary purpose of the Job Release Task is to undo
      changes to Compute Nodes made by the Job Preparation Task. Example activities include deleting
      local files, or shutting down services that were started as part of Job preparation."""
-    common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    common_environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="commonEnvironmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of common environment variable settings. These environment variables are set for all
@@ -1342,7 +1341,7 @@ class BatchJobCreateContent(_model_base.Model):
         name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The network configuration for the Job."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Job as metadata. The Batch service does not
@@ -1363,11 +1362,11 @@ class BatchJobCreateContent(_model_base.Model):
         job_manager_task: Optional["_models.BatchJobManagerTask"] = None,
         job_preparation_task: Optional["_models.BatchJobPreparationTask"] = None,
         job_release_task: Optional["_models.BatchJobReleaseTask"] = None,
-        common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
+        common_environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = None,
         on_task_failure: Optional[Union[str, "_models.OnBatchTaskFailure"]] = None,
         network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -1381,7 +1380,7 @@ class BatchJobCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobDisableContent(_model_base.Model):
+class BatchJobDisableContent(_Model):
     """Parameters for disabling an Azure Batch Job.
 
     :ivar disable_tasks: What to do with active Tasks associated with the Job. Required. Known
@@ -1413,7 +1412,7 @@ class BatchJobDisableContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobExecutionInfo(_model_base.Model):
+class BatchJobExecutionInfo(_Model):
     """Contains information about the execution of a Job in the Azure Batch service.
 
     :ivar start_time: The start time of the Job. This is the time at which the Job was created.
@@ -1500,7 +1499,7 @@ class BatchJobExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobManagerTask(_model_base.Model):
+class BatchJobManagerTask(_Model):
     """Specifies details of a Job Manager Task.
     The Job Manager Task is automatically started when the Job is created. The
     Batch service tries to schedule the Job Manager Task before any other Tasks in
@@ -1648,7 +1647,7 @@ class BatchJobManagerTask(_model_base.Model):
      are mapped into the container, and the Task command line is executed in the container. Files
      produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host
      disk, meaning that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+    resource_files: Optional[list["_models.ResourceFile"]] = rest_field(
         name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will download to the Compute Node before running the
@@ -1657,13 +1656,13 @@ class BatchJobManagerTask(_model_base.Model):
      request will fail and the response error code will be RequestEntityTooLarge. If this occurs,
      the collection of ResourceFiles must be reduced in size. This can be achieved using .zip files,
      Application Packages, or Docker Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(
+    output_files: Optional[list["_models.OutputFile"]] = rest_field(
         name="outputFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will upload from the Compute Node after running the
      command line. For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of environment variable settings for the Job Manager Task."""
@@ -1703,7 +1702,7 @@ class BatchJobManagerTask(_model_base.Model):
      other Tasks can run simultaneously with the Job Manager on a Compute Node. The Job Manager Task
      counts normally against the Compute Node's concurrent Task limit, so this is only relevant if
      the Compute Node allows multiple concurrent Tasks. The default value is true."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Application Packages that the Batch service will deploy to the
@@ -1738,15 +1737,15 @@ class BatchJobManagerTask(_model_base.Model):
         command_line: str,
         display_name: Optional[str] = None,
         container_settings: Optional["_models.BatchTaskContainerSettings"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
+        resource_files: Optional[list["_models.ResourceFile"]] = None,
+        output_files: Optional[list["_models.OutputFile"]] = None,
+        environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
         constraints: Optional["_models.BatchTaskConstraints"] = None,
         required_slots: Optional[int] = None,
         kill_job_on_completion: Optional[bool] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
         run_exclusive: Optional[bool] = None,
-        application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = None,
+        application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
         allow_low_priority_node: Optional[bool] = None,
     ) -> None: ...
@@ -1762,7 +1761,7 @@ class BatchJobManagerTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobNetworkConfiguration(_model_base.Model):
+class BatchJobNetworkConfiguration(_Model):
     """The network configuration for the Job.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which Compute Nodes
@@ -1839,7 +1838,7 @@ class BatchJobNetworkConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationAndReleaseTaskStatus(_model_base.Model):
+class BatchJobPreparationAndReleaseTaskStatus(_Model):
     """The status of the Job Preparation and Job Release Tasks on a Compute Node.
 
     :ivar pool_id: The ID of the Pool containing the Compute Node to which this entry refers.
@@ -1896,7 +1895,7 @@ class BatchJobPreparationAndReleaseTaskStatus(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationTask(_model_base.Model):
+class BatchJobPreparationTask(_Model):
     """A Job Preparation Task to run before any Tasks of the Job on any given Compute Node.
     You can use Job Preparation to prepare a Node to run Tasks for the Job.
     Activities commonly performed in Job Preparation include: Downloading common
@@ -2014,7 +2013,7 @@ class BatchJobPreparationTask(_model_base.Model):
      are mapped into the container, and the Task command line is executed in the container. Files
      produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host
      disk, meaning that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+    resource_files: Optional[list["_models.ResourceFile"]] = rest_field(
         name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will download to the Compute Node before running the
@@ -2023,7 +2022,7 @@ class BatchJobPreparationTask(_model_base.Model):
      request will fail and the response error code will be RequestEntityTooLarge. If this occurs,
      the collection of ResourceFiles must be reduced in size. This can be achieved using .zip files,
      Application Packages, or Docker Containers."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of environment variable settings for the Job Preparation Task."""
@@ -2067,8 +2066,8 @@ class BatchJobPreparationTask(_model_base.Model):
         command_line: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         container_settings: Optional["_models.BatchTaskContainerSettings"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
+        resource_files: Optional[list["_models.ResourceFile"]] = None,
+        environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
         constraints: Optional["_models.BatchTaskConstraints"] = None,
         wait_for_success: Optional[bool] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
@@ -2086,7 +2085,7 @@ class BatchJobPreparationTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobPreparationTaskExecutionInfo(_model_base.Model):
+class BatchJobPreparationTaskExecutionInfo(_Model):
     """Contains information about the execution of a Job Preparation Task on a Compute
     Node.
 
@@ -2228,7 +2227,7 @@ class BatchJobPreparationTaskExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobReleaseTask(_model_base.Model):
+class BatchJobReleaseTask(_Model):
     """A Job Release Task to run on Job completion on any Compute Node where the Job has run.
     The Job Release Task runs when the Job ends, because of one of the following:
     The user calls the Terminate Job API, or the Delete Job API while the Job is
@@ -2324,7 +2323,7 @@ class BatchJobReleaseTask(_model_base.Model):
      mapped into the container, and the Task command line is executed in the container. Files
      produced in the container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host
      disk, meaning that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+    resource_files: Optional[list["_models.ResourceFile"]] = rest_field(
         name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will download to the Compute Node before running the
@@ -2333,7 +2332,7 @@ class BatchJobReleaseTask(_model_base.Model):
      this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
      using .zip files, Application Packages, or Docker Containers. Files listed under this element
      are located in the Task's working directory."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of environment variable settings for the Job Release Task."""
@@ -2365,8 +2364,8 @@ class BatchJobReleaseTask(_model_base.Model):
         command_line: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         container_settings: Optional["_models.BatchTaskContainerSettings"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
+        resource_files: Optional[list["_models.ResourceFile"]] = None,
+        environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
         max_wall_clock_time: Optional[datetime.timedelta] = None,
         retention_time: Optional[datetime.timedelta] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
@@ -2383,7 +2382,7 @@ class BatchJobReleaseTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobReleaseTaskExecutionInfo(_model_base.Model):
+class BatchJobReleaseTaskExecutionInfo(_Model):
     """Contains information about the execution of a Job Release Task on a Compute
     Node.
 
@@ -2494,7 +2493,7 @@ class BatchJobReleaseTaskExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedule(_model_base.Model):
+class BatchJobSchedule(_Model):
     """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
     specification used to create each Job.
 
@@ -2592,7 +2591,7 @@ class BatchJobSchedule(_model_base.Model):
         name="executionInfo", visibility=["read"]
     )
     """Information about Jobs that have been and will be run under this schedule."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the schedule as metadata. The Batch service does not
@@ -2608,7 +2607,7 @@ class BatchJobSchedule(_model_base.Model):
         *,
         job_specification: "_models.BatchJobSpecification",
         schedule: Optional["_models.BatchJobScheduleConfiguration"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -2622,7 +2621,7 @@ class BatchJobSchedule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleConfiguration(_model_base.Model):
+class BatchJobScheduleConfiguration(_Model):
     """The schedule according to which Jobs will be created. All times are fixed
     respective to UTC and are not impacted by daylight saving time.
 
@@ -2726,7 +2725,7 @@ class BatchJobScheduleConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleCreateContent(_model_base.Model):
+class BatchJobScheduleCreateContent(_Model):
     """Parameters for creating an Azure Batch Job Schedule.
 
     :ivar id: A string that uniquely identifies the schedule within the Account. The ID can contain
@@ -2766,7 +2765,7 @@ class BatchJobScheduleCreateContent(_model_base.Model):
         name="jobSpecification", visibility=["read", "create", "update", "delete", "query"]
     )
     """The details of the Jobs to be created on this schedule. Required."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the schedule as metadata. The Batch service does not
@@ -2780,7 +2779,7 @@ class BatchJobScheduleCreateContent(_model_base.Model):
         schedule: "_models.BatchJobScheduleConfiguration",
         job_specification: "_models.BatchJobSpecification",
         display_name: Optional[str] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -2794,7 +2793,7 @@ class BatchJobScheduleCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleExecutionInfo(_model_base.Model):
+class BatchJobScheduleExecutionInfo(_Model):
     """Contains information about Jobs that have been and will be run under a Job
     Schedule.
 
@@ -2849,7 +2848,7 @@ class BatchJobScheduleExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleStatistics(_model_base.Model):
+class BatchJobScheduleStatistics(_Model):
     """Resource usage statistics for a Job Schedule.
 
     :ivar url: The URL of the statistics. Required.
@@ -3003,7 +3002,7 @@ class BatchJobScheduleStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobScheduleUpdateContent(_model_base.Model):
+class BatchJobScheduleUpdateContent(_Model):
     """Parameters for updating an Azure Batch Job Schedule.
 
     :ivar schedule: The schedule according to which Jobs will be created. All times are fixed
@@ -3031,7 +3030,7 @@ class BatchJobScheduleUpdateContent(_model_base.Model):
     """The details of the Jobs to be created on this schedule. Updates affect only Jobs that are
      started after the update has taken place. Any currently active Job continues with the older
      specification."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Job Schedule as metadata. If you do not specify
@@ -3043,7 +3042,7 @@ class BatchJobScheduleUpdateContent(_model_base.Model):
         *,
         schedule: Optional["_models.BatchJobScheduleConfiguration"] = None,
         job_specification: Optional["_models.BatchJobSpecification"] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -3057,7 +3056,7 @@ class BatchJobScheduleUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSchedulingError(_model_base.Model):
+class BatchJobSchedulingError(_Model):
     """An error encountered by the Batch service when scheduling a Job.
 
     :ivar category: The category of the Job scheduling error. Required. Known values are:
@@ -3084,7 +3083,7 @@ class BatchJobSchedulingError(_model_base.Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Job scheduling error, intended to be suitable for display in a user
      interface."""
-    details: Optional[List["_models.NameValuePair"]] = rest_field(
+    details: Optional[list["_models.NameValuePair"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional error details related to the scheduling error."""
@@ -3096,7 +3095,7 @@ class BatchJobSchedulingError(_model_base.Model):
         category: Union[str, "_models.ErrorCategory"],
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["_models.NameValuePair"]] = None,
+        details: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -3110,7 +3109,7 @@ class BatchJobSchedulingError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobSpecification(_model_base.Model):
+class BatchJobSpecification(_Model):
     """Specifies details of the Jobs to be created on a schedule.
 
     :ivar priority: The priority of Jobs created under this schedule. Priority values can range
@@ -3264,7 +3263,7 @@ class BatchJobSpecification(_model_base.Model):
      preparation. A Job Release Task cannot be specified without also specifying a Job Preparation
      Task for the Job. The Batch service runs the Job Release Task on the Compute Nodes that have
      run the Job Preparation Task."""
-    common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    common_environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="commonEnvironmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of common environment variable settings. These environment variables are set for all
@@ -3276,7 +3275,7 @@ class BatchJobSpecification(_model_base.Model):
     )
     """The Pool on which the Batch service runs the Tasks of Jobs created under this schedule.
      Required."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with each Job created under this schedule as metadata.
@@ -3300,8 +3299,8 @@ class BatchJobSpecification(_model_base.Model):
         job_manager_task: Optional["_models.BatchJobManagerTask"] = None,
         job_preparation_task: Optional["_models.BatchJobPreparationTask"] = None,
         job_release_task: Optional["_models.BatchJobReleaseTask"] = None,
-        common_environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        common_environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
     ) -> None: ...
 
     @overload
@@ -3315,7 +3314,7 @@ class BatchJobSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobStatistics(_model_base.Model):
+class BatchJobStatistics(_Model):
     """Resource usage statistics for a Job.
 
     :ivar url: The URL of the statistics. Required.
@@ -3460,7 +3459,7 @@ class BatchJobStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobTerminateContent(_model_base.Model):
+class BatchJobTerminateContent(_Model):
     """Parameters for terminating an Azure Batch Job.
 
     :ivar termination_reason: The text you want to appear as the Job's TerminationReason. The
@@ -3491,7 +3490,7 @@ class BatchJobTerminateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchJobUpdateContent(_model_base.Model):
+class BatchJobUpdateContent(_Model):
     """Parameters for updating an Azure Batch Job.
 
     :ivar priority: The priority of the Job. Priority values can range from -1000 to 1000, with
@@ -3574,7 +3573,7 @@ class BatchJobUpdateContent(_model_base.Model):
      turn it off again. If you try to do this, the request fails with an 'invalid property value'
      error response; if you are calling the REST API directly, the HTTP status code is 400 (Bad
      Request). Known values are: \"noaction\" and \"terminatejob\"."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Job as metadata. If omitted, the existing Job
@@ -3594,7 +3593,7 @@ class BatchJobUpdateContent(_model_base.Model):
         constraints: Optional["_models.BatchJobConstraints"] = None,
         pool_info: Optional["_models.BatchPoolInfo"] = None,
         on_all_tasks_complete: Optional[Union[str, "_models.OnAllBatchTasksComplete"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         network_configuration: Optional["_models.BatchJobNetworkConfiguration"] = None,
     ) -> None: ...
 
@@ -3609,7 +3608,7 @@ class BatchJobUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNode(_model_base.Model):
+class BatchNode(_Model):
     """A Compute Node in the Batch service.
 
     :ivar id: The ID of the Compute Node. Every Compute Node that is added to a Pool is assigned a
@@ -3774,7 +3773,7 @@ class BatchNode(_model_base.Model):
     """The total number of Job Tasks which completed successfully (with exitCode 0) on the Compute
      Node. This includes Job Manager Tasks and normal Tasks, but not Job Preparation, Job Release or
      Start Tasks."""
-    recent_tasks: Optional[List["_models.BatchTaskInfo"]] = rest_field(
+    recent_tasks: Optional[list["_models.BatchTaskInfo"]] = rest_field(
         name="recentTasks", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Tasks whose state has recently changed. This property is present only if at least one
@@ -3787,7 +3786,7 @@ class BatchNode(_model_base.Model):
         name="startTaskInfo", visibility=["read", "create", "update", "delete", "query"]
     )
     """Runtime information about the execution of the StartTask on the Compute Node."""
-    certificate_references: Optional[List["_models.BatchCertificateReference"]] = rest_field(
+    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
         name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
@@ -3800,7 +3799,7 @@ class BatchNode(_model_base.Model):
      Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
-    errors: Optional[List["_models.BatchNodeError"]] = rest_field(
+    errors: Optional[list["_models.BatchNodeError"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of errors that are currently being encountered by the Compute Node."""
@@ -3841,11 +3840,11 @@ class BatchNode(_model_base.Model):
         running_tasks_count: Optional[int] = None,
         running_task_slots_count: Optional[int] = None,
         total_tasks_succeeded: Optional[int] = None,
-        recent_tasks: Optional[List["_models.BatchTaskInfo"]] = None,
+        recent_tasks: Optional[list["_models.BatchTaskInfo"]] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
         start_task_info: Optional["_models.BatchStartTaskInfo"] = None,
-        certificate_references: Optional[List["_models.BatchCertificateReference"]] = None,
-        errors: Optional[List["_models.BatchNodeError"]] = None,
+        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
+        errors: Optional[list["_models.BatchNodeError"]] = None,
         is_dedicated: Optional[bool] = None,
         endpoint_configuration: Optional["_models.BatchNodeEndpointConfiguration"] = None,
         node_agent_info: Optional["_models.BatchNodeAgentInfo"] = None,
@@ -3863,7 +3862,7 @@ class BatchNode(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeAgentInfo(_model_base.Model):
+class BatchNodeAgentInfo(_Model):
     """The Batch Compute Node agent is a program that runs on each Compute Node in the
     Pool and provides Batch capability on the Compute Node.
 
@@ -3908,7 +3907,7 @@ class BatchNodeAgentInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeCounts(_model_base.Model):
+class BatchNodeCounts(_Model):
     """The number of Compute Nodes in each Compute Node state.
 
     :ivar creating: The number of Compute Nodes in the creating state. Required.
@@ -4021,7 +4020,7 @@ class BatchNodeCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeDeallocateContent(_model_base.Model):
+class BatchNodeDeallocateContent(_Model):
     """Options for deallocating a Compute Node.
 
     :ivar node_deallocate_option: When to deallocate the Compute Node and what to do with currently
@@ -4055,7 +4054,7 @@ class BatchNodeDeallocateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeDisableSchedulingContent(_model_base.Model):
+class BatchNodeDisableSchedulingContent(_Model):
     """Parameters for disabling scheduling on an Azure Batch Compute Node.
 
     :ivar node_disable_scheduling_option: What to do with currently running Tasks when disabling
@@ -4089,7 +4088,7 @@ class BatchNodeDisableSchedulingContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeEndpointConfiguration(_model_base.Model):
+class BatchNodeEndpointConfiguration(_Model):
     """The endpoint configuration for the Compute Node.
 
     :ivar inbound_endpoints: The list of inbound endpoints that are accessible on the Compute Node.
@@ -4097,7 +4096,7 @@ class BatchNodeEndpointConfiguration(_model_base.Model):
     :vartype inbound_endpoints: list[~azure.batch.models.InboundEndpoint]
     """
 
-    inbound_endpoints: List["_models.InboundEndpoint"] = rest_field(
+    inbound_endpoints: list["_models.InboundEndpoint"] = rest_field(
         name="inboundEndpoints", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of inbound endpoints that are accessible on the Compute Node. Required."""
@@ -4106,7 +4105,7 @@ class BatchNodeEndpointConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        inbound_endpoints: List["_models.InboundEndpoint"],
+        inbound_endpoints: list["_models.InboundEndpoint"],
     ) -> None: ...
 
     @overload
@@ -4120,7 +4119,7 @@ class BatchNodeEndpointConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeError(_model_base.Model):
+class BatchNodeError(_Model):
     """An error encountered by a Compute Node.
 
     :ivar code: An identifier for the Compute Node error. Codes are invariant and are intended to
@@ -4139,7 +4138,7 @@ class BatchNodeError(_model_base.Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Compute Node error, intended to be suitable for display in a user
      interface."""
-    error_details: Optional[List["_models.NameValuePair"]] = rest_field(
+    error_details: Optional[list["_models.NameValuePair"]] = rest_field(
         name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of additional error details related to the Compute Node error."""
@@ -4150,7 +4149,7 @@ class BatchNodeError(_model_base.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        error_details: Optional[List["_models.NameValuePair"]] = None,
+        error_details: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -4164,7 +4163,7 @@ class BatchNodeError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeFile(_model_base.Model):
+class BatchNodeFile(_Model):
     """Information about a file or directory on a Compute Node.
 
     :ivar name: The file path.
@@ -4211,7 +4210,7 @@ class BatchNodeFile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeIdentityReference(_model_base.Model):
+class BatchNodeIdentityReference(_Model):
     """The reference to a user assigned identity associated with the Batch pool which
     a compute node will use.
 
@@ -4242,7 +4241,7 @@ class BatchNodeIdentityReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeInfo(_model_base.Model):
+class BatchNodeInfo(_Model):
     """Information about the Compute Node on which a Task ran.
 
     :ivar affinity_id: An identifier for the Node on which the Task ran, which can be passed when
@@ -4303,7 +4302,7 @@ class BatchNodeInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodePlacementConfiguration(_model_base.Model):
+class BatchNodePlacementConfiguration(_Model):
     """For regional placement, nodes in the pool will be allocated in the same region.
     For zonal placement, nodes in the pool will be spread across different zones
     with best effort balancing.
@@ -4339,7 +4338,7 @@ class BatchNodePlacementConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRebootContent(_model_base.Model):
+class BatchNodeRebootContent(_Model):
     """Parameters for rebooting an Azure Batch Compute Node.
 
     :ivar node_reboot_option: When to reboot the Compute Node and what to do with currently running
@@ -4373,7 +4372,7 @@ class BatchNodeRebootContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeReimageContent(_model_base.Model):
+class BatchNodeReimageContent(_Model):
     """Parameters for reimaging an Azure Batch Compute Node.
 
     :ivar node_reimage_option: When to reimage the Compute Node and what to do with currently
@@ -4407,7 +4406,7 @@ class BatchNodeReimageContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRemoteLoginSettings(_model_base.Model):
+class BatchNodeRemoteLoginSettings(_Model):
     """The remote login settings for a Compute Node.
 
     :ivar remote_login_ip_address: The IP address used for remote login to the Compute Node.
@@ -4445,7 +4444,7 @@ class BatchNodeRemoteLoginSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeRemoveContent(_model_base.Model):
+class BatchNodeRemoveContent(_Model):
     """Parameters for removing nodes from an Azure Batch Pool.
 
     :ivar node_list: A list containing the IDs of the Compute Nodes to be removed from the
@@ -4462,7 +4461,7 @@ class BatchNodeRemoveContent(_model_base.Model):
     :vartype node_deallocation_option: str or ~azure.batch.models.BatchNodeDeallocationOption
     """
 
-    node_list: List[str] = rest_field(name="nodeList", visibility=["read", "create", "update", "delete", "query"])
+    node_list: list[str] = rest_field(name="nodeList", visibility=["read", "create", "update", "delete", "query"])
     """A list containing the IDs of the Compute Nodes to be removed from the specified Pool. A maximum
      of 100 nodes may be removed per request. Required."""
     resize_timeout: Optional[datetime.timedelta] = rest_field(
@@ -4483,7 +4482,7 @@ class BatchNodeRemoveContent(_model_base.Model):
     def __init__(
         self,
         *,
-        node_list: List[str],
+        node_list: list[str],
         resize_timeout: Optional[datetime.timedelta] = None,
         node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = None,
     ) -> None: ...
@@ -4499,7 +4498,7 @@ class BatchNodeRemoveContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserCreateContent(_model_base.Model):
+class BatchNodeUserCreateContent(_Model):
     """Parameters for creating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar name: The user name of the Account. Required.
@@ -4565,7 +4564,7 @@ class BatchNodeUserCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserUpdateContent(_model_base.Model):
+class BatchNodeUserUpdateContent(_Model):
     """Parameters for updating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar password: The password of the Account. The password is required for Windows Compute
@@ -4622,7 +4621,7 @@ class BatchNodeUserUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeVMExtension(_model_base.Model):
+class BatchNodeVMExtension(_Model):
     """The configuration for virtual machine extension instance view.
 
     :ivar provisioning_state: The provisioning state of the virtual machine extension.
@@ -4666,7 +4665,7 @@ class BatchNodeVMExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPool(_model_base.Model):
+class BatchPool(_Model):
     """A Pool in the Azure Batch service.
 
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
@@ -4861,11 +4860,11 @@ class BatchPool(_model_base.Model):
     """The timeout for allocation of Compute Nodes to the Pool. This is the timeout for the most
      recent resize operation. (The initial sizing when the Pool is created counts as a resize.) The
      default value is 15 minutes."""
-    resize_errors: Optional[List["_models.ResizeError"]] = rest_field(name="resizeErrors", visibility=["read"])
+    resize_errors: Optional[list["_models.ResizeError"]] = rest_field(name="resizeErrors", visibility=["read"])
     """A list of errors encountered while performing the last resize on the Pool. This property is set
      only if one or more errors occurred during the last Pool resize, and only when the Pool
      allocationState is Steady."""
-    resource_tags: Optional[Dict[str, str]] = rest_field(name="resourceTags", visibility=["read"])
+    resource_tags: Optional[dict[str, str]] = rest_field(name="resourceTags", visibility=["read"])
     """The user-specified tags associated with the pool. The user-defined tags to be associated with
      the Azure Batch Pool. When specified, these tags are propagated to the backing Azure resources
      associated with the pool. This property can only be specified when the Batch account was
@@ -4910,7 +4909,7 @@ class BatchPool(_model_base.Model):
         name="startTask", visibility=["read", "create", "update", "delete", "query"]
     )
     """A Task specified to run on each Compute Node as it joins the Pool."""
-    certificate_references: Optional[List["_models.BatchCertificateReference"]] = rest_field(
+    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
         name="certificateReferences", visibility=["read"]
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
@@ -4923,7 +4922,7 @@ class BatchPool(_model_base.Model):
      Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read"]
     )
     """The list of Packages to be installed on each Compute Node in the Pool. Changes to Package
@@ -4939,16 +4938,16 @@ class BatchPool(_model_base.Model):
     )
     """How Tasks are distributed across Compute Nodes in a Pool. If not specified, the default is
      spread."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(name="userAccounts", visibility=["read"])
+    user_accounts: Optional[list["_models.UserAccount"]] = rest_field(name="userAccounts", visibility=["read"])
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(visibility=["read"])
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(visibility=["read"])
     """A list of name-value pairs associated with the Pool as metadata."""
     stats: Optional["_models.BatchPoolStatistics"] = rest_field(visibility=["read"])
     """Utilization and resource usage statistics for the entire lifetime of the Pool. This property is
      populated only if the BatchPool was retrieved with an expand clause including the 'stats'
      attribute; otherwise it is null. The statistics may not be immediately available. The Batch
      service performs periodic roll-up of statistics. The typical delay is about 30 minutes."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+    mount_configuration: Optional[list["_models.MountConfiguration"]] = rest_field(
         name="mountConfiguration", visibility=["read"]
     )
     """A list of file systems to mount on each node in the pool. This supports Azure Files, NFS,
@@ -4992,7 +4991,7 @@ class BatchPool(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolCreateContent(_model_base.Model):
+class BatchPoolCreateContent(_Model):
     """Parameters for creating an Azure Batch Pool.
 
     :ivar id: A string that uniquely identifies the Pool within the Account. The ID can contain any
@@ -5137,7 +5136,7 @@ class BatchPoolCreateContent(_model_base.Model):
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      returns an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad
      Request)."""
-    resource_tags: Optional[Dict[str, str]] = rest_field(
+    resource_tags: Optional[dict[str, str]] = rest_field(
         name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """The user-specified tags associated with the pool. The user-defined tags to be associated with
@@ -5197,7 +5196,7 @@ class BatchPoolCreateContent(_model_base.Model):
     )
     """A Task specified to run on each Compute Node as it joins the Pool. The Task runs when the
      Compute Node is added to the Pool or when the Compute Node is restarted."""
-    certificate_references: Optional[List["_models.BatchCertificateReference"]] = rest_field(
+    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
         name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
@@ -5210,7 +5209,7 @@ class BatchPoolCreateContent(_model_base.Model):
      Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Packages to be installed on each Compute Node in the Pool. When creating a pool,
@@ -5230,16 +5229,16 @@ class BatchPoolCreateContent(_model_base.Model):
     )
     """How Tasks are distributed across Compute Nodes in a Pool. If not specified, the default is
      spread."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(
+    user_accounts: Optional[list["_models.UserAccount"]] = rest_field(
         name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Pool as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+    mount_configuration: Optional[list["_models.MountConfiguration"]] = rest_field(
         name="mountConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Mount storage using specified file system for the entire lifetime of the pool. Mount the
@@ -5263,7 +5262,7 @@ class BatchPoolCreateContent(_model_base.Model):
         display_name: Optional[str] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
         resize_timeout: Optional[datetime.timedelta] = None,
-        resource_tags: Optional[Dict[str, str]] = None,
+        resource_tags: Optional[dict[str, str]] = None,
         target_dedicated_nodes: Optional[int] = None,
         target_low_priority_nodes: Optional[int] = None,
         enable_auto_scale: Optional[bool] = None,
@@ -5272,13 +5271,13 @@ class BatchPoolCreateContent(_model_base.Model):
         enable_inter_node_communication: Optional[bool] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
-        certificate_references: Optional[List["_models.BatchCertificateReference"]] = None,
-        application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = None,
+        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
+        application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         task_slots_per_node: Optional[int] = None,
         task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = None,
-        user_accounts: Optional[List["_models.UserAccount"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
+        user_accounts: Optional[list["_models.UserAccount"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
+        mount_configuration: Optional[list["_models.MountConfiguration"]] = None,
         target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
     ) -> None: ...
@@ -5294,7 +5293,7 @@ class BatchPoolCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEnableAutoScaleContent(_model_base.Model):
+class BatchPoolEnableAutoScaleContent(_Model):
     """Parameters for enabling automatic scaling on an Azure Batch Pool.
 
     :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. The
@@ -5356,7 +5355,7 @@ class BatchPoolEnableAutoScaleContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEndpointConfiguration(_model_base.Model):
+class BatchPoolEndpointConfiguration(_Model):
     """The endpoint configuration for a Pool.
 
     :ivar inbound_nat_pools: A list of inbound NAT Pools that can be used to address specific ports
@@ -5367,7 +5366,7 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
     :vartype inbound_nat_pools: list[~azure.batch.models.InboundNatPool]
     """
 
-    inbound_nat_pools: List["_models.InboundNatPool"] = rest_field(
+    inbound_nat_pools: list["_models.InboundNatPool"] = rest_field(
         name="inboundNATPools", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of inbound NAT Pools that can be used to address specific ports on an individual Compute
@@ -5379,7 +5378,7 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        inbound_nat_pools: List["_models.InboundNatPool"],
+        inbound_nat_pools: list["_models.InboundNatPool"],
     ) -> None: ...
 
     @overload
@@ -5393,7 +5392,7 @@ class BatchPoolEndpointConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolEvaluateAutoScaleContent(_model_base.Model):
+class BatchPoolEvaluateAutoScaleContent(_Model):
     """Parameters for evaluating an automatic scaling formula on an Azure Batch Pool.
 
     :ivar auto_scale_formula: The formula for the desired number of Compute Nodes in the Pool. The
@@ -5433,7 +5432,7 @@ class BatchPoolEvaluateAutoScaleContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolIdentity(_model_base.Model):
+class BatchPoolIdentity(_Model):
     """The identity of the Batch pool, if configured.
 
     :ivar type: The identity of the Batch pool, if configured. The list of user identities
@@ -5455,7 +5454,7 @@ class BatchPoolIdentity(_model_base.Model):
      Batch pool. The user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
      Required. Known values are: \"UserAssigned\" and \"None\"."""
-    user_assigned_identities: Optional[List["_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[list["_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user identities associated with the Batch account. The user identity dictionary key
@@ -5467,7 +5466,7 @@ class BatchPoolIdentity(_model_base.Model):
         self,
         *,
         type: Union[str, "_models.BatchPoolIdentityType"],
-        user_assigned_identities: Optional[List["_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[list["_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -5481,7 +5480,7 @@ class BatchPoolIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolInfo(_model_base.Model):
+class BatchPoolInfo(_Model):
     """Specifies how a Job should be assigned to a Pool.
 
     :ivar pool_id: The ID of an existing Pool. All the Tasks of the Job will run on the specified
@@ -5538,7 +5537,7 @@ class BatchPoolInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolNodeCounts(_model_base.Model):
+class BatchPoolNodeCounts(_Model):
     """The number of Compute Nodes in each state for a Pool.
 
     :ivar pool_id: The ID of the Pool. Required.
@@ -5580,7 +5579,7 @@ class BatchPoolNodeCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolReplaceContent(_model_base.Model):
+class BatchPoolReplaceContent(_Model):
     """Parameters for replacing properties on an Azure Batch Pool.
 
     :ivar start_task: A Task to run on each Compute Node as it joins the Pool. The Task runs when
@@ -5630,7 +5629,7 @@ class BatchPoolReplaceContent(_model_base.Model):
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted. If this element is present, it
      overwrites any existing StartTask. If omitted, any existing StartTask is removed from the Pool."""
-    certificate_references: List["_models.BatchCertificateReference"] = rest_field(
+    certificate_references: list["_models.BatchCertificateReference"] = rest_field(
         name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """This list replaces any existing Certificate references configured on the Pool.
@@ -5647,7 +5646,7 @@ class BatchPoolReplaceContent(_model_base.Model):
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead.
      Required."""
-    application_package_references: List["_models.BatchApplicationPackageReference"] = rest_field(
+    application_package_references: list["_models.BatchApplicationPackageReference"] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Application Packages to be installed on each Compute Node in the Pool. The list
@@ -5657,7 +5656,7 @@ class BatchPoolReplaceContent(_model_base.Model):
      10 Application Package references on any given Pool. If omitted, or if you specify an empty
      collection, any existing Application Packages references are removed from the Pool. A maximum
      of 10 references may be specified on a given Pool. Required."""
-    metadata: List["_models.MetadataItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    metadata: list["_models.MetadataItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of name-value pairs associated with the Pool as metadata. This list replaces any
      existing metadata configured on the Pool. If omitted, or if you specify an empty collection,
      any existing metadata is removed from the Pool. Required."""
@@ -5672,9 +5671,9 @@ class BatchPoolReplaceContent(_model_base.Model):
     def __init__(
         self,
         *,
-        certificate_references: List["_models.BatchCertificateReference"],
-        application_package_references: List["_models.BatchApplicationPackageReference"],
-        metadata: List["_models.MetadataItem"],
+        certificate_references: list["_models.BatchCertificateReference"],
+        application_package_references: list["_models.BatchApplicationPackageReference"],
+        metadata: list["_models.MetadataItem"],
         start_task: Optional["_models.BatchStartTask"] = None,
         target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
     ) -> None: ...
@@ -5690,7 +5689,7 @@ class BatchPoolReplaceContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResizeContent(_model_base.Model):
+class BatchPoolResizeContent(_Model):
     """Parameters for changing the size of an Azure Batch Pool.
 
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool.
@@ -5752,7 +5751,7 @@ class BatchPoolResizeContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolResourceStatistics(_model_base.Model):
+class BatchPoolResourceStatistics(_Model):
     """Statistics related to resource consumption by Compute Nodes in a Pool.
 
     :ivar start_time: The start time of the time range covered by the statistics. Required.
@@ -5871,7 +5870,7 @@ class BatchPoolResourceStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolSpecification(_model_base.Model):
+class BatchPoolSpecification(_Model):
     """Specification for creating a new Pool.
 
     :ivar display_name: The display name for the Pool. The display name need not be unique and can
@@ -6067,7 +6066,7 @@ class BatchPoolSpecification(_model_base.Model):
     )
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted."""
-    certificate_references: Optional[List["_models.BatchCertificateReference"]] = rest_field(
+    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
         name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """For Windows Nodes, the Batch service installs the Certificates to the specified Certificate
@@ -6079,7 +6078,7 @@ class BatchPoolSpecification(_model_base.Model):
      Warning: This property is deprecated and will be removed after February, 2024.
      Please use the `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Packages to be installed on each Compute Node in the Pool. When creating a pool,
@@ -6088,16 +6087,16 @@ class BatchPoolSpecification(_model_base.Model):
      Changes to Package references affect all new Nodes joining the Pool, but do not affect Compute
      Nodes that are already in the Pool until they are rebooted or reimaged. There is a maximum of
      10 Package references on any given Pool."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(
+    user_accounts: Optional[list["_models.UserAccount"]] = rest_field(
         name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user Accounts to be created on each Compute Node in the Pool."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Pool as metadata. The Batch service does not
      assign any meaning to metadata; it is solely for the use of user code."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+    mount_configuration: Optional[list["_models.MountConfiguration"]] = rest_field(
         name="mountConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of file systems to mount on each node in the pool. This supports Azure Files, NFS,
@@ -6131,11 +6130,11 @@ class BatchPoolSpecification(_model_base.Model):
         enable_inter_node_communication: Optional[bool] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
-        certificate_references: Optional[List["_models.BatchCertificateReference"]] = None,
-        application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = None,
-        user_accounts: Optional[List["_models.UserAccount"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
-        mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
+        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
+        application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
+        user_accounts: Optional[list["_models.UserAccount"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
+        mount_configuration: Optional[list["_models.MountConfiguration"]] = None,
         target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
     ) -> None: ...
@@ -6151,7 +6150,7 @@ class BatchPoolSpecification(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolStatistics(_model_base.Model):
+class BatchPoolStatistics(_Model):
     """Contains utilization and resource usage statistics for the lifetime of a Pool.
 
     :ivar url: The URL for the statistics. Required.
@@ -6209,7 +6208,7 @@ class BatchPoolStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUpdateContent(_model_base.Model):
+class BatchPoolUpdateContent(_Model):
     """Parameters for updating an Azure Batch Pool.
 
     :ivar display_name: The display name for the Pool. The display name need not be unique and can
@@ -6323,7 +6322,7 @@ class BatchPoolUpdateContent(_model_base.Model):
     """A Task to run on each Compute Node as it joins the Pool. The Task runs when the Compute Node is
      added to the Pool or when the Compute Node is restarted. If this element is present, it
      overwrites any existing StartTask. If omitted, any existing StartTask is left unchanged."""
-    certificate_references: Optional[List["_models.BatchCertificateReference"]] = rest_field(
+    certificate_references: Optional[list["_models.BatchCertificateReference"]] = rest_field(
         name="certificateReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """If this element is present, it replaces any existing Certificate references configured on the
@@ -6339,7 +6338,7 @@ class BatchPoolUpdateContent(_model_base.Model):
      Warning: This property is deprecated and will be removed after February, 2024. Please use the
      `Azure KeyVault Extension
      <https://learn.microsoft.com/azure/batch/batch-certificate-migration-guide>`_ instead."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Packages to be installed on each Compute Node in the Pool. Changes to Package
@@ -6348,7 +6347,7 @@ class BatchPoolUpdateContent(_model_base.Model):
      replaces any existing Package references. If you specify an empty collection, then all Package
      references are removed from the Pool. If omitted, any existing Package references are left
      unchanged."""
-    metadata: Optional[List["_models.MetadataItem"]] = rest_field(
+    metadata: Optional[list["_models.MetadataItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs associated with the Pool as metadata. If this element is present, it
@@ -6381,7 +6380,7 @@ class BatchPoolUpdateContent(_model_base.Model):
         name="networkConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The network configuration for the Pool. This field can be updated only when the pool is empty."""
-    resource_tags: Optional[Dict[str, str]] = rest_field(
+    resource_tags: Optional[dict[str, str]] = rest_field(
         name="resourceTags", visibility=["read", "create", "update", "delete", "query"]
     )
     """The user-specified tags associated with the pool. The user-defined tags to be associated with
@@ -6389,12 +6388,12 @@ class BatchPoolUpdateContent(_model_base.Model):
      associated with the pool. This property can only be specified when the Batch account was
      created with the poolAllocationMode property set to 'UserSubscription'.<br /><br />This field
      can be updated only when the pool is empty."""
-    user_accounts: Optional[List["_models.UserAccount"]] = rest_field(
+    user_accounts: Optional[list["_models.UserAccount"]] = rest_field(
         name="userAccounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of user Accounts to be created on each Compute Node in the Pool. This field can be
      updated only when the pool is empty."""
-    mount_configuration: Optional[List["_models.MountConfiguration"]] = rest_field(
+    mount_configuration: Optional[list["_models.MountConfiguration"]] = rest_field(
         name="mountConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Mount storage using specified file system for the entire lifetime of the pool. Mount the
@@ -6414,17 +6413,17 @@ class BatchPoolUpdateContent(_model_base.Model):
         vm_size: Optional[str] = None,
         enable_inter_node_communication: Optional[bool] = None,
         start_task: Optional["_models.BatchStartTask"] = None,
-        certificate_references: Optional[List["_models.BatchCertificateReference"]] = None,
-        application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = None,
-        metadata: Optional[List["_models.MetadataItem"]] = None,
+        certificate_references: Optional[list["_models.BatchCertificateReference"]] = None,
+        application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
+        metadata: Optional[list["_models.MetadataItem"]] = None,
         virtual_machine_configuration: Optional["_models.VirtualMachineConfiguration"] = None,
         target_node_communication_mode: Optional[Union[str, "_models.BatchNodeCommunicationMode"]] = None,
         task_slots_per_node: Optional[int] = None,
         task_scheduling_policy: Optional["_models.BatchTaskSchedulingPolicy"] = None,
         network_configuration: Optional["_models.NetworkConfiguration"] = None,
-        resource_tags: Optional[Dict[str, str]] = None,
-        user_accounts: Optional[List["_models.UserAccount"]] = None,
-        mount_configuration: Optional[List["_models.MountConfiguration"]] = None,
+        resource_tags: Optional[dict[str, str]] = None,
+        user_accounts: Optional[list["_models.UserAccount"]] = None,
+        mount_configuration: Optional[list["_models.MountConfiguration"]] = None,
         upgrade_policy: Optional["_models.UpgradePolicy"] = None,
     ) -> None: ...
 
@@ -6439,7 +6438,7 @@ class BatchPoolUpdateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUsageMetrics(_model_base.Model):
+class BatchPoolUsageMetrics(_Model):
     """Usage metrics for a Pool across an aggregation interval.
 
     :ivar pool_id: The ID of the Pool whose metrics are aggregated in this entry. Required.
@@ -6501,7 +6500,7 @@ class BatchPoolUsageMetrics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchPoolUsageStatistics(_model_base.Model):
+class BatchPoolUsageStatistics(_Model):
     """Statistics related to Pool usage information.
 
     :ivar start_time: The start time of the time range covered by the statistics. Required.
@@ -6549,7 +6548,7 @@ class BatchPoolUsageStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchStartTask(_model_base.Model):
+class BatchStartTask(_Model):
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
@@ -6635,7 +6634,7 @@ class BatchStartTask(_model_base.Model):
      container, and the Task command line is executed in the container. Files produced in the
      container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+    resource_files: Optional[list["_models.ResourceFile"]] = rest_field(
         name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will download to the Compute Node before running the
@@ -6644,7 +6643,7 @@ class BatchStartTask(_model_base.Model):
      this occurs, the collection of ResourceFiles must be reduced in size. This can be achieved
      using .zip files, Application Packages, or Docker Containers. Files listed under this element
      are located in the Task's working directory."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of environment variable settings for the StartTask."""
@@ -6682,8 +6681,8 @@ class BatchStartTask(_model_base.Model):
         *,
         command_line: str,
         container_settings: Optional["_models.BatchTaskContainerSettings"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
+        resource_files: Optional[list["_models.ResourceFile"]] = None,
+        environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
         max_task_retry_count: Optional[int] = None,
         wait_for_success: Optional[bool] = None,
@@ -6700,7 +6699,7 @@ class BatchStartTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchStartTaskInfo(_model_base.Model):
+class BatchStartTaskInfo(_Model):
     """Information about a StartTask running on a Compute Node.
 
     :ivar state: The state of the StartTask on the Compute Node. Required. Known values are:
@@ -6825,7 +6824,7 @@ class BatchStartTaskInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchSubtask(_model_base.Model):
+class BatchSubtask(_Model):
     """Information about an Azure Batch subtask.
 
     :ivar id: The ID of the subtask.
@@ -6957,7 +6956,7 @@ class BatchSubtask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchSupportedImage(_model_base.Model):
+class BatchSupportedImage(_Model):
     """A reference to the Azure Virtual Machines Marketplace Image and additional
     information about the Image.
 
@@ -6996,7 +6995,7 @@ class BatchSupportedImage(_model_base.Model):
     )
     """The type of operating system (e.g. Windows or Linux) of the Image. Required. Known values are:
      \"linux\" and \"windows\"."""
-    capabilities: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    capabilities: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The capabilities or features which the Image supports. Not every capability of the Image is
      listed. Capabilities in this list are considered of special interest and are generally related
      to integration with other features in the Azure Batch service."""
@@ -7018,7 +7017,7 @@ class BatchSupportedImage(_model_base.Model):
         image_reference: "_models.ImageReference",
         os_type: Union[str, "_models.OSType"],
         verification_type: Union[str, "_models.ImageVerificationType"],
-        capabilities: Optional[List[str]] = None,
+        capabilities: Optional[list[str]] = None,
         batch_support_end_of_life: Optional[datetime.datetime] = None,
     ) -> None: ...
 
@@ -7033,7 +7032,7 @@ class BatchSupportedImage(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTask(_model_base.Model):
+class BatchTask(_Model):
     """Batch will retry Tasks when a recovery operation is triggered on a Node.
     Examples of recovery operations include (but are not limited to) when an
     unhealthy Node is rebooted or a Compute Node disappeared due to host failure.
@@ -7214,7 +7213,7 @@ class BatchTask(_model_base.Model):
      container, and the Task command line is executed in the container. Files produced in the
      container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(name="resourceFiles", visibility=["read"])
+    resource_files: Optional[list["_models.ResourceFile"]] = rest_field(name="resourceFiles", visibility=["read"])
     """A list of files that the Batch service will download to the Compute Node before running the
      command line. For multi-instance Tasks, the resource files will only be downloaded to the
      Compute Node on which the primary Task is executed. There is a maximum size for the list of
@@ -7222,11 +7221,11 @@ class BatchTask(_model_base.Model):
      code will be RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be
      reduced in size. This can be achieved using .zip files, Application Packages, or Docker
      Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(name="outputFiles", visibility=["read"])
+    output_files: Optional[list["_models.OutputFile"]] = rest_field(name="outputFiles", visibility=["read"])
     """A list of files that the Batch service will upload from the Compute Node after running the
      command line. For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="environmentSettings", visibility=["read"]
     )
     """A list of environment variable settings for the Task."""
@@ -7259,7 +7258,7 @@ class BatchTask(_model_base.Model):
     """The Tasks that this Task depends on. This Task will not be scheduled until all Tasks that it
      depends on have completed successfully. If any of those Tasks fail and exhaust their retry
      counts, this Task will never be scheduled."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read"]
     )
     """A list of Packages that the Batch service will deploy to the Compute Node before running the
@@ -7297,14 +7296,14 @@ class BatchTask(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskAddCollectionResult(_model_base.Model):
+class BatchTaskAddCollectionResult(_Model):
     """The result of adding a collection of Tasks to a Job.
 
     :ivar value: The results of the add Task collection operation.
     :vartype value: list[~azure.batch.models.BatchTaskAddResult]
     """
 
-    value: Optional[List["_models.BatchTaskAddResult"]] = rest_field(
+    value: Optional[list["_models.BatchTaskAddResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The results of the add Task collection operation."""
@@ -7313,7 +7312,7 @@ class BatchTaskAddCollectionResult(_model_base.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.BatchTaskAddResult"]] = None,
+        value: Optional[list["_models.BatchTaskAddResult"]] = None,
     ) -> None: ...
 
     @overload
@@ -7327,7 +7326,7 @@ class BatchTaskAddCollectionResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskAddResult(_model_base.Model):
+class BatchTaskAddResult(_Model):
     """Result for a single Task added as part of an add Task collection operation.
 
     :ivar status: The status of the add Task request. Required. Known values are: "success",
@@ -7392,7 +7391,7 @@ class BatchTaskAddResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskConstraints(_model_base.Model):
+class BatchTaskConstraints(_Model):
     """Execution constraints to apply to a Task.
 
     :ivar max_wall_clock_time: The maximum elapsed time that the Task may run, measured from the
@@ -7460,7 +7459,7 @@ class BatchTaskConstraints(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskContainerExecutionInfo(_model_base.Model):
+class BatchTaskContainerExecutionInfo(_Model):
     """Contains information about the container which a Task is executing.
 
     :ivar container_id: The ID of the container.
@@ -7506,7 +7505,7 @@ class BatchTaskContainerExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskContainerSettings(_model_base.Model):
+class BatchTaskContainerSettings(_Model):
     """The container settings for a Task.
 
     :ivar container_run_options: Additional options to the container create command. These
@@ -7551,7 +7550,7 @@ class BatchTaskContainerSettings(_model_base.Model):
     )
     """The location of the container Task working directory. The default is 'taskWorkingDirectory'.
      Known values are: \"taskWorkingDirectory\" and \"containerImageDefault\"."""
-    container_host_batch_bind_mounts: Optional[List["_models.ContainerHostBatchBindMountEntry"]] = rest_field(
+    container_host_batch_bind_mounts: Optional[list["_models.ContainerHostBatchBindMountEntry"]] = rest_field(
         name="containerHostBatchBindMounts", visibility=["read", "create", "update", "delete", "query"]
     )
     """The paths you want to mounted to container task. If this array is null or be not present,
@@ -7566,7 +7565,7 @@ class BatchTaskContainerSettings(_model_base.Model):
         container_run_options: Optional[str] = None,
         registry: Optional["_models.ContainerRegistryReference"] = None,
         working_directory: Optional[Union[str, "_models.ContainerWorkingDirectory"]] = None,
-        container_host_batch_bind_mounts: Optional[List["_models.ContainerHostBatchBindMountEntry"]] = None,
+        container_host_batch_bind_mounts: Optional[list["_models.ContainerHostBatchBindMountEntry"]] = None,
     ) -> None: ...
 
     @overload
@@ -7580,7 +7579,7 @@ class BatchTaskContainerSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCounts(_model_base.Model):
+class BatchTaskCounts(_Model):
     """The Task counts for a Job.
 
     :ivar active: The number of Tasks in the active state. Required.
@@ -7632,7 +7631,7 @@ class BatchTaskCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCountsResult(_model_base.Model):
+class BatchTaskCountsResult(_Model):
     """The Task and TaskSlot counts for a Job.
 
     :ivar task_counts: The number of Tasks per state. Required.
@@ -7669,7 +7668,7 @@ class BatchTaskCountsResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskCreateContent(_model_base.Model):
+class BatchTaskCreateContent(_Model):
     """Parameters for creating an Azure Batch Task.
 
     :ivar id: A string that uniquely identifies the Task within the Job. The ID can contain any
@@ -7797,7 +7796,7 @@ class BatchTaskCreateContent(_model_base.Model):
      container, and the Task command line is executed in the container. Files produced in the
      container outside of AZ_BATCH_NODE_ROOT_DIR might not be reflected to the host disk, meaning
      that Batch file APIs will not be able to access those files."""
-    resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+    resource_files: Optional[list["_models.ResourceFile"]] = rest_field(
         name="resourceFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will download to the Compute Node before running the
@@ -7807,13 +7806,13 @@ class BatchTaskCreateContent(_model_base.Model):
      code will be RequestEntityTooLarge. If this occurs, the collection of ResourceFiles must be
      reduced in size. This can be achieved using .zip files, Application Packages, or Docker
      Containers."""
-    output_files: Optional[List["_models.OutputFile"]] = rest_field(
+    output_files: Optional[list["_models.OutputFile"]] = rest_field(
         name="outputFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will upload from the Compute Node after running the
      command line. For multi-instance Tasks, the files will only be uploaded from the Compute Node
      on which the primary Task is executed."""
-    environment_settings: Optional[List["_models.EnvironmentSetting"]] = rest_field(
+    environment_settings: Optional[list["_models.EnvironmentSetting"]] = rest_field(
         name="environmentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of environment variable settings for the Task."""
@@ -7852,7 +7851,7 @@ class BatchTaskCreateContent(_model_base.Model):
      counts, this Task will never be scheduled. If the Job does not have usesTaskDependencies set to
      true, and this element is present, the request fails with error code
      TaskDependenciesNotSpecifiedOnJob."""
-    application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = rest_field(
+    application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = rest_field(
         name="applicationPackageReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Packages that the Batch service will deploy to the Compute Node before running the
@@ -7881,16 +7880,16 @@ class BatchTaskCreateContent(_model_base.Model):
         display_name: Optional[str] = None,
         exit_conditions: Optional["_models.ExitConditions"] = None,
         container_settings: Optional["_models.BatchTaskContainerSettings"] = None,
-        resource_files: Optional[List["_models.ResourceFile"]] = None,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        environment_settings: Optional[List["_models.EnvironmentSetting"]] = None,
+        resource_files: Optional[list["_models.ResourceFile"]] = None,
+        output_files: Optional[list["_models.OutputFile"]] = None,
+        environment_settings: Optional[list["_models.EnvironmentSetting"]] = None,
         affinity_info: Optional["_models.AffinityInfo"] = None,
         constraints: Optional["_models.BatchTaskConstraints"] = None,
         required_slots: Optional[int] = None,
         user_identity: Optional["_models.UserIdentity"] = None,
         multi_instance_settings: Optional["_models.MultiInstanceSettings"] = None,
         depends_on: Optional["_models.BatchTaskDependencies"] = None,
-        application_package_references: Optional[List["_models.BatchApplicationPackageReference"]] = None,
+        application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
         authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
     ) -> None: ...
 
@@ -7905,7 +7904,7 @@ class BatchTaskCreateContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskDependencies(_model_base.Model):
+class BatchTaskDependencies(_Model):
     """Specifies any dependencies of a Task. Any Task that is explicitly specified or
     within a dependency range must complete before the dependant Task will be
     scheduled.
@@ -7921,7 +7920,7 @@ class BatchTaskDependencies(_model_base.Model):
     :vartype task_id_ranges: list[~azure.batch.models.BatchTaskIdRange]
     """
 
-    task_ids: Optional[List[str]] = rest_field(
+    task_ids: Optional[list[str]] = rest_field(
         name="taskIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Task IDs that this Task depends on. All Tasks in this list must complete
@@ -7929,7 +7928,7 @@ class BatchTaskDependencies(_model_base.Model):
      64000 characters total (i.e. the combined length of all Task IDs). If the taskIds collection
      exceeds the maximum length, the Add Task request fails with error code
      TaskDependencyListTooLong. In this case consider using Task ID ranges instead."""
-    task_id_ranges: Optional[List["_models.BatchTaskIdRange"]] = rest_field(
+    task_id_ranges: Optional[list["_models.BatchTaskIdRange"]] = rest_field(
         name="taskIdRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Task ID ranges that this Task depends on. All Tasks in all ranges must complete
@@ -7939,8 +7938,8 @@ class BatchTaskDependencies(_model_base.Model):
     def __init__(
         self,
         *,
-        task_ids: Optional[List[str]] = None,
-        task_id_ranges: Optional[List["_models.BatchTaskIdRange"]] = None,
+        task_ids: Optional[list[str]] = None,
+        task_id_ranges: Optional[list["_models.BatchTaskIdRange"]] = None,
     ) -> None: ...
 
     @overload
@@ -7954,7 +7953,7 @@ class BatchTaskDependencies(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskExecutionInfo(_model_base.Model):
+class BatchTaskExecutionInfo(_Model):
     """Information about the execution of a Task.
 
     :ivar start_time: The time at which the Task started running. 'Running' corresponds to the
@@ -8094,7 +8093,7 @@ class BatchTaskExecutionInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskFailureInfo(_model_base.Model):
+class BatchTaskFailureInfo(_Model):
     """Information about a Task failure.
 
     :ivar category: The category of the Task error. Required. Known values are: "usererror" and
@@ -8119,7 +8118,7 @@ class BatchTaskFailureInfo(_model_base.Model):
      programmatically."""
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Task error, intended to be suitable for display in a user interface."""
-    details: Optional[List["_models.NameValuePair"]] = rest_field(
+    details: Optional[list["_models.NameValuePair"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional details related to the error."""
@@ -8131,7 +8130,7 @@ class BatchTaskFailureInfo(_model_base.Model):
         category: Union[str, "_models.ErrorCategory"],
         code: Optional[str] = None,
         message: Optional[str] = None,
-        details: Optional[List["_models.NameValuePair"]] = None,
+        details: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -8145,7 +8144,7 @@ class BatchTaskFailureInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskGroup(_model_base.Model):
+class BatchTaskGroup(_Model):
     """A collection of Azure Batch Tasks to add.
 
     :ivar value: The collection of Tasks to add. The maximum count of Tasks is 100. The total
@@ -8155,7 +8154,7 @@ class BatchTaskGroup(_model_base.Model):
     :vartype value: list[~azure.batch.models.BatchTaskCreateContent]
     """
 
-    value: List["_models.BatchTaskCreateContent"] = rest_field(
+    value: list["_models.BatchTaskCreateContent"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of Tasks to add. The maximum count of Tasks is 100. The total serialized size of
@@ -8167,7 +8166,7 @@ class BatchTaskGroup(_model_base.Model):
     def __init__(
         self,
         *,
-        value: List["_models.BatchTaskCreateContent"],
+        value: list["_models.BatchTaskCreateContent"],
     ) -> None: ...
 
     @overload
@@ -8181,7 +8180,7 @@ class BatchTaskGroup(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskIdRange(_model_base.Model):
+class BatchTaskIdRange(_Model):
     """The start and end of the range are inclusive. For example, if a range has start
     9 and end 12, then it represents Tasks '9', '10', '11' and '12'.
 
@@ -8215,7 +8214,7 @@ class BatchTaskIdRange(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskInfo(_model_base.Model):
+class BatchTaskInfo(_Model):
     """Information about a Task running on a Compute Node.
 
     :ivar task_url: The URL of the Task.
@@ -8274,7 +8273,7 @@ class BatchTaskInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskSchedulingPolicy(_model_base.Model):
+class BatchTaskSchedulingPolicy(_Model):
     """Specifies how Tasks should be distributed across Compute Nodes.
 
     :ivar node_fill_type: How Tasks are distributed across Compute Nodes in a Pool. If not
@@ -8306,7 +8305,7 @@ class BatchTaskSchedulingPolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskSlotCounts(_model_base.Model):
+class BatchTaskSlotCounts(_Model):
     """The TaskSlot counts for a Job.
 
     :ivar active: The number of TaskSlots for active Tasks. Required.
@@ -8354,7 +8353,7 @@ class BatchTaskSlotCounts(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchTaskStatistics(_model_base.Model):
+class BatchTaskStatistics(_Model):
     """Resource usage statistics for a Task.
 
     :ivar url: The URL of the statistics. Required.
@@ -8465,7 +8464,7 @@ class BatchTaskStatistics(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CifsMountConfiguration(_model_base.Model):
+class CifsMountConfiguration(_Model):
     """Information used to connect to a CIFS file system.
 
     :ivar username: The user to use for authentication against the CIFS file system. Required.
@@ -8523,7 +8522,7 @@ class CifsMountConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerConfiguration(_model_base.Model):
+class ContainerConfiguration(_Model):
     """The configuration for container-enabled Pools.
 
     :ivar type: The container technology to be used. Required. Known values are: "dockerCompatible"
@@ -8542,13 +8541,13 @@ class ContainerConfiguration(_model_base.Model):
     type: Union[str, "_models.ContainerType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The container technology to be used. Required. Known values are: \"dockerCompatible\" and
      \"criCompatible\"."""
-    container_image_names: Optional[List[str]] = rest_field(
+    container_image_names: Optional[list[str]] = rest_field(
         name="containerImageNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of container Image names. This is the full Image reference, as would be
      specified to \"docker pull\". An Image will be sourced from the default Docker registry unless
      the Image is fully qualified with an alternative registry."""
-    container_registries: Optional[List["_models.ContainerRegistryReference"]] = rest_field(
+    container_registries: Optional[list["_models.ContainerRegistryReference"]] = rest_field(
         name="containerRegistries", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional private registries from which containers can be pulled. If any Images must be
@@ -8560,8 +8559,8 @@ class ContainerConfiguration(_model_base.Model):
         self,
         *,
         type: Union[str, "_models.ContainerType"],
-        container_image_names: Optional[List[str]] = None,
-        container_registries: Optional[List["_models.ContainerRegistryReference"]] = None,
+        container_image_names: Optional[list[str]] = None,
+        container_registries: Optional[list["_models.ContainerRegistryReference"]] = None,
     ) -> None: ...
 
     @overload
@@ -8575,7 +8574,7 @@ class ContainerConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerHostBatchBindMountEntry(_model_base.Model):
+class ContainerHostBatchBindMountEntry(_Model):
     """The entry of path and mount mode you want to mount into task container.
 
     :ivar source: The path which be mounted to container customer can select. Known values are:
@@ -8621,7 +8620,7 @@ class ContainerHostBatchBindMountEntry(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerRegistryReference(_model_base.Model):
+class ContainerRegistryReference(_Model):
     """A private container registry.
 
     :ivar username: The user name to log into the registry server.
@@ -8670,7 +8669,7 @@ class ContainerRegistryReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DataDisk(_model_base.Model):
+class DataDisk(_Model):
     """Settings which will be used by the data disks associated to Compute Nodes in
     the Pool. When using attached data disks, you need to mount and format the
     disks from within a VM to use them.
@@ -8734,7 +8733,7 @@ class DataDisk(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeleteBatchCertificateError(_model_base.Model):
+class DeleteBatchCertificateError(_Model):
     """An error encountered by the Batch service when deleting a Certificate.
 
     :ivar code: An identifier for the Certificate deletion error. Codes are invariant and are
@@ -8756,7 +8755,7 @@ class DeleteBatchCertificateError(_model_base.Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Certificate deletion error, intended to be suitable for display in a
      user interface."""
-    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
+    values_property: Optional[list["_models.NameValuePair"]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional error details related to the Certificate deletion error. This list
@@ -8770,7 +8769,7 @@ class DeleteBatchCertificateError(_model_base.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        values_property: Optional[List["_models.NameValuePair"]] = None,
+        values_property: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -8784,7 +8783,7 @@ class DeleteBatchCertificateError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiffDiskSettings(_model_base.Model):
+class DiffDiskSettings(_Model):
     """Specifies the ephemeral Disk Settings for the operating system disk used by the
     compute node (VM).
 
@@ -8833,7 +8832,7 @@ class DiffDiskSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiskEncryptionConfiguration(_model_base.Model):
+class DiskEncryptionConfiguration(_Model):
     """The disk encryption configuration applied on compute nodes in the pool.
     Disk encryption configuration is not supported on Linux pool created with
     Azure Compute Gallery Image.
@@ -8843,7 +8842,7 @@ class DiskEncryptionConfiguration(_model_base.Model):
     :vartype targets: list[str or ~azure.batch.models.DiskEncryptionTarget]
     """
 
-    targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = rest_field(
+    targets: Optional[list[Union[str, "_models.DiskEncryptionTarget"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of disk targets Batch Service will encrypt on the compute node. The list of disk
@@ -8853,7 +8852,7 @@ class DiskEncryptionConfiguration(_model_base.Model):
     def __init__(
         self,
         *,
-        targets: Optional[List[Union[str, "_models.DiskEncryptionTarget"]]] = None,
+        targets: Optional[list[Union[str, "_models.DiskEncryptionTarget"]]] = None,
     ) -> None: ...
 
     @overload
@@ -8867,7 +8866,7 @@ class DiskEncryptionConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentSetting(_model_base.Model):
+class EnvironmentSetting(_Model):
     """An environment variable to be set on a Task process.
 
     :ivar name: The name of the environment variable. Required.
@@ -8900,7 +8899,7 @@ class EnvironmentSetting(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitCodeMapping(_model_base.Model):
+class ExitCodeMapping(_Model):
     """How the Batch service should respond if a Task exits with a particular exit
     code.
 
@@ -8937,7 +8936,7 @@ class ExitCodeMapping(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitCodeRangeMapping(_model_base.Model):
+class ExitCodeRangeMapping(_Model):
     """A range of exit codes and how the Batch service should respond to exit codes
     within that range.
 
@@ -8980,7 +8979,7 @@ class ExitCodeRangeMapping(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitConditions(_model_base.Model):
+class ExitConditions(_Model):
     """Specifies how the Batch service should respond when the Task completes.
 
     :ivar exit_codes: A list of individual Task exit codes and how the Batch service should respond
@@ -9005,11 +9004,11 @@ class ExitConditions(_model_base.Model):
     :vartype default: ~azure.batch.models.ExitOptions
     """
 
-    exit_codes: Optional[List["_models.ExitCodeMapping"]] = rest_field(
+    exit_codes: Optional[list["_models.ExitCodeMapping"]] = rest_field(
         name="exitCodes", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of individual Task exit codes and how the Batch service should respond to them."""
-    exit_code_ranges: Optional[List["_models.ExitCodeRangeMapping"]] = rest_field(
+    exit_code_ranges: Optional[list["_models.ExitCodeRangeMapping"]] = rest_field(
         name="exitCodeRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of Task exit code ranges and how the Batch service should respond to them."""
@@ -9035,8 +9034,8 @@ class ExitConditions(_model_base.Model):
     def __init__(
         self,
         *,
-        exit_codes: Optional[List["_models.ExitCodeMapping"]] = None,
-        exit_code_ranges: Optional[List["_models.ExitCodeRangeMapping"]] = None,
+        exit_codes: Optional[list["_models.ExitCodeMapping"]] = None,
+        exit_code_ranges: Optional[list["_models.ExitCodeRangeMapping"]] = None,
         pre_processing_error: Optional["_models.ExitOptions"] = None,
         file_upload_error: Optional["_models.ExitOptions"] = None,
         default: Optional["_models.ExitOptions"] = None,
@@ -9053,7 +9052,7 @@ class ExitConditions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExitOptions(_model_base.Model):
+class ExitOptions(_Model):
     """Specifies how the Batch service responds to a particular exit condition.
 
     :ivar job_action: An action to take on the Job containing the Task, if the Task completes with
@@ -9107,7 +9106,7 @@ class ExitOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class FileProperties(_model_base.Model):
+class FileProperties(_Model):
     """The properties of a file on a Compute Node.
 
     :ivar creation_time: The file creation time. The creation time is not returned for files on
@@ -9166,89 +9165,7 @@ class FileProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GetCertificateResponse(_model_base.Model):
-    """GetCertificateResponse.
-
-    :ivar thumbprint: The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex
-     digits (it may include spaces but these are removed). Required.
-    :vartype thumbprint: str
-    :ivar thumbprint_algorithm: The algorithm used to derive the thumbprint. This must be sha1.
-     Required.
-    :vartype thumbprint_algorithm: str
-    :ivar url: The URL of the Certificate.
-    :vartype url: str
-    :ivar state: The state of the Certificate. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype state: str or ~azure.batch.models.BatchCertificateState
-    :ivar state_transition_time: The time at which the Certificate entered its current state.
-    :vartype state_transition_time: ~datetime.datetime
-    :ivar previous_state: The previous state of the Certificate. This property is not set if the
-     Certificate is in its initial active state. Known values are: "active", "deleting", and
-     "deletefailed".
-    :vartype previous_state: str or ~azure.batch.models.BatchCertificateState
-    :ivar previous_state_transition_time: The time at which the Certificate entered its previous
-     state. This property is not set if the Certificate is in its initial Active state.
-    :vartype previous_state_transition_time: ~datetime.datetime
-    :ivar public_data: The public part of the Certificate as a base-64 encoded .cer file.
-    :vartype public_data: str
-    :ivar delete_certificate_error: The error that occurred on the last attempt to delete this
-     Certificate. This property is set only if the Certificate is in the DeleteFailed state.
-    :vartype delete_certificate_error: ~azure.batch.models.DeleteBatchCertificateError
-    """
-
-    thumbprint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The X.509 thumbprint of the Certificate. This is a sequence of up to 40 hex digits (it may
-     include spaces but these are removed). Required."""
-    thumbprint_algorithm: str = rest_field(
-        name="thumbprintAlgorithm", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The algorithm used to derive the thumbprint. This must be sha1. Required."""
-    url: Optional[str] = rest_field(visibility=["read"])
-    """The URL of the Certificate."""
-    state: Optional[Union[str, "_models.BatchCertificateState"]] = rest_field(visibility=["read"])
-    """The state of the Certificate. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="stateTransitionTime", visibility=["read"], format="rfc3339"
-    )
-    """The time at which the Certificate entered its current state."""
-    previous_state: Optional[Union[str, "_models.BatchCertificateState"]] = rest_field(
-        name="previousState", visibility=["read"]
-    )
-    """The previous state of the Certificate. This property is not set if the Certificate is in its
-     initial active state. Known values are: \"active\", \"deleting\", and \"deletefailed\"."""
-    previous_state_transition_time: Optional[datetime.datetime] = rest_field(
-        name="previousStateTransitionTime", visibility=["read"], format="rfc3339"
-    )
-    """The time at which the Certificate entered its previous state. This property is not set if the
-     Certificate is in its initial Active state."""
-    public_data: Optional[str] = rest_field(name="publicData", visibility=["read"])
-    """The public part of the Certificate as a base-64 encoded .cer file."""
-    delete_certificate_error: Optional["_models.DeleteBatchCertificateError"] = rest_field(
-        name="deleteCertificateError", visibility=["read"]
-    )
-    """The error that occurred on the last attempt to delete this Certificate. This property is set
-     only if the Certificate is in the DeleteFailed state."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        thumbprint: str,
-        thumbprint_algorithm: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class HttpHeader(_model_base.Model):
+class HttpHeader(_Model):
     """An HTTP header name-value pair.
 
     :ivar name: The case-insensitive name of the header to be used while uploading output files.
@@ -9282,7 +9199,7 @@ class HttpHeader(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageReference(_model_base.Model):
+class ImageReference(_Model):
     """A reference to an Azure Virtual Machines Marketplace Image or a Azure Compute Gallery Image.
     To get the list of all Azure Marketplace Image references verified by Azure Batch, see the
     ' List Supported Images ' operation.
@@ -9391,7 +9308,7 @@ class ImageReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundEndpoint(_model_base.Model):
+class InboundEndpoint(_Model):
     """An inbound endpoint on a Compute Node.
 
     :ivar name: The name of the endpoint. Required.
@@ -9448,7 +9365,7 @@ class InboundEndpoint(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundNatPool(_model_base.Model):
+class InboundNatPool(_Model):
     """A inbound NAT Pool that can be used to address specific ports on Compute Nodes
     in a Batch Pool externally.
 
@@ -9516,7 +9433,7 @@ class InboundNatPool(_model_base.Model):
      Pool must be distinct and cannot overlap. Each range must contain at least 40 ports. If any
      reserved or overlapping values are provided the request fails with HTTP status code 400.
      Required."""
-    network_security_group_rules: Optional[List["_models.NetworkSecurityGroupRule"]] = rest_field(
+    network_security_group_rules: Optional[list["_models.NetworkSecurityGroupRule"]] = rest_field(
         name="networkSecurityGroupRules", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of network security group rules that will be applied to the endpoint. The maximum number
@@ -9534,7 +9451,7 @@ class InboundNatPool(_model_base.Model):
         backend_port: int,
         frontend_port_range_start: int,
         frontend_port_range_end: int,
-        network_security_group_rules: Optional[List["_models.NetworkSecurityGroupRule"]] = None,
+        network_security_group_rules: Optional[list["_models.NetworkSecurityGroupRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -9548,7 +9465,7 @@ class InboundNatPool(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceViewStatus(_model_base.Model):
+class InstanceViewStatus(_Model):
     """The instance view status.
 
     :ivar code: The status code.
@@ -9602,7 +9519,7 @@ class InstanceViewStatus(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxUserConfiguration(_model_base.Model):
+class LinuxUserConfiguration(_Model):
     """Properties used to create a user Account on a Linux Compute Node.
 
     :ivar uid: The user ID of the user Account. The uid and gid properties must be specified
@@ -9657,7 +9574,7 @@ class LinuxUserConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedDisk(_model_base.Model):
+class ManagedDisk(_Model):
     """The managed disk parameters.
 
     :ivar storage_account_type: The storage account type for managed disk. Known values are:
@@ -9696,7 +9613,7 @@ class ManagedDisk(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataItem(_model_base.Model):
+class MetadataItem(_Model):
     """The Batch service does not assign any meaning to this metadata; it is solely
     for the use of user code.
 
@@ -9730,7 +9647,7 @@ class MetadataItem(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MountConfiguration(_model_base.Model):
+class MountConfiguration(_Model):
     """The file system to mount on each node.
 
     :ivar azure_blob_file_system_configuration: The Azure Storage Container to mount using blob
@@ -9790,7 +9707,7 @@ class MountConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiInstanceSettings(_model_base.Model):
+class MultiInstanceSettings(_Model):
     """Multi-instance Tasks are commonly used to support MPI Tasks. In the MPI case,
     if any of the subtasks fail (for example due to exiting with a non-zero exit
     code) the entire multi-instance Task fails. The multi-instance Task is then
@@ -9827,7 +9744,7 @@ class MultiInstanceSettings(_model_base.Model):
     """The command line to run on all the Compute Nodes to enable them to coordinate when the primary
      runs the main Task command. A typical coordination command line launches a background service
      and verifies that the service is ready to process inter-node messages. Required."""
-    common_resource_files: Optional[List["_models.ResourceFile"]] = rest_field(
+    common_resource_files: Optional[list["_models.ResourceFile"]] = rest_field(
         name="commonResourceFiles", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of files that the Batch service will download before running the coordination command
@@ -9846,7 +9763,7 @@ class MultiInstanceSettings(_model_base.Model):
         *,
         coordination_command_line: str,
         number_of_instances: Optional[int] = None,
-        common_resource_files: Optional[List["_models.ResourceFile"]] = None,
+        common_resource_files: Optional[list["_models.ResourceFile"]] = None,
     ) -> None: ...
 
     @overload
@@ -9860,7 +9777,7 @@ class MultiInstanceSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NameValuePair(_model_base.Model):
+class NameValuePair(_Model):
     """Represents a name-value pair.
 
     :ivar name: The name in the name-value pair.
@@ -9893,7 +9810,7 @@ class NameValuePair(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkConfiguration(_model_base.Model):
+class NetworkConfiguration(_Model):
     """The network configuration for a Pool.
 
     :ivar subnet_id: The ARM resource identifier of the virtual network subnet which the Compute
@@ -9994,7 +9911,7 @@ class NetworkConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupRule(_model_base.Model):
+class NetworkSecurityGroupRule(_Model):
     """A network security group rule to apply to an inbound endpoint.
 
     :ivar priority: The priority for this rule. Priorities within a Pool must be unique and are
@@ -10038,7 +9955,7 @@ class NetworkSecurityGroupRule(_model_base.Model):
     """The source address prefix or tag to match for the rule. Valid values are a single IP address
      (i.e. 10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses).  If
      any other values are provided the request fails with HTTP status code 400. Required."""
-    source_port_ranges: Optional[List[str]] = rest_field(
+    source_port_ranges: Optional[list[str]] = rest_field(
         name="sourcePortRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The source port ranges to match for the rule. Valid values are '*' (for all ports 0 - 65535), a
@@ -10054,7 +9971,7 @@ class NetworkSecurityGroupRule(_model_base.Model):
         priority: int,
         access: Union[str, "_models.NetworkSecurityGroupRuleAccess"],
         source_address_prefix: str,
-        source_port_ranges: Optional[List[str]] = None,
+        source_port_ranges: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -10068,7 +9985,7 @@ class NetworkSecurityGroupRule(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsMountConfiguration(_model_base.Model):
+class NfsMountConfiguration(_Model):
     """Information used to connect to an NFS file system.
 
     :ivar source: The URI of the file system to mount. Required.
@@ -10116,7 +10033,7 @@ class NfsMountConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OSDisk(_model_base.Model):
+class OSDisk(_Model):
     """Settings for the operating system disk of the compute node (VM).
 
     :ivar ephemeral_os_disk_settings: Specifies the ephemeral Disk Settings for the operating
@@ -10181,7 +10098,7 @@ class OSDisk(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFile(_model_base.Model):
+class OutputFile(_Model):
     """On every file uploads, Batch service writes two log files to the compute node,
     'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used to learn more about a
     specific failure.
@@ -10252,7 +10169,7 @@ class OutputFile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileBlobContainerDestination(_model_base.Model):
+class OutputFileBlobContainerDestination(_Model):
     """Specifies a file upload destination within an Azure blob storage container.
 
     :ivar path: The destination blob or virtual directory within the Azure Storage container. If
@@ -10294,7 +10211,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
     )
     """The reference to the user assigned identity to use to access Azure Blob Storage specified by
      containerUrl. The identity must have write access to the Azure Blob Storage container."""
-    upload_headers: Optional[List["_models.HttpHeader"]] = rest_field(
+    upload_headers: Optional[list["_models.HttpHeader"]] = rest_field(
         name="uploadHeaders", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of name-value pairs for headers to be used in uploading output files. These headers will
@@ -10310,7 +10227,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
         container_url: str,
         path: Optional[str] = None,
         identity_reference: Optional["_models.BatchNodeIdentityReference"] = None,
-        upload_headers: Optional[List["_models.HttpHeader"]] = None,
+        upload_headers: Optional[list["_models.HttpHeader"]] = None,
     ) -> None: ...
 
     @overload
@@ -10324,7 +10241,7 @@ class OutputFileBlobContainerDestination(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileDestination(_model_base.Model):
+class OutputFileDestination(_Model):
     """The destination to which a file should be uploaded.
 
     :ivar container: A location in Azure blob storage to which files are uploaded.
@@ -10354,7 +10271,7 @@ class OutputFileDestination(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputFileUploadConfig(_model_base.Model):
+class OutputFileUploadConfig(_Model):
     """Options for an output file upload operation, including under what conditions
     to perform the upload.
 
@@ -10389,7 +10306,7 @@ class OutputFileUploadConfig(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicIpAddressConfiguration(_model_base.Model):
+class PublicIpAddressConfiguration(_Model):
     """The public IP Address configuration of the networking configuration of a Pool.
 
     :ivar ip_address_provisioning_type: The provisioning type for Public IP Addresses for the Pool.
@@ -10410,7 +10327,7 @@ class PublicIpAddressConfiguration(_model_base.Model):
     )
     """The provisioning type for Public IP Addresses for the Pool. The default value is BatchManaged.
      Known values are: \"batchmanaged\", \"usermanaged\", and \"nopublicipaddresses\"."""
-    ip_address_ids: Optional[List[str]] = rest_field(
+    ip_address_ids: Optional[list[str]] = rest_field(
         name="ipAddressIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of public IPs which the Batch service will use when provisioning Compute Nodes. The
@@ -10425,7 +10342,7 @@ class PublicIpAddressConfiguration(_model_base.Model):
         self,
         *,
         ip_address_provisioning_type: Optional[Union[str, "_models.IpAddressProvisioningType"]] = None,
-        ip_address_ids: Optional[List[str]] = None,
+        ip_address_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -10439,7 +10356,7 @@ class PublicIpAddressConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RecentBatchJob(_model_base.Model):
+class RecentBatchJob(_Model):
     """Information about the most recent Job to run under the Job Schedule.
 
     :ivar id: The ID of the Job.
@@ -10472,7 +10389,7 @@ class RecentBatchJob(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ResizeError(_model_base.Model):
+class ResizeError(_Model):
     """An error that occurred when resizing a Pool.
 
     :ivar code: An identifier for the Pool resize error. Codes are invariant and are intended to be
@@ -10491,7 +10408,7 @@ class ResizeError(_model_base.Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Pool resize error, intended to be suitable for display in a user
      interface."""
-    values_property: Optional[List["_models.NameValuePair"]] = rest_field(
+    values_property: Optional[list["_models.NameValuePair"]] = rest_field(
         name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional error details related to the Pool resize error."""
@@ -10502,7 +10419,7 @@ class ResizeError(_model_base.Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        values_property: Optional[List["_models.NameValuePair"]] = None,
+        values_property: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -10516,7 +10433,7 @@ class ResizeError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceFile(_model_base.Model):
+class ResourceFile(_Model):
     """A single file or multiple files to be downloaded to a Compute Node.
 
     :ivar auto_storage_container_name: The storage container name in the auto storage Account. The
@@ -10636,7 +10553,7 @@ class ResourceFile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class RollingUpgradePolicy(_model_base.Model):
+class RollingUpgradePolicy(_Model):
     """The configuration parameters used while performing a rolling upgrade.
 
     :ivar enable_cross_zone_upgrade: Allow VMSS to ignore AZ boundaries when constructing upgrade
@@ -10747,7 +10664,7 @@ class RollingUpgradePolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityProfile(_model_base.Model):
+class SecurityProfile(_Model):
     """Specifies the security profile settings for the virtual machine or virtual machine scale set.
 
     :ivar encryption_at_host: This property can be used by user in the request to enable or disable
@@ -10810,7 +10727,7 @@ class SecurityProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceArtifactReference(_model_base.Model):
+class ServiceArtifactReference(_Model):
     """Specifies the service artifact reference id used to set same image version
     for all virtual machines in the scale set when using 'latest' image version.
 
@@ -10845,7 +10762,7 @@ class ServiceArtifactReference(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UefiSettings(_model_base.Model):
+class UefiSettings(_Model):
     """Specifies the security settings like secure boot and vTPM used while creating the virtual
     machine.
 
@@ -10884,7 +10801,7 @@ class UefiSettings(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UpgradePolicy(_model_base.Model):
+class UpgradePolicy(_Model):
     """Describes an upgrade policy - automatic, manual, or rolling.
 
     :ivar mode: Specifies the mode of an upgrade to virtual machines in the scale set.<br /><br />
@@ -10939,7 +10856,7 @@ class UpgradePolicy(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadBatchServiceLogsContent(_model_base.Model):
+class UploadBatchServiceLogsContent(_Model):
     """The Azure Batch service log files upload parameters for a Compute Node.
 
     :ivar container_url: The URL of the container within Azure Blob Storage to which to upload the
@@ -11013,7 +10930,7 @@ class UploadBatchServiceLogsContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadBatchServiceLogsResult(_model_base.Model):
+class UploadBatchServiceLogsResult(_Model):
     """The result of uploading Batch service log files from a specific Compute Node.
 
     :ivar virtual_directory_name: The virtual directory within Azure Blob Storage container to
@@ -11055,7 +10972,7 @@ class UploadBatchServiceLogsResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAccount(_model_base.Model):
+class UserAccount(_Model):
     """Properties used to create a user used to execute Tasks on an Azure Batch
     Compute Node.
 
@@ -11121,7 +11038,7 @@ class UserAccount(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_model_base.Model):
+class UserAssignedIdentity(_Model):
     """The user assigned Identity.
 
     :ivar resource_id: The ARM resource id of the user assigned identity. Required.
@@ -11157,7 +11074,7 @@ class UserAssignedIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserIdentity(_model_base.Model):
+class UserIdentity(_Model):
     """The definition of the user identity under which the Task is run. Specify either the userName or
     autoUser property, but not both.
 
@@ -11197,7 +11114,7 @@ class UserIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineConfiguration(_model_base.Model):
+class VirtualMachineConfiguration(_Model):
     """The configuration for Compute Nodes in a Pool based on the Azure Virtual
     Machines infrastructure.
 
@@ -11284,7 +11201,7 @@ class VirtualMachineConfiguration(_model_base.Model):
     )
     """Windows operating system settings on the virtual machine. This property must not be specified
      if the imageReference property specifies a Linux OS Image."""
-    data_disks: Optional[List["_models.DataDisk"]] = rest_field(
+    data_disks: Optional[list["_models.DataDisk"]] = rest_field(
         name="dataDisks", visibility=["read", "create", "update", "delete", "query"]
     )
     """The configuration for data disks attached to the Compute Nodes in the Pool. This property must
@@ -11325,7 +11242,7 @@ class VirtualMachineConfiguration(_model_base.Model):
     )
     """The node placement configuration for the pool. This configuration will specify rules on how
      nodes in the pool will be physically allocated."""
-    extensions: Optional[List["_models.VMExtension"]] = rest_field(
+    extensions: Optional[list["_models.VMExtension"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The virtual machine extension for the pool. If specified, the extensions mentioned in this
@@ -11353,12 +11270,12 @@ class VirtualMachineConfiguration(_model_base.Model):
         image_reference: "_models.ImageReference",
         node_agent_sku_id: str,
         windows_configuration: Optional["_models.WindowsConfiguration"] = None,
-        data_disks: Optional[List["_models.DataDisk"]] = None,
+        data_disks: Optional[list["_models.DataDisk"]] = None,
         license_type: Optional[str] = None,
         container_configuration: Optional["_models.ContainerConfiguration"] = None,
         disk_encryption_configuration: Optional["_models.DiskEncryptionConfiguration"] = None,
         node_placement_configuration: Optional["_models.BatchNodePlacementConfiguration"] = None,
-        extensions: Optional[List["_models.VMExtension"]] = None,
+        extensions: Optional[list["_models.VMExtension"]] = None,
         os_disk: Optional["_models.OSDisk"] = None,
         security_profile: Optional["_models.SecurityProfile"] = None,
         service_artifact_reference: Optional["_models.ServiceArtifactReference"] = None,
@@ -11375,7 +11292,7 @@ class VirtualMachineConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInfo(_model_base.Model):
+class VirtualMachineInfo(_Model):
     """Info about the current state of the virtual machine.
 
     :ivar image_reference: The reference to the Azure Virtual Machine's Marketplace Image.
@@ -11415,7 +11332,7 @@ class VirtualMachineInfo(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VMDiskSecurityProfile(_model_base.Model):
+class VMDiskSecurityProfile(_Model):
     """Specifies the security profile settings for the managed disk. **Note**: It can only be set for
     Confidential VMs and required when using Confidential VMs.
 
@@ -11453,7 +11370,7 @@ class VMDiskSecurityProfile(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtension(_model_base.Model):
+class VMExtension(_Model):
     """The configuration for virtual machine extensions.
 
     :ivar name: The name of the virtual machine extension. Required.
@@ -11502,14 +11419,14 @@ class VMExtension(_model_base.Model):
     )
     """Indicates whether the extension should be automatically upgraded by the platform if there is a
      newer version of the extension available."""
-    settings: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    settings: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """JSON formatted public settings for the extension."""
-    protected_settings: Optional[Dict[str, str]] = rest_field(
+    protected_settings: Optional[dict[str, str]] = rest_field(
         name="protectedSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """The extension can contain either protectedSettings or protectedSettingsFromKeyVault or no
      protected settings at all."""
-    provision_after_extensions: Optional[List[str]] = rest_field(
+    provision_after_extensions: Optional[list[str]] = rest_field(
         name="provisionAfterExtensions", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of extension names. Collection of extension names after which this extension
@@ -11525,9 +11442,9 @@ class VMExtension(_model_base.Model):
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
         enable_automatic_upgrade: Optional[bool] = None,
-        settings: Optional[Dict[str, str]] = None,
-        protected_settings: Optional[Dict[str, str]] = None,
-        provision_after_extensions: Optional[List[str]] = None,
+        settings: Optional[dict[str, str]] = None,
+        protected_settings: Optional[dict[str, str]] = None,
+        provision_after_extensions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -11541,7 +11458,7 @@ class VMExtension(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class VMExtensionInstanceView(_model_base.Model):
+class VMExtensionInstanceView(_Model):
     """The vm extension instance view.
 
     :ivar name: The name of the vm extension instance view.
@@ -11554,11 +11471,11 @@ class VMExtensionInstanceView(_model_base.Model):
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the vm extension instance view."""
-    statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field(
+    statuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource status information."""
-    sub_statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field(
+    sub_statuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(
         name="subStatuses", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource status information."""
@@ -11568,8 +11485,8 @@ class VMExtensionInstanceView(_model_base.Model):
         self,
         *,
         name: Optional[str] = None,
-        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
-        sub_statuses: Optional[List["_models.InstanceViewStatus"]] = None,
+        statuses: Optional[list["_models.InstanceViewStatus"]] = None,
+        sub_statuses: Optional[list["_models.InstanceViewStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -11583,7 +11500,7 @@ class VMExtensionInstanceView(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsConfiguration(_model_base.Model):
+class WindowsConfiguration(_Model):
     """Windows operating system settings to apply to the virtual machine.
 
     :ivar enable_automatic_updates: Whether automatic updates are enabled on the virtual machine.
@@ -11615,7 +11532,7 @@ class WindowsConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsUserConfiguration(_model_base.Model):
+class WindowsUserConfiguration(_Model):
     """Properties used to create a user Account on a Windows Compute Node.
 
     :ivar login_mode: The login mode for the user. The default is 'batch'. Known values are:
