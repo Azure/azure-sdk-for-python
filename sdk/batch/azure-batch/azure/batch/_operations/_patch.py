@@ -141,7 +141,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeleteJobPollingMethod(job_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_disable_job(
@@ -218,7 +218,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DisableJobPollingMethod(job_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_enable_job(
@@ -288,7 +288,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = EnableJobPollingMethod(job_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_delete_job_schedule(
@@ -359,7 +359,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeleteJobSchedulePollingMethod(job_schedule_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_delete_pool(
@@ -436,7 +436,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeletePoolPollingMethod(pool_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_delete_certificate(
@@ -492,7 +492,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeleteCertificatePollingMethod(thumbprint_algorithm, thumbprint, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_deallocate_node(
@@ -543,7 +543,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeallocateNodePollingMethod(pool_id, node_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_reboot_node(
@@ -594,7 +594,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = RebootNodePollingMethod(pool_id, node_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_reimage_node(
@@ -649,7 +649,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = ReimageNodePollingMethod(pool_id, node_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_remove_nodes(
@@ -721,7 +721,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = RemoveNodePollingMethod(pool_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_resize_pool(
@@ -797,7 +797,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = ResizePoolPollingMethod(pool_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_start_node(
@@ -844,7 +844,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = StartNodePollingMethod(pool_id, node_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_stop_pool_resize(
@@ -916,7 +916,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = StopPoolResizePollingMethod(pool_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_terminate_job(
@@ -996,7 +996,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = TerminateJobPollingMethod(job_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     def begin_terminate_job_schedule(
@@ -1066,7 +1066,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = TerminateJobSchedulePollingMethod(job_schedule_id, polling_interval)
-        return LROPoller(self, pipeline_response, lambda: None, polling_method, **kwargs)
+        return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     # create_task_collection renamed
     @distributed_trace
@@ -1537,7 +1537,7 @@ class _TaskWorkflowManager:
                     self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
                     self._bulk_add_tasks(results_queue, chunk_tasks_to_add[:midpoint])
             # Retry server side errors
-            elif 500 <= e.response.status_code <= 599:
+            elif 500 <= e.response.status_code <= 599: # type: ignore
                 self.tasks_to_add.extendleft(chunk_tasks_to_add)
             else:
                 # Re-add to pending queue as unknown status / don't have result

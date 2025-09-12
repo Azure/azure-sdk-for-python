@@ -80,9 +80,9 @@ class BatchSamples:
 
     def cleanup(self, client: BatchClient, pool_id: str, job_id: str):
         # deleting the job
-        client.delete_job(job_id=job_id)
+        client.begin_delete_job(job_id=job_id)
         # deleting the pool
-        client.delete_pool(pool_id=pool_id)
+        client.begin_delete_pool(pool_id=pool_id)
 
 
 if __name__ == "__main__":
