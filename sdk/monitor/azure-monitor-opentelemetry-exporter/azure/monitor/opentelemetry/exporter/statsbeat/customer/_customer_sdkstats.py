@@ -1,10 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
+
 from ._state import get_customer_stats_manager
 
 # pylint: disable=protected-access
-def collect_customer_sdkstats(exporter):  # type: ignore
+def collect_customer_sdkstats(exporter: "BaseExporter") -> None:  # type: ignore
     # Initialize customer SDKStats collection using global manager instance.
     # Uses the global CustomerSdkStatsManager instance for better performance
     # and cleaner access patterns.

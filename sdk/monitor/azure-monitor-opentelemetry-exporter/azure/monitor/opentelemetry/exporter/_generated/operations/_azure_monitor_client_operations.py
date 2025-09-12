@@ -66,7 +66,7 @@ class AzureMonitorClientOperationsMixin(object):
         self,
         body,  # type: List["_models.TelemetryItem"]
         **kwargs  # type: Any
-    ):
+    ) -> "_models.TrackResponse":
         # type: (...) -> "_models.TrackResponse"
         """Track telemetry events.
 
