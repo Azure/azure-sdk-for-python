@@ -578,9 +578,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             # Begin analysis operation with URL
             analysis_poller = await client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                body={
-                    "url": invoice_url,
-                },
+                url=invoice_url,
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
@@ -639,10 +637,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Starting binary analysis with analyzer {analyzer_id}")
             
             # Begin binary analysis operation
-            analysis_poller = await client.content_analyzers.begin_analyze_binary(
+            analysis_poller = await client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                input=pdf_content,
-                content_type="application/pdf",
+                data=pdf_content
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
@@ -699,10 +696,9 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
             print(f"Starting binary analysis to get operation ID")
             
             # Begin binary analysis operation
-            analysis_poller = await client.content_analyzers.begin_analyze_binary(
+            analysis_poller = await client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                input=pdf_content,
-                content_type="application/pdf",
+                data=pdf_content,
             )
 
             # Wait for analysis completion first

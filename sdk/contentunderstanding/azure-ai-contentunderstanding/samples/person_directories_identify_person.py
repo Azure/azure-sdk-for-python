@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory, FaceSource
 
-from sample_helper import read_image_to_base64
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -101,11 +100,12 @@ async def main():
             image_path = os.path.join(
                 sample_file_dir, "sample_files", "face", face_file
             )
-            image_b64 = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_data = image_file.read()
 
             face_add_response = await client.person_directories.add_face(
                 person_directory_id=directory_id,
-                face_source=FaceSource(data=image_b64),
+                face_source=FaceSource(data=image_data),
                 person_id=bill_id,
             )
             face_id = face_add_response.face_id
@@ -122,11 +122,12 @@ async def main():
             image_path = os.path.join(
                 sample_file_dir, "sample_files", "face", face_file
             )
-            image_b64 = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_data = image_file.read()
 
             face_add_response = await client.person_directories.add_face(
                 person_directory_id=directory_id,
-                face_source=FaceSource(data=image_b64),
+                face_source=FaceSource(data=image_data),
                 person_id=clare_id,
             )
             face_id = face_add_response.face_id
@@ -137,12 +138,13 @@ async def main():
         family_image_path = os.path.join(
             sample_file_dir, "sample_files", "face", "family.jpg"
         )
-        family_image_b64 = read_image_to_base64(family_image_path)
+        with open(family_image_path, "rb") as image_file:
+            family_image_data = image_file.read()
 
         # Use identify_person API to identify persons in the image
         response = await client.person_directories.identify_person(
             person_directory_id=directory_id,
-            face_source=FaceSource(data=family_image_b64),
+            face_source=FaceSource(data=family_image_data),
             max_person_candidates=5,
         )
 

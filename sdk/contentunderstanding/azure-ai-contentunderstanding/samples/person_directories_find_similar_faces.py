@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory, FaceSource
 
-from sample_helper import read_image_to_base64
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -57,7 +56,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory
@@ -92,11 +91,12 @@ async def main():
             image_path = os.path.join(
                 sample_file_dir, "sample_files", "face", face_file
             )
-            image_b64 = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_data = image_file.read()
 
             face_add_response = await client.person_directories.add_face(
                 person_directory_id=directory_id,
-                face_source=FaceSource(data=image_b64),
+                face_source=FaceSource(data=image_data),
                 person_id=person_id,
             )
             face_id = face_add_response.face_id
@@ -117,11 +117,12 @@ async def main():
             "Bill",
             "Family1-Dad3.jpg",
         )
-        query_image_base64 = read_image_to_base64(query_image_path)
+        with open(query_image_path, "rb") as image_file:
+            query_image_data = image_file.read()
 
         response = await client.person_directories.find_similar_faces(
             person_directory_id=directory_id,
-            face_source=FaceSource(data=query_image_base64),
+            face_source=FaceSource(data=query_image_data),
             max_similar_faces=10,
         )
 
@@ -151,11 +152,12 @@ async def main():
             "Clare",
             "Family1-Mom1.jpg",
         )
-        mom_query_b64 = read_image_to_base64(mom_query_path)
+        with open(mom_query_path, "rb") as image_file:
+            mom_query_data = image_file.read()
 
         mom_response = await client.person_directories.find_similar_faces(
             person_directory_id=directory_id,
-            body={"faceSource": {"data": mom_query_b64}, "maxSimilarFaces": 10},
+            body={"faceSource": {"data": mom_query_data}, "maxSimilarFaces": 10},
         )
 
         # Display results for Mom1 query

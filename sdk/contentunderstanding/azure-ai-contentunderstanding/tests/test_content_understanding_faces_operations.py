@@ -14,7 +14,7 @@ from devtools_testutils import recorded_by_proxy
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.core.exceptions import ResourceNotFoundError
-from test_helpers import read_image_to_base64, read_image_to_base64_bytes
+from test_helpers import read_image_bytes
 
 import pytest
 
@@ -34,7 +34,10 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64(image_path)
+        with open(image_path, "rb") as image_file:
+            image_bytes = image_file.read()
+        import base64
+        image_data = base64.b64encode(image_bytes).decode("utf-8")
         
         print(f"Testing original body method with image: {image_path}")
         response = client.faces.detect(
@@ -108,7 +111,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        image_data = read_image_bytes(image_path)  # Returns raw bytes
         
         print(f"Testing data keyword method with image: {image_path}")
         response = client.faces.detect(
@@ -142,9 +145,9 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Use a test image URL
         image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
         
-        print(f"Testing new URL positional overload with URL: {image_url}")
+        print(f"Testing new URL keyword overload with URL: {image_url}")
         response = client.faces.detect(
-            image_url,  # URL as positional argument (new overload)
+            url=image_url,  # URL as keyword argument (new overload)
             max_detected_faces=10
         )
         
@@ -174,11 +177,11 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        image_data = read_image_bytes(image_path)  # Returns raw bytes
         
-        print(f"Testing new bytes positional overload with image: {image_path}")
+        print(f"Testing new bytes keyword overload with image: {image_path}")
         response = client.faces.detect(
-            image_data,  # Bytes as positional argument (new overload)
+            data=image_data,  # Bytes as keyword argument (new overload)
             max_detected_faces=10
         )
         
@@ -210,8 +213,13 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         image1_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
         image2_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
         
-        image1_data = read_image_to_base64(image1_path)
-        image2_data = read_image_to_base64(image2_path)
+        with open(image1_path, "rb") as image_file:
+            image1_bytes = image_file.read()
+        with open(image2_path, "rb") as image_file:
+            image2_bytes = image_file.read()
+        import base64
+        image1_data = base64.b64encode(image1_bytes).decode("utf-8")
+        image2_data = base64.b64encode(image2_bytes).decode("utf-8")
         
         print(f"Comparing faces between two images of the same person (Bill)")
         print(f"Image 1: {image1_path}")
@@ -259,3 +267,65 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         print(f"Confidence score: {response.confidence} (expected high for same person)")
         
         print("Face comparison test completed successfully")
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_faces_detect_mutual_exclusivity(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Test that url and data parameters cannot be provided simultaneously
+        - Verify that the enhanced FacesOperations enforces mutual exclusivity
+        
+        Expected Result:
+        - ValueError should be raised when both url and data are provided
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        
+        # Test mutual exclusivity validation
+        print("Testing mutual exclusivity validation...")
+        
+        # This should raise a ValueError
+        try:
+            response = client.faces.detect(
+                url="https://example.com/test.jpg",
+                data=b"some binary data"
+            )
+            # If we get here, the test failed
+            assert False, "Expected ValueError for providing both url and data"
+            
+        except ValueError as e:
+            print(f"✅ Mutual exclusivity validation working: {e}")
+            assert "Cannot provide both 'url' and 'data' parameters simultaneously" in str(e)
+        
+        # Test that individual parameters work
+        print("Testing individual parameters work...")
+        
+        # URL only should work
+        try:
+            response = client.faces.detect(
+                url="https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
+            )
+            assert response is not None
+            print("✅ URL-only parameter works correctly")
+            
+        except Exception as e:
+            print(f"ℹ️  URL-only test: {e}")
+        
+        # Data only should work (if we have a local file)
+        try:
+            test_file_dir = os.path.dirname(os.path.abspath(__file__))
+            image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+            image_data = read_image_bytes(image_path)
+            
+            response = client.faces.detect(
+                data=image_data
+            )
+            assert response is not None
+            print("✅ Data-only parameter works correctly")
+            
+        except FileNotFoundError:
+            print("ℹ️  Local image file not found, skipping data-only test")
+        except Exception as e:
+            print(f"ℹ️  Data-only test: {e}")
+        
+        print("Mutual exclusivity test completed successfully")

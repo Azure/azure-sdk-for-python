@@ -13,7 +13,6 @@ from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import PersonDirectory
 
-from sample_helper import read_image_to_base64
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -53,7 +52,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory
@@ -85,12 +84,13 @@ async def main():
             image_path = os.path.join(
                 sample_file_dir, "sample_files", "face", face_file
             )
-            image_b64 = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_data = image_file.read()
 
             face_add_response = await client.person_directories.add_face(
                 person_directory_id=directory_id,
                 body={
-                    "faceSource": {"data": image_b64},
+                    "faceSource": {"data": image_data},
                     "personId": person_id,
                 },
             )

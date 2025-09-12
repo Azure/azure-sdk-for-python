@@ -65,9 +65,9 @@ async def main() -> None:
         print(
             "🔍 Analyzing sample_files/sample_invoice.pdf with prebuilt-documentAnalyzer..."
         )
-        poller = await client.content_analyzers.begin_analyze_binary(
+        poller = await client.content_analyzers.begin_analyze(
             analyzer_id="prebuilt-documentAnalyzer",
-            input=pdf_bytes,
+            data=pdf_bytes,
             content_type="application/pdf",
         )
         result: AnalyzeResult = await poller.result()

@@ -578,9 +578,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             # Begin analysis operation with URL
             analysis_poller = client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                body={
-                    "url": invoice_url,
-                },
+                url=invoice_url,
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
@@ -639,9 +637,9 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             print(f"Starting binary analysis with analyzer {analyzer_id}")
             
             # Begin binary analysis operation
-            analysis_poller = client.content_analyzers.begin_analyze_binary(
+            analysis_poller = client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                input=pdf_content,
+                data=pdf_content,
                 content_type="application/pdf",
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
@@ -699,9 +697,9 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             print(f"Starting binary analysis to get operation ID")
             
             # Begin binary analysis operation
-            analysis_poller = client.content_analyzers.begin_analyze_binary(
+            analysis_poller = client.content_analyzers.begin_analyze(
                 analyzer_id=analyzer_id,
-                input=pdf_content,
+                data=pdf_content,
                 content_type="application/pdf",
             )
 
@@ -832,4 +830,82 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
         finally:
             # Always clean up the created analyzer, even if the test fails
-            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer) 
+            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
+
+    @ContentUnderstandingPreparer()
+    @recorded_by_proxy
+    def test_content_analyzers_begin_analyze_mutual_exclusivity(self, contentunderstanding_endpoint):
+        """
+        Test Summary:
+        - Test that url and data parameters cannot be provided simultaneously
+        - Verify that the enhanced ContentAnalyzersOperations enforces mutual exclusivity
+        
+        Expected Result:
+        - ValueError should be raised when both url and data are provided
+        """
+        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_mutual_exclusivity")
+        created_analyzer = False
+
+        # Create a simple analyzer for testing
+        content_analyzer = new_simple_content_analyzer_object(
+            analyzer_id=analyzer_id,
+            description="Test analyzer for mutual exclusivity validation"
+        )
+
+        try:
+            # Create the analyzer
+            print(f"Creating analyzer {analyzer_id}")
+            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
+            created_analyzer = True
+            print(f"  Analyzer {analyzer_id} created")
+
+            # Test mutual exclusivity validation
+            print("Testing mutual exclusivity validation...")
+            
+            # This should raise a ValueError
+            try:
+                analysis_poller = client.content_analyzers.begin_analyze(
+                    analyzer_id=analyzer_id,
+                    url="https://example.com/test.pdf",
+                    data=b"some binary data"
+                )
+                # If we get here, the test failed
+                assert False, "Expected ValueError for providing both url and data"
+                
+            except ValueError as e:
+                print(f"✅ Mutual exclusivity validation working: {e}")
+                assert "Cannot provide both 'url' and 'data' parameters simultaneously" in str(e)
+            
+            # Test that individual parameters work
+            print("Testing individual parameters work...")
+            
+            # URL only should work
+            analysis_poller = client.content_analyzers.begin_analyze(
+                analyzer_id=analyzer_id,
+                url="https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
+            )
+            assert_poller_properties(analysis_poller, "URL analysis poller")
+            
+            # Data only should work (if we have a local file)
+            try:
+                pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "sample_files", "sample_invoice.pdf")
+                with open(pdf_path, "rb") as pdf_file:
+                    pdf_content = pdf_file.read()
+                
+                analysis_poller = client.content_analyzers.begin_analyze(
+                    analyzer_id=analyzer_id,
+                    data=pdf_content,
+                    content_type="application/pdf"
+                )
+                assert_poller_properties(analysis_poller, "Data analysis poller")
+                print("✅ Both individual parameters work correctly")
+                
+            except FileNotFoundError:
+                print("ℹ️  Local PDF file not found, skipping data-only test")
+
+        finally:
+            if created_analyzer:
+                print(f"Cleaning up analyzer {analyzer_id}")
+                client.content_analyzers.delete(analyzer_id=analyzer_id)
+                print(f"  Analyzer {analyzer_id} deleted")

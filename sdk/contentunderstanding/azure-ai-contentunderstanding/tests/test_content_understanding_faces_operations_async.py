@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.core.exceptions import ResourceNotFoundError
-from test_helpers import read_image_to_base64, read_image_to_base64_bytes
+from test_helpers import read_image_bytes
 
 
 def generate_test_id() -> str:
@@ -44,7 +44,10 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64(image_path)
+        with open(image_path, "rb") as image_file:
+            image_bytes = image_file.read()
+        import base64
+        image_data = base64.b64encode(image_bytes).decode("utf-8")
         
         print(f"Testing original body method with image: {image_path}")
         response = await client.faces.detect(
@@ -118,7 +121,7 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        image_data = read_image_bytes(image_path)  # Returns raw bytes
         
         print(f"Testing data keyword method with image: {image_path}")
         response = await client.faces.detect(
@@ -152,9 +155,9 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Use a test image URL
         image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
         
-        print(f"Testing new URL positional overload with URL: {image_url}")
+        print(f"Testing new URL keyword overload with URL: {image_url}")
         response = await client.faces.detect(
-            image_url,  # URL as positional argument (new overload)
+            url=image_url,  # URL as keyword argument (new overload)
             max_detected_faces=10
         )
         
@@ -184,11 +187,11 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-        image_data = read_image_to_base64_bytes(image_path)  # Returns bytes
+        image_data = read_image_bytes(image_path)  # Returns raw bytes
         
-        print(f"Testing new bytes positional overload with image: {image_path}")
+        print(f"Testing new bytes keyword overload with image: {image_path}")
         response = await client.faces.detect(
-            image_data,  # Bytes as positional argument (new overload)
+            data=image_data,  # Bytes as keyword argument (new overload)
             max_detected_faces=10
         )
         
@@ -220,8 +223,13 @@ class TestContentUnderstandingFacesOperationsAsync(ContentUnderstandingClientTes
         image1_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
         image2_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
         
-        image1_data = read_image_to_base64(image1_path)
-        image2_data = read_image_to_base64(image2_path)
+        with open(image1_path, "rb") as image_file:
+            image1_bytes = image_file.read()
+        with open(image2_path, "rb") as image_file:
+            image2_bytes = image_file.read()
+        import base64
+        image1_data = base64.b64encode(image1_bytes).decode("utf-8")
+        image2_data = base64.b64encode(image2_bytes).decode("utf-8")
         
         print(f"Comparing faces between two images of the same person (Bill)")
         print(f"Image 1: {image1_path}")

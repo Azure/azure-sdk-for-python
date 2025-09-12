@@ -303,7 +303,7 @@ def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str
     assert total_amount_field is not None, "total_amount field should not be None"
     assert total_amount_field.__class__.__name__ == "NumberField", f"total_amount field should be of type NumberField, got {total_amount_field.__class__.__name__}"
 
-    total_amount_value = total_amount_field.value_number
+    total_amount_value = total_amount_field.value
     
     print(f"Total amount field value: {total_amount_value}")
     assert total_amount_value == 110, f"Expected total_amount to be 110, but got {total_amount_value}"
@@ -504,42 +504,23 @@ async def generate_person_directory_id_async(client, test_name: str) -> str:
     return person_directory_id
 
 
-def read_image_to_base64(image_path: str) -> str:
-    """Read image file and convert to base64 string.
+
+
+def read_image_bytes(image_path: str) -> bytes:
+    """Read image file and return raw bytes.
     
     Args:
         image_path: Path to the image file
         
     Returns:
-        str: Base64 encoded string of the image
+        bytes: Raw image data as bytes
         
     Raises:
         FileNotFoundError: If the image file doesn't exist
         OSError: If there are issues reading the file
     """
-    import base64
     with open(image_path, "rb") as image_file:
-        image_bytes = image_file.read()
-        return base64.b64encode(image_bytes).decode('utf-8')
-
-
-def read_image_to_base64_bytes(image_path: str) -> bytes:
-    """Read image file and convert to base64 bytes.
-    
-    Args:
-        image_path: Path to the image file
-        
-    Returns:
-        bytes: Base64 encoded bytes of the image
-        
-    Raises:
-        FileNotFoundError: If the image file doesn't exist
-        OSError: If there are issues reading the file
-    """
-    import base64
-    with open(image_path, "rb") as image_file:
-        image_bytes = image_file.read()
-        return base64.b64encode(image_bytes)
+        return image_file.read()
 
 
 def get_test_data_path(relative_path: str) -> str:

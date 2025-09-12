@@ -15,7 +15,6 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.contentunderstanding.models import PersonDirectory
 from test_helpers import (
     generate_person_directory_id_async,
-    read_image_to_base64,
     get_enrollment_data_path
 )
 
@@ -167,15 +166,16 @@ async def build_person_directory_from_enrollment_data_async(
             print(f"- Adding face from {filename}... ", end="")
             
             try:
-                # Read image and convert to base64
-                image_data = read_image_to_base64(image_path)
+                # Read image as raw bytes
+                with open(image_path, "rb") as image_file:
+                    image_bytes = image_file.read()
                 
                 # Add face to person
                 face_response = await client.person_directories.add_face(
                     person_directory_id=person_directory_id,
                     body={
                         "faceSource": {
-                            "data": image_data
+                            "data": image_bytes
                         },
                         "personId": person_id
                     }
@@ -208,8 +208,9 @@ async def identify_persons_in_image_async(
     print(f"\nIdentifying Persons in Image...")
     print(f"Processing test image: {os.path.basename(image_path)}")
     
-    # Read image and convert to base64
-    image_data = read_image_to_base64(image_path)
+    # Read image as raw bytes
+    with open(image_path, "rb") as image_file:
+        image_bytes = image_file.read()
     
     # Detect faces first
     # Note: This would require a separate face detection API call
@@ -221,7 +222,7 @@ async def identify_persons_in_image_async(
             person_directory_id=person_directory_id,
             body={
                 "faceSource": {
-                    "data": image_data
+                    "data": image_bytes
                 },
                 "maxPersonCandidates": 5
             }
@@ -900,10 +901,11 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
-            # Read test image and convert to base64
+            # Read test image as raw bytes
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             # Add a face to the person
             print(f"Adding face to person {person_id}")
@@ -911,8 +913,8 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                 person_directory_id=person_directory_id,
             body={
                 "faceSource": {
-                        "data": image_data
-                    },
+                    "data": image_bytes
+                },
                     "personId": person_id
                 }
             )
@@ -997,14 +999,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Add a face to person 1
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             print(f"Adding face to person {person1_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": image_data
+                        "data": image_bytes
                     },
                     "personId": person1_id
                 }
@@ -1090,14 +1093,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Add a face to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             print(f"Adding face to person {person_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": image_data
+                        "data": image_bytes
                     },
                     "personId": person_id
                 }
@@ -1172,14 +1176,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Add a face to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             print(f"Adding face to person {person_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": image_data
+                        "data": image_bytes
                     },
                     "personId": person_id
                 }
@@ -1264,7 +1269,8 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Add multiple faces to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             face_ids = []
             for i in range(3):  # Add 3 faces
@@ -1273,7 +1279,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                     person_directory_id=person_directory_id,
                     body={
                         "faceSource": {
-                            "data": image_data
+                            "data": image_bytes
                         },
                         "personId": person_id
                     }
@@ -1350,16 +1356,17 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             
             print(f"Identifying persons in test image: {os.path.basename(test_image_path)}")
             
-            # Read test image and convert to base64
-            image_data = read_image_to_base64(test_image_path)
+            # Read test image as raw bytes
+            with open(test_image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             # Identify persons in the image
             response = await self._client.person_directories.identify_person(
                 person_directory_id=person_directory_id,
             body={
                 "faceSource": {
-                        "data": image_data
-                    },
+                    "data": image_bytes
+                },
                     "maxPersonCandidates": 5
                 }
             )
@@ -1439,14 +1446,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             face_ids = []
             for i, face_file in enumerate(face_images):
                 image_path = os.path.join(test_file_dir, face_file)
-                image_data = read_image_to_base64(image_path)
+                with open(image_path, "rb") as image_file:
+                    image_bytes = image_file.read()
                 
                 print(f"Adding face {i+1} from {face_file} to person {person_id}")
                 add_face_response = await self._client.person_directories.add_face(
                     person_directory_id=person_directory_id,
                     body={
                         "faceSource": {
-                            "data": image_data
+                            "data": image_bytes
                         },
                         "personId": person_id
                     }
@@ -1460,13 +1468,14 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # This should find matches since Dad3 is from the same person as Dad1 and Dad2
             print(f"\nTest 1: Finding similar faces using Family1-Dad3.jpg (same person)")
             dad3_image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad3.jpg")
-            dad3_image_data = read_image_to_base64(dad3_image_path)
+            with open(dad3_image_path, "rb") as image_file:
+                dad3_image_bytes = image_file.read()
             
             dad3_response = await self._client.person_directories.find_similar_faces(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": dad3_image_data
+                        "data": dad3_image_bytes
                     },
                     "maxSimilarFaces": 10
                 }
@@ -1493,13 +1502,14 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # This should find NO matches since Clare is a different person than Bill
             print(f"\nTest 2: Finding similar faces using Family1-Mom1.jpg (different person)")
             mom1_image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Clare", "Family1-Mom1.jpg")
-            mom1_image_data = read_image_to_base64(mom1_image_path)
+            with open(mom1_image_path, "rb") as image_file:
+                mom1_image_bytes = image_file.read()
             
             mom1_response = await self._client.person_directories.find_similar_faces(
                 person_directory_id=person_directory_id,
                 body={
                     "faceSource": {
-                        "data": mom1_image_data
+                        "data": mom1_image_bytes
                     },
                     "maxSimilarFaces": 10
                 }
@@ -1570,15 +1580,16 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Add a face to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-            image_data = read_image_to_base64(image_path)
+            with open(image_path, "rb") as image_file:
+                image_bytes = image_file.read()
 
             print(f"Adding face to person {person_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
             body={
                 "faceSource": {
-                        "data": image_data
-                    },
+                    "data": image_bytes
+                },
                     "personId": person_id
                 }
             )
@@ -1593,7 +1604,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                 person_id=person_id,
                 body={
                     "faceSource": {
-                        "data": image_data
+                        "data": image_bytes
                     }
                 }
             )
@@ -1665,13 +1676,14 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                 image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
                 
                 if os.path.exists(image_path):
-                    image_data = read_image_to_base64(image_path)
+                    with open(image_path, "rb") as image_file:
+                        image_bytes = image_file.read()
                     
                     add_face_response = await self._client.person_directories.add_face(
                         person_directory_id=person_directory_id,
                         body={
                             "faceSource": {
-                                "data": image_data
+                                "data": image_bytes
                             },
                             "personId": first_person_id
                         }
@@ -1706,13 +1718,14 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             test_image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
             
             if os.path.exists(test_image_path):
-                image_data = read_image_to_base64(test_image_path)
+                with open(test_image_path, "rb") as image_file:
+                    image_bytes = image_file.read()
                 
                 identify_response = await self._client.person_directories.identify_person(
                     person_directory_id=person_directory_id,
                     body={
                         "faceSource": {
-                            "data": image_data
+                            "data": image_bytes
                         },
                         "maxPersonCandidates": 5
                     }

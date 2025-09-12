@@ -63,7 +63,8 @@ async def main() -> None:
             f"🔍 Analyzing remote document from {file_url} with prebuilt-documentAnalyzer..."
         )
         poller = await client.content_analyzers.begin_analyze(
-            analyzer_id="prebuilt-documentAnalyzer", url=file_url
+            analyzer_id="prebuilt-documentAnalyzer", 
+            url=file_url
         )
         result: AnalyzeResult = await poller.result()
 

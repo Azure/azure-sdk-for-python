@@ -7,9 +7,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import List, Optional, Any, Union, overload
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import AsyncLROPoller
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -19,3 +21,200 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    pass
+
+
+# Make FacesOperations available for import - following WebPubSub pattern
+from .operations._operations import FacesOperations as FacesOperationsGenerated
+from .operations._operations import build_faces_detect_request
+from ..models import DetectFacesResult
+
+class FacesOperations(FacesOperationsGenerated):
+    """Extended FacesOperations with url/data mutual exclusivity enforcement."""
+    
+    @overload
+    async def detect(
+        self,
+        *,
+        url: str,
+        max_detected_faces: Optional[int] = None,
+        **kwargs: Any
+    ) -> DetectFacesResult:
+        """Detect faces using image URL.
+
+        :keyword url: Image URL. Required.
+        :paramtype url: str
+        :keyword max_detected_faces: Maximum number of faces to return (up to 100)
+        :paramtype max_detected_faces: int
+        :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @overload
+    async def detect(
+        self,
+        *,
+        data: bytes,
+        max_detected_faces: Optional[int] = None,
+        **kwargs: Any
+    ) -> DetectFacesResult:
+        """Detect faces using image data.
+
+        :keyword data: Binary image data as bytes. Required.
+        :paramtype data: bytes
+        :keyword max_detected_faces: Maximum number of faces to return (up to 100)
+        :paramtype max_detected_faces: int
+        :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @distributed_trace_async
+    async def detect(self, *args: Any, **kwargs: Any) -> DetectFacesResult:  # type: ignore[override]
+        """Detect faces in an image with url/data mutual exclusivity.
+
+        This method enforces that url and data cannot be provided simultaneously,
+        while allowing all other original behaviors including body parameters.
+
+        :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Validate that url and data are not provided together
+        if 'url' in kwargs and kwargs['url'] is not None and 'data' in kwargs and kwargs['data'] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
+        
+        # Handle bytes data - no conversion needed, pass through directly
+        # The original detect method will handle bytes data appropriately
+        
+        # Call the original method for all cases
+        return await super().detect(*args, **kwargs)
+
+
+# Make ContentAnalyzersOperations available for import
+from .operations._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
+from .. import models as _models
+
+
+class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
+    """Extended ContentAnalyzersOperations with url/data mutual exclusivity enforcement."""
+    
+    @overload
+    async def begin_analyze(
+        self,
+        analyzer_id: str,
+        *,
+        url: str,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        inputs: Optional[List[_models.AnalyzeInput]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+        """Extract content and fields from input using URL.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :keyword url: The URL of the primary input to analyze. Required.
+        :paramtype url: str
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword inputs: Additional inputs to analyze. Only supported in analyzers with mode=pro.
+         Default value is None.
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @overload
+    async def begin_analyze(
+        self,
+        analyzer_id: str,
+        *,
+        data: bytes,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/octet-stream",
+        inputs: Optional[List[_models.AnalyzeInput]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+        """Extract content and fields from input using binary data.
+
+        This method internally calls begin_analyze_binary for optimal binary data processing.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :keyword data: Binary content of the document to analyze. Required.
+        :paramtype data: bytes
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Content type for binary data. Default value is "application/octet-stream".
+        :paramtype content_type: str
+        :keyword inputs: Additional inputs to analyze. Only supported in analyzers with mode=pro.
+         Default value is None.
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        pass
+
+    @distributed_trace_async
+    async def begin_analyze(self, analyzer_id: str, *args: Any, **kwargs: Any) -> AsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
+        """Extract content and fields from input with url/data mutual exclusivity.
+
+        This method enforces that url and data cannot be provided simultaneously,
+        while allowing all other original behaviors including body parameters and inputs.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        # Validate that url and data are not provided together
+        if 'url' in kwargs and kwargs['url'] is not None and 'data' in kwargs and kwargs['data'] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
+        
+        # Handle bytes data by calling begin_analyze_binary for better efficiency
+        # Only route to begin_analyze_binary when:
+        # 1. data is provided and is bytes (raw binary data)
+        # 2. inputs is None (begin_analyze_binary doesn't support inputs parameter)
+        if ('data' in kwargs and kwargs['data'] is not None and isinstance(kwargs['data'], bytes) and
+            ('inputs' not in kwargs or kwargs.get('inputs') is None)):
+            data_bytes = kwargs.pop('data')
+            # Extract parameters that begin_analyze_binary supports
+            string_encoding = kwargs.pop('string_encoding', None)
+            processing_location = kwargs.pop('processing_location', None)
+            content_type = kwargs.pop('content_type', 'application/octet-stream')
+            
+            return await super().begin_analyze_binary(
+                analyzer_id=analyzer_id,
+                input=data_bytes,
+                string_encoding=string_encoding,
+                processing_location=processing_location,
+                content_type=content_type,
+                **kwargs
+            )
+        
+        # Call the original method for all other cases
+        return await super().begin_analyze(analyzer_id, *args, **kwargs)
