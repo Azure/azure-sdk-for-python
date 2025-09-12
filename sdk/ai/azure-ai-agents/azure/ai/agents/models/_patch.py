@@ -746,7 +746,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def __init__(
         self,
         name: str,
-        description: Optional[str] = None,
+        description: Optional[str],
         spec: Any,
         auth: OpenApiAuthDetails,
         default_parameters: Optional[List[str]] = None,
@@ -788,7 +788,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def add_definition(
         self,
         name: str,
-        description: Optional[str] = None,
+        description: Optional[str],
         spec: Any,
         auth: Optional[OpenApiAuthDetails] = None,
         default_parameters: Optional[List[str]] = None,
