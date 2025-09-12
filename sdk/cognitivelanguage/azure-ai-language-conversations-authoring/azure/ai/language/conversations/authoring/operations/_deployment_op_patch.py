@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.pipeline import PipelineResponse
@@ -27,9 +27,8 @@ from ._operations import DeploymentOperations as DeploymentOperationsGenerated
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class DeploymentOperations(DeploymentOperationsGenerated):
 
@@ -112,7 +111,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace
     def begin_delete_deployment_from_resources(
-        self, deployment_name: str, body: Union[DeleteDeploymentDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        body: Union[DeleteDeploymentDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Deletes a project deployment from the specified assigned resources.
 
@@ -194,7 +198,12 @@ class DeploymentOperations(DeploymentOperationsGenerated):
 
     @distributed_trace
     def begin_deploy_project(
-        self, deployment_name: str, body: Union[CreateDeploymentDetails, JSON, IO[bytes]],*, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        body: Union[CreateDeploymentDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 

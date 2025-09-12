@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.async_paging import AsyncItemPaged
@@ -33,9 +33,7 @@ from ._operations import TrainedModelOperations as TrainedModelOperationsGenerat
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class TrainedModelOperations(TrainedModelOperationsGenerated):
@@ -111,10 +109,7 @@ class TrainedModelOperations(TrainedModelOperationsGenerated):
 
     @distributed_trace
     async def begin_evaluate_model(  # type: ignore[override]
-        self,
-        trained_model_label: str,
-        body: Union[EvaluationDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, trained_model_label: str, body: Union[EvaluationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 

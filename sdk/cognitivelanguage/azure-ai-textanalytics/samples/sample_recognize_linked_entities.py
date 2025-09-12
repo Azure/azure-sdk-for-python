@@ -91,6 +91,7 @@ def sample_recognize_linked_entities():
     else:
         print("No documents in the response or unexpected result type.")
 
+
 # [END recognize_linked_entities]
 
 

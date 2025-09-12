@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint: disable=import-error
+from collections.abc import MutableMapping  # pylint: disable=import-error
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
@@ -35,9 +35,7 @@ if TYPE_CHECKING:
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
@@ -51,7 +49,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__( # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
@@ -164,9 +162,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await super()._begin_delete_project(
-            project_name=project_name, **kwargs
-        )
+        return await super()._begin_delete_project(project_name=project_name, **kwargs)
 
 
 def patch_sdk():

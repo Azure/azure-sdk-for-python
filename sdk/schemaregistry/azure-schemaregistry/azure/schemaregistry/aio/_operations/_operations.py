@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, List, Optional, TypeVar
+import json
+from typing import Any, AsyncIterator, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -36,18 +37,20 @@ from ..._operations._operations import (
     build_schema_registry_list_schema_versions_request,
     build_schema_registry_register_schema_request,
 )
-from ..._utils.model_base import _deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import SchemaRegistryClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, SchemaRegistryClientConfiguration]):
+class _SchemaRegistryClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], SchemaRegistryClientConfiguration]
+):
 
     @distributed_trace
-    def _list_schema_groups(self, **kwargs: Any) -> AsyncIterable[str]:
+    def _list_schema_groups(self, **kwargs: Any) -> AsyncItemPaged[str]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
@@ -59,7 +62,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Sc
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+        cls: ClsType[list[str]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -114,7 +117,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Sc
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[str], deserialized.get("Value", []))
+            list_of_elem = _deserialize(list[str], deserialized.get("Value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("NextLink") or None, AsyncList(list_of_elem)
@@ -137,7 +140,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Sc
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> AsyncIterable[int]:
+    def _list_schema_versions(self, group_name: str, schema_name: str, **kwargs: Any) -> AsyncItemPaged[int]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -153,7 +156,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Sc
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[int]] = kwargs.pop("cls", None)
+        cls: ClsType[list[int]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -210,7 +213,7 @@ class SchemaRegistryClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, Sc
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[int], deserialized.get("Value", []))
+            list_of_elem = _deserialize(list[int], deserialized.get("Value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("NextLink") or None, AsyncList(list_of_elem)
