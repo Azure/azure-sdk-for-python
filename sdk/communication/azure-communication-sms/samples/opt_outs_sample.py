@@ -38,44 +38,49 @@ def main():
     recipient_phone_number = os.environ["RECIPIENT_PHONE_NUMBER"]
     
     # [START manage_opt_out_list]
-    # Create opt-out request
-    opt_out_request = {
-        "from": sender_phone_number,
-        "recipients": [{"to": recipient_phone_number}]
-    }
-    
     try:
         print(f"Managing opt-out list for {recipient_phone_number} from {sender_phone_number}")
         
         # Check current opt-out status
         print("1. Checking current opt-out status...")
-        check_response = opt_outs_client.check_opt_out(opt_out_request)
-        print(f"Current opt-out status: {check_response}")
+        check_results = opt_outs_client.check_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in check_results:
+            print(f"Current opt-out status for {result.to}: {'Opted out' if result.is_opted_out else 'Not opted out'}")
         
         # [START add_opt_out]
         # Add phone number to opt-out list
         print("2. Adding phone number to opt-out list...")
-        add_response = opt_outs_client.add_opt_out(opt_out_request)
-        print(f"Add opt-out response: {add_response}")
+        add_results = opt_outs_client.add_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in add_results:
+            if result.http_status_code == 200 and not result.error_message:
+                print(f"Successfully added {result.to} to opt-out list")
+            else:
+                print(f"Failed to add {result.to}: {result.error_message or 'HTTP ' + str(result.http_status_code)}")
         # [END add_opt_out]
         
         # Check opt-out status after adding
         print("3. Checking opt-out status after adding...")
-        check_response_after_add = opt_outs_client.check_opt_out(opt_out_request)
-        print(f"Status after adding: {check_response_after_add}")
+        check_results_after_add = opt_outs_client.check_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in check_results_after_add:
+            print(f"Status after adding for {result.to}: {'Opted out' if result.is_opted_out else 'Not opted out'}")
         
         # [START remove_opt_out]
         # Remove phone number from opt-out list
         print("4. Removing phone number from opt-out list...")
-        remove_response = opt_outs_client.remove_opt_out(opt_out_request)
-        print(f"Remove opt-out response: {remove_response}")
+        remove_results = opt_outs_client.remove_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in remove_results:
+            if result.http_status_code == 200 and not result.error_message:
+                print(f"Successfully removed {result.to} from opt-out list")
+            else:
+                print(f"Failed to remove {result.to}: {result.error_message or 'HTTP ' + str(result.http_status_code)}")
         # [END remove_opt_out]
         
         # [START check_opt_out]
         # Check final opt-out status
         print("5. Checking final opt-out status...")
-        final_check_response = opt_outs_client.check_opt_out(opt_out_request)
-        print(f"Final opt-out status: {final_check_response}")
+        final_check_results = opt_outs_client.check_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in final_check_results:
+            print(f"Final opt-out status for {result.to}: {'Opted out' if result.is_opted_out else 'Not opted out'}")
         # [END check_opt_out]
         
     except Exception as e:

@@ -74,32 +74,36 @@ def main():
     # [END send_sms_with_delivery_reports]
     
     # [START manage_opt_outs]
-    # Create opt-out request
-    opt_out_request = {
-        "from": sender_phone_number,
-        "recipients": [{"to": recipient_phone_number}]
-    }
-    
     try:
         # Check current opt-out status
         print("Checking opt-out status...")
-        check_response = opt_outs_client.check_opt_out(opt_out_request)
-        print(f"Current opt-out status: {check_response}")
+        check_results = opt_outs_client.check_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in check_results:
+            print(f"Current opt-out status for {result.to}: {'Opted out' if result.is_opted_out else 'Not opted out'}")
         
         # Add phone number to opt-out list
         print("Adding phone number to opt-out list...")
-        add_response = opt_outs_client.add_opt_out(opt_out_request)
-        print(f"Add opt-out response: {add_response}")
+        add_results = opt_outs_client.add_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in add_results:
+            if result.http_status_code == 200 and not result.error_message:
+                print(f"Successfully added {result.to} to opt-out list")
+            else:
+                print(f"Failed to add {result.to}: {result.error_message or 'HTTP ' + str(result.http_status_code)}")
         
         # Check opt-out status again
         print("Checking opt-out status after adding...")
-        check_response = opt_outs_client.check_opt_out(opt_out_request)
-        print(f"Updated opt-out status: {check_response}")
+        check_results = opt_outs_client.check_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in check_results:
+            print(f"Updated opt-out status for {result.to}: {'Opted out' if result.is_opted_out else 'Not opted out'}")
         
-        # Remove phone number from opt-out list
+        # Remove phone number from opt-out list (cleanup)
         print("Removing phone number from opt-out list...")
-        remove_response = opt_outs_client.remove_opt_out(opt_out_request)
-        print(f"Remove opt-out response: {remove_response}")
+        remove_results = opt_outs_client.remove_opt_out(from_=sender_phone_number, to=recipient_phone_number)
+        for result in remove_results:
+            if result.http_status_code == 200 and not result.error_message:
+                print(f"Successfully removed {result.to} from opt-out list")
+            else:
+                print(f"Failed to remove {result.to}: {result.error_message or 'HTTP ' + str(result.http_status_code)}")
         
     except Exception as e:
         print(f"Error managing opt-outs: {e}")
