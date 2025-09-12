@@ -69,9 +69,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     timeout = kwargs.get('timeout')
     operation_start_time = kwargs.get(_Constants.OperationStartTime)
 
+    # this is just to satisfy python interpreter, operation_start_time will always be there
     if timeout and operation_start_time is None:
         operation_start_time = time.time()
-        # Also inject it into kwargs to be available for subsequent retries/calls if needed.
         kwargs[_Constants.OperationStartTime] = operation_start_time
 
 
