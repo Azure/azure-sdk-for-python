@@ -653,7 +653,7 @@ class AsyncFunctionCallingClient:
         now = datetime.datetime.now()
         
         if timezone.lower() == "utc":
-            now = datetime.datetime.utcnow()
+            now = datetime.datetime.now(datetime.timezone.utc)
             timezone_name = "UTC"
         else:
             timezone_name = "local"
