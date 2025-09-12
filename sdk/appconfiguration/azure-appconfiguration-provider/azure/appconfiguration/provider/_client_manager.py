@@ -222,7 +222,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         feature_flag_selectors: List[SettingSelector],
         headers: Dict[str, str],
         **kwargs
-    ) -> Tuple[bool, List[FeatureFlagConfigurationSetting]]:
+    ) -> Optional[List[FeatureFlagConfigurationSetting]]:
         """
         Gets the refreshed feature flags if they have changed.
 
@@ -232,15 +232,16 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value of the feature flag sentinel keys. The third item is the updated feature flags.
-        :rtype: Tuple[bool, List[FeatureFlagConfigurationSetting]]
+        :rtype: Optional[List[FeatureFlagConfigurationSetting]]
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
             if changed:
                 feature_flags = self.load_feature_flags(feature_flag_selectors, headers=headers, **kwargs)
-                return True, feature_flags
-        return False, []
+                break
+        return feature_flags
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> Optional[ConfigurationSetting]:

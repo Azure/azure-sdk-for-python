@@ -463,8 +463,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     ) -> Dict[str, Any]:
         if refreshed_feature_flags:
             # Reset feature flag usage
-            self._uses_ai_configuration = False
-            self._uses_aicc_configuration = False
+            self._feature_filter_usage = {}
 
         configuration_settings_processed = {}
         existing_feature_flags = (
