@@ -51,7 +51,12 @@ async def fetch_current_datetime_async(format: Optional[str] = None) -> str:
 
     # Use the provided format if available, else use a default format
     if format:
-        time_format = format
+        # Convert common format patterns to Python datetime format
+        time_format = format.replace("YYYY", "%Y").replace("MM", "%m").replace("DD", "%d")
+        time_format = time_format.replace("HH", "%H").replace("mm", "%M").replace("ss", "%S")
+        # Handle some other common variations
+        time_format = time_format.replace("yyyy", "%Y").replace("dd", "%d")
+        time_format = time_format.replace("hh", "%H")
     else:
         time_format = "%Y-%m-%d %H:%M:%S"
 
