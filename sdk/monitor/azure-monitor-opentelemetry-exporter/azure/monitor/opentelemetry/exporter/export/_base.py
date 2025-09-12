@@ -168,7 +168,7 @@ class BaseExporter:
         )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
-            self.storage: Optional[LocalFileStorage] = LocalFileStorage(  # pyright: ignore
+            self.storage = LocalFileStorage(  # pyright: ignore
                 path=self._storage_directory,  # type: ignore
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,

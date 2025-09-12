@@ -46,7 +46,7 @@ class StorageExportResult(Enum):
 # pylint: disable=broad-except
 class LocalFileBlob:
     def __init__(self, fullpath: str) -> None:
-        self.fullpath = fullpath
+        self.fullpath: str = fullpath
 
     def delete(self) -> None:
         try:
@@ -82,7 +82,7 @@ class LocalFileBlob:
 
     def lease(self, period: int) -> Optional['LocalFileBlob']:
         timestamp = _now() + _seconds(period)
-        fullpath = self.fullpath
+        fullpath: str = self.fullpath
         if fullpath.endswith(".lock"):
             fullpath = fullpath[: fullpath.rindex("@")]
         fullpath += "@{}.lock".format(_fmt(timestamp))
@@ -90,7 +90,7 @@ class LocalFileBlob:
             os.rename(self.fullpath, fullpath)
         except Exception:
             return None
-        self.fullpath: str = fullpath
+        self.fullpath = fullpath
         return self
 
 

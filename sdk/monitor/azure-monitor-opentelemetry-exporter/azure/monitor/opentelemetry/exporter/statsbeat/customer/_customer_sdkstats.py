@@ -4,8 +4,7 @@
 from ._state import get_customer_stats_manager
 
 # pylint: disable=protected-access
-# pyright: ignore
-def collect_customer_sdkstats(exporter):
+def collect_customer_sdkstats(exporter):  # type: ignore
     # Initialize customer SDKStats collection using global manager instance.
     # Uses the global CustomerSdkStatsManager instance for better performance
     # and cleaner access patterns.
