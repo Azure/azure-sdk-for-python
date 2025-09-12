@@ -238,7 +238,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        super(AzureAppConfigurationProvider, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         if "user_agent" in kwargs:
             user_agent = kwargs.pop("user_agent") + " " + USER_AGENT

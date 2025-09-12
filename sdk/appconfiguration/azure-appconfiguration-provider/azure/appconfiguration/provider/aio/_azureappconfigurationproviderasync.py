@@ -41,9 +41,7 @@ from .._azureappconfigurationproviderbase import (
     process_key_vault_options,
     update_correlation_context_header,
 )
-
-from .._client_manager_base import _ConfigurationClientWrapperBase
-from ._async_client_manager import AsyncConfigurationClientManager
+from ._async_client_manager import AsyncConfigurationClientManager, _AsyncConfigurationClientWrapper
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -308,7 +306,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         return False, []
 
     async def _attempt_refresh(
-        self, client: _ConfigurationClientWrapperBase, replica_count: int, is_failover_request: bool, **kwargs
+        self, client: _AsyncConfigurationClientWrapper, replica_count: int, is_failover_request: bool, **kwargs
     ) -> bool:
         refreshed_configs = False
         refreshed_feature_flags = False

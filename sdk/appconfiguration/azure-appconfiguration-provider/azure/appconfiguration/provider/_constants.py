@@ -36,7 +36,3 @@ TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line
 # Mime profiles
 APP_CONFIG_AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/"
 APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-completion"
-
-# Constants for initial client wrapper state
-INITIAL_FAILED_ATTEMPTS = 0
-INITIAL_BACKOFF_END_TIME = 0.0
