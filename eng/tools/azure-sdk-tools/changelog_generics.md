@@ -41,10 +41,7 @@ In summary, some modules were incorrectly visible/importable and have been renam
 
 Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
 
-# Autorest v3 to v4, if the package is multiapi
-
-
-## General Breaking changes
+# Breaking changes in generated packages
 
 This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
 In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
