@@ -90,7 +90,7 @@ class LocalFileBlob:
             os.rename(self.fullpath, fullpath)
         except Exception:
             return None
-        self.fullpath = fullpath
+        self.fullpath: str = fullpath
         return self
 
 
@@ -189,7 +189,7 @@ class LocalFileStorage:
         else:
             pass
 
-    def get(self) -> Optional['LocalFileBlob']:
+    def get(self) -> Optional[LocalFileBlob]:
         if not self._enabled:
             return None
         cursor = self.gets()

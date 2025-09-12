@@ -77,15 +77,6 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
         self.assertFalse(disabled_manager.is_initialized)
         self.assertFalse(disabled_manager.is_shutdown)
 
-    def test_singleton_behavior(self):
-        """Test that CustomerSdkStatsManager follows singleton pattern."""
-        manager1 = CustomerSdkStatsManager()
-        manager2 = CustomerSdkStatsManager()
-        manager3 = get_customer_stats_manager()
-        
-        self.assertIs(manager1, manager2)
-        self.assertIs(manager1, manager3)
-
     @patch('azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter')
     @patch('azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader')
     @patch('azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider')

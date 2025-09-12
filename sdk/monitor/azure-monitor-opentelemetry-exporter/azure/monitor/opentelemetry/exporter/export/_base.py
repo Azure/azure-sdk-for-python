@@ -166,9 +166,9 @@ class BaseExporter:
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
-        self.storage = None
+        self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
-            self.storage = LocalFileStorage(  # pyright: ignore
+            self.storage: Optional[LocalFileStorage] = LocalFileStorage(  # pyright: ignore
                 path=self._storage_directory,  # type: ignore
                 max_size=self._storage_max_size,
                 maintenance_period=self._storage_maintenance_period,
