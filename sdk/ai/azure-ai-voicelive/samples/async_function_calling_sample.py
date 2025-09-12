@@ -110,13 +110,13 @@ async def _wait_for_match(
 
 class AudioProcessor:
     """
-    Handles real-time audio capture and playback for the voice assistant with function calling.
+    Handles real-time audio capture and playback for the voice assistant.
     
-    Threading Architecture:
-    - Main thread: Event loop and UI
-    - Capture thread: PyAudio input stream reading
-    - Send thread: Async audio data transmission to VoiceLive
-    - Playback thread: PyAudio output stream writing
+    Responsibilities:
+    - Captures audio input from the microphone using PyAudio.
+    - Plays back audio output using PyAudio.
+    - Manages threading for audio capture, sending, and playback.
+    - Uses queues to buffer audio data between threads.
     """
 
     def __init__(self, connection):
@@ -653,7 +653,7 @@ class AsyncFunctionCallingClient:
         now = datetime.datetime.now()
         
         if timezone.lower() == "utc":
-            now = datetime.datetime.utcnow()
+            now = datetime.datetime.now(datetime.timezone.utc)
             timezone_name = "UTC"
         else:
             timezone_name = "local"
