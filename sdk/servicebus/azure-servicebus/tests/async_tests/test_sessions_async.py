@@ -1561,9 +1561,9 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
             async with sender:
                 await sender.send_messages(messages)
 
-            await asyncio.sleep(20)  # wait for messages to be available
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, session_id="mySessionId", max_wait_time=10)
-            async with receiver:
-                messages = await receiver.receive_messages(max_wait_time=10)
-                assert len(messages) == 2
-                assert all(msg.session_id == "mySessionId" for msg in messages)
+            received_messages = []
+            async with sb_client.get_queue_receiver(servicebus_queue.name, session_id="mySessionId", max_wait_time=10) as receiver:
+                async for message in receiver:
+                    received_messages.append(message)
+            assert len(received_messages) == 2
+            assert all(msg.session_id == "mySessionId" for msg in received_messages)
