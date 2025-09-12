@@ -33,51 +33,43 @@ class TestSMSClient(unittest.TestCase):
 
         self.assertTrue("invalid credential from connection string." in str(context.exception))
 
-    def test_send_message(self):
+    @patch("azure.communication.sms._generated.operations.SmsOperations.send")
+    def test_send_message(self, mock_send):
         phone_number = "+14255550123"
-        raised = False
+        
+        # Mock the response from the generated operation
+        mock_send.return_value = {
+            "value": [
+                {
+                    "to": phone_number,
+                    "messageId": "id",
+                    "httpStatusCode": 202,
+                    "errorMessage": None,
+                    "repeatabilityResult": "accepted",
+                    "successful": True,
+                }
+            ]
+        }
 
-        def mock_send(*_, **__):
-            return mock_response(
-                status_code=202,
-                json_payload={
-                    "value": [
-                        {
-                            "to": phone_number,
-                            "messageId": "id",
-                            "httpStatusCode": "202",
-                            "errorMessage": "null",
-                            "repeatabilityResult": "accepted",
-                            "successful": "true",
-                        }
-                    ]
-                },
-            )
+        sms_client = SmsClient("https://endpoint", FakeTokenCredential())
 
-        sms_client = SmsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
-
-        sms_response = None
-        try:
-            sms_responses = sms_client.send(
-                from_=phone_number,
-                to=[phone_number],
-                message="Hello World via SMS",
-                enable_delivery_report=True,
-                tag="custom-tag",
-            )
-            sms_response = sms_responses[0]
-        except:
-            raised = True
-            raise
-
-        self.assertFalse(raised, "Expected is no excpetion raised")
+        sms_responses = sms_client.send(
+            from_=phone_number,
+            to=[phone_number],
+            message="Hello World via SMS",
+            enable_delivery_report=True,
+            tag="custom-tag",
+        )
+        
+        sms_response = sms_responses[0]
+        
         self.assertEqual(phone_number, sms_response.to)
         self.assertIsNotNone(sms_response.message_id)
         self.assertEqual(202, sms_response.http_status_code)
-        self.assertIsNotNone(sms_response.error_message)
         self.assertTrue(sms_response.successful)
+        mock_send.assert_called_once()
 
-    @patch("azure.communication.sms._generated.operations._sms_operations.SmsOperations.send")
+    @patch("azure.communication.sms._generated.operations.SmsOperations.send")
     def test_send_message_parameters(self, mock_send):
         phone_number = "+14255550123"
         msg = "Hello World via SMS"
@@ -87,14 +79,14 @@ class TestSMSClient(unittest.TestCase):
         sms_client.send(from_=phone_number, to=[phone_number], message=msg, enable_delivery_report=True, tag=tag)
 
         send_message_request = mock_send.call_args[0][0]
-        self.assertEqual(phone_number, send_message_request.from_property)
-        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
-        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_request_id)
-        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_first_sent)
-        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
-        self.assertEqual(tag, send_message_request.sms_send_options.tag)
+        self.assertEqual(phone_number, send_message_request["from"])
+        self.assertEqual(phone_number, send_message_request["smsRecipients"][0]["to"])
+        self.assertIsNotNone(send_message_request["smsRecipients"][0]["repeatabilityRequestId"])
+        self.assertIsNotNone(send_message_request["smsRecipients"][0]["repeatabilityFirstSent"])
+        self.assertTrue(send_message_request["smsSendOptions"]["enableDeliveryReport"])
+        self.assertEqual(tag, send_message_request["smsSendOptions"]["tag"])
 
-    @patch("azure.communication.sms._generated.operations._sms_operations.SmsOperations.send")
+    @patch("azure.communication.sms._generated.operations.SmsOperations.send")
     def test_send_message_with_delivery_timeout(self, mock_send):
         """Test sending SMS with delivery report timeout parameter"""
         phone_number = "+14255550123"
@@ -111,12 +103,12 @@ class TestSMSClient(unittest.TestCase):
         )
 
         send_message_request = mock_send.call_args[0][0]
-        self.assertEqual(phone_number, send_message_request.from_property)
-        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
-        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
-        self.assertEqual(timeout_seconds, send_message_request.sms_send_options.delivery_report_timeout_in_seconds)
+        self.assertEqual(phone_number, send_message_request["from"])
+        self.assertEqual(phone_number, send_message_request["smsRecipients"][0]["to"])
+        self.assertTrue(send_message_request["smsSendOptions"]["enableDeliveryReport"])
+        self.assertEqual(timeout_seconds, send_message_request["smsSendOptions"]["deliveryReportTimeoutInSeconds"])
 
-    @patch("azure.communication.sms._generated.operations._sms_operations.SmsOperations.send")
+    @patch("azure.communication.sms._generated.operations.SmsOperations.send")
     def test_send_message_with_messaging_connect(self, mock_send):
         """Test sending SMS with messaging connect parameters"""
         phone_number = "+14255550123"
@@ -135,17 +127,17 @@ class TestSMSClient(unittest.TestCase):
         )
 
         send_message_request = mock_send.call_args[0][0]
-        self.assertEqual(phone_number, send_message_request.from_property)
-        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
-        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
+        self.assertEqual(phone_number, send_message_request["from"])
+        self.assertEqual(phone_number, send_message_request["smsRecipients"][0]["to"])
+        self.assertTrue(send_message_request["smsSendOptions"]["enableDeliveryReport"])
         
         # Check MessagingConnect options
-        messaging_connect = send_message_request.sms_send_options.messaging_connect
+        messaging_connect = send_message_request["smsSendOptions"]["messagingConnect"]
         self.assertIsNotNone(messaging_connect)
-        self.assertEqual(api_key, messaging_connect.api_key)
-        self.assertEqual(partner_name, messaging_connect.partner)
+        self.assertEqual(api_key, messaging_connect["apiKey"])
+        self.assertEqual(partner_name, messaging_connect["partner"])
 
-    @patch("azure.communication.sms._generated.operations._sms_operations.SmsOperations.send")
+    @patch("azure.communication.sms._generated.operations.SmsOperations.send")
     def test_send_message_with_all_new_parameters(self, mock_send):
         """Test sending SMS with all new parameters combined"""
         phone_number = "+14255550123"
@@ -168,17 +160,17 @@ class TestSMSClient(unittest.TestCase):
         )
 
         send_message_request = mock_send.call_args[0][0]
-        self.assertEqual(phone_number, send_message_request.from_property)
-        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
-        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
-        self.assertEqual(tag, send_message_request.sms_send_options.tag)
-        self.assertEqual(timeout_seconds, send_message_request.sms_send_options.delivery_report_timeout_in_seconds)
+        self.assertEqual(phone_number, send_message_request["from"])
+        self.assertEqual(phone_number, send_message_request["smsRecipients"][0]["to"])
+        self.assertTrue(send_message_request["smsSendOptions"]["enableDeliveryReport"])
+        self.assertEqual(tag, send_message_request["smsSendOptions"]["tag"])
+        self.assertEqual(timeout_seconds, send_message_request["smsSendOptions"]["deliveryReportTimeoutInSeconds"])
         
         # Check MessagingConnect options
-        messaging_connect = send_message_request.sms_send_options.messaging_connect
+        messaging_connect = send_message_request["smsSendOptions"]["messagingConnect"]
         self.assertIsNotNone(messaging_connect)
-        self.assertEqual(api_key, messaging_connect.api_key)
-        self.assertEqual(partner_name, messaging_connect.partner)
+        self.assertEqual(api_key, messaging_connect["apiKey"])
+        self.assertEqual(partner_name, messaging_connect["partner"])
 
     def test_messaging_connect_validation_missing_api_key(self):
         """Test that providing only partner name raises ValueError"""

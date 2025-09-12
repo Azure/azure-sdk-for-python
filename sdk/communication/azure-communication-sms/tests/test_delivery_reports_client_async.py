@@ -43,7 +43,7 @@ class TestDeliveryReportsClientAsync(aiounittest.AsyncTestCase):
             "receivedTimestamp": "2025-09-12T10:30:00Z"
         }
         
-        with patch("azure.communication.sms._generated.aio.operations._operations.DeliveryReportsOperations.get") as mock_get:
+        with patch("azure.communication.sms._generated.aio.operations.DeliveryReportsOperations.get") as mock_get:
             mock_get.return_value = mock_response_data
             
             client = DeliveryReportsClient("https://endpoint", FakeTokenCredential())
@@ -74,7 +74,7 @@ class TestDeliveryReportsClientAsync(aiounittest.AsyncTestCase):
             "receivedTimestamp": "2025-09-12T10:30:00Z"
         }
         
-        with patch("azure.communication.sms._generated.aio.operations._operations.DeliveryReportsOperations.get") as mock_get:
+        with patch("azure.communication.sms._generated.aio.operations.DeliveryReportsOperations.get") as mock_get:
             mock_get.return_value = mock_response_data
             
             client = DeliveryReportsClient("https://endpoint", FakeTokenCredential())
