@@ -8,18 +8,32 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
-    from typing_extensions import NotRequired
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Iterator,
+    List,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
-from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
+# === Third-party ===
 from typing_extensions import TypedDict
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.exceptions import AzureError
+
+# === Local ===
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -34,20 +48,26 @@ from azure.ai.voicelive.models._models import (
     ConversationRequestItem,
     ResponseCreateParams,
 )
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.exceptions import AzureError
 from .models import ClientEvent, RequestSession, ServerEvent
 
+# === Conditional typing/runtime ===
 if TYPE_CHECKING:
     from websockets.typing import Subprotocol as WSSubprotocol  # exact type for checkers
 else:
     try:
         from websockets.typing import Subprotocol as WSSubprotocol  # runtime if available
     except Exception:
-
         class WSSubprotocol(str):  # fallback, keeps runtime simple
             pass
 
+if TYPE_CHECKING:
+    # Not imported at runtime; only for type checkers (mypy/pyright).
+    from websockets.sync.client import ClientConnection as _WSClientConnection
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
 
 __all__: List[str] = [
     "connect",
@@ -492,7 +512,14 @@ class VoiceLiveConnection:
     :vartype transcription_session: ~azure.ai.voicelive.TranscriptionSessionResource
     """
 
-    def __init__(self, connection) -> None:
+    session: SessionResource
+    response: ResponseResource
+    input_audio_buffer: InputAudioBufferResource
+    conversation: ConversationResource
+    output_audio_buffer: OutputAudioBufferResource
+    transcription_session: TranscriptionSessionResource
+
+    def __init__(self, connection: "_WSClientConnection") -> None:
         """Initialize a VoiceLiveConnection.
 
         :param connection: The underlying WebSocket connection.

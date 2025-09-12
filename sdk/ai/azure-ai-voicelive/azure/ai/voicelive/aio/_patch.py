@@ -7,19 +7,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
-
-# pylint: disable=ungrouped-imports
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except ImportError:  # Python <=3.10
-    from typing_extensions import NotRequired
-# pylint: enable=ungrouped-imports
-
 from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
+
+# === Third-party ===
 from typing_extensions import TypedDict
 import aiohttp
 from azure.ai.voicelive.models._models import (
@@ -38,8 +33,15 @@ from azure.ai.voicelive.models._models import (
 )
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline import policies
+
+# === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
 
 __all__: List[str] = [
     "connect",
@@ -399,6 +401,16 @@ class VoiceLiveConnection:
     :ivar transcription_session: Resource for updating transcription session configuration.
     :vartype transcription_session: ~azure.ai.voicelive.aio.TranscriptionSessionResource
     """
+
+    _client_session: aiohttp.ClientSession
+    _connection: aiohttp.ClientWebSocketResponse
+
+    session: "SessionResource"
+    response: "ResponseResource"
+    input_audio_buffer: "InputAudioBufferResource"
+    conversation: "ConversationResource"
+    output_audio_buffer: "OutputAudioBufferResource"
+    transcription_session: "TranscriptionSessionResource"
 
     def __init__(self, client_session: aiohttp.ClientSession, ws: aiohttp.ClientWebSocketResponse) -> None:
         """Initialize a VoiceLiveConnection instance.
