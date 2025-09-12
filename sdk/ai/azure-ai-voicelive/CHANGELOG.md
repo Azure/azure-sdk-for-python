@@ -4,7 +4,7 @@
 
 ### Features Added
 
--Phrase list
+- Phrase list
 
 ## 1.0.0b2 (2025-09-10)
 
