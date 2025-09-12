@@ -310,6 +310,7 @@ class TestSdkAllowedKwargs(unittest.TestCase):
         result = sdk_allowed_kwargs({})
         self.assertEqual(result, {})
 
+
 class TestRefreshTimer(unittest.TestCase):
     """Test the _RefreshTimer class."""
 

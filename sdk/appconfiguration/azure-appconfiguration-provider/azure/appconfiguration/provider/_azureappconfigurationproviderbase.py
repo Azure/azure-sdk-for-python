@@ -225,6 +225,7 @@ def sdk_allowed_kwargs(kwargs):
     ]
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
 
+
 class _RefreshTimer:
     """
     A timer that tracks the next refresh time and the number of attempts.
