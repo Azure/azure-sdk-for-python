@@ -970,7 +970,28 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         documents: List[str],
         semantic_reranking_options: Optional[Dict[str, Any]] = None
     ) -> CosmosDict:
-        """rerank a list of documents using semantic reranking."""
+        """
+        Rerank a list of documents using semantic reranking.
+
+        This method uses a semantic reranker to score and reorder the provided documents
+        based on their relevance to the given reranking context.
+
+        Args:
+            reranking_context (str): The context or query string to use for reranking the documents.
+            documents (List[str]): A list of documents (as strings) to be reranked.
+            semantic_reranking_options (Optional[Dict[str, Any]]): Optional dictionary of additional
+                options to customize the semantic reranking process.
+
+        Returns:
+            CosmosDict: The reranking results, typically including the reranked documents and their scores.
+
+        Example:
+            >>> container = client.get_container_client("mycontainer")
+            >>> context = "What is the capital of France?"
+            >>> docs = ["Paris is the capital of France.", "Berlin is the capital of Germany."]
+            >>> result = container.semantic_rerank(context, docs)
+            >>> print(result)
+        """
         
         reranker = self.client_connection._get_semantic_reranker()
         
