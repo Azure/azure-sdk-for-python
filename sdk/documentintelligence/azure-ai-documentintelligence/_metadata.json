@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-09-01",
+  "commit": "bc1a5990088c5bcac020379efa04f2b72a6b5e2f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/ai/DocumentIntelligence",
+  "emitterVersion": "0.50.0"
+}
