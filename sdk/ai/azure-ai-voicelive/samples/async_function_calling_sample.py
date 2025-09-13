@@ -64,6 +64,7 @@ from azure.ai.voicelive.models import (
     RequestSession,
     ServerEventType,
     ServerVad,
+    AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
     AudioFormat,
@@ -379,11 +380,6 @@ class AsyncFunctionCallingClient:
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
-                connection_options={
-                    "max_msg_size": 10 * 1024 * 1024,
-                    "heartbeat": 20,
-                    "timeout": 20,
-                },
             ) as connection:
                 # Initialize audio processor
                 self.audio_processor = AudioProcessor(connection)
@@ -422,13 +418,13 @@ class AsyncFunctionCallingClient:
         logger.info("Setting up voice conversation session with function tools...")
 
         # Create voice configuration
-        voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
+        voice_config = AzureStandardVoice(name=self.voice)
 
         # Create turn detection configuration
         turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500)
 
         # Define available function tools
-        function_tools = [
+        function_tools: list[Tool] = [
             FunctionTool(
                 name="get_current_time",
                 description="Get the current time",
@@ -471,6 +467,7 @@ class AsyncFunctionCallingClient:
             voice=voice_config,
             input_audio_format=AudioFormat.PCM16,
             output_audio_format=AudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=turn_detection_config,
             tools=function_tools,
             tool_choice=ToolChoiceLiteral.AUTO,  # Let the model decide when to call functions
