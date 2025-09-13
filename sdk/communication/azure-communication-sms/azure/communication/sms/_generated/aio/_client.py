@@ -7,49 +7,46 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core import AsyncPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from . import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import AzureCommunicationSMSServiceConfiguration
 from .operations import DeliveryReportsOperations, OptOutsOperations, SmsOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
-    from azure.core.rest import HttpRequest, HttpResponse
+    from typing import Dict
 
 
-class AzureCommunicationSMSService(object):
+class AzureCommunicationSMSService:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Communication SMS Service.
 
     :ivar sms: SmsOperations operations
-    :vartype sms: azure.communication.sms.operations.SmsOperations
+    :vartype sms: azure.communication.sms.aio.operations.SmsOperations
     :ivar opt_outs: OptOutsOperations operations
-    :vartype opt_outs: azure.communication.sms.operations.OptOutsOperations
+    :vartype opt_outs: azure.communication.sms.aio.operations.OptOutsOperations
     :ivar delivery_reports: DeliveryReportsOperations operations
-    :vartype delivery_reports: azure.communication.sms.operations.DeliveryReportsOperations
+    :vartype delivery_reports: azure.communication.sms.aio.operations.DeliveryReportsOperations
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com.
+     https://my-resource.communication.azure.com. Required.
     :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2026-01-23". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _base_url = "{endpoint}"
-        self._config = AzureCommunicationSMSServiceConfiguration(endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
+        self, endpoint: str, **kwargs: Any
+    ) -> None:
+        _endpoint = "{endpoint}"
+        self._config = AzureCommunicationSMSServiceConfiguration(endpoint=endpoint, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.sms = SmsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.opt_outs = OptOutsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -57,27 +54,22 @@ class AzureCommunicationSMSService(object):
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -88,15 +80,12 @@ class AzureCommunicationSMSService(object):
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureCommunicationSMSService
-        self._client.__enter__()
+    async def __aenter__(self) -> "AzureCommunicationSMSService":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

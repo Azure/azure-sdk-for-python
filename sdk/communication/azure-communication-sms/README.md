@@ -34,6 +34,16 @@ pip install azure-communication-sms
 Azure Communication SMS package is used to do following:
 - Send a 1:1 SMS Message
 - Send a 1:N SMS Message
+- Retrieve SMS delivery reports
+- Manage SMS opt-out lists
+
+### TelcoMessagingClient
+
+The `TelcoMessagingClient` provides a unified interface to access all SMS-related operations through organized sub-clients:
+
+- **sms**: Send SMS messages (existing `SmsClient` functionality)
+- **delivery_reports**: Retrieve delivery reports for sent messages
+- **opt_outs**: Manage SMS opt-out lists for compliance
 
 ## Examples
 
@@ -42,23 +52,55 @@ The following section provides several code snippets covering some of the most c
 - [Client Initialization](#client-initialization)
 - [Send a 1:1 SMS Message](#send-a-11-sms-message)
 - [Send a 1:N SMS Message](#send-a-1n-sms-message)
+- [Retrieve Delivery Reports](#retrieve-delivery-reports)
+- [Manage Opt-Out Lists](#manage-opt-out-lists)
 
 ### Client Initialization
 
-To initialize the SMS Client, the connection string can be used to instantiate.
+To initialize the SMS clients, the connection string can be used to instantiate.
 Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
 
+#### TelcoMessagingClient (Recommended)
+
+The unified client provides access to all SMS operations:
+
 ```python
-from azure.communication.sms import SmsClient
+from azure.communication.sms import TelcoMessagingClient
 from azure.identity import DefaultAzureCredential
 
 connection_str = "endpoint=ENDPOINT;accessKey=KEY"
-sms_client = SmsClient.from_connection_string(connection_string)
+telco_client = TelcoMessagingClient.from_connection_string(connection_str)
+
+# To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
+# AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
+endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
+telco_client = TelcoMessagingClient(endpoint, DefaultAzureCredential())
+
+# Access sub-clients
+sms_client = telco_client.sms
+delivery_reports_client = telco_client.delivery_reports
+opt_outs_client = telco_client.opt_outs
+```
+
+#### Individual Clients
+
+You can also initialize individual clients directly:
+
+```python
+from azure.communication.sms import SmsClient, DeliveryReportsClient, OptOutsClient
+from azure.identity import DefaultAzureCredential
+
+connection_str = "endpoint=ENDPOINT;accessKey=KEY"
+sms_client = SmsClient.from_connection_string(connection_str)
+delivery_reports_client = DeliveryReportsClient.from_connection_string(connection_str)
+opt_outs_client = OptOutsClient.from_connection_string(connection_str)
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have
 # AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
 endpoint = "https://<RESOURCE_NAME>.communication.azure.com"
 sms_client = SmsClient(endpoint, DefaultAzureCredential())
+delivery_reports_client = DeliveryReportsClient(endpoint, DefaultAzureCredential())
+opt_outs_client = OptOutsClient(endpoint, DefaultAzureCredential())
 ```
 
 ### Send a 1:1 SMS Message
@@ -102,6 +144,63 @@ sms_responses = sms_client.send(
 - `message`: The message that you want to send.
 - `enable_delivery_report`: An optional parameter that you can use to configure delivery reporting. This is useful for scenarios where you want to emit events when SMS messages are delivered.
 - `tag`: An optional parameter that you can use to configure custom tagging.
+
+### Retrieve Delivery Reports
+
+You can retrieve delivery reports for SMS messages to track their delivery status:
+
+```python
+from azure.communication.sms import TelcoMessagingClient
+
+# Using TelcoMessagingClient (recommended)
+telco_client = TelcoMessagingClient.from_connection_string(connection_str)
+delivery_report = telco_client.delivery_reports.get_status("message-id-from-send-response")
+
+# Or using DeliveryReportsClient directly
+from azure.communication.sms import DeliveryReportsClient
+delivery_client = DeliveryReportsClient.from_connection_string(connection_str)
+delivery_report = delivery_client.get_status("message-id-from-send-response")
+
+# Check delivery status
+if delivery_report:
+    print(f"Message delivery status: {delivery_report.delivery_status}")
+    print(f"Delivery timestamp: {delivery_report.delivery_timestamp}")
+else:
+    print("Delivery report not found or error occurred")
+```
+
+### Manage Opt-Out Lists
+
+You can manage SMS opt-out lists for compliance with SMS regulations:
+
+```python
+from azure.communication.sms import TelcoMessagingClient
+
+# Using TelcoMessagingClient (recommended)
+telco_client = TelcoMessagingClient.from_connection_string(connection_str)
+
+# Add a phone number to opt-out list
+opt_out_request = {
+    "from": "<your-phone-number>",
+    "recipients": [{"to": "<recipient-phone-number>"}]
+}
+
+add_response = telco_client.opt_outs.add_opt_out(opt_out_request)
+print(f"Opt-out added: {add_response}")
+
+# Check if a phone number is in opt-out list
+check_response = telco_client.opt_outs.check_opt_out(opt_out_request)
+print(f"Opt-out status: {check_response}")
+
+# Remove a phone number from opt-out list
+remove_response = telco_client.opt_outs.remove_opt_out(opt_out_request)
+print(f"Opt-out removed: {remove_response}")
+
+# Or using OptOutsClient directly
+from azure.communication.sms import OptOutsClient
+opt_outs_client = OptOutsClient.from_connection_string(connection_str)
+add_response = opt_outs_client.add_opt_out(opt_out_request)
+```
 
 
 ## Troubleshooting

@@ -14,23 +14,29 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class AzureCommunicationSMSServiceConfiguration(Configuration):
+class AzureCommunicationSMSServiceConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for AzureCommunicationSMSService.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param endpoint: The communication resource, for example https://my-resource.communication.azure.com.
+    :param endpoint: The communication resource, for example
+     https://my-resource.communication.azure.com. Required.
     :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2026-01-23". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        super(AzureCommunicationSMSServiceConfiguration, self).__init__(**kwargs)
+        api_version = kwargs.pop("api_version", "2026-01-23")  # type: str
+
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        super(AzureCommunicationSMSServiceConfiguration, self).__init__(**kwargs)
 
         self.endpoint = endpoint
-        self.api_version = "2021-03-07"
+        self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "azurecommunicationsmsservice/{}".format(VERSION))
         self._configure(**kwargs)
 

@@ -59,3 +59,89 @@ class SmsSendResult(msrest.serialization.Model):
         self.http_status_code = http_status_code
         self.successful = successful
         self.error_message = error_message
+
+
+class OptOutResult(msrest.serialization.Model):
+    """Response for a single recipient opt-out operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param to: Required. The recipient's phone number in E.164 format.
+    :type to: str
+    :param http_status_code: Required. HTTP Status code.
+    :type http_status_code: int
+    :param successful: Required. Indicates if the operation is processed successfully or not.
+    :type successful: bool
+    :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+    :type error_message: str
+    """
+
+    _validation = {
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+    }
+
+    _attribute_map = {
+        "to": {"key": "to", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        to: str,
+        http_status_code: int,
+        error_message: Optional[str] = None,
+        **kwargs
+    ):
+        super(OptOutResult, self).__init__(**kwargs)
+        self.to = to
+        self.http_status_code = http_status_code
+        self.error_message = error_message
+
+
+class OptOutCheckResult(msrest.serialization.Model):
+    """Response for a single recipient opt-out status check.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param to: Required. The recipient's phone number in E.164 format.
+    :type to: str
+    :param http_status_code: Required. HTTP Status code.
+    :type http_status_code: int
+    :param successful: Required. Indicates if the operation is processed successfully or not.
+    :type successful: bool
+    :param is_opted_out: Required. Indicates if the recipient is opted out or not.
+    :type is_opted_out: bool
+    :param error_message: Optional error message in case of 4xx/5xx/repeatable errors.
+    :type error_message: str
+    """
+
+    _validation = {
+        "to": {"required": True},
+        "http_status_code": {"required": True},
+        "is_opted_out": {"required": True},
+    }
+
+    _attribute_map = {
+        "to": {"key": "to", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "int"},
+        "is_opted_out": {"key": "isOptedOut", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        to: str,
+        http_status_code: int,
+        is_opted_out: bool,
+        error_message: Optional[str] = None,
+        **kwargs
+    ):
+        super(OptOutCheckResult, self).__init__(**kwargs)
+        self.to = to
+        self.http_status_code = http_status_code
+        self.is_opted_out = is_opted_out
+        self.error_message = error_message
