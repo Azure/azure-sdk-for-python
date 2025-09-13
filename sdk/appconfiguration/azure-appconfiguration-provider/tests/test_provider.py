@@ -15,10 +15,7 @@ import datetime
 from unittest.mock import patch
 from test_constants import FEATURE_MANAGEMENT_KEY
 from unittest.mock import MagicMock, patch
-from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    delay_failure,
-    update_correlation_context_header,
-)
+from azure.appconfiguration.provider._utils import delay_failure, update_correlation_context_header
 
 
 def sleep(seconds):

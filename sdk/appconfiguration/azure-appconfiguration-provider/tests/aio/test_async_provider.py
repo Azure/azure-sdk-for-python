@@ -10,8 +10,7 @@ from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
 from unittest.mock import MagicMock, patch
-import asyncio
-from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
+from azure.appconfiguration.provider._utils import (
     update_correlation_context_header,
 )
 

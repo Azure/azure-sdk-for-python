@@ -35,10 +35,12 @@ from .._constants import (
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
-    delay_failure,
-    sdk_allowed_kwargs,
     process_load_arguments,
     process_key_vault_options,
+)
+from .._utils import (
+    delay_failure,
+    sdk_allowed_kwargs,
     update_correlation_context_header,
 )
 from ._async_client_manager import AsyncConfigurationClientManager, _AsyncConfigurationClientWrapper
