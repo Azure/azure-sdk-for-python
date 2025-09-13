@@ -32,6 +32,7 @@ def main():
 
     response = client.scheduled_actions.list_by_resource_group(
         resource_group_name="rgcomputeschedule",
+        api_version="2025-04-15-preview",
     )
     for item in response:
         print(item)

@@ -24,6 +24,7 @@ class TestComputeScheduleMgmtScheduledActionExtensionOperationsAsync(AzureMgmtRe
     async def test_scheduled_action_extension_list_by_vms(self, resource_group):
         response = self.client.scheduled_action_extension.list_by_vms(
             resource_uri="str",
+            api_version="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

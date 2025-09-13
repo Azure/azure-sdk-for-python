@@ -32,6 +32,7 @@ def main():
 
     response = client.scheduled_action_extension.list_by_vms(
         resource_uri="sazvpabfud",
+        api_version="2025-04-15-preview",
     )
     for item in response:
         print(item)

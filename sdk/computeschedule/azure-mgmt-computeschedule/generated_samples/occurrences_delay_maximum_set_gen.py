@@ -41,6 +41,7 @@ def main():
                 "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/myVm"
             ],
         },
+        api_version="2025-04-15-preview",
     ).result()
     print(response)
 

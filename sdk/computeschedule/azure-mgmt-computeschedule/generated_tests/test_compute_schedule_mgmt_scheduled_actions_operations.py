@@ -38,6 +38,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     "timezone": "str",
                 },
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -63,6 +64,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     "timezone": "str",
                 },
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -88,6 +90,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     "timezone": "str",
                 },
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -106,6 +109,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 },
                 "resources": {"ids": ["str"]},
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -124,6 +128,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 },
                 "resources": {"ids": ["str"]},
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -142,6 +147,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 },
                 "resources": {"ids": ["str"]},
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -165,6 +171,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 },
                 "correlationid": "str",
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -184,6 +191,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "correlationid": "str",
                 "forceDeletion": bool,
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -195,6 +203,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.virtual_machines_get_operation_status(
             locationparameter="str",
             request_body={"correlationid": "str", "operationIds": ["str"]},
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -206,6 +215,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.virtual_machines_cancel_operations(
             locationparameter="str",
             request_body={"correlationid": "str", "operationIds": ["str"]},
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -217,6 +227,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.virtual_machines_get_operation_errors(
             locationparameter="str",
             request_body={"operationIds": ["str"]},
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -228,6 +239,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.get(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -277,6 +289,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
+            api_version="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -313,6 +326,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                 },
                 "tags": {"str": "str"},
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -324,6 +338,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.begin_delete(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -334,6 +349,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
     def test_scheduled_actions_list_by_resource_group(self, resource_group):
         response = self.client.scheduled_actions.list_by_resource_group(
             resource_group_name=resource_group.name,
+            api_version="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -342,7 +358,9 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_scheduled_actions_list_by_subscription(self, resource_group):
-        response = self.client.scheduled_actions.list_by_subscription()
+        response = self.client.scheduled_actions.list_by_subscription(
+            api_version="str",
+        )
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
@@ -353,6 +371,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.list_resources(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -377,6 +396,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     }
                 ]
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -389,6 +409,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
             body={"resources": ["str"]},
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -413,6 +434,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
                     }
                 ]
             },
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -424,6 +446,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.disable(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -435,6 +458,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.enable(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -447,6 +471,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
             body={"resourceIds": ["str"]},
+            api_version="str",
         )
 
         # please add some check logic here by yourself
@@ -458,6 +483,7 @@ class TestComputeScheduleMgmtScheduledActionsOperations(AzureMgmtRecordedTestCas
         response = self.client.scheduled_actions.trigger_manual_occurrence(
             resource_group_name=resource_group.name,
             scheduled_action_name="str",
+            api_version="str",
         )
 
         # please add some check logic here by yourself
