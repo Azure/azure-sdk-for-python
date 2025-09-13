@@ -14,9 +14,9 @@ from ._models import CustomCredential as CustomCredentialGenerated
 class CustomCredential(CustomCredentialGenerated):
     """Custom credential definition.
 
-    :ivar type: The credential type. Required. Custom credential
-    :vartype type: str or ~azure.ai.projects.models.CUSTOM
-    :ivar credential_keys: The credential type. Required.
+    :ivar type: The credential type. Always equals CredentialType.CUSTOM. Required.
+    :vartype type: str or ~azure.ai.projects.models.CredentialType
+    :ivar credential_keys: The secret custom credential keys. Required.
     :vartype credential_keys: dict[str, str]
     """
 
