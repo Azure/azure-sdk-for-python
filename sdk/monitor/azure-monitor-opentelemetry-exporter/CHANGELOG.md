@@ -23,6 +23,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixes issues #42897 - TypeError in _transmit_from_storage: LocalFileBlob.get() returns None
+  ([#42897](https://github.com/Azure/azure-sdk-for-python/pull/42951))
 
 ### Other Changes
 

@@ -325,6 +325,28 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
 
+    def test_transmit_from_storage_blob_get_returns_none(self):
+        """Test that when blob.get() returns None, it's handled properly without TypeError."""
+        exporter = BaseExporter()
+        exporter.storage = mock.Mock()
+        blob_mock = mock.Mock()
+        blob_mock.lease.return_value = True
+        
+        blob_mock.get.return_value = None
+        exporter.storage.gets.return_value = [blob_mock]
+        transmit_mock = mock.Mock()
+        exporter._transmit = transmit_mock
+        
+        # This should not raise a TypeError
+        exporter._transmit_from_storage()
+        
+        # Verify that the blob was leased and deleted (since data was None)
+        exporter.storage.gets.assert_called_once()
+        blob_mock.lease.assert_called_once()
+        blob_mock.get.assert_called_once()
+        blob_mock.delete.assert_called_once()  # Corrupted blob should be deleted
+        transmit_mock.assert_not_called()  # No transmission should occur
+
 
     def test_format_storage_telemetry_item(self):
         time = datetime.now()
