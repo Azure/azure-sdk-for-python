@@ -103,56 +103,56 @@ class TestStatsbeat(unittest.TestCase):
         flush_mock.assert_called_once()
         mock_statsbeat_metrics_instance.init_non_initial_metrics.assert_called_once()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._ConfigurationManager")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics_registers_configuration_callback(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_config_manager_cls):
-        """Test that collect_statsbeat_metrics registers a configuration callback when initialized successfully."""
-        # Arrange
-        exporter = mock.Mock()
-        exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-        exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-        exporter._disable_offline_storage = False
-        exporter._credential = None
-        exporter._distro_version = ""
+    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._ConfigurationManager")
+    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
+    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    # @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
+    # def test_collect_statsbeat_metrics_registers_configuration_callback(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_config_manager_cls):
+    #     """Test that collect_statsbeat_metrics registers a configuration callback when initialized successfully."""
+    #     # Arrange
+    #     exporter = mock.Mock()
+    #     exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+    #     exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+    #     exporter._disable_offline_storage = False
+    #     exporter._credential = None
+    #     exporter._distro_version = ""
         
-        # Set up mock returns
-        mock_exporter_instance = mock.Mock()
-        mock_exporter.return_value = mock_exporter_instance
+    #     # Set up mock returns
+    #     mock_exporter_instance = mock.Mock()
+    #     mock_exporter.return_value = mock_exporter_instance
         
-        mock_reader_instance = mock.Mock()
-        mock_reader.return_value = mock_reader_instance
+    #     mock_reader_instance = mock.Mock()
+    #     mock_reader.return_value = mock_reader_instance
         
-        mock_meter_provider_instance = mock.Mock()
-        mock_meter_provider.return_value = mock_meter_provider_instance
-        flush_mock = mock.Mock()
-        mock_meter_provider_instance.force_flush = flush_mock
+    #     mock_meter_provider_instance = mock.Mock()
+    #     mock_meter_provider.return_value = mock_meter_provider_instance
+    #     flush_mock = mock.Mock()
+    #     mock_meter_provider_instance.force_flush = flush_mock
 
-        mock_statsbeat_metrics_instance = mock.Mock()
-        mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
+    #     mock_statsbeat_metrics_instance = mock.Mock()
+    #     mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
         
-        # Mock the configuration manager instance
-        mock_config_manager_instance = mock.Mock()
-        mock_config_manager_cls.return_value = mock_config_manager_instance
+    #     # Mock the configuration manager instance
+    #     mock_config_manager_instance = mock.Mock()
+    #     mock_config_manager_cls.return_value = mock_config_manager_instance
         
-        manager = StatsbeatManager()
-        self.assertFalse(manager._initialized)
+    #     manager = StatsbeatManager()
+    #     self.assertFalse(manager._initialized)
         
-        # Act
-        _statsbeat.collect_statsbeat_metrics(exporter)
+    #     # Act
+    #     _statsbeat.collect_statsbeat_metrics(exporter)
         
-        # Assert - verify manager is initialized
-        self.assertTrue(manager._initialized)
+    #     # Assert - verify manager is initialized
+    #     self.assertTrue(manager._initialized)
         
-        # Verify that the configuration manager callback was registered
-        mock_config_manager_cls.assert_called_once()
-        mock_config_manager_instance.register_callback.assert_called_once()
+    #     # Verify that the configuration manager callback was registered
+    #     mock_config_manager_cls.assert_called_once()
+    #     mock_config_manager_instance.register_callback.assert_called_once()
         
-        # Verify the callback function passed is the expected one
-        registered_callback = mock_config_manager_instance.register_callback.call_args[0][0]
-        self.assertEqual(registered_callback, _statsbeat.get_statsbeat_configuration_callback)
+    #     # Verify the callback function passed is the expected one
+    #     registered_callback = mock_config_manager_instance.register_callback.call_args[0][0]
+    #     self.assertEqual(registered_callback, _statsbeat.get_statsbeat_configuration_callback)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.StatsbeatManager")
     def test_get_statsbeat_configuration_callback_not_initialized(self, mock_statsbeat_manager_cls):

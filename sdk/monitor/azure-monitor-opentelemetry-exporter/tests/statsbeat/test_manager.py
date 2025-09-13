@@ -278,6 +278,9 @@ class TestStatsbeatManager(unittest.TestCase):
         except Exception:
             pass
         os.environ.pop(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL, None)
+        # Reset singleton state - only clear StatsbeatManager instances
+        if StatsbeatManager in StatsbeatManager._instances:
+            del StatsbeatManager._instances[StatsbeatManager]
 
     def _create_valid_config(
             self,
