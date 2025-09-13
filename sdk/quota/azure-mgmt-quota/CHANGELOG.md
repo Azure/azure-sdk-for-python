@@ -1,5 +1,23 @@
 # Release History
 
+## 2.1.0 (2025-09-22)
+
+### Features Added
+
+  - Model `QuotaMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `QuotaMgmtClient` added operation group `group_quota_usages`
+  - Client `QuotaMgmtClient` added operation group `group_quota_location_settings`
+  - Model `GroupQuotasEntityBase` added property `group_type`
+  - Model `GroupQuotasEntityProperties` added property `group_type`
+  - Enum `RequestState` added member `ESCALATED`
+  - Added enum `EnforcementState`
+  - Added model `GroupQuotasEnforcementListResponse`
+  - Added model `GroupQuotasEnforcementStatus`
+  - Added model `GroupQuotasEnforcementStatusProperties`
+  - Added enum `GroupType`
+  - Added model `GroupQuotaLocationSettingsOperations`
+  - Added model `GroupQuotaUsagesOperations`
+
 ## 2.0.0 (2025-02-26)
 
 ### Features Added

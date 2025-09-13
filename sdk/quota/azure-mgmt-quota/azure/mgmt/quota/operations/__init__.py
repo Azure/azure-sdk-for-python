@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -19,6 +20,8 @@ from ._group_quota_limits_request_operations import GroupQuotaLimitsRequestOpera
 from ._group_quota_limits_operations import GroupQuotaLimitsOperations  # type: ignore
 from ._group_quota_subscription_allocation_request_operations import GroupQuotaSubscriptionAllocationRequestOperations  # type: ignore
 from ._group_quota_subscription_allocation_operations import GroupQuotaSubscriptionAllocationOperations  # type: ignore
+from ._group_quota_usages_operations import GroupQuotaUsagesOperations  # type: ignore
+from ._group_quota_location_settings_operations import GroupQuotaLocationSettingsOperations  # type: ignore
 from ._usages_operations import UsagesOperations  # type: ignore
 from ._quota_operations import QuotaOperations  # type: ignore
 from ._quota_request_status_operations import QuotaRequestStatusOperations  # type: ignore
@@ -36,6 +39,8 @@ __all__ = [
     "GroupQuotaLimitsOperations",
     "GroupQuotaSubscriptionAllocationRequestOperations",
     "GroupQuotaSubscriptionAllocationOperations",
+    "GroupQuotaUsagesOperations",
+    "GroupQuotaLocationSettingsOperations",
     "UsagesOperations",
     "QuotaOperations",
     "QuotaRequestStatusOperations",

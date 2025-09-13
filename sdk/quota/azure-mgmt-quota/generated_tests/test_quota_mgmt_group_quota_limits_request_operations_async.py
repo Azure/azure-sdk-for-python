@@ -28,7 +28,7 @@ class TestQuotaMgmtGroupQuotaLimitsRequestOperationsAsync(AzureMgmtRecordedTestC
                 group_quota_name="str",
                 resource_provider_name="str",
                 location="str",
-                api_version="2025-03-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -42,7 +42,7 @@ class TestQuotaMgmtGroupQuotaLimitsRequestOperationsAsync(AzureMgmtRecordedTestC
             management_group_id="str",
             group_quota_name="str",
             request_id_parameter="str",
-            api_version="2025-03-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -56,7 +56,7 @@ class TestQuotaMgmtGroupQuotaLimitsRequestOperationsAsync(AzureMgmtRecordedTestC
             group_quota_name="str",
             resource_provider_name="str",
             filter="str",
-            api_version="2025-03-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

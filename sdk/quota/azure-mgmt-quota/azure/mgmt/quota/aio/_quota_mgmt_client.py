@@ -7,24 +7,28 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import QuotaMgmtClientConfiguration
 from .operations import (
     GroupQuotaLimitsOperations,
     GroupQuotaLimitsRequestOperations,
+    GroupQuotaLocationSettingsOperations,
     GroupQuotaSubscriptionAllocationOperations,
     GroupQuotaSubscriptionAllocationRequestOperations,
     GroupQuotaSubscriptionRequestsOperations,
     GroupQuotaSubscriptionsOperations,
+    GroupQuotaUsagesOperations,
     GroupQuotasOperations,
     QuotaOperationOperations,
     QuotaOperations,
@@ -33,6 +37,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -61,6 +66,11 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
      operations
     :vartype group_quota_subscription_allocation:
      azure.mgmt.quota.aio.operations.GroupQuotaSubscriptionAllocationOperations
+    :ivar group_quota_usages: GroupQuotaUsagesOperations operations
+    :vartype group_quota_usages: azure.mgmt.quota.aio.operations.GroupQuotaUsagesOperations
+    :ivar group_quota_location_settings: GroupQuotaLocationSettingsOperations operations
+    :vartype group_quota_location_settings:
+     azure.mgmt.quota.aio.operations.GroupQuotaLocationSettingsOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.quota.aio.operations.UsagesOperations
     :ivar quota: QuotaOperations operations
@@ -73,9 +83,12 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-03-01". Note that overriding this
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-09-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -86,10 +99,24 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        self._config = QuotaMgmtClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
+        self._config = QuotaMgmtClientConfiguration(
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -108,7 +135,9 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -131,6 +160,12 @@ class QuotaMgmtClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.group_quota_subscription_allocation = GroupQuotaSubscriptionAllocationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.group_quota_usages = GroupQuotaUsagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.group_quota_location_settings = GroupQuotaLocationSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.quota import QuotaMgmtClient
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python get_group_quotas_list.py
+    python patch_group_quota_enforcement.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.group_quotas.list(
+    response = client.group_quota_location_settings.begin_update(
         management_group_id="E7EC67B3-7657-4966-BFFC-41EFD36BAA09",
-    )
-    for item in response:
-        print(item)
+        group_quota_name="groupquota1",
+        resource_provider_name="Microsoft.Compute",
+        location="eastus",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-03-01/examples/GroupQuotas/GetGroupQuotasList.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2025-09-01/examples/GroupQuotasEnforcement/PatchGroupQuotaEnforcement.json
 if __name__ == "__main__":
     main()

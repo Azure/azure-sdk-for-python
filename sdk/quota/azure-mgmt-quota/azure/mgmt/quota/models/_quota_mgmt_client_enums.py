@@ -19,6 +19,23 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class EnforcementState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enforcement status."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    NOT_AVAILABLE = "NotAvailable"
+
+
+class GroupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the group."""
+
+    ALLOCATION_GROUP = "AllocationGroup"
+    """The group is used for subscription group quota allocations."""
+    ENFORCED_GROUP = "EnforcedGroup"
+    """The group is used for the enforced shared limit scenario"""
+
+
 class LimitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The limit object type."""
 
@@ -45,13 +62,23 @@ class QuotaRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Request status."""
 
-    ACCEPTED = "Accepted"
-    CREATED = "Created"
-    INVALID = "Invalid"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
+    ESCALATED = "Escalated"
+    """The quota request has been escalated for further review. Please file a support ticket. A
+    support engineer will follow up."""
     IN_PROGRESS = "InProgress"
+    """The quota request is currently being processed."""
     CANCELED = "Canceled"
+    """The quota request has been canceled."""
+    FAILED = "Failed"
+    """The quota request has failed."""
+    ACCEPTED = "Accepted"
+    """The quota request has been accepted."""
+    CREATED = "Created"
+    """The quota request has been created."""
+    INVALID = "Invalid"
+    """The quota request is invalid."""
+    SUCCEEDED = "Succeeded"
+    """The quota request has succeeded."""
 
 
 class UsagesTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
