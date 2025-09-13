@@ -32,83 +32,83 @@ def main():
 
     response = client.projects.begin_create_or_update(
         resource_group_name="rgneon",
-        organization_name="test-org",
-        project_name="entity-name",
+        organization_name="myOrganization",
+        project_name="myProject",
         resource={
             "properties": {
-                "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
+                "attributes": [{"name": "environment", "value": "development"}],
                 "branch": {
-                    "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                    "databaseName": "duhxebzhd",
+                    "attributes": [{"name": "environment", "value": "development"}],
                     "databases": [
                         {
-                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                            "branchId": "orfdwdmzvfvlnrgussvcvoek",
-                            "entityName": "entity-name",
-                            "ownerName": "odmbeg",
+                            "attributes": [{"name": "environment", "value": "development"}],
+                            "branchId": "branch-123",
+                            "entityName": "appdb",
+                            "ownerName": "postgres",
                         }
                     ],
                     "endpoints": [
                         {
-                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                            "branchId": "rzsyrhpfbydxtfkpaa",
-                            "endpointType": "read_only",
-                            "entityName": "entity-name",
-                            "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                            "attributes": [{"name": "environment", "value": "development"}],
+                            "branchId": "branch-123",
+                            "endpointType": "read_write",
+                            "entityName": "primary-endpoint",
+                            "projectId": "project-123",
+                            "size": {"autoscalingLimitMaxCu": 4, "autoscalingLimitMinCu": 1},
                         }
                     ],
-                    "entityName": "entity-name",
-                    "parentId": "entity-id",
-                    "projectId": "oik",
-                    "roleName": "qrrairsupyosxnqotdwhbpc",
+                    "entityName": "main",
+                    "parentId": "main-branch",
+                    "projectId": "project-123",
                     "roles": [
                         {
-                            "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                            "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                            "entityName": "entity-name",
+                            "attributes": [{"name": "environment", "value": "development"}],
+                            "branchId": "branch-123",
+                            "entityName": "read_only_role",
                             "isSuperUser": True,
-                            "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                            "permissions": ["SELECT"],
                         }
                     ],
                 },
                 "databases": [
                     {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "branchId": "orfdwdmzvfvlnrgussvcvoek",
-                        "entityName": "entity-name",
-                        "ownerName": "odmbeg",
+                        "attributes": [{"name": "environment", "value": "development"}],
+                        "branchId": "branch-123",
+                        "entityName": "postgres",
+                        "ownerName": "postgres",
                     }
                 ],
-                "defaultEndpointSettings": {"autoscalingLimitMaxCu": 20, "autoscalingLimitMinCu": 26},
+                "defaultEndpointSettings": {"autoscalingLimitMaxCu": 28, "autoscalingLimitMinCu": 3},
                 "endpoints": [
                     {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "branchId": "rzsyrhpfbydxtfkpaa",
+                        "attributes": [{"name": "environment", "value": "development"}],
+                        "branchId": "branch-123",
                         "endpointType": "read_only",
-                        "entityName": "entity-name",
-                        "projectId": "rtvdeeflqzlrpfzhjqhcsfbldw",
+                        "entityName": "readonly-endpoint",
+                        "projectId": "project-123",
+                        "size": {"autoscalingLimitMaxCu": 2, "autoscalingLimitMinCu": 1},
                     }
                 ],
-                "entityName": "entity-name",
-                "historyRetention": 7,
-                "pgVersion": 10,
-                "regionId": "tlcltldfrnxh",
+                "entityName": "myProject",
+                "historyRetention": 3,
+                "pgVersion": 14,
+                "regionId": "westus",
                 "roles": [
                     {
-                        "attributes": [{"name": "trhvzyvaqy", "value": "evpkgsskyavybxwwssm"}],
-                        "branchId": "wxbojkmdgaggkfiwqfakdkbyztm",
-                        "entityName": "entity-name",
+                        "attributes": [{"name": "environment", "value": "development"}],
+                        "branchId": "branch-123",
+                        "entityName": "admin_role",
                         "isSuperUser": True,
-                        "permissions": ["myucqecpjriewzohxvadgkhiudnyx"],
+                        "permissions": ["ALL"],
                     }
                 ],
-                "storage": 7,
+                "storage": 22,
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/Projects_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-23-preview/Projects_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
