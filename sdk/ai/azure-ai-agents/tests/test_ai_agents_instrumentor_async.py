@@ -159,7 +159,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
             ("gen_ai.request.model", "gpt-4o-mini"),
@@ -173,7 +173,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.system.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.event.content": '{"content": "You are helpful agent"}',
                 },
             }
@@ -186,7 +186,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_thread"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -202,7 +202,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.user.message",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
                     },
                 }
@@ -219,7 +219,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(spans) == 1
             span = spans[0]
             expected_attributes = [
-                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.provider.name", "az.ai.agents"),
                 ("gen_ai.operation.name", "create_message"),
                 ("server.address", ""),
                 ("gen_ai.thread.id", ""),
@@ -232,7 +232,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.user.message",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.event.content": '{"content": "Hello, tell me a joke", "role": "user"}',
                     },
@@ -246,7 +246,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "start_thread_run"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -264,7 +264,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) >= 1
         span = spans[-1]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "get_thread_run"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -283,7 +283,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "list_messages"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -295,7 +295,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 "name": "gen_ai.assistant.message",
                 "timestamp": "*",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
@@ -314,7 +314,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.message.id": "*",
                     "gen_ai.event.content": '{"content": {"text": {"value": "Hello, tell me a joke"}}, "role": "user"}',
@@ -354,7 +354,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
             ("gen_ai.request.model", "gpt-4o-mini"),
@@ -368,7 +368,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.system.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.event.content": "{}",
                 },
             }
@@ -380,7 +380,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_thread"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -392,7 +392,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_message"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -405,7 +405,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.event.content": '{"role": "user"}',
                 },
@@ -418,7 +418,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "start_thread_run"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -435,7 +435,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 2
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "list_messages"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -447,7 +447,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 "name": "gen_ai.assistant.message",
                 "timestamp": "*",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
@@ -466,7 +466,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.message.id": "*",
                     "gen_ai.event.content": '{"role": "user"}',

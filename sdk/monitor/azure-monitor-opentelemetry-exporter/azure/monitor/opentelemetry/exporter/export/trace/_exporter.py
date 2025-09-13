@@ -339,6 +339,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             gen_ai_attributes_val = ""
             if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
                 gen_ai_attributes_val = span.attributes[gen_ai_attributes.GEN_AI_SYSTEM]
+            if gen_ai_attributes.GEN_AI_PROVIDER_NAME in span.attributes:
+                gen_ai_attributes_val = span.attributes[gen_ai_attributes.GEN_AI_PROVIDER_NAME]
             if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
@@ -412,7 +414,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     target,  # type: ignore
                     span.attributes,
                 )
-            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
+            elif gen_ai_attributes.GEN_AI_SYSTEM in span.attributes or gen_ai_attributes.GEN_AI_PROVIDER_NAME in span.attributes:  # GenAI
                 data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(gen_ai_attributes_val)
             else:
                 data.type = "N/A"
@@ -443,6 +445,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             data.type = "InProc"
             if gen_ai_attributes.GEN_AI_SYSTEM in span.attributes:  # GenAI
                 data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(span.attributes[gen_ai_attributes.GEN_AI_SYSTEM])
+            elif gen_ai_attributes.GEN_AI_PROVIDER_NAME in span.attributes:
+                data.type = _GEN_AI_ATTRIBUTE_PREFIX.format(span.attributes[gen_ai_attributes.GEN_AI_PROVIDER_NAME])
             elif _AZURE_SDK_NAMESPACE_NAME in span.attributes:
                 data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
         # Apply truncation
