@@ -45,7 +45,7 @@ class whl(Check):
 
             if os.path.exists(dev_requirements):
                 print(f"Installing dev_requirements at {dev_requirements}")
-                install_into_venv(executable, [f"{dev_requirements}"])
+                install_into_venv(executable, [f"{dev_requirements}"], pkg)
             else:
                 print("Skipping installing dev_requirements")
 
