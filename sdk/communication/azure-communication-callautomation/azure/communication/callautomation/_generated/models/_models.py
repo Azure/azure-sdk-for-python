@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -305,6 +305,8 @@ class AnswerCallRequest(_serialization.Model):
      ~azure.communication.callautomation.models.MediaStreamingOptions
     :ivar transcription_options: Transcription Options.
     :vartype transcription_options: ~azure.communication.callautomation.models.TranscriptionOptions
+    :ivar enable_loopback_audio: Enables loopback audio functionality for the call.
+    :vartype enable_loopback_audio: bool
     """
 
     _validation = {
@@ -320,6 +322,7 @@ class AnswerCallRequest(_serialization.Model):
         "answered_by": {"key": "answeredBy", "type": "CommunicationUserIdentifierModel"},
         "media_streaming_options": {"key": "mediaStreamingOptions", "type": "MediaStreamingOptions"},
         "transcription_options": {"key": "transcriptionOptions", "type": "TranscriptionOptions"},
+        "enable_loopback_audio": {"key": "enableLoopbackAudio", "type": "bool"},
     }
 
     def __init__(
@@ -332,6 +335,7 @@ class AnswerCallRequest(_serialization.Model):
         answered_by: Optional["_models.CommunicationUserIdentifierModel"] = None,
         media_streaming_options: Optional["_models.MediaStreamingOptions"] = None,
         transcription_options: Optional["_models.TranscriptionOptions"] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -353,6 +357,8 @@ class AnswerCallRequest(_serialization.Model):
         :keyword transcription_options: Transcription Options.
         :paramtype transcription_options:
          ~azure.communication.callautomation.models.TranscriptionOptions
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool
         """
         super().__init__(**kwargs)
         self.incoming_call_context = incoming_call_context
@@ -362,6 +368,7 @@ class AnswerCallRequest(_serialization.Model):
         self.answered_by = answered_by
         self.media_streaming_options = media_streaming_options
         self.transcription_options = transcription_options
+        self.enable_loopback_audio = enable_loopback_audio
 
 
 class AnswerFailed(_serialization.Model):
@@ -541,7 +548,7 @@ class CallConnectionProperties(_serialization.Model):
         *,
         call_connection_id: Optional[str] = None,
         server_call_id: Optional[str] = None,
-        targets: Optional[List["_models.CommunicationIdentifierModel"]] = None,
+        targets: Optional[list["_models.CommunicationIdentifierModel"]] = None,
         call_connection_state: Optional[Union[str, "_models.CallConnectionState"]] = None,
         callback_uri: Optional[str] = None,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
@@ -1181,7 +1188,7 @@ class Choice(_serialization.Model):
     }
 
     def __init__(
-        self, *, label: str, phrases: List[str], tone: Optional[Union[str, "_models.DtmfTone"]] = None, **kwargs: Any
+        self, *, label: str, phrases: list[str], tone: Optional[Union[str, "_models.DtmfTone"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword label: Identifier for a given choice. Required.
@@ -1211,12 +1218,19 @@ class ChoiceResult(_serialization.Model):
     :ivar confidence: The confidence level of the recognized speech, if available, ranges from 0.0
      to 1.0.
     :vartype confidence: float
+    :ivar language_identified: The identified language for a spoken phrase.
+    :vartype language_identified: str
+    :ivar sentiment_analysis_result: Gets or sets the sentiment analysis result.
+    :vartype sentiment_analysis_result:
+     ~azure.communication.callautomation.models.SentimentAnalysisResult
     """
 
     _attribute_map = {
         "label": {"key": "label", "type": "str"},
         "recognized_phrase": {"key": "recognizedPhrase", "type": "str"},
         "confidence": {"key": "confidence", "type": "float"},
+        "language_identified": {"key": "languageIdentified", "type": "str"},
+        "sentiment_analysis_result": {"key": "sentimentAnalysisResult", "type": "SentimentAnalysisResult"},
     }
 
     def __init__(
@@ -1225,6 +1239,8 @@ class ChoiceResult(_serialization.Model):
         label: Optional[str] = None,
         recognized_phrase: Optional[str] = None,
         confidence: Optional[float] = None,
+        language_identified: Optional[str] = None,
+        sentiment_analysis_result: Optional["_models.SentimentAnalysisResult"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1238,11 +1254,18 @@ class ChoiceResult(_serialization.Model):
         :keyword confidence: The confidence level of the recognized speech, if available, ranges from
          0.0 to 1.0.
         :paramtype confidence: float
+        :keyword language_identified: The identified language for a spoken phrase.
+        :paramtype language_identified: str
+        :keyword sentiment_analysis_result: Gets or sets the sentiment analysis result.
+        :paramtype sentiment_analysis_result:
+         ~azure.communication.callautomation.models.SentimentAnalysisResult
         """
         super().__init__(**kwargs)
         self.label = label
         self.recognized_phrase = recognized_phrase
         self.confidence = confidence
+        self.language_identified = language_identified
+        self.sentiment_analysis_result = sentiment_analysis_result
 
 
 class CommunicationError(_serialization.Model):
@@ -1291,7 +1314,7 @@ class CommunicationError(_serialization.Model):
         self.code = code
         self.message = message
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.CommunicationError"]] = None
+        self.details: Optional[list["_models.CommunicationError"]] = None
         self.inner_error: Optional["_models.CommunicationError"] = None
 
 
@@ -1506,6 +1529,8 @@ class ConnectRequest(_serialization.Model):
      ~azure.communication.callautomation.models.MediaStreamingOptions
     :ivar transcription_options: Transcription Options.
     :vartype transcription_options: ~azure.communication.callautomation.models.TranscriptionOptions
+    :ivar enable_loopback_audio: Enables loopback audio functionality for the call.
+    :vartype enable_loopback_audio: bool
     """
 
     _validation = {
@@ -1520,6 +1545,7 @@ class ConnectRequest(_serialization.Model):
         "call_intelligence_options": {"key": "callIntelligenceOptions", "type": "CallIntelligenceOptions"},
         "media_streaming_options": {"key": "mediaStreamingOptions", "type": "MediaStreamingOptions"},
         "transcription_options": {"key": "transcriptionOptions", "type": "TranscriptionOptions"},
+        "enable_loopback_audio": {"key": "enableLoopbackAudio", "type": "bool"},
     }
 
     def __init__(
@@ -1531,6 +1557,7 @@ class ConnectRequest(_serialization.Model):
         call_intelligence_options: Optional["_models.CallIntelligenceOptions"] = None,
         media_streaming_options: Optional["_models.MediaStreamingOptions"] = None,
         transcription_options: Optional["_models.TranscriptionOptions"] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1549,6 +1576,8 @@ class ConnectRequest(_serialization.Model):
         :keyword transcription_options: Transcription Options.
         :paramtype transcription_options:
          ~azure.communication.callautomation.models.TranscriptionOptions
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool
         """
         super().__init__(**kwargs)
         self.call_locator = call_locator
@@ -1557,6 +1586,7 @@ class ConnectRequest(_serialization.Model):
         self.call_intelligence_options = call_intelligence_options
         self.media_streaming_options = media_streaming_options
         self.transcription_options = transcription_options
+        self.enable_loopback_audio = enable_loopback_audio
 
 
 class ContinuousDtmfRecognitionRequest(_serialization.Model):
@@ -1892,6 +1922,8 @@ class CreateCallRequest(_serialization.Model):
      account ID.
     :vartype teams_app_source:
      ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
+    :ivar enable_loopback_audio: Enables loopback audio functionality for the call.
+    :vartype enable_loopback_audio: bool
     """
 
     _validation = {
@@ -1910,12 +1942,13 @@ class CreateCallRequest(_serialization.Model):
         "media_streaming_options": {"key": "mediaStreamingOptions", "type": "MediaStreamingOptions"},
         "transcription_options": {"key": "transcriptionOptions", "type": "TranscriptionOptions"},
         "teams_app_source": {"key": "teamsAppSource", "type": "MicrosoftTeamsAppIdentifierModel"},
+        "enable_loopback_audio": {"key": "enableLoopbackAudio", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        targets: List["_models.CommunicationIdentifierModel"],
+        targets: list["_models.CommunicationIdentifierModel"],
         callback_uri: str,
         source_caller_id_number: Optional["_models.PhoneNumberIdentifierModel"] = None,
         source_display_name: Optional[str] = None,
@@ -1925,6 +1958,7 @@ class CreateCallRequest(_serialization.Model):
         media_streaming_options: Optional["_models.MediaStreamingOptions"] = None,
         transcription_options: Optional["_models.TranscriptionOptions"] = None,
         teams_app_source: Optional["_models.MicrosoftTeamsAppIdentifierModel"] = None,
+        enable_loopback_audio: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1957,6 +1991,8 @@ class CreateCallRequest(_serialization.Model):
          account ID.
         :paramtype teams_app_source:
          ~azure.communication.callautomation.models.MicrosoftTeamsAppIdentifierModel
+        :keyword enable_loopback_audio: Enables loopback audio functionality for the call.
+        :paramtype enable_loopback_audio: bool
         """
         super().__init__(**kwargs)
         self.targets = targets
@@ -1969,6 +2005,7 @@ class CreateCallRequest(_serialization.Model):
         self.media_streaming_options = media_streaming_options
         self.transcription_options = transcription_options
         self.teams_app_source = teams_app_source
+        self.enable_loopback_audio = enable_loopback_audio
 
 
 class CustomCallingContext(_serialization.Model):
@@ -1978,18 +2015,23 @@ class CustomCallingContext(_serialization.Model):
     :vartype voip_headers: dict[str, str]
     :ivar sip_headers: Custom calling context SIP headers.
     :vartype sip_headers: dict[str, str]
+    :ivar teams_phone_call_details: Custom calling context TeamsPhoneCallDetails.
+    :vartype teams_phone_call_details:
+     ~azure.communication.callautomation.models.TeamsPhoneCallDetails
     """
 
     _attribute_map = {
         "voip_headers": {"key": "voipHeaders", "type": "{str}"},
         "sip_headers": {"key": "sipHeaders", "type": "{str}"},
+        "teams_phone_call_details": {"key": "teamsPhoneCallDetails", "type": "TeamsPhoneCallDetails"},
     }
 
     def __init__(
         self,
         *,
-        voip_headers: Optional[Dict[str, str]] = None,
-        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[dict[str, str]] = None,
+        sip_headers: Optional[dict[str, str]] = None,
+        teams_phone_call_details: Optional["_models.TeamsPhoneCallDetails"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1997,10 +2039,14 @@ class CustomCallingContext(_serialization.Model):
         :paramtype voip_headers: dict[str, str]
         :keyword sip_headers: Custom calling context SIP headers.
         :paramtype sip_headers: dict[str, str]
+        :keyword teams_phone_call_details: Custom calling context TeamsPhoneCallDetails.
+        :paramtype teams_phone_call_details:
+         ~azure.communication.callautomation.models.TeamsPhoneCallDetails
         """
         super().__init__(**kwargs)
         self.voip_headers = voip_headers
         self.sip_headers = sip_headers
+        self.teams_phone_call_details = teams_phone_call_details
 
 
 class DtmfOptions(_serialization.Model):
@@ -2029,7 +2075,7 @@ class DtmfOptions(_serialization.Model):
         *,
         inter_tone_timeout_in_seconds: Optional[int] = None,
         max_tones_to_collect: Optional[int] = None,
-        stop_tones: Optional[List[Union[str, "_models.DtmfTone"]]] = None,
+        stop_tones: Optional[list[Union[str, "_models.DtmfTone"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2066,7 +2112,7 @@ class DtmfResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.tones: Optional[List[Union[str, "_models.DtmfTone"]]] = None
+        self.tones: Optional[list[Union[str, "_models.DtmfTone"]]] = None
 
 
 class ExternalStorage(_serialization.Model):
@@ -2159,7 +2205,7 @@ class GetParticipantsResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.CallParticipant"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.CallParticipant"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of the current participants in the call. Required.
@@ -2567,7 +2613,7 @@ class MediaStreamingSubscription(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "_models.MediaStreamingSubscriptionState"]] = None,
-        subscribed_content_types: Optional[List[Union[str, "_models.MediaStreamingContentType"]]] = None,
+        subscribed_content_types: Optional[list[Union[str, "_models.MediaStreamingContentType"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2734,6 +2780,252 @@ class MicrosoftTeamsUserIdentifierModel(_serialization.Model):
         self.cloud = cloud
 
 
+class MoveParticipantFailed(_serialization.Model):
+    """Moving the participant failed event.
+
+    :ivar from_call: The CallConnectionId for the call you want to move the participant from.
+    :vartype from_call: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: Participant.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    """
+
+    _attribute_map = {
+        "from_call": {"key": "fromCall", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+    }
+
+    def __init__(
+        self,
+        *,
+        from_call: Optional[str] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        participant: Optional["_models.CommunicationIdentifierModel"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+        :paramtype from_call: str
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        :keyword participant: Participant.
+        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        """
+        super().__init__(**kwargs)
+        self.from_call = from_call
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
+
+
+class MoveParticipantsRequest(_serialization.Model):
+    """The request payload for moving participant to the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar target_participants: The participant to Move. Required.
+    :vartype target_participants:
+     list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar from_call: The CallConnectionId for the call you want to move the participant from.
+     Required.
+    :vartype from_call: str
+    """
+
+    _validation = {
+        "target_participants": {"required": True},
+        "from_call": {"required": True},
+    }
+
+    _attribute_map = {
+        "target_participants": {"key": "targetParticipants", "type": "[CommunicationIdentifierModel]"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "from_call": {"key": "fromCall", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        target_participants: list["_models.CommunicationIdentifierModel"],
+        from_call: str,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword target_participants: The participant to Move. Required.
+        :paramtype target_participants:
+         list[~azure.communication.callautomation.models.CommunicationIdentifierModel]
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+         Required.
+        :paramtype from_call: str
+        """
+        super().__init__(**kwargs)
+        self.target_participants = target_participants
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
+        self.from_call = from_call
+
+
+class MoveParticipantsResponse(_serialization.Model):
+    """The response payload for moving participants to the call.
+
+    :ivar participants: List of current participants in the call.
+    :vartype participants: list[~azure.communication.callautomation.models.CallParticipant]
+    :ivar operation_context: The operation context provided by client.
+    :vartype operation_context: str
+    :ivar from_call: The CallConnectionId for the call you want to move the participant from.
+    :vartype from_call: str
+    """
+
+    _attribute_map = {
+        "participants": {"key": "participants", "type": "[CallParticipant]"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "from_call": {"key": "fromCall", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        participants: Optional[list["_models.CallParticipant"]] = None,
+        operation_context: Optional[str] = None,
+        from_call: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword participants: List of current participants in the call.
+        :paramtype participants: list[~azure.communication.callautomation.models.CallParticipant]
+        :keyword operation_context: The operation context provided by client.
+        :paramtype operation_context: str
+        :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+        :paramtype from_call: str
+        """
+        super().__init__(**kwargs)
+        self.participants = participants
+        self.operation_context = operation_context
+        self.from_call = from_call
+
+
+class MoveParticipantSucceeded(_serialization.Model):
+    """Moving the participant successfully event.
+
+    :ivar from_call: The CallConnectionId for the call you want to move the participant from.
+    :vartype from_call: str
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    :ivar participant: Participant.
+    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    """
+
+    _attribute_map = {
+        "from_call": {"key": "fromCall", "type": "str"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+        "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
+    }
+
+    def __init__(
+        self,
+        *,
+        from_call: Optional[str] = None,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        participant: Optional["_models.CommunicationIdentifierModel"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword from_call: The CallConnectionId for the call you want to move the participant from.
+        :paramtype from_call: str
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        :keyword participant: Participant.
+        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        """
+        super().__init__(**kwargs)
+        self.from_call = from_call
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
+        self.participant = participant
+
+
 class MuteParticipantsRequest(_serialization.Model):
     """The request payload for muting participants from the call.
 
@@ -2760,7 +3052,7 @@ class MuteParticipantsRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        target_participants: List["_models.CommunicationIdentifierModel"],
+        target_participants: list["_models.CommunicationIdentifierModel"],
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2832,7 +3124,7 @@ class ParticipantsUpdated(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         sequence_number: Optional[int] = None,
-        participants: Optional[List["_models.CallParticipant"]] = None,
+        participants: Optional[list["_models.CallParticipant"]] = None,
         result_information: Optional["_models.ResultInformation"] = None,
         **kwargs: Any
     ) -> None:
@@ -2902,6 +3194,39 @@ class PhoneNumberIdentifierModel(_serialization.Model):
         self.value = value
         self.is_anonymous = is_anonymous
         self.asserted_id = asserted_id
+
+
+class PiiRedactionOptions(_serialization.Model):
+    """PII redaction configuration options.
+
+    :ivar enable: Value indicating if PII redaction is enabled.
+    :vartype enable: bool
+    :ivar redaction_type: Value indicating the PII redaction type to be used. "maskWithCharacter"
+    :vartype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
+    """
+
+    _attribute_map = {
+        "enable": {"key": "enable", "type": "bool"},
+        "redaction_type": {"key": "redactionType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        enable: Optional[bool] = None,
+        redaction_type: Optional[Union[str, "_models.RedactionType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword enable: Value indicating if PII redaction is enabled.
+        :paramtype enable: bool
+        :keyword redaction_type: Value indicating the PII redaction type to be used.
+         "maskWithCharacter"
+        :paramtype redaction_type: str or ~azure.communication.callautomation.models.RedactionType
+        """
+        super().__init__(**kwargs)
+        self.enable = enable
+        self.redaction_type = redaction_type
 
 
 class PlayCanceled(_serialization.Model):
@@ -3148,8 +3473,8 @@ class PlayRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        play_sources: List["_models.PlaySource"],
-        play_to: Optional[List["_models.CommunicationIdentifierModel"]] = None,
+        play_sources: list["_models.PlaySource"],
+        play_to: Optional[list["_models.CommunicationIdentifierModel"]] = None,
         interrupt_call_media_operation: Optional[bool] = None,
         play_options: Optional["_models.PlayOptions"] = None,
         operation_context: Optional[str] = None,
@@ -3531,6 +3856,11 @@ class RecognizeOptions(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar speech_language: Speech language to be recognized, If not set default is en-US.
     :vartype speech_language: str
+    :ivar speech_languages: Speech languages for language identification and recognition. Example:
+     ["en-us", "fr-fr", "hi-in"] etc..
+    :vartype speech_languages: list[str]
+    :ivar enable_sentiment_analysis: Value indicating if sentiment analysis should be used.
+    :vartype enable_sentiment_analysis: bool
     :ivar speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
     :vartype speech_recognition_model_endpoint_id: str
     :ivar dtmf_options: Defines configurations for DTMF.
@@ -3551,6 +3881,8 @@ class RecognizeOptions(_serialization.Model):
         "initial_silence_timeout_in_seconds": {"key": "initialSilenceTimeoutInSeconds", "type": "int"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "speech_language": {"key": "speechLanguage", "type": "str"},
+        "speech_languages": {"key": "speechLanguages", "type": "[str]"},
+        "enable_sentiment_analysis": {"key": "enableSentimentAnalysis", "type": "bool"},
         "speech_recognition_model_endpoint_id": {"key": "speechRecognitionModelEndpointId", "type": "str"},
         "dtmf_options": {"key": "dtmfOptions", "type": "DtmfOptions"},
         "choices": {"key": "choices", "type": "[Choice]"},
@@ -3564,9 +3896,11 @@ class RecognizeOptions(_serialization.Model):
         interrupt_prompt: Optional[bool] = None,
         initial_silence_timeout_in_seconds: Optional[int] = None,
         speech_language: Optional[str] = None,
+        speech_languages: Optional[list[str]] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
         dtmf_options: Optional["_models.DtmfOptions"] = None,
-        choices: Optional[List["_models.Choice"]] = None,
+        choices: Optional[list["_models.Choice"]] = None,
         speech_options: Optional["_models.SpeechOptions"] = None,
         **kwargs: Any
     ) -> None:
@@ -3581,6 +3915,11 @@ class RecognizeOptions(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
+        :keyword speech_languages: Speech languages for language identification and recognition.
+         Example: ["en-us", "fr-fr", "hi-in"] etc..
+        :paramtype speech_languages: list[str]
+        :keyword enable_sentiment_analysis: Value indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
         :keyword dtmf_options: Defines configurations for DTMF.
@@ -3595,6 +3934,8 @@ class RecognizeOptions(_serialization.Model):
         self.initial_silence_timeout_in_seconds = initial_silence_timeout_in_seconds
         self.target_participant = target_participant
         self.speech_language = speech_language
+        self.speech_languages = speech_languages
+        self.enable_sentiment_analysis = enable_sentiment_analysis
         self.speech_recognition_model_endpoint_id = speech_recognition_model_endpoint_id
         self.dtmf_options = dtmf_options
         self.choices = choices
@@ -3649,7 +3990,7 @@ class RecognizeRequest(_serialization.Model):
         recognize_input_type: Union[str, "_models.RecognizeInputType"],
         recognize_options: "_models.RecognizeOptions",
         play_prompt: Optional["_models.PlaySource"] = None,
-        play_prompts: Optional[List["_models.PlaySource"]] = None,
+        play_prompts: Optional[list["_models.PlaySource"]] = None,
         interrupt_call_media_operation: Optional[bool] = None,
         operation_context: Optional[str] = None,
         operation_callback_uri: Optional[str] = None,
@@ -4097,12 +4438,26 @@ class ResultInformation(_serialization.Model):
     :vartype sub_code: int
     :ivar message: Detail message that describes the current result.
     :vartype message: str
+    :ivar sip_details: Sip response from SBC. This can be helpful to troubleshoot PSTN call if this
+     result was unexpected.
+     This is only applicable for PSTN calls and will be null if SBC/Carrier does not provide this
+     information.
+     Do not solely rely on this information for troubleshooting, as it may not always be available.
+    :vartype sip_details: ~azure.communication.callautomation.models.SipDiagnosticInfo
+    :ivar q850_details: Q850 cause from SBC. This can be helpful to troubleshoot call issues if
+     this result was unexpected.
+     This is only applicable for PSTN calls and will be null if SBC/Carrier does not provide this
+     information.
+     Do not solely rely on this information for troubleshooting, as it may not always be available.
+    :vartype q850_details: ~azure.communication.callautomation.models.SipDiagnosticInfo
     """
 
     _attribute_map = {
         "code": {"key": "code", "type": "int"},
         "sub_code": {"key": "subCode", "type": "int"},
         "message": {"key": "message", "type": "str"},
+        "sip_details": {"key": "sipDetails", "type": "SipDiagnosticInfo"},
+        "q850_details": {"key": "q850Details", "type": "SipDiagnosticInfo"},
     }
 
     def __init__(
@@ -4111,6 +4466,8 @@ class ResultInformation(_serialization.Model):
         code: Optional[int] = None,
         sub_code: Optional[int] = None,
         message: Optional[str] = None,
+        sip_details: Optional["_models.SipDiagnosticInfo"] = None,
+        q850_details: Optional["_models.SipDiagnosticInfo"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4122,11 +4479,25 @@ class ResultInformation(_serialization.Model):
         :paramtype sub_code: int
         :keyword message: Detail message that describes the current result.
         :paramtype message: str
+        :keyword sip_details: Sip response from SBC. This can be helpful to troubleshoot PSTN call if
+         this result was unexpected.
+         This is only applicable for PSTN calls and will be null if SBC/Carrier does not provide this
+         information.
+         Do not solely rely on this information for troubleshooting, as it may not always be available.
+        :paramtype sip_details: ~azure.communication.callautomation.models.SipDiagnosticInfo
+        :keyword q850_details: Q850 cause from SBC. This can be helpful to troubleshoot call issues if
+         this result was unexpected.
+         This is only applicable for PSTN calls and will be null if SBC/Carrier does not provide this
+         information.
+         Do not solely rely on this information for troubleshooting, as it may not always be available.
+        :paramtype q850_details: ~azure.communication.callautomation.models.SipDiagnosticInfo
         """
         super().__init__(**kwargs)
         self.code = code
         self.sub_code = sub_code
         self.message = message
+        self.sip_details = sip_details
+        self.q850_details = q850_details
 
 
 class SendDtmfTonesCompleted(_serialization.Model):
@@ -4277,7 +4648,7 @@ class SendDtmfTonesRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        tones: List[Union[str, "_models.DtmfTone"]],
+        tones: list[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
         operation_callback_uri: Optional[str] = None,
@@ -4324,6 +4695,56 @@ class SendDtmfTonesResult(_serialization.Model):
         self.operation_context = operation_context
 
 
+class SentimentAnalysisResult(_serialization.Model):
+    """SentimentAnalysisResult.
+
+    :ivar sentiment: Gets or sets the value of the sentiment detected (positive, negative, neutral,
+     mixed).
+    :vartype sentiment: str
+    """
+
+    _attribute_map = {
+        "sentiment": {"key": "sentiment", "type": "str"},
+    }
+
+    def __init__(self, *, sentiment: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword sentiment: Gets or sets the value of the sentiment detected (positive, negative,
+         neutral, mixed).
+        :paramtype sentiment: str
+        """
+        super().__init__(**kwargs)
+        self.sentiment = sentiment
+
+
+class SipDiagnosticInfo(_serialization.Model):
+    """SipDiagnosticInfo.
+
+    :ivar code: Represents the diagnostic code returned by the SIP service, used for identifying
+     specific issues or statuses.
+    :vartype code: int
+    :ivar message: Message associated with the code for diagnosing.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[int] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code: Represents the diagnostic code returned by the SIP service, used for identifying
+         specific issues or statuses.
+        :paramtype code: int
+        :keyword message: Message associated with the code for diagnosing.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
 class SpeechOptions(_serialization.Model):
     """Options for continuous speech recognition.
 
@@ -4354,24 +4775,46 @@ class SpeechResult(_serialization.Model):
     :ivar confidence: The confidence level of the recognized speech, if available, ranges from 0.0
      to 1.0.
     :vartype confidence: float
+    :ivar language_identified: The identified language.
+    :vartype language_identified: str
+    :ivar sentiment_analysis_result: Gets or sets the sentiment analysis result.
+    :vartype sentiment_analysis_result:
+     ~azure.communication.callautomation.models.SentimentAnalysisResult
     """
 
     _attribute_map = {
         "speech": {"key": "speech", "type": "str"},
         "confidence": {"key": "confidence", "type": "float"},
+        "language_identified": {"key": "languageIdentified", "type": "str"},
+        "sentiment_analysis_result": {"key": "sentimentAnalysisResult", "type": "SentimentAnalysisResult"},
     }
 
-    def __init__(self, *, speech: Optional[str] = None, confidence: Optional[float] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        speech: Optional[str] = None,
+        confidence: Optional[float] = None,
+        language_identified: Optional[str] = None,
+        sentiment_analysis_result: Optional["_models.SentimentAnalysisResult"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword speech: The recognized speech in string.
         :paramtype speech: str
         :keyword confidence: The confidence level of the recognized speech, if available, ranges from
          0.0 to 1.0.
         :paramtype confidence: float
+        :keyword language_identified: The identified language.
+        :paramtype language_identified: str
+        :keyword sentiment_analysis_result: Gets or sets the sentiment analysis result.
+        :paramtype sentiment_analysis_result:
+         ~azure.communication.callautomation.models.SentimentAnalysisResult
         """
         super().__init__(**kwargs)
         self.speech = speech
         self.confidence = confidence
+        self.language_identified = language_identified
+        self.sentiment_analysis_result = sentiment_analysis_result
 
 
 class SsmlSource(_serialization.Model):
@@ -4476,8 +4919,8 @@ class StartCallRecordingRequest(_serialization.Model):
         recording_content_type: Optional[Union[str, "_models.RecordingContent"]] = None,
         recording_channel_type: Optional[Union[str, "_models.RecordingChannel"]] = None,
         recording_format_type: Optional[Union[str, "_models.RecordingFormat"]] = None,
-        audio_channel_participant_ordering: Optional[List["_models.CommunicationIdentifierModel"]] = None,
-        channel_affinity: Optional[List["_models.ChannelAffinity"]] = None,
+        audio_channel_participant_ordering: Optional[list["_models.CommunicationIdentifierModel"]] = None,
+        channel_affinity: Optional[list["_models.ChannelAffinity"]] = None,
         pause_on_start: Optional[bool] = None,
         external_storage: Optional["_models.ExternalStorage"] = None,
         **kwargs: Any
@@ -4655,6 +5098,14 @@ class StartTranscriptionRequest(_serialization.Model):
      This setup is per-action. If this is not set, the default callback URI set by
      CreateCall/AnswerCall will be used.
     :vartype operation_callback_uri: str
+    :ivar pii_redaction_options: PII redaction configuration options.
+    :vartype pii_redaction_options: ~azure.communication.callautomation.models.PiiRedactionOptions
+    :ivar enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+    :vartype enable_sentiment_analysis: bool
+    :ivar locales: List of languages for Language Identification.
+    :vartype locales: list[str]
+    :ivar summarization_options: Summarization configuration options.
+    :vartype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
     """
 
     _attribute_map = {
@@ -4662,6 +5113,10 @@ class StartTranscriptionRequest(_serialization.Model):
         "speech_model_endpoint_id": {"key": "speechModelEndpointId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "pii_redaction_options": {"key": "piiRedactionOptions", "type": "PiiRedactionOptions"},
+        "enable_sentiment_analysis": {"key": "enableSentimentAnalysis", "type": "bool"},
+        "locales": {"key": "locales", "type": "[str]"},
+        "summarization_options": {"key": "summarizationOptions", "type": "SummarizationOptions"},
     }
 
     def __init__(
@@ -4671,6 +5126,10 @@ class StartTranscriptionRequest(_serialization.Model):
         speech_model_endpoint_id: Optional[str] = None,
         operation_context: Optional[str] = None,
         operation_callback_uri: Optional[str] = None,
+        pii_redaction_options: Optional["_models.PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        locales: Optional[list[str]] = None,
+        summarization_options: Optional["_models.SummarizationOptions"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4686,12 +5145,26 @@ class StartTranscriptionRequest(_serialization.Model):
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_uri: str
+        :keyword pii_redaction_options: PII redaction configuration options.
+        :paramtype pii_redaction_options:
+         ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword locales: List of languages for Language Identification.
+        :paramtype locales: list[str]
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options:
+         ~azure.communication.callautomation.models.SummarizationOptions
         """
         super().__init__(**kwargs)
         self.locale = locale
         self.speech_model_endpoint_id = speech_model_endpoint_id
         self.operation_context = operation_context
         self.operation_callback_uri = operation_callback_uri
+        self.pii_redaction_options = pii_redaction_options
+        self.enable_sentiment_analysis = enable_sentiment_analysis
+        self.locales = locales
+        self.summarization_options = summarization_options
 
 
 class StopMediaStreamingRequest(_serialization.Model):
@@ -4762,6 +5235,80 @@ class StopTranscriptionRequest(_serialization.Model):
         self.operation_callback_uri = operation_callback_uri
 
 
+class SummarizationOptions(_serialization.Model):
+    """Configuration options for call summarization.
+
+    :ivar enable_end_call_summary: Indicating whether end call summary should be enabled.
+    :vartype enable_end_call_summary: bool
+    :ivar locale: Locale for summarization (e.g., en-US).
+    :vartype locale: str
+    """
+
+    _attribute_map = {
+        "enable_end_call_summary": {"key": "enableEndCallSummary", "type": "bool"},
+        "locale": {"key": "locale", "type": "str"},
+    }
+
+    def __init__(
+        self, *, enable_end_call_summary: Optional[bool] = None, locale: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword enable_end_call_summary: Indicating whether end call summary should be enabled.
+        :paramtype enable_end_call_summary: bool
+        :keyword locale: Locale for summarization (e.g., en-US).
+        :paramtype locale: str
+        """
+        super().__init__(**kwargs)
+        self.enable_end_call_summary = enable_end_call_summary
+        self.locale = locale
+
+
+class SummarizeCallRequest(_serialization.Model):
+    """SummarizeCallRequest.
+
+    :ivar operation_context: The value to identify context of the operation.
+    :vartype operation_context: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar summarization_options: Summarization configuration options.
+    :vartype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
+    """
+
+    _attribute_map = {
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "summarization_options": {"key": "summarizationOptions", "type": "SummarizationOptions"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_context: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        summarization_options: Optional["_models.SummarizationOptions"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword operation_context: The value to identify context of the operation.
+        :paramtype operation_context: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options:
+         ~azure.communication.callautomation.models.SummarizationOptions
+        """
+        super().__init__(**kwargs)
+        self.operation_context = operation_context
+        self.operation_callback_uri = operation_callback_uri
+        self.summarization_options = summarization_options
+
+
 class TeamsExtensionUserIdentifierModel(_serialization.Model):
     """A Microsoft Teams Phone user who is using a Communication Services resource to extend their
     Teams Phone set up.
@@ -4821,6 +5368,244 @@ class TeamsExtensionUserIdentifierModel(_serialization.Model):
         self.tenant_id = tenant_id
         self.resource_id = resource_id
         self.cloud = cloud
+
+
+class TeamsPhoneCallDetails(_serialization.Model):
+    """The call details which will be sent to the target.
+
+    :ivar teams_phone_caller_details: Container for details relating to the original caller of the
+     call.
+    :vartype teams_phone_caller_details:
+     ~azure.communication.callautomation.models.TeamsPhoneCallerDetails
+    :ivar teams_phone_source_details: Container for details relating to the entity responsible for
+     the creation of these call details.
+    :vartype teams_phone_source_details:
+     ~azure.communication.callautomation.models.TeamsPhoneSourceDetails
+    :ivar session_id: Id to exclusively identify this call session. IVR will use this for their
+     telemetry/reporting.
+    :vartype session_id: str
+    :ivar intent: The intent of the call.
+    :vartype intent: str
+    :ivar call_topic: A very short description (max 48 chars) of the reason for the call. To be
+     displayed in Teams CallNotification.
+    :vartype call_topic: str
+    :ivar call_context: A summary of the call thus far. It will be displayed on a side panel in the
+     Teams UI.
+    :vartype call_context: str
+    :ivar transcript_url: Url for fetching the transcript of the call.
+    :vartype transcript_url: str
+    :ivar call_sentiment: Sentiment of the call thus far.
+    :vartype call_sentiment: str
+    :ivar suggested_actions: Recommendations for resolving the issue based on the customer's intent
+     and interaction history.
+    :vartype suggested_actions: str
+    """
+
+    _attribute_map = {
+        "teams_phone_caller_details": {"key": "teamsPhoneCallerDetails", "type": "TeamsPhoneCallerDetails"},
+        "teams_phone_source_details": {"key": "teamsPhoneSourceDetails", "type": "TeamsPhoneSourceDetails"},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "intent": {"key": "intent", "type": "str"},
+        "call_topic": {"key": "callTopic", "type": "str"},
+        "call_context": {"key": "callContext", "type": "str"},
+        "transcript_url": {"key": "transcriptUrl", "type": "str"},
+        "call_sentiment": {"key": "callSentiment", "type": "str"},
+        "suggested_actions": {"key": "suggestedActions", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        teams_phone_caller_details: Optional["_models.TeamsPhoneCallerDetails"] = None,
+        teams_phone_source_details: Optional["_models.TeamsPhoneSourceDetails"] = None,
+        session_id: Optional[str] = None,
+        intent: Optional[str] = None,
+        call_topic: Optional[str] = None,
+        call_context: Optional[str] = None,
+        transcript_url: Optional[str] = None,
+        call_sentiment: Optional[str] = None,
+        suggested_actions: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword teams_phone_caller_details: Container for details relating to the original caller of
+         the call.
+        :paramtype teams_phone_caller_details:
+         ~azure.communication.callautomation.models.TeamsPhoneCallerDetails
+        :keyword teams_phone_source_details: Container for details relating to the entity responsible
+         for the creation of these call details.
+        :paramtype teams_phone_source_details:
+         ~azure.communication.callautomation.models.TeamsPhoneSourceDetails
+        :keyword session_id: Id to exclusively identify this call session. IVR will use this for their
+         telemetry/reporting.
+        :paramtype session_id: str
+        :keyword intent: The intent of the call.
+        :paramtype intent: str
+        :keyword call_topic: A very short description (max 48 chars) of the reason for the call. To be
+         displayed in Teams CallNotification.
+        :paramtype call_topic: str
+        :keyword call_context: A summary of the call thus far. It will be displayed on a side panel in
+         the Teams UI.
+        :paramtype call_context: str
+        :keyword transcript_url: Url for fetching the transcript of the call.
+        :paramtype transcript_url: str
+        :keyword call_sentiment: Sentiment of the call thus far.
+        :paramtype call_sentiment: str
+        :keyword suggested_actions: Recommendations for resolving the issue based on the customer's
+         intent and interaction history.
+        :paramtype suggested_actions: str
+        """
+        super().__init__(**kwargs)
+        self.teams_phone_caller_details = teams_phone_caller_details
+        self.teams_phone_source_details = teams_phone_source_details
+        self.session_id = session_id
+        self.intent = intent
+        self.call_topic = call_topic
+        self.call_context = call_context
+        self.transcript_url = transcript_url
+        self.call_sentiment = call_sentiment
+        self.suggested_actions = suggested_actions
+
+
+class TeamsPhoneCallerDetails(_serialization.Model):
+    """Container for details relating to the original caller of the call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar caller: Caller's ID. Required.
+    :vartype caller: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar name: Caller's name. Required.
+    :vartype name: str
+    :ivar phone_number: Caller's phone number. Required.
+    :vartype phone_number: str
+    :ivar record_id: Caller's record ID (ex in CRM).
+    :vartype record_id: str
+    :ivar screen_pop_url: Caller's screen pop URL.
+    :vartype screen_pop_url: str
+    :ivar is_authenticated: Flag indicating whether the caller was authenticated.
+    :vartype is_authenticated: bool
+    :ivar additional_caller_information: A set of key value pairs (max 10, any additional entries
+     would be ignored) which a bot author wants to pass to the Teams Client for display to the
+     agent.
+    :vartype additional_caller_information: dict[str, str]
+    """
+
+    _validation = {
+        "caller": {"required": True},
+        "name": {"required": True},
+        "phone_number": {"required": True},
+    }
+
+    _attribute_map = {
+        "caller": {"key": "caller", "type": "CommunicationIdentifierModel"},
+        "name": {"key": "name", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "record_id": {"key": "recordId", "type": "str"},
+        "screen_pop_url": {"key": "screenPopUrl", "type": "str"},
+        "is_authenticated": {"key": "isAuthenticated", "type": "bool"},
+        "additional_caller_information": {"key": "additionalCallerInformation", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        caller: "_models.CommunicationIdentifierModel",
+        name: str,
+        phone_number: str,
+        record_id: Optional[str] = None,
+        screen_pop_url: Optional[str] = None,
+        is_authenticated: Optional[bool] = None,
+        additional_caller_information: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword caller: Caller's ID. Required.
+        :paramtype caller: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword name: Caller's name. Required.
+        :paramtype name: str
+        :keyword phone_number: Caller's phone number. Required.
+        :paramtype phone_number: str
+        :keyword record_id: Caller's record ID (ex in CRM).
+        :paramtype record_id: str
+        :keyword screen_pop_url: Caller's screen pop URL.
+        :paramtype screen_pop_url: str
+        :keyword is_authenticated: Flag indicating whether the caller was authenticated.
+        :paramtype is_authenticated: bool
+        :keyword additional_caller_information: A set of key value pairs (max 10, any additional
+         entries would be ignored) which a bot author wants to pass to the Teams Client for display to
+         the agent.
+        :paramtype additional_caller_information: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.caller = caller
+        self.name = name
+        self.phone_number = phone_number
+        self.record_id = record_id
+        self.screen_pop_url = screen_pop_url
+        self.is_authenticated = is_authenticated
+        self.additional_caller_information = additional_caller_information
+
+
+class TeamsPhoneSourceDetails(_serialization.Model):
+    """Container for details relating to the entity responsible for the creation of these call
+    details.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source: ID of the source entity passing along the call details (ex. Application Instance
+     ID of - CQ/AA). Required.
+    :vartype source: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+    :ivar language: Language of the source entity passing along the call details, passed in the
+     ISO-639 standard. Required.
+    :vartype language: str
+    :ivar status: Status of the source entity passing along the call details. Required.
+    :vartype status: str
+    :ivar intended_targets: Intended targets of the source entity passing along the call details.
+    :vartype intended_targets: dict[str,
+     ~azure.communication.callautomation.models.CommunicationIdentifierModel]
+    """
+
+    _validation = {
+        "source": {"required": True},
+        "language": {"required": True},
+        "status": {"required": True},
+    }
+
+    _attribute_map = {
+        "source": {"key": "source", "type": "CommunicationIdentifierModel"},
+        "language": {"key": "language", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "intended_targets": {"key": "intendedTargets", "type": "{CommunicationIdentifierModel}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source: "_models.CommunicationIdentifierModel",
+        language: str,
+        status: str,
+        intended_targets: Optional[dict[str, "_models.CommunicationIdentifierModel"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source: ID of the source entity passing along the call details (ex. Application
+         Instance ID of - CQ/AA). Required.
+        :paramtype source: ~azure.communication.callautomation.models.CommunicationIdentifierModel
+        :keyword language: Language of the source entity passing along the call details, passed in the
+         ISO-639 standard. Required.
+        :paramtype language: str
+        :keyword status: Status of the source entity passing along the call details. Required.
+        :paramtype status: str
+        :keyword intended_targets: Intended targets of the source entity passing along the call
+         details.
+        :paramtype intended_targets: dict[str,
+         ~azure.communication.callautomation.models.CommunicationIdentifierModel]
+        """
+        super().__init__(**kwargs)
+        self.source = source
+        self.language = language
+        self.status = status
+        self.intended_targets = intended_targets
 
 
 class TextSource(_serialization.Model):
@@ -4892,6 +5677,74 @@ class TextSource(_serialization.Model):
         self.voice_kind = voice_kind
         self.voice_name = voice_name
         self.custom_voice_endpoint_id = custom_voice_endpoint_id
+
+
+class TranscriptionCallSummaryUpdated(_serialization.Model):
+    """TranscriptionCallSummaryUpdated.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar transcription_update: Defines the result for TranscriptionUpdate with the current status
+     and the details about the status.
+    :vartype transcription_update: ~azure.communication.callautomation.models.TranscriptionUpdate
+    :ivar call_connection_id: Call connection ID.
+    :vartype call_connection_id: str
+    :ivar server_call_id: Server call ID.
+    :vartype server_call_id: str
+    :ivar correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+     skype chain ID.
+    :vartype correlation_id: str
+    :ivar operation_context: Used by customers when calling mid-call actions to correlate the
+     request to the response event.
+    :vartype operation_context: str
+    :ivar result_information: Contains the resulting SIP code, sub-code and message.
+    :vartype result_information: ~azure.communication.callautomation.models.ResultInformation
+    """
+
+    _validation = {
+        "transcription_update": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "transcription_update": {"key": "transcriptionUpdate", "type": "TranscriptionUpdate"},
+        "call_connection_id": {"key": "callConnectionId", "type": "str"},
+        "server_call_id": {"key": "serverCallId", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "operation_context": {"key": "operationContext", "type": "str"},
+        "result_information": {"key": "resultInformation", "type": "ResultInformation"},
+    }
+
+    def __init__(
+        self,
+        *,
+        call_connection_id: Optional[str] = None,
+        server_call_id: Optional[str] = None,
+        correlation_id: Optional[str] = None,
+        operation_context: Optional[str] = None,
+        result_information: Optional["_models.ResultInformation"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword call_connection_id: Call connection ID.
+        :paramtype call_connection_id: str
+        :keyword server_call_id: Server call ID.
+        :paramtype server_call_id: str
+        :keyword correlation_id: Correlation ID for event to call correlation. Also called ChainId for
+         skype chain ID.
+        :paramtype correlation_id: str
+        :keyword operation_context: Used by customers when calling mid-call actions to correlate the
+         request to the response event.
+        :paramtype operation_context: str
+        :keyword result_information: Contains the resulting SIP code, sub-code and message.
+        :paramtype result_information: ~azure.communication.callautomation.models.ResultInformation
+        """
+        super().__init__(**kwargs)
+        self.transcription_update: Optional["_models.TranscriptionUpdate"] = None
+        self.call_connection_id = call_connection_id
+        self.server_call_id = server_call_id
+        self.correlation_id = correlation_id
+        self.operation_context = operation_context
+        self.result_information = result_information
 
 
 class TranscriptionFailed(_serialization.Model):
@@ -4974,13 +5827,12 @@ class TranscriptionOptions(_serialization.Model):
      may be introduced that are not currently documented. Required. "websocket"
     :vartype transport_type: str or
      ~azure.communication.callautomation.models.StreamingTransportType
-    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
     :vartype locale: str
     """
 
     _validation = {
         "transport_type": {"required": True},
-        "locale": {"required": True},
     }
 
     _attribute_map = {
@@ -4990,9 +5842,9 @@ class TranscriptionOptions(_serialization.Model):
 
     _subtype_map = {"transport_type": {"websocket": "WebSocketTranscriptionOptions"}}
 
-    def __init__(self, *, locale: str, **kwargs: Any) -> None:
+    def __init__(self, *, locale: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
         :paramtype locale: str
         """
         super().__init__(**kwargs)
@@ -5164,7 +6016,7 @@ class TranscriptionSubscription(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         state: Optional[Union[str, "_models.TranscriptionSubscriptionState"]] = None,
-        subscribed_result_types: Optional[List[Union[str, "_models.TranscriptionResultType"]]] = None,
+        subscribed_result_types: Optional[list[Union[str, "_models.TranscriptionResultType"]]] = None,
         locale: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -5192,21 +6044,27 @@ class TranscriptionUpdate(_serialization.Model):
     """TranscriptionUpdate.
 
     :ivar transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
+     "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdated",
+     and "unspecifiedError".
     :vartype transcription_status: str or
      ~azure.communication.callautomation.models.TranscriptionStatus
     :ivar transcription_status_details: Known values are: "subscriptionStarted",
      "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
      "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
      "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
-     "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
+     "tooManyRequests", "forbidden", "serviceTimeout", "transcriptionLocaleUpdated",
+     "callSummarySuccess", and "callSummaryFailure".
     :vartype transcription_status_details: str or
      ~azure.communication.callautomation.models.TranscriptionStatusDetails
+    :ivar transcription_message: Optional message providing additional context about the
+     transcription update.
+    :vartype transcription_message: str
     """
 
     _attribute_map = {
         "transcription_status": {"key": "transcriptionStatus", "type": "str"},
         "transcription_status_details": {"key": "transcriptionStatusDetails", "type": "str"},
+        "transcription_message": {"key": "transcriptionMessage", "type": "str"},
     }
 
     def __init__(
@@ -5214,24 +6072,31 @@ class TranscriptionUpdate(_serialization.Model):
         *,
         transcription_status: Optional[Union[str, "_models.TranscriptionStatus"]] = None,
         transcription_status_details: Optional[Union[str, "_models.TranscriptionStatusDetails"]] = None,
+        transcription_message: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
-         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", and "unspecifiedError".
+         "transcriptionResumed", "transcriptionUpdated", "transcriptionStopped", "callSummaryUpdated",
+         and "unspecifiedError".
         :paramtype transcription_status: str or
          ~azure.communication.callautomation.models.TranscriptionStatus
         :keyword transcription_status_details: Known values are: "subscriptionStarted",
          "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
          "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
          "subscriptionStopped", "unspecifiedError", "authenticationFailure", "badRequest",
-         "tooManyRequests", "forbidden", "serviceTimeout", and "transcriptionLocaleUpdated".
+         "tooManyRequests", "forbidden", "serviceTimeout", "transcriptionLocaleUpdated",
+         "callSummarySuccess", and "callSummaryFailure".
         :paramtype transcription_status_details: str or
          ~azure.communication.callautomation.models.TranscriptionStatusDetails
+        :keyword transcription_message: Optional message providing additional context about the
+         transcription update.
+        :paramtype transcription_message: str
         """
         super().__init__(**kwargs)
         self.transcription_status = transcription_status
         self.transcription_status_details = transcription_status_details
+        self.transcription_message = transcription_message
 
 
 class TranscriptionUpdated(_serialization.Model):
@@ -5478,6 +6343,12 @@ class UpdateTranscriptionRequest(_serialization.Model):
      This setup is per-action. If this is not set, the default callback URI set by
      CreateCall/AnswerCall will be used.
     :vartype operation_callback_uri: str
+    :ivar pii_redaction_options: PII redaction configuration options.
+    :vartype pii_redaction_options: ~azure.communication.callautomation.models.PiiRedactionOptions
+    :ivar enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+    :vartype enable_sentiment_analysis: bool
+    :ivar summarization_options: Summarization configuration options.
+    :vartype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
     """
 
     _attribute_map = {
@@ -5485,6 +6356,9 @@ class UpdateTranscriptionRequest(_serialization.Model):
         "speech_model_endpoint_id": {"key": "speechModelEndpointId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "pii_redaction_options": {"key": "piiRedactionOptions", "type": "PiiRedactionOptions"},
+        "enable_sentiment_analysis": {"key": "enableSentimentAnalysis", "type": "bool"},
+        "summarization_options": {"key": "summarizationOptions", "type": "SummarizationOptions"},
     }
 
     def __init__(
@@ -5494,6 +6368,9 @@ class UpdateTranscriptionRequest(_serialization.Model):
         speech_model_endpoint_id: Optional[str] = None,
         operation_context: Optional[str] = None,
         operation_callback_uri: Optional[str] = None,
+        pii_redaction_options: Optional["_models.PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        summarization_options: Optional["_models.SummarizationOptions"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5509,12 +6386,23 @@ class UpdateTranscriptionRequest(_serialization.Model):
          This setup is per-action. If this is not set, the default callback URI set by
          CreateCall/AnswerCall will be used.
         :paramtype operation_callback_uri: str
+        :keyword pii_redaction_options: PII redaction configuration options.
+        :paramtype pii_redaction_options:
+         ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be used.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options:
+         ~azure.communication.callautomation.models.SummarizationOptions
         """
         super().__init__(**kwargs)
         self.locale = locale
         self.speech_model_endpoint_id = speech_model_endpoint_id
         self.operation_context = operation_context
         self.operation_callback_uri = operation_callback_uri
+        self.pii_redaction_options = pii_redaction_options
+        self.enable_sentiment_analysis = enable_sentiment_analysis
+        self.summarization_options = summarization_options
 
 
 class WebSocketMediaStreamingOptions(MediaStreamingOptions):
@@ -5615,7 +6503,7 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
      may be introduced that are not currently documented. Required. "websocket"
     :vartype transport_type: str or
      ~azure.communication.callautomation.models.StreamingTransportType
-    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+    :ivar locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
     :vartype locale: str
     :ivar transport_url: The URL used for live transcription transport.
     :vartype transport_url: str
@@ -5627,11 +6515,19 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
     :vartype start_transcription: bool
     :ivar enable_intermediate_results: Enables intermediate results for the transcribed speech.
     :vartype enable_intermediate_results: bool
+    :ivar pii_redaction_options: PII redaction configuration options.
+    :vartype pii_redaction_options: ~azure.communication.callautomation.models.PiiRedactionOptions
+    :ivar enable_sentiment_analysis: Indicating if sentiment analysis should be enabled.
+    :vartype enable_sentiment_analysis: bool
+    :ivar locales: Specifies the list of locales for language identification and transcription.
+     Example: ["en-us", "fr-fr", "hi-in"] etc.
+    :vartype locales: list[str]
+    :ivar summarization_options: Summarization configuration options.
+    :vartype summarization_options: ~azure.communication.callautomation.models.SummarizationOptions
     """
 
     _validation = {
         "transport_type": {"required": True},
-        "locale": {"required": True},
     }
 
     _attribute_map = {
@@ -5641,20 +6537,28 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
         "speech_model_endpoint_id": {"key": "speechModelEndpointId", "type": "str"},
         "start_transcription": {"key": "startTranscription", "type": "bool"},
         "enable_intermediate_results": {"key": "enableIntermediateResults", "type": "bool"},
+        "pii_redaction_options": {"key": "piiRedactionOptions", "type": "PiiRedactionOptions"},
+        "enable_sentiment_analysis": {"key": "enableSentimentAnalysis", "type": "bool"},
+        "locales": {"key": "locales", "type": "[str]"},
+        "summarization_options": {"key": "summarizationOptions", "type": "SummarizationOptions"},
     }
 
     def __init__(
         self,
         *,
-        locale: str,
+        locale: Optional[str] = None,
         transport_url: Optional[str] = None,
         speech_model_endpoint_id: Optional[str] = None,
         start_transcription: Optional[bool] = None,
         enable_intermediate_results: Optional[bool] = None,
+        pii_redaction_options: Optional["_models.PiiRedactionOptions"] = None,
+        enable_sentiment_analysis: Optional[bool] = None,
+        locales: Optional[list[str]] = None,
+        summarization_options: Optional["_models.SummarizationOptions"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU. Required.
+        :keyword locale: Specifies the Locale used for transcription, e.g., en-CA or en-AU.
         :paramtype locale: str
         :keyword transport_url: The URL used for live transcription transport.
         :paramtype transport_url: str
@@ -5666,6 +6570,17 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
         :paramtype start_transcription: bool
         :keyword enable_intermediate_results: Enables intermediate results for the transcribed speech.
         :paramtype enable_intermediate_results: bool
+        :keyword pii_redaction_options: PII redaction configuration options.
+        :paramtype pii_redaction_options:
+         ~azure.communication.callautomation.models.PiiRedactionOptions
+        :keyword enable_sentiment_analysis: Indicating if sentiment analysis should be enabled.
+        :paramtype enable_sentiment_analysis: bool
+        :keyword locales: Specifies the list of locales for language identification and transcription.
+         Example: ["en-us", "fr-fr", "hi-in"] etc.
+        :paramtype locales: list[str]
+        :keyword summarization_options: Summarization configuration options.
+        :paramtype summarization_options:
+         ~azure.communication.callautomation.models.SummarizationOptions
         """
         super().__init__(locale=locale, **kwargs)
         self.transport_type: str = "websocket"
@@ -5673,3 +6588,7 @@ class WebSocketTranscriptionOptions(TranscriptionOptions):
         self.speech_model_endpoint_id = speech_model_endpoint_id
         self.start_transcription = start_transcription
         self.enable_intermediate_results = enable_intermediate_results
+        self.pii_redaction_options = pii_redaction_options
+        self.enable_sentiment_analysis = enable_sentiment_analysis
+        self.locales = locales
+        self.summarization_options = summarization_options
