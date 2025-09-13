@@ -19,3 +19,4 @@ class next_pylint(pylint):
         """Run the next-pylint check command."""
         args.next = True
         return super().run(args)
+    

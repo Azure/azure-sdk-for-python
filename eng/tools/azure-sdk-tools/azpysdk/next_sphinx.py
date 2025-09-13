@@ -22,3 +22,4 @@ class next_sphinx(sphinx):
         """Run the next-sphinx check command."""
         args.next = True
         return super().run(args)
+    

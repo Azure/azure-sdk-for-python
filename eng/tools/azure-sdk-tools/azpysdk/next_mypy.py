@@ -19,3 +19,4 @@ class next_mypy(mypy):
         """Run the next-mypy check command."""
         args.next = True
         return super().run(args)
+    
