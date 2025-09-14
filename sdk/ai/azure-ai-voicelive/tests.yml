@@ -10,6 +10,6 @@ extends:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
         VOICELIVE_OPENAI_ENDPOINT: $(VOICELIVE_OPENAI_ENDPOINT)
-        VOICELIVE_OPENAI_KEY: $(VOICELIVE_OPENAI_KEY)
+        VOICELIVE_OPENAI_API_KEY: $(VOICELIVE_OPENAI_API_KEY)
       TestResourceDirectories:
         - ai/azure-ai-voicelive/

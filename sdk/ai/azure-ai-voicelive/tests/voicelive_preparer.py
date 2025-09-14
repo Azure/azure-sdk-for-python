@@ -5,5 +5,5 @@ VoiceLivePreparer = functools.partial(
     EnvironmentVariableLoader,
     "voicelive",
     voicelive_openai_endpoint="fake-endpoint",
-    voicelive_openai_key="fake-key",
-)
+    voicelive_openai_api_key="fake-key",
+)   

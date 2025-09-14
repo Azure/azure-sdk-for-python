@@ -13,7 +13,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
 from pathlib import Path
 
-ENV_API_KEY = "VOICELIVE_OPENAI_KEY"
+ENV_API_KEY = "VOICELIVE_OPENAI_API_KEY"
 ENV_OPENAI_ENDPOINT = "VOICELIVE_OPENAI_ENDPOINT"
 
 TEST_ENDPOINT = os.getenv(ENV_OPENAI_ENDPOINT, "endpoint")

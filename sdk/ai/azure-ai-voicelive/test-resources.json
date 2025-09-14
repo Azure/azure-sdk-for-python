@@ -499,7 +499,7 @@
         }
     ],
     "outputs": {
-	  "VOICELIVE_OPENAI_KEY": {
+	  "VOICELIVE_OPENAI_API_KEY": {
 		"type": "securestring",
 		"value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', parameters('name')), '2023-05-01').key1]"
 	  },
