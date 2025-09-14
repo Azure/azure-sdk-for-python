@@ -12,4 +12,4 @@ extends:
         VOICELIVE_OPENAI_ENDPOINT: $(VOICELIVE_OPENAI_ENDPOINT)
         VOICELIVE_OPENAI_KEY: $(VOICELIVE_OPENAI_KEY)
       TestResourceDirectories:
-        - ai/azure-ai-voicelive/tests
+        - ai/azure-ai-voicelive/
