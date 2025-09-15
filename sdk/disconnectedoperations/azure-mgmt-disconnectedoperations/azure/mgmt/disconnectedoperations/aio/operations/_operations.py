@@ -51,7 +51,7 @@ from ...operations._operations import (
     build_images_list_by_disconnected_operation_request,
     build_images_list_download_uri_request,
 )
-from .._configuration import EdgeClientConfiguration
+from .._configuration import DisconnectedOperationsMgmtClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -64,14 +64,16 @@ class DisconnectedOperationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.disconnectedoperations.aio.EdgeClient`'s
+        :class:`~azure.mgmt.disconnectedoperations.aio.DisconnectedOperationsMgmtClient`'s
         :attr:`disconnected_operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DisconnectedOperationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -909,14 +911,16 @@ class ImagesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.disconnectedoperations.aio.EdgeClient`'s
+        :class:`~azure.mgmt.disconnectedoperations.aio.DisconnectedOperationsMgmtClient`'s
         :attr:`images` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DisconnectedOperationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1177,14 +1181,16 @@ class ArtifactsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.disconnectedoperations.aio.EdgeClient`'s
+        :class:`~azure.mgmt.disconnectedoperations.aio.DisconnectedOperationsMgmtClient`'s
         :attr:`artifacts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: EdgeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DisconnectedOperationsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.disconnectedoperations.aio import EdgeClient
+from azure.mgmt.disconnectedoperations.aio import DisconnectedOperationsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestEdgeArtifactsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestDisconnectedOperationsMgmtImagesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(EdgeClient, is_async=True)
+        self.client = self.create_mgmt_client(DisconnectedOperationsMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_artifacts_list_by_parent(self, resource_group):
-        response = self.client.artifacts.list_by_parent(
+    async def test_images_list_by_disconnected_operation(self, resource_group):
+        response = self.client.images.list_by_disconnected_operation(
             resource_group_name=resource_group.name,
             name="str",
-            image_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +32,11 @@ class TestEdgeArtifactsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_artifacts_get(self, resource_group):
-        response = await self.client.artifacts.get(
+    async def test_images_get(self, resource_group):
+        response = await self.client.images.get(
             resource_group_name=resource_group.name,
             name="str",
             image_name="str",
-            artifact_name="str",
         )
 
         # please add some check logic here by yourself
@@ -46,12 +44,11 @@ class TestEdgeArtifactsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_artifacts_list_download_uri(self, resource_group):
-        response = await self.client.artifacts.list_download_uri(
+    async def test_images_list_download_uri(self, resource_group):
+        response = await self.client.images.list_download_uri(
             resource_group_name=resource_group.name,
             name="str",
             image_name="str",
-            artifact_name="str",
         )
 
         # please add some check logic here by yourself

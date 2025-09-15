@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.disconnectedoperations import EdgeClient
+from azure.mgmt.disconnectedoperations import DisconnectedOperationsMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.disconnectedoperations import EdgeClient
 
 
 def main():
-    client = EdgeClient(
+    client = DisconnectedOperationsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

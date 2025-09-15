@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class EdgeClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for EdgeClient.
+class DisconnectedOperationsMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for DisconnectedOperationsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
