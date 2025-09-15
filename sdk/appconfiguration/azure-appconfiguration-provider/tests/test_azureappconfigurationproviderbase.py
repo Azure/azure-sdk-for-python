@@ -15,6 +15,7 @@ from typing import Dict, Any
 from azure.appconfiguration import FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     _build_sentinel,
+    _generate_allocation_id,
     AzureAppConfigurationProviderBase,
     process_load_arguments,
     process_key_vault_options,
@@ -382,7 +383,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
     def test_generate_allocation_id_no_allocation(self):
         """Test allocation ID generation with no allocation."""
         feature_flag_value: Dict[str, Any] = {"no_allocation": "here"}
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = _generate_allocation_id(feature_flag_value)
         self.assertIsNone(result)
 
     def test_generate_allocation_id_with_allocation(self):
@@ -399,7 +400,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
             ],
         }
 
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = _generate_allocation_id(feature_flag_value)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, str)
         # Should be a base64 encoded string
@@ -418,7 +419,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 "default_when_enabled": "Control"
             }
         }
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = _generate_allocation_id(feature_flag_value)
         # Since default_when_enabled is provided, allocated_variants won't be empty
         # so this should return a valid allocation ID
         self.assertIsNotNone(result)
@@ -431,6 +432,6 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 # No seed and no default_when_enabled
             }
         }
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = _generate_allocation_id(feature_flag_value)
         # This should return None because allocated_variants is empty and no seed
         self.assertIsNone(result)

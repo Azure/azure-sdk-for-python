@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 import random
 import time
+from typing import Any
 
 
 class RefreshTimer:
@@ -12,7 +13,7 @@ class RefreshTimer:
     A timer that tracks the next refresh time and the number of attempts.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """
         Initialize the refresh timer with the specified configuration.
 
