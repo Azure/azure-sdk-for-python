@@ -30,12 +30,14 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
         This is the primary parameter used by the underlying _QuickpulseExporter
         for application identification and telemetry enrichment.
     :type resource: Optional[Resource]
+    :return: None
     :rtype: None
     """
     manager = _QuickpulseManager(**kwargs)
     initialized = manager.initialize()
     if initialized:
         # Register the callback that will be invoked on configuration changes
+        # Is a NoOp if _ConfigurationManager not initialized
         _ConfigurationManager().register_callback(get_quickpulse_configuration_callback)
         
     # We can detect feature usage for statsbeat since we are in an opt-in model currently

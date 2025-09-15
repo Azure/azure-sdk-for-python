@@ -176,7 +176,7 @@ class _QuickpulseManager(metaclass=Singleton):
             self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
             self._meter_provider = MeterProvider(
                 metric_readers=[self._reader],
-                resource=resource,
+                resource=self._resource,
             )
             self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
 
@@ -238,62 +238,41 @@ class _QuickpulseManager(metaclass=Singleton):
         )
 
     def shutdown(self) -> bool:
-        """Shutdown the QuickpulseManager.
-        
-        Note: The singleton instance and configuration are preserved after shutdown.
-        This allows for efficient reinitialization using the same configuration
-        without needing to pass parameters again.
-        
-        :return: True if shutdown was successful, False otherwise
-        :rtype: bool
-        """
+        # Shutdown the QuickpulseManager
         with self._lock:
             if not self._initialized:
                 return False
 
-            # Shutdown but preserve singleton instance and configuration
-            # This allows reinitialization with the same config later
-            return self._do_shutdown()
+            shutdown_success = False
+            try:
+                if self._meter_provider is not None:
+                    # Store reference before cleanup to avoid race conditions
+                    meter_provider = self._meter_provider
+                    meter_provider.shutdown()
+                    shutdown_success = True
+            except Exception:  # pylint: disable=broad-except
+                pass
+            finally:
+                self._cleanup(shutdown_meter_provider=False)
+            
+            if shutdown_success:
+                _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
+                # Clear the singleton instance from the metaclass
+                if self.__class__ in _QuickpulseManager._instances:  # pylint: disable=protected-access
+                    del _QuickpulseManager._instances[self.__class__]  # pylint: disable=protected-access
 
-    def _do_shutdown(self) -> bool:
-        """Internal shutdown method."""
-        shutdown_success = False
-        try:
-            if self._meter_provider is not None:
-                # Store reference before cleanup to avoid race conditions
-                meter_provider = self._meter_provider
-                # Clean up resources first
-                self._cleanup()
-                # Now shutdown the meter provider outside the lock to avoid deadlock
-                meter_provider.shutdown()
-                shutdown_success = True
-        except Exception as e:  # pylint: disable=broad-except
-            _logger.warning("Error during QuickpulseManager shutdown: %s", e)
-            # Ensure cleanup happens even if shutdown fails
-            self._cleanup()
-        
-        if shutdown_success:
-            _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
-            _logger.info("QuickpulseManager shutdown successfully.")
+            return shutdown_success
 
-        return shutdown_success
-
-    def _cleanup(self) -> None:
-        """Clean up resources.
-        
-        Note: Configuration parameters (_connection_string, _credential, _resource),
-        base monitoring data point, and metric instruments are intentionally preserved 
-        to allow efficient reinitialization.
-        """
+    def _cleanup(self, shutdown_meter_provider: bool = True) -> None:
+        # Clean up resources with optional meter provider shutdown
+        if shutdown_meter_provider and self._meter_provider:
+            try:
+                self._meter_provider.shutdown()
+            except Exception:  # pylint: disable=broad-except
+                pass
         self._exporter = None
         self._reader = None
-        # Note: _meter_provider and _meter are recreated during initialization
-        # but we don't set them to None here to preserve the metric instruments
-        
         self._initialized = False
-        
-        # Configuration parameters (_connection_string, _credential, _resource) are preserved
-        # This allows reinitialization without re-passing the same parameters
 
     def is_initialized(self) -> bool:
         """Check if the manager is initialized.
@@ -304,28 +283,7 @@ class _QuickpulseManager(metaclass=Singleton):
         with self._lock:
             return self._initialized
 
-    def get_current_config(self) -> Optional[Dict[str, Any]]:
-        """Get the current configuration.
-        
-        Returns the stored configuration parameters regardless of initialization state.
-        This configuration is preserved across shutdown/startup cycles, allowing
-        for efficient reinitialization without re-specifying parameters.
-        
-        :return: Current configuration parameters, None if no configuration has been set
-        :rtype: Optional[Dict[str, Any]]
-        """
-        with self._lock:
-            # Return config even if not initialized - config is preserved across shutdown/startup
-            if self._connection_string or self._credential or self._resource:
-                config = {}
-                if self._connection_string:
-                    config["connection_string"] = self._connection_string
-                if self._credential:
-                    config["credential"] = self._credential
-                if self._resource:
-                    config["resource"] = self._resource
-                return config
-            return None
+    # Quickpulse recording methods
 
     def _record_span(self, span: ReadableSpan) -> None:
         # Only record if in post state and manager is initialized
@@ -481,6 +439,12 @@ def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: 
         # Note that the default case is that the list of document_stream_ids is empty, in which
         # case no filtering is done for the telemetry type and it is sent to all streams
         if stream_ids:
+            document.document_stream_ids = list(stream_ids)
+
+        # Add the generated document to be sent to quickpulse
+        _append_quickpulse_document(document)
+
+# cSpell:enable
             document.document_stream_ids = list(stream_ids)
 
         # Add the generated document to be sent to quickpulse
