@@ -15,9 +15,10 @@ The client library uses version `2025-05-15-preview` of the AI Foundry [data pla
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects/product-doc)
 | [Samples][samples]
-| [API reference documentation](https://aka.ms/azsdk/azure-ai-projects/python/reference)
+| [API reference](https://aka.ms/azsdk/azure-ai-projects/python/reference)
 | [Package (PyPI)](https://aka.ms/azsdk/azure-ai-projects/python/package)
 | [SDK source code](https://aka.ms/azsdk/azure-ai-projects/python/code)
+| [Release history](https://aka.ms/azsdk/azure-ai-projects/python/release-history)
 
 ## Reporting issues
 

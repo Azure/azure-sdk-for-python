@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -7,19 +8,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
+from typing import Any, Mapping, Optional, Union, AsyncIterator, cast
 
-# pylint: disable=ungrouped-imports
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except ImportError:  # Python <=3.10
-    from typing_extensions import NotRequired
-# pylint: enable=ungrouped-imports
-
-from typing import Any, Dict, List, Mapping, Optional, Union, AsyncIterator, cast
+# === Third-party ===
 from typing_extensions import TypedDict
 import aiohttp
 from azure.ai.voicelive.models._models import (
@@ -33,13 +29,23 @@ from azure.ai.voicelive.models._models import (
     ClientEventResponseCancel,
     ClientEventResponseCreate,
     ClientEventSessionUpdate,
+    ConversationRequestItem,
+    ResponseCreateParams,
 )
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import policies
+
+# === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
 from .._patch import ConnectionError, ConnectionClosed
 
-__all__: List[str] = [
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
+
+__all__: list[str] = [
     "connect",
     "WebsocketConnectionOptions",
     "VoiceLiveConnection",
@@ -127,21 +133,34 @@ class ResponseResource:
         """
         self._connection = connection
 
-    async def create(self, *, response: Optional[Mapping[str, Any]] = None, event_id: Optional[str] = None) -> None:
+    async def create(
+        self,
+        *,
+        response: Optional[Union[ResponseCreateParams, Mapping[str, Any]]] = None,
+        event_id: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+    ) -> None:
         """Create a response from the model.
 
         This event instructs the server to create a Response (triggering model inference).
         When in Server VAD mode, the server may create responses automatically.
 
-        :keyword Mapping[str, Any] response: Optional response configuration.
-        :keyword str event_id: Optional ID for the event.
+        :keyword response: Optional response configuration to send.
+        :keyword type response: ~azure.ai.voicelive.models.ResponseCreateParams or Mapping[str, Any] or None
+        :keyword event_id: Optional ID for the event.
+        :keyword type event_id: str or None
+        :keyword additional_instructions: Extra system prompt appended to the session's default, for this response only.
+        :keyword type additional_instructions: str or None
         :rtype: None
         """
-        event = ClientEventResponseCreate()
-        if response is not None:
-            event["response"] = dict(response)
-        if event_id:
-            event["event_id"] = event_id
+        if response is not None and not isinstance(response, ResponseCreateParams):
+            response = ResponseCreateParams(**dict(response))
+
+        event = ClientEventResponseCreate(
+            event_id=event_id,
+            response=response,
+            additional_instructions=additional_instructions,
+        )
 
         await self._connection.send(event)
 
@@ -229,7 +248,7 @@ class OutputAudioBufferResource:
         :keyword str event_id: Optional ID for the event.
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
+        event: dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
             event["event_id"] = event_id
         await self._connection.send(event)
@@ -247,20 +266,27 @@ class ConversationItemResource:
         self._connection = connection
 
     async def create(
-        self, *, item: Mapping[str, Any], previous_item_id: Optional[str] = None, event_id: Optional[str] = None
+        self,
+        *,
+        item: Union[ConversationRequestItem, Mapping[str, Any]],
+        previous_item_id: Optional[str] = None,
+        event_id: Optional[str] = None,
     ) -> None:
         """Create a new conversation item.
 
-        :keyword Mapping[str, Any] item: The item to create (message/functions/etc.).
+        :keyword ConversationRequestItem | Mapping[str, Any] item: The item to create (message/functions/etc.).
         :keyword str previous_item_id: Optional ID of the item after which to insert this item.
         :keyword str event_id: Optional ID for the event.
         :rtype: None
         """
-        event = ClientEventConversationItemCreate({"item": dict(item)})
-        if previous_item_id:
-            event["previous_item_id"] = previous_item_id
-        if event_id:
-            event["event_id"] = event_id
+        if not isinstance(item, ConversationRequestItem):
+            item = ConversationRequestItem(**dict(item))
+
+        event = ClientEventConversationItemCreate(
+            event_id=event_id,
+            previous_item_id=previous_item_id,
+            item=item,
+        )
         await self._connection.send(event)
 
     async def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
@@ -344,7 +370,7 @@ class TranscriptionSessionResource:
         :keyword str event_id: Optional ID for the event.
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
+        event: dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
             event["event_id"] = event_id
         await self._connection.send(event)
@@ -377,6 +403,16 @@ class VoiceLiveConnection:
     :ivar transcription_session: Resource for updating transcription session configuration.
     :vartype transcription_session: ~azure.ai.voicelive.aio.TranscriptionSessionResource
     """
+
+    _client_session: aiohttp.ClientSession
+    _connection: aiohttp.ClientWebSocketResponse
+
+    session: "SessionResource"
+    response: "ResponseResource"
+    input_audio_buffer: "InputAudioBufferResource"
+    conversation: "ConversationResource"
+    output_audio_buffer: "OutputAudioBufferResource"
+    transcription_session: "TranscriptionSessionResource"
 
     def __init__(self, client_session: aiohttp.ClientSession, ws: aiohttp.ClientWebSocketResponse) -> None:
         """Initialize a VoiceLiveConnection instance.
@@ -573,7 +609,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
     def __init__(
         self,
         *,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         endpoint: str,
         model: str,
         api_version: str = "2025-05-01-preview",
@@ -584,7 +620,14 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
     ) -> None:
         self._credential = credential
         self._endpoint = endpoint
-        self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
+        raw_scopes = kwargs.pop(
+            "credential_scopes",
+            ["https://cognitiveservices.azure.com/.default"],
+        )
+        if isinstance(raw_scopes, str):
+            self.__credential_scopes = [raw_scopes]
+        else:
+            self.__credential_scopes = list(raw_scopes)
         self.__model = model
         self.__api_version = api_version
         self.__connection: Optional[VoiceLiveConnection] = None
@@ -593,18 +636,18 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         self.__connection_options = self._map_websocket_options(connection_options or {})
         self.__proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
 
-    def _map_websocket_options(self, options: WebsocketConnectionOptions) -> Dict[str, Any]:
+    def _map_websocket_options(self, options: WebsocketConnectionOptions) -> dict[str, Any]:
         """
         Map user options to :mod:`aiohttp` ``ws_connect`` kwargs (accept both TypedDict keys and common aliases).
 
         :param options: The user-provided WebSocket options.
         :type options: ~azure.ai.voicelive.aio.WebsocketConnectionOptions
         :return: Mapped options suitable for ``aiohttp.ClientSession.ws_connect``.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         # copy to a plain dict so we can safely check/pop alias keys without mypy complaints
-        src: Dict[str, Any] = dict(options)
-        mapped: Dict[str, Any] = {}
+        src: dict[str, Any] = dict(options)
+        mapped: dict[str, Any] = {}
         # aliases commonly used by other libs
         if "max_size" in src:
             mapped["max_msg_size"] = src.pop("max_size")
@@ -640,7 +683,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
                     "https": "http://localhost:8888",
                 }
 
-            auth_headers = self._get_auth_headers()
+            auth_headers = await self._get_auth_headers()
             headers = {**auth_headers, **dict(self.__extra_headers)}
 
             session = aiohttp.ClientSession()
@@ -654,16 +697,21 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         except (aiohttp.ClientError, ValueError) as e:
             raise ConnectionError(f"Failed to establish WebSocket connection: {e}") from e
 
-    def _get_auth_headers(self) -> Dict[str, str]:
+    async def _get_auth_headers(self) -> dict[str, str]:
         """
         Get authentication headers for WebSocket connection.
 
         :return: A dict of HTTP headers for authentication.
-        :rtype: Dict[str, str]
+        :rtype: dict[str, str]
         """
         if isinstance(self._credential, AzureKeyCredential):
             return {"api-key": self._credential.key}
-        token = self._credential.get_token(self.__credential_scopes)
+
+        if isinstance(self._credential, AsyncTokenCredential):
+            token = await self._credential.get_token(*self.__credential_scopes)
+        else:  # sync TokenCredential
+            token = self._credential.get_token(*self.__credential_scopes)
+
         return {"Authorization": f"Bearer {token.token}"}
 
     def _prepare_url(self) -> str:
@@ -680,7 +728,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             else ("ws" if parsed.scheme.startswith("http") else parsed.scheme)
         )
 
-        params: Dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
+        params: dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
         params.update(dict(self.__extra_query))
 
         existing_params = parse_qs(parsed.query)
@@ -688,7 +736,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             if key not in params:
                 params[key] = value_list[0] if value_list else ""
 
-        path = parsed.path.rstrip("/") + "/voice-agent/realtime"
+        path = parsed.path.rstrip("/") + "/voice-live/realtime"
         url = urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
         return url
 
@@ -710,7 +758,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
 
 def connect(
     *,
-    credential: Union[AzureKeyCredential, TokenCredential],
+    credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
     model: str,
     api_version: str = "2025-05-01-preview",
@@ -729,7 +777,7 @@ def connect(
     - Automatically cleans up the connection when the context exits.
 
     :keyword credential: The credential used to authenticate with the service.
-    :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
+    :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :paramtype type endpoint: str
     :keyword model: The model identifier to use for the session.

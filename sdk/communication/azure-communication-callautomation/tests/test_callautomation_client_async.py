@@ -15,6 +15,7 @@ from azure.communication.callautomation import (
 )
 from unittest_helpers import mock_response
 
+
 class TestCallAutomationClientAsync(IsolatedAsyncioTestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     server_callI_id = "12345"
@@ -110,14 +111,10 @@ class TestCallAutomationClientAsync(IsolatedAsyncioTestCase):
         transport = Mock()
         transport.send = AsyncMock(side_effect=mock_send)
         call_automation_client = AsyncCallAutomationClient(
-            "https://endpoint",
-            AzureKeyCredential("fakeCredential=="),
-            transport=transport
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=transport
         )
         call_connection_properties = await call_automation_client.create_call(
-            call_invite,
-            self.callback_url,
-            teams_app_source=caller
+            call_invite, self.callback_url, teams_app_source=caller
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
@@ -216,12 +213,12 @@ class TestCallAutomationClientAsync(IsolatedAsyncioTestCase):
         call_automation_client = AsyncCallAutomationClient(
             "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=transport
         )
-        call_connection_properties = await call_automation_client.answer_call(self.incoming_call_context, self.callback_url)
+        call_connection_properties = await call_automation_client.answer_call(
+            self.incoming_call_context, self.callback_url
+        )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
-
-
 
     async def test_redirect_call(self):
         async def mock_send(_, **kwargs):
@@ -240,9 +237,7 @@ class TestCallAutomationClientAsync(IsolatedAsyncioTestCase):
         await call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
         await call_automation_client.redirect_call(self.incoming_call_context, user)
         with pytest.raises(ValueError) as e:
-            await call_automation_client.redirect_call(
-                self.incoming_call_context, user, source_display_name="baz"
-            )
+            await call_automation_client.redirect_call(self.incoming_call_context, user, source_display_name="baz")
         assert "unexpected kwargs" in str(e.value)
 
     async def test_reject_call(self):
