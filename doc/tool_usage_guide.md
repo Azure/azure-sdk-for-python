@@ -1,6 +1,6 @@
 # Tool Usage Guide
 
-As part of shipping SDKs that can be trusted by customers, the azure-sdk-for-python dev team maintains a suite of `checks` that can be utilized by devs to ensure predictable quality measures that should prevent or allow shipping. These `checks` are implemented in a single entrypoint within local development package `eng/tools/azure-sdk-tools`. This package provides:
+As part of shipping SDKs that can be trusted by customers, the azure-sdk-for-python dev team maintains a suite of `checks` that can be utilized by developers to ensure predictable quality measures. These checks help determine whether a package meets the required quality standards for release or needs further work before it can be shipped. These `checks` are implemented in a single entrypoint within the local development package `eng/tools/azure-sdk-tools`. This package provides:
  
  - Templated package generation for mgmt packages
  -  The test-framework that all packages within this monorepo use (including record/playback integration)
@@ -37,8 +37,8 @@ The azpysdk is intended to be used from within the azure-sdk-for-python reposito
 ### Automatically isolating the environment
 
 The targeted tool should be able to run in an isolated environment for a couple reasons:
--  When attempting to diagnose an issue, sometimes a user is best served by completely wiping their `venv` and starting over from scatch. Issues may stem from having additional deps downloaded that normally wouldn't be installed with the package.
-- In `CI`, we _have_ to run in isolated virtual environments for some checks to allow processes like `multiple pytest` runs to invoke without accidentally stomping on each other's progress or hitting file contention errors.. CI passes this flag by default from `dispatch_checks.py`.
+-  When attempting to diagnose an issue, sometimes a user is best served by completely wiping their `venv` and starting over from scratch. Issues may stem from having additional deps downloaded that normally wouldn't be installed with the package.
+- In `CI`, we _have_ to run in isolated virtual environments for some checks to allow processes like `multiple pytest` runs to invoke without accidentally stomping on each other's progress or hitting file contention errors. CI passes this flag by default from `dispatch_checks.py`.
 
 To utilize this feature, add `--isolate` to any `azpysdk` invocation:
 
