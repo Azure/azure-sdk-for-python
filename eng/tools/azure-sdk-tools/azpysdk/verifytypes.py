@@ -20,7 +20,7 @@ from ci_tools.logging import logger
 PYRIGHT_VERSION = "1.1.287"
 REPO_ROOT = discover_repo_root()
 
-def install_from_main(setup_path: str) -> None:
+def install_from_main(setup_path: str) -> int:
     path = pathlib.Path(setup_path)
     subdirectory = path.relative_to(REPO_ROOT)
     cwd = os.getcwd()
@@ -40,7 +40,8 @@ def install_from_main(setup_path: str) -> None:
 
             if not os.path.exists(os.path.join(os.getcwd(), subdirectory)):
                 # code is not checked into main yet, nothing to compare
-                exit(0)
+                logger.info(f"{subdirectory} is not checked into main, nothing to compare.")
+                return 1
 
             os.chdir(subdirectory)
 
@@ -53,6 +54,7 @@ def install_from_main(setup_path: str) -> None:
             subprocess.check_call(command, stdout=subprocess.DEVNULL)
         finally:
             os.chdir(cwd)  # allow temp dir to be deleted
+        return 0
 
 def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = False) -> float:
     try:
@@ -66,16 +68,16 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
             logger.info(
                 f"Running verifytypes failed: {e.stderr}. See https://aka.ms/python/typing-guide for information."
             )
-            exit(1)
+            return -1.0
 
         report = json.loads(e.output)
         if check_pytyped:
             pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
             if not pytyped_present:
-                print(
+                logger.warning(
                     f"No py.typed file was found. See aka.ms/python/typing-guide for information."
                 )
-                exit(1)
+                return -1.0
         return report["typeCompleteness"]["completenessScore"]
 
     # library scores 100%
@@ -108,6 +110,8 @@ class verifytypes(Check):
             module = parsed.namespace
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for verifytypes check")
+
+            self.install_dev_reqs(executable, args, package_dir)
 
             # install pyright
             try:
@@ -146,16 +150,20 @@ class verifytypes(Check):
                 logger.info(
                     "Getting the type completeness score from the code in main..."
                 )
-                install_from_main(os.path.abspath(package_dir))
+                if (install_from_main(os.path.abspath(package_dir)) > 0):
+                    continue
+
                 score_from_main = get_type_complete_score(commands)
+                if (score_from_main == -1.0):
+                    continue
 
                 score_from_main_rounded = round(score_from_main * 100, 1)
                 score_from_current_rounded = round(score_from_current * 100, 1)
-                print("\n-----Type completeness score comparison-----\n")
-                print(f"Score in main: {score_from_main_rounded}%")
+                logger.info("\n-----Type completeness score comparison-----\n")
+                logger.info(f"Score in main: {score_from_main_rounded}%")
                 # Give a 5% buffer for type completeness score to decrease
                 if score_from_current_rounded < score_from_main_rounded - 5:
-                    print(
+                    logger.error(
                         f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
                         f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
                     )
