@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
 
 ### Other Changes
 
