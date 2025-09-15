@@ -188,7 +188,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -265,7 +265,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -329,7 +329,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -479,7 +479,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -540,7 +540,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -588,7 +588,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -830,7 +830,7 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
@@ -907,7 +907,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
@@ -962,7 +962,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
             Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying

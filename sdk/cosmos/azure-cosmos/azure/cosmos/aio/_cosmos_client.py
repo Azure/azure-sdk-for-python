@@ -273,7 +273,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple of a DatabaseProxy and CosmosDict instance.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -312,7 +312,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple of a DatabaseProxy and CosmosDict instance.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -347,7 +347,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple of a DatabaseProxy and CosmosDict instance.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -447,7 +447,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
-        :keyword bool return_properties: Specifies function to return either a DatabaseProxy
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple of a DatabaseProxy and CosmosDict instance.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.

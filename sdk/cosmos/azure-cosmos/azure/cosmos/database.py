@@ -207,7 +207,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A `ContainerProxy` instance representing the new container
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -280,7 +280,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A tuple of the `ContainerProxy`and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
@@ -339,7 +339,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
@@ -491,7 +491,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
@@ -550,7 +550,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A  tuple of the `ContainerProxy`and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
@@ -595,7 +595,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
@@ -896,7 +896,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
@@ -956,7 +956,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A tuple of the `ContainerProxy`and CosmosDict with the response headers.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
@@ -1005,7 +1005,7 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :keyword bool return_properties: Specifies function to return either a ContainerProxy
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
             or a Tuple of a ContainerProxy and CosmosDict instance.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the response headers.
