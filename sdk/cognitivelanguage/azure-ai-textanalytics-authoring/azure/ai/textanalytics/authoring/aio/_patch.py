@@ -7,14 +7,9 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, TYPE_CHECKING, Union, Optional
-from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline import policies
 from ._client import TextAuthoringClient as AuthoringClientGenerated
 from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
-
-from ._configuration import TextAuthoringProjectClientConfiguration
-from .._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
