@@ -23,7 +23,6 @@
 
 from typing import Optional, Any, Mapping
 
-from azure.core.utils import CaseInsensitiveDict
 from ._cosmos_responses import CosmosDict
 
 

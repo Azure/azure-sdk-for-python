@@ -305,7 +305,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace
-    def create_container(  # pylint:disable=docstring-missing-param, too-many-statements
+    def create_container(  # pylint:disable=docstring-missing-param, too-many-statements, docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any
@@ -559,7 +559,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace
-    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
+    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any
@@ -975,7 +975,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace
-    def replace_container(  # pylint:disable=docstring-missing-param
+    def replace_container(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any

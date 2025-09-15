@@ -335,7 +335,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    async def create_database(
+    async def create_database( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any
@@ -429,7 +429,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    async def create_database_if_not_exists(
+    async def create_database_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any

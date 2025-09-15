@@ -316,7 +316,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace_async
-    async def create_container(
+    async def create_container( # pylint:disable=docstring-should-be-keyword, too-many-statements
         self,
         *args: Any,
         **kwargs: Any
@@ -573,7 +573,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace_async
-    async def create_container_if_not_exists(
+    async def create_container_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any
@@ -930,7 +930,7 @@ class DatabaseProxy(object):
         ...
 
     @distributed_trace_async
-    async def replace_container(
+    async def replace_container( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
         **kwargs: Any
