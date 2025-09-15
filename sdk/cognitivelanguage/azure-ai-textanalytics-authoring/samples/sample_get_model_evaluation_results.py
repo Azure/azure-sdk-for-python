@@ -66,7 +66,7 @@ def sample_get_model_evaluation_results():
             print(f"    Predicted: {classification.predicted_class}")
         else:
             # If your project uses a different task type, handle other result kinds here
-            print(f"  (Unsupported result type: {type(result).__name__})")
+            print(f"  (Unsupported result type: {result.project_kind})")
 
 
 # [END text_authoring_get_model_evaluation_results]
