@@ -109,6 +109,9 @@ class TestConfigurationManager(unittest.TestCase):
         
         # Create second instance
         manager2 = _ConfigurationManager()
+
+        manager1.initialize()
+        manager2.initialize()
         
         # Should be the same instance
         self.assertIs(manager1, manager2)
@@ -123,6 +126,7 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_class.return_value = mock_worker_instance
         
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Verify worker was created with manager and default refresh interval
         mock_worker_class.assert_called_once_with(manager, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
@@ -143,6 +147,7 @@ class TestConfigurationManager(unittest.TestCase):
         mock_request.return_value = mock_response
         
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Execute
         result = manager.get_configuration_and_refresh_interval({"param": "value"})
@@ -169,6 +174,7 @@ class TestConfigurationManager(unittest.TestCase):
         mock_request.return_value = mock_response1
         
         manager = _ConfigurationManager()
+        manager.initialize()
         manager.get_configuration_and_refresh_interval()
         
         # Setup - second call should include etag
@@ -194,6 +200,7 @@ class TestConfigurationManager(unittest.TestCase):
     def test_version_increase_triggers_config_fetch(self, mock_worker_class, mock_request):
         """Test that version increase triggers CONFIG endpoint fetch."""
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Mock responses for CHANGE and CONFIG endpoints
         change_response = OneSettingsResponse(
@@ -271,6 +278,7 @@ class TestConfigurationManager(unittest.TestCase):
     def test_config_endpoint_failure_preserves_etag(self, mock_logger, mock_worker_class, mock_request):
         """Test that CONFIG endpoint failure preserves ETag for retry."""
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Mock responses
         change_response = OneSettingsResponse(
@@ -308,6 +316,7 @@ class TestConfigurationManager(unittest.TestCase):
     def test_version_mismatch_between_endpoints(self, mock_logger, mock_worker_class, mock_request):
         """Test handling of version mismatch between CHANGE and CONFIG endpoints."""
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Mock responses with mismatched versions
         change_response = OneSettingsResponse(
@@ -346,8 +355,9 @@ class TestConfigurationManager(unittest.TestCase):
     def test_get_settings(self):
         """Test get_settings returns copy of settings cache."""
         manager = _ConfigurationManager()
+        # Note: Don't initialize - test behavior when not initialized
         
-        # Get initial settings (should be empty)
+        # Get initial settings (should be empty when not initialized)
         initial_settings = manager.get_settings()
         self.assertEqual(initial_settings, {})
         
@@ -359,8 +369,9 @@ class TestConfigurationManager(unittest.TestCase):
     def test_get_current_version(self):
         """Test get_current_version returns current version."""
         manager = _ConfigurationManager()
+        # Note: Don't initialize - test behavior when not initialized
         
-        # Get initial version (should be -1)
+        # Get initial version (should be -1 when not initialized)
         initial_version = manager.get_current_version()
         self.assertEqual(initial_version, -1)
 
@@ -370,19 +381,19 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_instance = Mock()
         mock_worker_class.return_value = mock_worker_instance
         
-        # Create manager instance
+        # Create manager instance and initialize
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Verify initial state
         self.assertIsNotNone(manager._configuration_worker)
         self.assertEqual(manager._configuration_worker, mock_worker_instance)
         
-        # Get initial settings to verify they exist
-        initial_settings = manager.get_settings()
-        initial_version = manager.get_current_version()
-        
         # Execute shutdown
-        manager.shutdown()
+        result = manager.shutdown()
+        
+        # Verify shutdown was successful
+        self.assertTrue(result)
         
         # Verify worker shutdown was called
         mock_worker_instance.shutdown.assert_called_once()
@@ -394,7 +405,8 @@ class TestConfigurationManager(unittest.TestCase):
         manager2 = _ConfigurationManager()
         self.assertIsNot(manager, manager2)
         
-        # Verify new instance gets a new worker
+        # Initialize new instance to verify it gets a new worker
+        manager2.initialize()
         self.assertEqual(mock_worker_class.call_count, 2)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
@@ -404,14 +416,17 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_class.return_value = mock_worker_instance
         
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # First shutdown
-        manager.shutdown()
+        result1 = manager.shutdown()
+        self.assertTrue(result1)
         mock_worker_instance.shutdown.assert_called_once()
         self.assertIsNone(manager._configuration_worker)
         
-        # Second shutdown should not cause errors or additional calls
-        manager.shutdown()
+        # Second shutdown should return False (not initialized)
+        result2 = manager.shutdown()
+        self.assertFalse(result2)
         # shutdown should still only be called once on the worker
         mock_worker_instance.shutdown.assert_called_once()
 
@@ -422,18 +437,29 @@ class TestConfigurationManager(unittest.TestCase):
         mock_worker_class.return_value = mock_worker_instance
         
         manager = _ConfigurationManager()
+        manager.initialize()
         
         # Manually clear the worker to simulate edge case
         manager._configuration_worker = None
         
-        # Shutdown should not raise an exception
+        # Shutdown should not raise an exception and should return True
         try:
-            manager.shutdown()
+            result = manager.shutdown()
+            self.assertTrue(result)
         except Exception as e:
             self.fail(f"shutdown() raised an exception when worker was None: {e}")
         
         # Worker shutdown should not be called since worker was None
         mock_worker_instance.shutdown.assert_not_called()
+
+    def test_shutdown_not_initialized(self):
+        """Test shutdown when manager was never initialized."""
+        manager = _ConfigurationManager()
+        # Don't call initialize()
+        
+        # Shutdown should return False
+        result = manager.shutdown()
+        self.assertFalse(result)
 
 
 class TestGetConfigurationAndRefreshInterval(unittest.TestCase):
@@ -478,6 +504,7 @@ class TestGetConfigurationAndRefreshInterval(unittest.TestCase):
         
         # Execute
         manager = _ConfigurationManager()
+        manager.initialize()
         result = manager.get_configuration_and_refresh_interval()
         
         # Verify
@@ -487,6 +514,11 @@ class TestGetConfigurationAndRefreshInterval(unittest.TestCase):
         self.assertEqual(call_args[0][0], _ONE_SETTINGS_CHANGE_URL)
         self.assertEqual(call_args[0][1], {})
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_get_configuration_not_initialized(self):
+        """Test get_configuration_and_refresh_interval when not initialized."""
+        manager = _ConfigurationManager()
+        # Don't call initialize()
+        
+        # Should return default interval
+        result = manager.get_configuration_and_refresh_interval()
+        self.assertEqual(result, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
