@@ -19,7 +19,7 @@ import config
 # Prerequisites -
 #
 # 1. An Azure Cosmos account in fabric environment and database and container created.
-#
+#    https://learn.microsoft.com/en-us/fabric/database/cosmos-db/overview
 # 2. Python packages (preview + identity) and login:
 #    pip install "azure-cosmos==4.14.0b3" azure-identity
 #    az login
