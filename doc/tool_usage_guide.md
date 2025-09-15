@@ -13,9 +13,13 @@ A `tool` in this context is merely a single entrypoint provided by the `azpysdk`
 
 This repo is currently migrating all checks from a slower `tox`-based framework, to a lightweight implementation that uses `asyncio` to simultaneously run checks. This tools list is the current set that has been migrated from `tox` to the `azpysdk` entrypoint.
 
-- mypy
-- pylint
-- sphinx
+|tool|description|invocation|
+|---|---|---|
+|`pylint`| Runs `pylint` checks or `pylint-next` checks. (based on presence of `--next` argument)  | `azpysdk pylint .` |
+|`mypy`| Runs `mypy` checks or `mypy-next` checks. (based on presence of `--next` argument)  | `azpysdk mypy --next=True  .` |
+|`sphinx`| Generates a documentation website for the targeted packages. Runs `sphinx` or `next-sphinx` (based on presence of `--next` argument). | `azpysdk sphinx .` |
+|`black`| Runs `black` checks. | `azpysdk black .` |
+|`import_all`| Installs the package w/ default dependencies, then attempts to `import *` from the base namespace. Ensures that all imports will resolve after a base install and import. | `azpysdk import_all .` |
 
 ## Common arguments
 

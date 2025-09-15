@@ -197,6 +197,7 @@
     "avroencoder",
     "Avs",
     "azcmagent",
+    "azpysdk",
     "azsdk",
     "azurecr",
     "azuremgmtcore",
