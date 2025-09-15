@@ -40,7 +40,7 @@ class ruff(Check):
             try:
                 install_into_venv(executable, ["ruff"], package_dir)
             except subprocess.CalledProcessError as e:
-                logger.error("Failed to install ruff:", e)
+                logger.error(f"Failed to install ruff: {e}")
                 return e.returncode
 
             top_level_module = parsed.namespace.split(".")[0]

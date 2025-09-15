@@ -51,7 +51,7 @@ class pylint(Check):
             try:
                 install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install dependencies:", e)
+                logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
 
             # install pylint
@@ -62,7 +62,7 @@ class pylint(Check):
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install pylint:", e)
+                logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
 
             top_level_module = parsed.namespace.split(".")[0]
