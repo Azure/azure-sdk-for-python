@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 - Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
+  ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 
 ### Other Changes
 
