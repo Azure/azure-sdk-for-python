@@ -15,8 +15,8 @@ This repo is currently migrating all checks from a slower `tox`-based framework,
 
 |tool|description|invocation|
 |---|---|---|
-|`pylint`| Runs `pylint` checks or `pylint-next` checks. (based on presence of `--next` argument)  | `azpysdk pylint .` |
-|`mypy`| Runs `mypy` checks or `mypy-next` checks. (based on presence of `--next` argument)  | `azpysdk mypy --next=True  .` |
+|`pylint`| Runs `pylint` checks or `next-pylint` checks. (based on presence of `--next` argument)  | `azpysdk pylint .` |
+|`mypy`| Runs `mypy` checks or `next-mypy` checks. (based on presence of `--next` argument)  | `azpysdk mypy --next=True  .` |
 |`sphinx`| Generates a documentation website for the targeted packages. Runs `sphinx` or `next-sphinx` (based on presence of `--next` argument). | `azpysdk sphinx .` |
 |`black`| Runs `black` checks. | `azpysdk black .` |
 |`import_all`| Installs the package w/ default dependencies, then attempts to `import *` from the base namespace. Ensures that all imports will resolve after a base install and import. | `azpysdk import_all .` |
