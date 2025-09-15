@@ -19,7 +19,7 @@ USAGE:
     python basic_voice_assistant.py
     
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_KEY - The Azure VoiceLive API key
+    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
     
     Or copy .env.template to .env and fill in your values.
@@ -59,10 +59,12 @@ except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
 # Azure VoiceLive SDK imports
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.identity import DefaultAzureCredential, InteractiveBrowserCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
 
 from azure.ai.voicelive.aio import connect
+
 if TYPE_CHECKING:
     # Only needed for type checking; avoids runtime import issues
     from azure.ai.voicelive.aio import VoiceLiveConnection
@@ -70,6 +72,7 @@ if TYPE_CHECKING:
 from azure.ai.voicelive.models import (
     RequestSession,
     ServerVad,
+    AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
     AudioFormat,
@@ -314,7 +317,7 @@ class BasicVoiceAssistant:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         model: str,
         voice: str,
         instructions: str,
@@ -388,7 +391,7 @@ class BasicVoiceAssistant:
         voice_config: Union[AzureStandardVoice, str]
         if self.voice.startswith("en-US-") or self.voice.startswith("en-CA-") or "-" in self.voice:
             # Azure voice
-            voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
+            voice_config = AzureStandardVoice(name=self.voice)
         else:
             # OpenAI voice (alloy, echo, fable, onyx, nova, shimmer)
             voice_config = self.voice
@@ -403,6 +406,7 @@ class BasicVoiceAssistant:
             voice=voice_config,
             input_audio_format=AudioFormat.PCM16,
             output_audio_format=AudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=turn_detection_config,
         )
 
@@ -570,9 +574,9 @@ async def main():
 
     try:
         # Create client with appropriate credential
-        credential: Union[AzureKeyCredential, TokenCredential]
+        credential: Union[AzureKeyCredential, AsyncTokenCredential]
         if args.use_token_credential:
-            credential = InteractiveBrowserCredential()  # or DefaultAzureCredential() if needed
+            credential = AzureCliCredential()  # or DefaultAzureCredential() if needed
             logger.info("Using Azure token credential")
         else:
             credential = AzureKeyCredential(args.api_key)
@@ -633,12 +637,14 @@ if __name__ == "__main__":
         p = pyaudio.PyAudio()
         # Check for input devices
         input_devices = [
-            i for i in range(p.get_device_count())
+            i
+            for i in range(p.get_device_count())
             if cast(Union[int, float], p.get_device_info_by_index(i).get("maxInputChannels", 0) or 0) > 0
         ]
         # Check for output devices
         output_devices = [
-            i for i in range(p.get_device_count())
+            i
+            for i in range(p.get_device_count())
             if cast(Union[int, float], p.get_device_info_by_index(i).get("maxOutputChannels", 0) or 0) > 0
         ]
         p.terminate()

@@ -8,10 +8,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Tuple, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload, Dict
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import ClientEventType, ContentPartType, ItemType, MessageRole, ServerEventType, ToolType
+from ._enums import ClientEventType, ContentPartType, ItemType, ServerEventType, ToolType
 
 if TYPE_CHECKING:
     from .. import _types, models as _models
@@ -78,7 +78,7 @@ class Animation(_Model):
 
     model_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the animation model to use."""
-    outputs: Optional[List[Union[str, "_models.AnimationOutputType"]]] = rest_field(
+    outputs: Optional[list[Union[str, "_models.AnimationOutputType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of output data types requested from the animation system."""
@@ -92,7 +92,7 @@ class Animation(_Model):
         self,
         *,
         model_name: Optional[str] = None,
-        outputs: Optional[List[Union[str, "_models.AnimationOutputType"]]] = None,
+        outputs: Optional[list[Union[str, "_models.AnimationOutputType"]]] = None,
         emotion_detection_interval_ms: Optional[int] = None,
     ) -> None: ...
 
@@ -105,6 +105,133 @@ class Animation(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ConversationRequestItem(_Model):
+    """Base for any response item; discriminated by ``type``.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FunctionCallItem, FunctionCallOutputItem, MessageItem
+
+    :ivar type: Required. Known values are: "message", "function_call", and "function_call_output".
+    :vartype type: str or ~azure.ai.voicelive.models.ItemType
+    :ivar id:
+    :vartype id: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"message\", \"function_call\", and \"function_call_output\"."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageItem(ConversationRequestItem, discriminator="message"):
+    """MessageItem.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AssistantMessageItem, SystemMessageItem, UserMessageItem
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
+    :ivar role: Required. Default value is None.
+    :vartype role: str
+    :ivar status: Known values are: "completed" and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: Literal[ItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is None."""
+    status: Optional[Union[str, "_models.ItemParamStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"completed\" and \"incomplete\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        role: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MESSAGE  # type: ignore
+
+
+class AssistantMessageItem(MessageItem, discriminator="assistant"):
+    """AssistantMessageItem.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
+    :ivar status: Known values are: "completed" and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
+    :ivar role: Required. Default value is "assistant".
+    :vartype role: str
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.voicelive.models.OutputTextContentPart]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    role: Literal["assistant"] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"assistant\"."""
+    content: list["_models.OutputTextContentPart"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.OutputTextContentPart"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = "assistant"  # type: ignore
 
 
 class AudioEchoCancellation(_Model):
@@ -127,39 +254,55 @@ class AudioEchoCancellation(_Model):
 class AudioInputTranscriptionSettings(_Model):
     """Configuration for input audio transcription.
 
-    :ivar model: The model used for transcription. E.g., 'whisper-1', 'azure-fast-transcription',
-     's2s-ingraph'. Required. Is one of the following types: Literal["whisper-1"],
-     Literal["azure-fast-transcription"], Literal["s2s-ingraph"]
-    :vartype model: str or str or str
-    :ivar language: The language code to use for transcription, if specified.
+    :ivar model: The transcription model to use. Supported values:
+     'whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe',
+     'azure-fast-transcription', 'azure-speech'. Required. Is one of the following types:
+     Literal["whisper-1"], Literal["gpt-4o-transcribe"], Literal["gpt-4o-mini-transcribe"],
+     Literal["azure-fast-transcription"], Literal["azure-speech"], str
+    :vartype model: str
+    :ivar language: Optional BCP-47 language code (e.g., 'en-US').
     :vartype language: str
-    :ivar enabled: Whether transcription is enabled. Required.
-    :vartype enabled: bool
-    :ivar custom_model: Whether a custom model is being used. Required.
-    :vartype custom_model: bool
+    :ivar custom_speech: Optional configuration for custom speech models.
+    :vartype custom_speech: dict[str, str]
+    :ivar phrase_list: Optional list of phrase hints to bias recognition.
+    :vartype phrase_list: list[str]
     """
 
-    model: Literal["whisper-1", "azure-fast-transcription", "s2s-ingraph"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The model used for transcription. E.g., 'whisper-1', 'azure-fast-transcription', 's2s-ingraph'.
-     Required. Is one of the following types: Literal[\"whisper-1\"],
-     Literal[\"azure-fast-transcription\"], Literal[\"s2s-ingraph\"]"""
+    model: Union[
+        Literal["whisper-1"],
+        Literal["gpt-4o-transcribe"],
+        Literal["gpt-4o-mini-transcribe"],
+        Literal["azure-fast-transcription"],
+        Literal["azure-speech"],
+        str,
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The transcription model to use. Supported values:
+     'whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe',
+     'azure-fast-transcription', 'azure-speech'. Required. Is one of the following types:
+     Literal[\"whisper-1\"], Literal[\"gpt-4o-transcribe\"], Literal[\"gpt-4o-mini-transcribe\"],
+     Literal[\"azure-fast-transcription\"], Literal[\"azure-speech\"], str"""
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The language code to use for transcription, if specified."""
-    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether transcription is enabled. Required."""
-    custom_model: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether a custom model is being used. Required."""
+    """Optional BCP-47 language code (e.g., 'en-US')."""
+    custom_speech: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional configuration for custom speech models."""
+    phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional list of phrase hints to bias recognition."""
 
     @overload
     def __init__(
         self,
         *,
-        model: Literal["whisper-1", "azure-fast-transcription", "s2s-ingraph"],
-        enabled: bool,
-        custom_model: bool,
+        model: Union[
+            Literal["whisper-1"],
+            Literal["gpt-4o-transcribe"],
+            Literal["gpt-4o-mini-transcribe"],
+            Literal["azure-fast-transcription"],
+            Literal["azure-speech"],
+            str,
+        ],
         language: Optional[str] = None,
+        custom_speech: Optional[dict[str, str]] = None,
+        phrase_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -206,7 +349,7 @@ class AvatarConfig(_Model):
     :vartype video: ~azure.ai.voicelive.models.VideoParams
     """
 
-    ice_servers: Optional[List["_models.IceServer"]] = rest_field(
+    ice_servers: Optional[list["_models.IceServer"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional list of ICE servers to use for WebRTC connection establishment."""
@@ -225,7 +368,7 @@ class AvatarConfig(_Model):
         *,
         character: str,
         customized: bool,
-        ice_servers: Optional[List["_models.IceServer"]] = None,
+        ice_servers: Optional[list["_models.IceServer"]] = None,
         style: Optional[str] = None,
         video: Optional["_models.VideoParams"] = None,
     ) -> None: ...
@@ -241,120 +384,19 @@ class AvatarConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureCustomVoice(_Model):
-    """Voice configuration for Azure custom voice.
-
-    :ivar name: Name of the voice. Required.
-    :vartype name: str
-    :ivar endpoint_id: Custom endpoint ID. Required.
-    :vartype endpoint_id: str
-    :ivar type: Voice type identifier. Required. Is either a Literal["azure-custom"] type or a
-     Literal["custom"] type.
-    :vartype type: str or str
-    :ivar temperature: Optional temperature for generation.
-    :vartype temperature: float
-    :ivar custom_lexicon_url: Optional custom lexicon URL.
-    :vartype custom_lexicon_url: str
-    :ivar prefer_locales: Preferred locale list for voice rendering.
-    :vartype prefer_locales: list[str]
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the voice. Required."""
-    endpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Custom endpoint ID. Required."""
-    type: Literal["azure-custom", "custom"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Voice type identifier. Required. Is either a Literal[\"azure-custom\"] type or a
-     Literal[\"custom\"] type."""
-    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional temperature for generation."""
-    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional custom lexicon URL."""
-    prefer_locales: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Preferred locale list for voice rendering."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        endpoint_id: str,
-        type: Literal["azure-custom", "custom"],
-        temperature: Optional[float] = None,
-        custom_lexicon_url: Optional[str] = None,
-        prefer_locales: Optional[List[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzurePersonalVoice(_Model):
-    """Voice configuration for Azure personal voice.
-
-    :ivar name: Name of the voice. Required.
-    :vartype name: str
-    :ivar type: Voice type identifier. Required. Is either a Literal["azure-personal"] type or a
-     Literal["personal"] type.
-    :vartype type: str or str
-    :ivar model: Personal voice model identifier. Required. Is one of the following types:
-     Literal["DragonLatestNeural"], Literal["PhoenixLatestNeural"], Literal["PhoenixV2Neural"]
-    :vartype model: str or str or str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the voice. Required."""
-    type: Literal["azure-personal", "personal"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Voice type identifier. Required. Is either a Literal[\"azure-personal\"] type or a
-     Literal[\"personal\"] type."""
-    model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Personal voice model identifier. Required. Is one of the following types:
-     Literal[\"DragonLatestNeural\"], Literal[\"PhoenixLatestNeural\"], Literal[\"PhoenixV2Neural\"]"""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: Literal["azure-personal", "personal"],
-        model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TurnDetection(_Model):
-    """Top-level union for turn detection configuration.
+class AzureVoice(_Model):
+    """Base for Azure voice configurations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureSemanticVad, NoTurnDetection, ServerVad
+    AzureCustomVoice, AzurePersonalVoice, AzurePlatformVoice, AzureStandardVoice
 
-    :ivar type: Required. Is one of the following types: Literal["none"], Literal["server_vad"],
-     Literal["azure_semantic_vad"]
-    :vartype type: str or str or str
+    :ivar type: Required. Default value is None.
+    :vartype type: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Is one of the following types: Literal[\"none\"], Literal[\"server_vad\"],
-     Literal[\"azure_semantic_vad\"]"""
+    """Required. Default value is None."""
 
     @overload
     def __init__(
@@ -374,40 +416,63 @@ class TurnDetection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
-    """Semantic VAD settings based on Azure SDK features.
+class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
+    """Azure custom voice configuration (preferred).
 
-    :ivar type: Required. Default value is "azure_semantic_vad".
+    :ivar type: Required. Default value is "azure-custom".
     :vartype type: str
-    :ivar neg_threshold:
-    :vartype neg_threshold: float
-    :ivar window_size:
-    :vartype window_size: int
-    :ivar distinct_ci_phones:
-    :vartype distinct_ci_phones: int
-    :ivar require_vowel:
-    :vartype require_vowel: bool
-    :ivar remove_filler_words:
-    :vartype remove_filler_words: bool
+    :ivar name: Voice name cannot be empty. Required.
+    :vartype name: str
+    :ivar endpoint_id: Endpoint ID cannot be empty. Required.
+    :vartype endpoint_id: str
+    :ivar temperature: Temperature must be between 0.0 and 1.0.
+    :vartype temperature: float
+    :ivar custom_lexicon_url:
+    :vartype custom_lexicon_url: str
+    :ivar prefer_locales:
+    :vartype prefer_locales: list[str]
+    :ivar locale:
+    :vartype locale: str
+    :ivar style:
+    :vartype style: str
+    :ivar pitch:
+    :vartype pitch: str
+    :ivar rate:
+    :vartype rate: str
+    :ivar volume:
+    :vartype volume: str
     """
 
-    type: Literal["azure_semantic_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad\"."""
-    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["azure-custom"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"azure-custom\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Voice name cannot be empty. Required."""
+    endpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Endpoint ID cannot be empty. Required."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Temperature must be between 0.0 and 1.0."""
+    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    pitch: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    rate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    volume: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
         self,
         *,
-        neg_threshold: Optional[float] = None,
-        window_size: Optional[int] = None,
-        distinct_ci_phones: Optional[int] = None,
-        require_vowel: Optional[bool] = None,
-        remove_filler_words: Optional[bool] = None,
+        name: str,
+        endpoint_id: str,
+        temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        prefer_locales: Optional[list[str]] = None,
+        locale: Optional[str] = None,
+        style: Optional[str] = None,
+        pitch: Optional[str] = None,
+        rate: Optional[str] = None,
+        volume: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -418,37 +483,157 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="azure_semantic_vad", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "azure-custom"  # type: ignore
 
 
-class AzureStandardVoice(_Model):
-    """Voice configuration for Azure standard or platform voices.
+class TurnDetection(_Model):
+    """Top-level union for turn detection configuration.
 
-    :ivar name: Name of the voice. Required.
-    :vartype name: str
-    :ivar type: Voice type identifier. Required. Is either a Literal["azure-standard"] type or a
-     Literal["azure-platform"] type.
-    :vartype type: str or str
-    :ivar temperature: Optional temperature for generation.
-    :vartype temperature: float
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureSemanticVad, AzureMultilingualSemanticVad, NoTurnDetection, AzureSemanticVadServer, ServerVad
+
+    :ivar type: Required. Is one of the following types: Literal["none"], Literal["server_vad"],
+     Literal["azure_semantic_vad"], Literal["azure_semantic_vad_en"], Literal["server_sd"],
+     Literal["azure_semantic_vad_multilingual"]
+    :vartype type: str
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Name of the voice. Required."""
-    type: Literal["azure-standard", "azure-platform"] = rest_field(
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is one of the following types: Literal[\"none\"], Literal[\"server_vad\"],
+     Literal[\"azure_semantic_vad\"], Literal[\"azure_semantic_vad_en\"], Literal[\"server_sd\"],
+     Literal[\"azure_semantic_vad_multilingual\"]"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureMultilingualSemanticVad(TurnDetection, discriminator="azure_semantic_vad_multilingual"):
+    """Server Speech Detection (Azure semantic VAD).
+
+    :ivar type: Required. Default value is "azure_semantic_vad_multilingual".
+    :vartype type: str
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar prefix_padding_ms:
+    :vartype prefix_padding_ms: int
+    :ivar silence_duration_ms:
+    :vartype silence_duration_ms: int
+    :ivar end_of_utterance_detection:
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :ivar neg_threshold:
+    :vartype neg_threshold: float
+    :ivar speech_duration_ms:
+    :vartype speech_duration_ms: int
+    :ivar window_size:
+    :vartype window_size: int
+    :ivar distinct_ci_phones:
+    :vartype distinct_ci_phones: int
+    :ivar require_vowel:
+    :vartype require_vowel: bool
+    :ivar remove_filler_words:
+    :vartype remove_filler_words: bool
+    :ivar languages:
+    :vartype languages: list[str]
+    :ivar auto_truncate:
+    :vartype auto_truncate: bool
+    """
+
+    type: Literal["azure_semantic_vad_multilingual"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"azure_semantic_vad_multilingual\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Voice type identifier. Required. Is either a Literal[\"azure-standard\"] type or a
-     Literal[\"azure-platform\"] type."""
+    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        threshold: Optional[float] = None,
+        prefix_padding_ms: Optional[int] = None,
+        silence_duration_ms: Optional[int] = None,
+        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        neg_threshold: Optional[float] = None,
+        speech_duration_ms: Optional[int] = None,
+        window_size: Optional[int] = None,
+        distinct_ci_phones: Optional[int] = None,
+        require_vowel: Optional[bool] = None,
+        remove_filler_words: Optional[bool] = None,
+        languages: Optional[list[str]] = None,
+        auto_truncate: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "azure_semantic_vad_multilingual"  # type: ignore
+
+
+class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
+    """Azure personal voice configuration.
+
+    :ivar type: Required. Default value is "azure-personal".
+    :vartype type: str
+    :ivar name: Voice name cannot be empty. Required.
+    :vartype name: str
+    :ivar temperature: Temperature must be between 0.0 and 1.0.
+    :vartype temperature: float
+    :ivar model: Underlying neural model to use for personal voice. Required. Is one of the
+     following types: Literal["DragonLatestNeural"], Literal["PhoenixLatestNeural"],
+     Literal["PhoenixV2Neural"]
+    :vartype model: str
+    """
+
+    type: Literal["azure-personal"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"azure-personal\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Voice name cannot be empty. Required."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional temperature for generation."""
+    """Temperature must be between 0.0 and 1.0."""
+    model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Underlying neural model to use for personal voice. Required. Is one of the following types:
+     Literal[\"DragonLatestNeural\"], Literal[\"PhoenixLatestNeural\"], Literal[\"PhoenixV2Neural\"]"""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        type: Literal["azure-standard", "azure-platform"],
+        model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"],
         temperature: Optional[float] = None,
     ) -> None: ...
 
@@ -461,6 +646,454 @@ class AzureStandardVoice(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type = "azure-personal"  # type: ignore
+
+
+class AzurePlatformVoice(AzureVoice, discriminator="azure-platform"):
+    """Azure platform voice configuration (variant of standard).
+
+    :ivar type: Required. Default value is "azure-platform".
+    :vartype type: str
+    :ivar name: Voice name cannot be empty. Required.
+    :vartype name: str
+    :ivar temperature: Temperature must be between 0.0 and 1.0.
+    :vartype temperature: float
+    :ivar custom_lexicon_url:
+    :vartype custom_lexicon_url: str
+    :ivar prefer_locales:
+    :vartype prefer_locales: list[str]
+    :ivar locale:
+    :vartype locale: str
+    :ivar style:
+    :vartype style: str
+    :ivar pitch:
+    :vartype pitch: str
+    :ivar rate:
+    :vartype rate: str
+    :ivar volume:
+    :vartype volume: str
+    """
+
+    type: Literal["azure-platform"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"azure-platform\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Voice name cannot be empty. Required."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Temperature must be between 0.0 and 1.0."""
+    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    pitch: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    rate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    volume: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        prefer_locales: Optional[list[str]] = None,
+        locale: Optional[str] = None,
+        style: Optional[str] = None,
+        pitch: Optional[str] = None,
+        rate: Optional[str] = None,
+        volume: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "azure-platform"  # type: ignore
+
+
+class EOUDetection(_Model):
+    """Top-level union for end-of-utterance (EOU) semantic detection configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureSemanticDetection, AzureSemanticDetectionMultilingual
+
+    :ivar model: Required. Is one of the following types: Literal["semantic_detection_v1"],
+     Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"]
+    :vartype model: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    model: str = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is one of the following types: Literal[\"semantic_detection_v1\"],
+     Literal[\"semantic_detection_v1_en\"], Literal[\"semantic_detection_v1_multilingual\"]"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"):
+    """Azure semantic end-of-utterance detection (default).
+
+    :ivar model: Discriminator for this EOU model. Defaults to
+        ``"semantic_detection_v1"``; may also be ``"semantic_detection_v1_en"``.
+    :vartype model: str
+    :ivar threshold: Primary detection threshold (0.0–1.0).
+    :vartype threshold: float
+    :ivar timeout:
+    :vartype timeout: float
+    :ivar secondary_threshold:
+    :vartype secondary_threshold: float
+    :ivar secondary_timeout:
+    :vartype secondary_timeout: float
+    :ivar disable_rules:
+    :vartype disable_rules: bool
+    :ivar sr_boost:
+    :vartype sr_boost: float
+    :ivar extra_imend_check:
+    :vartype extra_imend_check: bool
+    """
+
+    model: Literal["semantic_detection_v1"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"semantic_detection_v1\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    secondary_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    secondary_timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    disable_rules: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sr_boost: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    extra_imend_check: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Literal["semantic_detection_v1", "semantic_detection_v1_en"] = "semantic_detection_v1",
+        threshold: Optional[float] = None,
+        timeout: Optional[float] = None,
+        secondary_threshold: Optional[float] = None,
+        secondary_timeout: Optional[float] = None,
+        disable_rules: Optional[bool] = None,
+        sr_boost: Optional[float] = None,
+        extra_imend_check: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        model_value = kwargs.pop("model", "semantic_detection_v1")
+        if model_value not in ("semantic_detection_v1", "semantic_detection_v1_en"):
+            raise ValueError("model must be 'semantic_detection_v1' or 'semantic_detection_v1_en'")
+        super().__init__(*args, model=model_value, **kwargs)
+
+
+class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_detection_v1_multilingual"):
+    """Azure semantic end-of-utterance detection (multilingual).
+
+    :ivar model: Required. Default value is "semantic_detection_v1_multilingual".
+    :vartype model: str
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar timeout:
+    :vartype timeout: float
+    :ivar secondary_threshold:
+    :vartype secondary_threshold: float
+    :ivar secondary_timeout:
+    :vartype secondary_timeout: float
+    :ivar disable_rules:
+    :vartype disable_rules: bool
+    :ivar sr_boost:
+    :vartype sr_boost: float
+    :ivar extra_imend_check:
+    :vartype extra_imend_check: bool
+    """
+
+    model: Literal["semantic_detection_v1_multilingual"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"semantic_detection_v1_multilingual\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    secondary_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    secondary_timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    disable_rules: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    sr_boost: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    extra_imend_check: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        threshold: Optional[float] = None,
+        timeout: Optional[float] = None,
+        secondary_threshold: Optional[float] = None,
+        secondary_timeout: Optional[float] = None,
+        disable_rules: Optional[bool] = None,
+        sr_boost: Optional[float] = None,
+        extra_imend_check: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.model = "semantic_detection_v1_multilingual"  # type: ignore
+
+
+class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
+    """Server Speech Detection (Azure semantic VAD, default variant).
+
+    :ivar type: Discriminator for this VAD. Defaults to ``"azure_semantic_vad"``.
+        May also be ``"azure_semantic_vad_en"`` or (legacy) ``"server_sd"``.
+    :vartype type: str
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar prefix_padding_ms:
+    :vartype prefix_padding_ms: int
+    :ivar silence_duration_ms:
+    :vartype silence_duration_ms: int
+    :ivar end_of_utterance_detection:
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :ivar neg_threshold:
+    :vartype neg_threshold: float
+    :ivar speech_duration_ms:
+    :vartype speech_duration_ms: int
+    :ivar window_size:
+    :vartype window_size: int
+    :ivar distinct_ci_phones:
+    :vartype distinct_ci_phones: int
+    :ivar require_vowel:
+    :vartype require_vowel: bool
+    :ivar remove_filler_words:
+    :vartype remove_filler_words: bool
+    :ivar languages:
+    :vartype languages: list[str]
+    :ivar auto_truncate:
+    :vartype auto_truncate: bool
+    """
+
+    type: Literal["azure_semantic_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"azure_semantic_vad\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Literal["azure_semantic_vad", "azure_semantic_vad_en", "server_sd"] = "azure_semantic_vad",
+        threshold: Optional[float] = None,
+        prefix_padding_ms: Optional[int] = None,
+        silence_duration_ms: Optional[int] = None,
+        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        neg_threshold: Optional[float] = None,
+        speech_duration_ms: Optional[int] = None,
+        window_size: Optional[int] = None,
+        distinct_ci_phones: Optional[int] = None,
+        require_vowel: Optional[bool] = None,
+        remove_filler_words: Optional[bool] = None,
+        languages: Optional[list[str]] = None,
+        auto_truncate: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        type_value = kwargs.pop("type", "azure_semantic_vad")
+        if type_value == "server_sd":
+            # normalize legacy alias to canonical discriminator
+            type_value = "azure_semantic_vad"
+        elif type_value not in ("azure_semantic_vad", "azure_semantic_vad_en"):
+            raise ValueError(
+                "type must be 'azure_semantic_vad', 'azure_semantic_vad_en', or legacy 'server_sd'"
+            )
+        super().__init__(*args, type=type_value, **kwargs)
+
+
+class AzureSemanticVadServer(TurnDetection, discriminator="server_sd"):
+    """Server Speech Detection (legacy ``server_sd`` alias).
+
+    :ivar type: Required. Default value is "server_sd".
+    :vartype type: str
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar prefix_padding_ms:
+    :vartype prefix_padding_ms: int
+    :ivar silence_duration_ms:
+    :vartype silence_duration_ms: int
+    :ivar end_of_utterance_detection:
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :ivar neg_threshold:
+    :vartype neg_threshold: float
+    :ivar speech_duration_ms:
+    :vartype speech_duration_ms: int
+    :ivar window_size:
+    :vartype window_size: int
+    :ivar distinct_ci_phones:
+    :vartype distinct_ci_phones: int
+    :ivar require_vowel:
+    :vartype require_vowel: bool
+    :ivar remove_filler_words:
+    :vartype remove_filler_words: bool
+    :ivar languages:
+    :vartype languages: list[str]
+    :ivar auto_truncate:
+    :vartype auto_truncate: bool
+    """
+
+    type: Literal["server_sd"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"server_sd\"."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        threshold: Optional[float] = None,
+        prefix_padding_ms: Optional[int] = None,
+        silence_duration_ms: Optional[int] = None,
+        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        neg_threshold: Optional[float] = None,
+        speech_duration_ms: Optional[int] = None,
+        window_size: Optional[int] = None,
+        distinct_ci_phones: Optional[int] = None,
+        require_vowel: Optional[bool] = None,
+        remove_filler_words: Optional[bool] = None,
+        languages: Optional[list[str]] = None,
+        auto_truncate: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "server_sd"  # type: ignore
+
+
+class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
+    """Azure standard voice configuration.
+
+    :ivar type: Required. Default value is "azure-standard".
+    :vartype type: str
+    :ivar name: Voice name cannot be empty. Required.
+    :vartype name: str
+    :ivar temperature: Temperature must be between 0.0 and 1.0.
+    :vartype temperature: float
+    :ivar custom_lexicon_url:
+    :vartype custom_lexicon_url: str
+    :ivar prefer_locales:
+    :vartype prefer_locales: list[str]
+    :ivar locale:
+    :vartype locale: str
+    :ivar style:
+    :vartype style: str
+    :ivar pitch:
+    :vartype pitch: str
+    :ivar rate:
+    :vartype rate: str
+    :ivar volume:
+    :vartype volume: str
+    """
+
+    type: Literal["azure-standard"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"azure-standard\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Voice name cannot be empty. Required."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Temperature must be between 0.0 and 1.0."""
+    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    pitch: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    rate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    volume: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        temperature: Optional[float] = None,
+        custom_lexicon_url: Optional[str] = None,
+        prefer_locales: Optional[list[str]] = None,
+        locale: Optional[str] = None,
+        style: Optional[str] = None,
+        pitch: Optional[str] = None,
+        rate: Optional[str] = None,
+        volume: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "azure-standard"  # type: ignore
 
 
 class ClientEvent(_Model):
@@ -486,7 +1119,7 @@ class ClientEvent(_Model):
     :vartype event_id: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of event. Required. Known values are: \"session.update\",
      \"input_audio_buffer.append\", \"input_audio_buffer.commit\", \"input_audio_buffer.clear\",
@@ -535,7 +1168,7 @@ class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation
      ID cannot be found, an error will be returned and the item will not be added.
     :vartype previous_item_id: str
     :ivar item:
-    :vartype item: ~azure.ai.voicelive.models.ConversationItemWithReference
+    :vartype item: ~azure.ai.voicelive.models.ConversationRequestItem
     """
 
     type: Literal[ClientEventType.CONVERSATION_ITEM_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -546,7 +1179,7 @@ class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation
      If set to ``root``, the new item will be added to the beginning of the conversation.
      If set to an existing ID, it allows an item to be inserted mid-conversation. If the
      ID cannot be found, an error will be returned and the item will not be added."""
-    item: Optional["_models.ConversationItemWithReference"] = rest_field(
+    item: Optional["_models.ConversationRequestItem"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
 
@@ -556,7 +1189,7 @@ class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation
         *,
         event_id: Optional[str] = None,
         previous_item_id: Optional[str] = None,
-        item: Optional["_models.ConversationItemWithReference"] = None,
+        item: Optional["_models.ConversationRequestItem"] = None,
     ) -> None: ...
 
     @overload
@@ -567,7 +1200,8 @@ class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.CONVERSATION_ITEM_CREATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.CONVERSATION_ITEM_CREATE  # type: ignore
 
 
 class ClientEventConversationItemDelete(ClientEvent, discriminator="conversation.item.delete"):
@@ -605,7 +1239,8 @@ class ClientEventConversationItemDelete(ClientEvent, discriminator="conversation
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.CONVERSATION_ITEM_DELETE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.CONVERSATION_ITEM_DELETE  # type: ignore
 
 
 class ClientEventConversationItemRetrieve(ClientEvent, discriminator="conversation.item.retrieve"):
@@ -645,7 +1280,8 @@ class ClientEventConversationItemRetrieve(ClientEvent, discriminator="conversati
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.CONVERSATION_ITEM_RETRIEVE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.CONVERSATION_ITEM_RETRIEVE  # type: ignore
 
 
 class ClientEventConversationItemTruncate(ClientEvent, discriminator="conversation.item.truncate"):
@@ -706,7 +1342,8 @@ class ClientEventConversationItemTruncate(ClientEvent, discriminator="conversati
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.CONVERSATION_ITEM_TRUNCATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.CONVERSATION_ITEM_TRUNCATE  # type: ignore
 
 
 class ClientEventInputAudioBufferAppend(ClientEvent, discriminator="input_audio_buffer.append"):
@@ -752,7 +1389,8 @@ class ClientEventInputAudioBufferAppend(ClientEvent, discriminator="input_audio_
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_BUFFER_APPEND, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_BUFFER_APPEND  # type: ignore
 
 
 class ClientEventInputAudioBufferClear(ClientEvent, discriminator="input_audio_buffer.clear"):
@@ -783,7 +1421,8 @@ class ClientEventInputAudioBufferClear(ClientEvent, discriminator="input_audio_b
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_BUFFER_CLEAR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_BUFFER_CLEAR  # type: ignore
 
 
 class ClientEventInputAudioBufferCommit(ClientEvent, discriminator="input_audio_buffer.commit"):
@@ -822,7 +1461,8 @@ class ClientEventInputAudioBufferCommit(ClientEvent, discriminator="input_audio_
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_BUFFER_COMMIT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_BUFFER_COMMIT  # type: ignore
 
 
 class ClientEventInputAudioClear(ClientEvent, discriminator="input_audio.clear"):
@@ -852,7 +1492,8 @@ class ClientEventInputAudioClear(ClientEvent, discriminator="input_audio.clear")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_CLEAR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_CLEAR  # type: ignore
 
 
 class ClientEventInputAudioTurnAppend(ClientEvent, discriminator="input_audio.turn.append"):
@@ -892,7 +1533,8 @@ class ClientEventInputAudioTurnAppend(ClientEvent, discriminator="input_audio.tu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_TURN_APPEND, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_TURN_APPEND  # type: ignore
 
 
 class ClientEventInputAudioTurnCancel(ClientEvent, discriminator="input_audio.turn.cancel"):
@@ -927,7 +1569,8 @@ class ClientEventInputAudioTurnCancel(ClientEvent, discriminator="input_audio.tu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_TURN_CANCEL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_TURN_CANCEL  # type: ignore
 
 
 class ClientEventInputAudioTurnEnd(ClientEvent, discriminator="input_audio.turn.end"):
@@ -962,7 +1605,8 @@ class ClientEventInputAudioTurnEnd(ClientEvent, discriminator="input_audio.turn.
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_TURN_END, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_TURN_END  # type: ignore
 
 
 class ClientEventInputAudioTurnStart(ClientEvent, discriminator="input_audio.turn.start"):
@@ -997,7 +1641,8 @@ class ClientEventInputAudioTurnStart(ClientEvent, discriminator="input_audio.tur
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.INPUT_AUDIO_TURN_START, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.INPUT_AUDIO_TURN_START  # type: ignore
 
 
 class ClientEventResponseCancel(ClientEvent, discriminator="response.cancel"):
@@ -1036,7 +1681,8 @@ class ClientEventResponseCancel(ClientEvent, discriminator="response.cancel"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.RESPONSE_CANCEL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.RESPONSE_CANCEL  # type: ignore
 
 
 class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
@@ -1093,7 +1739,8 @@ class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.RESPONSE_CREATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.RESPONSE_CREATE  # type: ignore
 
 
 class ClientEventSessionAvatarConnect(ClientEvent, discriminator="session.avatar.connect"):
@@ -1129,7 +1776,8 @@ class ClientEventSessionAvatarConnect(ClientEvent, discriminator="session.avatar
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.SESSION_AVATAR_CONNECT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.SESSION_AVATAR_CONNECT  # type: ignore
 
 
 class ClientEventSessionUpdate(ClientEvent, discriminator="session.update"):
@@ -1173,7 +1821,8 @@ class ClientEventSessionUpdate(ClientEvent, discriminator="session.update"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ClientEventType.SESSION_UPDATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ClientEventType.SESSION_UPDATE  # type: ignore
 
 
 class ContentPart(_Model):
@@ -1187,7 +1836,7 @@ class ContentPart(_Model):
     :vartype type: str or ~azure.ai.voicelive.models.ContentPartType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"input_text\", \"input_audio\", \"text\", and \"audio\"."""
 
@@ -1209,117 +1858,126 @@ class ContentPart(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConversationItemWithReference(_Model):
-    """The item to add to the conversation.
+class EmotionCandidate(_Model):
+    """EmotionCandidate.
 
-    :ivar id: For an item of type (``message`` | ``function_call`` | ``function_call_output``)
-     this field allows the client to assign the unique ID of the item. It is
-     not required because the server will generate one if not provided.
+    :ivar emotion: Required.
+    :vartype emotion: str
+    :ivar confidence: Required.
+    :vartype confidence: float
+    """
 
-     For an item of type ``item_reference``, this field is required and is a
-     reference to any item that has previously existed in the conversation.
+    emotion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        emotion: str,
+        confidence: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FunctionCallItem(ConversationRequestItem, discriminator="function_call"):
+    """FunctionCallItem.
+
+    :ivar id:
     :vartype id: str
-    :ivar type: The type of the item (``message``, ``function_call``, ``function_call_output``,
-     ``item_reference``). Is one of the following types: Literal["message"],
-     Literal["function_call"], Literal["function_call_output"]
-    :vartype type: str or str or str
-    :ivar object: Identifier for the API object being returned - always ``realtime.item``. Default
-     value is "realtime.item".
-    :vartype object: str
-    :ivar status: The status of the item (``completed``, ``incomplete``). These have no effect
-     on the conversation, but are accepted for consistency with the
-     ``conversation.item.created`` event. Is either a Literal["completed"] type or a
-     Literal["incomplete"] type.
-    :vartype status: str or str
-    :ivar role: The role of the message sender (``user``, ``assistant``, ``system``), only
-     applicable for ``message`` items. Is one of the following types: Literal["user"],
-     Literal["assistant"], Literal["system"]
-    :vartype role: str or str or str
-    :ivar content: The content of the message, applicable for ``message`` items.
-
-     * Message items of role `system` support only `input_text` content
-     * Message items of role `user` support `input_text` and `input_audio` content
-     * Message items of role `assistant` support `text` content.
-
-    :vartype content: list[~azure.ai.voicelive.models.ConversationItemWithReferenceContent]
-    :ivar call_id: The ID of the function call (for ``function_call`` and
-     ``function_call_output`` items). If passed on a ``function_call_output``
-     item, the server will check that a ``function_call`` item with the same
-     ID exists in the conversation history.
-    :vartype call_id: str
-    :ivar name: The name of the function being called (for ``function_call`` items).
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL
+    :ivar name: Required.
     :vartype name: str
-    :ivar arguments: The arguments of the function call (for ``function_call`` items).
+    :ivar call_id: Required.
+    :vartype call_id: str
+    :ivar arguments: Required.
     :vartype arguments: str
-    :ivar output: The output of the function call (for ``function_call_output`` items).
+    :ivar status: Known values are: "completed" and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
+    """
+
+    type: Literal[ItemType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    status: Optional[Union[str, "_models.ItemParamStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"completed\" and \"incomplete\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        call_id: str,
+        arguments: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.FUNCTION_CALL  # type: ignore
+
+
+class FunctionCallOutputItem(ConversationRequestItem, discriminator="function_call_output"):
+    """FunctionCallOutputItem.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL_OUTPUT
+    :ivar call_id: Required.
+    :vartype call_id: str
+    :ivar output: Required.
     :vartype output: str
+    :ivar status: Known values are: "completed" and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
     """
 
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """For an item of type (``message`` | ``function_call`` | ``function_call_output``)
-     this field allows the client to assign the unique ID of the item. It is
-     not required because the server will generate one if not provided.
-     
-     For an item of type ``item_reference``, this field is required and is a
-     reference to any item that has previously existed in the conversation."""
-    type: Optional[Literal["message", "function_call", "function_call_output"]] = rest_field(
+    type: Literal[ItemType.FUNCTION_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    status: Optional[Union[str, "_models.ItemParamStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of the item (``message``, ``function_call``, ``function_call_output``,
-     ``item_reference``). Is one of the following types: Literal[\"message\"],
-     Literal[\"function_call\"], Literal[\"function_call_output\"]"""
-    object: Optional[Literal["realtime.item"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for the API object being returned - always ``realtime.item``. Default value is
-     \"realtime.item\"."""
-    status: Optional[Literal["completed", "incomplete"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The status of the item (``completed``, ``incomplete``). These have no effect
-     on the conversation, but are accepted for consistency with the
-     ``conversation.item.created`` event. Is either a Literal[\"completed\"] type or a
-     Literal[\"incomplete\"] type."""
-    role: Optional[Literal["user", "assistant", "system"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The role of the message sender (``user``, ``assistant``, ``system``), only
-     applicable for ``message`` items. Is one of the following types: Literal[\"user\"],
-     Literal[\"assistant\"], Literal[\"system\"]"""
-    content: Optional[List["_models.ConversationItemWithReferenceContent"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The content of the message, applicable for ``message`` items.
-
-    * Message items of role `system` support only `input_text` content
-    * Message items of role `user` support `input_text` and `input_audio` content
-    * Message items of role `assistant` support `text` content.
-
-    """
-    call_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the function call (for ``function_call`` and
-     ``function_call_output`` items). If passed on a ``function_call_output``
-     item, the server will check that a ``function_call`` item with the same
-     ID exists in the conversation history."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the function being called (for ``function_call`` items)."""
-    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The arguments of the function call (for ``function_call`` items)."""
-    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output of the function call (for ``function_call_output`` items)."""
+    """Known values are: \"completed\" and \"incomplete\"."""
 
     @overload
     def __init__(
         self,
         *,
+        call_id: str,
+        output: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        type: Optional[Literal["message", "function_call", "function_call_output"]] = None,
-        object: Optional[Literal["realtime.item"]] = None,
-        status: Optional[Literal["completed", "incomplete"]] = None,
-        role: Optional[Literal["user", "assistant", "system"]] = None,
-        content: Optional[List["_models.ConversationItemWithReferenceContent"]] = None,
-        call_id: Optional[str] = None,
-        name: Optional[str] = None,
-        arguments: Optional[str] = None,
-        output: Optional[str] = None,
+        status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -1331,141 +1989,7 @@ class ConversationItemWithReference(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ConversationItemWithReferenceContent(_Model):
-    """ConversationItemWithReferenceContent.
-
-    :ivar type: The content type (``input_text``, ``input_audio``, ``item_reference``, ``text``).
-     Is one of the following types: Literal["input_audio"], Literal["input_text"],
-     Literal["item_reference"], Literal["text"]
-    :vartype type: str or str or str or str
-    :ivar text: The text content, used for ``input_text`` and ``text`` content types.
-    :vartype text: str
-    :ivar id: ID of a previous conversation item to reference (for ``item_reference``
-     content types in ``response.create`` events). These can reference both
-     client and server created items.
-    :vartype id: str
-    :ivar audio: Base64-encoded audio bytes, used for ``input_audio`` content type.
-    :vartype audio: str
-    :ivar transcript: The transcript of the audio, used for ``input_audio`` content type.
-    :vartype transcript: str
-    """
-
-    type: Optional[Literal["input_audio", "input_text", "item_reference", "text"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The content type (``input_text``, ``input_audio``, ``item_reference``, ``text``). Is one of the
-     following types: Literal[\"input_audio\"], Literal[\"input_text\"],
-     Literal[\"item_reference\"], Literal[\"text\"]"""
-    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The text content, used for ``input_text`` and ``text`` content types."""
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """ID of a previous conversation item to reference (for ``item_reference``
-     content types in ``response.create`` events). These can reference both
-     client and server created items."""
-    audio: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Base64-encoded audio bytes, used for ``input_audio`` content type."""
-    transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The transcript of the audio, used for ``input_audio`` content type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Literal["input_audio", "input_text", "item_reference", "text"]] = None,
-        text: Optional[str] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        audio: Optional[str] = None,
-        transcript: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConversationRequestItem(_Model):
-    """ConversationRequestItem.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RequestFunctionCallItem, RequestFunctionCallOutputItem, RequestMessageItem
-
-    :ivar type: Required. Known values are: "message", "function_call", and "function_call_output".
-    :vartype type: str or ~azure.ai.voicelive.models.ItemType
-    :ivar id:
-    :vartype id: str
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"message\", \"function_call\", and \"function_call_output\"."""
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ConversationResponseItem(_Model):
-    """ConversationResponseItem.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ResponseFunctionCallItem, ResponseFunctionCallOutputItem, ResponseMessageItem
-
-    :ivar object: Default value is "realtime.item".
-    :vartype object: str
-    :ivar type: Known values are: "message", "function_call", and "function_call_output".
-    :vartype type: str or ~azure.ai.voicelive.models.ItemType
-    :ivar id:
-    :vartype id: str
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    object: Optional[Literal["realtime.item"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Default value is \"realtime.item\"."""
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Known values are: \"message\", \"function_call\", and \"function_call_output\"."""
-    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
-    @overload
-    def __init__(
-        self,
-        *,
-        object: Optional[Literal["realtime.item"]] = None,
-        type: Optional[str] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+        self.type = ItemType.FUNCTION_CALL_OUTPUT  # type: ignore
 
 
 class Tool(_Model):
@@ -1478,7 +2002,7 @@ class Tool(_Model):
     :vartype type: str or ~azure.ai.voicelive.models.ToolType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. \"function\""""
 
@@ -1537,7 +2061,8 @@ class FunctionTool(Tool, discriminator="function"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ToolType.FUNCTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.FUNCTION  # type: ignore
 
 
 class IceServer(_Model):
@@ -1551,7 +2076,7 @@ class IceServer(_Model):
     :vartype credential: str
     """
 
-    urls: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    urls: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of ICE server URLs (e.g., TURN or STUN endpoints). Required."""
     username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional username used for authentication with the ICE server."""
@@ -1562,7 +2087,7 @@ class IceServer(_Model):
     def __init__(
         self,
         *,
-        urls: List[str],
+        urls: list[str],
         username: Optional[str] = None,
         credential: Optional[str] = None,
     ) -> None: ...
@@ -1591,14 +2116,14 @@ class InputAudio(_Model):
     model: Literal["azure-standard"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the model to use for input audio (currently only 'azure-standard' is supported).
      Required. Default value is \"azure-standard\"."""
-    phrase_list: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional list of phrases to bias the speech recognition engine."""
 
     @overload
     def __init__(
         self,
         *,
-        phrase_list: Optional[List[str]] = None,
+        phrase_list: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1611,6 +2136,179 @@ class InputAudio(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.model: Literal["azure-standard"] = "azure-standard"
+
+
+class UserContentPart(_Model):
+    """UserContentPart.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    InputAudioContentPart, InputTextContentPart
+
+    :ivar type: Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InputAudioContentPart(UserContentPart, discriminator="input_audio"):
+    """InputAudioContentPart.
+
+    :ivar type: Required. Default value is "input_audio".
+    :vartype type: str
+    :ivar audio: Required.
+    :vartype audio: str
+    :ivar transcript:
+    :vartype transcript: str
+    """
+
+    type: Literal["input_audio"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"input_audio\"."""
+    audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        audio: str,
+        transcript: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "input_audio"  # type: ignore
+
+
+class InputTextContentPart(UserContentPart, discriminator="input_text"):
+    """InputTextContentPart.
+
+    :ivar type: Required. Default value is "input_text".
+    :vartype type: str
+    :ivar text: Required.
+    :vartype text: str
+    """
+
+    type: Literal["input_text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"input_text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "input_text"  # type: ignore
+
+
+class InputTokenDetails(_Model):
+    """Details of input token usage.
+
+    :ivar cached_tokens: Number of cached tokens used in the input. Required.
+    :vartype cached_tokens: int
+    :ivar text_tokens: Number of text tokens used in the input. Required.
+    :vartype text_tokens: int
+    :ivar audio_tokens: Number of audio tokens used in the input. Required.
+    :vartype audio_tokens: int
+    """
+
+    cached_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of cached tokens used in the input. Required."""
+    text_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of text tokens used in the input. Required."""
+    audio_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of audio tokens used in the input. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        cached_tokens: int,
+        text_tokens: int,
+        audio_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LLMVoice(_Model):
+    """Voice configuration for LLM (Large Language Model) voices.
+
+    :ivar type: Required. Default value is "llm".
+    :vartype type: str
+    :ivar name: Required. "cosyvoice"
+    :vartype name: str or ~azure.ai.voicelive.models.Phi4mmVoice
+    """
+
+    type: Literal["llm"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"llm\"."""
+    name: Union[str, "_models.Phi4mmVoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. \"cosyvoice\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.Phi4mmVoice"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["llm"] = "llm"
 
 
 class LogProbProperties(_Model):
@@ -1628,7 +2326,7 @@ class LogProbProperties(_Model):
     """The token that was used to generate the log probability. Required."""
     logprob: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The log probability of the token. Required."""
-    bytes: List[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bytes: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The bytes that were used to generate the log probability. Required."""
 
     @overload
@@ -1637,7 +2335,7 @@ class LogProbProperties(_Model):
         *,
         token: str,
         logprob: float,
-        bytes: List[int],
+        bytes: list[int],
     ) -> None: ...
 
     @overload
@@ -1674,42 +2372,34 @@ class NoTurnDetection(TurnDetection, discriminator="none"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="none", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "none"  # type: ignore
 
 
-class RequestMessageItem(ConversationRequestItem, discriminator="message"):
-    """RequestMessageItem.
+class OpenAIVoice(_Model):
+    """OpenAI voice configuration with explicit type field.
 
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    RequestAssistantMessageItem, RequestSystemMessageItem, RequestUserMessageItem
+    This provides a unified interface for OpenAI voices, complementing the
+    existing string-based OAIVoice for backward compatibility.
 
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar role: Required. Known values are: "system", "user", and "assistant".
-    :vartype role: str or ~azure.ai.voicelive.models.MessageRole
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
+    :ivar type: Required. Default value is "openai".
+    :vartype type: str
+    :ivar name: Required. Known values are: "alloy", "ash", "ballad", "coral", "echo", "sage",
+     "shimmer", and "verse".
+    :vartype name: str or ~azure.ai.voicelive.models.OAIVoice
     """
 
-    __mapping__: Dict[str, _Model] = {}
-    type: Literal[ItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"system\", \"user\", and \"assistant\"."""
-    status: Optional[Union[str, "_models.ItemStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+    type: Literal["openai"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"openai\"."""
+    name: Union[str, "_models.OAIVoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"alloy\", \"ash\", \"ballad\", \"coral\", \"echo\", \"sage\",
+     \"shimmer\", and \"verse\"."""
 
     @overload
     def __init__(
         self,
         *,
-        role: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        status: Optional[Union[str, "_models.ItemStatus"]] = None,
+        name: Union[str, "_models.OAIVoice"],
     ) -> None: ...
 
     @overload
@@ -1720,39 +2410,29 @@ class RequestMessageItem(ConversationRequestItem, discriminator="message"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ItemType.MESSAGE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type: Literal["openai"] = "openai"
 
 
-class RequestAssistantMessageItem(RequestMessageItem, discriminator="assistant"):
-    """RequestAssistantMessageItem.
+class OutputTextContentPart(_Model):
+    """Output text content part.
 
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
-    :ivar role: Required.
-    :vartype role: str or ~azure.ai.voicelive.models.ASSISTANT
-    :ivar content: Required.
-    :vartype content: list[~azure.ai.voicelive.models.RequestTextContentPart]
+    :ivar type: Required. Default value is "text".
+    :vartype type: str
+    :ivar text: Required.
+    :vartype text: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
-    role: Literal[MessageRole.ASSISTANT] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    content: List["_models.RequestTextContentPart"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    type: Literal["text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"text\"."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        content: List["_models.RequestTextContentPart"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        status: Optional[Union[str, "_models.ItemStatus"]] = None,
+        text: str,
     ) -> None: ...
 
     @overload
@@ -1763,7 +2443,41 @@ class RequestAssistantMessageItem(RequestMessageItem, discriminator="assistant")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role=MessageRole.ASSISTANT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type: Literal["text"] = "text"
+
+
+class OutputTokenDetails(_Model):
+    """Details of output token usage.
+
+    :ivar text_tokens: Number of text tokens generated in the output. Required.
+    :vartype text_tokens: int
+    :ivar audio_tokens: Number of audio tokens generated in the output. Required.
+    :vartype audio_tokens: int
+    """
+
+    text_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of text tokens generated in the output. Required."""
+    audio_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of audio tokens generated in the output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        text_tokens: int,
+        audio_tokens: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
@@ -1794,99 +2508,8 @@ class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ContentPartType.INPUT_AUDIO, **kwargs)
-
-
-class RequestFunctionCallItem(ConversationRequestItem, discriminator="function_call"):
-    """RequestFunctionCallItem.
-
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL
-    :ivar name: Required.
-    :vartype name: str
-    :ivar call_id: Required.
-    :vartype call_id: str
-    :ivar arguments: Required.
-    :vartype arguments: str
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
-    """
-
-    type: Literal[ItemType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    status: Optional[Union[str, "_models.ItemStatus"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        call_id: str,
-        arguments: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        status: Optional[Union[str, "_models.ItemStatus"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ItemType.FUNCTION_CALL, **kwargs)
-
-
-class RequestFunctionCallOutputItem(ConversationRequestItem, discriminator="function_call_output"):
-    """RequestFunctionCallOutputItem.
-
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL_OUTPUT
-    :ivar call_id: Required.
-    :vartype call_id: str
-    :ivar output: Required.
-    :vartype output: str
-    """
-
-    type: Literal[ItemType.FUNCTION_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        call_id: str,
-        output: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ItemType.FUNCTION_CALL_OUTPUT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ContentPartType.INPUT_AUDIO  # type: ignore
 
 
 class RequestSession(_Model):
@@ -1898,11 +2521,11 @@ class RequestSession(_Model):
     :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
     :ivar animation:
     :vartype animation: ~azure.ai.voicelive.models.Animation
-    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], AzureStandardVoice,
-     AzureCustomVoice, AzurePersonalVoice, Union[str, "_models.Phi4mmVoice"]
+    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], OpenAIVoice,
+     AzureVoice, Union[str, "_models.Phi4mmVoice"], LLMVoice
     :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
-     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
+     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
     :ivar instructions:
     :vartype instructions: str
     :ivar input_audio:
@@ -1939,13 +2562,13 @@ class RequestSession(_Model):
     """
 
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    modalities: Optional[List[Union[str, "_models.Modality"]]] = rest_field(
+    modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     animation: Optional["_models.Animation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Is one of the following types: Union[str, \"_models.OAIVoice\"], AzureStandardVoice,
-     AzureCustomVoice, AzurePersonalVoice, Union[str, \"_models.Phi4mmVoice\"]"""
+    """Is one of the following types: Union[str, \"_models.OAIVoice\"], OpenAIVoice, AzureVoice,
+     Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     input_audio: Optional["_models.InputAudio"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1970,10 +2593,10 @@ class RequestSession(_Model):
     input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    output_audio_timestamp_types: Optional[List[Union[str, "_models.AudioTimestampType"]]] = rest_field(
+    output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    tools: Optional[List["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     tool_choice: Optional["_types.ToolChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a Union[str, \"_models.ToolChoiceLiteral\"] type or a ToolChoiceObject type."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1987,7 +2610,7 @@ class RequestSession(_Model):
         self,
         *,
         model: Optional[str] = None,
-        modalities: Optional[List[Union[str, "_models.Modality"]]] = None,
+        modalities: Optional[list[Union[str, "_models.Modality"]]] = None,
         animation: Optional["_models.Animation"] = None,
         voice: Optional["_types.Voice"] = None,
         instructions: Optional[str] = None,
@@ -2000,8 +2623,8 @@ class RequestSession(_Model):
         input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = None,
         avatar: Optional["_models.AvatarConfig"] = None,
         input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = None,
-        output_audio_timestamp_types: Optional[List[Union[str, "_models.AudioTimestampType"]]] = None,
-        tools: Optional[List["_models.Tool"]] = None,
+        output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
+        tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
@@ -2016,49 +2639,6 @@ class RequestSession(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class RequestSystemMessageItem(RequestMessageItem, discriminator="system"):
-    """RequestSystemMessageItem.
-
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
-    :ivar role: Required.
-    :vartype role: str or ~azure.ai.voicelive.models.SYSTEM
-    :ivar content: Required.
-    :vartype content: list[~azure.ai.voicelive.models.RequestTextContentPart]
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    role: Literal[MessageRole.SYSTEM] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    content: List["_models.RequestTextContentPart"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: List["_models.RequestTextContentPart"],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        status: Optional[Union[str, "_models.ItemStatus"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role=MessageRole.SYSTEM, **kwargs)
 
 
 class RequestTextContentPart(ContentPart, discriminator="input_text"):
@@ -2089,51 +2669,8 @@ class RequestTextContentPart(ContentPart, discriminator="input_text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ContentPartType.INPUT_TEXT, **kwargs)
-
-
-class RequestUserMessageItem(RequestMessageItem, discriminator="user"):
-    """RequestUserMessageItem.
-
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar status: Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
-    :ivar role: Required.
-    :vartype role: str or ~azure.ai.voicelive.models.USER
-    :ivar content: Required.
-    :vartype content: list[~azure.ai.voicelive.models.RequestTextContentPart or
-     ~azure.ai.voicelive.models.RequestAudioContentPart]
-    """
-
-    __mapping__: Dict[str, _Model] = {}
-    role: Literal[MessageRole.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    content: List[Union["_models.RequestTextContentPart", "_models.RequestAudioContentPart"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        content: List[Union["_models.RequestTextContentPart", "_models.RequestAudioContentPart"]],
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        status: Optional[Union[str, "_models.ItemStatus"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, role=MessageRole.USER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ContentPartType.INPUT_TEXT  # type: ignore
 
 
 class Response(_Model):
@@ -2144,19 +2681,19 @@ class Response(_Model):
     :ivar object: The object type, must be ``realtime.response``. Default value is
      "realtime.response".
     :vartype object: str
-    :ivar status: The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``). Is one of the following types: Literal["completed"], Literal["cancelled"],
-     Literal["failed"], Literal["incomplete"], Literal["in_progress"]
-    :vartype status: str or str or str or str or str
+    :ivar status: The final status of the response.
+     One of: ``completed``, ``cancelled``, ``failed``, ``incomplete``, or ``in_progress``. Known
+     values are: "completed", "cancelled", "failed", "incomplete", and "in_progress".
+    :vartype status: str or ~azure.ai.voicelive.models.ResponseStatus
     :ivar status_details: Additional details about the status.
     :vartype status_details: ~azure.ai.voicelive.models.ResponseStatusDetails
     :ivar output: The list of output items generated by the response.
-    :vartype output: list[~azure.ai.voicelive.models.ConversationResponseItem]
+    :vartype output: list[~azure.ai.voicelive.models.ResponseItem]
     :ivar usage: Usage statistics for the Response, this will correspond to billing. A
      VoiceLive API session will maintain a conversation context and append new
      Items to the Conversation, thus output from previous turns (text and
      audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.voicelive.models.ResponseUsage
+    :vartype usage: ~azure.ai.voicelive.models.Usage
     :ivar conversation_id: Which conversation the response is added to, determined by the
      ``conversation``
      field in the ``response.create`` event. If ``auto``, the response will be added to
@@ -2167,20 +2704,20 @@ class Response(_Model):
      the ``conversation_id`` will be an id like ``conv_1234``.
     :vartype conversation_id: str
     :ivar voice: supported voice identifiers and configurations. Is one of the following types:
-     Union[str, "_models.OAIVoice"], AzureStandardVoice, AzureCustomVoice, AzurePersonalVoice,
-     Union[str, "_models.Phi4mmVoice"]
+     Union[str, "_models.OAIVoice"], OpenAIVoice, AzureVoice, Union[str, "_models.Phi4mmVoice"],
+     LLMVoice
     :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
-     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
+     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
     :ivar modalities: The set of modalities the model used to respond. If there are multiple
      modalities,
      the model will pick one, for example if ``modalities`` is ``["text", "audio"]``, the model
      could be responding in either text or audio.
-    :vartype modalities: list[str or str]
+    :vartype modalities: list[str]
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
      ``g711_alaw``. Is one of the following types: Literal["pcm16"], Literal["g711_ulaw"],
      Literal["g711_alaw"]
-    :vartype output_audio_format: str or str or str
+    :vartype output_audio_format: str
     :ivar temperature: Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8.
     :vartype temperature: float
     :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
@@ -2195,21 +2732,21 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The object type, must be ``realtime.response``. Default value is \"realtime.response\"."""
-    status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = rest_field(
+    status: Optional[Union[str, "_models.ResponseStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The final status of the response (``completed``, ``cancelled``, ``failed``, or
-     ``incomplete``). Is one of the following types: Literal[\"completed\"], Literal[\"cancelled\"],
-     Literal[\"failed\"], Literal[\"incomplete\"], Literal[\"in_progress\"]"""
+    """The final status of the response.
+     One of: ``completed``, ``cancelled``, ``failed``, ``incomplete``, or ``in_progress``. Known
+     values are: \"completed\", \"cancelled\", \"failed\", \"incomplete\", and \"in_progress\"."""
     status_details: Optional["_models.ResponseStatusDetails"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional details about the status."""
-    output: Optional[List["_models.ConversationResponseItem"]] = rest_field(
+    output: Optional[list["_models.ResponseItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of output items generated by the response."""
-    usage: Optional["_models.ResponseUsage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: Optional["_models.Usage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage statistics for the Response, this will correspond to billing. A
      VoiceLive API session will maintain a conversation context and append new
      Items to the Conversation, thus output from previous turns (text and
@@ -2224,9 +2761,8 @@ class Response(_Model):
      the ``conversation_id`` will be an id like ``conv_1234``."""
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """supported voice identifiers and configurations. Is one of the following types: Union[str,
-     \"_models.OAIVoice\"], AzureStandardVoice, AzureCustomVoice, AzurePersonalVoice, Union[str,
-     \"_models.Phi4mmVoice\"]"""
-    modalities: Optional[List[Literal["text", "audio"]]] = rest_field(
+     \"_models.OAIVoice\"], OpenAIVoice, AzureVoice, Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
+    modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The set of modalities the model used to respond. If there are multiple modalities,
@@ -2252,13 +2788,13 @@ class Response(_Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         object: Optional[Literal["realtime.response"]] = None,
-        status: Optional[Literal["completed", "cancelled", "failed", "incomplete", "in_progress"]] = None,
+        status: Optional[Union[str, "_models.ResponseStatus"]] = None,
         status_details: Optional["_models.ResponseStatusDetails"] = None,
-        output: Optional[List["_models.ConversationResponseItem"]] = None,
-        usage: Optional["_models.ResponseUsage"] = None,
+        output: Optional[list["_models.ResponseItem"]] = None,
+        usage: Optional["_models.Usage"] = None,
         conversation_id: Optional[str] = None,
         voice: Optional["_types.Voice"] = None,
-        modalities: Optional[List[Literal["text", "audio"]]] = None,
+        modalities: Optional[list[Literal["text", "audio"]]] = None,
         output_audio_format: Optional[Literal["pcm16", "g711_ulaw", "g711_alaw"]] = None,
         temperature: Optional[float] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
@@ -2303,7 +2839,76 @@ class ResponseAudioContentPart(ContentPart, discriminator="audio"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ContentPartType.AUDIO, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ContentPartType.AUDIO  # type: ignore
+
+
+class ResponseStatusDetails(_Model):
+    """Base for all non-success response details.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ResponseCancelledDetails, ResponseFailedDetails, ResponseIncompleteDetails
+
+    :ivar type: Required. Default value is None.
+    :vartype type: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is None."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled"):
+    """Details for a cancelled response.
+
+    :ivar type: Required. Default value is "cancelled".
+    :vartype type: str
+    :ivar reason: Required. Is either a Literal["turn_detected"] type or a
+     Literal["client_cancelled"] type.
+    :vartype reason: str
+    """
+
+    type: Literal["cancelled"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"cancelled\"."""
+    reason: Literal["turn_detected", "client_cancelled"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Is either a Literal[\"turn_detected\"] type or a Literal[\"client_cancelled\"] type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: Literal["turn_detected", "client_cancelled"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "cancelled"  # type: ignore
 
 
 class ResponseCreateParams(_Model):
@@ -2337,11 +2942,11 @@ class ResponseCreateParams(_Model):
      start of the session.
     :vartype instructions: str
     :ivar voice: supported voice identifiers and configurations. Is one of the following types:
-     Union[str, "_models.OAIVoice"], AzureStandardVoice, AzureCustomVoice, AzurePersonalVoice,
-     Union[str, "_models.Phi4mmVoice"]
+     Union[str, "_models.OAIVoice"], OpenAIVoice, AzureVoice, Union[str, "_models.Phi4mmVoice"],
+     LLMVoice
     :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
-     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
+     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
      ``g711_alaw``. Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
     :vartype output_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
@@ -2364,16 +2969,16 @@ class ResponseCreateParams(_Model):
     """Whether to commit the response to the conversation. Defaults to true."""
     cancel_previous: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to cancel any ongoing generation before starting this one. Defaults to true."""
-    append_input_items: Optional[List["_models.ConversationRequestItem"]] = rest_field(
+    append_input_items: Optional[list["_models.ConversationRequestItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Input items to append to the conversation context before generating a response."""
-    input_items: Optional[List["_models.ConversationRequestItem"]] = rest_field(
+    input_items: Optional[list["_models.ConversationRequestItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Input items to be used as the context for this response.
      An empty array clears previous context."""
-    modalities: Optional[List[Union[str, "_models.Modality"]]] = rest_field(
+    modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The set of modalities the model can respond with. To disable audio,
@@ -2393,14 +2998,13 @@ class ResponseCreateParams(_Model):
      start of the session."""
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """supported voice identifiers and configurations. Is one of the following types: Union[str,
-     \"_models.OAIVoice\"], AzureStandardVoice, AzureCustomVoice, AzurePersonalVoice, Union[str,
-     \"_models.Phi4mmVoice\"]"""
+     \"_models.OAIVoice\"], OpenAIVoice, AzureVoice, Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
     output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or ``g711_alaw``. Known
      values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
-    tools: Optional[List["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tools (functions) available to the model."""
     tool_choice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """How the model chooses tools. Options are ``auto``, ``none``, ``required``, or
@@ -2422,13 +3026,13 @@ class ResponseCreateParams(_Model):
         *,
         commit: Optional[bool] = None,
         cancel_previous: Optional[bool] = None,
-        append_input_items: Optional[List["_models.ConversationRequestItem"]] = None,
-        input_items: Optional[List["_models.ConversationRequestItem"]] = None,
-        modalities: Optional[List[Union[str, "_models.Modality"]]] = None,
+        append_input_items: Optional[list["_models.ConversationRequestItem"]] = None,
+        input_items: Optional[list["_models.ConversationRequestItem"]] = None,
+        modalities: Optional[list[Union[str, "_models.Modality"]]] = None,
         instructions: Optional[str] = None,
         voice: Optional["_types.Voice"] = None,
         output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
-        tools: Optional[List["_models.Tool"]] = None,
+        tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional[str] = None,
         temperature: Optional[float] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
@@ -2445,46 +3049,25 @@ class ResponseCreateParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResponseFunctionCallItem(ConversationResponseItem, discriminator="function_call"):
-    """ResponseFunctionCallItem.
+class ResponseFailedDetails(ResponseStatusDetails, discriminator="failed"):
+    """Details for a failed response.
 
-    :ivar object: Default value is "realtime.item".
-    :vartype object: str
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL
-    :ivar name: Required.
-    :vartype name: str
-    :ivar call_id: Required.
-    :vartype call_id: str
-    :ivar arguments: Required.
-    :vartype arguments: str
-    :ivar status: Required. Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
+    :ivar type: Required. Default value is "failed".
+    :vartype type: str
+    :ivar error: Required.
+    :vartype error: any
     """
 
-    type: Literal[ItemType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal["failed"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"failed\"."""
+    error: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    status: Union[str, "_models.ItemStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
 
     @overload
     def __init__(
         self,
         *,
-        name: str,
-        call_id: str,
-        arguments: str,
-        status: Union[str, "_models.ItemStatus"],
-        object: Optional[Literal["realtime.item"]] = None,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        error: Any,
     ) -> None: ...
 
     @overload
@@ -2495,16 +3078,114 @@ class ResponseFunctionCallItem(ConversationResponseItem, discriminator="function
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ItemType.FUNCTION_CALL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "failed"  # type: ignore
 
 
-class ResponseFunctionCallOutputItem(ConversationResponseItem, discriminator="function_call_output"):
-    """ResponseFunctionCallOutputItem.
+class ResponseItem(_Model):
+    """ResponseItem.
 
-    :ivar object: Default value is "realtime.item".
-    :vartype object: str
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ResponseFunctionCallItem, ResponseFunctionCallOutputItem, ResponseMessageItem
+
+    :ivar type: Required. Known values are: "message", "function_call", and "function_call_output".
+    :vartype type: str or ~azure.ai.voicelive.models.ItemType
     :ivar id:
     :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"message\", \"function_call\", and \"function_call_output\"."""
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    object: Optional[Literal["realtime.item"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Default value is \"realtime.item\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ResponseFunctionCallItem(ResponseItem, discriminator="function_call"):
+    """ResponseFunctionCallItem.
+
+    :ivar id:
+    :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL
+    :ivar name: Required.
+    :vartype name: str
+    :ivar call_id: Required.
+    :vartype call_id: str
+    :ivar arguments: Required.
+    :vartype arguments: str
+    :ivar status: Required. Known values are: "in_progress", "completed", and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ResponseItemStatus
+    """
+
+    type: Literal[ItemType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    status: Union[str, "_models.ResponseItemStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        call_id: str,
+        arguments: str,
+        status: Union[str, "_models.ResponseItemStatus"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.FUNCTION_CALL  # type: ignore
+
+
+class ResponseFunctionCallOutputItem(ResponseItem, discriminator="function_call_output"):
+    """ResponseFunctionCallOutputItem.
+
+    :ivar id:
+    :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
     :ivar type: Required.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL_OUTPUT
     :ivar call_id: Required.
@@ -2526,8 +3207,8 @@ class ResponseFunctionCallOutputItem(ConversationResponseItem, discriminator="fu
         *,
         call_id: str,
         output: str,
-        object: Optional[Literal["realtime.item"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
     ) -> None: ...
 
     @overload
@@ -2538,16 +3219,54 @@ class ResponseFunctionCallOutputItem(ConversationResponseItem, discriminator="fu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ItemType.FUNCTION_CALL_OUTPUT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.FUNCTION_CALL_OUTPUT  # type: ignore
 
 
-class ResponseMessageItem(ConversationResponseItem, discriminator="message"):
+class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete"):
+    """Details for an incomplete response.
+
+    :ivar type: Required. Default value is "incomplete".
+    :vartype type: str
+    :ivar reason: Required. Is either a Literal["max_output_tokens"] type or a
+     Literal["content_filter"] type.
+    :vartype reason: str
+    """
+
+    type: Literal["incomplete"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"incomplete\"."""
+    reason: Literal["max_output_tokens", "content_filter"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required. Is either a Literal[\"max_output_tokens\"] type or a Literal[\"content_filter\"]
+     type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        reason: Literal["max_output_tokens", "content_filter"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = "incomplete"  # type: ignore
+
+
+class ResponseMessageItem(ResponseItem, discriminator="message"):
     """ResponseMessageItem.
 
-    :ivar object: Default value is "realtime.item".
-    :vartype object: str
     :ivar id:
     :vartype id: str
+    :ivar object: Default value is "realtime.item".
+    :vartype object: str
     :ivar type: Required.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
     :ivar role: Required. Known values are: "system", "user", and "assistant".
@@ -2555,16 +3274,18 @@ class ResponseMessageItem(ConversationResponseItem, discriminator="message"):
     :ivar content: Required.
     :vartype content: list[~azure.ai.voicelive.models.ContentPart]
     :ivar status: Required. Known values are: "in_progress", "completed", and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemStatus
+    :vartype status: str or ~azure.ai.voicelive.models.ResponseItemStatus
     """
 
     type: Literal[ItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required."""
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"system\", \"user\", and \"assistant\"."""
-    content: List["_models.ContentPart"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: list["_models.ContentPart"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    status: Union[str, "_models.ItemStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Union[str, "_models.ResponseItemStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Required. Known values are: \"in_progress\", \"completed\", and \"incomplete\"."""
 
     @overload
@@ -2572,10 +3293,10 @@ class ResponseMessageItem(ConversationResponseItem, discriminator="message"):
         self,
         *,
         role: Union[str, "_models.MessageRole"],
-        content: List["_models.ContentPart"],
-        status: Union[str, "_models.ItemStatus"],
-        object: Optional[Literal["realtime.item"]] = None,
+        content: list["_models.ContentPart"],
+        status: Union[str, "_models.ResponseItemStatus"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        object: Optional[Literal["realtime.item"]] = None,
     ) -> None: ...
 
     @overload
@@ -2586,7 +3307,8 @@ class ResponseMessageItem(ConversationResponseItem, discriminator="message"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ItemType.MESSAGE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ItemType.MESSAGE  # type: ignore
 
 
 class ResponseSession(_Model):
@@ -2602,11 +3324,11 @@ class ResponseSession(_Model):
     :vartype instructions: str
     :ivar animation:
     :vartype animation: ~azure.ai.voicelive.models.Animation
-    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], AzureStandardVoice,
-     AzureCustomVoice, AzurePersonalVoice, Union[str, "_models.Phi4mmVoice"]
+    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], OpenAIVoice,
+     AzureVoice, Union[str, "_models.Phi4mmVoice"], LLMVoice
     :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.AzureStandardVoice or ~azure.ai.voicelive.models.AzureCustomVoice or
-     ~azure.ai.voicelive.models.AzurePersonalVoice or str or ~azure.ai.voicelive.models.Phi4mmVoice
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
+     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
     :ivar input_audio:
     :vartype input_audio: ~azure.ai.voicelive.models.InputAudio
     :ivar input_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
@@ -2640,20 +3362,18 @@ class ResponseSession(_Model):
     :vartype max_response_output_tokens: int or str
     :ivar agent:
     :vartype agent: ~azure.ai.voicelive.models.AgentConfig
-    :ivar reasoning_effort: Controls model reasoning effort; one of "minimal", "low", "medium", "high" or any string.
-    :vartype reasoning_effort: str or Literal["minimal", "low", "medium", "high"]
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    modalities: Optional[List[Union[str, "_models.Modality"]]] = rest_field(
+    modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     animation: Optional["_models.Animation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Is one of the following types: Union[str, \"_models.OAIVoice\"], AzureStandardVoice,
-     AzureCustomVoice, AzurePersonalVoice, Union[str, \"_models.Phi4mmVoice\"]"""
+    """Is one of the following types: Union[str, \"_models.OAIVoice\"], OpenAIVoice, AzureVoice,
+     Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
     input_audio: Optional["_models.InputAudio"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     input_audio_format: Optional[Union[str, "_models.AudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2677,10 +3397,10 @@ class ResponseSession(_Model):
     input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    output_audio_timestamp_types: Optional[List[Union[str, "_models.AudioTimestampType"]]] = rest_field(
+    output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    tools: Optional[List["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     tool_choice: Optional["_types.ToolChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a Union[str, \"_models.ToolChoiceLiteral\"] type or a ToolChoiceObject type."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2689,16 +3409,14 @@ class ResponseSession(_Model):
     )
     """Is either a int type or a Literal[\"inf\"] type."""
     agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    reasoning_effort: Optional["_types.ReasoningEffort"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+
     @overload
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         model: Optional[str] = None,
-        modalities: Optional[List[Union[str, "_models.Modality"]]] = None,
+        modalities: Optional[list[Union[str, "_models.Modality"]]] = None,
         instructions: Optional[str] = None,
         animation: Optional["_models.Animation"] = None,
         voice: Optional["_types.Voice"] = None,
@@ -2711,110 +3429,12 @@ class ResponseSession(_Model):
         input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = None,
         avatar: Optional["_models.AvatarConfig"] = None,
         input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = None,
-        output_audio_timestamp_types: Optional[List[Union[str, "_models.AudioTimestampType"]]] = None,
-        tools: Optional[List["_models.Tool"]] = None,
+        output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
+        tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         agent: Optional["_models.AgentConfig"] = None,
-        reasoning_effort: Optional["_types.ReasoningEffort"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResponseStatusDetails(_Model):
-    """ResponseStatusDetails.
-
-    :ivar type: The type of error that caused the response to fail, corresponding
-     with the ``status`` field (``completed``, ``cancelled``, ``incomplete``,
-     ``failed``). Is one of the following types: Literal["completed"], Literal["cancelled"],
-     Literal["failed"], Literal["incomplete"]
-    :vartype type: str or str or str or str
-    :ivar reason: The reason the Response did not complete. For a ``cancelled`` Response,
-     one of ``turn_detected`` (the server VAD detected a new start of speech)
-     or ``client_cancelled`` (the client sent a cancel event). For an
-     ``incomplete`` Response, one of ``max_output_tokens`` or ``content_filter``
-     (the server-side safety filter activated and cut off the response). Is one of the following
-     types: Literal["turn_detected"], Literal["client_cancelled"], Literal["max_output_tokens"],
-     Literal["content_filter"]
-    :vartype reason: str or str or str or str
-    :ivar error: A description of the error that caused the response to fail,
-     populated when the ``status`` is ``failed``.
-    :vartype error: ~azure.ai.voicelive.models.ResponseStatusDetailsError
-    """
-
-    type: Optional[Literal["completed", "cancelled", "failed", "incomplete"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of error that caused the response to fail, corresponding
-     with the ``status`` field (``completed``, ``cancelled``, ``incomplete``,
-     ``failed``). Is one of the following types: Literal[\"completed\"], Literal[\"cancelled\"],
-     Literal[\"failed\"], Literal[\"incomplete\"]"""
-    reason: Optional[Literal["turn_detected", "client_cancelled", "max_output_tokens", "content_filter"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The reason the Response did not complete. For a ``cancelled`` Response,
-     one of ``turn_detected`` (the server VAD detected a new start of speech)
-     or ``client_cancelled`` (the client sent a cancel event). For an
-     ``incomplete`` Response, one of ``max_output_tokens`` or ``content_filter``
-     (the server-side safety filter activated and cut off the response). Is one of the following
-     types: Literal[\"turn_detected\"], Literal[\"client_cancelled\"],
-     Literal[\"max_output_tokens\"], Literal[\"content_filter\"]"""
-    error: Optional["_models.ResponseStatusDetailsError"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """A description of the error that caused the response to fail,
-     populated when the ``status`` is ``failed``."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Literal["completed", "cancelled", "failed", "incomplete"]] = None,
-        reason: Optional[Literal["turn_detected", "client_cancelled", "max_output_tokens", "content_filter"]] = None,
-        error: Optional["_models.ResponseStatusDetailsError"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResponseStatusDetailsError(_Model):
-    """ResponseStatusDetailsError.
-
-    :ivar type: The type of error.
-    :vartype type: str
-    :ivar code: Error code, if any.
-    :vartype code: str
-    """
-
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of error."""
-    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error code, if any."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        code: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2856,136 +3476,8 @@ class ResponseTextContentPart(ContentPart, discriminator="text"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ContentPartType.TEXT, **kwargs)
-
-
-class ResponseUsage(_Model):
-    """ResponseUsage.
-
-    :ivar total_tokens: The total number of tokens in the Response including input and output
-     text and audio tokens.
-    :vartype total_tokens: int
-    :ivar input_tokens: The number of input tokens used in the Response, including text and
-     audio tokens.
-    :vartype input_tokens: int
-    :ivar output_tokens: The number of output tokens sent in the Response, including text and
-     audio tokens.
-    :vartype output_tokens: int
-    :ivar input_token_details: Details about the input tokens used in the Response.
-    :vartype input_token_details: ~azure.ai.voicelive.models.ResponseUsageInputTokenDetails
-    :ivar output_token_details: Details about the output tokens used in the Response.
-    :vartype output_token_details: ~azure.ai.voicelive.models.ResponseUsageOutputTokenDetails
-    """
-
-    total_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The total number of tokens in the Response including input and output
-     text and audio tokens."""
-    input_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of input tokens used in the Response, including text and
-     audio tokens."""
-    output_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of output tokens sent in the Response, including text and
-     audio tokens."""
-    input_token_details: Optional["_models.ResponseUsageInputTokenDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Details about the input tokens used in the Response."""
-    output_token_details: Optional["_models.ResponseUsageOutputTokenDetails"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Details about the output tokens used in the Response."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        total_tokens: Optional[int] = None,
-        input_tokens: Optional[int] = None,
-        output_tokens: Optional[int] = None,
-        input_token_details: Optional["_models.ResponseUsageInputTokenDetails"] = None,
-        output_token_details: Optional["_models.ResponseUsageOutputTokenDetails"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ResponseUsageInputTokenDetails(_Model):
-    """ResponseUsageInputTokenDetails.
-
-    :ivar cached_tokens: The number of cached tokens used in the Response.
-    :vartype cached_tokens: int
-    :ivar text_tokens: The number of text tokens used in the Response.
-    :vartype text_tokens: int
-    :ivar audio_tokens: The number of audio tokens used in the Response.
-    :vartype audio_tokens: int
-    """
-
-    cached_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of cached tokens used in the Response."""
-    text_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of text tokens used in the Response."""
-    audio_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of audio tokens used in the Response."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        cached_tokens: Optional[int] = None,
-        text_tokens: Optional[int] = None,
-        audio_tokens: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResponseUsageOutputTokenDetails(_Model):
-    """ResponseUsageOutputTokenDetails.
-
-    :ivar text_tokens: The number of text tokens used in the Response.
-    :vartype text_tokens: int
-    :ivar audio_tokens: The number of audio tokens used in the Response.
-    :vartype audio_tokens: int
-    """
-
-    text_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of text tokens used in the Response."""
-    audio_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of audio tokens used in the Response."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        text_tokens: Optional[int] = None,
-        audio_tokens: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+        self.type = ContentPartType.TEXT  # type: ignore
 
 
 class ServerEvent(_Model):
@@ -2998,17 +3490,17 @@ class ServerEvent(_Model):
     ServerEventConversationItemInputAudioTranscriptionFailed, ServerEventConversationItemRetrieved,
     ServerEventConversationItemTruncated, ServerEventError, ServerEventInputAudioBufferCleared,
     ServerEventInputAudioBufferCommitted, ServerEventInputAudioBufferSpeechStarted,
-    ServerEventInputAudioBufferSpeechStopped, ResponseAnimationBlendshapeDeltaEvent,
-    ResponseAnimationBlendshapeDoneEvent, ResponseAnimationVisemeDeltaEvent,
-    ResponseAnimationVisemeDoneEvent, ServerEventResponseAudioDelta, ServerEventResponseAudioDone,
-    ResponseAudioTimestampDeltaEvent, ResponseAudioTimestampDoneEvent,
-    ServerEventResponseAudioTranscriptDelta, ServerEventResponseAudioTranscriptDone,
-    ServerEventResponseContentPartAdded, ServerEventResponseContentPartDone,
-    ServerEventResponseCreated, ServerEventResponseDone, ResponseEmotionHypothesis,
-    ServerEventResponseFunctionCallArgumentsDelta, ServerEventResponseFunctionCallArgumentsDone,
-    ServerEventResponseOutputItemAdded, ServerEventResponseOutputItemDone,
-    ServerEventResponseTextDelta, ServerEventResponseTextDone, ServerEventSessionAvatarConnecting,
-    ServerEventSessionCreated, ServerEventSessionUpdated
+    ServerEventInputAudioBufferSpeechStopped, ServerEventResponseAnimationBlendshapeDelta,
+    ServerEventResponseAnimationBlendshapeDone, ServerEventResponseAnimationVisemeDelta,
+    ServerEventResponseAnimationVisemeDone, ServerEventResponseAudioDelta,
+    ServerEventResponseAudioDone, ServerEventResponseAudioTimestampDelta,
+    ServerEventResponseAudioTimestampDone, ServerEventResponseAudioTranscriptDelta,
+    ServerEventResponseAudioTranscriptDone, ServerEventResponseContentPartAdded,
+    ServerEventResponseContentPartDone, ServerEventResponseCreated, ServerEventResponseDone,
+    ServerEventResponseEmotionHypothesis, ServerEventResponseFunctionCallArgumentsDelta,
+    ServerEventResponseFunctionCallArgumentsDone, ServerEventResponseOutputItemAdded,
+    ServerEventResponseOutputItemDone, ServerEventResponseTextDelta, ServerEventResponseTextDone,
+    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated
 
     :ivar type: The type of event. Required. Known values are: "error",
      "session.avatar.connecting", "session.created", "session.updated",
@@ -3031,7 +3523,7 @@ class ServerEvent(_Model):
     :vartype event_id: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of event. Required. Known values are: \"error\", \"session.avatar.connecting\",
      \"session.created\", \"session.updated\",
@@ -3071,7 +3563,7 @@ class ServerEvent(_Model):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def deserialize(cls, payload: dict) -> "ServerEvent":
+    def deserialize(cls, payload: Dict[str, Any]) -> "ServerEvent":
         # public, linter-friendly entrypoint
         # pylint: disable-next=protected-access
         return cls._deserialize(payload, [])
@@ -3081,42 +3573,40 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce
-      either one or two Items, which will be of type `message`
-      (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the
-      server (in `server_vad` mode). The server will take the content of the
-      input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item
-      to the Conversation.
+    The server is generating a Response, which if successful will produce
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
+    The input audio buffer has been committed, either by the client or the
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
+    The client has sent a `conversation.item.create` event to add a new Item
+    to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.created``. Required.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_CREATED
     :ivar previous_item_id: The ID of the preceding item in the Conversation context, allows the
-      client to understand the order of the conversation. Required.
+     client to understand the order of the conversation.
     :vartype previous_item_id: str
     :ivar item:
-    :vartype item: ~azure.ai.voicelive.models.ConversationItemWithReference
+    :vartype item: ~azure.ai.voicelive.models.ResponseItem
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``conversation.item.created``. Required."""
-    previous_item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    previous_item_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the preceding item in the Conversation context, allows the
-     client to understand the order of the conversation. Required."""
-    item: Optional["_models.ConversationItemWithReference"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+     client to understand the order of the conversation."""
+    item: Optional["_models.ResponseItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
         self,
         *,
-        previous_item_id: str,
         event_id: Optional[str] = None,
-        item: Optional["_models.ConversationItemWithReference"] = None,
+        previous_item_id: Optional[str] = None,
+        item: Optional["_models.ResponseItem"] = None,
     ) -> None: ...
 
     @overload
@@ -3127,7 +3617,8 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_CREATED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_CREATED  # type: ignore
 
 
 class ServerEventConversationItemDeleted(ServerEvent, discriminator="conversation.item.deleted"):
@@ -3164,7 +3655,8 @@ class ServerEventConversationItemDeleted(ServerEvent, discriminator="conversatio
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_DELETED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_DELETED  # type: ignore
 
 
 class ServerEventConversationItemInputAudioTranscriptionCompleted(
@@ -3223,7 +3715,8 @@ class ServerEventConversationItemInputAudioTranscriptionCompleted(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED  # type: ignore
 
 
 class ServerEventConversationItemInputAudioTranscriptionDelta(
@@ -3255,7 +3748,7 @@ class ServerEventConversationItemInputAudioTranscriptionDelta(
     """The index of the content part in the item's content array."""
     delta: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text delta."""
-    logprobs: Optional[List["_models.LogProbProperties"]] = rest_field(
+    logprobs: Optional[list["_models.LogProbProperties"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The log probabilities of the transcription."""
@@ -3268,7 +3761,7 @@ class ServerEventConversationItemInputAudioTranscriptionDelta(
         event_id: Optional[str] = None,
         content_index: Optional[int] = None,
         delta: Optional[str] = None,
-        logprobs: Optional[List["_models.LogProbProperties"]] = None,
+        logprobs: Optional[list["_models.LogProbProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -3279,7 +3772,8 @@ class ServerEventConversationItemInputAudioTranscriptionDelta(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA  # type: ignore
 
 
 class ServerEventConversationItemInputAudioTranscriptionFailed(
@@ -3331,7 +3825,8 @@ class ServerEventConversationItemInputAudioTranscriptionFailed(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED  # type: ignore
 
 
 class ServerEventConversationItemRetrieved(ServerEvent, discriminator="conversation.item.retrieved"):
@@ -3339,21 +3834,21 @@ class ServerEventConversationItemRetrieved(ServerEvent, discriminator="conversat
 
     :ivar type: The event type, must be ``conversation.item.retrieved``. Required.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_RETRIEVED
-    :ivar item_id:
-    :vartype item_id: str
+    :ivar item:
+    :vartype item: ~azure.ai.voicelive.models.ResponseItem
     :ivar event_id:
     :vartype event_id: str
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_RETRIEVED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The event type, must be ``conversation.item.retrieved``. Required."""
-    item_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    item: Optional["_models.ResponseItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
         self,
         *,
-        item_id: Optional[str] = None,
+        item: Optional["_models.ResponseItem"] = None,
         event_id: Optional[str] = None,
     ) -> None: ...
 
@@ -3365,7 +3860,8 @@ class ServerEventConversationItemRetrieved(ServerEvent, discriminator="conversat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_RETRIEVED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_RETRIEVED  # type: ignore
 
 
 class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversation.item.truncated"):
@@ -3416,7 +3912,8 @@ class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.CONVERSATION_ITEM_TRUNCATED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.CONVERSATION_ITEM_TRUNCATED  # type: ignore
 
 
 class ServerEventError(ServerEvent, discriminator="error"):
@@ -3453,7 +3950,8 @@ class ServerEventError(ServerEvent, discriminator="error"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.ERROR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.ERROR  # type: ignore
 
 
 class ServerEventErrorDetails(_Model):
@@ -3532,7 +4030,8 @@ class ServerEventInputAudioBufferCleared(ServerEvent, discriminator="input_audio
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.INPUT_AUDIO_BUFFER_CLEARED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.INPUT_AUDIO_BUFFER_CLEARED  # type: ignore
 
 
 class ServerEventInputAudioBufferCommitted(ServerEvent, discriminator="input_audio_buffer.committed"):
@@ -3575,7 +4074,8 @@ class ServerEventInputAudioBufferCommitted(ServerEvent, discriminator="input_aud
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.INPUT_AUDIO_BUFFER_COMMITTED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.INPUT_AUDIO_BUFFER_COMMITTED  # type: ignore
 
 
 class ServerEventInputAudioBufferSpeechStarted(ServerEvent, discriminator="input_audio_buffer.speech_started"):
@@ -3631,7 +4131,8 @@ class ServerEventInputAudioBufferSpeechStarted(ServerEvent, discriminator="input
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED  # type: ignore
 
 
 class ServerEventInputAudioBufferSpeechStopped(ServerEvent, discriminator="input_audio_buffer.speech_stopped"):
@@ -3677,7 +4178,232 @@ class ServerEventInputAudioBufferSpeechStopped(ServerEvent, discriminator="input
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED  # type: ignore
+
+
+class ServerEventResponseAnimationBlendshapeDelta(
+    ServerEvent, discriminator="response.animation_blendshapes.delta"
+):  # pylint: disable=name-too-long
+    """Represents a delta update of blendshape animation frames for a specific output of a response.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_BLENDSHAPES_DELTA
+    :ivar response_id: Required.
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    :ivar output_index: Required.
+    :vartype output_index: int
+    :ivar content_index: Required.
+    :vartype content_index: int
+    :ivar frames: Required. Is either a [[float]] type or a str type.
+    :vartype frames: list[list[float]] or str
+    :ivar frame_index: Required.
+    :vartype frame_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    frames: Union[list[list[float]], str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Is either a [[float]] type or a str type."""
+    frame_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        content_index: int,
+        frames: Union[list[list[float]], str],
+        frame_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DELTA  # type: ignore
+
+
+class ServerEventResponseAnimationBlendshapeDone(
+    ServerEvent, discriminator="response.animation_blendshapes.done"
+):  # pylint: disable=name-too-long
+    """Indicates the completion of blendshape animation processing for a specific output of a
+    response.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_BLENDSHAPES_DONE
+    :ivar response_id: Required.
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    :ivar output_index: Required.
+    :vartype output_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DONE  # type: ignore
+
+
+class ServerEventResponseAnimationVisemeDelta(ServerEvent, discriminator="response.animation_viseme.delta"):
+    """Represents a viseme ID delta update for animation based on audio.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_VISEME_DELTA
+    :ivar response_id: Required.
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    :ivar output_index: Required.
+    :vartype output_index: int
+    :ivar content_index: Required.
+    :vartype content_index: int
+    :ivar audio_offset_ms: Required.
+    :vartype audio_offset_ms: int
+    :ivar viseme_id: Required.
+    :vartype viseme_id: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_ANIMATION_VISEME_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    audio_offset_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    viseme_id: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        content_index: int,
+        audio_offset_ms: int,
+        viseme_id: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_ANIMATION_VISEME_DELTA  # type: ignore
+
+
+class ServerEventResponseAnimationVisemeDone(ServerEvent, discriminator="response.animation_viseme.done"):
+    """Indicates completion of viseme animation delivery for a response.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_VISEME_DONE
+    :ivar response_id: Required.
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    :ivar output_index: Required.
+    :vartype output_index: int
+    :ivar content_index: Required.
+    :vartype content_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_ANIMATION_VISEME_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        content_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_ANIMATION_VISEME_DONE  # type: ignore
 
 
 class ServerEventResponseAudioDelta(ServerEvent, discriminator="response.audio.delta"):
@@ -3732,7 +4458,8 @@ class ServerEventResponseAudioDelta(ServerEvent, discriminator="response.audio.d
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_AUDIO_DELTA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_AUDIO_DELTA  # type: ignore
 
 
 class ServerEventResponseAudioDone(ServerEvent, discriminator="response.audio.done"):
@@ -3783,7 +4510,130 @@ class ServerEventResponseAudioDone(ServerEvent, discriminator="response.audio.do
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_AUDIO_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_AUDIO_DONE  # type: ignore
+
+
+class ServerEventResponseAudioTimestampDelta(ServerEvent, discriminator="response.audio_timestamp.delta"):
+    """Represents a word-level audio timestamp delta for a response.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_TIMESTAMP_DELTA
+    :ivar response_id: Required.
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    :ivar output_index: Required.
+    :vartype output_index: int
+    :ivar content_index: Required.
+    :vartype content_index: int
+    :ivar audio_offset_ms: Required.
+    :vartype audio_offset_ms: int
+    :ivar audio_duration_ms: Required.
+    :vartype audio_duration_ms: int
+    :ivar text: Required.
+    :vartype text: str
+    :ivar timestamp_type: Required. Default value is "word".
+    :vartype timestamp_type: str
+    """
+
+    type: Literal[ServerEventType.RESPONSE_AUDIO_TIMESTAMP_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    audio_offset_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    audio_duration_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    timestamp_type: Literal["word"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required. Default value is \"word\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        content_index: int,
+        audio_offset_ms: int,
+        audio_duration_ms: int,
+        text: str,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_AUDIO_TIMESTAMP_DELTA  # type: ignore
+        self.timestamp_type: Literal["word"] = "word"
+
+
+class ServerEventResponseAudioTimestampDone(ServerEvent, discriminator="response.audio_timestamp.done"):
+    """Indicates completion of audio timestamp delivery for a response.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_TIMESTAMP_DONE
+    :ivar response_id: Required.
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    :ivar output_index: Required.
+    :vartype output_index: int
+    :ivar content_index: Required.
+    :vartype content_index: int
+    """
+
+    type: Literal[ServerEventType.RESPONSE_AUDIO_TIMESTAMP_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        item_id: str,
+        output_index: int,
+        content_index: int,
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_AUDIO_TIMESTAMP_DONE  # type: ignore
 
 
 class ServerEventResponseAudioTranscriptDelta(ServerEvent, discriminator="response.audio_transcript.delta"):
@@ -3838,7 +4688,8 @@ class ServerEventResponseAudioTranscriptDelta(ServerEvent, discriminator="respon
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA  # type: ignore
 
 
 class ServerEventResponseAudioTranscriptDone(ServerEvent, discriminator="response.audio_transcript.done"):
@@ -3895,7 +4746,8 @@ class ServerEventResponseAudioTranscriptDone(ServerEvent, discriminator="respons
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE  # type: ignore
 
 
 class ServerEventResponseContentPartAdded(ServerEvent, discriminator="response.content_part.added"):
@@ -3951,7 +4803,8 @@ class ServerEventResponseContentPartAdded(ServerEvent, discriminator="response.c
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_CONTENT_PART_ADDED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_CONTENT_PART_ADDED  # type: ignore
 
 
 class ServerEventResponseContentPartDone(ServerEvent, discriminator="response.content_part.done"):
@@ -4007,7 +4860,8 @@ class ServerEventResponseContentPartDone(ServerEvent, discriminator="response.co
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_CONTENT_PART_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_CONTENT_PART_DONE  # type: ignore
 
 
 class ServerEventResponseCreated(ServerEvent, discriminator="response.created"):
@@ -4043,7 +4897,8 @@ class ServerEventResponseCreated(ServerEvent, discriminator="response.created"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_CREATED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_CREATED  # type: ignore
 
 
 class ServerEventResponseDone(ServerEvent, discriminator="response.done"):
@@ -4080,7 +4935,70 @@ class ServerEventResponseDone(ServerEvent, discriminator="response.done"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_DONE  # type: ignore
+
+
+class ServerEventResponseEmotionHypothesis(ServerEvent, discriminator="response.emotion_hypothesis"):
+    """Represents an emotion hypothesis detected from response audio with multiple candidates.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_EMOTION_HYPOTHESIS
+    :ivar emotion: Required.
+    :vartype emotion: str
+    :ivar candidates: Required.
+    :vartype candidates: list[~azure.ai.voicelive.models._models.EmotionCandidate]
+    :ivar audio_offset_ms: Required.
+    :vartype audio_offset_ms: int
+    :ivar audio_duration_ms: Required.
+    :vartype audio_duration_ms: int
+    :ivar response_id:
+    :vartype response_id: str
+    :ivar item_id: Required.
+    :vartype item_id: str
+    """
+
+    type: Literal[ServerEventType.RESPONSE_EMOTION_HYPOTHESIS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    emotion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    candidates: list["_models._models.EmotionCandidate"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+    audio_offset_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    audio_duration_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        emotion: str,
+        candidates: list["_models._models.EmotionCandidate"],
+        audio_offset_ms: int,
+        audio_duration_ms: int,
+        item_id: str,
+        event_id: Optional[str] = None,
+        response_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_EMOTION_HYPOTHESIS  # type: ignore
 
 
 class ServerEventResponseFunctionCallArgumentsDelta(
@@ -4137,7 +5055,8 @@ class ServerEventResponseFunctionCallArgumentsDelta(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA  # type: ignore
 
 
 class ServerEventResponseFunctionCallArgumentsDone(
@@ -4200,7 +5119,8 @@ class ServerEventResponseFunctionCallArgumentsDone(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE  # type: ignore
 
 
 class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.output_item.added"):
@@ -4215,7 +5135,7 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
     :ivar output_index: The index of the output item in the Response. Required.
     :vartype output_index: int
     :ivar item:
-    :vartype item: ~azure.ai.voicelive.models.ConversationItemWithReference
+    :vartype item: ~azure.ai.voicelive.models.ResponseItem
     """
 
     type: Literal[ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4224,9 +5144,7 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
     """The ID of the Response to which the item belongs. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the output item in the Response. Required."""
-    item: Optional["_models.ConversationItemWithReference"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    item: Optional["_models.ResponseItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -4235,7 +5153,7 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
         response_id: str,
         output_index: int,
         event_id: Optional[str] = None,
-        item: Optional["_models.ConversationItemWithReference"] = None,
+        item: Optional["_models.ResponseItem"] = None,
     ) -> None: ...
 
     @overload
@@ -4246,7 +5164,8 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED  # type: ignore
 
 
 class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.output_item.done"):
@@ -4262,7 +5181,7 @@ class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.out
     :ivar output_index: The index of the output item in the Response. Required.
     :vartype output_index: int
     :ivar item:
-    :vartype item: ~azure.ai.voicelive.models.ConversationResponseItem
+    :vartype item: ~azure.ai.voicelive.models.ResponseItem
     """
 
     type: Literal[ServerEventType.RESPONSE_OUTPUT_ITEM_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4271,9 +5190,7 @@ class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.out
     """The ID of the Response to which the item belongs. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the output item in the Response. Required."""
-    item: Optional["_models.ConversationResponseItem"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    item: Optional["_models.ResponseItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -4282,7 +5199,7 @@ class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.out
         response_id: str,
         output_index: int,
         event_id: Optional[str] = None,
-        item: Optional["_models.ConversationResponseItem"] = None,
+        item: Optional["_models.ResponseItem"] = None,
     ) -> None: ...
 
     @overload
@@ -4293,7 +5210,8 @@ class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.out
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_OUTPUT_ITEM_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_OUTPUT_ITEM_DONE  # type: ignore
 
 
 class ServerEventResponseTextDelta(ServerEvent, discriminator="response.text.delta"):
@@ -4348,7 +5266,8 @@ class ServerEventResponseTextDelta(ServerEvent, discriminator="response.text.del
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_TEXT_DELTA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_TEXT_DELTA  # type: ignore
 
 
 class ServerEventResponseTextDone(ServerEvent, discriminator="response.text.done"):
@@ -4404,7 +5323,8 @@ class ServerEventResponseTextDone(ServerEvent, discriminator="response.text.done
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.RESPONSE_TEXT_DONE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.RESPONSE_TEXT_DONE  # type: ignore
 
 
 class ServerEventSessionAvatarConnecting(ServerEvent, discriminator="session.avatar.connecting"):
@@ -4440,7 +5360,8 @@ class ServerEventSessionAvatarConnecting(ServerEvent, discriminator="session.ava
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.SESSION_AVATAR_CONNECTING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.SESSION_AVATAR_CONNECTING  # type: ignore
 
 
 class ServerEventSessionCreated(ServerEvent, discriminator="session.created"):
@@ -4477,7 +5398,8 @@ class ServerEventSessionCreated(ServerEvent, discriminator="session.created"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.SESSION_CREATED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.SESSION_CREATED  # type: ignore
 
 
 class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
@@ -4513,7 +5435,8 @@ class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ServerEventType.SESSION_UPDATED, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.SESSION_UPDATED  # type: ignore
 
 
 class ServerVad(TurnDetection, discriminator="server_vad"):
@@ -4528,7 +5451,9 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: any
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :ivar auto_truncate:
+    :vartype auto_truncate: bool
     """
 
     type: Literal["server_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -4536,7 +5461,10 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -4545,7 +5473,8 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional[Any] = None,
+        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        auto_truncate: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4556,7 +5485,52 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type="server_vad", **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = "server_vad"  # type: ignore
+
+
+class SystemMessageItem(MessageItem, discriminator="system"):
+    """SystemMessageItem.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
+    :ivar status: Known values are: "completed" and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
+    :ivar role: Required. Default value is "system".
+    :vartype role: str
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.voicelive.models.InputTextContentPart]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    role: Literal["system"] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"system\"."""
+    content: list["_models.InputTextContentPart"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.InputTextContentPart"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = "system"  # type: ignore
 
 
 class ToolChoiceObject(_Model):
@@ -4569,7 +5543,7 @@ class ToolChoiceObject(_Model):
     :vartype type: str or ~azure.ai.voicelive.models.ToolType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. \"function\""""
 
@@ -4622,7 +5596,8 @@ class ToolChoiceFunctionObject(ToolChoiceObject, discriminator="function"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ToolType.FUNCTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.FUNCTION  # type: ignore
 
 
 class ToolChoiceFunctionObjectFunction(_Model):
@@ -4653,22 +5628,134 @@ class ToolChoiceFunctionObjectFunction(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Usage(_Model):
+    """Overall usage statistics for a response.
+
+    :ivar total_tokens: Total number of tokens (input + output). Required.
+    :vartype total_tokens: int
+    :ivar input_tokens: Number of input tokens. Required.
+    :vartype input_tokens: int
+    :ivar output_tokens: Number of output tokens. Required.
+    :vartype output_tokens: int
+    :ivar input_token_details: Detailed breakdown of input tokens. Required.
+    :vartype input_token_details: ~azure.ai.voicelive.models.InputTokenDetails
+    :ivar output_token_details: Detailed breakdown of output tokens. Required.
+    :vartype output_token_details: ~azure.ai.voicelive.models.OutputTokenDetails
+    """
+
+    total_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Total number of tokens (input + output). Required."""
+    input_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of input tokens. Required."""
+    output_tokens: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of output tokens. Required."""
+    input_token_details: "_models.InputTokenDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed breakdown of input tokens. Required."""
+    output_token_details: "_models.OutputTokenDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Detailed breakdown of output tokens. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        total_tokens: int,
+        input_tokens: int,
+        output_tokens: int,
+        input_token_details: "_models.InputTokenDetails",
+        output_token_details: "_models.OutputTokenDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UserMessageItem(MessageItem, discriminator="user"):
+    """UserMessageItem.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
+    :ivar status: Known values are: "completed" and "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
+    :ivar role: Required. Default value is "user".
+    :vartype role: str
+    :ivar content: Required.
+    :vartype content: list[~azure.ai.voicelive.models.UserContentPart]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    role: Literal["user"] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Default value is \"user\"."""
+    content: list["_models.UserContentPart"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.UserContentPart"],
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.role = "user"  # type: ignore
+
+
 class VideoCrop(_Model):
+    """Defines a video crop rectangle using top-left and bottom-right coordinates.
+
+    :ivar top_left: Top-left corner of the crop region. Array of [x, y], must be non-negative
+     integers. Required.
+    :vartype top_left: list[int]
+    :ivar bottom_right: Bottom-right corner of the crop region. Array of [x, y], must be
+     non-negative integers. Required.
+    :vartype bottom_right: list[int]
     """
-    Defines a video crop rectangle using top-left and bottom-right coordinates.
-    """
 
-    top_left: Tuple[int, int]
-    """Top-left corner of the crop region. Must be non-negative coordinates."""
+    top_left: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Top-left corner of the crop region. Array of [x, y], must be non-negative integers. Required."""
+    bottom_right: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Bottom-right corner of the crop region. Array of [x, y], must be non-negative integers.
+     Required."""
 
-    bottom_right: Tuple[int, int]
-    """Bottom-right corner of the crop region. Must be non-negative coordinates."""
+    @overload
+    def __init__(
+        self,
+        *,
+        top_left: list[int],
+        bottom_right: list[int],
+    ) -> None: ...
 
-    @classmethod
-    def check_positive(cls, value: Tuple[int, int]) -> Tuple[int, int]:
-        if value[0] < 0 or value[1] < 0:
-            raise ValueError("Coordinates must be non-negative integers")
-        return value
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class VideoParams(_Model):

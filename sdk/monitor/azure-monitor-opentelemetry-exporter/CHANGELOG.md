@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b42 (Unreleased)
+## 1.0.0b42 (2025-09-15)
 
 ### Features Added
 - Customer Facing Statsbeat: Added remaining drop codes to base
@@ -13,10 +13,14 @@
   ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
 - Rename Customer Statsbeat to Customer SDKStats as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
-
-### Breaking Changes
-
-### Bugs Fixed
+- Customer Facing SDKStats: Exception categorization as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdkstats/customer_facing_sdk_stats.md
+  ([#42695](https://github.com/Azure/azure-sdk-for-python/pull/42695))
+- Customer Facing SDKStats: Added logic for race conditions and updated the implementation to use a global instance for customer SDKStats metrics
+  ([#42655](https://github.com/Azure/azure-sdk-for-python/pull/42655))
+- Customer Facing SDKStats: Added telemetry_success field to dropped items as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/606
+  ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
+- Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
+  ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
 
 ### Other Changes
 
@@ -24,6 +28,10 @@
   ([#42360] https://github.com/Azure/azure-sdk-for-python/pull/42360)
 - Configuration manager/worker fetch via OneSettings part 2 - Concurrency and refactoring of _ConfigurationManager
   ([#42508] https://github.com/Azure/azure-sdk-for-python/pull/42508)
+- Refactoring of statsbeat to use `StatsbeatManager`
+  ([#42716] https://github.com/Azure/azure-sdk-for-python/pull/42716)
+- Support sdk stats dynamic change on OneSettings config change
+  ([#42877] https://github.com/Azure/azure-sdk-for-python/pull/42877)
 
 ## 1.0.0b41 (2025-07-31)
 
