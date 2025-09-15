@@ -48,6 +48,74 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         await self.client.close()
 
+    async def test_manual_session_token_takes_precedence_async(self):
+        # Establish an initial session state for the primary async client.
+        await self.created_container.create_item(
+            body={'id': 'precedence_doc_1_async' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        # Capture the session token from the primary client (Token A)
+        token_A = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(token_A)
+
+        # Use a separate async client to create a second item. This gives us a new, distinct session token.
+        async with CosmosClient(self.host, self.masterKey) as other_client:
+            other_collection = other_client.get_database_client(self.TEST_DATABASE_ID) \
+                .get_container_client(self.TEST_COLLECTION_ID)
+            item2 = await other_collection.create_item(
+                body={'id': 'precedence_doc_2_async' + str(uuid.uuid4()), 'pk': 'mypk'}
+            )
+            # Capture the session token from the second client (Token B)
+            manual_session_token = other_client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+            self.assertIsNotNone(manual_session_token)
+
+        # Assert that the two tokens are different to ensure we are testing a real override scenario.
+        self.assertNotEqual(token_A, manual_session_token)
+
+        # Define a hook to verify the correct token is sent.
+        def manual_token_hook(request):
+            # Assert that the header contains the manually provided Token B, not the client's automatic Token A.
+            self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+            self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], manual_session_token)
+
+        # Read an item using the primary client, but manually providing Token B.
+        # The hook will verify that Token B overrides the client's internal Token A.
+        await self.created_container.read_item(
+            item=item2['id'],
+            partition_key='mypk',
+            session_token=manual_session_token,  # Manually provide Token B
+            raw_request_hook=manual_token_hook
+        )
+
+    async def test_manual_session_token_override_async(self):
+        # Create an item to get a valid session token from the response
+        created_document = await self.created_container.create_item(
+            body={'id': 'doc_for_manual_session' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        session_token = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(session_token)
+
+        # temporarily disable client-side session management to test manual override
+        original_session = self.client.client_connection.session
+        self.client.client_connection.session = None
+
+        try:
+            # Define a hook to inspect the request headers
+            def manual_token_hook(request):
+                self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+                self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], session_token)
+
+            # Read the item, passing the session token manually.
+            # The hook will verify it's correctly added to the request headers.
+            await self.created_container.read_item(
+                item=created_document['id'],
+                partition_key='mypk',
+                session_token=session_token,  # Manually provide the session token
+                raw_request_hook=manual_token_hook
+            )
+        finally:
+            # Restore the original session object to avoid affecting other tests
+            self.client.client_connection.session = original_session
+
     async def test_session_token_swr_for_ops_async(self):
         # Session token should not be sent for control plane operations
         test_container = await self.created_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"), raw_response_hook=test_config.no_token_response_hook)

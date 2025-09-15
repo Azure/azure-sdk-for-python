@@ -766,14 +766,10 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
 
     :ivar type: The credential type. Required. Custom credential
     :vartype type: str or ~azure.ai.projects.models.CUSTOM
-    :ivar credential_keys: The credential type. Required.
-    :vartype credential_keys: dict[str, str]
     """
 
     type: Literal[CredentialType.CUSTOM] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Custom credential"""
-    credential_keys: Dict[str, str] = rest_field(name="keys", visibility=["read"])
-    """The credential type. Required."""
 
     @overload
     def __init__(

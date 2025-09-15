@@ -154,6 +154,7 @@ _TRACE = "TRACE"
 _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
+
 _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
@@ -179,27 +180,18 @@ class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
-class CustomerSdkStatsProperties:
-    language: str
-    version: str
-    compute_type: str
-    def __init__(self, language: str, version: str, compute_type: str):
-        self.language = language
-        self.version = version
-        self.compute_type = compute_type
-
 ## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
-                "EventData": _CUSTOM_EVENT,
-                "MetricData": _CUSTOM_METRIC,
-                "RemoteDependencyData": _DEPENDENCY,
-                "ExceptionData": _EXCEPTION,
-                "PageViewData": _PAGE_VIEW,
-                "MessageData": _TRACE,
-                "RequestData": _REQUEST,
-                "PerformanceCounterData": _PERFORMANCE_COUNTER,
-                "AvailabilityData": _AVAILABILITY,
-            }
+    "EventData": _CUSTOM_EVENT,
+    "MetricData": _CUSTOM_METRIC,
+    "RemoteDependencyData": _DEPENDENCY,
+    "ExceptionData": _EXCEPTION,
+    "PageViewData": _PAGE_VIEW,
+    "MessageData": _TRACE,
+    "RequestData": _REQUEST,
+    "PerformanceCounterData": _PERFORMANCE_COUNTER,
+    "AvailabilityData": _AVAILABILITY,
+}
 
 # Exception categories
 class _exception_categories(Enum):
