@@ -26,6 +26,7 @@ OPTIONAL ENV VARS:
 
 # [START text_authoring_delete_trained_model]
 import os
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.ai.textanalytics.authoring import TextAuthoringClient
 
@@ -43,24 +44,11 @@ def sample_delete_trained_model():
     # project-scoped client
     project_client = client.get_project_client(project_name)
 
-    # capture raw HTTP status via pipeline hook
-    captured = {}
-
-    def capture_response(pipeline_response):
-        captured["status_code"] = pipeline_response.http_response.status_code
-
-    # delete trained model (synchronous call)
-    project_client.trained_model.delete_trained_model(
-        trained_model_label,
-        raw_response_hook=capture_response,
-    )
-
-    # Print response status (204 expected on success)
-    status = captured.get("status_code")
-    print("=== Delete Trained Model ===")
-    print(f"Project: {project_name}")
-    print(f"Trained Model Label: {trained_model_label}")
-    print(f"HTTP Status: {status}")  # 204 No Content on success
+    try:
+        project_client.trained_model.delete_trained_model(trained_model_label)
+        print("Result: Deleted successfully")
+    except HttpResponseError as e:
+        print(f"Delete failed: {e.message}")
 
 
 # [END text_authoring_delete_trained_model]
