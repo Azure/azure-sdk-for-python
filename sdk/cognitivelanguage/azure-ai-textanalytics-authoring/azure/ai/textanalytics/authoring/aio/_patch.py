@@ -12,7 +12,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from ._client import TextAuthoringClient as AuthoringClientGenerated
 from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
-from .operations._patch import ProjectOperations, DeploymentOperations, ExportedModelOperations, TrainedModelOperations
 
 from ._configuration import TextAuthoringProjectClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
@@ -22,20 +21,8 @@ if TYPE_CHECKING:
 
 
 class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
-    """Custom TextAuthoringProjectClient that bypasses generated __init__
-    and ensures project_name is mandatory.
-    """
 
-    #: Deployment operations group
-    deployment: DeploymentOperations
-    #: Exported model operations group
-    exported_model: ExportedModelOperations
-    #: Project operations group
-    project: ProjectOperations
-    #: Trained model operations group
-    trained_model: TrainedModelOperations
-
-    def __init__(  # pylint: disable=super-init-not-called
+    def __init__(
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
@@ -55,50 +42,9 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
             Note that overriding this default value may result in unsupported behavior.
         :keyword str project_name: The name of the project to scope operations. Required.
         """
-        _endpoint = "{Endpoint}/language"
-        self._config = TextAuthoringProjectClientConfiguration(
-            endpoint=endpoint, credential=credential, project_name=project_name, **kwargs
-        )
-
         if api_version is not None:
             kwargs["api_version"] = api_version
-
-        _policies = kwargs.pop("policies", None)
-        if _policies is None:
-            _policies = [
-                policies.RequestIdPolicy(**kwargs),
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.proxy_policy,
-                policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
-                self._config.retry_policy,
-                self._config.authentication_policy,
-                self._config.custom_hook_policy,
-                self._config.logging_policy,
-                policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                self._config.http_logging_policy,
-            ]
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
-
-        # Assign patched operation groups with project_name
-        self.deployment = DeploymentOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
-        self.project = ProjectOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
-        self.exported_model = ExportedModelOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
-        self.trained_model = TrainedModelOperations(
-            self._client, self._config, self._serialize, self._deserialize, project_name=project_name
-        )
+        super().__init__(endpoint=endpoint, credential=credential, project_name=project_name,**kwargs)
 
 
 class TextAuthoringClient(AuthoringClientGenerated):

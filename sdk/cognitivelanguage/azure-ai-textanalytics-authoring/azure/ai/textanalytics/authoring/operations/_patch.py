@@ -7,11 +7,9 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from ._project_op_patch import ProjectOperations
-from ._trained_model_op_patch import TrainedModelOperations
-from ._deployment_op_patch import DeploymentOperations
-from ._exported_model_op_patch import ExportedModelOperations
+from typing import List
 
+__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
 
 def patch_sdk():
     """Do not remove from this file.
@@ -19,6 +17,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
-
-__all__ = ["ProjectOperations", "DeploymentOperations", "ExportedModelOperations", "TrainedModelOperations"]

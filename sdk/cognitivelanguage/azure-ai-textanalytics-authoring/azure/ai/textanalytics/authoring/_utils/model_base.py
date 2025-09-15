@@ -22,7 +22,7 @@ import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import xml.etree.ElementTree as ET
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping
 from typing_extensions import Self
 import isodate
 from azure.core.exceptions import DeserializationError
@@ -640,7 +640,7 @@ class Model(_MyMutableMapping):
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
-        return super().__new__(cls) # pylint:disable=no-value-for-parameter
+        return super().__new__(cls)
 
     def __init_subclass__(cls, discriminator: typing.Optional[str] = None) -> None:
         for base in cls.__bases__:
