@@ -829,7 +829,6 @@ class DataLakeFileClient(PathClient):
             treat the file data as CSV data formatted in the default dialect. This can be overridden with
             a custom DelimitedTextDialect, or DelimitedJsonDialect or "ParquetDialect" (passed as a string or enum).
             These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
-            These dialects can be passed through their respective classes, the QuickQueryDialect enum or as a string.
         :paramtype file_format:
             ~azure.storage.filedatalake.DelimitedTextDialect or ~azure.storage.filedatalake.DelimitedJsonDialect or
             ~azure.storage.filedatalake.QuickQueryDialect or str
