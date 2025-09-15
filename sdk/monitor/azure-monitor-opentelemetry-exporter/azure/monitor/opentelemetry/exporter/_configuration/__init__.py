@@ -7,10 +7,8 @@ from threading import Lock
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_CHANGE_URL,
-    _ONE_SETTINGS_CONFIG_URL,
 )
-from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
+from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 # Set up logger
@@ -46,12 +44,14 @@ class _ConfigurationManager(metaclass=Singleton):
         self._callbacks = []
         self._initialized = False
 
-    def initialize(self):
+    def initialize(self, **kwargs):
         """Initialize the ConfigurationManager and start the configuration worker."""
         with self._state_lock:
             if self._initialized:
-                logger.warning("ConfigurationManager is already initialized.")
                 return
+            
+            # Fill the configuration profile with the initializer's parameters
+            _ConfigurationProfile.fill(**kwargs)
                 
             # Lazy import to avoid circular import
             from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
@@ -137,127 +137,4 @@ class _ConfigurationManager(metaclass=Singleton):
         query_dict = query_dict or {}
         headers = {}
 
-        # Read current state atomically
-        with self._state_lock:
-            current_state = self._current_state
-            if current_state.etag:
-                headers["If-None-Match"] = current_state.etag
-            if current_state.refresh_interval:
-                headers["x-ms-onesetinterval"] = str(current_state.refresh_interval)
-
-        # Make the OneSettings request
-        response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
-
-        # Prepare new state updates
-        new_state_updates = {}
-        if response.etag is not None:
-            new_state_updates['etag'] = response.etag
-        if response.refresh_interval and response.refresh_interval > 0:
-            new_state_updates['refresh_interval'] = response.refresh_interval  # type: ignore
-
-        if response.status_code == 304:
-            # Not modified: Only update etag and refresh interval below
-            pass
-        # Handle version and settings updates
-        elif response.settings and response.version is not None:
-            needs_config_fetch = False
-            with self._state_lock:
-                current_state = self._current_state
-
-                if response.version > current_state.version_cache:
-                    # Version increase: new config available
-                    needs_config_fetch = True
-                elif response.version < current_state.version_cache:
-                    # Version rollback: Erroneous state
-                    logger.warning("Fetched version is lower than cached version. No configurations updated.")
-                    needs_config_fetch = False
-                else:
-                    # Version unchanged: No new config
-                    needs_config_fetch = False
-
-            # Fetch config
-            if needs_config_fetch:
-                config_response = make_onesettings_request(_ONE_SETTINGS_CONFIG_URL, query_dict)
-                if config_response.status_code == 200 and config_response.settings:
-                    # Validate that the versions from change and config match
-                    if config_response.version == response.version:
-                        new_state_updates.update({
-                            'version_cache': response.version,  # type: ignore
-                            'settings_cache': config_response.settings  # type: ignore
-                        })
-                    else:
-                        logger.warning("Version mismatch between change and config responses." \
-                        "No configurations updated.")
-                        # We do not update etag to allow retry on next call
-                        new_state_updates.pop('etag', None)
-                else:
-                    logger.warning("Unexpected response status: %d", config_response.status_code)
-                    # We do not update etag to allow retry on next call
-                    new_state_updates.pop('etag', None)
-        else:
-            # No settings or version provided
-            logger.warning("No settings or version provided in config response. Config not updated.")
-
-
-        notify_callbacks = False
-        current_refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
-        state_for_callbacks = None
-
-        # Atomic state update
-        with self._state_lock:
-            latest_state = self._current_state  # Always use latest state
-            self._current_state = latest_state.with_updates(**new_state_updates)
-            current_refresh_interval = self._current_state.refresh_interval
-            if 'settings_cache' in new_state_updates:
-                notify_callbacks = True
-                state_for_callbacks = self._current_state
-
-        # Handle configuration updates throughout the SDK
-        if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
-            self._notify_callbacks(state_for_callbacks.settings_cache)
-
-        return current_refresh_interval
-
-    def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
-        """Get current settings cache."""
-        if not self._initialized:
-            return {}
-        with self._state_lock:
-            return self._current_state.settings_cache.copy()  # type: ignore
-
-    def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
-        """Get current version."""
-        if not self._initialized:
-            return -1
-        with self._state_lock:
-            return self._current_state.version_cache  # type: ignore
-
-    def _cleanup(self) -> None:
-        """Clean up resources and reset state."""
-        self._configuration_worker = None
-        self._initialized = False
-        self._callbacks.clear()
-
-    def shutdown(self) -> bool:
-        """Shutdown the configuration worker."""
-        with self._state_lock:
-            if not self._initialized:
-                return False
-                
-            shutdown_success = False
-            try:
-                if self._configuration_worker:
-                    self._configuration_worker.shutdown()
-                shutdown_success = True  # Only set success after actual shutdown or when no worker exists
-            except Exception as ex:  # pylint: disable=broad-except
-                logger.warning("Error during configuration worker shutdown: %s", ex)
-            finally:
-                # Always clean up state
-                self._cleanup()
-                
-                # Only clear singleton on successful shutdown
-                if shutdown_success:
-                    if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
-                        del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access
-                        
-            return shutdown_success
+        # R

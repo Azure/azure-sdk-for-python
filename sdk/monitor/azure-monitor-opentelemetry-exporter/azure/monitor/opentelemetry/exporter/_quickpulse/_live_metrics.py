@@ -5,11 +5,13 @@ from typing import Any, Dict, Optional
 
 from opentelemetry.sdk.resources import Resource
 
-from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
+from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpulse_manager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_live_metrics_feature_set,
 )
 from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration._utils import evaluate_feature
+from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATURE_LIVE_METRICS
 
 _logger = logging.getLogger(__name__)
 
@@ -33,12 +35,12 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
     :return: None
     :rtype: None
     """
-    manager = _QuickpulseManager(**kwargs)
-    initialized = manager.initialize()
-    if initialized:
-        # Register the callback that will be invoked on configuration changes
-        # Is a NoOp if _ConfigurationManager not initialized
-        _ConfigurationManager().register_callback(get_quickpulse_configuration_callback)
+    manager = get_quickpulse_manager()
+    initialized = manager.initialize(**kwargs)
+    # if initialized:
+    #     # Register the callback that will be invoked on configuration changes
+    #     # Is a NoOp if _ConfigurationManager not initialized
+    #     _ConfigurationManager().register_callback(get_quickpulse_configuration_callback)
         
     # We can detect feature usage for statsbeat since we are in an opt-in model currently
     # Once we move to live metrics on-by-default, we will have to check for both explicit usage
@@ -54,39 +56,20 @@ def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
     :param settings: Configuration settings from onesettings
     :type settings: Dict[str, str]
     """
-    manager = _QuickpulseManager()
+    manager = get_quickpulse_manager()
     
     # Check if live metrics should be enabled based on configuration
-    live_metrics_enabled = _should_enable_live_metrics(settings)
+    live_metrics_enabled = evaluate_feature(
+        _ONE_SETTINGS_FEATURE_LIVE_METRICS,
+        settings
+    )
     
     if live_metrics_enabled and not manager.is_initialized():
         # Enable live metrics if it's not currently enabled
-        _logger.info("Enabling live metrics based on configuration.")
-        # Initialize using the configuration stored in the manager
         manager.initialize()
     elif not live_metrics_enabled and manager.is_initialized():
         # Disable live metrics if it's currently enabled
-        _logger.info("Disabling live metrics based on configuration.")
         manager.shutdown()
-
-
-def _should_enable_live_metrics(settings: Dict[str, str]) -> bool:
-    """Determine if live metrics should be enabled based on configuration settings.
-    
-    :param settings: Configuration settings from onesettings
-    :type settings: Dict[str, str]
-    :return: True if live metrics should be enabled, False otherwise
-    :rtype: bool
-    """
-    # Check for live metrics configuration settings
-    # This could be based on various configuration keys
-    live_metrics_setting = settings.get("LIVE_METRICS_ENABLED")
-    if live_metrics_setting is not None:
-        return live_metrics_setting.lower() in ("true", "1", "yes", "on")
-    
-    # Default behavior - could be based on other settings or always enabled
-    # For now, default to enabled unless explicitly disabled
-    return True
 
 
 def shutdown_live_metrics() -> bool:
@@ -95,4 +78,5 @@ def shutdown_live_metrics() -> bool:
     :return: True if shutdown was successful, False otherwise
     :rtype: bool
     """
-    return _QuickpulseManager().shutdown()
+    manager = get_quickpulse_manager()
+    return manager.shutdown()

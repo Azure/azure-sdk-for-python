@@ -88,8 +88,43 @@ NUM_CPUS = psutil.cpu_count()
 # pylint: disable=protected-access,too-many-instance-attributes
 class _QuickpulseManager(metaclass=Singleton):
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self) -> None:
         """Initialize the QuickpulseManager singleton.
+        
+        Basic initialization without configuration. Use initialize() method
+        to configure and start the manager with connection parameters.
+        """
+        # Initialize instance attributes. Called only once due to Singleton metaclass.
+        self._lock = threading.Lock()
+        self._initialized: bool = False
+        
+        # Configuration parameters - set during initialize()
+        self._connection_string: Optional[str] = None
+        self._credential = None
+        self._resource: Optional[Resource] = None
+        
+        # Components that depend on configuration - created during initialize()
+        self._base_monitoring_data_point: Optional[MonitoringDataPoint] = None
+        self._meter_provider: Optional[MeterProvider] = None
+        self._meter: Optional[Meter] = None
+        self._exporter: Optional[_QuickpulseExporter] = None
+        self._reader: Optional[_QuickpulseMetricReader] = None
+        
+        # Metric instruments - created during initialize()
+        self._request_duration = None
+        self._dependency_duration = None
+        self._request_rate_counter = None
+        self._request_failed_rate_counter = None
+        self._dependency_rate_counter = None
+        self._dependency_failure_rate_counter = None
+        self._exception_rate_counter = None
+        self._process_memory_gauge_old = None
+        self._process_memory_gauge = None
+        self._process_time_gauge_old = None
+        self._process_time_gauge = None
+
+    def initialize(self, **kwargs: Any) -> bool:
+        """Initialize the QuickpulseManager with configuration parameters.
         
         Expected keyword arguments:
         :param connection_string: The connection string used for your Application Insights resource
@@ -99,54 +134,6 @@ class _QuickpulseManager(metaclass=Singleton):
         :param resource: The OpenTelemetry Resource used for this Python application.
             This is the primary parameter used by the underlying _QuickpulseExporter.
         :type resource: Optional[Resource]
-        """
-        # Initialize instance attributes. Called only once due to Singleton metaclass.
-        self._lock = threading.Lock()
-        self._initialized: bool = False
-        
-        # Extract and store configuration parameters from kwargs
-        self._connection_string: Optional[str] = kwargs.get("connection_string")
-        self._credential = kwargs.get("credential")
-        self._resource: Optional[Resource] = kwargs.get("resource")
-        
-        # Initialize most components during construction
-        # Use provided resource or create default
-        resource = self._resource
-        if not resource:
-            resource = Resource.create({})
-            
-        # Create base monitoring data point
-        part_a_fields = _populate_part_a_fields(resource)
-        id_generator = RandomIdGenerator()
-        self._base_monitoring_data_point = MonitoringDataPoint(
-            version=_get_sdk_version(),
-            # Invariant version 5 indicates filtering is supported
-            invariant_version=5,
-            instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
-            role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
-            machine_name=platform.node(),
-            stream_id=str(id_generator.generate_trace_id()),
-            is_web_app=_is_on_app_service(),
-            performance_collection_supported=True,
-        )
-        
-        # Create meter provider and meter
-        self._meter_provider: Optional[MeterProvider] = MeterProvider(resource=resource)
-        self._meter: Optional[Meter] = self._meter_provider.get_meter("azure_monitor_live_metrics")
-        
-        # Only _reader and _exporter are created during initialize() since they depend on connection parameters
-        self._exporter: Optional[_QuickpulseExporter] = None
-        self._reader: Optional[_QuickpulseMetricReader] = None
-        
-        # Create metric instruments once during construction - these won't change
-        self._create_metric_instruments()
-
-    def initialize(self) -> bool:
-        """Initialize the QuickpulseManager using the configuration set during creation.
-        
-        Uses the configuration parameters (connection_string, credential, resource) that were
-        provided when the manager was created. Configuration is preserved across shutdown/startup
-        cycles, allowing efficient reinitialization without re-specifying parameters.
         
         :return: True if initialization was successful, False otherwise
         :rtype: bool
@@ -157,13 +144,38 @@ class _QuickpulseManager(metaclass=Singleton):
                 _logger.debug("QuickpulseManager is already initialized.")
                 return True
             
-            # Initialize using the configuration stored during creation
+            # Extract and store configuration parameters from kwargs
+            self._connection_string = kwargs.get("connection_string")
+            self._credential = kwargs.get("credential")
+            self._resource = kwargs.get("resource")
+            
+            # Initialize using the configuration parameters
             return self._do_initialize()
 
     def _do_initialize(self) -> bool:
         """Internal initialization method."""
         try:
             _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+            
+            # Use provided resource or create default
+            resource = self._resource
+            if not resource:
+                resource = Resource.create({})
+                
+            # Create base monitoring data point
+            part_a_fields = _populate_part_a_fields(resource)
+            id_generator = RandomIdGenerator()
+            self._base_monitoring_data_point = MonitoringDataPoint(
+                version=_get_sdk_version(),
+                # Invariant version 5 indicates filtering is supported
+                invariant_version=5,
+                instance=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, ""),
+                role_name=part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE, ""),
+                machine_name=platform.node(),
+                stream_id=str(id_generator.generate_trace_id()),
+                is_web_app=_is_on_app_service(),
+                performance_collection_supported=True,
+            )
             
             # Create exporter with explicit parameters
             exporter_kwargs = {}
@@ -176,9 +188,12 @@ class _QuickpulseManager(metaclass=Singleton):
             self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
             self._meter_provider = MeterProvider(
                 metric_readers=[self._reader],
-                resource=self._resource,
+                resource=resource,
             )
             self._meter = self._meter_provider.get_meter("azure_monitor_live_metrics")
+
+            # Create metric instruments
+            self._create_metric_instruments()
 
             # Only set initialized to True after everything succeeds
             self._initialized = True
@@ -192,7 +207,7 @@ class _QuickpulseManager(metaclass=Singleton):
             return False
             
     def _create_metric_instruments(self) -> None:
-        """Create all metric instruments. Called during construction."""
+        """Create all metric instruments. Called during initialization."""
         if not self._meter:
             raise ValueError("Meter must be initialized before creating instruments")
             
@@ -272,6 +287,21 @@ class _QuickpulseManager(metaclass=Singleton):
                 pass
         self._exporter = None
         self._reader = None
+        self._meter_provider = None
+        self._meter = None
+        self._base_monitoring_data_point = None
+        # Reset metric instruments
+        self._request_duration = None
+        self._dependency_duration = None
+        self._request_rate_counter = None
+        self._request_failed_rate_counter = None
+        self._dependency_rate_counter = None
+        self._dependency_failure_rate_counter = None
+        self._exception_rate_counter = None
+        self._process_memory_gauge_old = None
+        self._process_memory_gauge = None
+        self._process_time_gauge_old = None
+        self._process_time_gauge = None
         self._initialized = False
 
     def is_initialized(self) -> bool:
@@ -439,12 +469,6 @@ def _apply_document_filters_from_telemetry_data(data: _TelemetryData, exc_type: 
         # Note that the default case is that the list of document_stream_ids is empty, in which
         # case no filtering is done for the telemetry type and it is sent to all streams
         if stream_ids:
-            document.document_stream_ids = list(stream_ids)
-
-        # Add the generated document to be sent to quickpulse
-        _append_quickpulse_document(document)
-
-# cSpell:enable
             document.document_stream_ids = list(stream_ids)
 
         # Add the generated document to be sent to quickpulse
