@@ -186,9 +186,6 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         if endpoint is not None:
             raise TypeError("Received multiple values for parameter 'endpoint'.")
         endpoint = args[0]
-        if endpoint is not None:
-            raise TypeError("Received multiple values for parameter 'endpoint'.")
-        endpoint = args[0]
     elif len(args) == 2:
         if credential is not None:
             raise TypeError("Received multiple values for parameter 'credential'.")
@@ -325,10 +322,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     def _configuration_refresh(self, client, headers, **kwargs) -> Tuple[bool, List[ConfigurationSetting]]:
         configuration_settings: List[ConfigurationSetting] = []
-        need_refresh, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
+        refreshed_configs, self._refresh_on, configuration_settings = client.refresh_configuration_settings(
             self._selects, self._refresh_on, headers=headers, **kwargs
         )
-        if need_refresh:
+        if refreshed_configs:
             return True, configuration_settings
         return False, []
 
