@@ -5,12 +5,12 @@
 # ------------------------------------
 
 """
-FILE: sample_get_model_evaluation_results.py
+FILE: sample_list_model_evaluation_results.py
 DESCRIPTION:
     This sample demonstrates how to list **model evaluation results** for a trained model
     in a Text Authoring project (document-level metrics).
 USAGE:
-    python sample_get_model_evaluation_results.py
+    python sample_list_model_evaluation_results.py
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
     AZURE_CLIENT_ID
@@ -35,7 +35,7 @@ from azure.ai.textanalytics.authoring.models import (
 )
 
 
-def sample_get_model_evaluation_results():
+def sample_list_model_evaluation_results():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -47,7 +47,7 @@ def sample_get_model_evaluation_results():
 
     # trained-model–scoped call (pager of document-level evaluation results)
     project_client = client.get_project_client(project_name)
-    results = project_client.trained_model.get_model_evaluation_results(
+    results = project_client.trained_model.list_model_evaluation_results(
         trained_model_label,
         string_index_type=StringIndexType.UTF16_CODE_UNIT,
     )
@@ -73,7 +73,7 @@ def sample_get_model_evaluation_results():
 
 
 def main():
-    sample_get_model_evaluation_results()
+    sample_list_model_evaluation_results()
 
 
 if __name__ == "__main__":

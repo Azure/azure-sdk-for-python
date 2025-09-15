@@ -39,7 +39,7 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
         """
         if api_version is not None:
             kwargs["api_version"] = api_version
-        super().__init__(endpoint=endpoint, credential=credential, project_name=project_name,**kwargs)
+        super().__init__(endpoint=endpoint, credential=credential, project_name=project_name, **kwargs)
 
 
 class TextAuthoringClient(AuthoringClientGenerated):

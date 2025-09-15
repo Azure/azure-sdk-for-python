@@ -2520,8 +2520,8 @@ class ExportedCustomMultiLabelClassificationProjectAsset(
 class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disable=name-too-long
     """Represents an exported document for a custom single-label classification project.
 
-    :ivar class_property: The class of the documents.
-    :vartype class_property: ~azure.ai.textanalytics.authoring.models.ExportedDocumentClass
+    :ivar document_class: The class of the documents.
+    :vartype document_class: ~azure.ai.textanalytics.authoring.models.ExportedDocumentClass
     :ivar location: The location of the document in the storage.
     :vartype location: str
     :ivar language: Represents the document language. This is BCP-47 representation of a language.
@@ -2531,7 +2531,7 @@ class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disabl
     :vartype dataset: str
     """
 
-    class_property: Optional["_models.ExportedDocumentClass"] = rest_field(
+    document_class: Optional["_models.ExportedDocumentClass"] = rest_field(
         name="class", visibility=["read", "create", "update", "delete", "query"]
     )
     """The class of the documents."""
@@ -2547,7 +2547,7 @@ class ExportedCustomSingleLabelClassificationDocument(_Model):  # pylint: disabl
     def __init__(
         self,
         *,
-        class_property: Optional["_models.ExportedDocumentClass"] = None,
+        document_class: Optional["_models.ExportedDocumentClass"] = None,
         location: Optional[str] = None,
         language: Optional[str] = None,
         dataset: Optional[str] = None,

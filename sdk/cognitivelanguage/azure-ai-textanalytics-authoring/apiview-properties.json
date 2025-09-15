@@ -175,8 +175,8 @@
         "azure.ai.textanalytics.authoring.aio.operations.TrainedModelOperations.begin_evaluate_model": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.evaluateModel",
         "azure.ai.textanalytics.authoring.operations.TrainedModelOperations.begin_load_snapshot": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.loadSnapshot",
         "azure.ai.textanalytics.authoring.aio.operations.TrainedModelOperations.begin_load_snapshot": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.loadSnapshot",
-        "azure.ai.textanalytics.authoring.operations.TrainedModelOperations.get_model_evaluation_results": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.getModelEvaluationResults",
-        "azure.ai.textanalytics.authoring.aio.operations.TrainedModelOperations.get_model_evaluation_results": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.getModelEvaluationResults",
+        "azure.ai.textanalytics.authoring.operations.TrainedModelOperations.list_model_evaluation_results": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.getModelEvaluationResults",
+        "azure.ai.textanalytics.authoring.aio.operations.TrainedModelOperations.list_model_evaluation_results": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.getModelEvaluationResults",
         "azure.ai.textanalytics.authoring.operations.TrainedModelOperations.get_model_evaluation_summary": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.getModelEvaluationSummary",
         "azure.ai.textanalytics.authoring.aio.operations.TrainedModelOperations.get_model_evaluation_summary": "Language.TextAuthingClientCustomizations.TextAuthoringProjectClient.TrainedModelOperations.getModelEvaluationSummary"
     }

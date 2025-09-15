@@ -60,12 +60,12 @@ class TestConversationsCaseAsync(AzureRecordedTestCase):
                 ],
                 documents=[
                     ExportedCustomSingleLabelClassificationDocument(
-                        class_property=ExportedDocumentClass(category="Date"),
+                        document_class=ExportedDocumentClass(category="Date"),
                         location="01.txt",
                         language="en",
                     ),
                     ExportedCustomSingleLabelClassificationDocument(
-                        class_property=ExportedDocumentClass(category="LenderName"),
+                        document_class=ExportedDocumentClass(category="LenderName"),
                         location="02.txt",
                         language="en",
                     ),

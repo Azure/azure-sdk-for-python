@@ -5,12 +5,12 @@
 # ------------------------------------
 
 """
-FILE: sample_get_model_evaluation_results_async.py
+FILE: sample_list_model_evaluation_results_async.py
 DESCRIPTION:
     This sample demonstrates how to list **model evaluation results** for a trained model
     in a Text Authoring project (document-level metrics) — async version.
 USAGE:
-    python sample_get_model_evaluation_results_async.py
+    python sample_list_model_evaluation_results_async.py
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
     AZURE_CLIENT_ID
@@ -36,7 +36,7 @@ from azure.ai.textanalytics.authoring.models import (
 )
 
 
-async def sample_get_model_evaluation_results_async():
+async def sample_list_model_evaluation_results_async():
     # settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -47,7 +47,7 @@ async def sample_get_model_evaluation_results_async():
     async with TextAuthoringClient(endpoint, credential=credential) as client:
         # trained-model–scoped call (async pager of document-level evaluation results)
         project_client = client.get_project_client(project_name)
-        results = project_client.trained_model.get_model_evaluation_results(
+        results = project_client.trained_model.list_model_evaluation_results(
             trained_model_label,
             string_index_type=StringIndexType.UTF16_CODE_UNIT,
         )
@@ -73,7 +73,7 @@ async def sample_get_model_evaluation_results_async():
 
 
 async def main():
-    await sample_get_model_evaluation_results_async()
+    await sample_list_model_evaluation_results_async()
 
 
 if __name__ == "__main__":

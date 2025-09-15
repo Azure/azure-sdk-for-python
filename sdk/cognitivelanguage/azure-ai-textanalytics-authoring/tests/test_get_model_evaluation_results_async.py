@@ -33,7 +33,7 @@ class TestTextAuthoringGetModelEvaluationResultsAsync(TestTextAuthoring):
 
             # Trained-model–scoped call
             project_client = client.get_project_client(project_name)
-            results = project_client.trained_model.get_model_evaluation_results(
+            results = project_client.trained_model.list_model_evaluation_results(
                 trained_model_label,
                 string_index_type="UTF16CodeUnit",
             )
