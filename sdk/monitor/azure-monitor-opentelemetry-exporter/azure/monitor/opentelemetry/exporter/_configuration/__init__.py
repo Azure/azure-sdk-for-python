@@ -40,26 +40,32 @@ class _ConfigurationManager(metaclass=Singleton):
 
     def __init__(self):
         """Initialize the ConfigurationManager instance."""
-
         self._configuration_worker = None
         self._state_lock = Lock()  # Single lock for all state
         self._current_state = _ConfigurationState()
         self._callbacks = []
-        self._initialize_worker()
+        self._initialized = False
 
-    def _initialize_worker(self):
+    def initialize(self):
         """Initialize the ConfigurationManager and start the configuration worker."""
-        # Lazy import to avoid circular import
-        from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
-
-        # Get initial refresh interval from state
         with self._state_lock:
+            if self._initialized:
+                logger.warning("ConfigurationManager is already initialized.")
+                return
+                
+            # Lazy import to avoid circular import
+            from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
+
+            # Get initial refresh interval from current state
             initial_refresh_interval = self._current_state.refresh_interval
 
-        self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            self._initialized = True
 
     def register_callback(self, callback):
         # Register a callback to be invoked when configuration changes.
+        if not self._initialized:
+            return
         self._callbacks.append(callback)
 
     def _notify_callbacks(self, settings: Dict[str, str]):
@@ -126,6 +132,8 @@ class _ConfigurationManager(metaclass=Singleton):
             atomically using immutable state objects. This prevents race conditions where
             different threads might observe inconsistent combinations of these values.
         """
+        if not self._initialized:
+            return _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
         query_dict = query_dict or {}
         headers = {}
 
@@ -212,19 +220,44 @@ class _ConfigurationManager(metaclass=Singleton):
 
     def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
         """Get current settings cache."""
+        if not self._initialized:
+            return {}
         with self._state_lock:
             return self._current_state.settings_cache.copy()  # type: ignore
 
     def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
         """Get current version."""
+        if not self._initialized:
+            return -1
         with self._state_lock:
             return self._current_state.version_cache  # type: ignore
 
-    def shutdown(self) -> None:
+    def _cleanup(self) -> None:
+        """Clean up resources and reset state."""
+        self._configuration_worker = None
+        self._initialized = False
+        self._callbacks.clear()
+
+    def shutdown(self) -> bool:
         """Shutdown the configuration worker."""
-        if self._configuration_worker:
-            self._configuration_worker.shutdown()
-            self._configuration_worker = None
-        # Clear the singleton instance from the metaclass
-        if self.__class__ in Singleton._instances:  # pylint: disable=protected-access
-            del Singleton._instances[self.__class__]  # pylint: disable=protected-access
+        with self._state_lock:
+            if not self._initialized:
+                return False
+                
+            shutdown_success = False
+            try:
+                if self._configuration_worker:
+                    self._configuration_worker.shutdown()
+                shutdown_success = True  # Only set success after actual shutdown or when no worker exists
+            except Exception as ex:  # pylint: disable=broad-except
+                logger.warning("Error during configuration worker shutdown: %s", ex)
+            finally:
+                # Always clean up state
+                self._cleanup()
+                
+                # Only clear singleton on successful shutdown
+                if shutdown_success:
+                    if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
+                        del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access
+                        
+            return shutdown_success
