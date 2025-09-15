@@ -676,7 +676,7 @@ class ServiceBusMessageBatch(object):
         self._size = size_after_add
         self._count += 1
         self._messages.append(outgoing_sb_message)
-        
+
         if self._count == 1:  # Populate properties on the batch envelope from the first message
             if outgoing_sb_message.message_id or outgoing_sb_message.session_id:
                 properties: List[Optional[str]] = [None] * 13
