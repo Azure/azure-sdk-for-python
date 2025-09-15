@@ -265,6 +265,8 @@ class sphinx(Check):
                 logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
                 return 1
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,

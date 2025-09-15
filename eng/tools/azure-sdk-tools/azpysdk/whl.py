@@ -41,13 +41,8 @@ class whl(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
             print(f"Invoking check with {executable}")
-            dev_requirements = os.path.join(pkg, "dev_requirements.txt")
 
-            if os.path.exists(dev_requirements):
-                print(f"Installing dev_requirements at {dev_requirements}")
-                install_into_venv(executable, [f"{dev_requirements}"], pkg)
-            else:
-                print("Skipping installing dev_requirements")
+            self.install_dev_reqs(executable, args, pkg)
 
             create_package_and_install(
                 distribution_directory=staging_directory,
