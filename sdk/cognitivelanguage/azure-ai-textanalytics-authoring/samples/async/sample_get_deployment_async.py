@@ -61,12 +61,6 @@ async def sample_get_deployment_async():
             for resource in deployment.assigned_resources:
                 print(f"  Resource ID: {resource.resource_id}")
                 print(f"  Region: {resource.region}")
-                if resource.assigned_aoai_resource:
-                    aoai = resource.assigned_aoai_resource
-                    print("  AOAI Resource:")
-                    print(f"    Kind: {aoai.kind}")
-                    print(f"    Resource ID: {aoai.resource_id}")
-                    print(f"    Deployment Name: {aoai.deployment_name}")
 
 
 # [END text_authoring_get_deployment_async]
