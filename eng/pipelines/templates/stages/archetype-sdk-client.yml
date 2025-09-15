@@ -40,7 +40,7 @@ parameters:
     default: true
   - name: DevFeedName
     type: string
-    default: public/azure-sdk-for-python
+    default: internal/azure-sdk-for-python-pr
   - name: PublicFeed
     type: string
     default: 'PyPi'
