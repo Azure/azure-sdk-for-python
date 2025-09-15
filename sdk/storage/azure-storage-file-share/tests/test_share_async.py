@@ -1946,8 +1946,8 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         )
         start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
         expiry = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        user_delegation_key_1 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
-        user_delegation_key_2 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key_1 = await service.get_user_delegation_key(start=start, expiry=expiry)
+        user_delegation_key_2 = await service.get_user_delegation_key(start=start, expiry=expiry)
 
         # Assert key1 is valid
         assert user_delegation_key_1.signed_oid is not None
@@ -1985,7 +1985,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         )
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
-        user_delegation_key = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key = await service.get_user_delegation_key(start=start, expiry=expiry)
         token = await token_credential.get_token("https://storage.azure.com/.default")
         user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
 
