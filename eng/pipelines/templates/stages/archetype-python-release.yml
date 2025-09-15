@@ -5,7 +5,7 @@ parameters:
   ServiceDirectory: 'not-specified'
   DependsOn: Build
   DocArtifact: 'documentation'
-  DevFeedName: 'public/azure-sdk-for-python'
+  DevFeedName: 'internal/azure-sdk-for-python-pr'
   PublicFeed: PyPi
   PublicPublishEnvironment: package-publish
   TargetDocRepoOwner: ''
