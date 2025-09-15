@@ -24,7 +24,7 @@ class TestSqlManagementRestorableDroppedManagedDatabasesOperations(AzureMgmtReco
         response = self.client.restorable_dropped_managed_databases.list_by_instance(
             resource_group_name=resource_group.name,
             managed_instance_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-05-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementRestorableDroppedManagedDatabasesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             restorable_dropped_database_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2021-05-01-preview",
         )
 
         # please add some check logic here by yourself

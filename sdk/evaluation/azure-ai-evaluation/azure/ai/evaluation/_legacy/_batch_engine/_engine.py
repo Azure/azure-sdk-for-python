@@ -20,15 +20,31 @@ from concurrent.futures import Executor
 from functools import partial
 from contextlib import contextmanager
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, Final, Generator, Mapping, MutableMapping, Optional, Sequence, Set, Tuple, cast
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Final,
+    Generator,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    cast,
+    Literal,
+)
 from uuid import uuid4
 
+from ._config import BatchEngineConfig
 from ._utils import DEFAULTS_KEY, get_int_env_var, get_value_from_path, is_async_callable
 from ._status import BatchStatus
 from ._result import BatchResult, BatchRunDetails, BatchRunError, TokenMetrics
 from ._run_storage import AbstractRunStorage, NoOpRunStorage
-from .._common._logging import log_progress, NodeLogManager
-from ..._exceptions import ErrorBlame
+from .._common._logging import log_progress, logger, NodeLogManager
+from ..._exceptions import ErrorBlame, EvaluationException
 from ._exceptions import (
     BatchEngineCanceledError,
     BatchEngineError,
@@ -54,30 +70,25 @@ class BatchEngine:
         self,
         func: Callable,
         *,
+        config: BatchEngineConfig,
         storage: Optional[AbstractRunStorage] = None,
-        batch_timeout_sec: Optional[int] = None,
-        line_timeout_sec: Optional[int] = None,
-        max_worker_count: Optional[int] = None,
         executor: Optional[Executor] = None,
     ):
         """Create a new batch engine instance
 
         :param Callable func: The function to run the flow
+        :param BatchEngineConfig config: The configuration for the batch engine
         :param Optional[AbstractRunStorage] storage: The storage to store execution results
-        :param Optional[int] batch_timeout_sec: The timeout of batch run in seconds
-        :param Optional[int] line_timeout_sec: The timeout of each line in seconds
-        :param Optional[int] max_worker_count: The concurrency limit of batch run
         :param Optional[Executor] executor: The executor to run the flow (if needed)
         """
 
         self._func: Callable = func
+        self._config: BatchEngineConfig = config
         self._storage: AbstractRunStorage = storage or NoOpRunStorage()
 
-        # TODO ralphe: Consume these from the batch context/config instead of from
-        #              kwargs or (even worse) environment variables
-        self._batch_timeout_sec = batch_timeout_sec or get_int_env_var("PF_BATCH_TIMEOUT_SEC")
-        self._line_timeout_sec = line_timeout_sec or get_int_env_var("PF_LINE_TIMEOUT_SEC", 600)
-        self._max_worker_count = max_worker_count or get_int_env_var("PF_WORKER_COUNT") or MAX_WORKER_COUNT
+        self._batch_timeout_sec = self._config.batch_timeout_seconds
+        self._line_timeout_sec = self._config.line_timeout_seconds
+        self._max_worker_count = self._config.max_concurrency
 
         self._executor: Optional[Executor] = executor
         self._is_canceled: bool = False
@@ -85,15 +96,13 @@ class BatchEngine:
     async def run(
         self,
         data: Sequence[Mapping[str, Any]],
-        column_mapping: Mapping[str, str],
+        column_mapping: Optional[Mapping[str, str]],
         *,
         id: Optional[str] = None,
         max_lines: Optional[int] = None,
     ) -> BatchResult:
         if not data:
             raise BatchEngineValidationError("Please provide a non-empty data mapping.")
-        if not column_mapping:
-            raise BatchEngineValidationError("The column mapping is required.")
 
         start_time = datetime.now(timezone.utc)
 
@@ -105,6 +114,8 @@ class BatchEngine:
             id = id or str(uuid4())
             result: BatchResult = await self._exec_in_task(id, batch_inputs, start_time)
             return result
+        except EvaluationException:
+            raise
         except Exception as ex:
             raise BatchEngineError(
                 "Unexpected error while running the batch run.", blame=ErrorBlame.SYSTEM_ERROR
@@ -114,20 +125,58 @@ class BatchEngine:
         # TODO ralphe: Make sure this works
         self._is_canceled = True
 
-    @staticmethod
     def _apply_column_mapping(
+        self,
+        data: Sequence[Mapping[str, Any]],
+        column_mapping: Optional[Mapping[str, str]],
+        max_lines: Optional[int],
+    ) -> Sequence[Mapping[str, str]]:
+
+        resolved_column_mapping: Mapping[str, str] = self._resolve_column_mapping(column_mapping)
+        resolved_column_mapping.update(self._generate_defaults_for_column_mapping())
+        return self._apply_column_mapping_to_lines(data, resolved_column_mapping, max_lines)
+
+    def _resolve_column_mapping(
+        self,
+        column_mapping: Optional[Mapping[str, str]],
+    ) -> Mapping[str, str]:
+        parameters = inspect.signature(self._func).parameters
+        default_column_mapping: Dict[str, str] = {
+            name: f"${{data.{name}}}"
+            for name, value in parameters.items()
+            if name not in ["self", "cls", "args", "kwargs"]
+        }
+        resolved_mapping: Dict[str, str] = default_column_mapping.copy()
+
+        for name, value in parameters.items():
+            if value and value.default is not inspect.Parameter.empty:
+                resolved_mapping.pop(name)
+
+        resolved_mapping.update(column_mapping or {})
+        return resolved_mapping
+
+    def _generate_defaults_for_column_mapping(self) -> Mapping[Literal["$defaults$"], Any]:
+
+        return {
+            DEFAULTS_KEY: {
+                name: value.default
+                for name, value in inspect.signature(self._func).parameters.items()
+                if value.default is not inspect.Parameter.empty
+            }
+        }
+
+    @staticmethod
+    def _apply_column_mapping_to_lines(
         data: Sequence[Mapping[str, Any]],
         column_mapping: Mapping[str, str],
         max_lines: Optional[int],
-    ) -> Sequence[Mapping[str, str]]:
+    ) -> Sequence[Mapping[str, Any]]:
         data = data[:max_lines] if max_lines else data
 
         inputs: Sequence[Mapping[str, Any]] = []
-        line: int = 0
         defaults = cast(Mapping[str, Any], column_mapping.get(DEFAULTS_KEY, {}))
 
-        for input in data:
-            line += 1
+        for line_number, input in enumerate(data, start=1):
             mapped: Dict[str, Any] = {}
             missing_inputs: Set[str] = set()
 
@@ -148,18 +197,18 @@ class BatchEngine:
                     continue
 
                 dict_path = match.group(1)
-                found, value = get_value_from_path(dict_path, input)
+                found, mapped_value = get_value_from_path(dict_path, input)
                 if not found:  # try default value
-                    found, value = get_value_from_path(dict_path, defaults)
+                    found, mapped_value = get_value_from_path(dict_path, defaults)
 
                 if found:
-                    mapped[key] = value
+                    mapped[key] = mapped_value
                 else:
                     missing_inputs.add(dict_path)
 
             if missing_inputs:
                 missing = ", ".join(missing_inputs)
-                raise BatchEngineValidationError(f"Missing inputs for line {line}: '{missing}'")
+                raise BatchEngineValidationError(f"Missing inputs for line {line_number}: '{missing}'")
 
             inputs.append(mapped)
 
@@ -212,10 +261,12 @@ class BatchEngine:
                     end_time=None,
                     tokens=TokenMetrics(0, 0, 0),
                     error=BatchRunError("The line run is not completed.", None),
+                    index=i,
                 )
             )
             for i in range(len(batch_inputs))
         ]
+        self.handle_line_failures(result_details)
 
         for line_result in result_details:
             # Indicate the worst status of the batch run. This works because
@@ -229,9 +280,15 @@ class BatchEngine:
                 metrics.total_tokens += line_result.tokens.total_tokens
 
         if failed_lines and not error:
-            error = BatchEngineRunFailedError(
-                str(floor(failed_lines / len(batch_inputs) * 100)) + f"% of the batch run failed."
+            error_message = f"{floor(failed_lines / len(batch_inputs) * 100)}% of the batch run failed."
+            first_exception: Optional[Exception] = next(
+                (result.error.exception for result in result_details if result.error and result.error.exception),
+                None,
             )
+            if first_exception is not None:
+                error_message += f" {first_exception}"
+
+            error = BatchEngineRunFailedError(error_message)
 
         return BatchResult(
             status=status,
@@ -283,6 +340,18 @@ class BatchEngine:
                 # TODO ralphe: set logger to use here
             )
 
+    def __preprocess_inputs(self, inputs: Mapping[str, Any]) -> Mapping[str, Any]:
+
+        func_params = inspect.signature(self._func).parameters
+
+        has_kwargs = any(p.kind == p.VAR_KEYWORD for p in func_params.values())
+
+        if has_kwargs:
+            return inputs
+        else:
+            filtered_params = {key: value for key, value in inputs.items() if key in func_params}
+            return filtered_params
+
     async def _exec_line_async(
         self,
         run_id: str,
@@ -298,6 +367,7 @@ class BatchEngine:
                 end_time=None,
                 tokens=TokenMetrics(0, 0, 0),
                 error=None,
+                index=index,
             )
 
             try:
@@ -313,13 +383,15 @@ class BatchEngine:
                     #       For now we will just run the function in the current process, but in the future we may
                     #       want to consider running the function in a separate process for isolation reasons.
                     output: Any
+
+                    processed_inputs = self.__preprocess_inputs(inputs)
                     if is_async_callable(self._func):
-                        output = await self._func(**inputs)
+                        output = await self._func(**processed_inputs)
                     else:
                         # to maximize the parallelism, we run the synchronous function in a separate thread
                         # and await its result
                         output = await asyncio.get_event_loop().run_in_executor(
-                            self._executor, partial(self._func, **inputs)
+                            self._executor, partial(self._func, **processed_inputs)
                         )
 
                     # This should in theory never happen but as an extra precaution, let's check if the output
@@ -339,6 +411,24 @@ class BatchEngine:
                 details.end_time = datetime.now(timezone.utc)
 
         return index, details
+
+    @staticmethod
+    def handle_line_failures(run_infos: List[BatchRunDetails], raise_on_line_failure: bool = False):
+        """Handle line failures in batch run"""
+        failed_run_infos: List[BatchRunDetails] = [r for r in run_infos if r.status == BatchStatus.Failed]
+        failed_msg: Optional[str] = None
+        if len(failed_run_infos) > 0:
+            failed_indexes = ",".join([str(r.index) for r in failed_run_infos])
+            first_fail_exception: str = failed_run_infos[0].error.details
+            if raise_on_line_failure:
+                failed_msg = "Flow run failed due to the error: " + first_fail_exception
+                raise Exception(failed_msg)
+
+            failed_msg = (
+                f"{len(failed_run_infos)}/{len(run_infos)} flow run failed, indexes: [{failed_indexes}],"
+                f" exception of index {failed_run_infos[0].index}: {first_fail_exception}"
+            )
+            logger.error(failed_msg)
 
     def _persist_run_info(self, line_results: Sequence[BatchRunDetails]):
         # TODO ralphe: implement?

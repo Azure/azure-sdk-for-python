@@ -391,6 +391,7 @@ class TeamsExtensionUserIdentifier:
 
     def __init__(
         self,
+        *,
         user_id: str,
         tenant_id: str,
         resource_id: str,
@@ -446,7 +447,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
         cloud = CommunicationCloudEnvironment.GCCH
     else:
         raise ValueError("Invalid MRI")
-    return TeamsExtensionUserIdentifier(user_id, tenant_id, resource_id, cloud=cloud)
+    return TeamsExtensionUserIdentifier(user_id=user_id, tenant_id=tenant_id, resource_id=resource_id, cloud=cloud)
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """

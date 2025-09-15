@@ -4,7 +4,6 @@
 
 """End-to-end test.
 """
-
 import time
 import unittest
 import uuid
@@ -80,6 +79,7 @@ class TestSubpartitionCrudAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
         self.client = CosmosClient(self.host, self.masterKey)
+        await self.client.__aenter__()
         self.database_for_test = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):

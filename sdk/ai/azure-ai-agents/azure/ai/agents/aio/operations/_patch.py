@@ -591,6 +591,9 @@ class RunsOperations(RunsOperationsGenerated):
                             thread_id=thread_id, run_id=run.id, tool_outputs=tool_outputs
                         )
                         logger.debug("Tool outputs submitted to run: %s", run2.id)
+            elif isinstance(run.required_action, _models.SubmitToolApprovalAction):
+                logger.warning("Automatic MCP tool approval is not supported.")
+                await self.cancel(thread_id=thread_id, run_id=run.id)
 
             logger.debug("Current run ID: %s with status: %s", run.id, run.status)
 
@@ -2266,7 +2269,7 @@ class VectorStoreFilesOperations(VectorStoreFilesOperationsGenerated):
 
     @distributed_trace_async
     async def delete(self, vector_store_id: str, file_id: str, **kwargs: Any) -> None:
-        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        """Deletes a vector store file. This removes the file-to-store link (does not delete the file
         itself).
 
         :param vector_store_id: Identifier of the vector store.
@@ -2331,6 +2334,18 @@ class MessagesOperations(MessagesOperationsGenerated):
             if text_contents:
                 return text_contents[-1]
         return None
+
+    @distributed_trace_async
+    async def delete(self, thread_id: str, message_id: str, **kwargs: Any) -> None:
+        """Deletes an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        await super()._delete(thread_id=thread_id, message_id=message_id, **kwargs)
 
 
 __all__: List[str] = [

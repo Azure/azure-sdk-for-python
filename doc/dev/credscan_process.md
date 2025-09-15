@@ -67,23 +67,11 @@ Suppressing string values will disable warnings no matter where the string comes
 and inconvenient for lengthy strings. Suppressing warnings in a file is convenient for fake credential files, but
 strings in that file will still trigger warnings if present in another unsuppressed file.
 
-## Correct baselined warnings
-
-In addition to active warning that appear in the [python - aggregate-reports][aggregate_reports] pipeline ouput, there
-are also CredScan warnings that have been suppressed in [eng/python.gdnbaselines][baseline]. This file is a snapshot of
-the active warnings at one point in time; CredScan won't re-raise warnings that have been recorded here.
-
-Ultimately, we hope to remove this baseline file from the repository entirely. If you see any warnings for a package
-that you own in this file, please remove a few at a time from the file so that CredScan will output these warnings in
-the pipeline. Then, resolve them following the steps from the [Correct active warnings](#correct-active-warnings)
-section of this guide.
-
 
 [aggregate_reports]: https://dev.azure.com/azure-sdk/internal/_build?definitionId=1401&_a=summary
 [aggregate_reports_output]: https://dev.azure.com/azure-sdk/internal/_build/results?buildId=1411446&view=logs&j=9e400fad-ff47-5b38-f9dc-cae2431972da&t=8613334a-c306-55ea-63ff-80c6e8e0a0ca
-[baseline]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/python.gdnbaselines
 [ci_scan_output]: https://dev.azure.com/azure-sdk/public/_build/results?buildId=1426258&view=logs&jobId=b70e5e73-bbb6-5567-0939-8415943fadb9&j=bc67675d-56bf-581f-e0a2-208848ba68ca&t=7eee3a58-6120-518b-7fcb-7e943712aa81
 [credscan_doc]: https://aka.ms/credscan
 [devops_doc]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/413/Credential-Scan-Step-in-Pipeline
-[fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
+[fake_credentials]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/fake_credentials.py
 [suppression_file]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/CredScanSuppression.json

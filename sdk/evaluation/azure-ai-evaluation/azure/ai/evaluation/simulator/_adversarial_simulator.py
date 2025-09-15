@@ -8,6 +8,7 @@ import logging
 import random
 from typing import Any, Callable, Dict, List, Optional, Union, cast
 import uuid
+import warnings
 
 from tqdm import tqdm
 
@@ -68,6 +69,14 @@ class AdversarialSimulator:
 
     def __init__(self, *, azure_ai_project: Union[str, AzureAIProject], credential: TokenCredential):
         """Constructor."""
+        warnings.warn(
+            "DEPRECATION NOTE: Azure AI Evaluation SDK has discontinued active development on the AdversarialSimulator class."
+            + " While existing functionality remains available in preview, it is no longer recommended for production workloads or future integration. "
+            + "We recommend users migrate to the AI Red Teaming Agent for future use as it supports full parity of functionality."
+            + " See https://aka.ms/airedteamingagent-sample for details on AI Red Teaming Agent.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         if is_onedp_project(azure_ai_project):
             self.azure_ai_project = azure_ai_project

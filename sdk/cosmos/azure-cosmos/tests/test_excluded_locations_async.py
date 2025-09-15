@@ -10,7 +10,8 @@ import pytest
 import pytest_asyncio
 
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.documents import _OperationType as OperationType
+from azure.cosmos.http_constants import ResourceType
 from test_excluded_locations import (TestDataType, set_test_data_type,
                                      read_item_test_data, write_item_test_data, read_and_write_item_test_data,
                                      verify_endpoint)
@@ -73,6 +74,7 @@ async def setup_and_teardown_async():
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
@@ -340,7 +342,8 @@ class TestExcludedLocationsAsync:
                     await container.delete_item(item_id, PARTITION_KEY_VALUES, excluded_locations=request_excluded_locations)
 
                 # Verify endpoint locations
-                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
+                verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations,
+                                operation_type=OperationType.Delete, resource_type=ResourceType.Document)
 
 if __name__ == "__main__":
     unittest.main()

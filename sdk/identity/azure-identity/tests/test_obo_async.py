@@ -249,7 +249,8 @@ def test_invalid_cert():
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
-async def test_refresh_token(get_token_method):
+@pytest.mark.parametrize("enable_cae", [True, False])
+async def test_refresh_token(get_token_method, enable_cae):
     first_token = "***"
     second_token = first_token * 2
     refresh_token = "refresh-token"
@@ -274,10 +275,15 @@ async def test_refresh_token(get_token_method):
     credential = OnBehalfOfCredential(
         "tenant-id", "client-id", client_secret="secret", user_assertion="assertion", transport=Mock(send=send)
     )
-    token = await getattr(credential, get_token_method)("scope")
+
+    kwargs = {"enable_cae": enable_cae}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+
+    token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == first_token
 
-    token = await getattr(credential, get_token_method)("scope")
+    token = await getattr(credential, get_token_method)("scope", **kwargs)
     assert token.token == second_token
 
     assert requests == 2

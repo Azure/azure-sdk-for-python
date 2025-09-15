@@ -45,6 +45,9 @@ parameters:
     default: false
   - name: OSName
     type: string
+  - name: EnvVars
+    type: object
+    default: {}
 
 jobs:
   - job:
@@ -79,6 +82,13 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+          TokenToUseForAuth: $(azuresdk-github-pat)
+        Paths:
+          - '**'
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -90,29 +100,6 @@ jobs:
       parameters:
         AgentImage: ${{ parameters.OSName }}
 
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.10'
-
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: "azure-template"
-        ServiceDirectory: "template"
-        TestPipeline: ${{ parameters.TestPipeline }}
-
-    - pwsh: |
-        python -m pip install "tools/azure-sdk-tools[build]"
-      displayName: Install build tooling
-
-    - task: PythonScript@0
-      displayName: 'Set Tox Environment'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-        arguments: >-
-          --unsupported="$(UnsupportedToxEnvironments)"
-          --override="$(Run.ToxCustomEnvs)"
-          --team-project="$(System.TeamProject)"
-
     - template: ../steps/build-test.yml
       parameters:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
@@ -123,7 +110,9 @@ jobs:
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
+        TestPipeline: ${{ parameters.TestPipeline }}
         BeforeTestSteps:
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        EnvVars: ${{ parameters.EnvVars }}

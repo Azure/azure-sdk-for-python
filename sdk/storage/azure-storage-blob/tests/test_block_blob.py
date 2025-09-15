@@ -8,6 +8,9 @@ import requests
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
+import os
+import typing
+import pytest
 
 import pytest
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
@@ -85,7 +88,13 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         return blob_client
 
     def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
-        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
+        # In playback mode we don't want to invoke real Azure auth flows. Return a stable fake token
+        # so existing recordings (with sanitization) continue to match.
+        if not self.is_live:
+            return "Bearer FAKE_TOKEN"
+        credential = self.get_credential(BlobServiceClient)
+        token = credential.get_token(resource)
+        return f"Bearer {token.token}"
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
@@ -131,7 +140,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
-            source_data
+            source_data,
+            self.is_live
         )
 
         # Set up destination blob without data
@@ -156,12 +166,13 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             # Assert
             assert destination_blob_data == source_data
         finally:
-            requests.delete(
-                url=base_url,
-                headers=_build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            blob_service_client.delete_container(self.source_container_name)
+            if self.is_live:
+                requests.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+                blob_service_client.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -180,7 +191,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
-            source_data
+            source_data,
+            self.is_live
         )
 
         # Set up destination blob without data
@@ -188,6 +200,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             account_url=self.account_url(storage_account_name, "blob"),
             credential=storage_account_key
         )
+
         destination_blob_client = blob_service_client.get_blob_client(
             container=self.source_container_name,
             blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
@@ -209,12 +222,13 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             destination_blob_data = destination_blob_client.download_blob().readall()
             assert destination_blob_data == source_data
         finally:
-            requests.delete(
-                url=base_url,
-                headers=_build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            blob_service_client.delete_container(self.source_container_name)
+            if self.is_live:
+                requests.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+                blob_service_client.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy

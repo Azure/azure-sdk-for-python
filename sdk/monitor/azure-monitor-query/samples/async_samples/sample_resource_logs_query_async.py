@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 """
@@ -11,7 +12,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) LOGS_RESOURCE_ID - The resource ID. Example: `/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}`
 
-This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
+This example uses DefaultAzureCredential, which requests a token from Microsoft Entra ID.
 For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
 **Note** - Although this example uses pandas to print the response, it's optional and

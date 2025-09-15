@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.msi.v2024_11_30 import ManagedServiceIdentityClient
+from azure.mgmt.msi import ManagedServiceIdentityClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
         response = self.client.federated_identity_credentials.list(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2024-11-30",
+            api_version="2023-01-31",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
                 },
                 "type": "str",
             },
-            api_version="2024-11-30",
+            api_version="2023-01-31",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             resource_name="str",
             federated_identity_credential_resource_name="str",
-            api_version="2024-11-30",
+            api_version="2023-01-31",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestManagedServiceIdentityFederatedIdentityCredentialsOperations(AzureMgmt
             resource_group_name=resource_group.name,
             resource_name="str",
             federated_identity_credential_resource_name="str",
-            api_version="2024-11-30",
+            api_version="2023-01-31",
         )
 
         # please add some check logic here by yourself

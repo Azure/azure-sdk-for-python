@@ -64,7 +64,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _PROMPTY_FILE = "response_completeness.prompty"
     _RESULT_KEY = "response_completeness"
 
-    id = "completeness"
+    id = "azureai://built-in/evaluators/response_completeness"
 
     _MIN_COMPLETENESS_SCORE = 1
     _MAX_COMPLETENESS_SCORE = 5
@@ -73,11 +73,19 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD, **kwargs):
+    def __init__(
+        self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD, credential=None, **kwargs
+    ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
-        super().__init__(model_config=model_config, prompty_file=prompty_path, result_key=self._RESULT_KEY, **kwargs)
+        super().__init__(
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
+            credential=credential,
+            **kwargs,
+        )
 
     @overload
     def __call__(
