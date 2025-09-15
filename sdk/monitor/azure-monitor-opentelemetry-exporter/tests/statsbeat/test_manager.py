@@ -514,6 +514,10 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertIsNone(self.manager._config)
         mock_meter_provider.shutdown.assert_called_once()
         mock_set_shutdown.assert_called_once_with(True)
+        
+        # Verify singleton is cleared by creating a new instance
+        manager2 = StatsbeatManager()
+        self.assertIsNot(self.manager, manager2)
 
     @patch('azure.monitor.opentelemetry.exporter.statsbeat._state.set_statsbeat_shutdown')
     def test_shutdown_meter_provider_exception(self, mock_set_shutdown):
@@ -673,4 +677,3 @@ class TestStatsbeatManager(unittest.TestCase):
         self.assertIsNone(self.manager._metrics)
         self.assertIsNone(self.manager._config)
         mock_meter_provider.shutdown.assert_called_once()
-    
