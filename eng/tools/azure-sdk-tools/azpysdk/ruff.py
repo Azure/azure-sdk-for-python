@@ -6,7 +6,7 @@ from typing import Optional, List
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
-from ci_tools.variables import  set_envvar_defaults, set_envvar_defaults
+from ci_tools.variables import set_envvar_defaults
 from ci_tools.logging import logger
 
 class ruff(Check):
