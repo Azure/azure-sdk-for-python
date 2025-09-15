@@ -40,7 +40,7 @@ class whl(Check):
             pkg = parsed.folder
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
-            print(f"Invoking check with {executable}")
+            logger.info(f"Invoking check with {executable}")
 
             self.install_dev_reqs(executable, args, pkg)
 
