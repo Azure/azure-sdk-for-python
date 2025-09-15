@@ -443,7 +443,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         :paramtype file_property_semantics: Optional[Literal["New", "Restore"]]
         :keyword data: Optional initial data to upload, up to 4MB.
-        :paramtype data: bytes
+        :paramtype data: Optional[bytes]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
