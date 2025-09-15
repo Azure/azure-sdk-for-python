@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0 (2025-09-15)
+## 4.0.0 (2025-09-18)
 
 ### Features Added
 
@@ -19,6 +19,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `Resource` deleted or renamed its instance variable `etag`
   - Model `TrackedResource` deleted or renamed its instance variable `etag`
   - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `integrity_key`
@@ -32,7 +33,7 @@
   - Deleted or renamed model `VaultUsageList`
   - Method `VaultsOperations.begin_create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `VaultsOperations.begin_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `RecoveryServicesClientOperationsMixin`
+  - Deleted or renamed operation group `RecoveryServicesClientOperationsMixin`
 
 ## 3.1.0 (2025-06-03)
 
