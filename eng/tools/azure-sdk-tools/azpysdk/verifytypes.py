@@ -8,11 +8,11 @@ import json
 import pathlib
 
 from typing import Optional, List
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
-from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, in_ci, set_envvar_defaults
+from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.functions import get_pip_command
 from ci_tools.logging import logger
@@ -75,7 +75,7 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
             pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
             if not pytyped_present:
                 logger.error(
-                    f"No py.typed file was found. See aka.ms/python/typing-guide for information."
+                    f"No py.typed file was found. See https://aka.ms/python/typing-guide for information."
                 )
                 return -1.0
         return report["typeCompleteness"]["completenessScore"]
@@ -117,7 +117,7 @@ class verifytypes(Check):
             try:
                 install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
             except CalledProcessError as e:
-                logger.error(f"Failed to install pyright", e)
+                logger.error(f"Failed to install pyright: {e}")
                 return e.returncode
             
             if in_ci():
@@ -146,6 +146,7 @@ class verifytypes(Check):
             try: 
                 subprocess.check_call(commands[:-1]) 
             except subprocess.CalledProcessError:
+                logger.warning("verifytypes reported issues.")
                 pass  # we don't fail on verifytypes, only if type completeness score worsens from main
 
             if in_ci():
