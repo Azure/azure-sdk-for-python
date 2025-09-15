@@ -42,7 +42,6 @@ class TestServiceMetadata(unittest.TestCase):
                     "python": "",
                     "python-mode": "update",
                     "sdkrel:python-sdks-folder": "./sdk/.",
-                    "multiapi": "",
                     "track2": "",
                 },
                 "advanced_options": {
