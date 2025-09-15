@@ -146,8 +146,7 @@ class verifytypes(Check):
             try: 
                 subprocess.check_call(commands[:-1]) 
             except subprocess.CalledProcessError:
-                logger.warning("verifytypes reported issues.")
-                pass  # we don't fail on verifytypes, only if type completeness score worsens from main
+                logger.warning("verifytypes reported issues.") # we don't fail on verifytypes, only if type completeness score worsens from main
 
             if in_ci():
                 # get type completeness score from main
