@@ -65,7 +65,7 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
         )
     except subprocess.CalledProcessError as e:
         if e.returncode != 1:
-            logger.info(
+            logger.error(
                 f"Running verifytypes failed: {e.stderr}. See https://aka.ms/python/typing-guide for information."
             )
             return -1.0
@@ -74,7 +74,7 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
         if check_pytyped:
             pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
             if not pytyped_present:
-                logger.warning(
+                logger.error(
                     f"No py.typed file was found. See aka.ms/python/typing-guide for information."
                 )
                 return -1.0
@@ -139,6 +139,9 @@ class verifytypes(Check):
 
             # get type completeness score from current code
             score_from_current = get_type_complete_score(commands, check_pytyped=True)
+            if (score_from_current == -1.0):
+                results.append(1)
+                continue
 
             try: 
                 subprocess.check_call(commands[:-1]) 
@@ -155,6 +158,7 @@ class verifytypes(Check):
 
                 score_from_main = get_type_complete_score(commands)
                 if (score_from_main == -1.0):
+                    results.append(1)
                     continue
 
                 score_from_main_rounded = round(score_from_main * 100, 1)
