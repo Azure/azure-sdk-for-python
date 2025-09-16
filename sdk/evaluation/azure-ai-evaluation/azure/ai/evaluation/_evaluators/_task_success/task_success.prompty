@@ -4,7 +4,8 @@ description: Evaluates whether a task was successfully completed
 model:
   api: chat
   parameters:
-    max_completion_tokens: 1500
+    max_tokens: 1500
+    temperature: 0.0
     top_p: 1.0
     presence_penalty: 0
     frequency_penalty: 0
@@ -42,6 +43,7 @@ AGENT_RESPONSE: {{response}}
 
 CONVERSATION_HISTORY includes the full dialogue. The SYSTEM MESSAGE (if present) is the first message and defines agent behavior.
 AGENT_RESPONSE is the agent's reply to the latest user query.
+Tool calls and tool results are not visible to the user. The user only sees the agent's final response.
 
 EVALUATION FRAMEWORK
 ====================
@@ -123,21 +125,13 @@ EXPECTED OUTPUT:
 CONVERSATION_HISTORY:
 User: My internet connection keeps dropping. Help me troubleshoot and then upgrade my data plan to unlimited.
 
-Agent: Let me help you with both issues.
-
-First, let's troubleshoot your connection:
+AGENT_RESPONSE:
 [TOOL_CALL] run_network_diagnostic()
 [TOOL_RESULT] Issue found: Router firmware outdated, DNS servers slow
 
-I've identified the problems. Here's what to do:
-1. Update router firmware: Go to 192.168.1.1, login, update firmware to version 2.1.4
-2. Change DNS to 8.8.8.8 and 8.8.4.4
-
-Now for your data plan upgrade:
 [TOOL_CALL] upgrade_plan(customer_id="12345", plan="unlimited")
 [TOOL_RESULT] Plan upgraded successfully. Unlimited data active immediately.
 
-AGENT_RESPONSE:
 Your internet issues are resolved - update firmware and change DNS as instructed. Your unlimited data plan is now active. You should see stable connection and no data limits immediately.
 
 EXPECTED OUTPUT:
@@ -178,7 +172,6 @@ User: My internet connection keeps dropping. Help me troubleshoot and then upgra
 AGENT_RESPONSE:
 [TOOL_CALL] run_network_diagnostic()
 [TOOL_RESULT] Issue found: Router firmware outdated
-
 I found that your router firmware needs updating. You can usually do this through your router's admin panel. Let me know if you need help with the data plan upgrade after you fix the connection.
 
 EXPECTED OUTPUT:
