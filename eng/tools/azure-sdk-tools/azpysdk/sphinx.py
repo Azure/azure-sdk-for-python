@@ -294,7 +294,7 @@ class sphinx(Check):
                         package_dir
                     )
             except CalledProcessError as e:
-                logger.error("Failed to install sphinx:", e)
+                logger.error(f"Failed to install sphinx: {e}")
                 return e.returncode
 
             logger.info(f"Running sphinx against {package_name}")
