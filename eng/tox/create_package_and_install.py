@@ -46,7 +46,7 @@ if __name__ == "__main__":
         "--cache-dir",
         dest="cache_dir",
         help="Location that, if present, will be used as the pip cache directory.",
-        default=None
+        default=None,
     )
 
     parser.add_argument(
@@ -54,14 +54,11 @@ if __name__ == "__main__":
         "--work-dir",
         dest="work_dir",
         help="Location that, if present, will be used as working directory to run pip install.",
-        default=None
+        default=None,
     )
 
     parser.add_argument(
-        "--force-create",
-        dest="force_create",
-        help="Force recreate whl even if it is prebuilt",
-        default=False
+        "--force-create", dest="force_create", help="Force recreate whl even if it is prebuilt", default=False
     )
 
     parser.add_argument(
@@ -75,6 +72,13 @@ if __name__ == "__main__":
         "--pre-download-disabled",
         dest="pre_download_disabled",
         help="During a dev build, we will restore package dependencies from a dev feed before installing them. The presence of this flag disables that behavior.",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--enable-error-logging",
+        dest="enable_error_logging",
+        help="Enable error logging",
         action="store_true",
     )
 
@@ -93,7 +97,5 @@ if __name__ == "__main__":
         force_create=args.force_create,
         package_type=args.package_type,
         pre_download_disabled=args.pre_download_disabled,
+        enable_error_logging=args.enable_error_logging,
     )
-
-
-

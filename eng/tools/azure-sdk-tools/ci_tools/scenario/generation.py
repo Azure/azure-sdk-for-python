@@ -22,6 +22,7 @@ from .managed_virtual_env import ManagedVirtualEnv
 
 from ci_tools.logging import logger
 
+
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
     Empties the venv_directory directory and creates a virtual environment within. Returns the path to the new python executable.
@@ -42,6 +43,7 @@ def create_package_and_install(
     package_type: str,
     pre_download_disabled: bool,
     python_executable: Optional[str] = None,
+    enable_error_logging: bool = True,
 ) -> None:
     """
     Workhorse for singular package installation given a package and a possible prebuilt wheel directory. Handles installation of both package AND dependencies, handling compatibility
@@ -71,7 +73,12 @@ def create_package_and_install(
     target_package = ParsedSetup.from_path(target_setup)
 
     discovered_packages = discover_packages(
-        target_setup, distribution_directory, target_setup, package_type, force_create
+        target_setup,
+        distribution_directory,
+        target_setup,
+        package_type,
+        force_create,
+        enable_error_logging=enable_error_logging,
     )
 
     # ensure that discovered packages are always copied to the distribution directory regardless of other factors
@@ -116,7 +123,7 @@ def create_package_and_install(
                     download_command = [
                         sys.executable,
                         "-m",
-                        "pip", # uv pip doesn't have a download command, so we use the system pip
+                        "pip",  # uv pip doesn't have a download command, so we use the system pip
                         "download",
                         "-d",
                         tmp_dl_folder,
@@ -231,7 +238,12 @@ def replace_dev_reqs(file: str, pkg_root: str, wheel_dir: Optional[str]) -> None
 
 
 def discover_packages(
-    setup_path: str, distribution_directory: str, target_setup: str, package_type: str, force_create: bool
+    setup_path: str,
+    distribution_directory: str,
+    target_setup: str,
+    package_type: str,
+    force_create: bool,
+    enable_error_logging: bool = True,
 ):
     packages = []
     if os.getenv("PREBUILT_WHEEL_DIR") is not None and not force_create:
@@ -247,10 +259,7 @@ def discover_packages(
             exit(1)
     else:
         packages = build_and_discover_package(
-            setup_path,
-            distribution_directory,
-            target_setup,
-            package_type,
+            setup_path, distribution_directory, target_setup, package_type, enable_error_logging=enable_error_logging
         )
     return packages
 
@@ -353,11 +362,13 @@ def build_whl_for_req(req: str, package_path: str, wheel_dir: Optional[str]) -> 
         return req
 
 
-def build_and_discover_package(setup_path: str, dist_dir: str, target_setup: str, package_type):
+def build_and_discover_package(
+    setup_path: str, dist_dir: str, target_setup: str, package_type: str, enable_error_logging: bool = True
+):
     if package_type == "wheel":
-        create_package(setup_path, dist_dir, enable_sdist=False)
+        create_package(setup_path, dist_dir, enable_sdist=False, enable_error_logging=enable_error_logging)
     else:
-        create_package(setup_path, dist_dir, enable_wheel=False)
+        create_package(setup_path, dist_dir, enable_wheel=False, enable_error_logging=enable_error_logging)
 
     prebuilt_packages = [
         f for f in os.listdir(dist_dir) if f.endswith(".whl" if package_type == "wheel" else ".tar.gz")
