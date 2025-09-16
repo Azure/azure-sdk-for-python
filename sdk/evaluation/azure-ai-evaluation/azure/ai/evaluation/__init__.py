@@ -31,6 +31,8 @@ from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._ungrounded_attributes import UngroundedAttributesEvaluator
 from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
+from ._evaluators._tool_selection import ToolSelectionEvaluator
+from ._evaluators._paramater_correctness import ParameterCorrectnessEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
 from ._model_configurations import (
     AzureAIProject,
@@ -131,6 +133,8 @@ __all__ = [
     "CodeVulnerabilityEvaluator",
     "UngroundedAttributesEvaluator",
     "ToolCallAccuracyEvaluator",
+    "ToolSelectionEvaluator",
+    "ParameterCorrectnessEvaluator",
     "AzureOpenAIGrader",
     "AzureOpenAILabelGrader",
     "AzureOpenAIStringCheckGrader",
