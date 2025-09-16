@@ -13,6 +13,7 @@ from ci_tools.logging import logger
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
+PYGITHUB_VERSION = "1.59.0"
 
 class pylint(Check):
     def __init__(self) -> None:
@@ -48,6 +49,7 @@ class pylint(Check):
             logger.info(f"Processing {package_name} for pylint check")
 
             # install dependencies
+            self.install_dev_reqs(executable, args, package_dir)
             try:
                 install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
             except CalledProcessError as e:
@@ -58,7 +60,7 @@ class pylint(Check):
             try:
                 if args.next:
                     # use latest version of pylint
-                    install_into_venv(executable, ["pylint"], package_dir)
+                    install_into_venv(executable, ["pylint", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
             except CalledProcessError as e:

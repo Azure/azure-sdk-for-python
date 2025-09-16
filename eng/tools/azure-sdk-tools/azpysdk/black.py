@@ -46,6 +46,8 @@ class black(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for black check")
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             # install black
             try:
                 install_into_venv(executable, [f"black=={BLACK_VERSION}"], package_dir)
