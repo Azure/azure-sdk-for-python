@@ -198,6 +198,7 @@
     "Avs",
     "azcmagent",
     "azpysdk",
+    "pyenv",
     "azsdk",
     "azurecr",
     "azuremgmtcore",
