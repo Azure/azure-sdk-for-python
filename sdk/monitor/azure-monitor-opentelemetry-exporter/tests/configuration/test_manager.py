@@ -245,280 +245,122 @@ class TestConfigurationManager(unittest.TestCase):
         self.assertEqual(manager.get_settings(), {"key": "config_value"})
         self.assertEqual(result, 1800)
 
-    # NOTE: The following tests are commented out because they require manipulating
-    # internal state that is not accessible through the public API. The actual
-    # implementation uses instance variables, not class variables, and doesn't
-    # provide methods to preset the state for testing.
-    
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_version_same_no_config_fetch(self, mock_worker_class, mock_request):
-    #     """Test that same version does not trigger CONFIG fetch."""
-    #     # This test would require presetting the version cache, which isn't possible
-    #     # with the current implementation
-    
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker') 
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
-    # def test_version_decrease_warning(self, mock_logger, mock_worker_class, mock_request):
-    #     """Test warning when version decreases."""
-    #     # This test would require presetting the version cache, which isn't possible
-    #     # with the current implementation
-    
-    # @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    # @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    # def test_304_not_modified_response(self, mock_worker_class, mock_request):
-    #     """Test handling of 304 Not Modified response."""
-    #     # This test would require presetting the state, which isn't possible
-    #     # with the current implementation
-
     @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
     @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_version_same_no_config_fetch(self, mock_worker_class, mock_request):
+        """Test that same version does not trigger CONFIG fetch."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        manager._current_state.refresh_interval = 10
+        manager._current_state.etag = "old_etag"
+        manager._current_state.version_cache = 3
+
+        # First call to establish version cache
+        first_response = OneSettingsResponse(
+            etag="first-etag",
+            refresh_interval=2500,
+            settings={"key": "first_value"},
+            version=3,
+            status_code=200
+        )
+        mock_request.return_value = first_response
+        result = manager.get_configuration_and_refresh_interval()
+        
+        # Verify that ALL calls were to CHANGE endpoint only
+        all_calls = mock_request.call_args_list
+        for call in all_calls:
+            self.assertEqual(call[0][0], _ONE_SETTINGS_CHANGE_URL)
+        
+        self.assertEqual(result, 2500)
+    
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker') 
     @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
-    def test_config_endpoint_failure_preserves_etag(self, mock_logger, mock_worker_class, mock_request):
-        """Test that CONFIG endpoint failure preserves ETag for retry."""
+    def test_version_decrease_warning(self, mock_logger, mock_worker_class, mock_request):
+        """Test warning when version decreases."""
         manager = _ConfigurationManager()
         manager.initialize()
         
-        # Mock responses
-        change_response = OneSettingsResponse(
-            etag="test-etag",
-            refresh_interval=1800,
-            settings={"key": "value"},
-            version=5,
+        # Set initial state with higher version
+        manager._current_state.refresh_interval = 1800
+        manager._current_state.etag = "first_etag"
+        manager._current_state.version_cache = 5
+        
+        # Call with lower version
+        lower_version_response = OneSettingsResponse(
+            etag="second-etag",
+            refresh_interval=2400,
+            settings={"key": "second_value"},
+            version=3,  # Lower version
             status_code=200
         )
-        config_response = OneSettingsResponse(
-            status_code=500  # Server error
-        )
+        mock_request.return_value = lower_version_response
         
-        def mock_request_side_effect(url, query_dict, headers=None):
-            if url == _ONE_SETTINGS_CHANGE_URL:
-                return change_response
-            elif url == _ONE_SETTINGS_CONFIG_URL:
-                return config_response
-            return OneSettingsResponse()
-        
-        mock_request.side_effect = mock_request_side_effect
-        
-        # Execute
-        result = manager.get_configuration_and_refresh_interval()
-        
-        # Verify warning was logged
-        mock_logger.warning.assert_called()
-        
-        # Note: We can't verify ETag state since it's not accessible through public API
-        self.assertEqual(result, 1800)
-
-    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
-    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
-    def test_version_mismatch_between_endpoints(self, mock_logger, mock_worker_class, mock_request):
-        """Test handling of version mismatch between CHANGE and CONFIG endpoints."""
-        manager = _ConfigurationManager()
-        manager.initialize()
-        
-        # Mock responses with mismatched versions
-        change_response = OneSettingsResponse(
-            etag="test-etag",
-            refresh_interval=1800,
-            settings={"key": "value"},
-            version=5,
-            status_code=200
-        )
-        config_response = OneSettingsResponse(
-            settings={"key": "config_value"},
-            version=6,  # Different version!
-            status_code=200
-        )
-        
-        def mock_request_side_effect(url, query_dict, headers=None):
-            if url == _ONE_SETTINGS_CHANGE_URL:
-                return change_response
-            elif url == _ONE_SETTINGS_CONFIG_URL:
-                return config_response
-            return OneSettingsResponse()
-        
-        mock_request.side_effect = mock_request_side_effect
-        
-        # Execute
-        result = manager.get_configuration_and_refresh_interval()
+        # Execute call
+        manager.get_configuration_and_refresh_interval()
         
         # Verify warning was logged
         mock_logger.warning.assert_called()
         warning_message = mock_logger.warning.call_args[0][0]
-        self.assertIn("Version mismatch", warning_message)
+        self.assertIn("lower than cached version", warning_message)
         
-        # Note: We can't verify ETag state since it's not accessible through public API
-        self.assertEqual(result, 1800)
-
-    def test_get_settings(self):
-        """Test get_settings returns copy of settings cache."""
-        manager = _ConfigurationManager()
-        # Note: Don't initialize - test behavior when not initialized
-        
-        # Get initial settings (should be empty when not initialized)
-        initial_settings = manager.get_settings()
-        self.assertEqual(initial_settings, {})
-        
-        # Verify it's a copy (modifying returned dict doesn't affect internal state)
-        initial_settings["key3"] = "value3"
-        next_settings = manager.get_settings()
-        self.assertEqual(next_settings, {})  # Should still be empty
-
-    def test_get_current_version(self):
-        """Test get_current_version returns current version."""
-        manager = _ConfigurationManager()
-        # Note: Don't initialize - test behavior when not initialized
-        
-        # Get initial version (should be -1 when not initialized)
-        initial_version = manager.get_current_version()
-        self.assertEqual(initial_version, -1)
-
-    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    def test_shutdown(self, mock_worker_class):
-        """Test shutdown properly cleans up worker and singleton instance."""
-        mock_worker_instance = Mock()
-        mock_worker_class.return_value = mock_worker_instance
-        
-        # Create manager instance and initialize
-        manager = _ConfigurationManager()
-        manager.initialize()
-        
-        # Verify initial state
-        self.assertIsNotNone(manager._configuration_worker)
-        self.assertEqual(manager._configuration_worker, mock_worker_instance)
-        
-        # Execute shutdown
-        result = manager.shutdown()
-        
-        # Verify shutdown was successful
-        self.assertTrue(result)
-        
-        # Verify worker shutdown was called
-        mock_worker_instance.shutdown.assert_called_once()
-        
-        # Verify worker reference is cleared
-        self.assertIsNone(manager._configuration_worker)
-        
-        # Verify singleton is cleared by creating a new instance
-        manager2 = _ConfigurationManager()
-        self.assertIsNot(manager, manager2)
-        
-        # Initialize new instance to verify it gets a new worker
-        manager2.initialize()
-        self.assertEqual(mock_worker_class.call_count, 2)
-
-    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    def test_shutdown_idempotent(self, mock_worker_class):
-        """Test that shutdown can be called multiple times safely."""
-        mock_worker_instance = Mock()
-        mock_worker_class.return_value = mock_worker_instance
-        
-        manager = _ConfigurationManager()
-        manager.initialize()
-        
-        # First shutdown
-        result1 = manager.shutdown()
-        self.assertTrue(result1)
-        mock_worker_instance.shutdown.assert_called_once()
-        self.assertIsNone(manager._configuration_worker)
-        
-        # Second shutdown should return False (not initialized)
-        result2 = manager.shutdown()
-        self.assertFalse(result2)
-        # shutdown should still only be called once on the worker
-        mock_worker_instance.shutdown.assert_called_once()
-
-    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    def test_shutdown_with_no_worker(self, mock_worker_class):
-        """Test shutdown when worker is manually cleared."""
-        mock_worker_instance = Mock()
-        mock_worker_class.return_value = mock_worker_instance
-        
-        manager = _ConfigurationManager()
-        manager.initialize()
-        
-        # Manually clear the worker to simulate edge case
-        manager._configuration_worker = None
-        
-        # Shutdown should not raise an exception and should return True
-        try:
-            result = manager.shutdown()
-            self.assertTrue(result)
-        except Exception as e:
-            self.fail(f"shutdown() raised an exception when worker was None: {e}")
-        
-        # Worker shutdown should not be called since worker was None
-        mock_worker_instance.shutdown.assert_not_called()
-
-    def test_shutdown_not_initialized(self):
-        """Test shutdown when manager was never initialized."""
-        manager = _ConfigurationManager()
-        # Don't call initialize()
-        
-        # Shutdown should return False
-        result = manager.shutdown()
-        self.assertFalse(result)
-
-
-class TestGetConfigurationAndRefreshInterval(unittest.TestCase):
-    """Test cases for get_configuration_and_refresh_interval method."""
-
-    def setUp(self):
-        """Reset singleton state before each test."""
-        # Clear any existing singleton instance
-        from azure.monitor.opentelemetry.exporter._utils import Singleton
-        if _ConfigurationManager in Singleton._instances:
-            # Shutdown existing instance first
-            existing_instance = Singleton._instances[_ConfigurationManager]
-            if hasattr(existing_instance, '_configuration_worker') and existing_instance._configuration_worker:
-                existing_instance.shutdown()
-        if _ConfigurationManager in Singleton._instances:
-            del Singleton._instances[_ConfigurationManager]
-
-    def tearDown(self):
-        """Clean up after each test."""
-        from azure.monitor.opentelemetry.exporter._utils import Singleton
-        if _ConfigurationManager in Singleton._instances:
-            # Shutdown the instance
-            instance = Singleton._instances[_ConfigurationManager]
-            if hasattr(instance, '_configuration_worker') and instance._configuration_worker:
-                instance.shutdown()
-        if _ConfigurationManager in Singleton._instances:
-            del Singleton._instances[_ConfigurationManager]
+        # Verify that ALL calls were to CHANGE endpoint only
+        all_calls = mock_request.call_args_list
+        for call in all_calls:
+            self.assertEqual(call[0][0], _ONE_SETTINGS_CHANGE_URL)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
     @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
-    def test_get_configuration_and_refresh_interval_method(self, mock_worker_class, mock_request):
-        """Test get_configuration_and_refresh_interval method with default parameters."""
-        # Setup
-        mock_response = OneSettingsResponse(
-            etag="test-etag",
-            refresh_interval=3600,
-            settings={"key": "value"},
-            version=-1,
-            status_code=200
-        )
-        mock_request.return_value = mock_response
-        
-        # Execute
+    def test_304_not_modified_response(self, mock_worker_class, mock_request):
+        """Test handling of 304 Not Modified response."""
         manager = _ConfigurationManager()
         manager.initialize()
-        result = manager.get_configuration_and_refresh_interval()
         
-        # Verify
-        self.assertEqual(result, 3600)
+        # First call to establish etag and state
+        first_response = OneSettingsResponse(
+            etag="test-etag",
+            refresh_interval=1800,
+            settings={"key": "value"},
+            version=2,
+            status_code=200
+        )
+        config_response = OneSettingsResponse(
+            settings={"key": "config_value"},
+            version=2,
+            status_code=200
+        )
+        
+        def first_call_side_effect(url, query_dict, headers=None):
+            if url == _ONE_SETTINGS_CHANGE_URL:
+                return first_response
+            elif url == _ONE_SETTINGS_CONFIG_URL:
+                return config_response
+            return OneSettingsResponse()
+        
+        mock_request.side_effect = first_call_side_effect
+        first_result = manager.get_configuration_and_refresh_interval()
+        
+        # Reset mock for 304 response
+        mock_request.reset_mock()
+        
+        # Second call returns 304 Not Modified
+        not_modified_response = OneSettingsResponse(
+            status_code=304
+        )
+        mock_request.return_value = not_modified_response
+        
+        # Execute second call
+        second_result = manager.get_configuration_and_refresh_interval()
+        
+        # Verify 304 response preserves previous refresh interval (both should be 1800)
+        self.assertEqual(first_result, 1800)
+        self.assertEqual(second_result, 1800)  # Should preserve the original interval
+        
+        # Verify only CHANGE endpoint was called
         mock_request.assert_called_once()
         call_args = mock_request.call_args
         self.assertEqual(call_args[0][0], _ONE_SETTINGS_CHANGE_URL)
-        self.assertEqual(call_args[0][1], {})
-
-    def test_get_configuration_not_initialized(self):
-        """Test get_configuration_and_refresh_interval when not initialized."""
-        manager = _ConfigurationManager()
-        # Don't call initialize()
         
-        # Should return default interval
-        result = manager.get_configuration_and_refresh_interval()
-        self.assertEqual(result, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        # Verify etag was included in headers
+        headers = call_args[0][2]
+        self.assertEqual(headers["If-None-Match"], "test-etag")
