@@ -8,18 +8,30 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
-    from typing_extensions import NotRequired
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Iterator,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
-from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
+# === Third-party ===
 from typing_extensions import TypedDict
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.exceptions import AzureError
+
+# === Local ===
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -34,10 +46,9 @@ from azure.ai.voicelive.models._models import (
     ConversationRequestItem,
     ResponseCreateParams,
 )
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.exceptions import AzureError
 from .models import ClientEvent, RequestSession, ServerEvent
 
+# === Conditional typing/runtime ===
 if TYPE_CHECKING:
     from websockets.typing import Subprotocol as WSSubprotocol  # exact type for checkers
 else:
@@ -49,7 +60,16 @@ else:
             pass
 
 
-__all__: List[str] = [
+if TYPE_CHECKING:
+    # Not imported at runtime; only for type checkers (mypy/pyright).
+    from websockets.sync.client import ClientConnection as _WSClientConnection
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
+
+__all__: list[str] = [
     "connect",
     "WebsocketConnectionOptions",
     "ConnectionError",
@@ -319,7 +339,7 @@ class OutputAudioBufferResource:
         :return: None
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
+        event: dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
             event["event_id"] = event_id
         self._connection.send(event)
@@ -337,11 +357,7 @@ class ConversationItemResource:
         self._connection = connection
 
     def create(
-        self,
-        *,
-        item: Mapping[str, Any],
-        previous_item_id: Optional[str] = None,
-        event_id: Optional[str] = None
+        self, *, item: Mapping[str, Any], previous_item_id: Optional[str] = None, event_id: Optional[str] = None
     ) -> None:
         """Create a new conversation item.
 
@@ -457,7 +473,7 @@ class TranscriptionSessionResource:
         :return: None
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
+        event: dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
             event["event_id"] = event_id
         self._connection.send(event)
@@ -492,7 +508,14 @@ class VoiceLiveConnection:
     :vartype transcription_session: ~azure.ai.voicelive.TranscriptionSessionResource
     """
 
-    def __init__(self, connection) -> None:
+    session: SessionResource
+    response: ResponseResource
+    input_audio_buffer: InputAudioBufferResource
+    conversation: ConversationResource
+    output_audio_buffer: OutputAudioBufferResource
+    transcription_session: TranscriptionSessionResource
+
+    def __init__(self, connection: "_WSClientConnection") -> None:
         """Initialize a VoiceLiveConnection.
 
         :param connection: The underlying WebSocket connection.
@@ -647,14 +670,14 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
 
             # Build headers as str->str and use list of tuples to satisfy HeadersLike
             extra_headers_map: Mapping[str, Any] = self.__extra_headers or {}
-            merged_headers: Dict[str, str] = {
+            merged_headers: dict[str, str] = {
                 **self._get_auth_headers(),
                 **{str(k): str(v) for k, v in extra_headers_map.items()},
             }
-            headers_like: List[Tuple[str, str]] = list(merged_headers.items())
+            headers_like: list[Tuple[str, str]] = list(merged_headers.items())
 
             # Build kwargs for websockets; avoid dict(Optional[...])
-            ws_kwargs: Dict[str, Any] = {}
+            ws_kwargs: dict[str, Any] = {}
             if self.__connection_options is not None:
                 ws_kwargs.update(cast(Mapping[str, Any], self.__connection_options))
 
@@ -688,7 +711,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         if self.__connection is not None:
             self.__connection.close()
 
-    def _get_auth_headers(self) -> Dict[str, str]:
+    def _get_auth_headers(self) -> dict[str, str]:
         """Get authentication headers for WebSocket connection.
 
         :return: A dictionary containing authentication headers.
@@ -708,7 +731,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         parsed = urlparse(self._endpoint)
         scheme = "wss" if parsed.scheme == "https" else ("ws" if parsed.scheme == "http" else parsed.scheme)
 
-        params: Dict[str, str] = {"model": self.__model, "api-version": self.__api_version}
+        params: dict[str, str] = {"model": self.__model, "api-version": self.__api_version}
         extra_query: Mapping[str, Any] = self.__extra_query or {}
         for k, v in extra_query.items():
             params[str(k)] = str(v)
@@ -719,7 +742,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
             if key not in params:
                 params[key] = value_list[0] if value_list else ""
 
-        path = parsed.path.rstrip("/") + "/voice-agent/realtime"
+        path = parsed.path.rstrip("/") + "/voice-live/realtime"
         return urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
 
 

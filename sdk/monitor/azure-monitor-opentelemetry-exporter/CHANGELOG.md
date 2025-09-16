@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b42 (Unreleased)
+## 1.0.0b42 (2025-09-15)
 
 ### Features Added
 - Customer Facing Statsbeat: Added remaining drop codes to base
@@ -21,8 +21,6 @@
   ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
   ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
-- OneSettings control plane: Add live metrics feature control
-  ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
 
 ### Breaking Changes
 
@@ -38,6 +36,8 @@
   ([#42716] https://github.com/Azure/azure-sdk-for-python/pull/42716)
 - Support sdk stats dynamic change on OneSettings config change
   ([#42877] https://github.com/Azure/azure-sdk-for-python/pull/42877)
+- OneSettings control plane: Add live metrics feature control
+  ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
 
 ## 1.0.0b41 (2025-07-31)
 
