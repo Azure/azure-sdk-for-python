@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
+import json
 from typing import Any, Callable, Dict, List, Optional
 
 from pyrit.models import (
@@ -64,10 +65,35 @@ class _CallbackChatTarget(PromptChatTarget):
         # response_context contains "messages", "stream", "session_state, "context"
         response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
         response_text = response_context["messages"][-1]["content"]
-        if type(response_text) is tuple:
-            response_text = response_text[0]
-            response_tool_calls = response_text[1]
-        response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text], prompt_metadata={"tool_calls": response_tool_calls})
+        
+        parsed_tool_calls = None
+        # Handle both tuple and non-tuple responses
+        if isinstance(response_text, tuple):
+            response_message = response_text[0]
+            raw_tool_calls = response_text[1] # list of RunStepToolCall objects
+            
+            # Convert raw tool calls to ToolCallAccuracyEvaluator format
+            if raw_tool_calls:
+                parsed_tool_calls = [raw_tool_call.as_dict() for raw_tool_call in raw_tool_calls]
+            
+            response_entry = construct_response_from_request(
+                request=request, 
+                response_text_pieces=[response_message]
+            )
+        else:
+            # Handle case where response is just text (no tool calls)
+            response_message = response_text
+            response_entry = construct_response_from_request(
+                request=request, 
+                response_text_pieces=[response_message]
+            )
+        
+        # Add parsed tool calls to the response piece labels if they exist
+        if parsed_tool_calls and len(response_entry.request_pieces) > 0:
+            response_piece = response_entry.request_pieces[0]
+            if not hasattr(response_piece, 'labels') or response_piece.labels is None:
+                response_piece.labels = {}
+            response_piece.labels["tool_calls"] = json.dumps(parsed_tool_calls)
 
         logger.info("Received the following response from the prompt target" + f"{response_text}")
         return response_entry

@@ -81,6 +81,11 @@ def get_formatted_template(data: dict, annotation_task: str) -> str:
         "query": html.escape(data.get("query", "")),
         "response": html.escape(data.get("response", "")),
     }
+    
+    # If tool calls are present, append them to the response for evaluation
+    if "tool_calls" in data and data["tool_calls"]:
+        as_dict["tool_calls"] = data["tool_calls"]
+    
     user_text = USER_TEXT_TEMPLATE_DICT.get(annotation_task, USER_TEXT_TEMPLATE_DICT["DEFAULT"]).substitute(**as_dict)
     return user_text.replace("'", '\\"')
 
@@ -642,6 +647,7 @@ async def evaluate_with_rai_service(
     metric_display_name=None,
     evaluator_name=None,
     scan_session_id: Optional[str] = None,
+    tool_calls: Optional[list] = None,
 ) -> Dict[str, Union[str, float]]:
     """Evaluate the content safety of the response using Responsible AI service
 
@@ -662,9 +668,17 @@ async def evaluate_with_rai_service(
     :type evaluator_name: str
     :param scan_session_id: The scan session ID to use for the evaluation.
     :type scan_session_id: Optional[str]
+    :param tool_calls: Optional list of tool calls to include in the evaluation.
+    :type tool_calls: Optional[list]
     :return: The parsed annotation result.
     :rtype: Dict[str, Union[str, float]]
     """
+    
+    # Add tool calls to data if provided (following ToolCallAccuracyEvaluator pattern)
+    if tool_calls:
+        import json
+        data = data.copy()  # Don't modify the original data
+        data["tool_calls"] = json.dumps(tool_calls)
 
     if is_onedp_project(project_scope):
         client = AIProjectClient(
