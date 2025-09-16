@@ -9,10 +9,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import asyncio
 import datetime
-import time
 import collections
 import logging
-from typing import Any, cast, Callable, Deque, AsyncIterator, List, Iterable, MutableMapping, Optional, Union
+from typing import Any, cast, Callable, Deque, Dict, AsyncIterator, List, Iterable, Optional, TypeVar
 
 from azure.batch import models as _models
 from azure.core import MatchConditions
@@ -29,9 +28,7 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import PipelineResponse
-from azure.core.utils import case_insensitive_dict
 
-from ..._utils.model_base import _failsafe_deserialize
 from ._polling_async import (
     DeallocateNodePollingMethodAsync,
     DeleteCertificatePollingMethodAsync,
@@ -53,9 +50,6 @@ from ._operations import (
     _BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
 )
 
-
-# Type definitions
-from typing import Dict, TypeVar
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -130,7 +124,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
                 return pipeline_response
 
         # cast otherwise mypy complains about incompatible return type
@@ -150,8 +144,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = DeleteJobPollingMethodAsync(job_id, polling_interval)
-        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
+        polling_method = DeleteJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        # redundant but needed to fix pylint errors in the polling method code
+        return AsyncLROPoller(self, pipeline_response, None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_disable_job(
@@ -211,7 +206,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -285,7 +280,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -359,7 +354,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(

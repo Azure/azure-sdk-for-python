@@ -7,7 +7,6 @@
 """ Custom Async Polling Methods for Azure Batch Operations."""
 
 import asyncio
-import time
 
 from typing import Any, Callable, Optional
 
@@ -25,14 +24,14 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
     It checks the status of the job until it is deleted or an error occurs.
     """
 
-    def __init__(self, job_id: str, polling_interval: int = 5):
-        # remove client to keep in initialize
-        self._job_id = job_id
-        self._polling_interval = polling_interval
-
-    def initialize(
-        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
-    ) -> None:
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_id: str,
+            polling_interval: int = 5
+        ):
         """Set the initial status of this LRO, verify that we can poll, and
         initialize anything necessary for polling.
 
@@ -40,14 +39,18 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
         :param initial_response: In this example, the PipelineResponse returned from the initial call.
         :param deserialization_callback: A callable to transform the final result before returning to the end user.
         """
-
-        # double checking the 202 (server accepted)
-
+        self._job_id = job_id
+        self._polling_interval = polling_interval
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
         self._status = "InProgress"
         self._finished = False
+
+    def initialize(
+        self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
+    ) -> None:
+        pass
 
     def status(self) -> str:
         """Should return the current status as a string. The initial status is set by
