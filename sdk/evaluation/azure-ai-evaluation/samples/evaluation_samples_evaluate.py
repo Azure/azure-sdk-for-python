@@ -424,7 +424,7 @@ class EvaluationEvaluateSamples(object):
 
         # [START task_success_evaluator]
         import os
-        from azure.ai.evaluation import TaskSuccessEvaluator
+        from azure.ai.evaluation._evaluators._task_success import TaskSuccessEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
