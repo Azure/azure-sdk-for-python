@@ -1,8 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union, List
+from typing import Any, Dict, Union, List, Optional
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import LabelModelGrader
 from azure.ai.evaluation._common._experimental import experimental
@@ -54,6 +55,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
         model: str,
         name: str,
         passing_labels: List[str],
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = LabelModelGrader(
@@ -64,4 +66,4 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
             passing_labels=passing_labels,
             type="label_model",
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

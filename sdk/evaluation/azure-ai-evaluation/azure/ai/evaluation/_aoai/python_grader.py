@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, Union, Optional
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import PythonGrader
 from azure.ai.evaluation._common._experimental import experimental
@@ -63,6 +64,7 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
         image_tag: str,
         pass_threshold: float,
         source: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
         # Validate pass_threshold
@@ -81,4 +83,4 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
             type="python",
         )
 
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

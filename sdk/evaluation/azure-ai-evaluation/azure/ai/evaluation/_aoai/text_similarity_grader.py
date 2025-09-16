@@ -1,11 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 from typing_extensions import Literal
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import TextSimilarityGrader
+
+from azure.core.credentials import TokenCredential
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from azure.ai.evaluation._common._experimental import experimental
 
 from .aoai_grader import AzureOpenAIGrader
@@ -76,6 +78,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
         pass_threshold: float,
         reference: str,
         name: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = TextSimilarityGrader(
@@ -86,4 +89,4 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             reference=reference,
             type="text_similarity",
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

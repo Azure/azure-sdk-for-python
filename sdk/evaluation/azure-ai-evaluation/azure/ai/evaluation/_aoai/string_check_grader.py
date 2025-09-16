@@ -1,9 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 from typing_extensions import Literal
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import StringCheckGrader
 from azure.ai.evaluation._common._experimental import experimental
@@ -54,6 +55,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             "ilike",
         ],
         reference: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = StringCheckGrader(
@@ -63,4 +65,4 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             reference=reference,
             type="string_check",
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

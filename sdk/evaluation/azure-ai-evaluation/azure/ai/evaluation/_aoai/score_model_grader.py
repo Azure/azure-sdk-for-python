@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional
 
+from azure.core.credentials import TokenCredential
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import ScoreModelGrader
 from azure.ai.evaluation._common._experimental import experimental
@@ -59,6 +60,7 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
         range: Optional[List[float]] = None,
         pass_threshold: Optional[float] = None,
         sampling_params: Optional[Dict[str, Any]] = None,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
         # Validate range and pass_threshold
@@ -88,4 +90,4 @@ class AzureOpenAIScoreModelGrader(AzureOpenAIGrader):
 
         grader = ScoreModelGrader(**grader_kwargs)
 
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)
