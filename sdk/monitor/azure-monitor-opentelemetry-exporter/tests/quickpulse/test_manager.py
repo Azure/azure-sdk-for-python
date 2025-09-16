@@ -809,4 +809,203 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertIsNone(doc_mock.document_stream_ids)
         append_mock.assert_not_called()
 
-# # cSpell:enable
+    def test_validate_recording_resources(self):
+        """Test _validate_recording_resources method."""
+        qpm = _QuickpulseManager()
+        
+        # Before initialization - should return False
+        self.assertFalse(qpm._validate_recording_resources())
+        
+        # After initialization - should return True
+        qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        self.assertTrue(qpm._validate_recording_resources())
+        
+        # After shutdown - should return False
+        qpm.shutdown()
+        self.assertFalse(qpm._validate_recording_resources())
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_span_not_post_state(self, post_state_mock):
+        """Test _record_span when not in post state."""
+        post_state_mock.return_value = False
+        qpm = _QuickpulseManager()
+        qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        
+        span_mock = mock.Mock()
+        
+        # Mock the metric instruments to verify they're not called
+        qpm._request_rate_counter = mock.Mock()
+        qpm._request_duration = mock.Mock()
+        
+        qpm._record_span(span_mock)
+        
+        # Verify no metrics were recorded
+        qpm._request_rate_counter.add.assert_not_called()
+        qpm._request_duration.record.assert_not_called()
+        
+        # Cleanup
+        qpm.shutdown()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_span_not_initialized(self, post_state_mock):
+        """Test _record_span when manager is not initialized."""
+        post_state_mock.return_value = True
+        qpm = _QuickpulseManager()
+        
+        span_mock = mock.Mock()
+        
+        # Should not crash and should not record anything
+        qpm._record_span(span_mock)
+        
+        # Verify manager is still not initialized
+        self.assertFalse(qpm.is_initialized())
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_span_exception_handling(self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock):
+        """Test _record_span exception handling."""
+        post_state_mock.return_value = True
+        span_mock = mock.Mock()
+        span_mock.end_time = 10
+        span_mock.start_time = 5
+        span_mock.status.is_ok = True
+        span_mock.kind = SpanKind.SERVER
+        span_mock.events = []
+        
+        # Make _TelemetryData._from_span raise an exception
+        data_mock._from_span.side_effect = Exception("Test exception")
+        
+        qpm = _QuickpulseManager()
+        qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        
+        # Should not crash when exception occurs
+        qpm._record_span(span_mock)
+        
+        # Verify exception was logged
+        logger_mock.exception.assert_called_once()
+        
+        # Cleanup
+        qpm.shutdown()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_log_record_not_post_state(self, post_state_mock):
+        """Test _record_log_record when not in post state."""
+        post_state_mock.return_value = False
+        qpm = _QuickpulseManager()
+        qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        
+        log_data_mock = mock.Mock()
+        
+        # Mock the metric instruments to verify they're not called
+        qpm._exception_rate_counter = mock.Mock()
+        
+        qpm._record_log_record(log_data_mock)
+        
+        # Verify no metrics were recorded
+        qpm._exception_rate_counter.add.assert_not_called()
+        
+        # Cleanup
+        qpm.shutdown()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_log_record_not_initialized(self, post_state_mock):
+        """Test _record_log_record when manager is not initialized."""
+        post_state_mock.return_value = True
+        qpm = _QuickpulseManager()
+        
+        log_data_mock = mock.Mock()
+        
+        # Should not crash and should not record anything
+        qpm._record_log_record(log_data_mock)
+        
+        # Verify manager is still not initialized
+        self.assertFalse(qpm.is_initialized())
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_log_record_exception_handling(self, post_state_mock, data_mock, metric_derive_mock, doc_mock, logger_mock):
+        """Test _record_log_record exception handling."""
+        post_state_mock.return_value = True
+        log_record_mock = mock.Mock()
+        log_data_mock = mock.Mock()
+        log_data_mock.log_record = log_record_mock
+        
+        # Make _TelemetryData._from_log_record raise an exception
+        data_mock._from_log_record.side_effect = Exception("Test exception")
+        
+        qpm = _QuickpulseManager()
+        qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        
+        # Should not crash when exception occurs
+        qpm._record_log_record(log_data_mock)
+        
+        # Verify exception was logged
+        logger_mock.exception.assert_called_once()
+        
+        # Cleanup
+        qpm.shutdown()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._TelemetryData")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
+    def test_record_log_record_no_log_record(self, post_state_mock, data_mock, metric_derive_mock, doc_mock):
+        """Test _record_log_record when log_data.log_record is None."""
+        post_state_mock.return_value = True
+        log_data_mock = mock.Mock()
+        log_data_mock.log_record = None
+        
+        qpm = _QuickpulseManager()
+        qpm.initialize(connection_string=self.connection_string, resource=self.resource)
+        
+        # Should not crash and should not process anything
+        qpm._record_log_record(log_data_mock)
+        
+        # Verify no telemetry data processing occurred
+        data_mock._from_log_record.assert_not_called()
+        metric_derive_mock.assert_not_called()
+        doc_mock.assert_not_called()
+        
+        # Cleanup
+        qpm.shutdown()
+
+    def test_create_metric_instruments_no_meter(self):
+        """Test _create_metric_instruments when meter is None."""
+        qpm = _QuickpulseManager()
+        
+        # Should raise ValueError when meter is not set
+        with self.assertRaises(ValueError) as context:
+            qpm._create_metric_instruments()
+        
+        self.assertIn("Meter must be initialized", str(context.exception))
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
+    def test_derive_metrics_no_config(self, get_derived_mock):
+        """Test _derive_metrics_from_telemetry_data when no filtering is configured."""
+        get_derived_mock.return_value = {}
+        
+        data = _DependencyData(
+            duration=0,
+            success=True,
+            name="test",
+            result_code=200,
+            target="",
+            type="",
+            data="",
+            custom_dimensions={},
+        )
+        
+        # Should return early without processing
+        _derive_metrics_from_telemetry_data(data)
+        get_derived_mock.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._get_quickpulse_derived_metric_infos")
+    def test_derive_metrics_unknown_data_type(self, get_derived_mock):
+        """Test _derive_metrics_from_telemetry_data with unknown data type."""
+        get_derived_mock.return_value = {TelemetryType.DEPENDENCY: [mock.Mock()]}
