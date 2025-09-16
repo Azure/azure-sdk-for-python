@@ -75,9 +75,10 @@ def main():
         run_sample()
     except exceptions.CosmosHttpResponseError as e:
         print(f"CosmosHttpResponseError: {getattr(e, 'status_code', None)} - {e}")
-        if getattr(e, "response", None) is not None and hasattr(e.response, "headers"):
+        resp = getattr(e, "response", None)
+        if resp is not None and getattr(resp, "headers", None) is not None:
             try:
-                print("Response headers:\n" + json.dumps(dict(e.response.headers), indent=2))
+                print("Response headers:\n" + json.dumps(dict(resp.headers), indent=2))
             except Exception:
                 pass
         traceback.print_exc()
