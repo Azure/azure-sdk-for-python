@@ -237,5 +237,5 @@ class _ConfigurationManager(metaclass=Singleton):
         self._initialized = False
         self._callbacks.clear()
         # Clear the singleton instance from the metaclass
-        if self.__class__ in Singleton._instances:  # pylint: disable=protected-access
-            del Singleton._instances[self.__class__]  # pylint: disable=protected-access
+        if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
+            del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access
