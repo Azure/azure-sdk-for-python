@@ -7,7 +7,7 @@ from subprocess import run
 
 from .Check import Check
 
-from ci_tools.functions import is_error_code_5_allowed, pip_install
+from ci_tools.functions import is_error_code_5_allowed, install_into_venv
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
@@ -45,7 +45,7 @@ class whl(Check):
 
             if os.path.exists(dev_requirements):
                 print(f"Installing dev_requirements at {dev_requirements}")
-                pip_install([f"-r", f"{dev_requirements}"], True, executable, pkg)
+                install_into_venv(executable, [f"{dev_requirements}"], pkg)
             else:
                 print("Skipping installing dev_requirements")
 

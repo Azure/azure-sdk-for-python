@@ -19,7 +19,7 @@ USAGE:
     python basic_voice_assistant.py
     
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_KEY - The Azure VoiceLive API key
+    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
     
     Or copy .env.template to .env and fill in your values.
@@ -70,6 +70,7 @@ if TYPE_CHECKING:
 from azure.ai.voicelive.models import (
     RequestSession,
     ServerVad,
+    AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
     AudioFormat,
@@ -376,7 +377,7 @@ class BasicVoiceAssistant:
         # Create strongly typed voice configuration
         voice_config: Union[AzureStandardVoice, str]
         if self.voice.startswith("en-US-") or self.voice.startswith("en-CA-") or "-" in self.voice:
-            voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
+            voice_config = AzureStandardVoice(name=self.voice)
         else:
             voice_config = self.voice
 
@@ -390,6 +391,7 @@ class BasicVoiceAssistant:
             voice=voice_config,
             input_audio_format=AudioFormat.PCM16,
             output_audio_format=AudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=turn_detection_config,
         )
 

@@ -21,7 +21,7 @@ This directory contains sample applications demonstrating various capabilities o
    Create a `.env` file at the root of the azure-ai-voicelive directory or in the samples directory with the following variables:
 
    ```ini
-   AZURE_VOICELIVE_KEY=your-voicelive-api-key
+   AZURE_VOICELIVE_API_KEY=your-voicelive-api-key
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
    VOICELIVE_MODEL=gpt-4o-realtime-preview
    VOICELIVE_VOICE=alloy
@@ -107,7 +107,7 @@ python sample_voicelive_async.py --help
   - Confirm your network allows WSS to the service
 
 - **Auth errors**
-  - For API key: confirm `AZURE_VOICELIVE_KEY`
+  - For API key: confirm `AZURE_VOICELIVE_API_KEY`
   - For AAD: ensure your identity has access to the resource
 
 ## Next steps
