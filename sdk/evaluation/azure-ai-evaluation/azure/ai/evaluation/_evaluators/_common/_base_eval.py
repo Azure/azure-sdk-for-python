@@ -520,8 +520,20 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         tool_calls = self._parse_tools_from_response(response)
         tool_names = []
         for tool_call in tool_calls:
-            assert isinstance(tool_call, dict), "Tool call must be a dictionary."
-            assert tool_call.get("type") == "tool_call", "Tool call must have 'type' set to 'tool_call'."
+            if not isinstance(tool_call, dict):
+                raise EvaluationException(
+                    "Tool call must be a dictionary.",
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.UNKNOWN,
+                )
+            if tool_call.get("type") != "tool_call":
+                raise EvaluationException(
+                    "Tool call must have 'type' set to 'tool_call'.",
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.INVALID_VALUE,
+                )
             if "name" in tool_call:
                 tool_names.append(tool_call["name"])
             else:

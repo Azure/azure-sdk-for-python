@@ -496,7 +496,7 @@ class EvaluationEvaluateSamples(object):
         # [END tool_call_accuracy_evaluator]
 
         # [START path_efficiency_evaluator]
-        from azure.ai.evaluation import PathEfficiencyEvaluator
+        from azure.ai.evaluation._evaluators._path_efficiency import PathEfficiencyEvaluator
 
         path_efficiency_evaluator = PathEfficiencyEvaluator(
             precision_threshold=0.7, recall_threshold=0.8, f1_score_threshold=0.75
