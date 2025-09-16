@@ -30,8 +30,8 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                     "location": "str",
                     "authOptions": {"aadOrApiKey": {"aadAuthFailureMode": "str"}, "apiKeyOnly": {}},
                     "computeType": "str",
+                    "dataExfiltrationProtections": ["str"],
                     "disableLocalAuth": bool,
-                    "disabledDataExfiltrationOptions": ["str"],
                     "eTag": "str",
                     "encryptionWithCmk": {"encryptionComplianceStatus": "str", "enforcement": "str"},
                     "endpoint": "str",
@@ -60,6 +60,14 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                                 },
                                 "provisioningState": "str",
                             },
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
+                            },
                             "type": "str",
                         }
                     ],
@@ -67,7 +75,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                     "publicNetworkAccess": "enabled",
                     "replicaCount": 1,
                     "semanticSearch": "str",
-                    "serviceUpgradeDate": "2020-02-20 00:00:00",
+                    "serviceUpgradedAt": "2020-02-20 00:00:00",
                     "sharedPrivateLinkResources": [
                         {
                             "id": "str",
@@ -79,6 +87,14 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                                 "requestMessage": "str",
                                 "resourceRegion": "str",
                                 "status": "str",
+                            },
+                            "systemData": {
+                                "createdAt": "2020-02-20 00:00:00",
+                                "createdBy": "str",
+                                "createdByType": "str",
+                                "lastModifiedAt": "2020-02-20 00:00:00",
+                                "lastModifiedBy": "str",
+                                "lastModifiedByType": "str",
                             },
                             "type": "str",
                         }
@@ -96,9 +112,9 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "tags": {"str": "str"},
                     "type": "str",
-                    "upgradeAvailable": bool,
+                    "upgradeAvailable": "str",
                 },
-                api_version="2025-02-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -114,8 +130,8 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
             service={
                 "authOptions": {"aadOrApiKey": {"aadAuthFailureMode": "str"}, "apiKeyOnly": {}},
                 "computeType": "str",
+                "dataExfiltrationProtections": ["str"],
                 "disableLocalAuth": bool,
-                "disabledDataExfiltrationOptions": ["str"],
                 "eTag": "str",
                 "encryptionWithCmk": {"encryptionComplianceStatus": "str", "enforcement": "str"},
                 "endpoint": "str",
@@ -145,6 +161,14 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                             },
                             "provisioningState": "str",
                         },
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
                         "type": "str",
                     }
                 ],
@@ -152,7 +176,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                 "publicNetworkAccess": "enabled",
                 "replicaCount": 1,
                 "semanticSearch": "str",
-                "serviceUpgradeDate": "2020-02-20 00:00:00",
+                "serviceUpgradedAt": "2020-02-20 00:00:00",
                 "sharedPrivateLinkResources": [
                     {
                         "id": "str",
@@ -164,6 +188,14 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                             "requestMessage": "str",
                             "resourceRegion": "str",
                             "status": "str",
+                        },
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
                         },
                         "type": "str",
                     }
@@ -181,9 +213,9 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
                 "type": "str",
-                "upgradeAvailable": bool,
+                "upgradeAvailable": "str",
             },
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -195,7 +227,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.services.get(
             resource_group_name=resource_group.name,
             search_service_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -207,7 +239,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.services.delete(
             resource_group_name=resource_group.name,
             search_service_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -218,7 +250,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_services_list_by_resource_group(self, resource_group):
         response = self.client.services.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -228,7 +260,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_services_list_by_subscription(self, resource_group):
         response = self.client.services.list_by_subscription(
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -239,7 +271,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_services_check_name_availability(self, resource_group):
         response = await self.client.services.check_name_availability(
             name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-05-01",
             type="searchServices",
         )
 
@@ -253,7 +285,7 @@ class TestSearchManagementServicesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.services.begin_upgrade(
                 resource_group_name=resource_group.name,
                 search_service_name="str",
-                api_version="2025-02-01-preview",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

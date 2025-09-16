@@ -32,21 +32,25 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_submit_hibernate(
-        locationparameter="slxeawqkswmmfjbvkratyfhx",
+        locationparameter="zuevcqpgdohzbjodhachtr",
         request_body={
-            "correlationid": "htqivutynuoslvbp",
+            "correlationid": "b211f086-4b91-4686-a453-2f5c012e4d80",
             "executionParameters": {},
             "resources": {
                 "ids": [
-                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource3"
+                    "/subscriptions/YourSubscriptionId/resourceGroups/YourResourceGroupName/providers/Microsoft.Compute/virtualMachines/testResource4"
                 ]
             },
-            "schedule": {"deadlineType": "Unknown"},
+            "schedule": {
+                "deadLine": "2025-04-17T00:23:56.803Z",
+                "deadlineType": "Unknown",
+                "timeZone": "aigbjdnldtzkteqi",
+            },
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/ScheduledActions_VirtualMachinesSubmitHibernate_MinimumSet_Gen.json
+# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesSubmitHibernate_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -12,7 +12,7 @@ from azure.core.paging import ItemPaged
 
 from azure.communication.callautomation._generated.models import (
     AddParticipantRequest,
-    MoveParticipantsRequest,
+     MoveParticipantsRequest,
 )
 from unittest_helpers import mock_response
 
@@ -214,24 +214,24 @@ class TestCallConnectionClient(unittest.TestCase):
         response = call_connection.remove_participant(user)
         self.assertEqual(self.operation_context, response.operation_context)
 
-    def test_move_participants(self):
-        from_call_id = "20000000-0000-0000-0000-000000000000"
+        def test_move_participants(self):
+            from_call_id = "20000000-0000-0000-0000-000000000000"
         
-        def mock_send(request, **kwargs):
-            kwargs.pop("stream", None)
-            body = json.loads(request.content)
-            assert body["fromCall"] == from_call_id, "Parameter value not as expected"
-            assert len(body["targetParticipants"]) == 1, "Expected 1 participant to move"
-            if kwargs:
-                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(
-                status_code=202,
-                json_payload={
-                    "participants": [self.call_participant], 
-                    "operationContext": self.operation_context,
-                    "fromCall": from_call_id
-                },
-            )
+            def mock_send(request, **kwargs):
+                kwargs.pop("stream", None)
+                body = json.loads(request.content)
+                assert body["fromCall"] == from_call_id, "Parameter value not as expected"
+                assert len(body["targetParticipants"]) == 1, "Expected 1 participant to move"
+                if kwargs:
+                    raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+                return mock_response(
+                    status_code=202,
+                    json_payload={
+                        "participants": [self.call_participant], 
+                        "operationContext": self.operation_context,
+                        "fromCall": from_call_id
+                    },
+                )
 
         call_connection = CallConnectionClient(
             endpoint="https://endpoint",
@@ -278,7 +278,7 @@ class TestCallConnectionClient(unittest.TestCase):
         self.assertEqual(expected_move_request.from_call, actual_request["from_call"])
         self.assertEqual(expected_move_request.operation_context, actual_request["operation_context"])
         self.assertEqual(len(expected_move_request.target_participants), len(actual_request["target_participants"]))
-
+    
     def test_mute_participant(self):
         def mock_send(_, **kwargs):
             kwargs.pop("stream", None)

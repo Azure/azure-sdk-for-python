@@ -108,8 +108,6 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     :paramtype shm_size: Optional[str]
     :keyword max_instance_count: The maximum number of instances or nodes used by the compute target.
     :paramtype max_instance_count: Optional[int]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
 
     .. admonition:: Example:
 

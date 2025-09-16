@@ -28,7 +28,11 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
 )
-
+from azure.monitor.opentelemetry.exporter._constants import (
+    _TYPE_MAP,
+    _UNKNOWN,
+    _RP_Names,
+)
 
 opentelemetry_version = ""
 
@@ -120,6 +124,7 @@ def _getlocale():
             # by continuing to use getdefaultlocale() even though it has been deprecated.
             # we ignore the deprecation warnings to reduce noise
             warnings.simplefilter("ignore", category=DeprecationWarning)
+            # pylint: disable=deprecated-method
             return locale.getdefaultlocale()[0]
     except AttributeError:
         # locale.getlocal() has issues on Windows: https://github.com/python/cpython/issues/82986
@@ -374,9 +379,35 @@ def _get_scope(aad_audience=None):
 
 
 class Singleton(type):
-    _instance = None
+    """Metaclass for creating thread-safe singleton instances.
+    
+    Supports multiple singleton classes by maintaining a separate instance
+    for each class that uses this metaclass.
+    """
+    _instances = {}  # type: ignore
+    _lock = threading.Lock()
 
-    def __call__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instance
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
+        if cls not in cls._instances:
+            with cls._lock:
+                # Double-check pattern to avoid race conditions
+                if cls not in cls._instances:
+                    instance = super().__call__(*args, **kwargs)
+                    cls._instances[cls] = instance  # type: ignore
+        return cls._instances[cls]
+
+def _get_telemetry_type(item: TelemetryItem):
+    if hasattr(item, "data") and item.data is not None:
+        base_type = getattr(item.data, "base_type", None)
+        if base_type:
+            return _TYPE_MAP.get(base_type, _UNKNOWN)
+    return _UNKNOWN
+
+def get_compute_type():
+    if _is_on_functions():
+        return _RP_Names.FUNCTIONS.value
+    if _is_on_app_service():
+        return _RP_Names.APP_SERVICE.value
+    if _is_on_aks():
+        return _RP_Names.AKS.value
+    return _RP_Names.UNKNOWN.value

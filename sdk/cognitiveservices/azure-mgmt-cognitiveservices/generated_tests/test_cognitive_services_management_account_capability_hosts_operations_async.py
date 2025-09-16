@@ -27,7 +27,7 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 account_name="str",
                 capability_host_name="str",
-                api_version="2025-04-01-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -41,7 +41,7 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperationsAsync(Azure
             resource_group_name=resource_group.name,
             account_name="str",
             capability_host_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperationsAsync(Azure
                 resource_group_name=resource_group.name,
                 account_name="str",
                 capability_host_name="str",
-                body={
+                capability_host={
                     "properties": {
                         "aiServicesConnections": ["str"],
                         "capabilityHostKind": "str",
@@ -71,7 +71,7 @@ class TestCognitiveServicesManagementAccountCapabilityHostsOperationsAsync(Azure
                     "name": "str",
                     "type": "str",
                 },
-                api_version="2025-04-01-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

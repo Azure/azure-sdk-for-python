@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.5 (Unreleased)
+## 1.1.1 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,17 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.1.0 (2025-07-18)
+
+### Bugs Fixed
+
 - Fixed an issue where the package version in operation user agent strings was always set to "unknown" instead of the actual package version. ([#39866](https://github.com/Azure/azure-sdk-for-python/pull/39866))
 
 ### Other Changes
+
+- Python 3.9 is now the minimum supported version for this package.
 
 ## 1.0.4 (2024-06-11)
 

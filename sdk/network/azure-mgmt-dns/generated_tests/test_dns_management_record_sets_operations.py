@@ -20,7 +20,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_record_sets_update(self, resource_group):
         response = self.client.record_sets.update(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -63,7 +63,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_record_sets_create_or_update(self, resource_group):
         response = self.client.record_sets.create_or_update(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -106,7 +106,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_record_sets_delete(self, resource_group):
         response = self.client.record_sets.delete(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -120,7 +120,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_record_sets_get(self, resource_group):
         response = self.client.record_sets.get(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -134,7 +134,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_type(self, resource_group):
+    def test_record_sets_list_by_type(self, resource_group):
         response = self.client.record_sets.list_by_type(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -147,7 +147,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_dns_zone(self, resource_group):
+    def test_record_sets_list_by_dns_zone(self, resource_group):
         response = self.client.record_sets.list_by_dns_zone(
             resource_group_name=resource_group.name,
             zone_name="str",
@@ -159,7 +159,7 @@ class TestDnsManagementRecordSetsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_all_by_dns_zone(self, resource_group):
+    def test_record_sets_list_all_by_dns_zone(self, resource_group):
         response = self.client.record_sets.list_all_by_dns_zone(
             resource_group_name=resource_group.name,
             zone_name="str",

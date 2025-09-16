@@ -20,11 +20,38 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_elastic_pools_list_metrics(self, resource_group):
+        response = self.client.elastic_pools.list_metrics(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            elastic_pool_name="str",
+            filter="str",
+            api_version="2014-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_elastic_pools_list_metric_definitions(self, resource_group):
+        response = self.client.elastic_pools.list_metric_definitions(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            elastic_pool_name="str",
+            api_version="2014-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_elastic_pools_list_by_server(self, resource_group):
         response = self.client.elastic_pools.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +64,7 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             elastic_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +79,6 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
             elastic_pool_name="str",
             parameters={
                 "location": "str",
-                "autoPauseDelay": 0,
                 "availabilityZone": "str",
                 "creationDate": "2020-02-20 00:00:00",
                 "highAvailabilityReplicaCount": 0,
@@ -63,7 +89,7 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
                 "maxSizeBytes": 0,
                 "minCapacity": 0.0,
                 "name": "str",
-                "perDatabaseSettings": {"autoPauseDelay": 0, "maxCapacity": 0.0, "minCapacity": 0.0},
+                "perDatabaseSettings": {"maxCapacity": 0.0, "minCapacity": 0.0},
                 "preferredEnclaveType": "str",
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "state": "str",
@@ -71,7 +97,7 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zoneRedundant": bool,
             },
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -84,7 +110,7 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             elastic_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,20 +124,19 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             elastic_pool_name="str",
             parameters={
-                "autoPauseDelay": 0,
                 "availabilityZone": "str",
                 "highAvailabilityReplicaCount": 0,
                 "licenseType": "str",
                 "maintenanceConfigurationId": "str",
                 "maxSizeBytes": 0,
                 "minCapacity": 0.0,
-                "perDatabaseSettings": {"autoPauseDelay": 0, "maxCapacity": 0.0, "minCapacity": 0.0},
+                "perDatabaseSettings": {"maxCapacity": 0.0, "minCapacity": 0.0},
                 "preferredEnclaveType": "str",
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 "tags": {"str": "str"},
                 "zoneRedundant": bool,
             },
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -124,7 +149,7 @@ class TestSqlManagementElasticPoolsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             server_name="str",
             elastic_pool_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

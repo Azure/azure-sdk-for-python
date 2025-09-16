@@ -1,4 +1,3 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 -e ../azure-communication-identity
 aiohttp>=3.0
-python-dateutil>=2.8.1

@@ -20,11 +20,23 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_event_subscriptions_get_delivery_attributes(self, resource_group):
+        response = self.client.event_subscriptions.get_delivery_attributes(
+            scope="str",
+            event_subscription_name="str",
+            api_version="2025-04-01-preview",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_event_subscriptions_get(self, resource_group):
         response = self.client.event_subscriptions.get(
             scope="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -40,11 +52,19 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
                 "deadLetterDestination": "dead_letter_destination",
                 "deadLetterWithResourceIdentity": {
                     "deadLetterDestination": "dead_letter_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "deliveryWithResourceIdentity": {
                     "destination": "event_subscription_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "destination": "event_subscription_destination",
                 "eventDeliverySchema": "str",
@@ -73,7 +93,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
                 "topic": "str",
                 "type": "str",
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -85,7 +105,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
         response = self.client.event_subscriptions.begin_delete(
             scope="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,11 +121,19 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
                 "deadLetterDestination": "dead_letter_destination",
                 "deadLetterWithResourceIdentity": {
                     "deadLetterDestination": "dead_letter_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "deliveryWithResourceIdentity": {
                     "destination": "event_subscription_destination",
-                    "identity": {"type": "str", "userAssignedIdentity": "str"},
+                    "identity": {
+                        "federatedIdentityCredentialInfo": {"federatedClientId": "str"},
+                        "type": "str",
+                        "userAssignedIdentity": "str",
+                    },
                 },
                 "destination": "event_subscription_destination",
                 "eventDeliverySchema": "str",
@@ -121,7 +149,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
                 "labels": ["str"],
                 "retryPolicy": {"eventTimeToLiveInMinutes": 1440, "maxDeliveryAttempts": 30},
             },
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -133,7 +161,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
         response = self.client.event_subscriptions.get_full_url(
             scope="str",
             event_subscription_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -143,7 +171,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
     @recorded_by_proxy
     def test_event_subscriptions_list_global_by_subscription(self, resource_group):
         response = self.client.event_subscriptions.list_global_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -154,7 +182,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
     def test_event_subscriptions_list_global_by_subscription_for_topic_type(self, resource_group):
         response = self.client.event_subscriptions.list_global_by_subscription_for_topic_type(
             topic_type_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -165,7 +193,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
     def test_event_subscriptions_list_global_by_resource_group(self, resource_group):
         response = self.client.event_subscriptions.list_global_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -177,7 +205,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
         response = self.client.event_subscriptions.list_global_by_resource_group_for_topic_type(
             resource_group_name=resource_group.name,
             topic_type_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -188,7 +216,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
     def test_event_subscriptions_list_regional_by_subscription(self, resource_group):
         response = self.client.event_subscriptions.list_regional_by_subscription(
             location="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -200,7 +228,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
         response = self.client.event_subscriptions.list_regional_by_resource_group(
             resource_group_name=resource_group.name,
             location="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -212,7 +240,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
         response = self.client.event_subscriptions.list_regional_by_subscription_for_topic_type(
             location="str",
             topic_type_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -225,7 +253,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             location="str",
             topic_type_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -239,7 +267,7 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
             provider_namespace="str",
             resource_type_name="str",
             resource_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -252,20 +280,8 @@ class TestEventGridManagementEventSubscriptionsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             domain_name="str",
             topic_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_event_subscriptions_get_delivery_attributes(self, resource_group):
-        response = self.client.event_subscriptions.get_delivery_attributes(
-            scope="str",
-            event_subscription_name="str",
-            api_version="2025-02-15",
-        )
-
         # please add some check logic here by yourself
         # ...

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,10 +39,6 @@ def main():
             "properties": {
                 "captureDescription": {
                     "destination": {
-                        "identity": {
-                            "type": "UserAssigned",
-                            "userAssignedIdentity": "/subscriptions/SampleSubscription/resourceGroups/ResurceGroupSample/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ud2",
-                        },
                         "name": "EventHubArchive.AzureBlockBlob",
                         "properties": {
                             "archiveNameFormat": "{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}",
@@ -56,19 +53,13 @@ def main():
                 },
                 "messageRetentionInDays": 4,
                 "partitionCount": 4,
-                "retentionDescription": {
-                    "cleanupPolicy": "Compact",
-                    "retentionTimeInHours": 96,
-                    "tombstoneRetentionTimeInHours": 1,
-                },
                 "status": "Active",
-                "userMetadata": "key",
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/eventhub/resource-manager/Microsoft.EventHub/stable/2024-01-01/examples/EventHubs/EHEventHubCreate.json
+# x-ms-original-file: specification/eventhub/resource-manager/Microsoft.EventHub/preview/2022-01-01-preview/examples/EventHubs/EHEventHubCreate.json
 if __name__ == "__main__":
     main()

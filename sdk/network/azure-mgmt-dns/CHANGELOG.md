@@ -1,5 +1,31 @@
 # Release History
 
+## 9.0.0 (2025-07-14)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Deleted or renamed client operation group `DnsManagementClient.dnssec_configs`
+  - Model `RecordSet` deleted or renamed its instance variable `traffic_management_profile`
+  - Model `RecordSet` deleted or renamed its instance variable `ds_records`
+  - Model `RecordSet` deleted or renamed its instance variable `tlsa_records`
+  - Model `RecordSet` deleted or renamed its instance variable `naptr_records`
+  - Deleted or renamed enum value `RecordType.DS`
+  - Deleted or renamed enum value `RecordType.NAPTR`
+  - Deleted or renamed enum value `RecordType.TLSA`
+  - Model `Zone` deleted or renamed its instance variable `system_data`
+  - Model `Zone` deleted or renamed its instance variable `signing_keys`
+  - Deleted or renamed model `CreatedByType`
+  - Deleted or renamed model `DelegationSignerInfo`
+  - Deleted or renamed model `Digest`
+  - Deleted or renamed model `DnssecConfig`
+  - Deleted or renamed model `DsRecord`
+  - Deleted or renamed model `NaptrRecord`
+  - Deleted or renamed model `SigningKey`
+  - Deleted or renamed model `SystemData`
+  - Deleted or renamed model `TlsaRecord`
+  - Deleted or renamed operation group `DnssecConfigsOperations`
+
 ## 8.2.0 (2024-10-22)
 
 ### Features Added
