@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The media type (MIME type)."""
+
+    PFX = "application/x-pkcs12"
+    """The PKCS#12 file format."""
+    PEM = "application/x-pem-file"
+    """The PEM file format."""
+
+
 class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reflects the deletion recovery level currently in effect for secrets in the current vault. If
     it contains 'Purgeable', the secret can be permanently deleted by a privileged user; otherwise,

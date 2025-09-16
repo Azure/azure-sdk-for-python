@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -47,14 +47,15 @@ from ..._operations._operations import (
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
+from ..._validation import api_version_validation
 from .._configuration import KeyVaultClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class KeyVaultClientOperationsMixin(
+class _KeyVaultClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -207,7 +208,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -273,7 +274,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -290,9 +291,9 @@ class KeyVaultClientOperationsMixin(
     async def update_secret(
         self,
         secret_name: str,
-        secret_version: str,
         parameters: _models.SecretUpdateParameters,
         *,
+        secret_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.SecretBundle:
@@ -304,10 +305,10 @@ class KeyVaultClientOperationsMixin(
 
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param secret_version: The version of the secret. Required.
-        :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
         :type parameters: ~azure.keyvault.secrets._generated.models.SecretUpdateParameters
+        :keyword secret_version: The version of the secret. Default value is None.
+        :paramtype secret_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -320,9 +321,9 @@ class KeyVaultClientOperationsMixin(
     async def update_secret(
         self,
         secret_name: str,
-        secret_version: str,
         parameters: JSON,
         *,
+        secret_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.SecretBundle:
@@ -334,10 +335,10 @@ class KeyVaultClientOperationsMixin(
 
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param secret_version: The version of the secret. Required.
-        :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
         :type parameters: JSON
+        :keyword secret_version: The version of the secret. Default value is None.
+        :paramtype secret_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -350,9 +351,9 @@ class KeyVaultClientOperationsMixin(
     async def update_secret(
         self,
         secret_name: str,
-        secret_version: str,
         parameters: IO[bytes],
         *,
+        secret_version: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.SecretBundle:
@@ -364,10 +365,10 @@ class KeyVaultClientOperationsMixin(
 
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param secret_version: The version of the secret. Required.
-        :type secret_version: str
         :param parameters: The parameters for update secret operation. Required.
         :type parameters: IO[bytes]
+        :keyword secret_version: The version of the secret. Default value is None.
+        :paramtype secret_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -380,8 +381,9 @@ class KeyVaultClientOperationsMixin(
     async def update_secret(
         self,
         secret_name: str,
-        secret_version: str,
         parameters: Union[_models.SecretUpdateParameters, JSON, IO[bytes]],
+        *,
+        secret_version: Optional[str] = None,
         **kwargs: Any
     ) -> _models.SecretBundle:
         """Updates the attributes associated with a specified secret in a given key vault.
@@ -392,12 +394,12 @@ class KeyVaultClientOperationsMixin(
 
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param secret_version: The version of the secret. Required.
-        :type secret_version: str
         :param parameters: The parameters for update secret operation. Is one of the following types:
          SecretUpdateParameters, JSON, IO[bytes] Required.
         :type parameters: ~azure.keyvault.secrets._generated.models.SecretUpdateParameters or JSON or
          IO[bytes]
+        :keyword secret_version: The version of the secret. Default value is None.
+        :paramtype secret_version: str
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -453,7 +455,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -467,7 +469,18 @@ class KeyVaultClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_secret(self, secret_name: str, secret_version: str, **kwargs: Any) -> _models.SecretBundle:
+    @api_version_validation(
+        params_added_on={"2025-06-01-preview": ["out_content_type"]},
+        api_versions_list=["7.5", "7.6-preview.2", "7.6", "2025-06-01-preview"],
+    )
+    async def get_secret(
+        self,
+        secret_name: str,
+        *,
+        secret_version: Optional[str] = None,
+        out_content_type: Optional[Union[str, _models.ContentType]] = None,
+        **kwargs: Any
+    ) -> _models.SecretBundle:
         """Get a specified secret from a given key vault.
 
         The GET operation is applicable to any secret stored in Azure Key Vault. This operation
@@ -475,9 +488,15 @@ class KeyVaultClientOperationsMixin(
 
         :param secret_name: The name of the secret. Required.
         :type secret_name: str
-        :param secret_version: The version of the secret. This URI fragment is optional. If not
-         specified, the latest version of the secret is returned. Required.
-        :type secret_version: str
+        :keyword secret_version: The version of the secret. This URI fragment is optional. If not
+         specified, the latest version of the secret is returned. Default value is None.
+        :paramtype secret_version: str
+        :keyword out_content_type: The media type (MIME type) of the certificate. If a supported format
+         is specified, the certificate content is converted to the requested format. Currently, only PFX
+         to PEM conversion is supported. If an unsupported format is specified, the request is rejected.
+         If not specified, the certificate is returned in its original format without conversion. Known
+         values are: "application/x-pkcs12" and "application/x-pem-file". Default value is None.
+        :paramtype out_content_type: str or ~azure.keyvault.secrets._generated.models.ContentType
         :return: SecretBundle. The SecretBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.secrets._generated.models.SecretBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -498,6 +517,7 @@ class KeyVaultClientOperationsMixin(
         _request = build_key_vault_get_secret_request(
             secret_name=secret_name,
             secret_version=secret_version,
+            out_content_type=out_content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -523,7 +543,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -537,7 +557,7 @@ class KeyVaultClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_secrets(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> AsyncIterable["_models.SecretItem"]:
+    def get_secrets(self, *, maxresults: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged["_models.SecretItem"]:
         """List secrets in a specified key vault.
 
         The Get Secrets operation is applicable to the entire vault. However, only the base secret
@@ -555,7 +575,7 @@ class KeyVaultClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SecretItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SecretItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -605,7 +625,7 @@ class KeyVaultClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecretItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.SecretItem], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -621,7 +641,7 @@ class KeyVaultClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -631,7 +651,7 @@ class KeyVaultClientOperationsMixin(
     @distributed_trace
     def get_secret_versions(
         self, secret_name: str, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.SecretItem"]:
+    ) -> AsyncItemPaged["_models.SecretItem"]:
         """List all versions of the specified secret.
 
         The full secret identifier and attributes are provided in the response. No values are returned
@@ -650,7 +670,7 @@ class KeyVaultClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SecretItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SecretItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -701,7 +721,7 @@ class KeyVaultClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecretItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.SecretItem], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -717,7 +737,7 @@ class KeyVaultClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -727,7 +747,7 @@ class KeyVaultClientOperationsMixin(
     @distributed_trace
     def get_deleted_secrets(
         self, *, maxresults: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.DeletedSecretItem"]:
+    ) -> AsyncItemPaged["_models.DeletedSecretItem"]:
         """Lists deleted secrets for the specified vault.
 
         The Get Deleted Secrets operation returns the secrets that have been deleted for a vault
@@ -744,7 +764,7 @@ class KeyVaultClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DeletedSecretItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DeletedSecretItem]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -794,7 +814,7 @@ class KeyVaultClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DeletedSecretItem], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.DeletedSecretItem], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -810,7 +830,7 @@ class KeyVaultClientOperationsMixin(
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(_models.KeyVaultError, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -870,7 +890,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -932,7 +952,7 @@ class KeyVaultClientOperationsMixin(
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if cls:
@@ -991,7 +1011,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1057,7 +1077,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
@@ -1193,7 +1213,7 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(_models.KeyVaultError, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:

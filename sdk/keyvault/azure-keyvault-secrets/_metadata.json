@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-06-01-preview",
+  "commit": "f19bec6b8f2d2ca2ea4911f85e5228ba0af8c323",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/keyvault/Security.KeyVault.Secrets",
+  "emitterVersion": "0.50.0"
+}
