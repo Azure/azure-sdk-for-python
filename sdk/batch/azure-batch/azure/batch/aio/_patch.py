@@ -36,7 +36,7 @@ class BatchClient(GenerateBatchClient):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
+    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs) -> None:
         per_call_policies = kwargs.pop("per_call_policies", [])
         per_call_policies.append(BatchExceptionPolicy())
         super().__init__(

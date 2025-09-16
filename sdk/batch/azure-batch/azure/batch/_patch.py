@@ -10,7 +10,7 @@ import base64
 import hmac
 import hashlib
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Union
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.credentials import AzureNamedKeyCredential, TokenCredential
@@ -23,8 +23,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
 )
 from azure.core.pipeline import PipelineResponse, PipelineRequest
-from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
-from azure.core.rest import HttpRequest
 
 from ._client import BatchClient as GenerateBatchClient
 from . import models as _models
@@ -41,12 +39,6 @@ except ImportError:
 __all__ = [
     "BatchClient",
 ]  # Add all objects you want publicly available to users at this package level
-
-# if TYPE_CHECKING:
-#     ClientType = TypeVar("ClientType", bound="BatchClient")
-#     T = TypeVar("T")
-#     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
 
 class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
@@ -139,9 +131,8 @@ class BatchErrorFormat(ODataV4Format):
             if "values" in odata_error:
                 for item in odata_error["values"]:
                     self.details.append({"code": item["key"], "message": item["value"]})
-        except KeyError as e:
+        except KeyError:
             super().__init__(odata_error)
-
 
 class BatchExceptionPolicy(SansIOHTTPPolicy):
 

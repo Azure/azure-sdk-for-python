@@ -8,9 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-import time
-import json
-from typing import Any, Callable, Deque, List, MutableMapping, Optional, Iterable, Iterator, overload
+from typing import Any, Callable, Deque, List, Optional, Iterable, Iterator
 import collections
 import logging
 import threading
@@ -23,10 +21,8 @@ from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ._polling import (
     DeleteCertificatePollingMethod,
     DeallocateNodePollingMethod,
