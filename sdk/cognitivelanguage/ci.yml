@@ -35,3 +35,7 @@ extends:
       safeName: azureailanguagequestionanswering
     - name: azure-ai-language-conversations
       safeName: azureailanguageconversations
+    - name: azure-ai-language-conversations-authoring
+      safeName: azureailanguageconversationsauthoring
+    - name: azure-ai-textanalytics
+      safeName: azureaitextanalytics

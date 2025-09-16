@@ -1,0 +1,11 @@
+{
+  "commit": "2a6e9b63a0340623c39a25954d11707ffd399fcc",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.37.1",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/databoxedge/resource-manager//readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --keep-setup-py=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2021-02-01-preview --use=@autorest/python@6.37.1 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/databoxedge/resource-manager//readme.md"
+}

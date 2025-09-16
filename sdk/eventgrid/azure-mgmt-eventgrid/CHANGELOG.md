@@ -1,5 +1,76 @@
 # Release History
 
+## 10.5.0b1 (2025-07-20)
+
+### Features Added
+
+  - Client `EventGridManagementClient` added operation group `partner_destinations`
+  - Client `EventGridManagementClient` added operation group `network_security_perimeter_configurations`
+  - Model `Channel` added property `partner_destination_info`
+  - Enum `ChannelProvisioningState` added member `IDLE_DUE_TO_MIRRORED_PARTNER_DESTINATION_DELETION`
+  - Enum `ChannelType` added member `PARTNER_DESTINATION`
+  - Model `ChannelUpdateParameters` added property `partner_destination_info`
+  - Model `Domain` added property `sku`
+  - Model `DomainUpdateParameters` added property `sku`
+  - Enum `EndpointType` added member `PARTNER_DESTINATION`
+  - Model `EventSubscriptionIdentity` added property `federated_identity_credential_info`
+  - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
+  - Model `Subscription` added property `tags`
+  - Model `SubscriptionUpdateParameters` added property `tags`
+  - Model `Topic` added property `sku`
+  - Model `Topic` added property `kind`
+  - Model `Topic` added property `extended_location`
+  - Model `TopicSpacesConfiguration` added property `client_authentication`
+  - Model `TopicUpdateParameters` added property `sku`
+  - Model `UpdateTopicSpacesConfigurationInfo` added property `client_authentication`
+  - Model `VerifiedPartner` added property `partner_destination_details`
+  - Added enum `AlternativeAuthenticationNameSource`
+  - Added model `AzureADPartnerClientAuthentication`
+  - Added model `ClientAuthenticationSettings`
+  - Added model `CustomJwtAuthenticationManagedIdentity`
+  - Added enum `CustomJwtAuthenticationManagedIdentityType`
+  - Added model `CustomJwtAuthenticationSettings`
+  - Added model `CustomWebhookAuthenticationManagedIdentity`
+  - Added enum `CustomWebhookAuthenticationManagedIdentityType`
+  - Added model `EncodedIssuerCertificateInfo`
+  - Added model `ExtendedLocation`
+  - Added model `FederatedIdentityCredentialInfo`
+  - Added model `IssuerCertificateInfo`
+  - Added enum `NetworkSecurityPerimeterAssociationAccessMode`
+  - Added enum `NetworkSecurityPerimeterConfigProvisioningState`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added enum `NetworkSecurityPerimeterConfigurationIssueSeverity`
+  - Added enum `NetworkSecurityPerimeterConfigurationIssueType`
+  - Added model `NetworkSecurityPerimeterConfigurationIssues`
+  - Added model `NetworkSecurityPerimeterConfigurationList`
+  - Added model `NetworkSecurityPerimeterConfigurationProfile`
+  - Added model `NetworkSecurityPerimeterInfo`
+  - Added model `NetworkSecurityPerimeterProfileAccessRule`
+  - Added enum `NetworkSecurityPerimeterProfileAccessRuleDirection`
+  - Added enum `NetworkSecurityPerimeterResourceType`
+  - Added model `NetworkSecurityPerimeterSubscription`
+  - Added model `PartnerClientAuthentication`
+  - Added enum `PartnerClientAuthenticationType`
+  - Added model `PartnerDestination`
+  - Added enum `PartnerDestinationActivationState`
+  - Added model `PartnerDestinationInfo`
+  - Added enum `PartnerDestinationProvisioningState`
+  - Added model `PartnerDestinationUpdateParameters`
+  - Added model `PartnerDestinationsListResult`
+  - Added enum `PartnerEndpointType`
+  - Added model `PartnerEventSubscriptionDestination`
+  - Added model `PartnerUpdateDestinationInfo`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceKind`
+  - Added model `ResourceMoveChangeHistory`
+  - Added model `ResourceSku`
+  - Added enum `Sku`
+  - Added model `WebhookAuthenticationSettings`
+  - Added model `WebhookPartnerDestinationInfo`
+  - Added model `WebhookUpdatePartnerDestinationInfo`
+  - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
+  - Added operation group `PartnerDestinationsOperations`
+
 ## 10.4.0 (2025-03-24)
 
 ### Features Added

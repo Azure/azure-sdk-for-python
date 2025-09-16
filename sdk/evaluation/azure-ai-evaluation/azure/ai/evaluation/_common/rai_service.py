@@ -290,7 +290,7 @@ async def submit_request_onedp(
     payload = generate_payload(normalized_user_text, metric, annotation_task=annotation_task)
     headers = get_common_headers(token, evaluator_name)
     if scan_session_id:
-        headers["client_request_id"] = scan_session_id
+        headers["x-ms-client-request-id"] = scan_session_id
     response = client.evaluations.submit_annotation(payload, headers=headers)
     result = json.loads(response)
     operation_id = result["location"].split("/")[-1]
@@ -319,8 +319,8 @@ async def fetch_result(operation_id: str, rai_svc_url: str, credential: TokenCre
         token = await fetch_or_reuse_token(credential, token)
         headers = get_common_headers(token)
 
-        async with get_async_http_client_with_timeout() as client:
-            response = await client.get(url, headers=headers)
+        async with get_async_http_client() as client:
+            response = await client.get(url, headers=headers, timeout=RAIService.TIMEOUT)
 
         if response.status_code == 200:
             return response.json()

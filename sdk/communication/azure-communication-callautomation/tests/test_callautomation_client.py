@@ -121,13 +121,11 @@ class TestCallAutomationClient(unittest.TestCase):
         # make invitation
         call_invite = CallInvite(target=user)
         call_automation_client = CallAutomationClient(
-            "https://endpoint",
-            AzureKeyCredential("fakeCredential=="),
-            transport=Mock(send=mock_send)
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
         )
-        call_connection_properties = call_automation_client.create_call(call_invite,
-                                                                        self.callback_url,
-                                                                        teams_app_source=caller)
+        call_connection_properties = call_automation_client.create_call(
+            call_invite, self.callback_url, teams_app_source=caller
+        )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
@@ -228,27 +226,27 @@ class TestCallAutomationClient(unittest.TestCase):
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
-    
-    def test_answer_call_with_custom_context(self):
-        def mock_send(_, **kwargs):
-            kwargs.pop("stream", None)
-            if kwargs:
-                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(
-                status_code=200,
-                json_payload={
-                    "callConnectionId": self.call_connection_id,
-                    "serverCallId": self.server_callI_id,
-                    "callbackUri": self.callback_url,
-                    "targets": [
-                        {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}
-                    ],
-                    "source": {
-                        "rawId": self.communication_user_source_id,
-                        "communicationUser": {"id": self.communication_user_source_id},
+
+        def test_answer_call_with_custom_context(self):
+            def mock_send(_, **kwargs):
+                kwargs.pop("stream", None)
+                if kwargs:
+                    raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+                return mock_response(
+                    status_code=200,
+                    json_payload={
+                        "callConnectionId": self.call_connection_id,
+                        "serverCallId": self.server_callI_id,
+                        "callbackUri": self.callback_url,
+                        "targets": [
+                            {"rawId": self.communication_user_id, "communicationUser": {"id": self.communication_user_id}}
+                        ],
+                        "source": {
+                            "rawId": self.communication_user_source_id,
+                            "communicationUser": {"id": self.communication_user_source_id},
+                        },
                     },
-                },
-            )
+                )
 
         # target endpoint for ACS User
         user = CommunicationUserIdentifier(self.communication_user_id)
@@ -259,7 +257,6 @@ class TestCallAutomationClient(unittest.TestCase):
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
-
     def test_redirect_call(self):
         def mock_send(_, **kwargs):
             kwargs.pop("stream", None)
@@ -277,9 +274,7 @@ class TestCallAutomationClient(unittest.TestCase):
         call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
         call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"})
         with pytest.raises(ValueError) as e:
-            call_automation_client.redirect_call(
-                self.incoming_call_context, user, voip_headers={"foo": "bar"}, source_display_name="baz"
-            )
+            call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"}, source_display_name="baz")
         assert "unexpected kwargs" in str(e.value)
 
     def test_reject_call(self):

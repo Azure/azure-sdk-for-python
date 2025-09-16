@@ -28,7 +28,7 @@ jobs:
     - pwsh: |
         $ErrorActionPreference = 'Stop'
         $PSNativeCommandUseErrorActionPreference = $true
-        pip install "tools/azure-sdk-tools[build,conda]"
+        pip install "eng/tools/azure-sdk-tools[build,conda]"
         pip install disutils
         Invoke-WebRequest "$(VS_INSTALLER_URL)" -OutFile "$(VS_INSTALLER_PATH)"
         # In order of component appearance in the install command below, these are the names of the components

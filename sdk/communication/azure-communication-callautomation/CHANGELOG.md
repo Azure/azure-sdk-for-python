@@ -1,6 +1,6 @@
 # Release History
 
-## 1.6.0b1 (Unreleased)
+## 1.7.0b1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,47 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.6.0b1 (2025-09-11)
+
+### Features Added
+
+- Added support for moving a participant from one call to another, enabling seamless participant transfer between active calls.
+- Added support for retrieving Teams phone call details, including the ability to specify a custom calling context for enhanced integration scenarios.
+- Added support for Personally Identifiable Information (PII) redaction and summarization in transcription, improving privacy and providing concise summaries of transcribed content.
+- Added support for sentiment analysis in both speech and choice recognition, allowing detection of participant sentiment during call interactions.
+
+## 1.5.0 (2025-09-10)
+
+### Features Added
+
+- Added support for Teams multipersona users in create call, add participant, transfer, and redirect scenarios in OPS calls
+- Added TeamsAppSource for use when creating outbound OPS calls
+- Recording with the call connection ID is now supported. OPS calls can be recorded using the call connection ID.
+- Adds support for SIP headers prefixed with 'X-' and 'X-MS-Custom-' within the CustomCallingContext.
+
+### Breaking Changes
+
+- The properties `media_streaming_subscription` and `transcription_subscription` of `CallConnectionProperties` are no longer subclasses of the internal `Model` baseclass, and no longer have the inherited methods.
+- The following attributes have now been typed as `Optional` to reflect the actual behaviour: `CallParticipant.is_muted`, `CallParticipant.is_on_hold`, `AddParticipantResult.invitation_id`, `CancelAddParticipantOperationResult.invitation_id`.
+- The models `FileSource` and `ChannelAffinity` will no longer accept arbitrary keyword args in the constructor.
+
+### Bugs fixed
+
+- Fixed range specification for download_recording.
+- Fixed serialization of participant ordering for start_recording.
+
+
+## 1.4.0 (2025-06-06)
+
+### Features Added
+
+- Real-time transcription support
+- Audio and DTMF streaming capabilities
+- Integration of ConnectAPI for seamless streaming and transcription
+- Improved media streaming with bidirectional functionality, allowing audio formats in both directions, currently supporting sample rates of 24kHz and 16kHz
+- Support for custom speech models has been integrated into transcription
+- A confidence level for recognized speech has been introduced, ranging from 0.0 to 1.0 when available
 
 ## 1.4.0 (2025-06-06)
  
@@ -74,7 +115,7 @@
 ### Features Added
 
 - Support for Bring Your Own Storage recording option
-- Support for PauseOnStart recording option 
+- Support for PauseOnStart recording option
 - Support for Recording state change with new recording kind's
 
 ### Other Changes

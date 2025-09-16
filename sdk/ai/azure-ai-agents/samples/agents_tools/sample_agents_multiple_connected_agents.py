@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.ai.agents.models._models import RunStepConnectedAgentToolCall
 
 """
 DESCRIPTION:
@@ -22,8 +23,12 @@ USAGE:
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
     3) STORAGE_QUEUE_URI - the storage service queue endpoint, triggering Azure function.
-       Please see Getting Started with Azure Functions page for more information on Azure Functions:
-       https://learn.microsoft.com/azure/azure-functions/functions-get-started
+
+    Please see Getting Started with Azure Functions page for more information on Azure Functions:
+    https://learn.microsoft.com/azure/azure-functions/functions-get-started
+    **Note:** The Azure Function may be only used in standard agent setup. Please follow the instruction on the web page
+    https://github.com/azure-ai-foundry/foundry-samples/tree/main/samples/microsoft/infrastructure-setup/41-standard-agent-setup
+    to deploy an agent, capable of calling Azure Functions.
 """
 
 import os
@@ -35,7 +40,6 @@ from azure.ai.agents.models import (
     ListSortOrder,
     MessageRole,
     RunStepToolCallDetails,
-    
 )
 from azure.identity import DefaultAzureCredential
 
@@ -146,14 +150,16 @@ with project_client:
     # Delete the connected Agent when done
     agents_client.delete_agent(weather_agent.id)
     print("Deleted weather agent")
-    
+
     # [START list_tool_calls]
     for run_step in agents_client.run_steps.list(thread_id=thread.id, run_id=run.id, order=ListSortOrder.ASCENDING):
         if isinstance(run_step.step_details, RunStepToolCallDetails):
             for tool_call in run_step.step_details.tool_calls:
-                print(f"\tAgent: {tool_call._data['connected_agent']['name']} "
-                      f"query: {tool_call._data['connected_agent']['arguments']} ",
-                      f"output: {tool_call._data['connected_agent']['output']}")
+                if isinstance(tool_call, RunStepConnectedAgentToolCall):
+                    print(
+                        f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
+                        f"output: {tool_call.connected_agent.output}",
+                    )
     # [END list_tool_calls]
 
     # [START list_messages]
@@ -162,7 +168,7 @@ with project_client:
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]
-            text = last_text.text.value.replace('\u3010', '[').replace('\u3011', ']')
+            text = last_text.text.value.replace("\u3010", "[").replace("\u3011", "]")
             print(f"{msg.role}: {text}")
     # [END list_messages]
 

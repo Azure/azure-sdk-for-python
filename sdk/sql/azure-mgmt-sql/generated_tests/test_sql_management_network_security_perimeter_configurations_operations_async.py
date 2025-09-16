@@ -25,7 +25,7 @@ class TestSqlManagementNetworkSecurityPerimeterConfigurationsOperationsAsync(Azu
         response = self.client.network_security_perimeter_configurations.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementNetworkSecurityPerimeterConfigurationsOperationsAsync(Azu
             resource_group_name=resource_group.name,
             server_name="str",
             nsp_config_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2024-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestSqlManagementNetworkSecurityPerimeterConfigurationsOperationsAsync(Azu
                 resource_group_name=resource_group.name,
                 server_name="str",
                 nsp_config_name="str",
-                api_version="2024-05-01-preview",
+                api_version="2024-11-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

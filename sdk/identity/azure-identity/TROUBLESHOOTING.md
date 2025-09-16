@@ -18,7 +18,7 @@ This troubleshooting guide covers failure investigation techniques, common error
 - [Troubleshoot ManagedIdentityCredential authentication issues](#troubleshoot-managedidentitycredential-authentication-issues)
   - [Azure Virtual Machine managed identity](#azure-virtual-machine-managed-identity)
   - [Azure App Service and Azure Functions managed identity](#azure-app-service-and-azure-functions-managed-identity)
-  - [Azure Kubernetes Service managed identity](#azure-kubernetes-service-managed-identity)
+- [Troubleshoot VisualStudioCodeCredential authentication issues](#troubleshoot-visualstudiocodecredential-authentication-issues)
 - [Troubleshoot AzureCliCredential authentication issues](#troubleshoot-azureclicredential-authentication-issues)
 - [Troubleshoot AzureDeveloperCliCredential authentication issues](#troubleshoot-azuredeveloperclicredential-authentication-issues)
 - [Troubleshoot AzurePowerShellCredential authentication issues](#troubleshoot-azurepowershellcredential-authentication-issues)
@@ -131,7 +131,6 @@ The `ManagedIdentityCredential` is designed to work on a variety of Azure hosts 
 |---|---|---|
 |Azure App Service and Azure Functions|[Configuration](https://learn.microsoft.com/azure/app-service/overview-managed-identity)|[Troubleshooting](#azure-app-service-and-azure-functions-managed-identity)|
 |Azure Arc|[Configuration](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)||
-|Azure Kubernetes Service|[Configuration](https://azure.github.io/aad-pod-identity/docs/)|[Troubleshooting](#azure-kubernetes-service-managed-identity)|
 |Azure Service Fabric|[Configuration](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)||
 |Azure Virtual Machines and Scale Sets|[Configuration](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-portal-windows-vm)|[Troubleshooting](#azure-virtual-machine-managed-identity)|
 
@@ -173,14 +172,25 @@ curl 'http://169.254.169.254/metadata/identity/oauth2/token?resource=https://man
 
 > Note that the output of this command will contain a valid access token, and SHOULD NOT BE SHARED to avoid compromising account security.
 
-### Azure Kubernetes Service managed identity
+## Troubleshoot `VisualStudioCodeCredential` authentication issues
 
-#### Pod identity for Kubernetes
+> **Applies to:** Version 1.24.0b1 and later
+
+As of version 1.24.0b1, `VisualStudioCodeCredential` uses brokered authentication to sign in using the Azure Resources extension in Visual Studio Code. This approach requires the `azure-identity-broker` dependency and currently only works on Windows or WSL.
+
+### Platform support
+
+**Note:** `VisualStudioCodeCredential` with brokered authentication is currently only supported on Windows and WSL. Linux and macOS are not yet supported.
+
+### Common errors
 
 `CredentialUnavailableError`
-| Error Message |Description| Mitigation |
+
+| Error Message | Description | Mitigation |
 |---|---|---|
-|No managed identity endpoint found|The application attempted to authenticate before an identity was assigned to its pod|Verify the pod is labeled correctly. This also occurs when a correctly labeled pod authenticates before the identity is ready. To prevent initialization races, configure NMI to set the Retry-After header in its responses (see [Pod Identity documentation](https://azure.github.io/aad-pod-identity/docs/configure/feature_flags/#set-retry-after-header-in-nmi-response)).
+| VisualStudioCodeCredential requires the 'azure-identity-broker' package to be installed. You must also ensure you have the Azure Resources extension installed and have signed in to Azure via Visual Studio Code.` | Brokered authentication is not available, which may be due to missing dependencies, not being signed in to Azure in VS Code, or the Azure Resources extension not being installed. | <ul><li>Ensure your project includes the <code>azure-identity-broker</code> dependency.</li><li>In Visual Studio Code, install the <a href="https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups">Azure Resources extension</a>.</li><li>Sign in to Azure using the "Azure: Sign In" command in VS Code.</li><li>Restart your application after signing in.</li></ul> |
+
+> VisualStudioCodeCredential is intended for local development scenarios and is not recommended for production environments.
 
 ## Troubleshoot `AzureCliCredential` authentication issues
 

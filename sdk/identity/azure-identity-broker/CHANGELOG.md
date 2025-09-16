@@ -1,14 +1,26 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
+## 1.3.1 (Unreleased)
 
 ### Features Added
-
-- Added broker support for Linux and WSL.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.3.0 (2025-08-07)
+
+### Features Added
+
+- Allow silent authentication attempts on all platforms. Previously, `use_default_broker_account=True` in `InteractiveBrowserBrokerCredential` only applied to Windows/WSL. ([#42375](https://github.com/Azure/azure-sdk-for-python/pull/42375))
+
+## 1.3.0b2 (2025-07-17)
+
+### Features Added
+
+- Added broker support for Linux and WSL.
 
 ### Other Changes
 

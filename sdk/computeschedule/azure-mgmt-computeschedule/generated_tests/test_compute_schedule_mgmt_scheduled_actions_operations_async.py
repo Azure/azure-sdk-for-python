@@ -222,3 +222,248 @@ class TestComputeScheduleMgmtScheduledActionsOperationsAsync(AzureMgmtRecordedTe
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_get(self, resource_group):
+        response = await self.client.scheduled_actions.get(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.scheduled_actions.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                scheduled_action_name="str",
+                resource={
+                    "location": "str",
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "actionType": "str",
+                        "notificationSettings": [
+                            {"destination": "str", "language": "str", "type": "str", "disabled": bool}
+                        ],
+                        "resourceType": "str",
+                        "schedule": {
+                            "requestedDaysOfTheMonth": [0],
+                            "requestedMonths": ["str"],
+                            "requestedWeekDays": ["str"],
+                            "scheduledTime": "12:30:00",
+                            "timeZone": "str",
+                            "deadlineType": "str",
+                            "executionParameters": {
+                                "optimizationPreference": "str",
+                                "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                            },
+                        },
+                        "startTime": "2020-02-20 00:00:00",
+                        "disabled": bool,
+                        "endTime": "2020-02-20 00:00:00",
+                        "provisioningState": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_update(self, resource_group):
+        response = await self.client.scheduled_actions.update(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+            properties={
+                "properties": {
+                    "actionType": "str",
+                    "disabled": bool,
+                    "endTime": "2020-02-20 00:00:00",
+                    "notificationSettings": [
+                        {"destination": "str", "language": "str", "type": "str", "disabled": bool}
+                    ],
+                    "resourceType": "str",
+                    "schedule": {
+                        "requestedDaysOfTheMonth": [0],
+                        "requestedMonths": ["str"],
+                        "requestedWeekDays": ["str"],
+                        "scheduledTime": "12:30:00",
+                        "timeZone": "str",
+                        "deadlineType": "str",
+                        "executionParameters": {
+                            "optimizationPreference": "str",
+                            "retryPolicy": {"retryCount": 0, "retryWindowInMinutes": 0},
+                        },
+                    },
+                    "startTime": "2020-02-20 00:00:00",
+                },
+                "tags": {"str": "str"},
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_begin_delete(self, resource_group):
+        response = await (
+            await self.client.scheduled_actions.begin_delete(
+                resource_group_name=resource_group.name,
+                scheduled_action_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_list_by_resource_group(self, resource_group):
+        response = self.client.scheduled_actions.list_by_resource_group(
+            resource_group_name=resource_group.name,
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_list_by_subscription(self, resource_group):
+        response = self.client.scheduled_actions.list_by_subscription()
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_list_resources(self, resource_group):
+        response = self.client.scheduled_actions.list_resources(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_attach_resources(self, resource_group):
+        response = await self.client.scheduled_actions.attach_resources(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+            body={
+                "resources": [
+                    {
+                        "id": "str",
+                        "name": "str",
+                        "resourceId": "str",
+                        "notificationSettings": [
+                            {"destination": "str", "language": "str", "type": "str", "disabled": bool}
+                        ],
+                        "type": "str",
+                    }
+                ]
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_detach_resources(self, resource_group):
+        response = await self.client.scheduled_actions.detach_resources(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+            body={"resources": ["str"]},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_patch_resources(self, resource_group):
+        response = await self.client.scheduled_actions.patch_resources(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+            body={
+                "resources": [
+                    {
+                        "id": "str",
+                        "name": "str",
+                        "resourceId": "str",
+                        "notificationSettings": [
+                            {"destination": "str", "language": "str", "type": "str", "disabled": bool}
+                        ],
+                        "type": "str",
+                    }
+                ]
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_disable(self, resource_group):
+        response = await self.client.scheduled_actions.disable(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_enable(self, resource_group):
+        response = await self.client.scheduled_actions.enable(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_cancel_next_occurrence(self, resource_group):
+        response = await self.client.scheduled_actions.cancel_next_occurrence(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+            body={"resourceIds": ["str"]},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_scheduled_actions_trigger_manual_occurrence(self, resource_group):
+        response = await self.client.scheduled_actions.trigger_manual_occurrence(
+            resource_group_name=resource_group.name,
+            scheduled_action_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...

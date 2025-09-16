@@ -25,7 +25,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
         response = await self.client.partner_namespaces.get(
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -90,7 +90,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
             await self.client.partner_namespaces.begin_delete(
                 resource_group_name=resource_group.name,
                 partner_namespace_name="str",
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -111,7 +111,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
                     "publicNetworkAccess": "str",
                     "tags": {"str": "str"},
                 },
-                api_version="2025-02-15",
+                api_version="2025-04-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -122,7 +122,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_partner_namespaces_list_by_subscription(self, resource_group):
         response = self.client.partner_namespaces.list_by_subscription(
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -133,7 +133,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
     async def test_partner_namespaces_list_by_resource_group(self, resource_group):
         response = self.client.partner_namespaces.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -145,7 +145,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
         response = await self.client.partner_namespaces.list_shared_access_keys(
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -158,7 +158,7 @@ class TestEventGridManagementPartnerNamespacesOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             partner_namespace_name="str",
             regenerate_key_request={"keyName": "str"},
-            api_version="2025-02-15",
+            api_version="2025-04-01-preview",
         )
 
         # please add some check logic here by yourself

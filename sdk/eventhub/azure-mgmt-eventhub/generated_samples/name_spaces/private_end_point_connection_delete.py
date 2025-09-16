@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,7 +28,7 @@ from azure.mgmt.eventhub import EventHubManagementClient
 def main():
     client = EventHubManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="5f750a97-50d9-4e36-8081-c9ee4c0210d4",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
     client.private_endpoint_connections.begin_delete(
@@ -37,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/eventhub/resource-manager/Microsoft.EventHub/stable/2024-01-01/examples/NameSpaces/PrivateEndPointConnectionDelete.json
+# x-ms-original-file: specification/eventhub/resource-manager/Microsoft.EventHub/preview/2022-01-01-preview/examples/NameSpaces/PrivateEndPointConnectionDelete.json
 if __name__ == "__main__":
     main()

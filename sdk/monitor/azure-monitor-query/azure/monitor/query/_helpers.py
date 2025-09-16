@@ -4,38 +4,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Any, Optional, Tuple, Union
+from datetime import datetime, timedelta
+from typing import List, Dict, Any, Optional
+from json import loads
 
-from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
-from ._generated._serialization import Serializer, Deserializer
-
-
-def get_authentication_policy(credential: TokenCredential, audience: str) -> BearerTokenCredentialPolicy:
-    """Returns the correct authentication policy.
-
-    :param credential: The credential to use for authentication with the service.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :param str audience: The audience for the token.
-    :returns: The correct authentication policy.
-    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
-    """
-    if credential is None:
-        raise ValueError("Parameter 'credential' must not be None.")
-    scope = audience.rstrip("/") + "/.default"
-    if hasattr(credential, "get_token"):
-        return BearerTokenCredentialPolicy(credential, scope)
-
-    raise TypeError("Unsupported credential")
+from ._utils.serialization import Serializer, Deserializer
 
 
 def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -> List:
     ordered = [mapping[id] for id in request_order]
     results = []
     for item in ordered:
+        # In rare cases, the generated value is a JSON string instead of a dict. This potentially stems from a bug in
+        # the service. This check handles that case.
+        if isinstance(item["body"], str):
+            item["body"] = loads(item["body"])
         if not item["body"].get("error"):
             result_obj = kwargs.get("obj")
             if result_obj:
@@ -90,48 +75,6 @@ def construct_iso8601(timespan=None) -> Optional[str]:
     return iso_str
 
 
-def get_timespan_iso8601_endpoints(
-    timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None
-) -> Tuple[Optional[str], Optional[str]]:
-
-    if not timespan:
-        return None, None
-    start, end, duration = None, None, None
-
-    if isinstance(timespan, timedelta):
-        duration = timespan
-    else:
-        if isinstance(timespan[1], datetime):
-            start, end = timespan[0], timespan[1]
-        elif isinstance(timespan[1], timedelta):
-            start, duration = timespan[0], timespan[1]
-        else:
-            raise ValueError("Tuple must be a start datetime with a timedelta or an end datetime.")
-
-    iso_start = None
-    iso_end = None
-    if start is not None:
-        iso_start = Serializer.serialize_iso(start)
-        if end is not None:
-            iso_end = Serializer.serialize_iso(end)
-        elif duration is not None:
-            iso_end = Serializer.serialize_iso(start + duration)
-        else:  # means that an invalid value None that is provided with start_time
-            raise ValueError("Duration or end_time cannot be None when provided with start_time.")
-    else:
-        # Only duration was provided
-        if duration is None:
-            raise ValueError("Duration cannot be None when start_time is None.")
-        end = datetime.now(timezone.utc)
-        iso_end = Serializer.serialize_iso(end)
-        iso_start = Serializer.serialize_iso(end - duration)
-
-    # In some cases with a negative timedelta, the start time will be after the end time.
-    if iso_start and iso_end and iso_start > iso_end:
-        return iso_end, iso_start
-    return iso_start, iso_end
-
-
 def native_col_type(col_type, value):
     if col_type == "datetime":
         try:
@@ -166,24 +109,3 @@ def process_prefer(server_timeout, include_statistics, include_visualization):
     if include_visualization:
         prefer += "include-render=true"
     return prefer.rstrip(",")
-
-
-def get_subscription_id_from_resource(resource_id: str) -> str:
-    """Get the subscription ID from the provided resource ID.
-
-    The format of the resource ID is:
-        /subscriptions/{subscriptionId}/resourceGroups/{group}/providers/{provider}/{type}/{name}
-
-    :param str resource_id: The resource ID to parse.
-    :returns: The subscription ID.
-    :rtype: str
-    """
-    if not resource_id:
-        raise ValueError("Resource ID must not be None or empty.")
-
-    parts = resource_id.split("subscriptions/")
-    if len(parts) != 2:
-        raise ValueError("Resource ID must contain a subscription ID.")
-
-    subscription_id = parts[1].split("/")[0]
-    return subscription_id

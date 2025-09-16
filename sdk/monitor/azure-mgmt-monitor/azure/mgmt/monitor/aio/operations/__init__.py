@@ -44,6 +44,9 @@ from ._private_link_scoped_resources_operations import PrivateLinkScopedResource
 from ._subscription_diagnostic_settings_operations import SubscriptionDiagnosticSettingsOperations  # type: ignore
 from ._azure_monitor_workspaces_operations import AzureMonitorWorkspacesOperations  # type: ignore
 from ._monitor_operations_operations import MonitorOperationsOperations  # type: ignore
+from ._data_collection_endpoints_operations import DataCollectionEndpointsOperations  # type: ignore
+from ._data_collection_rule_associations_operations import DataCollectionRuleAssociationsOperations  # type: ignore
+from ._data_collection_rules_operations import DataCollectionRulesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -81,6 +84,9 @@ __all__ = [
     "SubscriptionDiagnosticSettingsOperations",
     "AzureMonitorWorkspacesOperations",
     "MonitorOperationsOperations",
+    "DataCollectionEndpointsOperations",
+    "DataCollectionRuleAssociationsOperations",
+    "DataCollectionRulesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

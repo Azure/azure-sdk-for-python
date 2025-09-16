@@ -20,7 +20,7 @@ def create_pool(
     if not pool_only:
         create_account(client, rg, acc_name, location)
     print("Creating pool {0} in NetApp Account {1}".format(pool_name, acc_name))
-    pool_body = CapacityPool(SERVICE_LEVEL=setup.SERVICE_LEVEL, size=DEFAULT_SIZE, location=location)
+    pool_body = CapacityPool(service_level=setup.SERVICE_LEVEL, size=DEFAULT_SIZE, location=location)
     pool = client.pools.begin_create_or_update(rg, acc_name, pool_name, pool_body).result()
     wait_for_pool(client, rg, acc_name, pool_name)
     print("\tDone creating pool {0} in NetApp Account {1}".format(pool_name, acc_name))

@@ -66,7 +66,7 @@ with AIProjectClient(
         red_team=red_team,
         headers={
             "model-endpoint": model_endpoint,
-            "api-key": model_api_key,
+            "model-api-key": model_api_key,
         },
     )
     print(f"Red Team scan created with scan name: {red_team_response.name}")
