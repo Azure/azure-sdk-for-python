@@ -157,8 +157,7 @@ with project_client:
             for tool_call in run_step.step_details.tool_calls:
                 if isinstance(tool_call, RunStepConnectedAgentToolCall):
                     print(
-                        f"\tAgent: {tool_call.connected_agent.name} "
-                        f"query: {tool_call.connected_agent.arguments} ",
+                        f"\tAgent: {tool_call.connected_agent.name} " f"query: {tool_call.connected_agent.arguments} ",
                         f"output: {tool_call.connected_agent.output}",
                     )
     # [END list_tool_calls]

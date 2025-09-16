@@ -27,7 +27,7 @@ class TestSqlManagementManagedDatabaseQueriesOperationsAsync(AzureMgmtRecordedTe
             managed_instance_name="str",
             database_name="str",
             query_id="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestSqlManagementManagedDatabaseQueriesOperationsAsync(AzureMgmtRecordedTe
             managed_instance_name="str",
             database_name="str",
             query_id="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

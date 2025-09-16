@@ -19,7 +19,7 @@ class WebpubsubTest(AzureRecordedTestCase):
             credential=credential,
             endpoint=endpoint,
             hub=hub,
-            reverse_proxy_endpoint=reverse_proxy_endpoint
+            reverse_proxy_endpoint=reverse_proxy_endpoint,
         )
 
 
@@ -28,5 +28,5 @@ WebpubsubPowerShellPreparer = functools.partial(
     "webpubsub",
     webpubsub_endpoint="https://myservice.webpubsub.azure.com",
     webpubsub_reverse_proxy_endpoint="https://myservice.webpubsub.azure.com",
-    webpubsub_connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;"
+    webpubsub_connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;",
 )

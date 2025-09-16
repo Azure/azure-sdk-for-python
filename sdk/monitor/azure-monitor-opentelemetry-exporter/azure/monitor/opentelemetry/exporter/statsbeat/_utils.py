@@ -1,17 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os
-from typing import Optional, List, Tuple
-from azure.core.exceptions import ServiceRequestError
-from azure.monitor.opentelemetry.exporter._constants import (
-    RetryCode,
-    RetryCodeType,
-    DropCodeType,
-    _UNKNOWN,
-)
-from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
-from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
-
+import logging
+import json
+from collections.abc import Iterable
+from typing import Optional, Dict
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME,
@@ -24,10 +17,13 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _EU_ENDPOINTS,
     _REQ_DURATION_NAME,
     _REQ_SUCCESS_NAME,
+    _ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY,
+    _ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY,
 )
+
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-    _REQUESTS_MAP_LOCK,
     _REQUESTS_MAP,
+    _REQUESTS_MAP_LOCK,
 )
 
 def _get_stats_connection_string(endpoint: str) -> str:
@@ -46,7 +42,10 @@ def _get_stats_short_export_interval() -> int:
     ei_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME)
     if ei_env:
         try:
-            return int(ei_env)
+            value = int(ei_env)
+            if value < 1:
+                return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
+            return value
         except ValueError:
             return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
     return _DEFAULT_STATS_SHORT_EXPORT_INTERVAL
@@ -57,7 +56,10 @@ def _get_stats_long_export_interval() -> int:
     ei_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME)
     if ei_env:
         try:
-            return int(ei_env)
+            value = int(ei_env)
+            if value < 1:
+                return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
+            return value
         except ValueError:
             return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
     return _DEFAULT_STATS_LONG_EXPORT_INTERVAL
@@ -78,103 +80,82 @@ def _update_requests_map(type_name, value):
                 _REQUESTS_MAP[type_name] = {}
             _REQUESTS_MAP[type_name][value] = prev + 1
 
-def categorize_status_code(status_code: int) -> str:
-    status_map = {
-        400: "bad_request",
-        401: "unauthorized",
-        402: "daily quota exceeded",
-        403: "forbidden",
-        404: "not_found",
-        408: "request_timeout",
-        413: "payload_too_large",
-        429: "too_many_requests",
-        500: "internal_server_error",
-        502: "bad_gateway",
-        503: "service_unavailable",
-        504: "gateway_timeout",
-    }
-    if status_code in status_map:
-        return status_map[status_code]
-    if 400 <= status_code < 500:
-        return "client_error_4xx"
-    if 500 <= status_code < 600:
-        return "server_error_5xx"
-    return f"status_{status_code}"
+## OneSettings Config
 
-def _determine_client_retry_code(error) -> Tuple[RetryCodeType, Optional[str]]:
-    if hasattr(error, 'status_code') and error.status_code in [401, 403, 408, 429, 500, 502, 503, 504]:
-        # For specific status codes, preserve the custom message if available
-        error_message = getattr(error, 'message', None) if hasattr(error, 'message') else None
-        return (error.status_code, error_message or _UNKNOWN)
+# pylint: disable=too-many-return-statements
+def _get_connection_string_for_region_from_config(target_region: str, settings: Dict[str, str]) -> Optional[str]:
+    """Get the appropriate stats connection string for the given region.
 
-    if isinstance(error, ServiceRequestError):
-        error_message = str(error.message) if error.message else ""
-    else:
-        error_message = str(error)
+    This function determines which data boundary the given region
+    belongs to and returns the corresponding stats connection string. The logic:
 
-    error_message_lower = error_message.lower()
-    if 'timeout' in error_message_lower or 'timed out' in error_message_lower:
-        return (RetryCode.CLIENT_TIMEOUT, error_message)
-    return (RetryCode.CLIENT_EXCEPTION, error_message)
+    1. Checks if the given region is in any of the supported data boundary regions
+    2. Returns the matching stats connection string for that boundary
+    3. Falls back to DEFAULT if region is not found in any boundary
 
-def _track_successful_items(customer_statsbeat_metrics, envelopes: List[TelemetryItem]):
-    if customer_statsbeat_metrics:
-        for envelope in envelopes:
-            telemetry_type = _get_telemetry_type(envelope)
-            customer_statsbeat_metrics.count_successful_items(
-                1,
-                telemetry_type
-            )
+    :param target_region: The Azure region name (e.g., "westeurope", "eastus")
+    :type target_region: str
+    :param settings: Dictionary containing OneSettings configuration values
+    :type settings: Dict[str, str]
+    :return: The stats connection string for the region's data boundary,
+            or None if no configuration is available
+    :rtype: Optional[str]
+    """
+    logger = logging.getLogger(__name__)
 
-def _track_dropped_items(
-        customer_statsbeat_metrics,
-        envelopes: List[TelemetryItem],
-        drop_code: DropCodeType,
-        error_message: Optional[str] = None
-    ):
-    if customer_statsbeat_metrics:
-        if error_message is None:
-            for envelope in envelopes:
-                telemetry_type = _get_telemetry_type(envelope)
-                customer_statsbeat_metrics.count_dropped_items(
-                    1,
-                    telemetry_type,
-                    drop_code
-                )
-        else:
-            for envelope in envelopes:
-                telemetry_type = _get_telemetry_type(envelope)
-                customer_statsbeat_metrics.count_dropped_items(
-                    1,
-                    telemetry_type,
-                    drop_code,
-                    error_message
-                )
+    default_connection_string = settings.get(_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY)
 
-def _track_retry_items(customer_statsbeat_metrics, envelopes: List[TelemetryItem], error) -> None:
-    if customer_statsbeat_metrics:
-        retry_code, message = _determine_client_retry_code(error)
-        for envelope in envelopes:
-            telemetry_type = _get_telemetry_type(envelope)
-            if isinstance(retry_code, int):
-                # For status codes, include the message if available
-                if message:
-                    customer_statsbeat_metrics.count_retry_items(
-                        1,
-                        telemetry_type,
-                        retry_code,
-                        str(message)
-                    )
-                else:
-                    customer_statsbeat_metrics.count_retry_items(
-                        1,
-                        telemetry_type,
-                        retry_code
-                    )
-            else:
-                customer_statsbeat_metrics.count_retry_items(
-                    1,
-                    telemetry_type,
-                    retry_code,
-                    str(message)
-                )
+    try:
+        # Get supported data boundaries
+        supported_boundaries = settings.get(_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY)
+        if not supported_boundaries:
+            logger.warning("Supported data boundaries key not found in configuration")
+            return default_connection_string
+
+        # Parse if it's a JSON string
+        if isinstance(supported_boundaries, str):
+            supported_boundaries = json.loads(supported_boundaries)
+
+        # supported_boundaries should be a list
+        if not isinstance(supported_boundaries, Iterable):
+            logger.warning("Supported data boundaries is not iterable")
+            return default_connection_string
+
+        # Check each supported boundary to find the region
+        for boundary in supported_boundaries:
+            # Skip DEFAULT
+            if boundary.upper() == "DEFAULT":
+                continue
+            boundary_regions_key = f"{boundary}_REGIONS"
+            boundary_regions = settings.get(boundary_regions_key)
+
+            if boundary_regions:
+                # Parse if it's a JSON string
+                if isinstance(boundary_regions, str):
+                    boundary_regions = json.loads(boundary_regions)
+
+                # Check if the region is in this boundary's regions
+                if isinstance(boundary_regions, list) and \
+                    any(target_region.lower() == r.lower() for r in boundary_regions):
+                    # Found the boundary, get the corresponding connection string
+                    connection_string_key = f"{boundary}_STATS_CONNECTION_STRING"
+                    connection_string = settings.get(connection_string_key)
+
+                    if connection_string:
+                        return connection_string
+
+                    logger.warning("Connection string key '%s' not found in configuration",
+                                    connection_string_key)
+
+        # Region not found in any specific boundary, try DEFAULT
+        if not default_connection_string:
+            logger.warning("Default stats connection string not found in configuration")
+            return None
+        return default_connection_string
+    except (ValueError, TypeError, KeyError) as ex:
+        logger.warning("Error parsing configuration for region '%s': %s", target_region, str(ex))
+        return None
+    except Exception as ex:  # pylint: disable=broad-exception-caught
+        logger.warning("Unexpected error getting stats connection string for region '%s': %s",
+                     target_region, str(ex))
+        return None
