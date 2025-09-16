@@ -9,7 +9,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpul
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_live_metrics_feature_set,
 )
-from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
 from azure.monitor.opentelemetry.exporter._configuration._utils import evaluate_feature
 from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATURE_LIVE_METRICS
 
