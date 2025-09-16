@@ -11,7 +11,7 @@ param ledgerName string = 'pysdkci-${uniqueString(resourceGroup().id)}'
 param testApplicationOid string
 
 @description('The location of the resource. Currently, not all regions are supported.')
-param location string = 'AustraliaEast' // Australia East is our frontier region for production testing
+param location string = 'westeurope'
 // Explicitly set a region due to regional restrictions e.g. ACL is not currently available in westus
 
 var azureConfidentialLedgerUrl = 'https://${ledgerName}.confidential-ledger.azure.com'
