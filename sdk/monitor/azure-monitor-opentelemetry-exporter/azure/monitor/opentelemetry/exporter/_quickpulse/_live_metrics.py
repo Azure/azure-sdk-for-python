@@ -9,6 +9,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpul
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     set_statsbeat_live_metrics_feature_set,
 )
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 from azure.monitor.opentelemetry.exporter._configuration._utils import evaluate_feature
 from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATURE_LIVE_METRICS
 
@@ -36,11 +37,13 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
     """
     manager = get_quickpulse_manager()
     initialized = manager.initialize(**kwargs)
-    # if initialized:
-    #     # Register the callback that will be invoked on configuration changes
-    #     # Is a NoOp if _ConfigurationManager not initialized
-    #     _ConfigurationManager().register_callback(get_quickpulse_configuration_callback)
-        
+    if initialized:
+        # Register the callback that will be invoked on configuration changes
+        # Will only be added if QuickpulseManager is initialized successfully
+        # Is a NoOp if _ConfigurationManager not initialized
+        config_manager = get_configuration_manager()
+        config_manager.register_callback(get_quickpulse_configuration_callback)
+
     # We can detect feature usage for statsbeat since we are in an opt-in model currently
     # Once we move to live metrics on-by-default, we will have to check for both explicit usage
     # and whether or not user is actually using live metrics (being on live metrics blade in UX)
@@ -65,7 +68,13 @@ def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
     
     if live_metrics_enabled and not manager.is_initialized():
         # Enable live metrics if it's not currently enabled
-        manager.initialize()
+        # This should be a re-initialization with previous parameters
+        if manager._connection_string:
+            manager.initialize(
+                connection_string=manager._connection_string,
+                credential=manager._credential,
+                resource=manager._resource
+            )
     elif not live_metrics_enabled and manager.is_initialized():
         # Disable live metrics if it's currently enabled
         manager.shutdown()

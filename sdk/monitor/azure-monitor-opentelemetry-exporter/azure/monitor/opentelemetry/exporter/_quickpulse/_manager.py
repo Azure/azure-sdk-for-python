@@ -285,23 +285,12 @@ class _QuickpulseManager(metaclass=Singleton):
                 self._meter_provider.shutdown()
             except Exception:  # pylint: disable=broad-except
                 pass
+        # We leave connection_string, credential, and resource intact for potential re-initialization
         self._exporter = None
         self._reader = None
         self._meter_provider = None
         self._meter = None
         self._base_monitoring_data_point = None
-        # Reset metric instruments
-        self._request_duration = None
-        self._dependency_duration = None
-        self._request_rate_counter = None
-        self._request_failed_rate_counter = None
-        self._dependency_rate_counter = None
-        self._dependency_failure_rate_counter = None
-        self._exception_rate_counter = None
-        self._process_memory_gauge_old = None
-        self._process_memory_gauge = None
-        self._process_time_gauge_old = None
-        self._process_time_gauge = None
         self._initialized = False
 
     def is_initialized(self) -> bool:

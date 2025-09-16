@@ -11,7 +11,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
 if TYPE_CHECKING:
     from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
 
-from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,8 @@ def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ign
         if initialized:
             # Register the callback that will be invoked on configuration changes to statsbeat
             # Is a NoOp if _ConfigurationManager not initialized
-            _ConfigurationManager().register_callback(get_statsbeat_configuration_callback)
+            config_manager = get_configuration_manager()
+            config_manager.register_callback(get_statsbeat_configuration_callback)
 
 def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     current_config = StatsbeatManager().get_current_config()

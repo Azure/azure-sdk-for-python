@@ -207,7 +207,6 @@ class _ConfigurationManager(metaclass=Singleton):
         # Atomic state update
         with self._state_lock:
             latest_state = self._current_state  # Always use latest state
-            print(new_state_updates)
             self._current_state = latest_state.with_updates(**new_state_updates)
             current_refresh_interval = self._current_state.refresh_interval
             if 'settings_cache' in new_state_updates:
@@ -217,8 +216,6 @@ class _ConfigurationManager(metaclass=Singleton):
         # Handle configuration updates throughout the SDK
         if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
             self._notify_callbacks(state_for_callbacks.settings_cache)
-
-        print(current_refresh_interval)
 
         return current_refresh_interval
 

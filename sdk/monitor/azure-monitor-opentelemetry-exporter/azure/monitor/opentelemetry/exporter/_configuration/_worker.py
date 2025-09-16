@@ -127,9 +127,9 @@ class _ConfigurationWorker:
             - Uses _shutdown_event.wait() for interruptible sleep periods
             - Exits cleanly when shutdown is requested
         """
-        # Add random startup delay (0-15 seconds) to stagger configuration requests
+        # Add random startup delay (5-15 seconds) to stagger configuration requests
         # This prevents thundering herd when many SDKs start simultaneously
-        startup_delay = random.uniform(0.0, 15.0)
+        startup_delay = random.uniform(5.0, 15.0)
 
         if self._shutdown_event.wait(startup_delay):
             # Shutdown requested during startup delay
