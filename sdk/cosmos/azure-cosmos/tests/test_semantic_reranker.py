@@ -29,7 +29,7 @@ class TestSemanticReranker(unittest.TestCase):
                 "tests.")
 
         credential = DefaultAzureCredential()
-        cls.client = cosmos_client.CosmosClient(cls.host, credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, credential=credential)
         cls.test_db = cls.client.create_database_if_not_exists(cls.TEST_DATABASE_ID)
         cls.test_container = cls.test_db.create_container_if_not_exists(cls.TEST_CONTAINER_ID,
                                                                         cls.TEST_CONTAINER_PARTITION_KEY)

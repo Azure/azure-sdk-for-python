@@ -71,7 +71,7 @@ from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider, routing_range
-from ._semantic_reranker import _SemanticReranker
+from ._inference_service import _InferenceService
 from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
     _Undefined,
@@ -237,9 +237,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             policies=policies
         )
 
-        self._semantic_reranker: Optional[_SemanticReranker] = None
+        self._inference_service: Optional[_InferenceService] = None
         if self.aad_credentials:
-            self._semantic_reranker = _SemanticReranker(self)
+            self._inference_service = _InferenceService(self)
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -307,9 +307,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         else:
             self.session = None
 
-    def _get_semantic_reranker(self) -> Optional[_SemanticReranker]:
-        """Get semantic reranker instance and account name."""
-        return self._semantic_reranker
+    def _get_inference_service(self) -> Optional[_InferenceService]:
+        """Get inference service instance"""
+        return self._inference_service
 
     @property
     def Session(self) -> Optional[_session.Session]:
