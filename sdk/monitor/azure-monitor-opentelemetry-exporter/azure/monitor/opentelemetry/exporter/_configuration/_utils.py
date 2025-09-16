@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 class _ConfigurationProfile:
     """Profile for the current running SDK."""
-    os: str =  ""
+    os: str = ""
     rp: str = ""
     attach: str = ""
     version: str = ""
