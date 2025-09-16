@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.1 (2025-09-16)
+## 1.8.1 (2025-09-17)
 
 ### Bugs Fixed
 - Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
