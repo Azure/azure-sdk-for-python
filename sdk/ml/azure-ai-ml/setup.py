@@ -21,7 +21,10 @@ NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(PACKAGE_FOLDER_PATH, "_version.py"), "r") as fd:
-    version = cast(Match[Any], re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE)).group(1)
+    version = cast(
+        Match[Any],
+        re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE),
+    ).group(1)
 if not version:
     raise RuntimeError("Cannot find version information")
 
@@ -71,7 +74,7 @@ setup(
         "pyyaml>=5.1.0,<7.0.0",
         "azure-core>=1.23.0",
         "azure-mgmt-core>=1.3.0",
-        "marshmallow>=3.5,<4.0.0",
+        "marshmallow>=3.5,<5.0.0",
         "jsonschema>=4.0.0,<5.0.0",
         "tqdm<5.0.0",
         # Used for PR 825138
