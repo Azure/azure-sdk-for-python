@@ -68,7 +68,7 @@ class mypy(Check):
                 else:
                     install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements, package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install mypy:", e)
+                logger.error(f"Failed to install mypy: {e}")
                 return e.returncode
 
             logger.info(f"Running mypy against {package_name}")
