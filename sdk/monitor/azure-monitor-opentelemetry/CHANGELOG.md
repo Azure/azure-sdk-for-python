@@ -1,14 +1,10 @@
 # Release History
 
-## 1.8.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.8.1 (2025-09-16)
 
 ### Bugs Fixed
-
-### Other Changes
+- Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
+  ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 
 ## 1.8.0 (2025-09-08)
 

@@ -34,7 +34,7 @@ This sample demonstrates the fundamental capabilities of the Azure VoiceLive SDK
    
    Or set environment variables directly:
    ```bash
-   export AZURE_VOICELIVE_KEY="your-api-key"
+   export AZURE_VOICELIVE_API_KEY="your-api-key"
    export AZURE_VOICELIVE_ENDPOINT="wss://api.voicelive.com/v1"
    export VOICELIVE_MODEL="gpt-4o-realtime-preview"
    export VOICELIVE_VOICE="en-US-AvaNeural"
@@ -63,7 +63,7 @@ python basic_voice_assistant.py \
 
 ### Available Options
 
-- `--api-key`: Azure VoiceLive API key (or use AZURE_VOICELIVE_KEY env var)
+- `--api-key`: Azure VoiceLive API key (or use AZURE_VOICELIVE_API_KEY env var)
 - `--endpoint`: VoiceLive endpoint URL
 - `--model`: Model to use (default: gpt-4o-realtime-preview)
 - `--voice`: Voice for the assistant (alloy, echo, fable, onyx, nova, shimmer, en-US-AvaNeural, etc.)

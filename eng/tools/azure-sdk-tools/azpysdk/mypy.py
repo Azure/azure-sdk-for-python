@@ -16,7 +16,6 @@ from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
-
 ADDITIONAL_LOCKED_DEPENDENCIES = [
   "types-chardet==5.0.4.6",
   "types-requests==2.31.0.6",
@@ -68,7 +67,7 @@ class mypy(Check):
                 else:
                     install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements, package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install mypy:", e)
+                logger.error(f"Failed to install mypy: {e}")
                 return e.returncode
 
             logger.info(f"Running mypy against {package_name}")
