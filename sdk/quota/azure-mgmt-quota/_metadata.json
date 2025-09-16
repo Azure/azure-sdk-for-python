@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-09-01",
+  "commit": "3ed4c07ba75ceba9b01d5cf2e4bed0ea988d3c52",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/quota/Quota.Management",
+  "emitterVersion": "0.50.0"
+}
