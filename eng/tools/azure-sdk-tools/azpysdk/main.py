@@ -21,6 +21,8 @@ from .next_pylint import next_pylint
 from .sphinx import sphinx
 from .next_sphinx import next_sphinx
 from .black import black
+from .pyright import pyright
+from .next_pyright import next_pyright
 from .ruff import ruff
 
 from ci_tools.logging import configure_logging, logger
@@ -85,6 +87,8 @@ def build_parser() -> argparse.ArgumentParser:
     sphinx().register(subparsers, [common])
     next_sphinx().register(subparsers, [common])
     black().register(subparsers, [common])
+    pyright().register(subparsers, [common])
+    next_pyright().register(subparsers, [common])
     ruff().register(subparsers, [common])
 
     return parser
