@@ -19,11 +19,12 @@
   - Added model `GroupQuotasEnforcementStatus`
   - Added model `GroupQuotasEnforcementStatusProperties`
   - Added enum `GroupType`
-  - Added model `GroupQuotaLocationSettingsOperations`
-  - Added model `GroupQuotaUsagesOperations`
+  - Added operation group `GroupQuotaLocationSettingsOperations`
+  - Added operation group `GroupQuotaUsagesOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed model `CommonResourceProperties`
   - Deleted or renamed model `CreateGenericQuotaRequestParameters`
   - Deleted or renamed model `GroupQuotaList`
@@ -49,11 +50,6 @@
   - Deleted or renamed model `SubscriptionQuotaAllocationsStatusList`
   - Deleted or renamed model `UsagesLimits`
   - Method `QuotaRequestStatusOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `UsagesOperations.get` re-ordered its parameters from `['self', 'resource_name', 'scope', 'kwargs']` to `['self', 'scope', 'resource_name', 'kwargs']`
-  - Method `QuotaRequestStatusOperations.get` re-ordered its parameters from `['self', 'id', 'scope', 'kwargs']` to `['self', 'scope', 'id', 'kwargs']`
-  - Method `QuotaOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_name', 'scope', 'create_quota_request', 'kwargs']` to `['self', 'scope', 'resource_name', 'create_quota_request', 'kwargs']`
-  - Method `QuotaOperations.begin_update` re-ordered its parameters from `['self', 'resource_name', 'scope', 'create_quota_request', 'kwargs']` to `['self', 'scope', 'resource_name', 'create_quota_request', 'kwargs']`
-  - Method `QuotaOperations.get` re-ordered its parameters from `['self', 'resource_name', 'scope', 'kwargs']` to `['self', 'scope', 'resource_name', 'kwargs']`
 
 ## 2.0.0 (2025-02-26)
 
