@@ -6,6 +6,7 @@
 - Fixed version pinned for opentelemetry-sdk to resolve dependency conflicts.
   ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 - Modified ordering of dependencies in setup.py to avoid dependency conflicts in future.
+  ([#43023](https://github.com/Azure/azure-sdk-for-python/pull/43023))
 
 ## 1.8.0 (2025-09-08)
 
