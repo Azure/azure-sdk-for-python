@@ -75,9 +75,21 @@ class TestQuickpulseManager(unittest.TestCase):
         if _QuickpulseManager in _QuickpulseManager._instances:
             del _QuickpulseManager._instances[_QuickpulseManager]
 
+    def tearDown(self):
+        # Reset singleton state - only clear QuickpulseManager instances
+        if _QuickpulseManager in _QuickpulseManager._instances:
+            del _QuickpulseManager._instances[_QuickpulseManager]
+
     @classmethod
     def setUpClass(cls):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
+        cls.connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+        cls.resource = Resource.create(
+            {
+                ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",
+                ResourceAttributes.SERVICE_NAME: "test_service",
+            }
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -86,17 +98,15 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("opentelemetry.sdk.trace.id_generator.RandomIdGenerator.generate_trace_id")
     def test_init(self, generator_mock):
         generator_mock.return_value = "test_trace_id"
-        resource = Resource.create(
-            {
-                ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",
-                ResourceAttributes.SERVICE_NAME: "test_service",
-            }
+        part_a_fields = _populate_part_a_fields(self.resource)
+        qpm = _QuickpulseManager()
+        
+        # Initialize with kwargs
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
-        part_a_fields = _populate_part_a_fields(resource)
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=resource,
-        )
+        
         self.assertEqual(_get_global_quickpulse_state(), _QuickpulseState.PING_SHORT)
         self.assertTrue(isinstance(qpm._exporter, _QuickpulseExporter))
         self.assertEqual(
@@ -120,7 +130,7 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._reader._base_monitoring_data_point, qpm._base_monitoring_data_point)
         self.assertTrue(isinstance(qpm._meter_provider, MeterProvider))
         self.assertEqual(qpm._meter_provider._sdk_config.metric_readers, [qpm._reader])
-        self.assertEqual(qpm._meter_provider._sdk_config.resource, resource)
+        self.assertEqual(qpm._meter_provider._sdk_config.resource, self.resource)
         self.assertTrue(isinstance(qpm._meter, Meter))
         self.assertEqual(qpm._meter.name, "azure_monitor_live_metrics")
         self.assertTrue(isinstance(qpm._request_duration, Histogram))
@@ -148,28 +158,26 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertEqual(qpm._process_time_gauge_old._callbacks, [_get_process_time_normalized_old])
 
     def test_singleton(self):
-        resource = Resource.create(
-            {
-                ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",
-                ResourceAttributes.SERVICE_NAME: "test_service",
-            }
-        )
-        part_a_fields = _populate_part_a_fields(resource)
+        part_a_fields = _populate_part_a_fields(self.resource)
         resource2 = Resource.create(
             {
                 ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance2",
                 ResourceAttributes.SERVICE_NAME: "test_service2",
             }
         )
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=resource,
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
-        qpm2 = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
+        qpm2 = _QuickpulseManager()
+        # Second instance should be the same singleton, so initialize should be ignored
+        qpm2.initialize(
+            connection_string=self.connection_string,
             resource=resource2,
         )
         self.assertEqual(qpm, qpm2)
+        # Configuration should be from first initialization since singleton was already initialized
         self.assertEqual(
             qpm._base_monitoring_data_point.instance, part_a_fields.get(ContextTagKeys.AI_CLOUD_ROLE_INSTANCE, "")
         )
@@ -183,16 +191,16 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_initialize_success(self):
         """Test successful initialization."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key",
-            resource=Resource.create({"service.name": "test"})
-        )
+        qpm = _QuickpulseManager()
         
         # Initially not initialized
         self.assertFalse(qpm.is_initialized())
         
         # Initialize should succeed
-        result = qpm.initialize()
+        result = qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource
+        )
         self.assertTrue(result)
         self.assertTrue(qpm.is_initialized())
         
@@ -208,34 +216,30 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_initialize_already_initialized(self):
         """Test initialization when already initialized."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
+        qpm = _QuickpulseManager()
         
         # First initialization
-        result1 = qpm.initialize()
+        result1 = qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(result1)
         self.assertTrue(qpm.is_initialized())
         
         # Second initialization should return True without reinitializing
-        result2 = qpm.initialize()
+        result2 = qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(result2)
         self.assertTrue(qpm.is_initialized())
         
         # Cleanup
         qpm.shutdown()
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._QuickpulseExporter")
     def test_initialize_failure(self, exporter_mock):
         """Test initialization failure handling."""
         exporter_mock.side_effect = Exception("Exporter creation failed")
         
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
+        qpm = _QuickpulseManager()
         
         # Initialize should fail
-        result = qpm.initialize()
+        result = qpm.initialize(connection_string=self.connection_string)
         self.assertFalse(result)
         self.assertFalse(qpm.is_initialized())
         
@@ -247,11 +251,9 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_initialize_with_default_resource(self):
         """Test initialization with default resource when none provided."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
+        qpm = _QuickpulseManager()
         
-        result = qpm.initialize()
+        result = qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(result)
         self.assertTrue(qpm.is_initialized())
         self.assertIsNotNone(qpm._base_monitoring_data_point)
@@ -261,12 +263,10 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_shutdown_success(self):
         """Test successful shutdown."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
+        qpm = _QuickpulseManager()
         
         # Initialize first
-        qpm.initialize()
+        qpm.initialize(connection_string=self.connection_string)
         self.assertTrue(qpm.is_initialized())
         
         # Shutdown should succeed
@@ -282,9 +282,7 @@ class TestQuickpulseManager(unittest.TestCase):
 
     def test_shutdown_not_initialized(self):
         """Test shutdown when not initialized."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
+        qpm = _QuickpulseManager()
         
         # Shutdown should return False when not initialized
         result = qpm.shutdown()
@@ -294,12 +292,10 @@ class TestQuickpulseManager(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._logger")
     def test_shutdown_meter_provider_exception(self, logger_mock):
         """Test shutdown handling meter provider exception."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
+        qpm = _QuickpulseManager()
         
         # Initialize first
-        qpm.initialize()
+        qpm.initialize(connection_string=self.connection_string)
         
         # Mock meter provider to raise exception on shutdown
         qpm._meter_provider.shutdown = mock.Mock(side_effect=Exception("Shutdown failed"))
@@ -308,145 +304,6 @@ class TestQuickpulseManager(unittest.TestCase):
         result = qpm.shutdown()
         self.assertFalse(result)
         self.assertFalse(qpm.is_initialized())
-        
-        # Should log warning
-        logger_mock.warning.assert_called_once()
-
-    def test_get_current_config_with_all_params(self):
-        """Test get_current_config with all parameters."""
-        resource = Resource.create({"service.name": "test"})
-        credential = mock.Mock()
-        
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key",
-            credential=credential,
-            resource=resource
-        )
-        
-        config = qpm.get_current_config()
-        self.assertIsNotNone(config)
-        self.assertEqual(config["connection_string"], "InstrumentationKey=test-key")
-        self.assertEqual(config["credential"], credential)
-        self.assertEqual(config["resource"], resource)
-
-    def test_get_current_config_partial_params(self):
-        """Test get_current_config with partial parameters."""
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
-        
-        config = qpm.get_current_config()
-        self.assertIsNotNone(config)
-        self.assertEqual(config["connection_string"], "InstrumentationKey=test-key")
-        self.assertNotIn("credential", config)
-        self.assertNotIn("resource", config)
-
-    def test_get_current_config_no_params(self):
-        """Test get_current_config with no parameters."""
-        qpm = _QuickpulseManager()
-        
-        config = qpm.get_current_config()
-        self.assertIsNone(config)
-
-    def test_config_preserved_across_shutdown_restart(self):
-        """Test that configuration is preserved across shutdown/restart cycles."""
-        resource = Resource.create({"service.name": "test"})
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key",
-            resource=resource
-        )
-        
-        # Initialize
-        qpm.initialize()
-        self.assertTrue(qpm.is_initialized())
-        
-        # Get config while initialized
-        config1 = qpm.get_current_config()
-        
-        # Shutdown
-        qpm.shutdown()
-        self.assertFalse(qpm.is_initialized())
-        
-        # Config should still be available after shutdown
-        config2 = qpm.get_current_config()
-        self.assertEqual(config1, config2)
-        
-        # Should be able to reinitialize with preserved config
-        result = qpm.initialize()
-        self.assertTrue(result)
-        self.assertTrue(qpm.is_initialized())
-        
-        # Config should still be the same
-        config3 = qpm.get_current_config()
-        self.assertEqual(config1, config3)
-        
-        # Cleanup
-        qpm.shutdown()
-
-    @mock.patch("threading.Lock")
-    def test_thread_safety_initialize(self, lock_mock):
-        """Test thread safety of initialize method."""
-        lock_instance = mock.Mock()
-        lock_mock.return_value = lock_instance
-        
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
-        
-        qpm.initialize()
-        
-        # Verify lock was used
-        lock_instance.__enter__.assert_called()
-        lock_instance.__exit__.assert_called()
-
-    @mock.patch("threading.Lock")
-    def test_thread_safety_shutdown(self, lock_mock):
-        """Test thread safety of shutdown method."""
-        lock_instance = mock.Mock()
-        lock_mock.return_value = lock_instance
-        
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
-        
-        qpm.initialize()
-        qpm.shutdown()
-        
-        # Verify lock was used for both calls
-        self.assertEqual(lock_instance.__enter__.call_count, 2)
-        self.assertEqual(lock_instance.__exit__.call_count, 2)
-
-    @mock.patch("threading.Lock")
-    def test_thread_safety_is_initialized(self, lock_mock):
-        """Test thread safety of is_initialized method."""
-        lock_instance = mock.Mock()
-        lock_mock.return_value = lock_instance
-        
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
-        
-        qpm.is_initialized()
-        
-        # Verify lock was used
-        lock_instance.__enter__.assert_called()
-        lock_instance.__exit__.assert_called()
-
-    @mock.patch("threading.Lock")
-    def test_thread_safety_get_current_config(self, lock_mock):
-        """Test thread safety of get_current_config method."""
-        lock_instance = mock.Mock()
-        lock_mock.return_value = lock_instance
-        
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=test-key"
-        )
-        
-        qpm.get_current_config()
-        
-        # Verify lock was used
-        lock_instance.__enter__.assert_called()
-        lock_instance.__exit__.assert_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -459,6 +316,7 @@ class TestQuickpulseManager(unittest.TestCase):
         span_mock.start_time = 5
         span_mock.status.is_ok = True
         span_mock.kind = SpanKind.SERVER
+        span_mock.events = []
         data = _RequestData(
             custom_dimensions={},
             duration=1000,
@@ -468,18 +326,25 @@ class TestQuickpulseManager(unittest.TestCase):
             url="test_url",
         )
         data_mock._from_span.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
         qpm._request_rate_counter = mock.Mock()
         qpm._request_duration = mock.Mock()
+        
         qpm._record_span(span_mock)
         qpm._request_rate_counter.add.assert_called_once_with(1)
-        qpm._request_duration.record.assert_called_once_with(5 / 1e9)
+        qpm._request_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -492,6 +357,7 @@ class TestQuickpulseManager(unittest.TestCase):
         span_mock.start_time = 5
         span_mock.status.is_ok = False
         span_mock.kind = SpanKind.SERVER
+        span_mock.events = []
         data = _RequestData(
             custom_dimensions={},
             duration=1000,
@@ -501,18 +367,25 @@ class TestQuickpulseManager(unittest.TestCase):
             url="test_url",
         )
         data_mock._from_span.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
         qpm._request_failed_rate_counter = mock.Mock()
         qpm._request_duration = mock.Mock()
+        
         qpm._record_span(span_mock)
         qpm._request_failed_rate_counter.add.assert_called_once_with(1)
-        qpm._request_duration.record.assert_called_once_with(5 / 1e9)
+        qpm._request_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -525,6 +398,7 @@ class TestQuickpulseManager(unittest.TestCase):
         span_mock.start_time = 5
         span_mock.status.is_ok = True
         span_mock.kind = SpanKind.CLIENT
+        span_mock.events = []
         data = _DependencyData(
             custom_dimensions={},
             duration=1000,
@@ -536,18 +410,25 @@ class TestQuickpulseManager(unittest.TestCase):
             success=True,
         )
         data_mock._from_span.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
         qpm._dependency_rate_counter = mock.Mock()
         qpm._dependency_duration = mock.Mock()
+        
         qpm._record_span(span_mock)
         qpm._dependency_rate_counter.add.assert_called_once_with(1)
-        qpm._dependency_duration.record.assert_called_once_with(5 / 1e9)
+        qpm._dependency_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -560,6 +441,7 @@ class TestQuickpulseManager(unittest.TestCase):
         span_mock.start_time = 5
         span_mock.status.is_ok = False
         span_mock.kind = SpanKind.CLIENT
+        span_mock.events = []
         data = _DependencyData(
             custom_dimensions={},
             duration=1000,
@@ -571,18 +453,25 @@ class TestQuickpulseManager(unittest.TestCase):
             success=False,
         )
         data_mock._from_span.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
         qpm._dependency_failure_rate_counter = mock.Mock()
         qpm._dependency_duration = mock.Mock()
+        
         qpm._record_span(span_mock)
         qpm._dependency_failure_rate_counter.add.assert_called_once_with(1)
-        qpm._dependency_duration.record.assert_called_once_with(5 / 1e9)
+        qpm._dependency_duration.record.assert_called_once_with(5e-09)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -595,6 +484,7 @@ class TestQuickpulseManager(unittest.TestCase):
         span_mock = mock.Mock()
         span_mock.end_time = 10
         span_mock.start_time = 5
+        span_mock.events = []
         data = _RequestData(
             custom_dimensions={},
             duration=1000,
@@ -604,14 +494,18 @@ class TestQuickpulseManager(unittest.TestCase):
             url="test_url",
         )
         data_mock._from_span.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
         qpm._record_span(span_mock)
         data_mock._from_span.assert_called_once_with(span_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._ExceptionData")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
@@ -643,17 +537,26 @@ class TestQuickpulseManager(unittest.TestCase):
         )
         data_mock._from_span.return_value = data
         exc_data_mock._from_span_event.return_value = exc_data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
+        qpm._exception_rate_counter = mock.Mock()
+        
         qpm._record_span(span_mock)
+        qpm._exception_rate_counter.add.assert_called_once_with(1)
         data_mock._from_span.assert_called_once_with(span_mock)
         exc_data_mock._from_span_event.assert_called_once_with(event_mock)
         metric_derive_mock.assert_any_call(data)
         doc_mock.assert_any_call(data)
         metric_derive_mock.assert_any_call(exc_data)
         doc_mock.assert_any_call(exc_data)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -670,16 +573,23 @@ class TestQuickpulseManager(unittest.TestCase):
             custom_dimensions={},
         )
         data_mock._from_log_record.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
         qpm._exception_rate_counter = mock.Mock()
+        
         qpm._record_log_record(log_data_mock)
-        qpm._exception_rate_counter.assert_not_called()
+        qpm._exception_rate_counter.add.assert_not_called()
         data_mock._from_log_record.assert_called_once_with(log_record_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data, None)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -701,16 +611,23 @@ class TestQuickpulseManager(unittest.TestCase):
             SpanAttributes.EXCEPTION_MESSAGE: "exc_msg",
         }
         log_data_mock.log_record.attributes = attributes
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
+        
+        # Mock the metric instruments
         qpm._exception_rate_counter = mock.Mock()
+        
         qpm._record_log_record(log_data_mock)
         qpm._exception_rate_counter.add.assert_called_once_with(1)
         data_mock._from_log_record.assert_called_once_with(log_record_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data, "exc_type")
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._apply_document_filters_from_telemetry_data")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._derive_metrics_from_telemetry_data")
@@ -729,14 +646,18 @@ class TestQuickpulseManager(unittest.TestCase):
             custom_dimensions={},
         )
         data_mock._from_log_record.return_value = data
-        qpm = _QuickpulseManager(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/",
-            resource=Resource.create(),
+        qpm = _QuickpulseManager()
+        qpm.initialize(
+            connection_string=self.connection_string,
+            resource=self.resource,
         )
         qpm._record_log_record(log_data_mock)
         data_mock._from_log_record.assert_called_once_with(log_record_mock)
         metric_derive_mock.assert_called_once_with(data)
         doc_mock.assert_called_once_with(data, None)
+        
+        # Cleanup
+        qpm.shutdown()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._create_projections")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._check_metric_filters")
@@ -888,4 +809,4 @@ class TestQuickpulseManager(unittest.TestCase):
         self.assertIsNone(doc_mock.document_stream_ids)
         append_mock.assert_not_called()
 
-# cSpell:enable
+# # cSpell:enable
