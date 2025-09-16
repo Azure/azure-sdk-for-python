@@ -94,7 +94,7 @@ class TestConfigurationWorker(unittest.TestCase):
         
         try:
             # Verify random.uniform was called with correct range
-            mock_random.assert_called_once_with(0.0, 15.0)
+            mock_random.assert_called_once_with(5.0, 15.0)
         finally:
             worker.shutdown()
 

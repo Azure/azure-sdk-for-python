@@ -820,9 +820,9 @@ class TestQuickpulseManager(unittest.TestCase):
         qpm.initialize(connection_string=self.connection_string, resource=self.resource)
         self.assertTrue(qpm._validate_recording_resources())
         
-        # After shutdown - should return False
+        # After shutdown - instruments should be preserved
         qpm.shutdown()
-        self.assertFalse(qpm._validate_recording_resources())
+        self.assertTrue(qpm._validate_recording_resources())
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._manager._is_post_state")
     def test_record_span_not_post_state(self, post_state_mock):
