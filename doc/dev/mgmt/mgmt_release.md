@@ -2,13 +2,13 @@
 
 ## General Release Process Overview
 
-Once Swagger PR is merged and a release plan/request is submited, here are steps that you need to do in order to release a new package:
+Once Swagger PR is merged and a release plan/request is submitted, here are steps that you need to do in order to release a new package:
 
 - create SDK pull request with code generation
 - identify and resolve breaking changes
 - verify that generated code was generated correctly, make sure right version was generated with right configuration
 - verify the release notes match actual changes (CHANGELOG.md)
-- verify the version accordingly to changes that were made (version.py)
+- verify the version accordingly to changes that were made (_version.py)
 - generate samples and develop tests
 - make sure the CI passes
 - merge the PR if everything looks good
