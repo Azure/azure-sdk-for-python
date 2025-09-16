@@ -280,7 +280,7 @@ class StatsbeatManager(metaclass=Singleton):
                 self._cleanup(shutdown_meter_provider=False)
 
             if shutdown_success:
-                set_statsbeat_shutdown(True)  # Use the proper setter functiontion
+                set_statsbeat_shutdown(True)  # Use the proper setter function
                 # Clear the singleton instance from the metaclass
                 if self.__class__ in StatsbeatManager._instances:  # pylint: disable=protected-access
                     del StatsbeatManager._instances[self.__class__]  # pylint: disable=protected-access
