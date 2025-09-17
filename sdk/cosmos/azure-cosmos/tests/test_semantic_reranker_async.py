@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+# cspell:ignore rerank reranker reranking
 import json
 import unittest
 import asyncio

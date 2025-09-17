@@ -1,5 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# cspell:ignore rerank reranker reranking
 import unittest
 
 import azure.cosmos.cosmos_client as cosmos_client
