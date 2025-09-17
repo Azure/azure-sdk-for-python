@@ -21,7 +21,8 @@
         "prompty",
 		"Likert",
         "isna",
-        "dtype"
+        "dtype",
+        "duckdb"
     ],
     "ignorePaths": [
         "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/onedp/models/_enums.py",
