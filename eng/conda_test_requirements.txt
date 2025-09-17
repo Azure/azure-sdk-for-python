@@ -1,6 +1,6 @@
 # install from root of repo
 aiohttp>=3.0
-tools/azure-sdk-tools
+eng/tools/azure-sdk-tools
 mock;
 aiodns>=2.0
 parameterized>=0.7.3

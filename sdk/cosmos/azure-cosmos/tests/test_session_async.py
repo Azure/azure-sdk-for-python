@@ -10,8 +10,8 @@ import pytest
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 import azure.cosmos.exceptions as exceptions
 import test_config
-from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos import DatabaseProxy, PartitionKey
+from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
+from azure.cosmos import PartitionKey
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes, HttpHeaders
 from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
@@ -47,6 +47,74 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncTearDown(self):
         await self.client.close()
+
+    async def test_manual_session_token_takes_precedence_async(self):
+        # Establish an initial session state for the primary async client.
+        await self.created_container.create_item(
+            body={'id': 'precedence_doc_1_async' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        # Capture the session token from the primary client (Token A)
+        token_A = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(token_A)
+
+        # Use a separate async client to create a second item. This gives us a new, distinct session token.
+        async with CosmosClient(self.host, self.masterKey) as other_client:
+            other_collection = other_client.get_database_client(self.TEST_DATABASE_ID) \
+                .get_container_client(self.TEST_COLLECTION_ID)
+            item2 = await other_collection.create_item(
+                body={'id': 'precedence_doc_2_async' + str(uuid.uuid4()), 'pk': 'mypk'}
+            )
+            # Capture the session token from the second client (Token B)
+            manual_session_token = other_client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+            self.assertIsNotNone(manual_session_token)
+
+        # Assert that the two tokens are different to ensure we are testing a real override scenario.
+        self.assertNotEqual(token_A, manual_session_token)
+
+        # Define a hook to verify the correct token is sent.
+        def manual_token_hook(request):
+            # Assert that the header contains the manually provided Token B, not the client's automatic Token A.
+            self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+            self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], manual_session_token)
+
+        # Read an item using the primary client, but manually providing Token B.
+        # The hook will verify that Token B overrides the client's internal Token A.
+        await self.created_container.read_item(
+            item=item2['id'],
+            partition_key='mypk',
+            session_token=manual_session_token,  # Manually provide Token B
+            raw_request_hook=manual_token_hook
+        )
+
+    async def test_manual_session_token_override_async(self):
+        # Create an item to get a valid session token from the response
+        created_document = await self.created_container.create_item(
+            body={'id': 'doc_for_manual_session' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        session_token = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(session_token)
+
+        # temporarily disable client-side session management to test manual override
+        original_session = self.client.client_connection.session
+        self.client.client_connection.session = None
+
+        try:
+            # Define a hook to inspect the request headers
+            def manual_token_hook(request):
+                self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+                self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], session_token)
+
+            # Read the item, passing the session token manually.
+            # The hook will verify it's correctly added to the request headers.
+            await self.created_container.read_item(
+                item=created_document['id'],
+                partition_key='mypk',
+                session_token=session_token,  # Manually provide the session token
+                raw_request_hook=manual_token_hook
+            )
+        finally:
+            # Restore the original session object to avoid affecting other tests
+            self.client.client_connection.session = original_session
 
     async def test_session_token_swr_for_ops_async(self):
         # Session token should not be sent for control plane operations
@@ -87,10 +155,37 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 
+    async def test_session_token_with_space_in_container_name_async(self):
+
+        # Session token should not be sent for control plane operations
+        test_container = await self.created_db.create_container(
+            "Container with space" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            raw_response_hook=test_config.no_token_response_hook
+        )
+        try:
+            # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
+            created_document = await test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+                                                          raw_response_hook=test_config.no_token_response_hook)
+            response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
+            read_item = await test_container.read_item(item=created_document['id'], partition_key='mypk',
+                                                 raw_response_hook=test_config.token_response_hook)
+            query_iterable = test_container.query_items(
+                "SELECT * FROM c WHERE c.id = '" + str(created_document['id']) + "'",
+                partition_key='mypk',
+                raw_response_hook=test_config.token_response_hook)
+
+            async for _ in query_iterable:
+                pass
+
+            assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
+                    response_session_token)
+        finally:
+            await self.created_db.delete_container(test_container)
+
     async def test_session_token_mwr_for_ops_async(self):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
-        first_region_uri: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1")
         custom_transport = FaultInjectionTransportAsync()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account
@@ -179,11 +274,13 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                 None,
                 {},
                 None,
+                None,
                 None)
             self.assertEqual(session_token, "")
             self.assertEqual(e.status_code, StatusCodes.NOT_FOUND)
             self.assertEqual(e.sub_status, SubStatusCodes.READ_SESSION_NOTAVAILABLE)
-        _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
+        finally:
+            _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
 
     async def _MockExecuteFunctionInvalidSessionTokenAsync(self, function, *args, **kwargs):
         response = {'_self': 'dbs/90U1AA==/colls/90U1AJ4o6iA=/docs/90U1AJ4o6iABCT0AAAAABA==/', 'id': '1'}

@@ -2335,6 +2335,18 @@ class MessagesOperations(MessagesOperationsGenerated):
                 return text_contents[-1]
         return None
 
+    @distributed_trace_async
+    async def delete(self, thread_id: str, message_id: str, **kwargs: Any) -> None:
+        """Deletes an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        await super()._delete(thread_id=thread_id, message_id=message_id, **kwargs)
+
 
 __all__: List[str] = [
     "MessagesOperations",

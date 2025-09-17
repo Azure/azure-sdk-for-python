@@ -1,6 +1,6 @@
 # Release History
 
-## 1.35.1 (Unreleased)
+## 1.35.2 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,17 @@
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.35.1 (2025-09-11)
+
+### Bugs Fixed
+
 - Fixed an issue where the `retry_backoff_max` parameter in `RetryPolicy` and `AsyncRetryPolicy` constructors was being ignored, causing retry operations to use default maximum backoff values instead of the user-specified limits. #42444
 
 ### Other Changes
+
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now properly surface credential exceptions when handling claims challenges. Previously, exceptions from credential token requests were suppressed; now they are raised and chained with the original 401 `HttpResponseError` response for better debugging visibility. #42536
 
 ## 1.35.0 (2025-07-02)
 
