@@ -78,7 +78,7 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         response: Union[str, List[dict]],
         tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, bool]]:
-        """Evaluate task success for a given query, response, and optional tool definitions.
+        """Evaluate task success for a given query, response, and optionally tool definitions.
         The query and response can be either a string or a list of messages.
 
 
