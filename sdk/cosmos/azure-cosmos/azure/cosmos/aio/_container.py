@@ -1128,11 +1128,12 @@ class ContainerProxy:
             semantic_reranking_options (Optional[Dict[str, Any]]): Optional dictionary of additional
                 options to customize the semantic reranking process. Supported options:
                 - **return_documents** (bool): Whether to return the document text in the response. 
-                If False, only scores and indices are returned. Default is True.
+                                               If False, only scores and indices are returned. Default is True.
                 - **top_k** (int): Maximum number of documents to return in the reranked results. 
-                If not specified, all documents are returned.
+                                   If not specified, all documents are returned.
+                - **batch_size** (int): Batch size for the model to process the documents.
                 - **sort** (bool): Whether to sort the results by relevance score in descending order. 
-                Default is True.
+                                   Default is True.
         Returns:
             CosmosDict: The reranking results, typically including the reranked documents and their scores.
         """
