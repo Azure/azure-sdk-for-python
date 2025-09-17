@@ -208,7 +208,7 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -281,8 +281,8 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
-        :returns: A tuple of the `ContainerProxy`and CosmosDict with the response headers.
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A tuple of the `ContainerProxy`and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
 
@@ -340,9 +340,9 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the response headers.
+            and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
 
@@ -362,8 +362,8 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
-        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        id = args[0] if len(args) > 0 else kwargs.pop('id')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
         indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
         default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
         populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
@@ -492,7 +492,7 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -551,8 +551,8 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
-        :returns: A  tuple of the `ContainerProxy`and CosmosDict with the response headers.
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A  tuple of the `ContainerProxy`and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
@@ -596,15 +596,15 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the response headers.
+            and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
 
-        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        id = args[0] if len(args) > 0 else kwargs.pop('id')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
         indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
         default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
         populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
@@ -897,7 +897,7 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -957,8 +957,8 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
-        :returns: A tuple of the `ContainerProxy`and CosmosDict with the response headers.
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A tuple of the `ContainerProxy`and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
@@ -1006,9 +1006,9 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the response headers.
+            and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
@@ -1024,7 +1024,7 @@ class DatabaseProxy(object):
         """
 
         container = args[0] if len(args) > 0 else kwargs.pop('container', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
         indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
         default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
         conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop('conflict_resolution_policy', None)

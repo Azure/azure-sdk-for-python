@@ -188,8 +188,6 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -214,6 +212,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -265,8 +265,6 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -291,8 +289,10 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :returns: A tuple of the `ContainerProxy` and CosmosDict with the response headers.
+        :returns: A tuple of the `ContainerProxy` and CosmosDict with the container properties.
         :rtype: tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
@@ -329,8 +329,6 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -355,9 +353,11 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the response headers.
+            and CosmosDict with the container properties.
         :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
@@ -379,8 +379,8 @@ class DatabaseProxy(object):
                 :name: create_container_with_settings
         """
 
-        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        id = args[0] if len(args) > 0 else kwargs.pop('id')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
         if len(args) > 2:
             raise TypeError(f"Unexpected positional parameters: {args[2:]}")
         indexing_policy = kwargs.pop('indexing_policy', None)
@@ -479,8 +479,6 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -505,6 +503,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -540,8 +540,6 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -566,8 +564,10 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
-        :returns: A  tuple of the `ContainerProxy` and CosmosDict with the response headers.
+        :returns: A  tuple of the `ContainerProxy` and CosmosDict with the container properties.
         :rtype: tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
         ...
@@ -588,8 +588,6 @@ class DatabaseProxy(object):
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -614,14 +612,16 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the response headers.
+            and CosmosDict with the container properties.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
 
-        id = args[0] if len(args) > 0 else kwargs.pop('id', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        id = args[0] if len(args) > 0 else kwargs.pop('id')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
         if len(args) > 2:
             raise TypeError(f"Unexpected positional parameters: {args[2:]}")
         indexing_policy = kwargs.pop('indexing_policy', None)
@@ -830,8 +830,6 @@ class DatabaseProxy(object):
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
         :type partition_key: ~azure.cosmos.PartitionKey
-        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -848,6 +846,8 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -908,11 +908,8 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
-        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
-            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
-            data type, and is generated for a particular distance function.
-        :returns: A tuple of the `ContainerProxy` and CosmosDict with the response headers.
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A tuple of the `ContainerProxy` and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
@@ -963,12 +960,9 @@ class DatabaseProxy(object):
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and CosmosDict instance.
-        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
-            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
-            data type, and is generated for a particular distance function.
+            or a Tuple of a ContainerProxy and the container properties.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the response headers.
+            and CosmosDict with the container properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
@@ -984,8 +978,8 @@ class DatabaseProxy(object):
                 :name: reset_container_properties
         """
 
-        container = args[0] if len(args) > 0 else kwargs.pop('container', None)
-        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key', None)
+        container = args[0] if len(args) > 0 else kwargs.pop('container')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
         if len(args) > 2:
             raise TypeError(f"Unexpected positional parameters: {args[2:]}")
         indexing_policy = kwargs.pop('indexing_policy', None)

@@ -51,7 +51,7 @@ class ThroughputProperties:
         """Returns a copy of the response headers associated to this response
 
         :return: Dict of response headers
-        :rtype: ~azure.core.CaseInsensitiveDict
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
         """
         if self.properties is None:
             return {}
