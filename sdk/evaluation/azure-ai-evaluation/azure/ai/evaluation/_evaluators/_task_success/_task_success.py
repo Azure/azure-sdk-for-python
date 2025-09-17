@@ -69,11 +69,11 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         super().__init__(
-            model_config=model_config, 
-            prompty_file=prompty_path, 
-            result_key=self._RESULT_KEY, 
+            model_config=model_config,
+            prompty_file=prompty_path,
+            result_key=self._RESULT_KEY,
             credential=credential,
-            **kwargs
+            **kwargs,
         )
 
     @overload
