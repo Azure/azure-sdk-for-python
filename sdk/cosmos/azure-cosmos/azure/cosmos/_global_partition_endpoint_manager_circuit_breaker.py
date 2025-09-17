@@ -23,7 +23,7 @@
 """
 from typing import TYPE_CHECKING, Optional
 
-from azure.cosmos._constants import _Constants
+from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore
@@ -35,6 +35,10 @@ from azure.cosmos.http_constants import HttpHeaders
 
 if TYPE_CHECKING:
     from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
 
 class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
     """
@@ -67,7 +71,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
 
         options = {}
         if request.excluded_locations:
-            options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
+            options[_Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
         if request.pk_val:
             partition_key_value = request.pk_val
             # get the partition key range for the given partition key

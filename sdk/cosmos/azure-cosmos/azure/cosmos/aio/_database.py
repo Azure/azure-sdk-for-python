@@ -30,8 +30,13 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
-from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
+from .._base import (
+    build_options as _build_options,
+    _set_throughput_options,
+    _deserialize_throughput,
     _replace_throughput
+)
+from .._constants import _Constants as Constants
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes
@@ -40,12 +45,17 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
+
 
 __all__ = ("DatabaseProxy",)
 
 
 # pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
@@ -104,14 +114,18 @@ class DatabaseProxy(object):
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_id(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
         if isinstance(container_or_id, ContainerProxy):
             return container_or_id.id
         return str(container_or_id["id"])
 
-    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_link(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
@@ -138,20 +152,21 @@ class DatabaseProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database
+            couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: Dict[str, Any]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
+                "The 'session_token' flag does not apply to this method and is always "
+                "ignored even if passed. It will now be removed in the future.",
                 DeprecationWarning)
 
         database_link = _get_database_link(self)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
 
         self._properties = await self.client_connection.ReadDatabase(
@@ -232,19 +247,19 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -278,14 +293,22 @@ class DatabaseProxy(object):
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+            database_link=self.database_link,
+            collection=definition,
+            options=request_options,
+            **kwargs
         )
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerProxy(
+            self.client_connection,
+            self.database_link,
+            data["id"],
+            properties=data
+        )
 
     @distributed_trace_async
     async def create_container_if_not_exists(
@@ -343,19 +366,19 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -386,11 +409,13 @@ class DatabaseProxy(object):
                 **kwargs
             )
 
-    def get_container_client(self, container: Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy:
+    def get_container_client(
+        self, container: Union[str, ContainerProxy, Dict[str, Any]]
+    ) -> ContainerProxy:
         """Get a `ContainerProxy` for a container with specified ID (name).
 
-        :param container: The ID (name), dict representing the properties, or :class:`ContainerProxy`
-            instance of the container to get.
+        :param container: The ID (name), dict representing the properties, or
+            :class:`ContainerProxy` instance of the container to get.
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :returns: A `ContainerProxy` instance representing the container.
         :rtype: ~azure.cosmos.aio.ContainerProxy
@@ -419,7 +444,9 @@ class DatabaseProxy(object):
         *,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the containers in the database.
@@ -441,17 +468,17 @@ class DatabaseProxy(object):
                 :caption: List all containers in the database:
                 :name: list_containers
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -468,7 +495,9 @@ class DatabaseProxy(object):
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
         initial_headers: Optional[Dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List the properties for containers in the current database.
@@ -484,17 +513,17 @@ class DatabaseProxy(object):
         :returns: An AsyncItemPaged of container properties (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
@@ -563,26 +592,26 @@ class DatabaseProxy(object):
                 :caption: Reset the TTL property on a container, and display the updated properties:
                 :name: reset_container_properties
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -607,7 +636,10 @@ class DatabaseProxy(object):
             container_link, collection=parameters, options=request_options, **kwargs
         )
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
+            self.client_connection,
+            self.database_link,
+            container_properties["id"],
+            properties=container_properties
         )
 
     @distributed_trace_async
@@ -630,30 +662,32 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = _build_options(kwargs)
 
         collection_link = self._get_container_link(container)
-        await self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
+        await self.client_connection.DeleteContainer(
+            collection_link, options=request_options, **kwargs
+        )
 
     @distributed_trace_async
     async def create_user(
@@ -690,7 +724,10 @@ class DatabaseProxy(object):
             database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+            client_connection=self.client_connection,
+            id=user["id"],
+            database_link=self.database_link,
+            properties=user
         )
 
     def get_user_client(
@@ -711,14 +748,20 @@ class DatabaseProxy(object):
             id_value = user.id
         else:
             id_value = str(user['id'])
-        return UserProxy(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
+        return UserProxy(
+            client_connection=self.client_connection,
+            id=id_value,
+            database_link=self.database_link
+        )
 
     @distributed_trace
     def list_users(
         self,
         *,
         max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the users in the container.
@@ -731,7 +774,7 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadUsers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -747,7 +790,9 @@ class DatabaseProxy(object):
         *,
         parameters: Optional[List[Dict[str, Any]]] = None,
         max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]
+        ] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all users matching the given `query`.
@@ -765,7 +810,7 @@ class DatabaseProxy(object):
         """
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,
@@ -801,7 +846,10 @@ class DatabaseProxy(object):
             database_link=self.database_link, user=body, options=request_options, **kwargs
         )
         return UserProxy(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+            client_connection=self.client_connection,
+            id=user["id"],
+            database_link=self.database_link,
+            properties=user
         )
 
     @distributed_trace_async
@@ -863,7 +911,9 @@ class DatabaseProxy(object):
     async def get_throughput(
             self,
             *,
-            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            response_hook: Optional[
+                Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
+            ] = None,
             **kwargs: Any) -> ThroughputProperties:
         """Get the ThroughputProperties object for this database.
 
@@ -928,7 +978,13 @@ class DatabaseProxy(object):
 
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
-                                                         offer=throughput_properties[0], **kwargs)
+        data = await self.client_connection.ReplaceOffer(
+            offer_link=throughput_properties[0]["_self"],
+            offer=throughput_properties[0],
+            **kwargs
+        )
 
-        return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
+        return ThroughputProperties(
+            offer_throughput=data["content"]["offerThroughput"],
+            properties=data
+        )

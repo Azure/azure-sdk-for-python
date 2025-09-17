@@ -39,6 +39,10 @@ from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
 
+# Shorter aliases for convenient usage
+_InternalOptions = Constants.InternalOptions
+_Kwargs = Constants.Kwargs
+
 
 __all__ = ("CosmosClient",)
 
@@ -145,7 +149,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
-    policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
+    policy.RetryNonIdempotentWrites = kwargs.pop(_Kwargs.RETRY_WRITE, False)
     return policy
 
 
@@ -195,7 +199,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Must be used along with a logger to work.
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
-    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
+    :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
@@ -299,26 +303,26 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :dedent: 0
                 :caption: Create a database in the Cosmos DB account:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if populate_query_metrics is not None:
             warnings.warn(
                 "The 'populate_query_metrics' flag does not apply to this method"
@@ -327,7 +331,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             )
 
         if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
@@ -365,28 +369,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         try:
             database_proxy = self.get_database_client(id)
             database_proxy.read(
@@ -440,7 +444,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[Dict[str, str]]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -452,12 +456,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning,
             )
         if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
@@ -497,7 +501,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 UserWarning,
             )
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -505,14 +509,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning)
 
         if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         if throughput_bucket is not None:
-            kwargs['throughput_bucket'] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         feed_options = build_options(kwargs)
         if enable_cross_partition_query is not None:
-            feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
+            feed_options[_InternalOptions.ENABLE_CROSS_PARTITION_QUERY] = enable_cross_partition_query
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         if query:
             result = self.client_connection.QueryDatabases(
@@ -549,19 +553,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -573,9 +577,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning,
             )
         if throughput_bucket is not None:
-            kwargs['throughput_bucket'] = throughput_bucket
+            kwargs[_Kwargs.THROUGHPUT_BUCKET] = throughput_bucket
         if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         database_link = _get_database_link(database)
         self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
