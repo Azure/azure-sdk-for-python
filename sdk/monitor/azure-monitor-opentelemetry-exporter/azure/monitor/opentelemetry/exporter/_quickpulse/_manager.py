@@ -154,8 +154,8 @@ class _QuickpulseManager(metaclass=Singleton):
             # Initialize using the configuration parameters
             return self._do_initialize()
 
-    def _do_initialize(self) -> bool:  # pylint:disable=docstring-missing-return
-        """Internal initialization method."""
+    def _do_initialize(self) -> bool:
+        # Internal initialization method.
         try:
             _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
 

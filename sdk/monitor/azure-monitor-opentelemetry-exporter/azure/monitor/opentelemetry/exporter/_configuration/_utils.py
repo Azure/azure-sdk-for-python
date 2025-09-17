@@ -362,9 +362,8 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
                     return False
 
             return True
-        else:
-            # Exact version match
-            return profile.version == str(condition_value)
+        # Exact version match
+        return profile.version == str(condition_value)
 
     if condition_key == "component":
         # Component condition - exact match
@@ -414,30 +413,28 @@ def _compare_versions(version1: str, version2: str, operator: str) -> bool:
         # Compare tuples
         if operator == ">=":
             return v1_parts >= v2_parts
-        elif operator == "<=":
+        if operator == "<=":
             return v1_parts <= v2_parts
-        elif operator == "==":
+        if operator == "==":
             return v1_parts == v2_parts
-        elif operator == ">":
+        if operator == ">":
             return v1_parts > v2_parts
-        elif operator == "<":
+        if operator == "<":
             return v1_parts < v2_parts
-        else:
-            return False
+        return False
     except (ValueError, AttributeError):
         # If version parsing fails, fall back to string comparison
         if operator == ">=":
             return version1 >= version2
-        elif operator == "<=":
+        if operator == "<=":
             return version1 <= version2
-        elif operator == "==":
+        if operator == "==":
             return version1 == version2
-        elif operator == ">":
+        if operator == ">":
             return version1 > version2
-        elif operator == "<":
+        if operator == "<":
             return version1 < version2
-        else:
-            return False
+        return False
 
 
 def _parse_version_with_beta(version: str) -> tuple:
