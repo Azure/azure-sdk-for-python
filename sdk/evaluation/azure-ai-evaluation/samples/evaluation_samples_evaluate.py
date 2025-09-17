@@ -9,8 +9,8 @@
 
 """
 DESCRIPTION:
-    These samples demonstrate usage of various classes and methods used to perform evaluation in the azure-ai-evaluation library.
-    
+    These samples demonstrate usage of various classes and methods used to perform evaluation in the
+    azure-ai-evaluation library.
 USAGE:
     python evaluation_samples_evaluate.py
 
@@ -475,23 +475,32 @@ class EvaluationEvaluateSamples(object):
         tool_call_accuracy_evaluator(
             query="How is the weather in New York?",
             response="The weather in New York is sunny.",
-            tool_calls={
-                "type": "tool_call",
-                "tool_call": {
-                    "id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
+            tool_calls=[
+                {
+                    "type": "tool_call",
+                    "tool_call_id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
+                    "name": "fetch_weather",
+                    "arguments": {
+                        "location": "New York"
+                    }
+                }
+            ],
+            tool_definitions=[
+                {
+                    "name": "fetch_weather",
                     "type": "function",
-                    "function": {"name": "fetch_weather", "arguments": {"location": "New York"}},
-                },
-            },
-            tool_definitions={
-                "id": "fetch_weather",
-                "name": "fetch_weather",
-                "description": "Fetches the weather information for the specified location.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
-                },
-            },
+                    "description": "Fetches the weather information for the specified location.",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The location to fetch weather for."
+                            }
+                        }
+                    }
+                }
+            ]
         )
         # [END tool_call_accuracy_evaluator]
 
