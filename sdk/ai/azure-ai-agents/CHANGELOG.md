@@ -7,7 +7,8 @@
 ### Features Added
 
 ### Bugs Fixed
-- Added `RunStepDeltaChunk` to `StreamEventData` model
+- Added `RunStepDeltaChunk` to `StreamEventData` model (GitHub issues [43022](https://github.com/Azure/azure-sdk-for-python/issues/43022))
+
 
 ## 1.2.0b4 (2025-09-12)
 
