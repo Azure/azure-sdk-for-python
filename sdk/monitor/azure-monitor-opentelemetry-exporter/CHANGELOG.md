@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b42 (2025-09-15)
+## 1.0.0b43 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b42 (2025-09-17)
 
 ### Features Added
 - Customer Facing Statsbeat: Added remaining drop codes to base
