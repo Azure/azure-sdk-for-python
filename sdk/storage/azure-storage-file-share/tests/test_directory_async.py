@@ -1081,6 +1081,33 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_list_pagination_name_starts_with(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        dir1 = await share_client.create_directory('dir1')
+        dir2 = await share_client.create_directory('dir2')
+
+        for i in range(6):
+            await dir1.upload_file(f"samples_{i}", "data1")
+        for i in range(6):
+            await dir2.upload_file(f"not_{i}", "data2")
+
+        list_all = []
+        async for path in share_client.list_directories_and_files(
+            directory_name="dir1",
+            name_starts_with="samples_",
+            results_per_page=2
+        ):
+            list_all.append(path)
+        assert len(list_all) == 6
+        for i in range(6):
+            assert list_all[i]["name"] == f"samples_{i}"
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_delete_directory_with_existing_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
