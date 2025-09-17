@@ -102,7 +102,7 @@ from .. import types as _types
 
 logger = logging.getLogger(__name__)
 
-StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
+StreamEventData = Union["RunStepDeltaChunk", "MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
 
 
 def get_tool_resources(tools: List["Tool"]) -> ToolResources:
