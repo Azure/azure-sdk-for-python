@@ -457,9 +457,8 @@ def _parse_version_with_beta(version: str) -> tuple:
         base_parts = [int(x) for x in base_version.split('.')]
         beta_number = int(beta_part) if beta_part.isdigit() else 0
         return tuple(base_parts + [beta_number])
-    else:
-        # Release version - use infinity for beta part so it sorts after beta versions
-        base_parts = [int(x) for x in version.split('.')]
-        return tuple(base_parts + [float('inf')])
+    # Release version - use infinity for beta part so it sorts after beta versions
+    base_parts = [int(x) for x in version.split('.')]
+    return tuple(base_parts + [float('inf')])
 
 # cSpell:enable
