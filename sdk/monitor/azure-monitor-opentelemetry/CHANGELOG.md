@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fix detector version
+  ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
+
 ### Other Changes
 
 ## 1.8.1 (2025-09-17)
@@ -17,8 +20,6 @@
   ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 - Modified ordering of dependencies in setup.py to avoid dependency conflicts in future.
   ([#43023](https://github.com/Azure/azure-sdk-for-python/pull/43023))
-- Fix detector version
-  ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
 
 ## 1.8.0 (2025-09-08)
 
