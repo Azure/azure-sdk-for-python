@@ -25,23 +25,24 @@ async def delete_person_directory_and_assert(client, person_directory_id: str, c
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID to delete
-        created_directory: Whether the directory was created (to determine if cleanup is needed)
+        created_directory: Whether the directory was created (for logging purposes only)
         
     Raises:
         AssertionError: If the directory still exists after deletion
     """
-    if created_directory:
-        print(f"Cleaning up person directory {person_directory_id}")
-        try:
+    print(f"Cleaning up person directory {person_directory_id}")
+    try:
+        # Always attempt to delete the directory if it exists
+        if await person_directory_exists_async(client, person_directory_id):
             await client.person_directories.delete(person_directory_id=person_directory_id)
             # Verify deletion
             assert not await person_directory_exists_async(client, person_directory_id), f"Deleted person directory with ID '{person_directory_id}' was found"
             print(f"Person directory {person_directory_id} is deleted successfully")
-        except Exception as e:
-            # If deletion fails, the test should fail
-            raise AssertionError(f"Failed to delete person directory {person_directory_id}: {e}") from e
-    else:
-        print(f"Person directory {person_directory_id} was not created, no cleanup needed")
+        else:
+            print(f"Person directory {person_directory_id} does not exist, no cleanup needed")
+    except Exception as e:
+        # If deletion fails, the test should fail
+        raise AssertionError(f"Failed to delete person directory {person_directory_id}: {e}") from e
 
 
 async def person_directory_exists_async(client, person_directory_id: str) -> bool:

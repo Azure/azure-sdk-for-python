@@ -479,28 +479,30 @@ def save_keyframe_image_to_file(
 
 # Person Directory Helper Functions
 def generate_person_directory_id_sync(client, test_name: str) -> str:
-    """Generate a unique person directory ID with current date, time, and GUID (sync version)."""
-    person_directory_id = f"python-sdk-pd-sync-{test_name}"
-    if is_live_and_not_recording():
-        # Ensure to clean up any left-over resources from any failed tests
-        try:
-            client.person_directories.delete(person_directory_id=person_directory_id)
-        except Exception:
-            # Ignore errors if directory doesn't exist
-            pass
+    """Generate a unique person directory ID using test name (sync version)."""
+    person_directory_id = f"pd-sync-{test_name}"
+    
+    # Always attempt to delete any existing directory first to avoid conflicts
+    try:
+        client.person_directories.delete(person_directory_id=person_directory_id)
+    except Exception:
+        # Ignore errors if directory doesn't exist
+        pass
+    
     return person_directory_id
 
 
 async def generate_person_directory_id_async(client, test_name: str) -> str:
-    """Generate a unique person directory ID with current date, time, and GUID (async version)."""
-    person_directory_id = f"python-sdk-pd-async-{test_name}"
-    if is_live_and_not_recording():
-        # Ensure to clean up any left-over resources from any failed tests
-        try:
-            await client.person_directories.delete(person_directory_id=person_directory_id)
-        except Exception:
-            # Ignore errors if directory doesn't exist
-            pass
+    """Generate a unique person directory ID using test name (async version)."""
+    person_directory_id = f"pd-async-{test_name}"
+    
+    # Always attempt to delete any existing directory first to avoid conflicts
+    try:
+        await client.person_directories.delete(person_directory_id=person_directory_id)
+    except Exception:
+        # Ignore errors if directory doesn't exist
+        pass
+    
     return person_directory_id
 
 
