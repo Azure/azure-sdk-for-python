@@ -9,6 +9,7 @@ import math
 import os
 import sys
 import warnings
+import tempfile
 from collections import OrderedDict
 from io import BytesIO
 from json import (
@@ -52,6 +53,9 @@ _ERROR_OBJECT_INVALID = "{0} does not define a complete interface. Value of {1} 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
     "The require_encryption flag is set, but encryption is not supported for this method."
 )
+
+class Blah():
+    hi = "sdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"
 
 
 class KeyEncryptionKey(Protocol):
