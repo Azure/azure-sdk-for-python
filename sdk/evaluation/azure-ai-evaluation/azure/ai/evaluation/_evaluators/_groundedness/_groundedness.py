@@ -280,10 +280,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
-        import json
 
-        # query_text = reformat_conversation_history(eval_input["query"], logger)
-        # final_response_text = reformat_agent_response(eval_input["response"], logger)
         contains_context = self.has_context(eval_input)
 
         simplified_query = self._simplify_messages(
@@ -324,9 +321,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 }
             else:
                 raise ex
-
-    def _get_version(self):
-        return "v12"
 
     def _convert_kwargs_to_eval_input(self, **kwargs):
         if kwargs.get("context") or kwargs.get("conversation"):
