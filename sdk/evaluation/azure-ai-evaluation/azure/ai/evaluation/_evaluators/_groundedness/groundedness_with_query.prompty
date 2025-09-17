@@ -154,7 +154,7 @@ Definition of Key Details:
 - Example 1
 **QUERY:** [{"role":"user","content":"When was 'The Silent Echo' released?"}]
 **CONTEXT:** The author released her latest novel, 'The Silent Echo', on September 1st.
-**RESPONSE:** [{"role":"assistant","content":"The Silent Echo' was released on September 1st."}]
+**RESPONSE:** [{"role":"assistant","content":"The 'Silent Echo' was released on September 1st."}]
 
 > This is a score of 5 because the response is fully supported by the context and complete.
 

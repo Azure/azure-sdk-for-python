@@ -16,6 +16,7 @@ from ..._common.utils import (
     ErrorCategory,
     construct_prompty_model_config,
     validate_model_config,
+    simplify_messages,
 )
 
 try:
@@ -207,57 +208,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         return super().__call__(*args, **kwargs)
 
-    def _simplify_messages(self, messages, drop_system=True, drop_tool_calls=False):
-        """
-        Simplify a list of conversation messages by keeping only role and content.
-        Optionally filter out system messages and/or tool calls.
-
-        :param messages: List of message dicts (e.g., from query or response)
-        :param drop_system: If True, remove system role messages
-        :param drop_tool_calls: If True, remove tool_call items from assistant content
-        :return: New simplified list of messages
-        """
-        from ..._common.utils import _extract_text_from_content
-
-        simplified_msgs = []
-        for msg in messages:
-            role = msg.get("role")
-            content = msg.get("content", [])
-
-            # Drop system message (if should)
-            if drop_system and role == "system":
-                continue
-
-            # Simplify user messages
-            if role == "user":
-                simplified_msg = {
-                    "role": role,
-                    "content": _extract_text_from_content(content),
-                }
-                simplified_msgs.append(simplified_msg)
-                continue
-
-            # Drop tool results (if should)
-            if drop_tool_calls and role == "tool":
-                continue
-
-            # Simplify assistant messages
-            if role == "assistant":
-                simplified_content = _extract_text_from_content(content)
-                # Check if message has content
-                if simplified_content:
-                    simplified_msg = {"role": role, "content": simplified_content}
-                    simplified_msgs.append(simplified_msg)
-                    continue
-
-                # Drop tool calls (if should)
-                if drop_tool_calls and any(c.get("type") == "tool_call" for c in content):
-                    continue
-
-            # If we reach here, it means we want to keep the message
-            simplified_msgs.append(msg)
-
-        return simplified_msgs
 
     def has_context(self, eval_input: dict) -> bool:
         """
@@ -266,6 +216,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         context = eval_input.get("context", None)
         if not context:
+            return False
+        if context == "<>":  # Special marker for no context
             return False
         if isinstance(context, list):
             return any(str(c).strip() for c in context)
@@ -277,8 +229,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
         contains_context = self.has_context(eval_input)
 
-        simplified_query = self._simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
-        simplified_response = self._simplify_messages(eval_input["response"], drop_tool_calls=False)
+        simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
+        simplified_response = simplify_messages(eval_input["response"], drop_tool_calls=False)
 
         # Build simplified input
         simplified_eval_input = {
@@ -373,11 +325,10 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             context = "\n".join(context_lines) if len(context_lines) > 0 else None
 
         except Exception as ex:
-            print(f"Error extracting context from agent response: {str(ex)}")
             logger.debug(f"Error extracting context from agent response : {str(ex)}")
             context = None
 
-        context = context if context else "<>"
+        context = context if context else NO_CONTEXT
         return context
 
     def _get_file_search_tool_call_ids(self, query_or_response):
