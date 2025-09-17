@@ -493,7 +493,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
                 optionalbody=data,
-                content_length=len(data) if data else None,
+                content_length=len(data) if data is not None else None,
                 lease_access_conditions=access_conditions,
                 headers=headers,
                 timeout=timeout,
