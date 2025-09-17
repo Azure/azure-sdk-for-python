@@ -19,6 +19,9 @@
 
 - Added a workflow to create GitHub issues in case a major version of a dependency is released
 
+### Other Changes
+- Upgraded `marshmallow` dependency from version 3.x to 4.x (`>=4.0.0,<5.0.0`) for improved performance and compatibility with latest serialization standards.
+
 ## 1.27.1 (2025-05-13)
 
 ### Bugs Fixed

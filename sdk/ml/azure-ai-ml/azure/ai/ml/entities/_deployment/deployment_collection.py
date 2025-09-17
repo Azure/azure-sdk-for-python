@@ -41,7 +41,7 @@ class DeploymentCollection:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = DeploymentCollectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DeploymentCollectionSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     @classmethod

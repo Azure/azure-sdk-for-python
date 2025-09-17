@@ -32,7 +32,7 @@ class RequestLogging:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        res: dict = RequestLoggingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = RequestLoggingSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def _to_rest_object(self) -> RestRequestLogging:

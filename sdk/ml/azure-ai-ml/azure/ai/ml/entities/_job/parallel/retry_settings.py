@@ -35,7 +35,7 @@ class RetrySettings(RestTranslatableMixin, DictMixin):
         self.max_retries = max_retries
 
     def _to_dict(self) -> Dict:
-        res: dict = RetrySettingsSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = RetrySettingsSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})  # pylint: disable=no-member
         return res
 
     @classmethod

@@ -52,7 +52,9 @@ class Index(_model_base.Model):
      under development. Required."""
     description: Optional[str] = rest_field()
     """Description information of the asset."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    system_data: Optional["_models.SystemData"] = rest_field(
+        name="systemData", visibility=["read"]
+    )
     """Metadata containing createdBy and modifiedBy information."""
     tags: Optional[Dict[str, str]] = rest_field()
     """Asset's tags."""
@@ -71,8 +73,7 @@ class Index(_model_base.Model):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -81,7 +82,9 @@ class Index(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -107,8 +110,7 @@ class PagedIndex(_model_base.Model):
         *,
         value: List["_models.Index"],
         next_link: Optional[str] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -117,7 +119,9 @@ class PagedIndex(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
 
 
@@ -136,11 +140,17 @@ class SystemData(_model_base.Model):
     :vartype last_modified_at: ~datetime.datetime
     """
 
-    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    created_at: Optional[datetime.datetime] = rest_field(
+        name="createdAt", visibility=["read"], format="rfc3339"
+    )
     """The timestamp the resource was created at."""
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    created_by: Optional[str] = rest_field(
+        name="createdBy", visibility=["read"]
+    )
     """The identity that created the resource."""
-    created_by_type: Optional[str] = rest_field(name="createdByType", visibility=["read"])
+    created_by_type: Optional[str] = rest_field(
+        name="createdByType", visibility=["read"]
+    )
     """The identity type that created the resource."""
     last_modified_at: Optional[datetime.datetime] = rest_field(
         name="lastModifiedAt", visibility=["read"], format="rfc3339"
@@ -170,8 +180,7 @@ class VersionInfo(_model_base.Model):
         *,
         latest_version: str,
         next_version: Optional[int] = None,
-    ):
-        ...
+    ): ...
 
     @overload
     def __init__(self, mapping: Mapping[str, Any]):
@@ -180,5 +189,7 @@ class VersionInfo(_model_base.Model):
         :type mapping: Mapping[str, Any]
         """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+    def __init__(
+        self, *args: Any, **kwargs: Any
+    ) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)

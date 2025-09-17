@@ -342,7 +342,7 @@ class ComputeInstance(Compute):
         )
 
     def _to_dict(self) -> Dict:
-        res: dict = ComputeInstanceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ComputeInstanceSchema().dump(self, context={BASE_PATH_CONTEXT_KEY: "./"})
         return res
 
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:

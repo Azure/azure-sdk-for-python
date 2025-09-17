@@ -149,5 +149,5 @@ class OneLakeDatastore(Datastore):
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = OneLakeSchema(context=context).dump(self)
+        res: dict = OneLakeSchema().dump(self, context=context)
         return res
