@@ -17,6 +17,8 @@
   ([#43012](https://github.com/Azure/azure-sdk-for-python/pull/43012))
 - Modified ordering of dependencies in setup.py to avoid dependency conflicts in future.
   ([#43023](https://github.com/Azure/azure-sdk-for-python/pull/43023))
+- Fix detector version
+  ([#xxx](https://github.com/Azure/azure-sdk-for-python/pull/xxx))
 
 ## 1.8.0 (2025-09-08)
 
