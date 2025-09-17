@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # cSpell:disable
-from typing import Dict, Optional, Any, List
+from typing import Dict, Optional, Any
 import json
 import logging
 # mypy: disable-error-code="import-untyped"
@@ -342,7 +342,7 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
             return profile.os.lower() in [str(os).lower() for os in condition_value]
         return profile.os.lower() == str(condition_value).lower()
 
-    elif condition_key == "ver":
+    if condition_key == "ver":
         # Version condition - support min/max version checks
         if isinstance(condition_value, dict):
             current_version = profile.version

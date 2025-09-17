@@ -1,9 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Any, Dict, Optional
-
-from opentelemetry.sdk.resources import Resource
+from typing import Any, Dict
 
 from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpulse_manager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (

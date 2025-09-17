@@ -5,8 +5,9 @@ from typing import Any, Dict, List, Optional
 
 import logging
 import platform
-import psutil
 import threading
+
+import psutil
 
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk.metrics import MeterProvider, Meter
@@ -153,8 +154,7 @@ class _QuickpulseManager(metaclass=Singleton):
             # Initialize using the configuration parameters
             return self._do_initialize()
 
-    # pylint:disable=docstring-missing-return
-    def _do_initialize(self) -> bool:
+    def _do_initialize(self) -> bool:  # pylint:disable=docstring-missing-return
         """Internal initialization method."""
         try:
             _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
