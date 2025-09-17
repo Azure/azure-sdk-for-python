@@ -55,8 +55,7 @@ class InferenceServiceBearerTokenPolicy(BearerTokenCredentialPolicy):
         """
         super().on_request(request)
         # The None-check for self._token is done in the parent on_request
-        if self._token:
-            self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
 
     def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -68,3 +67,5 @@ class InferenceServiceBearerTokenPolicy(BearerTokenCredentialPolicy):
         :param str scopes: required scopes of authentication
         """
         super().authorize_request(request, *scopes, **kwargs)
+        # The None-check for self._token is done in the parent authorize_request
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)

@@ -19,13 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # cspell:ignore rerank reranker reranking
-import copy
+
 import json
 import urllib
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, cast, Dict, List, Optional
 from urllib.parse import urlparse
-
-from azure.core.utils import CaseInsensitiveDict
 from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
@@ -33,6 +31,7 @@ from azure.core.exceptions import DecodeError
 from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy, DistributedTracingPolicy, HeadersPolicy,
                                           NetworkTraceLoggingPolicy, UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.utils import CaseInsensitiveDict
 
 from ._inference_auth_policy_async import AsyncInferenceServiceBearerTokenPolicy
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -63,7 +62,8 @@ class _InferenceService:
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> AsyncPipelineClient:
-        """Create a clean pipeline for inference requests without Cosmos-specific policies.
+        """Create a pipeline for inference requests.
+
         :returns: An AsyncPipelineClient configured for inference calls.
         :rtype: ~azure.core.AsyncPipelineClient
         """
@@ -133,21 +133,26 @@ class _InferenceService:
         )
 
     async def rerank(
-            self,
-            reranking_context: str,
-            documents: List[str],
-            semantic_reranking_options: Optional[Dict[str, Any]] = None,
+        self,
+        reranking_context: str,
+        documents: List[str],
+        semantic_reranking_options: Optional[Dict[str, Any]] = None,
     ) -> CosmosDict:
-        """Rerank documents using semantic reranking service.
+        """Rerank documents using the semantic reranking service (async).
 
-        :param reranking_context: The search query context for reranking
+        :param reranking_context: Query / context string used to score documents.
         :type reranking_context: str
-        :param documents: List of documents to rerank
+        :param documents: List of document strings to rerank.
         :type documents: List[str]
-        :param semantic_reranking_options: Optional reranking parameters
+        :param semantic_reranking_options: Optional dictionary of tuning parameters. Supported keys:
+            * return_documents (bool): Include original document text in results. Default True.
+            * top_k (int): Limit number of scored documents returned.
+            * batch_size (int): Batch size for internal scoring operations.
+            * sort (bool): If True (default) results are ordered by descending score.
         :type semantic_reranking_options: Optional[Dict[str, Any]]
-        :returns: Reranked documents with scores
-        :rtype: Dict[str, Any]
+        :returns: Reranking result payload.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: On HTTP or service error.
         """
         try:
             body = {

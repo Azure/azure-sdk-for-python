@@ -26,13 +26,13 @@ import warnings
 from datetime import datetime
 from typing import (Any, AsyncIterable, Callable, cast, Dict, List, Mapping, Optional, overload, Sequence, Tuple, Type,
                     Union)
+from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
 from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
-from typing_extensions import Literal
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy

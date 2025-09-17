@@ -56,8 +56,7 @@ class AsyncInferenceServiceBearerTokenPolicy(AsyncBearerTokenCredentialPolicy):
         """
         await super().on_request(request)
         # The None-check for self._token is done in the parent on_request
-        if self._token:
-            self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -70,5 +69,4 @@ class AsyncInferenceServiceBearerTokenPolicy(AsyncBearerTokenCredentialPolicy):
         """
         await super().authorize_request(request, *scopes, **kwargs)
         # The None-check for self._token is done in the parent authorize_request
-        if self._token:
-            self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+        self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)

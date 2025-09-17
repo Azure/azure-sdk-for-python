@@ -19,24 +19,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 # cspell:ignore rerank reranker reranking
-import copy
+
 import json
 import urllib
-from typing import Any, Dict, List, Optional, cast
-
-from azure.core.utils import CaseInsensitiveDict
 from urllib3.util.retry import Retry
+from typing import Any, cast, Dict, List, Optional
 
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
-from azure.core.pipeline.policies import (HTTPPolicy, ContentDecodePolicy, DistributedTracingPolicy, HeadersPolicy,
+from azure.core.pipeline.policies import (ContentDecodePolicy, DistributedTracingPolicy, HeadersPolicy, HTTPPolicy,
                                           NetworkTraceLoggingPolicy, UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
-from ._retry_utility import ConnectionRetryPolicy
+from azure.core.utils import CaseInsensitiveDict
 
 from . import exceptions
 from ._cosmos_responses import CosmosDict
 from ._inference_auth_policy import InferenceServiceBearerTokenPolicy
+from ._retry_utility import ConnectionRetryPolicy
 from .http_constants import HttpHeaders
 
 _DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
@@ -64,8 +63,8 @@ class _InferenceService:
     def _create_inference_pipeline_client(self) -> PipelineClient:
         """Create a pipeline for inference requests.
 
-        :returns: An AsyncPipelineClient configured for inference calls.
-        :rtype: ~azure.core.AsyncPipelineClient
+        :returns: A PipelineClient configured for inference calls.
+        :rtype: ~azure.core.PipelineClient
         """
         access_token = self._aad_credentials
         auth_policy = InferenceServiceBearerTokenPolicy(access_token, self._token_scope)
@@ -116,21 +115,26 @@ class _InferenceService:
         return "azure-cosmos-python-sdk-inference"
 
     def rerank(
-            self,
-            reranking_context: str,
-            documents: List[str],
-            semantic_reranking_options: Optional[Dict[str, Any]] = None,
+        self,
+        reranking_context: str,
+        documents: List[str],
+        semantic_reranking_options: Optional[Dict[str, Any]] = None,
     ) -> CosmosDict:
-        """Rerank documents using semantic reranking service.
+        """Rerank documents using the semantic reranking service.
 
-        :param reranking_context: The search query context for reranking
+        :param reranking_context: Query / context string used to score documents.
         :type reranking_context: str
-        :param documents: List of documents to rerank
+        :param documents: List of document strings to rerank.
         :type documents: List[str]
-        :param semantic_reranking_options: Optional reranking parameters
+        :param semantic_reranking_options: Optional dictionary of tuning parameters. Supported keys:
+            * return_documents (bool): Include original document text in results. Default True.
+            * top_k (int): Limit number of scored documents returned.
+            * batch_size (int): Batch size for internal scoring operations.
+            * sort (bool): If True (default) results are ordered by descending score.
         :type semantic_reranking_options: Optional[Dict[str, Any]]
-        :returns: Reranked documents with scores
-        :rtype: Dict[str, Any]
+        :returns: Reranking result payload.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: On HTTP or service error.
         """
         try:
             body = {

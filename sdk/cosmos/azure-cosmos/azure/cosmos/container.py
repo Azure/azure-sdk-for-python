@@ -25,12 +25,12 @@ import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
 from typing import Any, Callable, cast, Dict, Iterable, List, Mapping, Optional, overload, Sequence, Tuple, Union
+from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
-from typing_extensions import Literal
 
 from . import _utils as utils
 from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
@@ -972,7 +972,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         return items
-    
+
     @distributed_trace
     def semantic_rerank(
         self,
@@ -1007,14 +1007,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
         """
-        
+
         inference_service = self.client_connection._get_inference_service()
         if inference_service is None:
             raise CosmosHttpResponseError(
                 message="Semantic reranking requires AAD credentials (inference service not initialized).",
                 response=None
             )
-        
+
         result = inference_service.rerank(
             reranking_context=reranking_context,
             documents=documents,
