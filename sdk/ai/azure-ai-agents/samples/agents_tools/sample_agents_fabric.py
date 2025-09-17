@@ -24,8 +24,8 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) FABRIC_CONNECTION_ID  - The ID of the Fabric connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+    3) FABRIC_CONNECTION_NAME  - The name of a connection to the Microsoft Fabric resource as it is
+       listed in Azure AI Foundry connected resources.
 """
 
 import os
@@ -39,7 +39,7 @@ project_client = AIProjectClient(
 )
 
 # [START create_agent_with_fabric_tool]
-conn_id = os.environ["FABRIC_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["FABRIC_CONNECTION_NAME"]).id
 
 print(conn_id)
 

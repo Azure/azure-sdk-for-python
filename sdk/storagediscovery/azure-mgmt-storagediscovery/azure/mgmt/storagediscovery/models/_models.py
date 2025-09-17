@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -53,9 +53,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -221,15 +221,15 @@ class StorageDiscoveryScope(_Model):
 
     display_name: str = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
     """Display name of the collection. Required."""
-    resource_types: List[Union[str, "_models.StorageDiscoveryResourceType"]] = rest_field(
+    resource_types: list[Union[str, "_models.StorageDiscoveryResourceType"]] = rest_field(
         name="resourceTypes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource types for the collection. Required."""
-    tag_keys_only: Optional[List[str]] = rest_field(
+    tag_keys_only: Optional[list[str]] = rest_field(
         name="tagKeysOnly", visibility=["read", "create", "update", "delete", "query"]
     )
     """The storage account tags keys to filter."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
@@ -237,9 +237,9 @@ class StorageDiscoveryScope(_Model):
         self,
         *,
         display_name: str,
-        resource_types: List[Union[str, "_models.StorageDiscoveryResourceType"]],
-        tag_keys_only: Optional[List[str]] = None,
-        tags: Optional[Dict[str, str]] = None,
+        resource_types: list[Union[str, "_models.StorageDiscoveryResourceType"]],
+        tag_keys_only: Optional[list[str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -273,7 +273,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -283,7 +283,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -330,7 +330,7 @@ class StorageDiscoveryWorkspace(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StorageDiscoveryWorkspaceProperties"] = None,
     ) -> None: ...
 
@@ -368,11 +368,11 @@ class StorageDiscoveryWorkspaceProperties(_Model):
     """The storage discovery sku. Known values are: \"Standard\" and \"Free\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the storage discovery workspace."""
-    workspace_roots: List[str] = rest_field(
+    workspace_roots: list[str] = rest_field(
         name="workspaceRoots", visibility=["read", "create", "update", "delete", "query"]
     )
     """The view level storage discovery data estate. Required."""
-    scopes: List["_models.StorageDiscoveryScope"] = rest_field(
+    scopes: list["_models.StorageDiscoveryScope"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The scopes of the storage discovery workspace. Required."""
@@ -386,8 +386,8 @@ class StorageDiscoveryWorkspaceProperties(_Model):
     def __init__(
         self,
         *,
-        workspace_roots: List[str],
-        scopes: List["_models.StorageDiscoveryScope"],
+        workspace_roots: list[str],
+        scopes: list["_models.StorageDiscoveryScope"],
         sku: Optional[Union[str, "_models.StorageDiscoverySku"]] = None,
         description: Optional[str] = None,
     ) -> None: ...
@@ -422,11 +422,11 @@ class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name
     """The storage discovery sku. Known values are: \"Standard\" and \"Free\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The description of the storage discovery workspace."""
-    workspace_roots: Optional[List[str]] = rest_field(
+    workspace_roots: Optional[list[str]] = rest_field(
         name="workspaceRoots", visibility=["read", "create", "update", "delete", "query"]
     )
     """The view level storage discovery data estate."""
-    scopes: Optional[List["_models.StorageDiscoveryScope"]] = rest_field(
+    scopes: Optional[list["_models.StorageDiscoveryScope"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The scopes of the storage discovery workspace."""
@@ -437,8 +437,8 @@ class StorageDiscoveryWorkspacePropertiesUpdate(_Model):  # pylint: disable=name
         *,
         sku: Optional[Union[str, "_models.StorageDiscoverySku"]] = None,
         description: Optional[str] = None,
-        workspace_roots: Optional[List[str]] = None,
-        scopes: Optional[List["_models.StorageDiscoveryScope"]] = None,
+        workspace_roots: Optional[list[str]] = None,
+        scopes: Optional[list["_models.StorageDiscoveryScope"]] = None,
     ) -> None: ...
 
     @overload
@@ -462,7 +462,7 @@ class StorageDiscoveryWorkspaceUpdate(_Model):
      ~azure.mgmt.storagediscovery.models.StorageDiscoveryWorkspacePropertiesUpdate
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.StorageDiscoveryWorkspacePropertiesUpdate"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -473,7 +473,7 @@ class StorageDiscoveryWorkspaceUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StorageDiscoveryWorkspacePropertiesUpdate"] = None,
     ) -> None: ...
 

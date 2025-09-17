@@ -34,6 +34,7 @@ from ... import models as _models
 from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC, prepare_multipart_form_data
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_agents_create_agent_request,
     build_agents_create_thread_and_run_request,
@@ -47,6 +48,7 @@ from ...operations._operations import (
     build_files_list_request,
     build_files_upload_file_request,
     build_messages_create_request,
+    build_messages_delete_request,
     build_messages_get_request,
     build_messages_list_request,
     build_messages_update_request,
@@ -1145,6 +1147,77 @@ class MessagesOperations:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ThreadMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="v1",
+        params_added_on={"v1": ["api_version", "thread_id", "message_id", "accept"]},
+        api_versions_list=["v1", "2025-05-15-preview"],
+    )
+    async def _delete(self, thread_id: str, message_id: str, **kwargs: Any) -> _models._models.MessageDeletionStatus:
+        """Deletes an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :return: MessageDeletionStatus. The MessageDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models._models.MessageDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.MessageDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_messages_delete_request(
+            thread_id=thread_id,
+            message_id=message_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.MessageDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
