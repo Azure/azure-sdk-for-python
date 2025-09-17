@@ -18,12 +18,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# cspell:ignore rerank reranker reranking
 
 import json
 import urllib
-from urllib3.util.retry import Retry
 from typing import Any, cast, Dict, List, Optional
+from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
@@ -39,6 +38,9 @@ from ._retry_utility import ConnectionRetryPolicy
 from .http_constants import HttpHeaders
 
 _DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
+
+# cspell:ignore rerank reranker reranking
+# pylint: disable=protected-access
 
 
 class _InferenceService:

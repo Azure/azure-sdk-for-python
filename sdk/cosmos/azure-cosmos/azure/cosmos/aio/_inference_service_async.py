@@ -18,7 +18,6 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# cspell:ignore rerank reranker reranking
 
 import json
 import urllib
@@ -40,6 +39,9 @@ from .._cosmos_responses import CosmosDict
 from ..http_constants import HttpHeaders
 
 _DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
+
+# cspell:ignore rerank reranker reranking
+# pylint: disable=protected-access
 
 
 class _InferenceService:
