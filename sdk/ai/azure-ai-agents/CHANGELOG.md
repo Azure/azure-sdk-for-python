@@ -2,6 +2,13 @@
 
 # Release History
 
+## 1.2.0b5 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Added `RunStepDeltaChunk` to `StreamEventData` model
+
 ## 1.2.0b4 (2025-09-12)
 
 ### Features Added
