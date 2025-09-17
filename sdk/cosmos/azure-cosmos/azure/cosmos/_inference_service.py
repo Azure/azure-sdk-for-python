@@ -22,7 +22,9 @@
 import copy
 import json
 import urllib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
+
+from azure.core.utils import CaseInsensitiveDict
 from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
@@ -60,7 +62,11 @@ class _InferenceService:
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> PipelineClient:
-        """Create a clean pipeline for inference requests without Cosmos-specific policies."""
+        """Create a pipeline for inference requests.
+
+        :returns: An AsyncPipelineClient configured for inference calls.
+        :rtype: ~azure.core.AsyncPipelineClient
+        """
         access_token = self._aad_credentials
         auth_policy = InferenceServiceBearerTokenPolicy(access_token, self._token_scope)
 
@@ -100,7 +106,11 @@ class _InferenceService:
         )
 
     def _get_user_agent(self) -> str:
-        """Get user agent string from client connection or use default."""
+        """Return the user agent string for inference pipeline.
+
+        :returns: User agent string.
+        :rtype: str
+        """
         if self._client_connection and hasattr(self._client_connection, '_user_agent'):
             return self._client_connection._user_agent + "_inference"
         return "azure-cosmos-python-sdk-inference"
@@ -151,7 +161,7 @@ class _InferenceService:
 
             pipeline_response = self._inference_pipeline_client._pipeline.run(request)
             response = pipeline_response.http_response
-            headers = copy.copy(response.headers)
+            response_headers = cast(CaseInsensitiveDict, response.headers)
 
             data = response.body()
             if data:
@@ -176,7 +186,7 @@ class _InferenceService:
                         response=response,
                         error=e) from e
 
-            return CosmosDict(result, response_headers=headers)
+            return CosmosDict(result, response_headers=response_headers)
 
         except Exception as e:
             if isinstance(e, (exceptions.CosmosHttpResponseError, exceptions.CosmosResourceNotFoundError)):

@@ -18,13 +18,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-# cspell:ignore rerank reranker reranking
+
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-import asyncio # pylint: disable=do-not-import-asyncio
-from datetime import datetime
-from typing import (Any, Dict, Mapping, Optional, Sequence, Union, List, Tuple, cast, overload, AsyncIterable,
-                    Callable, Type)
+import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from datetime import datetime
 from typing import (Any, AsyncIterable, Callable, cast, Dict, List, Mapping, Optional, overload, Sequence, Tuple, Type,
@@ -47,18 +44,18 @@ from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
+from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
-from ..partition_key import (
-    NonePartitionKeyValue,
-    _return_undefined_or_empty_partition_key,
-    _get_partition_key_from_partition_key_definition, NullPartitionKeyValue, _PartitionKeyType
-)
+from ..partition_key import (_get_partition_key_from_partition_key_definition, _PartitionKeyType,
+                             _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
+
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
@@ -1122,23 +1119,33 @@ class ContainerProxy:
         This method uses a semantic reranker to score and reorder the provided documents
         based on their relevance to the given reranking context.
 
-        Args:
-            reranking_context (str): The context or query string to use for reranking the documents.
-            documents (List[str]): A list of documents (as strings) to be reranked.
-            semantic_reranking_options (Optional[Dict[str, Any]]): Optional dictionary of additional
-                options to customize the semantic reranking process. Supported options:
-                - **return_documents** (bool): Whether to return the document text in the response. 
-                                               If False, only scores and indices are returned. Default is True.
-                - **top_k** (int): Maximum number of documents to return in the reranked results. 
-                                   If not specified, all documents are returned.
-                - **batch_size** (int): Batch size for the model to process the documents.
-                - **sort** (bool): Whether to sort the results by relevance score in descending order. 
-                                   Default is True.
-        Returns:
-            CosmosDict: The reranking results, typically including the reranked documents and their scores.
+        :param str reranking_context: The context or query string to use for reranking the documents.
+        :param list[str] documents: A list of documents (as strings) to be reranked.
+        :param semantic_reranking_options: Optional dictionary of additional
+            options to customize the semantic reranking process. Supported options:
+            - **return_documents** (bool): Whether to return the document text in the response.
+          If False, only scores and indices are returned. Default is True.
+        - **top_k** (int): Maximum number of documents to return in the reranked results.
+          If not specified, all documents are returned.
+        - **batch_size** (int): Number of documents to process in each batch.
+          Used for optimizing performance with large document sets.
+        - **sort** (bool): Whether to sort the results by relevance score in descending order.
+          Default is True.
+        :type semantic_reranking_options: Optional[Dict[str, Any]]
+
+        :returns: A CosmosDict containing the reranking results. The structure typically includes:
+            - **results** (list): List of reranked documents with their relevance scores
+            - Each result contains: **index** (int), **relevance_score** (float), and optionally **document** (str)
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
         """
 
         inference_service = self.client_connection._get_inference_service()
+        if inference_service is None:
+            raise CosmosHttpResponseError(
+                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                response=None
+            )
 
         result = await inference_service.rerank(
             reranking_context=reranking_context,

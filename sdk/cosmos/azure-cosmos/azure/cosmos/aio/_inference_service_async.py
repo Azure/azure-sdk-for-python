@@ -22,15 +22,17 @@
 import copy
 import json
 import urllib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 from urllib.parse import urlparse
+
+from azure.core.utils import CaseInsensitiveDict
+from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError
 from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy, DistributedTracingPolicy, HeadersPolicy,
                                           NetworkTraceLoggingPolicy, UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
-from urllib3.util.retry import Retry
 
 from ._inference_auth_policy_async import AsyncInferenceServiceBearerTokenPolicy
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -61,7 +63,10 @@ class _InferenceService:
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> AsyncPipelineClient:
-        """Create a clean pipeline for inference requests without Cosmos-specific policies."""
+        """Create a clean pipeline for inference requests without Cosmos-specific policies.
+        :returns: An AsyncPipelineClient configured for inference calls.
+        :rtype: ~azure.core.AsyncPipelineClient
+        """
         access_token = self._aad_credentials
         auth_policy = AsyncInferenceServiceBearerTokenPolicy(access_token, self._token_scope)
 
@@ -101,13 +106,23 @@ class _InferenceService:
         )
 
     def _get_user_agent(self) -> str:
-        """Get user agent string from client connection or use default."""
+        """Return the user agent string for inference pipeline.
+
+        :returns: User agent string.
+        :rtype: str
+        """
         if self._client_connection and hasattr(self._client_connection, '_user_agent'):
             return self._client_connection._user_agent + "_inference"
         return "azure-cosmos-python-sdk-inference"
 
     def _get_ssl_verification_setting(self) -> bool:
-        """Determine SSL verification setting using same logic as main client."""
+        """Determine whether SSL verification should be enabled for inference endpoint.
+
+        This mirrors the logic used in the core client (localhost / DisableSSLVerification).
+
+        :returns: True if SSL verification is enabled, otherwise False.
+        :rtype: bool
+        """
         connection_policy = self._client_connection.connection_policy
         parsed = urlparse(self._inference_endpoint)
 
@@ -170,7 +185,7 @@ class _InferenceService:
                 connection_verify=is_ssl_enabled
             )
             response = pipeline_response.http_response
-            headers = copy.copy(response.headers)
+            response_headers = cast(CaseInsensitiveDict, response.headers)
 
             data = response.body()
             if data:
@@ -195,7 +210,7 @@ class _InferenceService:
                         response=response,
                         error=e) from e
 
-            return CosmosDict(result, response_headers=headers)
+            return CosmosDict(result, response_headers=response_headers)
 
         except Exception as e:
             if isinstance(e, (exceptions.CosmosHttpResponseError, exceptions.CosmosResourceNotFoundError)):
