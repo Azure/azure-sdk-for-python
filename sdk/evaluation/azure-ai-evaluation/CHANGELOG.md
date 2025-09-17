@@ -1,6 +1,6 @@
 # Release History
 
-## 1.11.1 (Unreleased)
+## 1.11.1 (2025-09-17)
 
 ### Bugs Fixed
 - Pinning duckdb version to 1.3.2 for redteam extra to fix error `TypeError: unhashable type: '_duckdb.typing.DuckDBPyType'`
