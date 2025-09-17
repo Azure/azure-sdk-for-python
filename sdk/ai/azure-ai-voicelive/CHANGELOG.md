@@ -4,11 +4,20 @@
 
 ### Features Added
 
-- Phrase list
+- **Transcription improvement**: Added phrase list
+- **New Voice Types**: Added `AzurePlatformVoice` and `LLMVoice` classes
+- **Enhanced Speech Detection**: Added `AzureSemanticVadServer` class
+- **Improved Function Calling**: Enhanced async function calling sample with better error handling
 
 ### Breaking Changes
 
-- Removed `custom_model` and `enabled` from `AudioInputTranscriptionSettings`.
+- **Transcription**: Removed `custom_model` and `enabled` from `AudioInputTranscriptionSettings`.
+- **Async Authentication**: Fixed credential handling for async scenarios
+- **Model Serialization**: Improved error handling and deserialization
+
+### Other Changes
+
+- **Code Modernization**: Updated type annotations throughout
 
 ## 1.0.0b2 (2025-09-10)
 

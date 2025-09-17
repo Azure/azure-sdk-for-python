@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 #!/usr/bin/env python
 
 # -------------------------------------------------------------------------
@@ -37,7 +38,7 @@ import base64
 import signal
 import threading
 import queue
-from typing import Union, Optional, Dict, Any, Mapping, Callable, TYPE_CHECKING, List, cast
+from typing import Union, Optional, Dict, Any, Mapping, Callable, TYPE_CHECKING, cast
 from concurrent.futures import ThreadPoolExecutor
 
 # Audio processing imports
@@ -50,17 +51,20 @@ except ImportError:
 # Environment variable loading
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
 # Azure VoiceLive SDK imports
-from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
     RequestSession,
     ServerEventType,
     ServerVad,
+    AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
     AudioFormat,
@@ -84,6 +88,7 @@ logger = logging.getLogger(__name__)
 
 async def _wait_for_event(conn, wanted_types: set, timeout_s: float = 10.0):
     """Wait until we receive any event whose type is in wanted_types."""
+
     async def _next():
         while True:
             evt = await conn.recv()
@@ -99,6 +104,7 @@ async def _wait_for_match(
     timeout_s: float = 10.0,
 ):
     """Wait until we receive an event that satisfies the given predicate."""
+
     async def _next():
         while True:
             evt = await conn.recv()
@@ -111,7 +117,7 @@ async def _wait_for_match(
 class AudioProcessor:
     """
     Handles real-time audio capture and playback for the voice assistant.
-    
+
     Responsibilities:
     - Captures audio input from the microphone using PyAudio.
     - Plays back audio output using PyAudio.
@@ -342,7 +348,7 @@ class AsyncFunctionCallingClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
         model: str,
         voice: str,
         instructions: str,
@@ -357,7 +363,7 @@ class AsyncFunctionCallingClient:
         self.active_call_id: Optional[str] = None
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready: bool = False
-        
+
         # Define available functions
         self.available_functions: Dict[str, Callable[[Union[str, Mapping[str, Any]]], Mapping[str, Any]]] = {
             "get_current_time": self.get_current_time,
@@ -374,21 +380,16 @@ class AsyncFunctionCallingClient:
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
-                connection_options={
-                    "max_msg_size": 10 * 1024 * 1024,
-                    "heartbeat": 20,
-                    "timeout": 20,
-                },
             ) as connection:
                 # Initialize audio processor
                 self.audio_processor = AudioProcessor(connection)
-                
+
                 # Configure session with function tools
                 await self._setup_session(connection)
-                
+
                 # Start audio playback system
                 await self.audio_processor.start_playback()
-                
+
                 logger.info("Voice assistant with function calling ready! Start speaking...")
                 print("\n" + "=" * 70)
                 print("🎤 VOICE ASSISTANT WITH FUNCTION CALLING READY")
@@ -398,7 +399,7 @@ class AsyncFunctionCallingClient:
                 print("  • 'What time is it in UTC?'")
                 print("Press Ctrl+C to exit")
                 print("=" * 70 + "\n")
-                
+
                 # Process events asynchronously
                 await self._process_events(connection)
 
@@ -417,13 +418,13 @@ class AsyncFunctionCallingClient:
         logger.info("Setting up voice conversation session with function tools...")
 
         # Create voice configuration
-        voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
-        
+        voice_config = AzureStandardVoice(name=self.voice)
+
         # Create turn detection configuration
         turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500)
-        
+
         # Define available function tools
-        function_tools: List[Tool] = [
+        function_tools: list[Tool] = [
             FunctionTool(
                 name="get_current_time",
                 description="Get the current time",
@@ -458,7 +459,7 @@ class AsyncFunctionCallingClient:
                 },
             ),
         ]
-        
+
         # Create session configuration with function tools
         session_config = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO],
@@ -466,12 +467,13 @@ class AsyncFunctionCallingClient:
             voice=voice_config,
             input_audio_format=AudioFormat.PCM16,
             output_audio_format=AudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=turn_detection_config,
             tools=function_tools,
             tool_choice=ToolChoiceLiteral.AUTO,  # Let the model decide when to call functions
             input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
         )
-        
+
         # Send session configuration asynchronously
         await connection.session.update(session=session_config)
         logger.info("Session configuration with function tools sent")
@@ -491,63 +493,63 @@ class AsyncFunctionCallingClient:
         """Handle different types of events from VoiceLive asynchronously."""
         ap = self.audio_processor
         assert ap is not None, "AudioProcessor must be initialized"
-        
+
         if event.type == ServerEventType.SESSION_UPDATED:
             self.session_id = event.session.id
             logger.info(f"Session ready: {self.session_id}")
             self.session_ready = True
-            
+
             # Start audio capture once session is ready
             await ap.start_capture()
             print("🎤 Ready for voice input! Try asking about time or weather with your location...")
-            
+
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
             logger.info("🎤 User started speaking - stopping playback")
             print("🎤 Listening...")
-            
+
             # Stop current assistant audio playback (interruption handling)
             await ap.stop_playback()
-            
+
             # Cancel any ongoing response
             try:
                 await connection.response.cancel()
             except Exception as e:
                 logger.debug(f"No response to cancel: {e}")
-                
+
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
             print("🤔 Processing...")
-            
+
             # Restart playback system for response
             await ap.start_playback()
-            
+
         elif event.type == ServerEventType.RESPONSE_CREATED:
             logger.info("🤖 Assistant response created")
-            
+
         elif event.type == ServerEventType.RESPONSE_TEXT_DELTA:
             logger.info(f"Text response: {event.delta}")
-            
+
         elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
             # Stream audio response to speakers
             logger.debug("Received audio delta")
             await ap.queue_audio(event.delta)
-            
+
         elif event.type == ServerEventType.RESPONSE_AUDIO_DONE:
             logger.info("🤖 Assistant finished speaking")
             print("🎤 Ready for next input...")
-            
+
         elif event.type == ServerEventType.RESPONSE_DONE:
             logger.info("✅ Response complete")
             self.function_call_in_progress = False
             self.active_call_id = None
-            
+
         elif event.type == ServerEventType.ERROR:
             logger.error(f"❌ VoiceLive error: {event.error.message}")
             print(f"Error: {event.error.message}")
-            
+
         elif event.type == ServerEventType.CONVERSATION_ITEM_CREATED:
             logger.info(f"Conversation item created: {event.item.id}")
-            
+
             # Check if it's a function call item using the improved pattern from the test
             if event.item.type == ItemType.FUNCTION_CALL:
                 print(f"🔧 Calling function: {event.item.name}")
@@ -559,75 +561,71 @@ class AsyncFunctionCallingClient:
         if not isinstance(conversation_created_event, ServerEventConversationItemCreated):
             logger.error("Expected ServerEventConversationItemCreated")
             return
-            
+
         if not isinstance(conversation_created_event.item, ResponseFunctionCallItem):
             logger.error("Expected ResponseFunctionCallItem")
             return
-            
+
         function_call_item = conversation_created_event.item
         function_name = function_call_item.name
         call_id = function_call_item.call_id
         previous_item_id = function_call_item.id
-        
+
         logger.info(f"Function call detected: {function_name} with call_id: {call_id}")
-        
+
         try:
             # Set tracking variables
             self.function_call_in_progress = True
             self.active_call_id = call_id
-            
+
             # Wait for the function arguments to be complete
             function_done = await _wait_for_event(connection, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
-            
+
             if not isinstance(function_done, ServerEventResponseFunctionCallArgumentsDone):
                 logger.error("Expected ServerEventResponseFunctionCallArgumentsDone")
                 return
-                
+
             if function_done.call_id != call_id:
                 logger.warning(f"Call ID mismatch: expected {call_id}, got {function_done.call_id}")
                 return
-                
+
             arguments = function_done.arguments
             logger.info(f"Function arguments received: {arguments}")
-            
+
             # Wait for response to be done before proceeding
             await _wait_for_event(connection, {ServerEventType.RESPONSE_DONE})
-            
+
             # Execute the function if we have it
             if function_name in self.available_functions:
                 logger.info(f"Executing function: {function_name}")
                 result = self.available_functions[function_name](arguments)
-                
+
                 # Create function call output item
-                function_output = FunctionCallOutputItem(
-                    call_id=call_id,
-                    output=json.dumps(result)
-                )
-                
+                function_output = FunctionCallOutputItem(call_id=call_id, output=json.dumps(result))
+
                 # Send the result back to the conversation with proper previous_item_id
-                await connection.conversation.item.create(
-                    previous_item_id=previous_item_id,
-                    item=function_output
-                )
+                await connection.conversation.item.create(previous_item_id=previous_item_id, item=function_output)
                 logger.info(f"Function result sent: {result}")
-                
+
                 # Create a new response to process the function result
                 await connection.response.create()
-                
+
                 # Wait for the final response
                 response = await _wait_for_match(
-                    connection, 
-                    lambda e: e.type == ServerEventType.RESPONSE_OUTPUT_ITEM_DONE and hasattr(e, 'item') and e.item.id != previous_item_id
+                    connection,
+                    lambda e: e.type == ServerEventType.RESPONSE_OUTPUT_ITEM_DONE
+                    and hasattr(e, "item")
+                    and e.item.id != previous_item_id,
                 )
-                
-                if hasattr(response, 'item') and hasattr(response.item, 'content') and response.item.content:
-                    if hasattr(response.item.content[0], 'transcript'):
+
+                if hasattr(response, "item") and hasattr(response.item, "content") and response.item.content:
+                    if hasattr(response.item.content[0], "transcript"):
                         transcript = response.item.content[0].transcript
                         logger.info(f"Final response transcript: {transcript}")
-                    
+
             else:
                 logger.error(f"Unknown function: {function_name}")
-                
+
         except asyncio.TimeoutError:
             logger.error(f"Timeout waiting for function call completion for {function_name}")
         except Exception as e:
@@ -635,7 +633,7 @@ class AsyncFunctionCallingClient:
         finally:
             self.function_call_in_progress = False
             self.active_call_id = None
-    
+
     def get_current_time(self, arguments: Optional[Union[str, Mapping[str, Any]]] = None) -> Dict[str, Any]:
         """Get the current time."""
         # Parse arguments if provided as string
@@ -648,25 +646,21 @@ class AsyncFunctionCallingClient:
             args = arguments
         else:
             args = {}
-            
+
         timezone = args.get("timezone", "local")
         now = datetime.datetime.now()
-        
+
         if timezone.lower() == "utc":
             now = datetime.datetime.now(datetime.timezone.utc)
             timezone_name = "UTC"
         else:
             timezone_name = "local"
-            
+
         formatted_time = now.strftime("%I:%M:%S %p")
         formatted_date = now.strftime("%A, %B %d, %Y")
-        
-        return {
-            "time": formatted_time,
-            "date": formatted_date,
-            "timezone": timezone_name
-        }
-    
+
+        return {"time": formatted_time, "date": formatted_date, "timezone": timezone_name}
+
     def get_current_weather(self, arguments: Union[str, Mapping[str, Any]]):
         """Get the current weather for a location."""
         # Parse arguments if provided as string
@@ -680,10 +674,10 @@ class AsyncFunctionCallingClient:
             args = arguments
         else:
             return {"error": "No arguments provided"}
-            
+
         location = args.get("location", "Unknown")
         unit = args.get("unit", "celsius")
-        
+
         # In a real application, you would call a weather API
         # This is a simulated response similar to the test
         try:
@@ -695,9 +689,9 @@ class AsyncFunctionCallingClient:
                 "humidity": 65,
                 "wind_speed": 10,
             }
-            
+
             return weather_data
-            
+
         except Exception as e:
             logger.error(f"Error getting weather: {e}")
             return {"error": str(e)}
@@ -708,15 +702,24 @@ async def main():
     # Get credentials from environment variables
     api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
     endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
-    
+
     if not api_key:
         print("❌ Error: No API key provided")
         print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
         sys.exit(1)
-        
-    # Create credential
+
+    # Option 1: API key authentication (simple, recommended for quick start)
     credential = AzureKeyCredential(api_key)
-    
+
+    # Option 2: Async AAD authentication (requires azure-identity)
+    # from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
+    # credential = DefaultAzureCredential() or AzureCliCredential()
+    #
+    # 👉 Use this if you prefer AAD/MSAL-based auth.
+    #    It will look for environment variables like:
+    #      AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+    #    or fall back to managed identity if running in Azure.
+
     # Create and run the client
     client = AsyncFunctionCallingClient(
         endpoint=endpoint,
@@ -724,12 +727,12 @@ async def main():
         model="gpt-4o-realtime-preview",
         voice="en-US-AvaNeural",
         instructions="You are a helpful AI assistant with access to functions. "
-                    "Use the functions when appropriate to provide accurate, real-time information. "
-                    "If you are asked about the weather, please respond with 'I will get the weather for you. Please wait a moment.' and then call the get_current_weather function. "
-                    "If you are asked about the time, please respond with 'I will get the time for you. Please wait a moment.' and then call the get_current_time function. "
-                    "Explain when you're using a function and include the results in your response naturally."
+        "Use the functions when appropriate to provide accurate, real-time information. "
+        "If you are asked about the weather, please respond with 'I will get the weather for you. Please wait a moment.' and then call the get_current_weather function. "
+        "If you are asked about the time, please respond with 'I will get the time for you. Please wait a moment.' and then call the get_current_time function. "
+        "Explain when you're using a function and include the results in your response naturally.",
     )
-    
+
     # Setup signal handlers for graceful shutdown
     def signal_handler(sig, frame):
         logger.info("Received shutdown signal")
@@ -737,7 +740,7 @@ async def main():
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
-    
+
     try:
         await client.run()
     except KeyboardInterrupt:
