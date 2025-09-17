@@ -280,8 +280,13 @@ class PathEfficiencyEvaluator(EvaluatorBase):
                     raise TypeError("ground_truth parameters dictionary keys must be strings (tool names)")
                 if not isinstance(params, dict):
                     raise TypeError(f"ground_truth parameters for tool '{tool_name}' must be a dictionary")
-                if not all(isinstance(k, str) and isinstance(v, str) for k, v in params.items()):
-                    raise TypeError(f"ground_truth parameters for tool '{tool_name}' must have string keys and values")
+                for k, v in params.items():
+                    if not isinstance(k, str):
+                        raise TypeError(f"ground_truth parameters for tool '{tool_name}' must have string keys")
+                    try:
+                        json.dumps(v)
+                    except (TypeError, ValueError):
+                        raise TypeError(f"ground_truth parameters for tool '{tool_name}' must have JSON-serializable values (got type {type(v)} for key '{k}')")
             
             ground_truth_names = [name.strip() for name in tool_names_list]
             ground_truth_params_dict = params_dict
