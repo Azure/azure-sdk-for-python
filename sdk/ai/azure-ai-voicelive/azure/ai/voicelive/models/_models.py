@@ -3684,7 +3684,7 @@ class ServerEvent(_Model):
         super().__init__(*args, **kwargs)
 
     @classmethod
-    def deserialize(cls, payload: Dict[str, Any]) -> "ServerEvent":
+    def deserialize(cls, payload: dict[str, Any]) -> "ServerEvent":
         # public, linter-friendly entrypoint
         # pylint: disable-next=protected-access
         return cls._deserialize(payload, [])
