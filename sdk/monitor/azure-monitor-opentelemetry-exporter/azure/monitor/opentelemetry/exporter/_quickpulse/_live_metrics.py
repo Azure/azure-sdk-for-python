@@ -16,6 +16,7 @@ from azure.monitor.opentelemetry.exporter._constants import _ONE_SETTINGS_FEATUR
 _logger = logging.getLogger(__name__)
 
 
+# pylint:disable=docstring-should-be-keyword
 def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
     """Live metrics entry point.
 
@@ -24,7 +25,7 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
         This parameter configures the Azure Monitor endpoint for telemetry submission.
     :type connection_string: Optional[str]
     :param credential: Token credential, such as ManagedIdentityCredential or
-        ClientSecretCredential, used for Azure Active Directory (AAD) authentication. 
+        ClientSecretCredential, used for Azure Active Directory (AAD) authentication.
         Used as an alternative to connection string authentication. Defaults to None.
     :type credential: Optional[Any]
     :param resource: The OpenTelemetry Resource used for this Python application.
@@ -52,37 +53,37 @@ def enable_live_metrics(**kwargs: Any) -> None:  # pylint: disable=C4758
 
 def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
     """Callback function invoked when configuration changes.
-    
+
     This function handles dynamic enabling/disabling of live metrics based on configuration.
-    
+
     :param settings: Configuration settings from onesettings
     :type settings: Dict[str, str]
     """
     manager = get_quickpulse_manager()
-    
+
     # Check if live metrics should be enabled based on configuration
     live_metrics_enabled = evaluate_feature(
         _ONE_SETTINGS_FEATURE_LIVE_METRICS,
         settings
     )
-    
+
     if live_metrics_enabled and not manager.is_initialized():
         # Enable live metrics if it's not currently enabled
         # This should be a re-initialization with previous parameters
-        if manager._connection_string:
+        if manager._connection_string:  # pylint:disable=protected-access
             manager.initialize(
-                connection_string=manager._connection_string,
-                credential=manager._credential,
-                resource=manager._resource
+                connection_string=manager._connection_string,  # pylint:disable=protected-access
+                credential=manager._credential,  # pylint:disable=protected-access
+                resource=manager._resource  # pylint:disable=protected-access
             )
-    elif not live_metrics_enabled and manager.is_initialized():
+    elif live_metrics_enabled is False and manager.is_initialized():
         # Disable live metrics if it's currently enabled
         manager.shutdown()
 
 
 def shutdown_live_metrics() -> bool:
     """Shutdown live metrics.
-    
+
     :return: True if shutdown was successful, False otherwise
     :rtype: bool
     """

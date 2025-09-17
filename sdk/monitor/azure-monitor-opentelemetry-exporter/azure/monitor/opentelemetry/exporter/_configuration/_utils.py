@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
 from typing import Dict, Optional, Any, List
 import json
 import logging
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class _ConfigurationProfile:
     """Profile for the current running SDK."""
-    os: str =  ""
+    os: str = ""
     rp: str = ""
     attach: str = ""
     version: str = ""
@@ -125,6 +126,7 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         logger.warning("Unexpected error while fetching configuration: %s", str(ex))
         return OneSettingsResponse()
 
+
 def _parse_onesettings_response(response: requests.Response) -> OneSettingsResponse:
     """Parse an HTTP response from OneSettings into a structured response object.
 
@@ -200,19 +202,20 @@ def _parse_onesettings_response(response: requests.Response) -> OneSettingsRespo
     return OneSettingsResponse(etag, refresh_interval, settings, version, status_code)
 
 
+# mypy: disable-error-code="no-any-return"
 def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[bool]:
     """Evaluate whether a feature should be enabled based on configuration profile and settings.
-    
+
     This function compares the current _ConfigurationProfile against feature-specific
     override conditions to determine if a feature should be enabled or disabled.
-    
+
     :param feature_key: The name of the feature to evaluate
     :type feature_key: str
     :param settings: Dictionary containing feature configurations with override conditions
     :type settings: Dict[str, Any]
     :return: True if the feature should be enabled, False if disabled, None if inputs are invalid
     :rtype: Optional[bool]
-    
+
     Example settings structure:
     {
         "live_metrics": {
@@ -228,33 +231,36 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
             "override": [
                 {"os": ["w", "l"]},  # Disable on Windows OR Linux
                 {"ver": {"max": "1.0.0"}},  # Disable on versions <= 1.0.0
-                {"attach": ["i", "m"], "region": "eastus"}  # Disable if attach is integratedauto/manual AND region is eastus
+                # Disable if attach is integratedauto/manual AND region is eastus
+                {"attach": ["i", "m"], "region": "eastus"}
             ]
         },
         "profiling": {
             "default": "disabled",
             "override": [
                 {"os": "w", "ver": {"min": "2.0.0", "max": "3.0.0"}},  # Enable on Windows with version 2.0.0-3.0.0
-                {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]}  # Enable if component is exporter AND rp is functions/appsvc AND region is westus/eastus
+                # Enable if component is exporter AND rp is functions/appsvc AND region is westus/eastus
+                {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]}
             ]
         },
         "debug_logging": {
             "default": "enabled",
             "override": [
                 {"ver": "1.0.0b1"},  # Disable on exact version 1.0.0b1
-                {"os": "l", "component": "dst", "attach": "m", "rp": "k"}  # Disable on Linux with distro component, manual attach, and AKS runtime
+                # Disable on Linux with distro component, manual attach, and AKS runtime
+                {"os": "l", "component": "dst", "attach": "m", "rp": "k"}
             ]
         }
     }
-    
+
     Available condition fields:
     - os: Operating system ("w"=windows, "l"=linux, "d"=darwin, "u"=unknown, etc.) - supports single value or list
     - ver: Version constraints - supports exact string match or dict with "min"/"max" keys
     - component: Component type ("ext"=exporter, "dst"=distro) - exact string match
-    - rp: Runtime platform ("u"=unknown, "f"=functions, "a"=appsvc, "k"=aks) - supports single value or list  
+    - rp: Runtime platform ("u"=unknown, "f"=functions, "a"=appsvc, "k"=aks) - supports single value or list
     - region: Host region ("westus", "eastus", etc.) - supports single value or list
     - attach: Attachment type ("m"=manual, "i"=integratedauto) - supports single value or list
-    
+
     Override logic:
     - Each item in the override list is an independent rule
     - ALL conditions within a single rule must match for that rule to apply
@@ -267,33 +273,34 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
 
     if feature_key not in settings:
         return None
-    
+
     feature_config = settings[feature_key]
     if not isinstance(feature_config, dict):
         return None
-    
+
     default_state = feature_config.get("default", "disabled").lower() == "enabled"
     override_list = feature_config.get("override", [])
-    
+
     # If no override conditions, return default state
     if not override_list or not isinstance(override_list, list):
         return default_state
-    
+
     # Check override conditions - if ANY override rule matches completely, apply override
     for override_rule in override_list:
         if isinstance(override_rule, dict) and _matches_override_rule(override_rule):
             # At least one override rule matched - return opposite of default
             return not default_state
-    
+
     # No override rules matched - return default state
     return default_state
 
 
+# mypy: disable-error-code="no-any-return"
 def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     """Check if all conditions in an override rule match the current configuration profile.
-    
+
     All conditions within a single override rule must match for the rule to apply.
-    
+
     :param override_rule: Dictionary of conditions that must all be true
     :type override_rule: Dict[str, Any]
     :return: True if all conditions in the rule match, False otherwise
@@ -302,20 +309,20 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     # Validate input
     if not override_rule:
         return False
-    
+
     # All conditions in this rule must match
     for condition_key, condition_value in override_rule.items():
         if not _matches_condition(condition_key, condition_value):
             # If any condition doesn't match, this rule doesn't apply
             return False
-    
+
     # All conditions in this rule matched
     return True
 
-
+# pylint:disable=too-many-return-statements
 def _matches_condition(condition_key: str, condition_value: Any) -> bool:
     """Check if a specific condition matches the current configuration profile.
-    
+
     :param condition_key: The profile attribute to check (os, ver, component, etc.)
     :type condition_key: str
     :param condition_value: The expected value(s) or constraints for the condition
@@ -324,72 +331,72 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
     :rtype: bool
     """
     profile = _ConfigurationProfile
-    
+
     # Validate condition_key
     if not condition_key or condition_value is None:
         return False
-    
+
     if condition_key == "os":
         # OS condition - check if current OS is in the list
         if isinstance(condition_value, list):
             return profile.os.lower() in [str(os).lower() for os in condition_value]
         return profile.os.lower() == str(condition_value).lower()
-    
+
     elif condition_key == "ver":
         # Version condition - support min/max version checks
         if isinstance(condition_value, dict):
             current_version = profile.version
             if not current_version:
                 return False
-            
+
             # Check minimum version
             if "min" in condition_value:
                 min_version = condition_value["min"]
                 if not _compare_versions(current_version, str(min_version), ">="):
                     return False
-            
+
             # Check maximum version
             if "max" in condition_value:
                 max_version = condition_value["max"]
                 if not _compare_versions(current_version, str(max_version), "<="):
                     return False
-            
+
             return True
         else:
             # Exact version match
             return profile.version == str(condition_value)
-    
-    elif condition_key == "component":
+
+    if condition_key == "component":
         # Component condition - exact match
         return profile.component == str(condition_value)
-    
-    elif condition_key == "rp":
+
+    if condition_key == "rp":
         # Runtime platform condition - check if current RP is in the list
         if isinstance(condition_value, list):
             return profile.rp in [str(rp) for rp in condition_value]
         return profile.rp == str(condition_value)
-    
-    elif condition_key == "region":
+
+    if condition_key == "region":
         # Region condition - check if current region is in the list
         if isinstance(condition_value, list):
             return profile.region in [str(region) for region in condition_value]
         return profile.region == str(condition_value)
-    
-    elif condition_key == "attach":
+
+    if condition_key == "attach":
         # Attach type condition - check if current attach type is in the list
         if isinstance(condition_value, list):
             return profile.attach in [str(attach) for attach in condition_value]
         return profile.attach == str(condition_value)
-    
+
     # Unknown condition key
     return False
 
 
 def _compare_versions(version1: str, version2: str, operator: str) -> bool:
     """Compare two version strings using the specified operator.
-    
+
     Handles standard semantic versioning with beta versions (e.g., "1.0.0b28").
-    
+
     :param version1: First version string (e.g., "2.9.1", "1.0.0b28")
     :type version1: str
     :param version2: Second version string (e.g., "2.9.0", "1.0.0b20")
@@ -403,7 +410,7 @@ def _compare_versions(version1: str, version2: str, operator: str) -> bool:
         # Parse version strings into comparable tuples
         v1_parts = _parse_version_with_beta(version1)
         v2_parts = _parse_version_with_beta(version2)
-        
+
         # Compare tuples
         if operator == ">=":
             return v1_parts >= v2_parts
@@ -435,12 +442,12 @@ def _compare_versions(version1: str, version2: str, operator: str) -> bool:
 
 def _parse_version_with_beta(version: str) -> tuple:
     """Parse a version string that may contain beta suffix into a comparable tuple.
-    
+
     Examples:
     - "1.0.0" -> (1, 0, 0, float('inf'))  # Release version sorts after beta
     - "1.0.0b28" -> (1, 0, 0, 28)        # Beta version with number
     - "2.1.5b1" -> (2, 1, 5, 1)          # Beta version with number
-    
+
     :param version: Version string to parse
     :type version: str
     :return: Tuple representing version for comparison
@@ -457,3 +464,5 @@ def _parse_version_with_beta(version: str) -> tuple:
         # Release version - use infinity for beta part so it sorts after beta versions
         base_parts = [int(x) for x in version.split('.')]
         return tuple(base_parts + [float('inf')])
+
+# cSpell:enable

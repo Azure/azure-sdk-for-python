@@ -7,11 +7,11 @@ from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
     StatsbeatConfig,
     StatsbeatManager,
 )
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 
 if TYPE_CHECKING:
     from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
 
-from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 
 logger = logging.getLogger(__name__)
 

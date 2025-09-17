@@ -52,10 +52,10 @@ class _ConfigurationManager(metaclass=Singleton):
         with self._state_lock:
             if self._initialized:
                 return
-            
+
             # Fill the configuration profile with the initializer's parameters
             _ConfigurationProfile.fill(**kwargs)
-                
+
             # Lazy import to avoid circular import
             from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
 
@@ -79,7 +79,7 @@ class _ConfigurationManager(metaclass=Singleton):
             except Exception as ex:  # pylint: disable=broad-except
                 logger.warning("Callback failed: %s", ex)
 
-       # pylint: disable=too-many-statements
+    # pylint: disable=too-many-statements
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
         

@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- OneSettings control plane: Add live metrics feature control
+  ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -46,8 +49,6 @@
   ([#42716] https://github.com/Azure/azure-sdk-for-python/pull/42716)
 - Support sdk stats dynamic change on OneSettings config change
   ([#42877] https://github.com/Azure/azure-sdk-for-python/pull/42877)
-- OneSettings control plane: Add live metrics feature control
-  ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
 
 ## 1.0.0b41 (2025-07-31)
 

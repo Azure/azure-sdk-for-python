@@ -90,26 +90,26 @@ class _QuickpulseManager(metaclass=Singleton):
 
     def __init__(self) -> None:
         """Initialize the QuickpulseManager singleton.
-        
+
         Basic initialization without configuration. Use initialize() method
         to configure and start the manager with connection parameters.
         """
         # Initialize instance attributes. Called only once due to Singleton metaclass.
         self._lock = threading.Lock()
         self._initialized: bool = False
-        
+
         # Configuration parameters - set during initialize()
         self._connection_string: Optional[str] = None
         self._credential = None
         self._resource: Optional[Resource] = None
-        
+
         # Components that depend on configuration - created during initialize()
         self._base_monitoring_data_point: Optional[MonitoringDataPoint] = None
         self._meter_provider: Optional[MeterProvider] = None
         self._meter: Optional[Meter] = None
         self._exporter: Optional[_QuickpulseExporter] = None
         self._reader: Optional[_QuickpulseMetricReader] = None
-        
+
         # Metric instruments - created during initialize()
         self._request_duration = None
         self._dependency_duration = None
@@ -123,9 +123,10 @@ class _QuickpulseManager(metaclass=Singleton):
         self._process_time_gauge_old = None
         self._process_time_gauge = None
 
+    # pylint:disable=docstring-should-be-keyword
     def initialize(self, **kwargs: Any) -> bool:
         """Initialize the QuickpulseManager with configuration parameters.
-        
+
         Expected keyword arguments:
         :param connection_string: The connection string used for your Application Insights resource
         :type connection_string: Optional[str]
@@ -134,7 +135,7 @@ class _QuickpulseManager(metaclass=Singleton):
         :param resource: The OpenTelemetry Resource used for this Python application.
             This is the primary parameter used by the underlying _QuickpulseExporter.
         :type resource: Optional[Resource]
-        
+
         :return: True if initialization was successful, False otherwise
         :rtype: bool
         """
@@ -143,25 +144,26 @@ class _QuickpulseManager(metaclass=Singleton):
                 # Manager is already initialized, no need to reinitialize
                 _logger.debug("QuickpulseManager is already initialized.")
                 return True
-            
+
             # Extract and store configuration parameters from kwargs
             self._connection_string = kwargs.get("connection_string")
             self._credential = kwargs.get("credential")
             self._resource = kwargs.get("resource")
-            
+
             # Initialize using the configuration parameters
             return self._do_initialize()
 
+    # pylint:disable=docstring-missing-return
     def _do_initialize(self) -> bool:
         """Internal initialization method."""
         try:
             _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
-            
+
             # Use provided resource or create default
             resource = self._resource
             if not resource:
                 resource = Resource.create({})
-                
+
             # Create base monitoring data point
             part_a_fields = _populate_part_a_fields(resource)
             id_generator = RandomIdGenerator()
@@ -176,14 +178,14 @@ class _QuickpulseManager(metaclass=Singleton):
                 is_web_app=_is_on_app_service(),
                 performance_collection_supported=True,
             )
-            
+
             # Create exporter with explicit parameters
             exporter_kwargs = {}
             if self._connection_string:
                 exporter_kwargs["connection_string"] = self._connection_string
             if self._credential:
                 exporter_kwargs["credential"] = self._credential
-                
+
             self._exporter = _QuickpulseExporter(**exporter_kwargs)
             self._reader = _QuickpulseMetricReader(self._exporter, self._base_monitoring_data_point)
             self._meter_provider = MeterProvider(
@@ -205,12 +207,12 @@ class _QuickpulseManager(metaclass=Singleton):
             # Ensure cleanup happens and state is consistent
             self._cleanup()
             return False
-            
+
     def _create_metric_instruments(self) -> None:
         """Create all metric instruments. Called during initialization."""
         if not self._meter:
             raise ValueError("Meter must be initialized before creating instruments")
-            
+
         self._request_duration = self._meter.create_histogram(
             _REQUEST_DURATION_NAME[0], "ms", "live metrics avg request duration in ms"
         )
@@ -269,7 +271,7 @@ class _QuickpulseManager(metaclass=Singleton):
                 pass
             finally:
                 self._cleanup(shutdown_meter_provider=False)
-            
+
             if shutdown_success:
                 _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
                 # Clear the singleton instance from the metaclass
@@ -295,7 +297,7 @@ class _QuickpulseManager(metaclass=Singleton):
 
     def is_initialized(self) -> bool:
         """Check if the manager is initialized.
-        
+
         :return: True if initialized, False otherwise
         :rtype: bool
         """
@@ -385,7 +387,7 @@ class _QuickpulseManager(metaclass=Singleton):
 
     def _validate_recording_resources(self) -> bool:
         """Validate that all required resources for recording are available.
-        
+
         :return: True if all required resources are available, False otherwise
         :rtype: bool
         """
