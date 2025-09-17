@@ -15,7 +15,6 @@ steps:
         "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --checks="pylint"
-        --disablecov
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
     env:
