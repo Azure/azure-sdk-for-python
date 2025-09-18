@@ -6,6 +6,8 @@
 
 - OneSettings control plane: Add live metrics feature control
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
+- OneSettings control plane: Add killswitch + exponential  backoff
+  ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
 
 ### Breaking Changes
 

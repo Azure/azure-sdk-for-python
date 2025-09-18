@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import unittest
 from unittest.mock import Mock, patch
+import os
 
 from azure.monitor.opentelemetry.exporter._configuration import (
     _ConfigurationManager,
@@ -364,3 +365,35 @@ class TestConfigurationManager(unittest.TestCase):
         # Verify etag was included in headers
         headers = call_args[0][2]
         self.assertEqual(headers["If-None-Match"], "test-etag")
+
+    @patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "true"})
+    def test_configuration_manager_disabled(self):
+        """Test that configuration manager is disabled when environment variable is set."""
+        from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+        
+        # When controlplane is disabled, get_configuration_manager should return None
+        manager = get_configuration_manager()
+        self.assertIsNone(manager)
+
+    @patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "false"})
+    def test_configuration_manager_enabled(self):
+        """Test that configuration manager is enabled when environment variable is false."""
+        from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+        
+        # When controlplane is not disabled, get_configuration_manager should return instance
+        manager = get_configuration_manager()
+        self.assertIsNotNone(manager)
+        self.assertIsInstance(manager, _ConfigurationManager)
+
+    def test_configuration_manager_enabled_by_default(self):
+        """Test that configuration manager is enabled by default when no environment variable is set."""
+        from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+        
+        # Ensure env var is not set
+        if "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED" in os.environ:
+            del os.environ["APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED"]
+        
+        # When no env var is set, get_configuration_manager should return instance
+        manager = get_configuration_manager()
+        self.assertIsNotNone(manager)
+        self.assertIsInstance(manager, _ConfigurationManager)

@@ -24,7 +24,9 @@ def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ign
             # Register the callback that will be invoked on configuration changes to statsbeat
             # Is a NoOp if _ConfigurationManager not initialized
             config_manager = get_configuration_manager()
-            config_manager.register_callback(get_statsbeat_configuration_callback)
+            # config_manager would be `None` if control plane is disabled
+            if config_manager:
+                config_manager.register_callback(get_statsbeat_configuration_callback)
 
 def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     current_config = StatsbeatManager().get_current_config()
