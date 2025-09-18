@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix logic for message field on Microsoft.ApplicationInsights.Message to sync with Breeze
 
 ### Other Changes
 

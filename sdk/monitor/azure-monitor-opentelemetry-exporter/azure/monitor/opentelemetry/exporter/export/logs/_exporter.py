@@ -82,6 +82,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 
     def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
         envelope = _convert_log_to_envelope(log_data)
+        if envelope is None:
+            return None
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -189,6 +191,9 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             severity_level=severity_level,  # type: ignore
             properties=properties,
         )
+        if len(data.message) == 0:
+            _logger.warning("Log record body cannot be empty. Skipping export for this log record.")
+            return None
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
     return envelope
