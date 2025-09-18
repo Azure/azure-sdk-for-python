@@ -21,12 +21,12 @@ from azure.keyvault.keys.crypto.aio import (
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
-from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
+from azure.keyvault.keys._generated._serialization import Deserializer
 from azure.keyvault.keys._generated.models import KeySignParameters
-from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import AsyncKeysClientPreparer, get_decorator
+from _async_test_case import AsyncKeysClientPreparer
+from _test_case import get_decorator
 from _shared.helpers_async import get_completed_future
 from _shared.test_case_async import KeyVaultTestCase
 from _keys_test_case import KeysTestCase
