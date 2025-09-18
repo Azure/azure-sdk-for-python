@@ -17,6 +17,7 @@ _STATSBEAT_STATE = {
     "SHUTDOWN": False,
     "CUSTOM_EVENTS_FEATURE_SET": False,
     "LIVE_METRICS_FEATURE_SET": False,
+    "CUSTOMER_SDKSTATS_FEATURE_SET": False,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
@@ -74,3 +75,11 @@ def set_statsbeat_live_metrics_feature_set():
 def set_statsbeat_shutdown(shutdown: bool):
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["SHUTDOWN"] = shutdown
+
+def get_statsbeat_customer_sdkstats_feature_set(): # pylint: disable=name-too-long
+    return _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"]
+
+
+def set_statsbeat_customer_sdkstats_feature_set(): # pylint: disable=name-too-long
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = True
