@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2025-09-17)
 
 ### Features Added
 
@@ -8,6 +8,8 @@
 - **New Voice Types**: Added `AzurePlatformVoice` and `LLMVoice` classes
 - **Enhanced Speech Detection**: Added `AzureSemanticVadServer` class
 - **Improved Function Calling**: Enhanced async function calling sample with better error handling
+- **English-Specific Detection**: Added `AzureSemanticDetectionEn` class for optimized English-only semantic end-of-utterance detection
+- **English-Specific Voice Activity Detection**: Added `AzureSemanticVadEn` class for enhanced English-only voice activity detection
 
 ### Breaking Changes
 
