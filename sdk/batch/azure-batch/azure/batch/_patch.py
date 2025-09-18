@@ -130,19 +130,11 @@ class BatchErrorFormat(ODataV4Format):
             self.message = odata_error["message"]["value"]
             if "values" in odata_error:
                 for item in odata_error["values"]:
-                    self.details.append({"code": item["key"], "message": item["value"]})
+                    self.details.append(ODataV4Format({"code": item["key"], "message": item["value"]}))
         except KeyError:
             super().__init__(odata_error)
 
 class BatchExceptionPolicy(SansIOHTTPPolicy):
-
-    def __init__(self):
-        super().__init__()
-
-    def send(self, request):
-        """Mutate the request."""
-
-        return self.next.send(request)
 
     def on_response(self, request: PipelineRequest, response: PipelineResponse):
         req = request.http_request
@@ -151,7 +143,6 @@ class BatchExceptionPolicy(SansIOHTTPPolicy):
         if not (res.status_code >= 200 and res.status_code < 300):
             raise_error = HttpResponseError
             error = _failsafe_deserialize(_models.BatchError, res.json())
-            print("HELLO!!!!!!!!: \n", error)
 
             # for 412 status code error handling
             if_match = req.headers.get("If-Match")
@@ -191,7 +182,7 @@ class BatchClient(GenerateBatchClient):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs):
+    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs) -> None:
         per_call_policies = kwargs.pop("per_call_policies", [])
         per_call_policies.append(BatchExceptionPolicy())
         super().__init__(
