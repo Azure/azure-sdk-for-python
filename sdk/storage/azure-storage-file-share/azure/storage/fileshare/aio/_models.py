@@ -8,13 +8,13 @@
 from typing import (
     Any, Callable, Dict, List, Optional
 )
+from urllib.parse import unquote
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 
 from .._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from .._generated.models import DirectoryItem
-from .._generated.models import StringEncoded
 from .._models import Handle, ShareProperties, DirectoryProperties, FileProperties
 
 
@@ -201,8 +201,8 @@ class DirectoryPropertiesPaged(AsyncPageIterator):
     async def _extract_data_cb(self, get_next_return):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix.content if (
-            isinstance(self._response.prefix, StringEncoded)) else self._response.prefix
+        self.prefix = unquote(self._response.prefix.content) if (
+            self._response.prefix.encoded) else self._response.prefix.content
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items] # pylint: disable = protected-access
