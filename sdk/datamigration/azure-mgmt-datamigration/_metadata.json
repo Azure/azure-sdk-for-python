@@ -1,11 +1,11 @@
 {
-  "commit": "2b4cec68b918329b9dacee73cd8a1a6afe60315c",
+  "commit": "4bf96d0b0334d1f2e95205ca8f0d7495f7db2f0f",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.35.0",
+    "@autorest/python@6.38.2",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/datamigration/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.35.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "autorest_command": "autorest specification/datamigration/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --keep-setup-py=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-2025-06 --use=@autorest/python@6.38.2 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
   "readme": "specification/datamigration/resource-manager/readme.md"
 }
