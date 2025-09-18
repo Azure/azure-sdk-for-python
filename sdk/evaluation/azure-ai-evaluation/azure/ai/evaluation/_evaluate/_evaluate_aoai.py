@@ -275,7 +275,9 @@ def _get_single_run_results(
     for row_result in all_results:
         listed_results["index"].append(row_result.datasource_item_id)
         for single_grader_row_result in row_result.results:
-            if hasattr(single_grader_row_result, "model_dump"):
+            if isinstance(single_grader_row_result, dict):
+                result_dict = single_grader_row_result
+            elif hasattr(single_grader_row_result, "model_dump"):
                 result_dict = single_grader_row_result.model_dump()
             elif hasattr(single_grader_row_result, "dict"):
                 result_dict = single_grader_row_result.dict()
