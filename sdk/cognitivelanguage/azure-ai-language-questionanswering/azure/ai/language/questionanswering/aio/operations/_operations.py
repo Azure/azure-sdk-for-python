@@ -51,7 +51,7 @@ class QuestionAnsweringOperations:
         :attr:`question_answering` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: QuestionAnsweringClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")

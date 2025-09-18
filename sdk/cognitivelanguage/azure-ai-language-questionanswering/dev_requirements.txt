@@ -2,3 +2,4 @@
 ../../core/azure-core
 aiohttp
 -e ../../identity/azure-identity
+isodate>=0.6.1   # Added so isolated pylint env has this runtime dependency
