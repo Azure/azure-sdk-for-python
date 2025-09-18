@@ -2,14 +2,21 @@
 
 # Release History
 
-## 1.2.0b4 (Unreleased)
+## 1.2.0b5 (Unreleased)
 
-### Breaking Changes
+### Features Added
+
+### Bugs Fixed
+- Added `RunStepDeltaChunk` to `StreamEventData` model (GitHub issues [43022](https://github.com/Azure/azure-sdk-for-python/issues/43022))
+
+
+## 1.2.0b4 (2025-09-12)
 
 ### Features Added
 
 - Added Computer Use Preview tool for use with the computer-use-preview model
-- Added static `merge_resources` method to `McpTool` with accompanying sample.
+- ToolSet now supports adding multiple McpTool instances and OpenApiTool instances.
+- Added static functions `get_tool_resources` and `get_tool_definitions` in `azure.ai.agents.models` to simplify extracting tool resources and definitions from collections of tools, making it easier to configure agents with multiple tool instances.
 
 ### Bugs Fixed
 
@@ -20,8 +27,11 @@
 
 ### Sample updates
 
-- Added Computer Use Preview tool sample demonstrating use with the computer-use-preview model
 - Added sample demonstrating multiple McpTool instance usage.
+- Added `sample_agents_mcp_stream_eventhandler.py` demonstrating how to use MCP tools with streaming and event handlers for real-time processing.
+- Added `sample_agents_mcp_stream_iteration.py` showing MCP tool usage with streaming iteration for step-by-step response handling.
+- Added `sample_agents_multiple_mcp.py` illustrating how to configure and use multiple MCP tool.
+
 
 ## 1.2.0b3 (2025-08-22)
 
