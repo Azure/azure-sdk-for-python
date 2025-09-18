@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 - Fix logic for message field on Microsoft.ApplicationInsights.Message to sync with Breeze
+  ([#43060](https://github.com/Azure/azure-sdk-for-python/pull/43060))
 
 ### Other Changes
 
