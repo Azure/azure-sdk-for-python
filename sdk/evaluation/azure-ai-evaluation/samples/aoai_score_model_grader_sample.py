@@ -240,11 +240,43 @@ def demonstrate_score_model_grader():
 
         print("✅ Conversation quality grader created successfully")
 
+        conversation_consistency_grader = AzureOpenAIScoreModelGrader(
+            model_config=model_config,
+            name="Conversation Consistency Assessment",
+            model="gpt-4o-mini",
+            input=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are an expert evaluator who judges whether AI assistant responses stay"
+                        " consistent with the provided context and conversation history. Score between"
+                        " 0.0 (completely inconsistent) and 1.0 (fully consistent)."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        "Evaluate this conversation for consistency with the user's needs and the context:\n"
+                        "Context: {{ item.context }}\n"
+                        "Messages: {{ item.conversation }}\n\n"
+                        "Return only a numeric consistency score from 0.0 to 1.0."
+                    ),
+                },
+            ],
+            range=[0.0, 1.0],
+            sampling_params={"temperature": 0.0},
+        )
+
+        print("✅ Conversation consistency grader created successfully")
+
         # 4. Run evaluation with the score model grader
         print("\n🚀 Running evaluation with score model grader...")
         result = evaluate(
             data=data_file,
-            evaluators={"conversation_quality": conversation_quality_grader},
+            evaluators={
+                "conversation_quality": conversation_quality_grader,
+                "conversation_consistency": conversation_consistency_grader,
+            },
             azure_ai_project=azure_ai_project,
             tags={
                 "grader_type": "score_model",
@@ -285,6 +317,13 @@ def demonstrate_score_model_grader():
 
     except Exception as e:
         print(f"\n❌ Error during evaluation: {str(e)}")
+        # print traceback for debugging
+        import traceback
+
+        traceback.print_exc()
+        import pdb
+
+        pdb.set_trace()
 
     # Clean up
     if os.path.exists(data_file):

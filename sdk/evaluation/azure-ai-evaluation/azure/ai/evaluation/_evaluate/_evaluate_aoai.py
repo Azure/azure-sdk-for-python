@@ -280,10 +280,7 @@ def _get_single_run_results(
                 result_dict = vars(single_grader_row_result)
             else:
                 raise EvaluationException(
-                    message=(
-                        "Unsupported AOAI evaluation result type: "
-                        f"{type(single_grader_row_result)!r}."
-                    ),
+                    message=("Unsupported AOAI evaluation result type: " f"{type(single_grader_row_result)!r}."),
                     blame=ErrorBlame.UNKNOWN,
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=ErrorTarget.AOAI_GRADER,
@@ -448,17 +445,16 @@ def _get_graders_and_column_mappings(
     Split them into sub-lists and sub-dictionaries that each correspond to a single evaluation run
     that must be performed to evaluate the entire dataset.
 
-    Currently this function is fairly naive; it always splits the data if there are multiple
-    graders present and any of them have a unique column mapping.
+    Graders are grouped by their resolved column mapping so that graders sharing the same mapping
+    run together. Separate runs are only created when graders require distinct mappings.
 
     This odd separate of data is necessary because our system allows for different evaluators
     to have different dataset columns mapped to the same input name for each evaluator, while
     the OAI API can't. So, if if there's a possibility that such a conflict might arise,
     we need to split the incoming data up.
 
-    Currently splits each grader into its own eval group/run to ensure they each use
-    their own credentials later on. Planned fast follow is to group things by
-    matching credentials later.
+    Runs are still separated when graders require distinct mappings (or in future, distinct
+    credentials). Planned fast follow is to group things by matching credentials later.
 
     :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
     :type graders: Dict[str, AoaiGrader]
@@ -469,15 +465,33 @@ def _get_graders_and_column_mappings(
     :rtype: List[Tuple[Dict[str, AoaiGrader], Optional[Dict[str, str]]]]
     """
 
+    if not graders:
+        return []
+
     if column_mappings is None:
-        return [({name: grader}, None) for name, grader in graders.items()]
-    default_mapping = column_mappings.get("default", None)
-    if default_mapping is None:
-        default_mapping = {}
-    return [
-        ({name: grader}, None if column_mappings is None else column_mappings.get(name, default_mapping))
-        for name, grader in graders.items()
-    ]
+        return [(graders, None)]
+
+    default_mapping = column_mappings.get("default") or {}
+
+    grouped_graders: Dict[Tuple[Tuple[str, str], ...], Dict[str, AzureOpenAIGrader]] = {}
+    grouped_mappings: Dict[Tuple[Tuple[str, str], ...], Optional[Dict[str, str]]] = {}
+    insertion_order: List[Tuple[Tuple[str, str], ...]] = []
+
+    for name, grader in graders.items():
+        mapping = column_mappings.get(name)
+        if mapping is None:
+            mapping = default_mapping
+
+        mapping_key: Tuple[Tuple[str, str], ...] = tuple(sorted(mapping.items())) if mapping else tuple()
+
+        if mapping_key not in grouped_graders:
+            grouped_graders[mapping_key] = {}
+            grouped_mappings[mapping_key] = mapping
+            insertion_order.append(mapping_key)
+
+        grouped_graders[mapping_key][name] = grader
+
+    return [(grouped_graders[key], grouped_mappings[key]) for key in insertion_order]
 
 
 def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
