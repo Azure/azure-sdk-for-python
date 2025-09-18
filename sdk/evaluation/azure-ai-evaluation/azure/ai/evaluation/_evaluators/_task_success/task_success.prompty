@@ -17,7 +17,9 @@ inputs:
   response:
     type: string
   tool_definitions:
-    default: "[]"
+    type: Dict
+    optional: true
+    default: {}
 ---
 system:
 You are an expert evaluator who determines if an agent has successfully completed the task required by the user based on the final outcome.
