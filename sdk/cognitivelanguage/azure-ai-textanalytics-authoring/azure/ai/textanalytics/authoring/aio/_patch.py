@@ -10,12 +10,27 @@ from typing import Any, TYPE_CHECKING, Union, Optional
 from azure.core.credentials import AzureKeyCredential
 from ._client import TextAuthoringClient as AuthoringClientGenerated
 from ._client import TextAuthoringProjectClient as AuthoringProjectClientGenerated
+from .operations import (
+    DeploymentOperations,
+    ExportedModelOperations,
+    ProjectOperations,
+    TrainedModelOperations
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
 class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
+
+    #: Deployment operations group
+    deployment: DeploymentOperations
+    #: Exported model operations group
+    exported_model: ExportedModelOperations
+    #: Project operations group
+    project: ProjectOperations
+    #: Trained model operations group
+    trained_model: TrainedModelOperations
 
     def __init__(
         self,
