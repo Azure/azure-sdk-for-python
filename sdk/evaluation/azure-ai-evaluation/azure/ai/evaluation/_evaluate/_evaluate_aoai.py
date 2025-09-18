@@ -280,10 +280,7 @@ def _get_single_run_results(
                 result_dict = vars(single_grader_row_result)
             else:
                 raise EvaluationException(
-                    message=(
-                        "Unsupported AOAI evaluation result type: "
-                        f"{type(single_grader_row_result)!r}."
-                    ),
+                    message=("Unsupported AOAI evaluation result type: " f"{type(single_grader_row_result)!r}."),
                     blame=ErrorBlame.UNKNOWN,
                     category=ErrorCategory.FAILED_EXECUTION,
                     target=ErrorTarget.AOAI_GRADER,
