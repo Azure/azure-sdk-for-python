@@ -32,6 +32,7 @@ from .._default_converter import _DefaultConverter
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from .formatting_utils import message_to_dict_for_target
 
 
 def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
@@ -102,12 +103,16 @@ def get_chat_target(
     """
     import inspect
 
-    # Helper function for message conversion
+    # Helper function for message conversion - this function is used when converting 
+    # messages to send to the target, so we should merge context into content
     def _message_to_dict(message):
-        return {
-            "role": message.role,
-            "content": message.content,
-        }
+        # Check if the message has context information that should be merged
+        context = getattr(message, 'context', None)
+        if hasattr(message, 'labels') and message.labels:
+            context = message.labels.get('context', context)
+        
+        # Use the new function that merges context into content for target messages
+        return message_to_dict_for_target(message, context)
 
     if isinstance(target, PromptChatTarget):
         return target
