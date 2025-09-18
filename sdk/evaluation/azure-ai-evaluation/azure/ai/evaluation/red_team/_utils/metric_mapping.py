@@ -15,7 +15,6 @@ RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
     RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
     RiskCategory.UngroundedAttributes: EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-    RiskCategory.IndirectAttack: EvaluationMetrics.XPIA,
     _InternalRiskCategory.ECI: _InternalEvaluationMetrics.ECI,
     RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
 }
@@ -27,7 +26,6 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
     RiskCategory.SelfHarm: Tasks.CONTENT_HARM,
     RiskCategory.ProtectedMaterial: Tasks.PROTECTED_MATERIAL,
     RiskCategory.UngroundedAttributes: Tasks.UNGROUNDED_ATTRIBUTES,
-    RiskCategory.IndirectAttack: Tasks.XPIA,
     _InternalRiskCategory.ECI: _InternalAnnotationTasks.ECI,
     RiskCategory.CodeVulnerability: Tasks.CODE_VULNERABILITY,
 }
@@ -66,5 +64,5 @@ def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory]) 
     return (
         "isa"
         if risk_category == RiskCategory.UngroundedAttributes
-        else "xpia" if risk_category == RiskCategory.IndirectAttack else risk_category.value
+        else risk_category.value
     )

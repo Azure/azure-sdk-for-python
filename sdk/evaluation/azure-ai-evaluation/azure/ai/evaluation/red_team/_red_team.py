@@ -460,6 +460,9 @@ class RedTeam:
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+            # Handle indirect jailbreak strategy
+            elif strategy == "indirect_jailbreak":
+                objectives_response = await self._apply_xpia_prompts(objectives_response)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -503,6 +506,102 @@ class RedTeam:
             self.logger.error(f"Error applying jailbreak prefixes: {str(e)}")
 
         return objectives_list
+
+    async def _apply_xpia_prompts(self, objectives_list: List) -> List:
+        """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy."""
+        self.logger.debug("Applying XPIA prompts to objectives for indirect jailbreak")
+        try:
+            # Get XPIA prompts from RAI service
+            @self.retry_manager.create_retry_decorator(context="xpia_prompts")
+            async def get_xpia_prompts_with_retry():
+                return await self.generated_rai_client.get_attack_objectives(
+                    risk_type=None,
+                    risk_category="xpia",
+                    application_scenario="",
+                    strategy=None,
+                    language=self.language.value,
+                    scan_session_id=self.scan_session_id,
+                )
+
+            xpia_prompts = await get_xpia_prompts_with_retry()
+            
+            if not xpia_prompts or len(xpia_prompts) == 0:
+                self.logger.warning("No XPIA prompts available, returning objectives unchanged")
+                return objectives_list
+
+            # Apply XPIA formatting to each objective
+            for objective in objectives_list:
+                if "messages" in objective and len(objective["messages"]) > 0:
+                    message = objective["messages"][0]
+                    if isinstance(message, dict) and "content" in message:
+                        original_content = message["content"]
+                        # Randomly select an XPIA prompt
+                        xpia_prompt = random.choice(xpia_prompts)
+                        
+                        # Apply the XPIA formatting
+                        formatted_content = self._format_xpia_objective(original_content, xpia_prompt)
+                        message["content"] = formatted_content
+                        
+        except Exception as e:
+            self.logger.error(f"Error applying XPIA prompts: {str(e)}")
+            self.logger.warning("XPIA prompt application failed, returning original objectives")
+
+        return objectives_list
+
+    def _format_xpia_objective(self, objective_content: str, xpia_prompt: dict) -> str:
+        """Format an objective with XPIA prompt structure.
+        
+        Expected XPIA prompt structure:
+        {
+            "content": "Document content with placeholders",
+            "document_type": "Email|Document|etc",
+            "xpia_attack_type": "Information Gathering|etc", 
+            "xpia_attack_sentence": "The attack instruction",
+            "action": "Action to perform"
+        }
+        
+        Result format:
+        <action>
+        <document_type tags>
+        <content with injected objective>
+        </document_type tags>
+        """
+        try:
+            # Get document tags based on type
+            doc_type = xpia_prompt.get("document_type", "Document").lower()
+            start_tag, end_tag = self._get_document_tags(doc_type)
+            
+            # Get action and content
+            action = xpia_prompt.get("action", "Process the document")
+            xpia_content = xpia_prompt.get("content", "Please review this document.")
+            
+            # Inject the objective into the XPIA content
+            # Simple injection for now - could be more sophisticated
+            injected_content = f"{xpia_content}\n\n{objective_content}"
+            
+            # Format according to specification
+            formatted_objective = f"{action}\n{start_tag}\n{injected_content}\n{end_tag}"
+            
+            return formatted_objective
+            
+        except Exception as e:
+            self.logger.error(f"Error formatting XPIA objective: {str(e)}")
+            # Return original content as fallback
+            return objective_content
+
+    def _get_document_tags(self, document_type: str) -> tuple[str, str]:
+        """Get appropriate document tags based on document type."""
+        document_tags = {
+            "email": ("<email>", "</email>"),
+            "document": ("<document>", "</document>"),
+            "letter": ("<letter>", "</letter>"),
+            "memo": ("<memo>", "</memo>"),
+            "report": ("<report>", "</report>"),
+            "message": ("<message>", "</message>"),
+        }
+        
+        # Default to document tags if type not recognized
+        return document_tags.get(document_type.lower(), ("<document>", "</document>"))
 
     def _filter_and_select_objectives(
         self,
@@ -944,14 +1043,13 @@ class RedTeam:
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
         if AttackStrategy.Tense in flattened_attack_strategies and (
-            RiskCategory.IndirectAttack in self.risk_categories
-            or RiskCategory.UngroundedAttributes in self.risk_categories
+            RiskCategory.UngroundedAttributes in self.risk_categories
         ):
             self.logger.warning(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories. Skipping Tense strategy."
+                "Tense strategy is not compatible with UngroundedAttributes risk categories. Skipping Tense strategy."
             )
             raise ValueError(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
+                "Tense strategy is not compatible with UngroundedAttributes risk categories."
             )
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):

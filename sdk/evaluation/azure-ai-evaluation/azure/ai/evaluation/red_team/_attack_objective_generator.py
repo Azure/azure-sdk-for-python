@@ -21,7 +21,6 @@ class RiskCategory(str, Enum):
     ProtectedMaterial = "protected_material"
     CodeVulnerability = "code_vulnerability"
     UngroundedAttributes = "ungrounded_attributes"
-    IndirectAttack = "indirect_attack"
 
 
 @experimental
