@@ -79,8 +79,14 @@ def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
     missing_flag_col = "outputs.rel.row_missing"
     assert missing_flag_col not in df.columns
 
-    # Pass rate surfaced from per_testing_criteria_results
+    # Pass metrics include both binary aggregate and pass rate based on total rows
     assert metrics["rel.pass_rate"] == 4 / 5
+    assert metrics["rel.binary_aggregate"] == pytest.approx(4 / 5, rel=1e-9)
+
+    assert metrics["result_counts.total"] == expected_rows
+    assert metrics["result_counts.passed"] == 4
+    assert metrics["result_counts.failed"] == 1
+    assert metrics["result_counts.errored"] == 0
 
     # No warning about padding missing rows in this scenario
     assert not any(

@@ -10,6 +10,7 @@ from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, T
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
+from ._metrics_utils import compute_pass_fail_statistics
 
 # import aoai_mapping
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
@@ -235,11 +236,13 @@ def _get_single_run_results(
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
+    expected_rows = run_info.get("expected_rows", None)
     for criteria_result in run_results.per_testing_criteria_results:
         grader_name = run_info["grader_name_map"][criteria_result.testing_criteria]
-        passed = criteria_result.passed
-        failed = criteria_result.failed
-        ratio = passed / (passed + failed) if (passed + failed) else 0.0
+        passed = getattr(criteria_result, "passed", 0) or 0
+        failed = getattr(criteria_result, "failed", 0) or 0
+        total_for_rate = expected_rows if expected_rows is not None else (passed + failed)
+        ratio = passed / total_for_rate if total_for_rate else 0.0
         formatted_column_name = f"{grader_name}.pass_rate"
         run_metrics[formatted_column_name] = ratio
 
@@ -373,6 +376,17 @@ def _get_single_run_results(
 
     # Reset to RangeIndex so downstream concatenation aligns on position
     output_df.reset_index(drop=True, inplace=True)
+
+    output_columns = [col for col in output_df.columns if col.startswith("outputs.")]
+    outputs_only_df = output_df[output_columns] if output_columns else pd.DataFrame(index=output_df.index)
+    evaluator_names = list(run_info["grader_name_map"].values())
+    pass_rates, binary_metrics, result_counts = compute_pass_fail_statistics(outputs_only_df, evaluator_names)
+
+    for key, value in pass_rates.items():
+        run_metrics.setdefault(key, value)
+    run_metrics.update(binary_metrics)
+    run_metrics.update(result_counts)
+
     return output_df, run_metrics
 
 

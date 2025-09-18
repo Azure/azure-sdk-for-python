@@ -22,4 +22,7 @@ class TestContentSafetyDefectRate:
         df = df.fillna("n/a")
         metrics = _aggregate_metrics(df, {"content_safety": ContentSafetyEvaluator})
 
-        assert metrics["content_safety.hate_unfairness_defect_rate"] == 0.33
+        assert metrics["content_safety.hate_unfairness_defect_rate"] == pytest.approx(0.33, rel=1e-2)
+        assert metrics["result_counts.total"] == len(df)
+        assert metrics["result_counts.errored"] == 0
+        assert metrics["content_safety.pass_rate"] == pytest.approx(metrics["content_safety.binary_aggregate"], rel=1e-9)

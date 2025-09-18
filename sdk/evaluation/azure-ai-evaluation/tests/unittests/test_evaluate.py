@@ -611,14 +611,19 @@ class TestEvaluate:
         }
         aggregation = _aggregate_metrics(data_df, evaluators)
 
-        assert len(aggregation) == 4
-        assert aggregation["content_safety.violence_defect_rate"] == 0.5
-        assert aggregation["content_safety.sexual_defect_rate"] == 0.25
-        assert aggregation["content_safety.self_harm_defect_rate"] == 0.0
-        assert aggregation["content_safety.hate_unfairness_defect_rate"] == 0.3
+        assert aggregation["content_safety.violence_defect_rate"] == pytest.approx(0.5)
+        assert aggregation["content_safety.sexual_defect_rate"] == pytest.approx(0.25)
+        assert aggregation["content_safety.self_harm_defect_rate"] == pytest.approx(0.0)
+        assert aggregation["content_safety.hate_unfairness_defect_rate"] == pytest.approx(0.3)
+        assert aggregation["content_safety.pass_rate"] == pytest.approx(1.0)
+        assert aggregation["result_counts.total"] == len(data_df)
+        assert aggregation["result_counts.failed"] == 0
+        assert aggregation["result_counts.errored"] == 0
 
         no_results = _aggregate_metrics(pd.DataFrame({"content_safety.violence_score": [np.nan, None]}), evaluators)
-        assert len(no_results) == 0
+        assert no_results["result_counts.total"] == 2
+        assert no_results["result_counts.errored"] == 2
+        assert no_results["content_safety.pass_rate"] == 0.0
 
     def test_label_based_aggregation(self):
         data = {
@@ -636,17 +641,20 @@ class TestEvaluate:
         }
         aggregation = _aggregate_metrics(data_df, evaluators)
         # ECI and PM labels should be replaced with defect rates, unaccounted should not
-        assert len(aggregation) == 3
         assert "eci.eci_label" not in aggregation
         assert "protected_material.protected_material_label" not in aggregation
-        assert aggregation["unknown.unaccounted_label"] == 0.4
+        assert aggregation["unknown.unaccounted_label"] == pytest.approx(0.4)
 
-        assert aggregation["eci.eci_defect_rate"] == 1.0
-        assert aggregation["protected_material.protected_material_defect_rate"] == 0.2
+        assert aggregation["eci.eci_defect_rate"] == pytest.approx(1.0)
+        assert aggregation["protected_material.protected_material_defect_rate"] == pytest.approx(0.2)
         assert "unaccounted_defect_rate" not in aggregation
+        assert aggregation["result_counts.total"] == len(data_df)
+        assert aggregation["result_counts.errored"] == 0
 
         no_results = _aggregate_metrics(pd.DataFrame({"eci.eci_label": [np.nan, None]}), evaluators)
-        assert len(no_results) == 0
+        assert no_results["result_counts.total"] == 2
+        assert no_results["result_counts.errored"] == 2
+        assert no_results["eci.pass_rate"] == 0.0
 
     def test_other_aggregation(self):
         data = {
@@ -656,11 +664,14 @@ class TestEvaluate:
         evaluators = {}
         aggregation = _aggregate_metrics(data_df, evaluators)
 
-        assert len(aggregation) == 1
-        assert aggregation["thing.groundedness_pro_passing_rate"] == 0.5
+        assert aggregation["thing.groundedness_pro_passing_rate"] == pytest.approx(0.5)
+        assert aggregation["result_counts.total"] == len(data_df)
+        assert aggregation["result_counts.failed"] == 0
+        assert aggregation["result_counts.errored"] == 0
 
         no_results = _aggregate_metrics(pd.DataFrame({"thing.groundedness_pro_label": [np.nan, None]}), {})
-        assert len(no_results) == 0
+        assert no_results["result_counts.total"] == 2
+        assert no_results["result_counts.passed"] == 2
 
     def test_general_aggregation(self):
         data = {
@@ -677,10 +688,12 @@ class TestEvaluate:
         evaluators = {}
         aggregation = _aggregate_metrics(data_df, evaluators)
 
-        assert len(aggregation) == 3
-        assert aggregation["thing.metric"] == 3
-        assert aggregation["other_thing.other_meteric"] == -3
-        assert aggregation["final_thing.final_metric"] == 3 / 7.0
+        assert aggregation["thing.metric"] == pytest.approx(3)
+        assert aggregation["other_thing.other_meteric"] == pytest.approx(-3)
+        assert aggregation["final_thing.final_metric"] == pytest.approx(3 / 7.0)
+        assert aggregation["result_counts.total"] == len(data_df)
+        assert aggregation["result_counts.failed"] == 0
+        assert aggregation["result_counts.errored"] == 0
         assert "bad_thing.mixed_metric" not in aggregation
         assert "bad_thing.boolean_with_nan" not in aggregation
         assert "bad_thing.boolean_with_none" not in aggregation
