@@ -1,15 +1,19 @@
 trigger: none
 
-extends:
-    template: ../../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
-    parameters:
-      ServiceDirectory: ai/azure-ai-voicelive
-      Location: eastus2
-      BuildTargetingString: azure-ai-voicelive*
-      EnvVars:
-        AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'true'
-        VOICELIVE_OPENAI_ENDPOINT: $(VOICELIVE_OPENAI_ENDPOINT)
-        VOICELIVE_OPENAI_API_KEY: $(VOICELIVE_OPENAI_API_KEY)
-      TestResourceDirectories:
-        - ai/azure-ai-voicelive/
+stages:
+- template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  parameters:
+    ServiceDirectory: ai/azure-ai-voicelive
+    BuildTargetingString: azure-ai-voicelive
+    SupportedClouds: 'Public'
+    CloudConfig:
+      Public:
+        Location: 'eastus2'
+    TestResourceDirectories:
+      - ai/azure-ai-voicelive
+    EnvVars:
+      AZURE_TEST_RUN_LIVE: 'True'
+      # Turn this OFF if you want recordings for playback:
+      AZURE_SKIP_LIVE_RECORDING: 'True'
+      VOICELIVE_OPENAI_ENDPOINT: $(VOICELIVE_OPENAI_ENDPOINT)
+      VOICELIVE_OPENAI_API_KEY: $(VOICELIVE_OPENAI_API_KEY)
