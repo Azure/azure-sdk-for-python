@@ -27,6 +27,7 @@ class TextAuthoringProjectClient(AuthoringProjectClientGenerated):
         **kwargs: Any,
     ) -> None:
         """Initialize a TextAuthoringProjectClient.
+
         :param str endpoint: Supported Cognitive Services endpoint, e.g.
             "https://<resource>.cognitiveservices.azure.com".
         :param credential: Credential used to authenticate requests to the service.
@@ -54,6 +55,7 @@ class TextAuthoringClient(AuthoringClientGenerated):
     ) -> None:
         """
         Create a TextAuthoringClient.
+        
         :param str endpoint: Supported Cognitive Services endpoint, e.g.
             ``https://<resource-name>.api.cognitiveservices.azure.com``.
         :param credential: Key or token credential.
