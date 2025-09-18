@@ -64,7 +64,7 @@ class pylint(Check):
                 cache_dir=None,
                 work_dir=staging_directory,
                 force_create=False,
-                package_type="sdist",
+                package_type="wheel",
                 pre_download_disabled=False,
                 python_executable=executable,
             )
