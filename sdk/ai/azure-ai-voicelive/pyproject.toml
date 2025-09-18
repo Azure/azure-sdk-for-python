@@ -74,6 +74,7 @@ exclude = [
     "tests*",
     "samples*",
     "doc*",
+    "build*",
     "azure",
     "azure.ai",
 ]
