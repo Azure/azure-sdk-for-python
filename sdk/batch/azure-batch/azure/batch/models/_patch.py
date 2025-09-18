@@ -7,12 +7,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import List, Any, Optional
+from typing import List, Optional
 
 from azure.core.exceptions import HttpResponseError
 
-from ._models import BatchPoolReplaceOptions as BatchPoolReplaceContentGenerated
-from .._model_base import rest_field
 
 __all__: List[str] = [
     "CreateTasksError",
@@ -29,7 +27,13 @@ class CreateTasksError(HttpResponseError):
     :param [~Exception] errors: List of unknown errors forcing early termination
     """
 
-    def __init__(self, pending_tasks=[], failure_tasks=[], errors=[]):
+    def __init__(self, pending_tasks=None, failure_tasks=None, errors=None) -> None:
+        if pending_tasks is None:
+            pending_tasks = []
+        if failure_tasks is None:
+            failure_tasks = []
+        if errors is None:
+            errors = []
         self.pending_tasks = pending_tasks
         self.failure_tasks = failure_tasks
         self.errors = errors
