@@ -16,7 +16,7 @@ from .._red_team_result import RedTeamResult
 
 
 def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
-    """Convert a ChatMessage and context to dictionary format.
+    """Convert a ChatMessage and context to dictionary format for evaluation.
 
     :param message: The chat message to convert
     :type message: ChatMessage
@@ -25,7 +25,41 @@ def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]
     :return: Dictionary representation with role and content
     :rtype: Dict[str, str]
     """
+    return message_to_dict_for_evaluation(message, context)
+
+
+def message_to_dict_for_evaluation(message: ChatMessage, context: str = None) -> Dict[str, str]:
+    """Convert a ChatMessage and context to dictionary format for evaluation.
+    
+    This keeps the context as a separate field for evaluation purposes.
+
+    :param message: The chat message to convert
+    :type message: ChatMessage
+    :param context: Additional context to include in the dictionary
+    :type context: str
+    :return: Dictionary representation with role, content, and separate context
+    :rtype: Dict[str, str]
+    """
     return {"role": message.role, "content": message.content, "context": context}
+
+
+def message_to_dict_for_target(message: ChatMessage, context: str = None) -> Dict[str, str]:
+    """Convert a ChatMessage and context to dictionary format for red team targets.
+    
+    This merges context into the content field when sending to targets.
+
+    :param message: The chat message to convert
+    :type message: ChatMessage
+    :param context: Additional context to include in the content
+    :type context: str
+    :return: Dictionary representation with role and content (context merged into content)
+    :rtype: Dict[str, str]
+    """
+    content = message.content
+    if context and context.strip():
+        content = f"{message.content}\n\nContext: {context}"
+    
+    return {"role": message.role, "content": content}
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -221,7 +255,7 @@ def write_pyrit_outputs_to_file(
                         json.dumps(
                             {
                                 "conversation": {
-                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                                    "messages": [message_to_dict_for_evaluation(message[0], message[1]) for message in conversation]
                                 }
                             }
                         )
@@ -252,7 +286,7 @@ def write_pyrit_outputs_to_file(
                 json.dumps(
                     {
                         "conversation": {
-                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                            "messages": [message_to_dict_for_evaluation(message[0], message[1]) for message in conversation]
                         }
                     }
                 )
