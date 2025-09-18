@@ -30,7 +30,7 @@ These sample programs show common scenarios for the Text Authoring client’s of
 | [sample_deploy_project.py][sample_deploy_project] and [sample_deploy_project_async.py][sample_deploy_project_async] | Deploy a trained model to an endpoint. |
 | [sample_export_project.py][sample_export_project] and [sample_export_project_async.py][sample_export_project_async] | Export a project into JSON format for versioning or reuse. |
 | [sample_get_deployment.py][sample_get_deployment] and [sample_get_deployment_async.py][sample_get_deployment_async] | Retrieve details about a deployment. |
-| [sample_get_model_evaluation_results.py][sample_get_model_evaluation_results] and [sample_get_model_evaluation_results_async.py][sample_get_model_evaluation_results_async] | Get detailed model evaluation results for analysis. |
+| [sample_list_model_evaluation_results.py][sample_get_model_evaluation_results] and [sample_list_model_evaluation_results_async.py][sample_get_model_evaluation_results_async] | Get detailed model evaluation results for analysis. |
 | [sample_get_model_evaluation_summary.py][sample_get_model_evaluation_summary] and [sample_get_model_evaluation_summary_async.py][sample_get_model_evaluation_summary_async] | Retrieve summary of model evaluation metrics. |
 | [sample_get_project.py][sample_get_project] and [sample_get_project_async.py][sample_get_project_async] | Get details of a specific project. |
 | [sample_import_project.py][sample_import_project] and [sample_import_project_async.py][sample_import_project_async] | Import labeled assets and metadata into a project. |
@@ -106,8 +106,8 @@ Check out the [API reference documentation][api_reference_authoring] to explore 
 [sample_get_deployment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_deployment.py
 [sample_get_deployment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_deployment_async.py
 
-[sample_get_model_evaluation_results]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_model_evaluation_results.py
-[sample_get_model_evaluation_results_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_model_evaluation_results_async.py
+[sample_get_model_evaluation_results]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_list_model_evaluation_results.py
+[sample_get_model_evaluation_results_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_list_model_evaluation_results_async.py
 
 [sample_get_model_evaluation_summary]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/sample_get_model_evaluation_summary.py
 [sample_get_model_evaluation_summary_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics-authoring/samples/async/sample_get_model_evaluation_summary_async.py
