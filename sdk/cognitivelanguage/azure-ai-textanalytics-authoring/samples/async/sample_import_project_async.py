@@ -79,12 +79,12 @@ async def sample_import_project_async():
             ],
             documents=[
                 ExportedCustomSingleLabelClassificationDocument(
-                    class_property=ExportedDocumentClass(category="ClassA"),
+                    document_class=ExportedDocumentClass(category="ClassA"),
                     location=doc1_path,
                     language=language_tag,
                 ),
                 ExportedCustomSingleLabelClassificationDocument(
-                    class_property=ExportedDocumentClass(category="ClassB"),
+                    document_class=ExportedDocumentClass(category="ClassB"),
                     location=doc2_path,
                     language=language_tag,
                 ),
