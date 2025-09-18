@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where batched messages couldn't be sent to a queue that had session & partitions enabled. ([#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
+
 ### Other Changes
 
 ## 7.14.2 (2025-04-09)
