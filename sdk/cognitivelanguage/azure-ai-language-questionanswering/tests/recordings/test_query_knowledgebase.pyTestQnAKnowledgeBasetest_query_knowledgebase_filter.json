@@ -10,11 +10,10 @@
         "Content-Length": "254",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
-        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "question": "Battery life",
-        "top": 3,
         "filters": {
           "metadataFilter": {
             "metadata": [
@@ -29,18 +28,19 @@
             ],
             "logicalOperation": "OR"
           }
-        }
+        },
+        "top": 3
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "87afb829-82d1-45c8-93e0-cd78b445a058",
+        "apim-request-id": "bf8aa0a0-f9f2-4d92-b24f-06e87dc71c2f",
         "Content-Length": "996",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1",
-        "Date": "Thu, 11 Sep 2025 07:52:14 GMT",
+        "Date": "Thu, 18 Sep 2025 14:17:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "831",
+        "x-envoy-upstream-service-time": "1342",
         "x-ms-region": "East US"
       },
       "ResponseBody": {

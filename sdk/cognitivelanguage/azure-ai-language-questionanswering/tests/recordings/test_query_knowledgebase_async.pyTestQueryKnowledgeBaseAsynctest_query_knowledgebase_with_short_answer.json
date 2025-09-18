@@ -1,12 +1,11 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:query-knowledgebases?api-version=2025-05-15-preview&projectName=test-project&deploymentName=test",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/:query-knowledgebases?api-version=2025-05-15-preview&projectName=test-project&deploymentName=test",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "219",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
@@ -27,14 +26,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "404a4f5a-84e8-4c8d-a7b0-cb11bfa420a6",
+        "apim-request-id": "6910c80d-0365-4fd8-80a2-6a3edbc343a6",
         "Content-Length": "2086",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1",
-        "Date": "Thu, 18 Sep 2025 14:17:35 GMT",
+        "Date": "Thu, 18 Sep 2025 14:17:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1524",
+        "x-envoy-upstream-service-time": "1852",
         "x-ms-region": "East US"
       },
       "ResponseBody": {

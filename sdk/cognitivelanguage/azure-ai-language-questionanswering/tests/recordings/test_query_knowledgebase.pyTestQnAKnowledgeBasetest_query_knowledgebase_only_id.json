@@ -10,21 +10,21 @@
         "Content-Length": "13",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
-        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "qnaId": 19
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0815ea57-459c-4106-8927-cebec6200564",
+        "apim-request-id": "517b50eb-9c73-41ac-9b31-1fd722bbd795",
         "Content-Length": "1996",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1",
-        "Date": "Thu, 11 Sep 2025 07:52:13 GMT",
+        "Date": "Thu, 18 Sep 2025 14:17:38 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "177",
+        "x-envoy-upstream-service-time": "473",
         "x-ms-region": "East US"
       },
       "ResponseBody": {

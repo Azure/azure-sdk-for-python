@@ -1,24 +1,45 @@
 # Release History
 
-## 2.0.0b1 (2025-09-11)
-### Features Added
-- Re-generated client from TypeSpec (service API 2025-05-15-preview).
-- Convenience normalization for `AnswersFromTextOptions.text_documents` (accepts `List[str]`).
+## 2.0.0 (Unreleased)
 
 ### Breaking Changes
-- Removed legacy public `operations` / `aio.operations` namespaces.
-- Renamed (migration summary):
-  * `QueryTextOptions` -> `AnswersFromTextOptions`
-  * `QueryTextOptions.records` -> `AnswersFromTextOptions.text_documents`
-- Dropped dependency on `msrest`.
-- Minimum supported Python now 3.7+ (per repo policy).
+* Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, `QuestionAnsweringProjectsClient`, and related authoring operations have been eliminated from the runtime client distribution.
+* Dropped support for Python versions earlier than 3.9 (aligns with Azure SDK Python support policy going forward).
 
-### Bugs Fixed
-- Fixed formatting of `MetadataFilter.metadata` when empty.
-- Docstring indentation issue that broke Sphinx build.
+### Features Added
+* Documentation improvements: expanded README with authentication guidance, AAD usage, async examples, and troubleshooting section.
 
 ### Other Changes
-- Added README, samples, basic tests.
+* Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
+
+## 1.1.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2022-10-13)
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.0.0.
+> Only code written against a beta version such as 1.1.0b2 may be affected
+
+* `QuestionAnsweringProjectsClient` was renamed to `AuthoringClient`.
+* The `azure.ai.language.questionanswering.projects` namespace was renamed to `azure.ai.language.questionanswering.authoring`
+* Authoring client methods: `begin_deploy_project`, `begin_import_assets`, `begin_update_sources` 
+  and `begin_update_qnas` now return a response upon completion of the long-running operation.
+* Keyword argument `format` renamed to `file_format` for `begin_export` and `begin_import_assets`.
+
+### Bugs Fixed
+* Fixed a bug where the client-level keyword argument `default_language` was not being honored for `get_answers_from_text`.
+
+### Other Changes
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Dropped dependency on `msrest`.
 
 ## 1.1.0b2 (2022-07-19)
 

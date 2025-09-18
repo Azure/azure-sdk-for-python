@@ -766,7 +766,8 @@ class PrebuiltQueryMatchingPolicy(MatchingPolicy, discriminator="Prebuilt"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=MatchingPolicyKind.PREBUILT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = MatchingPolicyKind.PREBUILT  # type: ignore
 
 
 class QueryFilters(_Model):

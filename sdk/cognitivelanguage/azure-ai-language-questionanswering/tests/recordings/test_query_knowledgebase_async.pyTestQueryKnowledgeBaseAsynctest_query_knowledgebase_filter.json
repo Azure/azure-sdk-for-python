@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://Sanitized.cognitiveservices.azure.com/language/:query-knowledgebases?api-version=2025-05-15-preview&projectName=test-project&deploymentName=test",
+      "RequestUri": "https://Sanitized.cognitiveservices.azure.com//language/:query-knowledgebases?api-version=2025-05-15-preview&projectName=test-project&deploymentName=test",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Content-Length": "254",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Key": "Sanitized",
-        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0b1 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
+        "User-Agent": "azsdk-python-ai-language-questionanswering/2.0.0 Python/3.13.7 (Windows-11-10.0.26100-SP0)"
       },
       "RequestBody": {
         "question": "Battery life",
@@ -32,14 +32,14 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9175fc1b-c621-46e2-a1bd-44d59c651c6d",
+        "apim-request-id": "a162671e-ec08-4d64-b41c-1f8188d694c9",
         "Content-Length": "996",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.QuestionAnsweringTextRecords=1",
-        "Date": "Thu, 11 Sep 2025 07:52:30 GMT",
+        "Date": "Thu, 18 Sep 2025 14:17:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "599",
+        "x-envoy-upstream-service-time": "983",
         "x-ms-region": "East US"
       },
       "ResponseBody": {
