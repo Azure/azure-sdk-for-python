@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b42 (Unreleased)
+## 1.0.0b43 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b42 (2025-09-17)
 
 ### Features Added
 - Customer Facing Statsbeat: Added remaining drop codes to base
@@ -21,10 +31,6 @@
   ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
   ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
