@@ -217,7 +217,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
             excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
         else:
             excluded_locations = self.location_cache.connection_policy.ExcludedLocations
-        preferred_locations = self.PreferredLocations
+        preferred_locations = self.location_cache.effective_preferred_locations
         available_regions = [item for item in preferred_locations if item not in excluded_locations]
         available_regional_endpoints = {}
         for region, context in self.location_cache.account_read_regional_routing_contexts_by_location.items():
