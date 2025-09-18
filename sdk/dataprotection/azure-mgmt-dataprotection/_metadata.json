@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-07-01",
+  "commit": "12850330a0b9e339ded4e707c8312d74a57c2d9f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/dataprotection/resource-manager/Microsoft.DataProtection/DataProtection",
+  "emitterVersion": "0.50.0"
+}
