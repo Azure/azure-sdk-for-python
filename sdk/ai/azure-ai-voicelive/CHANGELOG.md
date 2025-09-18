@@ -1,5 +1,28 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+- **Audio Format Improvements**: Reorganized audio format enums with separate `InputAudioFormat` and `OutputAudioFormat` enums for better clarity
+- **Enhanced Output Audio Format Support**: Added more granular output audio format options including specific sampling rates (8kHz, 16kHz) for PCM16
+
+### Breaking Changes
+
+- **Model Cleanup**: Removed experimental classes `AzurePlatformVoice`, `LLMVoice`, `AzureSemanticVadServer`, `InputAudio`, `NoTurnDetection`, and `ToolChoiceFunctionObjectFunction`
+- **Enum Reorganization**:
+  - Replaced `AudioFormat` enum with separate `InputAudioFormat` and `OutputAudioFormat` enums
+  - Removed `Phi4mmVoice` enum
+  - Removed `EMOTION` value from `AnimationOutputType` enum
+  - Removed `IN_PROGRESS` value from `ItemParamStatus` enum
+- **Server Events**: Removed `RESPONSE_EMOTION_HYPOTHESIS` from `ServerEventType` enum
+
+### Other Changes
+
+- **Package Configuration**: Updated package structure and build configuration in pyproject.toml
+- **Sample Updates**: Improved async function calling sample and basic voice assistant async sample
+- **Code Optimization**: Streamlined model definitions with significant code reduction
+
 ## 1.0.0b3 (2025-09-17)
 
 ### Features Added
