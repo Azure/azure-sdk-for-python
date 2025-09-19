@@ -1,6 +1,7 @@
 parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
+  EnvVars: {}
   AdditionalTestArgs: ''
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
@@ -10,15 +11,14 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Pylint'
     inputs:
-      scriptPath: 'eng/scripts/dispatch_checks.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --checks="pylint"
+        --toxenv="pylint"
+        --disablecov
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
-    env:
-      TOX_PIP_IMPL: "uv"
-      VIRTUAL_ENV: ""
-      PYTHONHOME: ""
+    env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
