@@ -230,6 +230,14 @@ class TestDependencyData(unittest.TestCase):
         }
         result = _DependencyData._from_span(self.span)
         self.assertEqual(result.type, "genai")
+    
+    def test_genai_provider_name_dependency(self):
+        self.span.kind = SpanKind.CLIENT
+        self.span.attributes = {
+            gen_ai_attributes.GEN_AI_PROVIDER_NAME: "genai"
+        }
+        result = _DependencyData._from_span(self.span)
+        self.assertEqual(result.type, "genai")
 
     def test_producer_dependency(self):
         self.span.kind = SpanKind.PRODUCER
