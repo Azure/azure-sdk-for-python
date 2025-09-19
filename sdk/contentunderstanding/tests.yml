@@ -1,0 +1,11 @@
+trigger: none
+
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+  parameters:
+    ServiceDirectory: contentunderstanding
+    # optional knobs you can add later:
+    # MatrixReplace:
+    #   - TestSamples=.*/false
+    EnvVars:
+      AZURE_TEST_RUN_LIVE: 'false'
