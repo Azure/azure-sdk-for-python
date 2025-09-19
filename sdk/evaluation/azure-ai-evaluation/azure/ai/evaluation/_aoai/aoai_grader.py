@@ -1,16 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.core.credentials import TokenCredential
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-
-from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION, TokenScope
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._user_agent import UserAgentSingleton
-from typing import Any, Dict, Union, Optional, TYPE_CHECKING
-from azure.ai.evaluation._common._experimental import experimental
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from typing_extensions import TypeIs
+
+from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._constants import DEFAULT_AOAI_API_VERSION, TokenScope
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.ai.evaluation._user_agent import UserAgentSingleton
+from azure.core.credentials import TokenCredential
 
 if TYPE_CHECKING:
     from openai.lib.azure import AzureADTokenProvider
