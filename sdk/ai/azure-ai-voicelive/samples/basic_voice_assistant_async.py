@@ -411,7 +411,7 @@ class BasicVoiceAssistant:
             voice_config = self.voice
 
         # Create strongly typed turn detection configuration
-        turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500)
+        turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500, interrupt_response=True)
 
         # Create strongly typed session configuration
         session_config = RequestSession(
@@ -465,11 +465,13 @@ class BasicVoiceAssistant:
             # Stop current assistant audio playback (interruption handling)
             await ap.stop_playback()
 
-            # Cancel any ongoing response
-            try:
-                await conn.response.cancel()
-            except Exception as e:
-                logger.debug(f"No response to cancel: {e}")
+            # No need to call conn.response.cancel() here —
+            # if your VAD is configured with interrupt_response=True,
+            # the server will automatically cancel the assistant's response.
+            # try:
+            #     await conn.response.cancel()
+            # except Exception as e:
+            #     logger.debug(f"No response to cancel: {e}")
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
