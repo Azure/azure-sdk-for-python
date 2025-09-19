@@ -83,8 +83,7 @@ def _is_attach_enabled():
     return False
 
 
-def _get_sdk_version_prefix():
-    sdk_version_prefix = ""
+def _get_rp():
     rp = "u"
     if _is_on_functions():
         rp = "f"
@@ -95,17 +94,29 @@ def _get_sdk_version_prefix():
     #     rp = 'v'
     elif _is_on_aks():
         rp = "k"
+    return rp
 
+
+def _get_os():
     os = "u"
     system = platform.system()
     if system == "Linux":
         os = "l"
     elif system == "Windows":
         os = "w"
+    return os
 
+def _get_attach_type():
     attach_type = "m"
     if _is_attach_enabled():
         attach_type = "i"
+    return attach_type
+
+def _get_sdk_version_prefix():
+    sdk_version_prefix = ""
+    rp = _get_rp()
+    os = _get_os()
+    attach_type = _get_attach_type()
     sdk_version_prefix = "{}{}{}_".format(rp, os, attach_type)
 
     return sdk_version_prefix

@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- OneSettings control plane: Add live metrics feature control
+  ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -31,6 +34,10 @@
   ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
   ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
 
