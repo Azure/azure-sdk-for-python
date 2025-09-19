@@ -29,13 +29,6 @@ extends:
   parameters:
     ServiceDirectory: contentunderstanding
     TestProxy: true
-    # Ensure change detection selects this package when source files change
-    TriggeringPaths:
-      - azure-ai-contentunderstanding/azure/ai/contentunderstanding/**
-      - azure-ai-contentunderstanding/setup.py
-      - azure-ai-contentunderstanding/CHANGELOG.md
-      - azure-ai-contentunderstanding/MANIFEST.in
-      - azure-ai-contentunderstanding/README.md
     Artifacts:
     - name: azure-ai-contentunderstanding
       safeName: azureaicontentunderstanding
