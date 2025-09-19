@@ -36,8 +36,8 @@ This sample demonstrates the fundamental capabilities of the Azure VoiceLive SDK
    ```bash
    export AZURE_VOICELIVE_API_KEY="your-api-key"
    export AZURE_VOICELIVE_ENDPOINT="wss://api.voicelive.com/v1"
-   export VOICELIVE_MODEL="gpt-4o-realtime-preview"
-   export VOICELIVE_VOICE="en-US-AvaNeural"
+   export AZURE_VOICELIVE_MODEL="gpt-4o-realtime-preview"
+   export AZURE_VOICELIVE_VOICE="en-US-AvaNeural"
    ```
 
 ## Usage
@@ -168,8 +168,8 @@ session_config = RequestSession(
     modalities=[Modality.TEXT, Modality.AUDIO],
     instructions=instructions,
     voice=voice_config,
-    input_audio_format=AudioFormat.PCM16,
-    output_audio_format=AudioFormat.PCM16,
+    input_audio_format=InputAudioFormat.PCM16,
+    output_audio_format=OutputAudioFormat.PCM16,
     turn_detection=turn_detection_config
 )
 
