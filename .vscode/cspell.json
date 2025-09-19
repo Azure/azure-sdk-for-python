@@ -61,6 +61,8 @@
     "sdk/contentunderstanding/azure-ai-contentunderstanding/generated_samples/sample_files/**/*.mp4",
     "sdk/contentunderstanding/azure-ai-contentunderstanding/generated_tests/test_data/**/*.mp3",
     "sdk/contentunderstanding/azure-ai-contentunderstanding/generated_tests/test_data/**/*.mp4",
+    "sdk/contentunderstanding/azure-ai-contentunderstanding/tests/test_data/**/*.mp3",
+    "sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_files/**/*.mp3",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",
