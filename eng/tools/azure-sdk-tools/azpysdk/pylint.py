@@ -48,6 +48,12 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
+        
+            # TODO test
+            try:
+               install_into_venv(executable, ["-r", os.path.join(REPO_ROOT, "eng", "ci_tools.txt")], REPO_ROOT)
+            except CalledProcessError as e:
+               logger.error(f"Failed to install ci_tools requirements: {e}")
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
