@@ -21,12 +21,13 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-import asyncio # pylint: disable=do-not-import-asyncio
-from datetime import datetime
-from typing import (Any, Dict, Mapping, Optional, Sequence, Union, List, Tuple, cast, overload, AsyncIterable,
-                    Callable, Type)
+import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
+from datetime import datetime
+from typing import (Any, AsyncIterable, Callable, cast, Dict, List, Mapping, Optional, overload, Sequence, Tuple, Type,
+                    Union)
 from typing_extensions import Literal
+
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace
@@ -36,31 +37,25 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
 from .. import _utils as utils
-from .._base import (
-    build_options as _build_options,
-    validate_cache_staleness_value,
-    _deserialize_throughput,
-    _replace_throughput,
-    GenerateGuidId,
-    _build_properties_cache
-)
+from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
+                     build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
-from .._cosmos_responses import CosmosDict, CosmosList
 from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
+from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
-from ..partition_key import (
-    NonePartitionKeyValue,
-    _return_undefined_or_empty_partition_key,
-    _get_partition_key_from_partition_key_definition, NullPartitionKeyValue, _PartitionKeyType
-)
+from ..partition_key import (_get_partition_key_from_partition_key_definition, _PartitionKeyType,
+                             _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
+
 __all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access, too-many-lines
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
@@ -81,11 +76,11 @@ class ContainerProxy:
     """
 
     def __init__(
-        self,
-        client_connection: CosmosClientConnection,
-        database_link: str,
-        id: str,
-        properties: Optional[Dict[str, Any]] = None
+            self,
+            client_connection: CosmosClientConnection,
+            database_link: str,
+            id: str,
+            properties: Optional[Dict[str, Any]] = None
     ) -> None:
         self.client_connection = client_connection
         self.container_cache_lock = asyncio.Lock()
@@ -165,13 +160,13 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def read(
-        self,
-        *,
-        populate_partition_key_range_statistics: Optional[bool] = None,
-        populate_quota_info: Optional[bool] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+            self,
+            *,
+            populate_partition_key_range_statistics: Optional[bool] = None,
+            populate_quota_info: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            **kwargs: Any
     ) -> Dict[str, Any]:
         """Read the container properties.
 
@@ -213,20 +208,20 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def create_item(
-        self,
-        body: Dict[str, Any],
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        indexing_directive: Optional[int] = None,
-        enable_automatic_id_generation: bool = False,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            body: Dict[str, Any],
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            indexing_directive: Optional[int] = None,
+            enable_automatic_id_generation: bool = False,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            retry_write: Optional[bool] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
 
@@ -305,17 +300,17 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def read_item(
-        self,
-        item: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        *,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            *,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
 
@@ -380,15 +375,15 @@ class ContainerProxy:
 
     @distributed_trace
     def read_all_items(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
 
@@ -472,7 +467,6 @@ class ContainerProxy:
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
         """
-
 
         if session_token is not None:
             kwargs['session_token'] = session_token
@@ -664,9 +658,9 @@ class ContainerProxy:
 
     @distributed_trace
     def query_items(
-        self,
-        *args: Any,
-        **kwargs: Any
+            self,
+            *args: Any,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
@@ -951,7 +945,7 @@ class ContainerProxy:
         ...
 
     @distributed_trace
-    def query_items_change_feed( # pylint: disable=unused-argument
+    def query_items_change_feed(  # pylint: disable=unused-argument
             self,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -1029,20 +1023,20 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def upsert_item(
-        self,
-        body: Dict[str, Any],
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            body: Dict[str, Any],
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            retry_write: Optional[bool] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
 
@@ -1113,22 +1107,71 @@ class ContainerProxy:
         return result
 
     @distributed_trace_async
+    async def semantic_rerank(
+            self,
+            reranking_context: str,
+            documents: List[str],
+            semantic_reranking_options: Optional[Dict[str, Any]] = None
+    ) -> CosmosDict:
+        """
+        Rerank a list of documents using semantic reranking.
+
+        This method uses a semantic reranker to score and reorder the provided documents
+        based on their relevance to the given reranking context.
+
+        :param str reranking_context: The context or query string to use for reranking the documents.
+        :param list[str] documents: A list of documents (as strings) to be reranked.
+        :param semantic_reranking_options: Optional dictionary of additional
+            options to customize the semantic reranking process. Supported options:
+            - **return_documents** (bool): Whether to return the document text in the response.
+          If False, only scores and indices are returned. Default is True.
+        - **top_k** (int): Maximum number of documents to return in the reranked results.
+          If not specified, all documents are returned.
+        - **batch_size** (int): Number of documents to process in each batch.
+          Used for optimizing performance with large document sets.
+        - **sort** (bool): Whether to sort the results by relevance score in descending order.
+          Default is True.
+        :type semantic_reranking_options: Optional[Dict[str, Any]]
+
+        :returns: A CosmosDict containing the reranking results. The structure typically includes:
+            - **results** (list): List of reranked documents with their relevance scores
+            - Each result contains: **index** (int), **relevance_score** (float), and optionally **document** (str)
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
+        """
+
+        inference_service = self.client_connection._get_inference_service()
+        if inference_service is None:
+            raise CosmosHttpResponseError(
+                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                response=None
+            )
+
+        result = await inference_service.rerank(
+            reranking_context=reranking_context,
+            documents=documents,
+            semantic_reranking_options=semantic_reranking_options
+        )
+
+        return result
+
+    @distributed_trace_async
     async def replace_item(
-        self,
-        item: Union[str, Mapping[str, Any]],
-        body: Dict[str, Any],
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Mapping[str, Any]],
+            body: Dict[str, Any],
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            retry_write: Optional[bool] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
 
@@ -1200,22 +1243,22 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def patch_item(
-        self,
-        item: Union[str, Dict[str, Any]],
-        partition_key: PartitionKeyType,
-        patch_operations: List[Dict[str, Any]],
-        *,
-        filter_predicate: Optional[str] = None,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Dict[str, Any]],
+            partition_key: PartitionKeyType,
+            patch_operations: List[Dict[str, Any]],
+            *,
+            filter_predicate: Optional[str] = None,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            no_response: Optional[bool] = None,
+            retry_write: Optional[bool] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
          exists in the container.
@@ -1294,20 +1337,20 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def delete_item(
-        self,
-        item: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        retry_write: Optional[bool] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            item: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            retry_write: Optional[bool] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
 
@@ -1408,9 +1451,9 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def replace_throughput(
-        self,
-        throughput: Union[int, ThroughputProperties],
-        **kwargs: Any
+            self,
+            throughput: Union[int, ThroughputProperties],
+            **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
 
@@ -1445,11 +1488,11 @@ class ContainerProxy:
 
     @distributed_trace
     def list_conflicts(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the conflicts in the container.
 
@@ -1474,14 +1517,14 @@ class ContainerProxy:
 
     @distributed_trace
     def query_conflicts(
-        self,
-        query: str,
-        *,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        max_item_count: Optional[int] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
-        **kwargs: Any
+            self,
+            query: str,
+            *,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            max_item_count: Optional[int] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], AsyncItemPaged[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all conflicts matching a given `query`.
 
@@ -1521,10 +1564,10 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def get_conflict(
-        self,
-        conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        **kwargs: Any,
+            self,
+            conflict: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            **kwargs: Any,
     ) -> Dict[str, Any]:
         """Get the conflict identified by `conflict`.
 
@@ -1553,10 +1596,10 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def delete_conflict(
-        self,
-        conflict: Union[str, Mapping[str, Any]],
-        partition_key: PartitionKeyType,
-        **kwargs: Any,
+            self,
+            conflict: Union[str, Mapping[str, Any]],
+            partition_key: PartitionKeyType,
+            **kwargs: Any,
     ) -> None:
         """Delete a specified conflict from the container.
 
@@ -1585,14 +1628,14 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def delete_all_items_by_partition_key(
-        self,
-        partition_key: PartitionKeyType,
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            partition_key: PartitionKeyType,
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> None:
         """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
         documents with the same logical partition key value, using the Cosmos SDK. The delete by partition key
@@ -1648,16 +1691,16 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def execute_item_batch(
-        self,
-        batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
-        partition_key: PartitionKeyType,
-        *,
-        pre_trigger_include: Optional[str] = None,
-        post_trigger_include: Optional[str] = None,
-        session_token: Optional[str] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]],
+            partition_key: PartitionKeyType,
+            *,
+            pre_trigger_include: Optional[str] = None,
+            post_trigger_include: Optional[str] = None,
+            session_token: Optional[str] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
 
@@ -1740,16 +1783,17 @@ class ContainerProxy:
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        async def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
+        async def get_next(continuation_token: str) -> List[Dict[str, Any]]:  # pylint: disable=unused-argument
             partition_key_ranges = \
-                await self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
+                await self.client_connection._routing_map_provider.get_overlapping_ranges(
+                    # pylint: disable=protected-access
                     self.container_link,
                     # default to full range
                     [Range("", "FF", True, False)],
                     **kwargs)
 
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                       for partitionKeyRange in partition_key_ranges]
+                           for partitionKeyRange in partition_key_ranges]
 
             return feed_ranges
 
