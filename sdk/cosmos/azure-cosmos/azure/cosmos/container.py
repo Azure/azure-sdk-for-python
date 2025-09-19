@@ -22,6 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import threading
+import time
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
@@ -111,6 +112,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs = {}
         if options and "excludedLocations" in options:
             kwargs['excluded_locations'] = options['excludedLocations']
+        if options and Constants.OperationStartTime in options:
+            kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
+        if options and "timeout" in options:
+            kwargs['timeout'] = options['timeout']
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -353,6 +358,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
+        query_options[Constants.UseOperationTimeout] = True
 
         item_tuples = [(item_id, self._set_partition_key(pk)) for item_id, pk in items]
 
