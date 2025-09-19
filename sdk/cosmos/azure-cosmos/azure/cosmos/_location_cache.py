@@ -24,7 +24,7 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
-from typing import Set, Mapping, OrderedDict, Dict
+from typing import Set, Mapping, OrderedDict, Dict, Optional
 from typing import List
 from urllib.parse import urlparse
 
@@ -231,7 +231,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 excluded_locations.append(excluded_location)
         return excluded_locations
 
-    def _get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -247,7 +247,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Else, return all regional endpoints
         return self.get_read_regional_routing_contexts()
 
-    def _get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]:
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
         # Get configured excluded locations
         excluded_locations = self._get_configured_excluded_locations(request)
 
@@ -262,6 +262,16 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         # Else, return all regional endpoints
         return self.get_write_regional_routing_contexts()
+
+    def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
+        if is_write_operation:
+            if endpoint in self.account_locations_by_write_endpoints:
+                return self.account_locations_by_write_endpoints[endpoint]
+        else:
+            if endpoint in self.account_locations_by_read_endpoints:
+                return self.account_locations_by_read_endpoints[endpoint]
+
+        return None
 
     def resolve_service_endpoint(self, request):
         if request.location_endpoint_to_route:
@@ -303,9 +313,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return self.default_regional_routing_context.get_primary()
 
         regional_routing_contexts = (
-            self._get_applicable_write_regional_routing_contexts(request)
+            self.get_applicable_write_regional_routing_contexts(request)
             if documents._OperationType.IsWriteOperation(request.operation_type)
-            else self._get_applicable_read_regional_routing_contexts(request)
+            else self.get_applicable_read_regional_routing_contexts(request)
         )
         regional_routing_context = regional_routing_contexts[location_index % len(regional_routing_contexts)]
         if (
