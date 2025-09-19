@@ -1,5 +1,25 @@
 # Release History
 
+## 1.1.0b2 (2025-08-20)
+
+### Features Added
+
+  - Enum `UserRole` added member `DATABASE_OWNER`
+
+### Breaking Changes
+
+  - Model `MongoCluster` deleted or renamed its instance variable `identity`
+  - Model `MongoClusterProperties` deleted or renamed its instance variable `encryption`
+  - Model `MongoClusterUpdate` deleted or renamed its instance variable `identity`
+  - Deleted or renamed enum value `UserRole.ROOT`
+  - Deleted or renamed model `CustomerManagedKeyEncryptionProperties`
+  - Deleted or renamed model `EncryptionProperties`
+  - Deleted or renamed model `KeyEncryptionKeyIdentity`
+  - Deleted or renamed model `KeyEncryptionKeyIdentityType`
+  - Deleted or renamed model `ManagedServiceIdentity`
+  - Deleted or renamed model `ManagedServiceIdentityType`
+  - Deleted or renamed model `UserAssignedIdentity`
+
 ## 1.1.0b1 (2025-07-23)
 
 ### Features Added
