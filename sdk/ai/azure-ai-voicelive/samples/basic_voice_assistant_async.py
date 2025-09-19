@@ -58,7 +58,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 try:
     from dotenv import load_dotenv
 
-    load_dotenv(".\.env", override=True)
+    load_dotenv(".env", override=True)
 except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
