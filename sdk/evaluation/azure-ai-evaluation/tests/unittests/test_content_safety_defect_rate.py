@@ -3,6 +3,7 @@ import pathlib
 
 import pandas as pd
 import pytest
+import numpy as np
 
 from azure.ai.evaluation import ContentSafetyEvaluator
 from azure.ai.evaluation._evaluate._evaluate import _aggregate_metrics
@@ -26,3 +27,10 @@ class TestContentSafetyDefectRate:
         assert metrics["result_counts.total"] == len(df)
         assert metrics["result_counts.errored"] == 0
         assert metrics["content_safety.pass_rate"] == pytest.approx(metrics["content_safety.binary_aggregate"], rel=1e-9)
+
+        no_results = _aggregate_metrics(
+            pd.DataFrame({"content_safety.violence_score": [np.nan, None]}), {"content_safety": ContentSafetyEvaluator}
+        )
+        assert no_results["result_counts.total"] == 2
+        assert no_results["result_counts.errored"] == 2
+        assert no_results["content_safety.pass_rate"] == 0.0

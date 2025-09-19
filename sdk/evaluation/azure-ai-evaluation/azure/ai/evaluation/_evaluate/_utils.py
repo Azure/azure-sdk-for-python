@@ -156,8 +156,18 @@ def _log_metrics_and_instance_results_onedp(
         user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
     )
 
+    if instance_results.columns.duplicated().any():
+        duplicate_columns = instance_results.columns[instance_results.columns.duplicated()].tolist()
+        LOGGER.warning(
+            "Duplicate columns detected in instance results; keeping the first occurrence and dropping %s",
+            duplicate_columns,
+        )
+        instance_results = instance_results.loc[:, ~instance_results.columns.duplicated()].copy()
+
     # Massaging before artifacts are put on disk
     # Adding line_number as index column this is needed by UI to form link to individual instance run
+    if "line_number" in instance_results.columns:
+        LOGGER.warning("Overwriting existing line_number column in instance results before upload.")
     instance_results["line_number"] = instance_results.index.values
 
     artifact_name = "instance_results.jsonl"
@@ -166,9 +176,8 @@ def _log_metrics_and_instance_results_onedp(
         # storing multi_modal images if exists
         col_name = "inputs.conversation"
         if col_name in instance_results.columns:
-            for item in instance_results[col_name].items():
-                value = item[1]
-                if "messages" in value:
+            for _, value in instance_results[col_name].items():
+                if isinstance(value, dict) and "messages" in value:
                     _store_multimodal_content(value["messages"], tmpdir)
 
         # storing artifact result

@@ -28,6 +28,7 @@ from azure.ai.evaluation._constants import (
     DEFAULT_EVALUATION_RESULTS_FILE_NAME,
     _AggregationType,
     EvaluationRunProperties,
+    ROW_ID_COLUMN,
 )
 from azure.ai.evaluation._evaluate._evaluate import (
     _aggregate_metrics,
@@ -543,6 +544,8 @@ class TestEvaluate:
         expected.at[0, "outputs.yeti.result"] = math.nan
         expected.at[2, "outputs.yeti.result"] = math.nan
         expected.at[3, "outputs.yeti.result"] = math.nan
+        expected[ROW_ID_COLUMN] = expected.index.to_series().map(lambda idx: f"row_{idx}")
+        expected = expected[result_df.columns]
         assert_frame_equal(expected, result_df)
 
     @patch("azure.ai.evaluation._evaluate._evaluate._evaluate")

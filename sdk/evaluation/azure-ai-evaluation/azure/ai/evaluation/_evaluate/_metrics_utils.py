@@ -49,9 +49,17 @@ def compute_pass_fail_statistics(
         evaluator_columns = [col for col in df.columns if col.startswith(prefix)]
 
         if not evaluator_columns:
-            rate = 1.0 if total_rows > 0 else 0.0
+            alt_prefix = f"{evaluator_name}."
+            evaluator_columns = [col for col in df.columns if col.startswith(alt_prefix)]
+            if evaluator_columns:
+                prefix = alt_prefix
+
+        if not evaluator_columns:
+            rate = 0.0
             pass_rates[f"{evaluator_name}.pass_rate"] = rate
             binary_metrics[f"{evaluator_name}.{BINARY_AGGREGATE_SUFFIX}"] = round(rate, 2)
+            for idx in range(total_rows):
+                row_status[idx] = "errored"
             continue
 
         row_missing_column = f"{prefix}row_missing"

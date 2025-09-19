@@ -3,23 +3,26 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import List
+from typing import Dict, List
 from unittest.mock import Mock, patch
 
 import pandas as pd
 import pytest
 
+from azure.ai.evaluation._constants import ROW_ID_COLUMN
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
     OAIEvalRunCreationInfo,
     _get_single_run_results,
 )
+from openai.types.evals.runs.output_item_list_response import Result
 
 
 class MockOutputItem:
-    def __init__(self, id: str, datasource_item_id: int, results: List[dict]):
+    def __init__(self, id: str, datasource_item_id: int, results: List[Result], datasource_item: Dict[str, object]):
         self.id = id
         self.datasource_item_id = datasource_item_id
         self.results = results
+        self.datasource_item = datasource_item
 
 
 class MockOutputItemsList:
@@ -33,11 +36,13 @@ def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
     """AOAI output_items can arrive unordered; results should align to row ids (0..N-1)."""
     mock_client = Mock()
     expected_rows = 5
+    row_ids = [f"row_{i}" for i in range(expected_rows)]
     run_info = OAIEvalRunCreationInfo(
         client=mock_client,
         eval_group_id="grp",
         eval_run_id="run",
         grader_name_map={"grader-1": "rel"},
+        row_ids=row_ids,
         expected_rows=expected_rows,
     )
 
@@ -48,11 +53,36 @@ def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
 
     # Unordered items: ids [3,0,4,1,2]; score equals its id for easy checks
     unordered_items = [
-        MockOutputItem(id="i3", datasource_item_id=3, results=[{"name": "grader-1", "passed": True, "score": 3.0}]),
-        MockOutputItem(id="i0", datasource_item_id=0, results=[{"name": "grader-1", "passed": True, "score": 0.0}]),
-        MockOutputItem(id="i4", datasource_item_id=4, results=[{"name": "grader-1", "passed": False, "score": 4.0}]),
-        MockOutputItem(id="i1", datasource_item_id=1, results=[{"name": "grader-1", "passed": True, "score": 1.0}]),
-        MockOutputItem(id="i2", datasource_item_id=2, results=[{"name": "grader-1", "passed": True, "score": 2.0}]),
+        MockOutputItem(
+            id="i3",
+            datasource_item_id=3,
+            results=[Result(name="grader-1", passed=True, score=3.0)],
+            datasource_item={ROW_ID_COLUMN: row_ids[3]},
+        ),
+        MockOutputItem(
+            id="i0",
+            datasource_item_id=0,
+            results=[Result(name="grader-1", passed=True, score=0.0)],
+            datasource_item={ROW_ID_COLUMN: row_ids[0]},
+        ),
+        MockOutputItem(
+            id="i4",
+            datasource_item_id=4,
+            results=[Result(name="grader-1", passed=False, score=4.0)],
+            datasource_item={ROW_ID_COLUMN: row_ids[4]},
+        ),
+        MockOutputItem(
+            id="i1",
+            datasource_item_id=1,
+            results=[Result(name="grader-1", passed=True, score=1.0)],
+            datasource_item={ROW_ID_COLUMN: row_ids[1]},
+        ),
+        MockOutputItem(
+            id="i2",
+            datasource_item_id=2,
+            results=[Result(name="grader-1", passed=True, score=2.0)],
+            datasource_item={ROW_ID_COLUMN: row_ids[2]},
+        ),
     ]
     mock_client.evals.runs.output_items.list.return_value = MockOutputItemsList(data=unordered_items, has_more=False)
 
@@ -66,14 +96,14 @@ def test_aoai_results_preserve_order_with_unordered_output_items(caplog):
 
     # Shape and index
     assert len(df) == expected_rows
-    assert list(df.index) == list(range(expected_rows))
+    assert list(df.index) == row_ids
 
     score_col = "outputs.rel.score"
     assert score_col in df.columns
 
     # Each row i should have score == float(i), proving correct alignment after sort/reindex
-    for i in range(expected_rows):
-        assert df.loc[i, score_col] == float(i)
+    for i, row_id in enumerate(row_ids):
+        assert df.loc[row_id, score_col] == float(i)
 
     # No missing-row padding in this test; the row_missing flag should not exist
     missing_flag_col = "outputs.rel.row_missing"

@@ -5,7 +5,9 @@
 import pytest
 from unittest.mock import Mock, MagicMock, patch
 import pandas as pd
-from typing import List, Any
+from typing import List, Any, Dict, Optional
+from openai.types.evals.runs.output_item_list_response import Result
+from azure.ai.evaluation._constants import ROW_ID_COLUMN
 
 from azure.ai.evaluation._evaluate._evaluate_aoai import (
     _get_single_run_results,
@@ -18,10 +20,17 @@ from azure.ai.evaluation._exceptions import EvaluationException
 class MockOutputItem:
     """Mock class for output items"""
 
-    def __init__(self, id: str, datasource_item_id: int, results: List[dict]):
+    def __init__(
+        self,
+        id: str,
+        datasource_item_id: int,
+        results: List[Result],
+        datasource_item: Optional[Dict[str, object]] = None,
+    ) -> None:
         self.id = id
         self.datasource_item_id = datasource_item_id
         self.results = results
+        self.datasource_item = datasource_item or {}
 
 
 class MockOutputItemsList:
@@ -58,12 +67,12 @@ class TestAOAIPagination:
                 id=f"item-{i}",
                 datasource_item_id=i,
                 results=[
-                    {
-                        "name": "grader-1",
-                        "passed": i % 2 == 0,
-                        "score": 0.8 if i % 2 == 0 else 0.2,
-                        "sample": f"Sample {i}",
-                    }
+                    Result(
+                        name="grader-1",
+                        passed=i % 2 == 0,
+                        score=0.8 if i % 2 == 0 else 0.2,
+                        sample={"text": f"Sample {i}"},
+                    )
                 ],
             )
             for i in range(10)
@@ -107,7 +116,9 @@ class TestAOAIPagination:
             MockOutputItem(
                 id=f"item-{i}",
                 datasource_item_id=i,
-                results=[{"name": "grader-1", "passed": True, "score": 0.9, "sample": f"Sample {i}"}],
+                results=[
+                    Result(name="grader-1", passed=True, score=0.9, sample={"text": f"Sample {i}"})
+                ],
             )
             for i in range(100)
         ]
@@ -116,7 +127,9 @@ class TestAOAIPagination:
             MockOutputItem(
                 id=f"item-{i}",
                 datasource_item_id=i,
-                results=[{"name": "grader-1", "passed": True, "score": 0.85, "sample": f"Sample {i}"}],
+                results=[
+                    Result(name="grader-1", passed=True, score=0.85, sample={"text": f"Sample {i}"})
+                ],
             )
             for i in range(100, 200)
         ]
@@ -125,7 +138,9 @@ class TestAOAIPagination:
             MockOutputItem(
                 id=f"item-{i}",
                 datasource_item_id=i,
-                results=[{"name": "grader-1", "passed": False, "score": 0.3, "sample": f"Sample {i}"}],
+                results=[
+                    Result(name="grader-1", passed=False, score=0.3, sample={"text": f"Sample {i}"})
+                ],
             )
             for i in range(200, 250)
         ]
@@ -180,7 +195,7 @@ class TestAOAIPagination:
                     MockOutputItem(
                         id=f"item-{i}",
                         datasource_item_id=i,
-                        results=[{"name": "grader-1", "passed": True, "score": 1.0}],
+                        results=[Result(name="grader-1", passed=True, score=1.0)],
                     )
                     for i in range(5)
                 ],
@@ -219,8 +234,8 @@ class TestAOAIPagination:
         page1_items = [
             MockOutputItem(
                 id=f"item-{i}",
-                datasource_item_id=i,  # was i * 2
-                results=[{"name": "grader-1", "passed": True, "score": i}],
+                datasource_item_id=i,
+                results=[Result(name="grader-1", passed=True, score=float(i))],
             )
             for i in [5, 3, 8, 1, 9]
         ]
@@ -228,8 +243,8 @@ class TestAOAIPagination:
         page2_items = [
             MockOutputItem(
                 id=f"item-{i}",
-                datasource_item_id=i,  # was i * 2
-                results=[{"name": "grader-1", "passed": True, "score": i}],
+                datasource_item_id=i,
+                results=[Result(name="grader-1", passed=True, score=float(i))],
             )
             for i in [2, 7, 4, 6, 0]
         ]

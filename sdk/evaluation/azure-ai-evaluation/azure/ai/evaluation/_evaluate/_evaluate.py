@@ -30,6 +30,7 @@ from .._constants import (
     _InternalEvaluationMetrics,
     DEFAULT_OAI_EVAL_RUN_NAME,
 )
+from .._constants import ROW_ID_COLUMN
 from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
@@ -960,6 +961,11 @@ def _preprocess_data(
     input_data_df = _validate_and_load_data(
         target, data, evaluators_and_graders, output_path, azure_ai_project, evaluation_name, tags
     )
+    input_data_df = input_data_df.reset_index(drop=True)
+    if ROW_ID_COLUMN in input_data_df.columns:
+        input_data_df[ROW_ID_COLUMN] = input_data_df[ROW_ID_COLUMN].astype(str)
+    else:
+        input_data_df[ROW_ID_COLUMN] = input_data_df.index.to_series().map(lambda idx: f"row_{idx}").astype(str)
     if target is not None:
         _validate_columns_for_target(input_data_df, target)
 
@@ -1171,6 +1177,17 @@ def _run_callable_evaluators(
             _turn_error_logs_into_exception(evaluator_result["run_summary"]["log_path"] + "/error.json")
 
         evaluator_result_df = evaluator_result["result"]
+        row_id_column_name = f"{Prefixes.INPUTS}{ROW_ID_COLUMN}"
+        if row_id_column_name in evaluator_result_df.columns:
+            row_ids_series = evaluator_result_df[row_id_column_name].astype(str)
+        else:
+            base_input_df = validated_data["input_data_df"]
+            if ROW_ID_COLUMN in base_input_df.columns:
+                row_ids_series = base_input_df[ROW_ID_COLUMN].astype(str)
+            else:
+                row_ids_series = (
+                    base_input_df.index.to_series().map(lambda idx: f"row_{idx}").astype(str)
+                )
 
         # drop input columns
         evaluator_result_df = evaluator_result_df.drop(
@@ -1187,6 +1204,10 @@ def _run_callable_evaluators(
             inplace=True,
         )
 
+        evaluator_result_df[ROW_ID_COLUMN] = row_ids_series.values
+        evaluator_result_df.set_index(ROW_ID_COLUMN, drop=False, inplace=True)
+        evaluator_result_df.drop(columns=[ROW_ID_COLUMN], inplace=True, errors="ignore")
+
         evaluators_result_df = (
             pd.concat([evaluators_result_df, evaluator_result_df], axis=1, verify_integrity=True)
             if evaluators_result_df is not None
@@ -1199,9 +1220,38 @@ def _run_callable_evaluators(
     # If target generates columns, already present in the input data, these columns
     # will be marked as outputs already so we do not need to rename them.
 
-    input_data_df = _rename_columns_conditionally(validated_data["input_data_df"])
+    input_data_df = _rename_columns_conditionally(validated_data["input_data_df"].copy())
+    row_id_inputs_column = f"{Prefixes.INPUTS}{ROW_ID_COLUMN}"
+    if ROW_ID_COLUMN not in input_data_df.columns:
+        if row_id_inputs_column in input_data_df.columns:
+            input_data_df[ROW_ID_COLUMN] = input_data_df[row_id_inputs_column].astype(str)
+        else:
+            input_data_df[ROW_ID_COLUMN] = (
+                input_data_df.index.to_series().map(lambda idx: f"row_{idx}").astype(str)
+            )
+    if row_id_inputs_column in input_data_df.columns:
+        input_data_df.drop(columns=[row_id_inputs_column], inplace=True)
+    input_data_df = input_data_df.set_index(ROW_ID_COLUMN, drop=False)
+    if not evaluators_result_df.empty:
+        evaluators_result_df = evaluators_result_df.reindex(input_data_df.index)
     eval_result_df = pd.concat([input_data_df, evaluators_result_df], axis=1, verify_integrity=True)
-    eval_metrics = _aggregate_metrics(evaluators_result_df, evaluators)
+    metrics_input_df = evaluators_result_df.drop(columns=[ROW_ID_COLUMN], errors="ignore")
+    eval_metrics = _aggregate_metrics(metrics_input_df, evaluators)
+
+    # Capture per-evaluator totals/failed/errored counts when that information is available.
+    for evaluator_name, evaluator_result in per_evaluator_results.items():
+        run_summary = evaluator_result.get("run_summary", {}) or {}
+        total_lines = run_summary.get("total_lines")
+        failed_lines = run_summary.get("failed_lines")
+        errored_lines = run_summary.get("errored_lines")
+
+        if total_lines is not None:
+            eval_metrics[f"{evaluator_name}.total"] = total_lines
+        if errored_lines is not None:
+            eval_metrics[f"{evaluator_name}.errored"] = errored_lines
+        if failed_lines is not None:
+            eval_metrics[f"{evaluator_name}.failed"] = failed_lines
+
     eval_metrics.update(evaluators_metric)
 
     return eval_result_df, eval_metrics, per_evaluator_results
