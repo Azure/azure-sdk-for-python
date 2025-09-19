@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added function `model_dump` to `azure.core.serialization`. This function will serialize generated models to a dictionary with keys corresponding to the REST API's JSON keys. #41584
+
 ### Breaking Changes
 
 ### Bugs Fixed
