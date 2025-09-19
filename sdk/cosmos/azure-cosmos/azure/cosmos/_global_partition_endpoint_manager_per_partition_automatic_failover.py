@@ -51,7 +51,7 @@ class PartitionLevelFailoverInfo:
         :rtype: bool
         """
         with self._lock:
-            if endpoint_region != self.current_region:
+            if endpoint_region != self.current_region and self.current_region is not None:
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
                 return True
@@ -172,7 +172,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                     endpoint_region = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
                     if endpoint_region in partition_failover_info.unavailable_regional_endpoints:
                         available_account_regional_endpoints = self.compute_available_preferred_regions(request)
-                        if endpoint_region != partition_failover_info.current_region:
+                        if (partition_failover_info.current_region is not None and
+                                endpoint_region != partition_failover_info.current_region):
                             # this request has not yet seen there's an available region being used for this partition
                             regional_endpoint = available_account_regional_endpoints[
                                 partition_failover_info.current_region]
