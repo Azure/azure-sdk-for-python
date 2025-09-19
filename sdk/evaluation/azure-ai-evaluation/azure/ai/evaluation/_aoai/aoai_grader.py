@@ -64,7 +64,7 @@ class AzureOpenAIGrader:
         """Validate the model configuration that this grader wrapper is using."""
         msg = None
         if self._is_azure_model_config(self._model_config):
-            if all(auth for auth in (self._model_config.get("api_key"), self._credential)):
+            if not any(auth for auth in (self._model_config.get("api_key"), self._credential)):
                 msg = (
                     f"{type(self).__name__}: Requires an api_key in the supplied model_config, "
                     + "or providing a credential to the grader's __init__ method. "
