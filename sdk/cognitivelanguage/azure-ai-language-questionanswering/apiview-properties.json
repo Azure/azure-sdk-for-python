@@ -30,9 +30,9 @@
         "azure.ai.language.questionanswering.models.MatchingPolicyKind": "Language.QuestionAnswering.MatchingPolicyKind",
         "azure.ai.language.questionanswering.models.MatchingPolicyFieldsType": "Language.QuestionAnswering.MatchingPolicyFieldsType",
         "azure.ai.language.questionanswering.models.StringIndexType": "Language.QuestionAnswering.StringIndexType",
-        "azure.ai.language.questionanswering.operations.QuestionAnsweringOperations.get_answers": "Language.QuestionAnswering.QuestionAnswering.getAnswers",
-        "azure.ai.language.questionanswering.aio.operations.QuestionAnsweringOperations.get_answers": "Language.QuestionAnswering.QuestionAnswering.getAnswers",
-        "azure.ai.language.questionanswering.operations.QuestionAnsweringOperations.get_answers_from_text": "Language.QuestionAnswering.QuestionAnswering.getAnswersFromText",
-        "azure.ai.language.questionanswering.aio.operations.QuestionAnsweringOperations.get_answers_from_text": "Language.QuestionAnswering.QuestionAnswering.getAnswersFromText"
+        "azure.ai.language.questionanswering.QuestionAnsweringClient.get_answers": "Language.QuestionAnsweringClientCustomizations.QuestionAnsweringClientOperations.getAnswers",
+        "azure.ai.language.questionanswering.aio.QuestionAnsweringClient.get_answers": "Language.QuestionAnsweringClientCustomizations.QuestionAnsweringClientOperations.getAnswers",
+        "azure.ai.language.questionanswering.QuestionAnsweringClient.get_answers_from_text": "Language.QuestionAnsweringClientCustomizations.QuestionAnsweringClientOperations.getAnswersFromText",
+        "azure.ai.language.questionanswering.aio.QuestionAnsweringClient.get_answers_from_text": "Language.QuestionAnsweringClientCustomizations.QuestionAnsweringClientOperations.getAnswersFromText"
     }
 }

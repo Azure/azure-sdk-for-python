@@ -23,7 +23,7 @@ class TestQueryText(QuestionAnsweringTestCase):
             language="en",
         )
         # Use operations group directly to satisfy static type checking (dynamic convenience wrapper added in _patch)
-        output = client.question_answering.get_answers_from_text(params)
+        output = client.get_answers_from_text(params)
         assert output.answers
         for answer in output.answers:
             assert answer.answer
@@ -44,31 +44,31 @@ class TestQueryText(QuestionAnsweringTestCase):
             "language": "en",
         }
         with client:
-            output = client.question_answering.get_answers_from_text(params)
+            output = client.get_answers_from_text(params)
             assert output.answers
 
     def test_query_text_overload_errors(self):  # negative client-side parameter validation
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):
-                client.question_answering.get_answers_from_text("positional_one", "positional_two")  # type: ignore[arg-type]
+                client.get_answers_from_text("positional_one", "positional_two")  # type: ignore[arg-type]
             with pytest.raises(TypeError):
-                client.question_answering.get_answers_from_text("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]
+                client.get_answers_from_text("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]
             params = AnswersFromTextOptions(
                 question="Meaning?", text_documents=[TextDocument(text="foo", id="doc1"), TextDocument(text="bar", id="doc2")]
             )
             with pytest.raises(TypeError):
-                client.question_answering.get_answers_from_text(options=params)  # type: ignore[arg-type]
+                client.get_answers_from_text(options=params)  # type: ignore[arg-type]
             with pytest.raises(TypeError):
-                client.question_answering.get_answers_from_text(question="why?", text_documents=["foo", "bar"], options=params)  # type: ignore[arg-type]
+                client.get_answers_from_text(question="why?", text_documents=["foo", "bar"], options=params)  # type: ignore[arg-type]
             with pytest.raises(TypeError):
-                client.question_answering.get_answers_from_text(params, question="Why?")  # type: ignore[arg-type]
+                client.get_answers_from_text(params, question="Why?")  # type: ignore[arg-type]
 
     def test_query_text_default_lang_override(self, recorded_test, qna_creds):
         client = QuestionAnsweringClient(
             qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), default_language="es"
         )
         # client default applies
-        output = client.question_answering.get_answers_from_text(
+        output = client.get_answers_from_text(
             {
                 "question": "How long it takes to charge surface?",
                 "language": "es",
@@ -79,7 +79,7 @@ class TestQueryText(QuestionAnsweringTestCase):
             raw_response_hook=lambda r: _assert_request_language(r, "es"),
         )
         # override
-        output = client.question_answering.get_answers_from_text(
+        output = client.get_answers_from_text(
             {
                 "question": "How long it takes to charge surface?",
                 "language": "en",

@@ -33,12 +33,15 @@ async def sample_chit_chat():
     client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
     async with client:
         first_question = "How long should my Surface battery last?"
-        first_output = await client.question_answering.get_answers(
+        first_options = qna.AnswersOptions(
             question=first_question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
             short_answer_options=qna.ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
+        )
+        first_output = await client.get_answers(
+            first_options,
             project_name=project,
             deployment_name=deployment,
         )
@@ -55,7 +58,7 @@ async def sample_chit_chat():
 
         if best_candidate.qna_id:
             followup_question = "How long does it take to charge a Surface?"
-            follow_output = await client.question_answering.get_answers(
+            followup_options = qna.AnswersOptions(
                 question=followup_question,
                 top=3,
                 confidence_threshold=0.2,
@@ -65,6 +68,9 @@ async def sample_chit_chat():
                 ),
                 short_answer_options=qna.ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
                 include_unstructured_sources=True,
+            )
+            follow_output = await client.get_answers(
+                followup_options,
                 project_name=project,
                 deployment_name=deployment,
             )

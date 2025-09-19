@@ -52,7 +52,7 @@ async def sample_query_text():
             ],
         )
 
-        output = await client.question_answering.get_answers_from_text(options)
+        output = await client.get_answers_from_text(options)
         best_answer = next(
             (a for a in (output.answers or []) if a.confidence and a.confidence > 0.9),
             None,

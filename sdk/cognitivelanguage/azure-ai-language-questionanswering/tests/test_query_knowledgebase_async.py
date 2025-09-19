@@ -28,7 +28,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         async with client:
-            output = await client.question_answering.get_answers(
+            output = await client.get_answers(
                 params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
         assert output.answers
@@ -49,7 +49,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.1, top=2),
         )
         async with client:
-            output = await client.question_answering.get_answers(
+            output = await client.get_answers(
                 params, project_name=qna_creds["qna_project"], deployment_name="test"
             )
         assert output.answers
@@ -69,12 +69,15 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
         async with QuestionAnsweringClient(
             qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"])
         ) as client:
-            response = await client.question_answering.get_answers(
+            params = AnswersOptions(
+                question="Battery life",
+                top=3,
+                filters=filters,
+            )
+            response = await client.get_answers(
+                params,
                 project_name=qna_creds["qna_project"],
                 deployment_name="test",
-                question="Battery life",
-                filters=filters,
-                top=3,
             )
             assert response.answers
             assert any(
@@ -88,6 +91,6 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
     async def test_query_knowledgebase_overload_errors(self):  # negative parameter validation
         async with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):
-                await client.question_answering.get_answers("positional_one", "positional_two")  # type: ignore[arg-type]
+                await client.get_answers("positional_one", "positional_two")  # type: ignore[arg-type]
             with pytest.raises(TypeError):
-                await client.question_answering.get_answers("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]
+                await client.get_answers("positional_options_bag", options="options bag by name")  # type: ignore[arg-type]

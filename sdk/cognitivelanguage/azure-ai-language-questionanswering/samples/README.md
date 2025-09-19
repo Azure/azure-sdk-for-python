@@ -25,7 +25,7 @@ to a separate location and are intentionally not referenced here.
 
 > Note: The deprecated wrapper methods `client.get_answers` and `client.get_answers_from_text`
 > have been replaced in these samples by the recommended operations group access:
-> `client.question_answering.get_answers` and `client.question_answering.get_answers_from_text`.
+> `client.get_answers` and `client.get_answers_from_text`.
 
 ## Prerequisites
 

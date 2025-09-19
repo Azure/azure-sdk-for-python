@@ -17,21 +17,15 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import QuestionAnsweringClientConfiguration
-from .operations import QuestionAnsweringOperations
+from ._operations import _QuestionAnsweringClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class QuestionAnsweringClient:
-    """The language service API is a suite of natural language processing (NLP) skills
-    built with best-in-class Microsoft machine learning algorithms.  The API can be
-    used to analyze unstructured text for tasks such as sentiment analysis, key
-    phrase extraction, language detection and question answering.
+class QuestionAnsweringClient(_QuestionAnsweringClientOperationsMixin):
+    """QuestionAnsweringClient.
 
-    :ivar question_answering: QuestionAnsweringOperations operations
-    :vartype question_answering:
-     azure.ai.language.questionanswering.aio.operations.QuestionAnsweringOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -73,9 +67,6 @@ class QuestionAnsweringClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.question_answering: QuestionAnsweringOperations = QuestionAnsweringOperations(  # added annotation
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

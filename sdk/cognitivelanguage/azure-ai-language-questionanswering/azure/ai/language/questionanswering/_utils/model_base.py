@@ -7,9 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 # pylint: disable=protected-access, broad-except
-# NOTE: Additional pylint disable added specifically for a false positive on __new__ (no-value-for-parameter)
-# Astroid misinterprets the generated Model.__new__ signature with Self + complex MRO.
-# pylint: disable=no-value-for-parameter
 
 import copy
 import calendar
@@ -25,7 +22,7 @@ import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import xml.etree.ElementTree as ET
-from collections.abc import MutableMapping  # pylint: disable=import-error  # False positive on Python 3.13: runtime import succeeds
+from collections.abc import MutableMapping
 from typing_extensions import Self
 import isodate
 from azure.core.exceptions import DeserializationError
@@ -620,7 +617,7 @@ class Model(_MyMutableMapping):
     def copy(self) -> "Model":
         return Model(self.__dict__)
 
-    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:  # pylint: disable=no-value-for-parameter  # Astroid false positive with Self + custom MRO
+    def __new__(cls, *args: typing.Any, **kwargs: typing.Any) -> Self:
         if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
             # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
             # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'

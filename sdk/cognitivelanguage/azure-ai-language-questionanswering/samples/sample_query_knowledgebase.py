@@ -40,13 +40,15 @@ def sample_query_knowledgebase():
     with client:
         question = "How long should my Surface battery last?"
 
-        # Flattened call (question + top/etc. as keyword arguments).
-        output = client.question_answering.get_answers(
+        options = qna.AnswersOptions(
             question=question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
             short_answer_options=qna.ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
+        )
+        output = client.get_answers(
+            options,
             project_name=project,
             deployment_name=deployment,
         )

@@ -27,7 +27,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             answer_context=KnowledgeBaseAnswerContext(previous_question="Meet Surface Pro 4", previous_qna_id=4),
         )
         with client:
-            output = client.question_answering.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
+            output = client.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
         assert output.answers
         for answer in output.answers:
             assert answer.answer
@@ -44,7 +44,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.1, top=2),
         )
         with client:
-            output = client.question_answering.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
+            output = client.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
         assert output.answers
         # If short answer returned, essential fields exist
         for answer in output.answers:
@@ -68,7 +68,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                 filters=filters,
                 top=3,
             )
-            response = client.question_answering.get_answers(
+            response = client.get_answers(
                 query_params,
                 project_name=qna_creds["qna_project"],
                 deployment_name="test",
@@ -79,7 +79,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))
         with client:
             query_params = AnswersOptions(qna_id=19)
-            output = client.question_answering.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
+            output = client.get_answers(query_params, project_name=qna_creds["qna_project"], deployment_name="test")
             assert output.answers is not None
             assert len(output.answers) == 1
 
@@ -87,18 +87,18 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             # These calls intentionally violate the method signature to ensure TypeError is raised.
             with pytest.raises(TypeError):
-                client.question_answering.get_answers("positional_one", "positional_two")  # type: ignore
+                client.get_answers("positional_one", "positional_two")  # type: ignore
             with pytest.raises(TypeError):
-                client.question_answering.get_answers("positional_options_bag", options="options bag by name")  # type: ignore
+                client.get_answers("positional_options_bag", options="options bag by name")  # type: ignore
             with pytest.raises(TypeError):
-                client.question_answering.get_answers(options={"qnaId": 15}, project_name="hello", deployment_name="test")  # type: ignore
+                client.get_answers(options={"qnaId": 15}, project_name="hello", deployment_name="test")  # type: ignore
             with pytest.raises(TypeError):
-                client.question_answering.get_answers({"qnaId": 15}, question="Why?", project_name="hello", deployment_name="test")  # type: ignore
+                client.get_answers({"qnaId": 15}, question="Why?", project_name="hello", deployment_name="test")  # type: ignore
 
     def test_query_knowledgebase_question_or_qna_id(self):
         with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             options = AnswersOptions()
             with pytest.raises(TypeError):
-                client.question_answering.get_answers(options, project_name="hello", deployment_name="test")
+                client.get_answers(options, project_name="hello", deployment_name="test")
             with pytest.raises(TypeError):
-                client.question_answering.get_answers(project_name="hello", deployment_name="test")
+                client.get_answers(project_name="hello", deployment_name="test")

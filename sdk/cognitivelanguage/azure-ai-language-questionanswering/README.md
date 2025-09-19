@@ -85,42 +85,45 @@ Below are some common usage examples. See the [samples][questionanswering_sample
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering import QuestionAnsweringClient
+from azure.ai.language.questionanswering import models as qna
 
 endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
 key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
 client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
 
-response = client.get_answers(
-	question="How long should my Surface battery last?",
-	project_name="FAQ",
-	deployment_name="production",
+options = qna.AnswersOptions(
+    question="How long should my Surface battery last?",
+    # Optional extra parameters:
+    # confidence_threshold=0.2,
+    # top=5,
+    # short_answer_options=qna.ShortAnswerOptions(top=1)
 )
+response = client.get_answers(options, project_name="FAQ", deployment_name="production")
 
 for answer in response.answers:
-	print(f"({answer.confidence:.2f}) {answer.answer}")
-	print(f"Source: {answer.source}")
+    print(f"({answer.confidence:.2f}) {answer.answer}")
+    print(f"Source: {answer.source}")
 ```
 
-You can also pass optional parameters like `confidence_threshold`, `top`, or `short_answer_options`.
+You can also pass optional parameters like `confidence_threshold`, `top`, or `short_answer_options` inside the `AnswersOptions` object.
 
 ### Ask a follow-up question
 
-If your project is configured for chit-chat, some answers may include prompts for follow-up questions. Supply the previous answer's `qna_id` as context.
+If your project is configured for chit-chat, some answers may include prompts for follow-up questions. Supply the previous answer's `qna_id` as context using `KnowledgeBaseAnswerContext` in the options object.
 
 ```python
-from azure.ai.language.questionanswering import models
+from azure.ai.language.questionanswering import models as qna
 
-# previous_answer = ... obtain from earlier response
-follow_up = client.get_answers(
-	question="How long should charging take?",
-	answer_context=models.KnowledgeBaseAnswerContext(previous_qna_id=previous_answer.qna_id),
-	project_name="FAQ",
-	deployment_name="production",
+# previous_answer = ... obtain from earlier response above
+follow_up_options = qna.AnswersOptions(
+    question="How long should charging take?",
+    answer_context=qna.KnowledgeBaseAnswerContext(previous_qna_id=previous_answer.qna_id),
 )
+follow_up = client.get_answers(follow_up_options, project_name="FAQ", deployment_name="production")
 
 for answer in follow_up.answers:
-	print(f"({answer.confidence:.2f}) {answer.answer}")
+    print(f"({answer.confidence:.2f}) {answer.answer}")
 ```
 
 ### Asynchronous usage
@@ -130,21 +133,21 @@ import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
+from azure.ai.language.questionanswering import models as qna
 
 async def main():
-	endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
-	key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-	client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
-	response = await client.get_answers(
-		question="How long should my Surface battery last?",
-		project_name="FAQ",
-		deployment_name="production",
-	)
-	for answer in response.answers:
-		print(f"({answer.confidence:.2f}) {answer.answer}")
+    endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+    key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
+    client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
+    options = qna.AnswersOptions(question="How long should my Surface battery last?")
+    response = await client.get_answers(options, project_name="FAQ", deployment_name="production")
+    for answer in response.answers:
+        print(f"({answer.confidence:.2f}) {answer.answer}")
 
 asyncio.run(main())
 ```
+
+> Note: Starting with version `2.0.0b1`, samples and documentation use an explicit `AnswersOptions` object (or `AnswersFromTextOptions` for text) as the first positional argument when calling `get_answers` / `get_answers_from_text`. The older "flattened" parameter form (passing `question=...` directly to `get_answers`) has been removed from samples and may be rejected with a `TypeError` if used incorrectly.
 
 ## Optional configuration
 

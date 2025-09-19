@@ -16,22 +16,16 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import QuestionAnsweringClientConfiguration
+from ._operations import _QuestionAnsweringClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
-from .operations import QuestionAnsweringOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class QuestionAnsweringClient:
-    """The language service API is a suite of natural language processing (NLP) skills
-    built with best-in-class Microsoft machine learning algorithms.  The API can be
-    used to analyze unstructured text for tasks such as sentiment analysis, key
-    phrase extraction, language detection and question answering.
+class QuestionAnsweringClient(_QuestionAnsweringClientOperationsMixin):
+    """QuestionAnsweringClient.
 
-    :ivar question_answering: QuestionAnsweringOperations operations
-    :vartype question_answering:
-     azure.ai.language.questionanswering.operations.QuestionAnsweringOperations
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://<resource-name>.api.cognitiveservices.azure.com). Required.
     :type endpoint: str
@@ -71,9 +65,6 @@ class QuestionAnsweringClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.question_answering: QuestionAnsweringOperations = QuestionAnsweringOperations(  # added annotation
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
