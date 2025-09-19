@@ -6,7 +6,7 @@ from typing import Optional, List
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
-from ci_tools.functions import install_into_venv
+from ci_tools.functions import install_into_venv, get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
@@ -48,6 +48,17 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
+        
+            # TODO debug
+            check_call([executable, "-m", "ensurepip", "--upgrade"])
+
+            pip_cmd = get_pip_command(executable)
+            logger.info("Running pip freeze before installing dev reqs:")  
+            try:
+                check_call(pip_cmd + ["freeze"])
+            except CalledProcessError as e:
+                logger.error(f"Failed to run pip freeze: {e}")
+                return e.returncode
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
@@ -55,6 +66,14 @@ class pylint(Check):
                 install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
             except CalledProcessError as e:
                 logger.error(f"Failed to install dependencies: {e}")
+                return e.returncode
+            
+            # TODO debug
+            logger.info("Running pip freeze AFTER installing dev reqs:") 
+            try:
+                check_call(pip_cmd + ["freeze"])
+            except CalledProcessError as e:
+                logger.error(f"Failed to run pip freeze: {e}")
                 return e.returncode
 
             create_package_and_install(
@@ -68,6 +87,14 @@ class pylint(Check):
                 pre_download_disabled=False,
                 python_executable=executable,
             )
+
+            # TODO debug
+            logger.info("Running pip freeze AFTER create package and install:") 
+            try:
+                check_call(pip_cmd + ["freeze"])
+            except CalledProcessError as e:
+                logger.error(f"Failed to run pip freeze: {e}")
+                return e.returncode
 
             # install pylint
             try:

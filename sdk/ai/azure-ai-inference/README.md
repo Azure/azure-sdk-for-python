@@ -698,7 +698,6 @@ This project has adopted the
 see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
-
 <!-- Note: I did not use LINKS section here with a list of `[link-label](link-url)` because these
 links don't work in the Sphinx generated documentation. The index.html page of these docs
 include this README, but with broken links.-->
