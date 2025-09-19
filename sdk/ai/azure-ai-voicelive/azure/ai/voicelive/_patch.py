@@ -8,18 +8,30 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import json
 import logging
 from contextlib import AbstractContextManager
 from urllib.parse import parse_qs, urlencode, urlparse, urlunparse
 
-try:  # Python 3.11+
-    from typing import NotRequired  # type: ignore[attr-defined]
-except Exception:  # Python <=3.10
-    from typing_extensions import NotRequired
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Iterator,
+    Mapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+    cast,
+)
 
-from typing import TYPE_CHECKING, Optional, Mapping, Sequence, Tuple, Union, Iterator, Any, Dict, List, cast
+# === Third-party ===
 from typing_extensions import TypedDict
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.exceptions import AzureError
+
+# === Local ===
 from azure.ai.voicelive.models._models import (
     ClientEventConversationItemCreate,
     ClientEventConversationItemDelete,
@@ -31,11 +43,12 @@ from azure.ai.voicelive.models._models import (
     ClientEventResponseCancel,
     ClientEventResponseCreate,
     ClientEventSessionUpdate,
+    ConversationRequestItem,
+    ResponseCreateParams,
 )
-from azure.core.credentials import AzureKeyCredential, TokenCredential
-from azure.core.exceptions import AzureError
 from .models import ClientEvent, RequestSession, ServerEvent
 
+# === Conditional typing/runtime ===
 if TYPE_CHECKING:
     from websockets.typing import Subprotocol as WSSubprotocol  # exact type for checkers
 else:
@@ -47,7 +60,16 @@ else:
             pass
 
 
-__all__: List[str] = [
+if TYPE_CHECKING:
+    # Not imported at runtime; only for type checkers (mypy/pyright).
+    from websockets.sync.client import ClientConnection as _WSClientConnection
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired  # noqa: F401
+else:
+    from typing_extensions import NotRequired  # noqa: F401
+
+__all__: list[str] = [
     "connect",
     "WebsocketConnectionOptions",
     "ConnectionError",
@@ -198,21 +220,33 @@ class ResponseResource:
         """
         self._connection = connection
 
-    def create(self, *, response: Optional[Mapping[str, Any]] = None, event_id: Optional[str] = None) -> None:
-        """Create a new response.
+    def create(
+        self,
+        *,
+        response: Optional[Union[ResponseCreateParams, Mapping[str, Any]]] = None,
+        event_id: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+    ) -> None:
+        """
+        Create a new response.
 
-        :keyword response: Optional mapping of response parameters to send.
-        :keyword type response: Mapping[str, Any] or None
+        :keyword response: Optional response parameters to send.
+        :keyword type response: ~azure.ai.voicelive.models.ResponseCreateParams or Mapping[str, Any] or None
         :keyword event_id: Optional ID for the event.
         :keyword type event_id: str or None
-        :return: None
+        :keyword additional_instructions: Extra system prompt appended to the session's default, for this response only.
+        :keyword type additional_instructions: str or None
         :rtype: None
         """
-        event = ClientEventResponseCreate()
-        if response:
-            event["response"] = dict(response)
-        if event_id:
-            event["event_id"] = event_id
+        if response is not None and not isinstance(response, ResponseCreateParams):
+            response = ResponseCreateParams(**dict(response))
+
+        # Use constructor kwargs (typed) instead of item-assignment
+        event = ClientEventResponseCreate(
+            event_id=event_id,
+            response=response,
+            additional_instructions=additional_instructions,
+        )
         self._connection.send(event)
 
     def cancel(self, *, response_id: Optional[str] = None, event_id: Optional[str] = None) -> None:
@@ -305,7 +339,7 @@ class OutputAudioBufferResource:
         :return: None
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "output_audio_buffer.clear"}
+        event: dict[str, Any] = {"type": "output_audio_buffer.clear"}
         if event_id:
             event["event_id"] = event_id
         self._connection.send(event)
@@ -328,7 +362,7 @@ class ConversationItemResource:
         """Create a new conversation item.
 
         :keyword item: The item to create (message, function call, etc.).
-        :keyword type item: Mapping[str, Any]
+        :keyword ConversationRequestItem | Mapping[str, Any] item: The item to create (message/functions/etc.).
         :keyword previous_item_id: Insert after this item, if provided.
         :keyword type previous_item_id: str or None
         :keyword event_id: Optional ID for the event.
@@ -336,11 +370,14 @@ class ConversationItemResource:
         :return: None
         :rtype: None
         """
-        event = ClientEventConversationItemCreate({"item": dict(item)})
-        if previous_item_id:
-            event["previous_item_id"] = previous_item_id
-        if event_id:
-            event["event_id"] = event_id
+        if not isinstance(item, ConversationRequestItem):
+            item = ConversationRequestItem(**dict(item))
+
+        event = ClientEventConversationItemCreate(
+            event_id=event_id,
+            previous_item_id=previous_item_id,
+            item=item,
+        )
         self._connection.send(event)
 
     def delete(self, *, item_id: str, event_id: Optional[str] = None) -> None:
@@ -436,7 +473,7 @@ class TranscriptionSessionResource:
         :return: None
         :rtype: None
         """
-        event: Dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
+        event: dict[str, Any] = {"type": "transcription_session.update", "session": dict(session)}
         if event_id:
             event["event_id"] = event_id
         self._connection.send(event)
@@ -471,7 +508,14 @@ class VoiceLiveConnection:
     :vartype transcription_session: ~azure.ai.voicelive.TranscriptionSessionResource
     """
 
-    def __init__(self, connection) -> None:
+    session: SessionResource
+    response: ResponseResource
+    input_audio_buffer: InputAudioBufferResource
+    conversation: ConversationResource
+    output_audio_buffer: OutputAudioBufferResource
+    transcription_session: TranscriptionSessionResource
+
+    def __init__(self, connection: "_WSClientConnection") -> None:
         """Initialize a VoiceLiveConnection.
 
         :param connection: The underlying WebSocket connection.
@@ -592,8 +636,8 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         *,
         credential: Union[AzureKeyCredential, TokenCredential],
         endpoint: str,
-        model: str,
         api_version: str,
+        model: Optional[str] = None,
         extra_query: Optional[Mapping[str, Any]] = None,
         extra_headers: Optional[Mapping[str, Any]] = None,
         connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -602,8 +646,8 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         self._credential = credential
         self._endpoint = endpoint
         self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
-        self.__model = model
         self.__api_version = api_version
+        self.__model = model
         self.__connection: Optional[VoiceLiveConnection] = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
@@ -626,14 +670,14 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
 
             # Build headers as str->str and use list of tuples to satisfy HeadersLike
             extra_headers_map: Mapping[str, Any] = self.__extra_headers or {}
-            merged_headers: Dict[str, str] = {
+            merged_headers: dict[str, str] = {
                 **self._get_auth_headers(),
                 **{str(k): str(v) for k, v in extra_headers_map.items()},
             }
-            headers_like: List[Tuple[str, str]] = list(merged_headers.items())
+            headers_like: list[Tuple[str, str]] = list(merged_headers.items())
 
             # Build kwargs for websockets; avoid dict(Optional[...])
-            ws_kwargs: Dict[str, Any] = {}
+            ws_kwargs: dict[str, Any] = {}
             if self.__connection_options is not None:
                 ws_kwargs.update(cast(Mapping[str, Any], self.__connection_options))
 
@@ -667,7 +711,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         if self.__connection is not None:
             self.__connection.close()
 
-    def _get_auth_headers(self) -> Dict[str, str]:
+    def _get_auth_headers(self) -> dict[str, str]:
         """Get authentication headers for WebSocket connection.
 
         :return: A dictionary containing authentication headers.
@@ -687,7 +731,9 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
         parsed = urlparse(self._endpoint)
         scheme = "wss" if parsed.scheme == "https" else ("ws" if parsed.scheme == "http" else parsed.scheme)
 
-        params: Dict[str, str] = {"model": self.__model, "api-version": self.__api_version}
+        params: dict[str, Any] = {"api-version": self.__api_version}
+        if self.__model is not None:
+            params["model"] = self.__model
         extra_query: Mapping[str, Any] = self.__extra_query or {}
         for k, v in extra_query.items():
             params[str(k)] = str(v)
@@ -698,7 +744,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
             if key not in params:
                 params[key] = value_list[0] if value_list else ""
 
-        path = parsed.path.rstrip("/") + "/voice-agent/realtime"
+        path = parsed.path.rstrip("/") + "/voice-live/realtime"
         return urlunparse((scheme, parsed.netloc, path, parsed.params, urlencode(params), parsed.fragment))
 
 
@@ -706,8 +752,8 @@ def connect(
     *,
     endpoint: str,
     credential: Union[AzureKeyCredential, TokenCredential],
-    model: str,
     api_version: str = "2025-05-01-preview",
+    model: Optional[str] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -733,10 +779,13 @@ def connect(
     :paramtype endpoint: str
     :keyword credential: Credential used to authenticate the WebSocket connection.
     :paramtype credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
-    :keyword model: Model identifier to use for the session.
-    :paramtype model: str
     :keyword api_version: API version to use. Defaults to ``"2025-05-01-preview"``.
     :paramtype api_version: str
+    :keyword model: Model identifier to use for the session.
+     In most scenarios, this parameter is required.
+     It may be omitted only when connecting through an **Agent** scenario,
+     in which case the service will use the model associated with the Agent.
+    :paramtype model: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
     :paramtype query: Mapping[str, Any] or None
     :keyword headers: Optional headers to include in the WebSocket handshake.
@@ -752,8 +801,8 @@ def connect(
     return _VoiceLiveConnectionManager(
         credential=credential,
         endpoint=endpoint,
-        model=model,
         api_version=api_version,
+        model=model,
         extra_query=query or {},
         extra_headers=headers or {},
         connection_options=connection_options,

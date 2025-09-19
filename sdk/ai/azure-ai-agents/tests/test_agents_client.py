@@ -4035,7 +4035,9 @@ class TestAgentClient(TestAgentClientBase):
                     MessageInputImageUrlBlock(image_url=url_param),
                 ]
                 # Create message to thread
-                message = agents_client.messages.create(thread_id=thread.id, role=MessageRole.USER, content=content_blocks)
+                message = agents_client.messages.create(
+                    thread_id=thread.id, role=MessageRole.USER, content=content_blocks
+                )
                 run = agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
                 submitted_tool_outputs = False
                 result_image_base64 = image_to_base64(self._get_screenshot_next_file())

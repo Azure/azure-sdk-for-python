@@ -15,6 +15,8 @@ We utilize a variety of tools to ensure smooth development, testing, and code qu
 
 - Virtualenv: [Virtualenv](https://virtualenv.pypa.io/en/latest/) is leveraged by Tox to create isolated environments for each test suite, ensuring consistent dependencies and reducing conflicts.
 
+- UV: [UV](https://docs.astral.sh/uv/) is a fast package manager that can manage Python versions, run and install Python packages, and be used instead of pip, virtualenv, and more.
+
 - Pytest: [Pytest](https://docs.pytest.org/en/stable/) is the test framework we use for writing and running our unit tests. It supports fixtures, parameterized tests, and other features that make testing more powerful and flexible.
 
 - Pylint: [Pylint](https://pylint.readthedocs.io/en/stable/) is used for code linting to enforce coding standards and catch potential issues early. Maintaining a consistent code style is important, and Pylint helps achieve that goal.

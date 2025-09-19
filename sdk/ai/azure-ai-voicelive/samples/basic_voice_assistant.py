@@ -19,7 +19,7 @@ USAGE:
     python basic_voice_assistant.py
     
     Set the environment variables with your own values before running the sample:
-    1) AZURE_VOICELIVE_KEY - The Azure VoiceLive API key
+    1) AZURE_VOICELIVE_API_KEY - The Azure VoiceLive API key
     2) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
     
     Or copy .env.template to .env and fill in your values.
@@ -70,9 +70,11 @@ if TYPE_CHECKING:
 from azure.ai.voicelive.models import (
     RequestSession,
     ServerVad,
+    AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
-    AudioFormat,
+    InputAudioFormat,
+    OutputAudioFormat,
 )
 
 # Set up logging
@@ -376,7 +378,7 @@ class BasicVoiceAssistant:
         # Create strongly typed voice configuration
         voice_config: Union[AzureStandardVoice, str]
         if self.voice.startswith("en-US-") or self.voice.startswith("en-CA-") or "-" in self.voice:
-            voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
+            voice_config = AzureStandardVoice(name=self.voice)
         else:
             voice_config = self.voice
 
@@ -388,8 +390,9 @@ class BasicVoiceAssistant:
             modalities=[Modality.TEXT, Modality.AUDIO],
             instructions=self.instructions,
             voice=voice_config,
-            input_audio_format=AudioFormat.PCM16,
-            output_audio_format=AudioFormat.PCM16,
+            input_audio_format=InputAudioFormat.PCM16,
+            output_audio_format=OutputAudioFormat.PCM16,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=turn_detection_config,
         )
 
@@ -499,14 +502,14 @@ def parse_arguments():
         "--model",
         help="VoiceLive model to use",
         type=str,
-        default=os.environ.get("VOICELIVE_MODEL", "gpt-4o-realtime-preview"),
+        default=os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-4o-realtime-preview"),
     )
 
     parser.add_argument(
         "--voice",
         help="Voice to use for the assistant",
         type=str,
-        default=os.environ.get("VOICELIVE_VOICE", "en-US-AvaNeural"),
+        default=os.environ.get("AZURE_VOICELIVE_VOICE", "en-US-AvaNeural"),
         choices=[
             "alloy",
             "echo",
@@ -525,7 +528,7 @@ def parse_arguments():
         help="System instructions for the AI assistant",
         type=str,
         default=os.environ.get(
-            "VOICELIVE_INSTRUCTIONS",
+            "AZURE_VOICELIVE_INSTRUCTIONS",
             "You are a helpful AI assistant. Respond naturally and conversationally. "
             "Keep your responses concise but engaging.",
         ),

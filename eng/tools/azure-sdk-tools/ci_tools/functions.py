@@ -13,6 +13,7 @@ import io
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
+from ci_tools.logging import logger
 
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
@@ -40,6 +41,17 @@ REGRESSION_EXCLUDED_PACKAGES = [
 
 MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
+]
+
+# In very rare situations, we need to actively transition a package from one part of the code base to another
+# in a multi-stage process. For example, migrating "azure-ai-textanalytics" from "sdk/textanalytics" to "sdk/ai".
+# Both need to simultaneously exist for a short period of time, but we need to prevent discovery of the package
+# so that downstream checks aren't broken by this.
+# We need to actively prevent ourselves from discovering the package in its old location. To do that we:
+#  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
+#  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
+PATHS_EXCLUDED_FROM_DISCOVERY = [
+    "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
@@ -182,6 +194,15 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
         p for p in collected_top_level_directories if not any(part in ("test", "tests") for part in p.split(os.sep))
     ]
 
+    # remove any packages that might exist in the PATHS_EXCLUDED_FROM_DISCOVERY path list (relative from repo root)
+    excluded = set(PATHS_EXCLUDED_FROM_DISCOVERY)
+    filtered = []
+    for pkg_path in collected_top_level_directories:
+        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, '/')
+        if not any(rel == excl or rel.startswith(excl + '/') for excl in excluded):
+            filtered.append(pkg_path)
+    collected_top_level_directories = filtered
+
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
 
@@ -222,25 +243,25 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
-    logging.info(
+    logger.debug(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
-    logging.info(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
+    logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
-        logging.info(f"Results after compatibility filter: {collected_packages}")
+        logger.debug(f"Results after compatibility filter: {collected_packages}")
 
     if not include_inactive:
         collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
-    logging.info(f"Results after business filter: {collected_packages}")
+    logger.debug(f"Results after business filter: {collected_packages}")
 
     return sorted(collected_packages)
 
@@ -504,14 +525,15 @@ def get_venv_python(venv_path: str) -> str:
 
     # cross-platform python in a venv
     bin_dir = "Scripts" if os.name == "nt" else "bin"
-    return os.path.join(venv_path, bin_dir, "python")
+    python_exe =  "python.exe" if os.name == "nt" else "python"
+    return os.path.join(venv_path, bin_dir, python_exe)
 
 
 def install_into_venv(
-    venv_path_or_executable: str, installation_target: str, editable: bool = True, extras: Optional[str] = None
+    venv_path_or_executable: str, requirements: List[str], working_directory: str
 ) -> None:
     """
-    Install the package into an existing venv (venv_path) without activating it.
+    Install the requirements into an existing venv (venv_path) without activating it.
 
     - Uses get_pip_command(get_venv_python) per request.
     - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
@@ -520,20 +542,13 @@ def install_into_venv(
     py = get_venv_python(venv_path_or_executable)
     pip_cmd = get_pip_command(py)
 
-    install_target = installation_target
-    if extras:
-        install_target = f"{installation_target}[{extras}]"
-
-    if editable:
-        cmd = pip_cmd + ["install", "-e", install_target]
-    else:
-        cmd = pip_cmd + ["install", install_target]
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["install"] + install_targets
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
-
     # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd=working_directory)
 
 
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
@@ -1035,6 +1050,7 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
 
 
 def is_error_code_5_allowed(target_pkg: str, pkg_name: str):

@@ -407,8 +407,8 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_check_and_set_folder_permissions_oserror_sets_exception_state(self):
         test_input = (1, 2, 3)
         test_error_message = "OSError: Permission denied creating directory"
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
@@ -439,8 +439,8 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_check_and_set_folder_permissions_generic_exception_sets_exception_state(self):
         test_input = (1, 2, 3)
         test_error_message = "RuntimeError: Unexpected error during setup"
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
@@ -470,8 +470,8 @@ class TestLocalFileStorage(unittest.TestCase):
     
     def test_check_and_set_folder_permissions_readonly_filesystem_sets_readonly_state(self):
         test_input = (1, 2, 3)
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
         )
@@ -505,8 +505,8 @@ class TestLocalFileStorage(unittest.TestCase):
     
     def test_check_and_set_folder_permissions_windows_icacls_failure_sets_exception_state(self):
         test_input = (1, 2, 3)
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
@@ -549,8 +549,8 @@ class TestLocalFileStorage(unittest.TestCase):
     
     def test_check_and_set_folder_permissions_windows_user_retrieval_failure(self):
         test_input = (1, 2, 3)
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
@@ -585,8 +585,8 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_check_and_set_folder_permissions_unix_chmod_exception_sets_exception_state(self):
         test_input = (1, 2, 3)
         test_error_message = "OSError: Operation not permitted"
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
@@ -625,8 +625,8 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_exception_state_persistence_across_storage_instances(self):
         test_input = (1, 2, 3)
         test_error_message = "Persistent storage setup error"
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
@@ -658,7 +658,7 @@ class TestLocalFileStorage(unittest.TestCase):
         test_input = (1, 2, 3)
         test_error_message = "Temporary storage setup error"
         
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
@@ -687,7 +687,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 self.assertEqual(retrieved_data, test_input)
 
     def test_local_storage_state_readonly_get_set_operations(self):
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
             _LOCAL_STORAGE_SETUP_STATE,
@@ -729,8 +729,8 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_readonly_state_interaction_with_storage_put_method(self):
         test_input = (1, 2, 3)
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
@@ -767,7 +767,7 @@ class TestLocalFileStorage(unittest.TestCase):
         test_input = (1, 2, 3)
         test_exception_message = "Some storage exception"
         
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
             get_local_storage_setup_state_exception,
@@ -795,8 +795,8 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_readonly_state_thread_safety(self):
         import threading
         import time
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
         )
@@ -839,8 +839,8 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_readonly_state_persistence_across_storage_instances(self):
         test_input = (1, 2, 3)
-        
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
@@ -867,7 +867,7 @@ class TestLocalFileStorage(unittest.TestCase):
         self.assertTrue(get_local_storage_setup_state_readonly())
 
     def test_readonly_state_direct_access_vs_function_access(self):
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
             _LOCAL_STORAGE_SETUP_STATE,
@@ -887,7 +887,7 @@ class TestLocalFileStorage(unittest.TestCase):
         self.assertTrue(direct_value)
 
     def test_readonly_state_idempotent_set_operations(self):
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+        from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_readonly,
         )

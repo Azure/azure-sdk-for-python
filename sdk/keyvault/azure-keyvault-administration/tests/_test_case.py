@@ -8,7 +8,6 @@ import pytest
 
 from azure.keyvault.administration import ApiVersion
 from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
-from azure.identity import ManagedIdentityCredential
 from devtools_testutils import AzureRecordedTestCase
 
 
