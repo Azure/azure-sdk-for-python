@@ -79,7 +79,6 @@ def set_statsbeat_shutdown(shutdown: bool):
 def get_statsbeat_customer_sdkstats_feature_set(): # pylint: disable=name-too-long
     return _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"]
 
-
 def set_statsbeat_customer_sdkstats_feature_set(): # pylint: disable=name-too-long
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = True
