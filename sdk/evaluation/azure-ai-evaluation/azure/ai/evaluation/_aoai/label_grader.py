@@ -39,6 +39,8 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
     :type name: str
     :param passing_labels: The labels that indicate a passing result. Must be a subset of labels.
     :type passing_labels: List[str]
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 

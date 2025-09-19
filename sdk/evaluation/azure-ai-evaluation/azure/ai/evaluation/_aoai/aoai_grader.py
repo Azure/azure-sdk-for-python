@@ -36,6 +36,8 @@ class AzureOpenAIGrader:
         to be formatted as a dictionary that matches the specifications of the sub-types of
         the TestingCriterion alias specified in (OpenAI's SDK)[https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_create_params.py#L151].
     :type grader_config: Dict[str, Any]
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 

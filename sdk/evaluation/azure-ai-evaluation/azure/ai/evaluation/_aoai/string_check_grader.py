@@ -35,6 +35,8 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     :type operation: Literal["eq", "ne", "like", "ilike"]
     :param reference: The reference text. This may include template strings.
     :type reference: str
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 

@@ -49,6 +49,8 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     :type reference: str
     :param name: The name of the grader.
     :type name: str
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 
