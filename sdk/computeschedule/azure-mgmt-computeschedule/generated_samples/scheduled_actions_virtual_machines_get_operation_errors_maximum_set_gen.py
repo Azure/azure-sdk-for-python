@@ -33,6 +33,7 @@ def main():
     response = client.scheduled_actions.virtual_machines_get_operation_errors(
         locationparameter="ennweqswbghorrgzbet",
         request_body={"operationIds": ["ksufjznokhsbowdupyt"]},
+        api_version="2025-04-15-preview",
     )
     print(response)
 

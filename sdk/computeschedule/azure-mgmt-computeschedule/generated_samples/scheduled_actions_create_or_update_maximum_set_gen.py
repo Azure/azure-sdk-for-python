@@ -59,6 +59,7 @@ def main():
             },
             "tags": {"key2102": "obwsqwdydpkscnzceopxgkrhrxtdhv"},
         },
+        api_version="2025-04-15-preview",
     ).result()
     print(response)
 

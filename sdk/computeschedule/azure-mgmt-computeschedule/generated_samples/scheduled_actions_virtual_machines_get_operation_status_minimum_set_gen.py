@@ -36,6 +36,7 @@ def main():
             "correlationid": "b211f086-4b91-4686-a453-2f5c012e4d80",
             "operationIds": ["duhqnwosjzexcfwfhryvy"],
         },
+        api_version="2025-04-15-preview",
     )
     print(response)
 

@@ -9,8 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
-import urllib.parse
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -36,7 +35,6 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_occurrence_extension_list_occurrence_by_vms_request,
     build_occurrences_cancel_request,
@@ -75,8 +73,9 @@ from ...operations._operations import (
 from .._configuration import ComputeScheduleMgmtClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 
 class Operations:
@@ -97,9 +96,11 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
+    def list(self, *, api_version: str, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of Operation
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -121,7 +122,7 @@ class Operations:
             if not next_link:
 
                 _request = build_operations_list_request(
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -133,18 +134,7 @@ class Operations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -172,7 +162,7 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -203,6 +193,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.SubmitDeallocateRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
@@ -213,6 +204,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -224,7 +217,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_submit_deallocate(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesSubmitDeallocate: Schedule deallocate operation for a batch of virtual machines
         at datetime in future.
@@ -233,6 +232,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -244,7 +245,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_submit_deallocate(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesSubmitDeallocate: Schedule deallocate operation for a batch of virtual machines
         at datetime in future.
@@ -253,6 +260,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -267,6 +276,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.SubmitDeallocateRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesSubmitDeallocate: Schedule deallocate operation for a batch of virtual machines
@@ -278,6 +289,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.SubmitDeallocateRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.DeallocateResourceOperationResponse
@@ -307,8 +320,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_submit_deallocate_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -332,7 +345,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -351,6 +364,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.SubmitHibernateRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
@@ -361,6 +375,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -372,7 +388,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_submit_hibernate(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesSubmitHibernate: Schedule hibernate operation for a batch of virtual machines at
         datetime in future.
@@ -381,6 +403,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -392,7 +416,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_submit_hibernate(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesSubmitHibernate: Schedule hibernate operation for a batch of virtual machines at
         datetime in future.
@@ -401,6 +431,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -415,6 +447,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.SubmitHibernateRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesSubmitHibernate: Schedule hibernate operation for a batch of virtual machines at
@@ -426,6 +460,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.SubmitHibernateRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.HibernateResourceOperationResponse
@@ -455,8 +491,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_submit_hibernate_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -480,7 +516,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -499,6 +535,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.SubmitStartRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
@@ -509,6 +546,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -520,7 +559,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_submit_start(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesSubmitStart: Schedule start operation for a batch of virtual machines at
         datetime in future.
@@ -529,6 +574,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -540,7 +587,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_submit_start(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesSubmitStart: Schedule start operation for a batch of virtual machines at
         datetime in future.
@@ -549,6 +602,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -560,7 +615,12 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def virtual_machines_submit_start(
-        self, locationparameter: str, request_body: Union[_models.SubmitStartRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: Union[_models.SubmitStartRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesSubmitStart: Schedule start operation for a batch of virtual machines at
         datetime in future.
@@ -570,6 +630,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param request_body: The request body. Is one of the following types: SubmitStartRequest, JSON,
          IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.SubmitStartRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.StartResourceOperationResponse
@@ -599,8 +661,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_submit_start_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -624,7 +686,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -643,6 +705,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.ExecuteDeallocateRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
@@ -653,6 +716,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -664,7 +729,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_deallocate(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesExecuteDeallocate: Execute deallocate operation for a batch of virtual machines,
         this operation is triggered as soon as Computeschedule receives it.
@@ -673,6 +744,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -684,7 +757,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_deallocate(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesExecuteDeallocate: Execute deallocate operation for a batch of virtual machines,
         this operation is triggered as soon as Computeschedule receives it.
@@ -693,6 +772,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -707,6 +788,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.ExecuteDeallocateRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.DeallocateResourceOperationResponse:
         """VirtualMachinesExecuteDeallocate: Execute deallocate operation for a batch of virtual machines,
@@ -718,6 +801,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeallocateRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: DeallocateResourceOperationResponse. The DeallocateResourceOperationResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.DeallocateResourceOperationResponse
@@ -747,8 +832,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_execute_deallocate_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -772,7 +857,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -791,6 +876,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.ExecuteHibernateRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
@@ -801,6 +887,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -812,7 +900,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_hibernate(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesExecuteHibernate: Execute hibernate operation for a batch of virtual machines,
         this operation is triggered as soon as Computeschedule receives it.
@@ -821,6 +915,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -832,7 +928,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_hibernate(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesExecuteHibernate: Execute hibernate operation for a batch of virtual machines,
         this operation is triggered as soon as Computeschedule receives it.
@@ -841,6 +943,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -855,6 +959,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.ExecuteHibernateRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.HibernateResourceOperationResponse:
         """VirtualMachinesExecuteHibernate: Execute hibernate operation for a batch of virtual machines,
@@ -866,6 +972,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteHibernateRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: HibernateResourceOperationResponse. The HibernateResourceOperationResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.HibernateResourceOperationResponse
@@ -895,8 +1003,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_execute_hibernate_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -920,7 +1028,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -939,6 +1047,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.ExecuteStartRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
@@ -949,6 +1058,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -960,7 +1071,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_start(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesExecuteStart: Execute start operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -969,6 +1086,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -980,7 +1099,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_start(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesExecuteStart: Execute start operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -989,6 +1114,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1000,7 +1127,12 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def virtual_machines_execute_start(
-        self, locationparameter: str, request_body: Union[_models.ExecuteStartRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: Union[_models.ExecuteStartRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        **kwargs: Any
     ) -> _models.StartResourceOperationResponse:
         """VirtualMachinesExecuteStart: Execute start operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1010,6 +1142,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param request_body: The request body. Is one of the following types: ExecuteStartRequest,
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteStartRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: StartResourceOperationResponse. The StartResourceOperationResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.StartResourceOperationResponse
@@ -1039,8 +1173,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_execute_start_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1064,7 +1198,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1083,6 +1217,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.ExecuteCreateRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
@@ -1093,6 +1228,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1104,7 +1241,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_create(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
         """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1113,6 +1256,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1124,7 +1269,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_create(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
         """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1133,6 +1284,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1143,15 +1296,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-05-01",
-        params_added_on={
-            "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
-        },
-        api_versions_list=["2025-05-01", "2025-04-15-preview"],
-    )
     async def virtual_machines_execute_create(
-        self, locationparameter: str, request_body: Union[_models.ExecuteCreateRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: Union[_models.ExecuteCreateRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        **kwargs: Any
     ) -> _models.CreateResourceOperationResponse:
         """VirtualMachinesExecuteCreate: Execute create operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1162,6 +1313,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteCreateRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: CreateResourceOperationResponse. The CreateResourceOperationResponse is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.CreateResourceOperationResponse
@@ -1191,8 +1344,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_execute_create_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1216,7 +1369,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1235,6 +1388,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.ExecuteDeleteRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
@@ -1245,6 +1399,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1256,7 +1412,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_delete(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
         """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1265,6 +1427,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1276,7 +1440,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_execute_delete(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
         """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1285,6 +1455,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1295,15 +1467,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-05-01",
-        params_added_on={
-            "2025-05-01": ["api_version", "subscription_id", "locationparameter", "content_type", "accept"]
-        },
-        api_versions_list=["2025-05-01", "2025-04-15-preview"],
-    )
     async def virtual_machines_execute_delete(
-        self, locationparameter: str, request_body: Union[_models.ExecuteDeleteRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: Union[_models.ExecuteDeleteRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
+        **kwargs: Any
     ) -> _models.DeleteResourceOperationResponse:
         """VirtualMachinesExecuteDelete: Execute delete operation for a batch of virtual machines, this
         operation is triggered as soon as Computeschedule receives it.
@@ -1314,6 +1484,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.ExecuteDeleteRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: DeleteResourceOperationResponse. The DeleteResourceOperationResponse is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.DeleteResourceOperationResponse
@@ -1343,8 +1515,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_execute_delete_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1368,7 +1540,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1387,6 +1559,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.GetOperationStatusRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
@@ -1397,6 +1570,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1408,7 +1583,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_get_operation_status(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
         """VirtualMachinesGetOperationStatus: Polling endpoint to read status of operations performed on
         virtual machines.
@@ -1417,6 +1598,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1428,7 +1611,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_get_operation_status(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
         """VirtualMachinesGetOperationStatus: Polling endpoint to read status of operations performed on
         virtual machines.
@@ -1437,6 +1626,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1451,6 +1642,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.GetOperationStatusRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.GetOperationStatusResponse:
         """VirtualMachinesGetOperationStatus: Polling endpoint to read status of operations performed on
@@ -1462,6 +1655,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          GetOperationStatusRequest, JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.GetOperationStatusRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: GetOperationStatusResponse. The GetOperationStatusResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.GetOperationStatusResponse
@@ -1491,8 +1686,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_get_operation_status_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1516,7 +1711,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1535,6 +1730,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.CancelOperationsRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
@@ -1545,6 +1741,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1556,7 +1754,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_cancel_operations(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CancelOperationsResponse:
         """VirtualMachinesCancelOperations: Cancel a previously submitted (start/deallocate/hibernate)
         request.
@@ -1565,6 +1769,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1576,7 +1782,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_cancel_operations(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CancelOperationsResponse:
         """VirtualMachinesCancelOperations: Cancel a previously submitted (start/deallocate/hibernate)
         request.
@@ -1585,6 +1797,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1599,6 +1813,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.CancelOperationsRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.CancelOperationsResponse:
         """VirtualMachinesCancelOperations: Cancel a previously submitted (start/deallocate/hibernate)
@@ -1610,6 +1826,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.CancelOperationsRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: CancelOperationsResponse. The CancelOperationsResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.CancelOperationsResponse
@@ -1639,8 +1857,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_cancel_operations_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1664,7 +1882,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1683,6 +1901,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         locationparameter: str,
         request_body: _models.GetOperationErrorsRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GetOperationErrorsResponse:
@@ -1693,6 +1912,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1704,7 +1925,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_get_operation_errors(
-        self, locationparameter: str, request_body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: JSON,
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.GetOperationErrorsResponse:
         """VirtualMachinesGetOperationErrors: Get error details on operation errors (like transient errors
         encountered, additional logs) if they exist.
@@ -1713,6 +1940,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1724,7 +1953,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def virtual_machines_get_operation_errors(
-        self, locationparameter: str, request_body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locationparameter: str,
+        request_body: IO[bytes],
+        *,
+        api_version: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.GetOperationErrorsResponse:
         """VirtualMachinesGetOperationErrors: Get error details on operation errors (like transient errors
         encountered, additional logs) if they exist.
@@ -1733,6 +1968,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type locationparameter: str
         :param request_body: The request body. Required.
         :type request_body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1747,6 +1984,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         self,
         locationparameter: str,
         request_body: Union[_models.GetOperationErrorsRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.GetOperationErrorsResponse:
         """VirtualMachinesGetOperationErrors: Get error details on operation errors (like transient errors
@@ -1758,6 +1997,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
          GetOperationErrorsRequest, JSON, IO[bytes] Required.
         :type request_body: ~azure.mgmt.computeschedule.models.GetOperationErrorsRequest or JSON or
          IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: GetOperationErrorsResponse. The GetOperationErrorsResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.GetOperationErrorsResponse
@@ -1787,8 +2028,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         _request = build_scheduled_actions_virtual_machines_get_operation_errors_request(
             locationparameter=locationparameter,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1812,7 +2053,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1826,20 +2067,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
-    async def get(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> _models.ScheduledAction:
+    async def get(
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
+    ) -> _models.ScheduledAction:
         """Get a ScheduledAction.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1847,6 +2077,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1868,7 +2100,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1891,7 +2123,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -1904,25 +2136,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         resource: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1950,8 +2170,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1974,7 +2194,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1998,6 +2218,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         resource: _models.ScheduledAction,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
@@ -2010,6 +2231,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.computeschedule.models.ScheduledAction
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2026,6 +2249,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         resource: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
@@ -2038,6 +2262,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param resource: Resource create parameters. Required.
         :type resource: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2054,6 +2280,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         resource: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
@@ -2066,6 +2293,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2076,25 +2305,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         resource: Union[_models.ScheduledAction, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScheduledAction]:
         """Create a ScheduledAction.
@@ -2107,6 +2324,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param resource: Resource create parameters. Is one of the following types: ScheduledAction,
          JSON, IO[bytes] Required.
         :type resource: ~azure.mgmt.computeschedule.models.ScheduledAction or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns ScheduledAction. The ScheduledAction is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.computeschedule.models.ScheduledAction]
@@ -2125,6 +2344,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 resource_group_name=resource_group_name,
                 scheduled_action_name=scheduled_action_name,
                 resource=resource,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -2171,6 +2391,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         properties: _models.ScheduledActionUpdate,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ScheduledAction:
@@ -2183,6 +2404,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2198,6 +2421,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         properties: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ScheduledAction:
@@ -2210,6 +2434,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2225,6 +2451,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         properties: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ScheduledAction:
@@ -2237,6 +2464,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2246,25 +2475,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def update(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         properties: Union[_models.ScheduledActionUpdate, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.ScheduledAction:
         """Update a ScheduledAction.
@@ -2277,6 +2494,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param properties: The resource properties to be updated. Is one of the following types:
          ScheduledActionUpdate, JSON, IO[bytes] Required.
         :type properties: ~azure.mgmt.computeschedule.models.ScheduledActionUpdate or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: ScheduledAction. The ScheduledAction is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.ScheduledAction
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2306,8 +2525,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2331,7 +2550,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2344,21 +2563,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def _delete_initial(
-        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2377,7 +2583,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2399,7 +2605,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2415,21 +2621,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def begin_delete(
-        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Delete a ScheduledAction.
 
@@ -2438,6 +2631,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2453,6 +2648,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
                 scheduled_action_name=scheduled_action_name,
+                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2487,19 +2683,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
-    )
     def list_by_resource_group(
-        self, resource_group_name: str, **kwargs: Any
+        self, resource_group_name: str, *, api_version: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of ScheduledAction
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledAction]
@@ -2524,7 +2717,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 _request = build_scheduled_actions_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2536,18 +2729,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2575,7 +2757,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2583,14 +2765,11 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={"2025-04-15-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
-    )
-    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledAction"]:
+    def list_by_subscription(self, *, api_version: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledAction"]:
         """List ScheduledAction resources by subscription ID.
 
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of ScheduledAction
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledAction]
@@ -2614,7 +2793,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
                 _request = build_scheduled_actions_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2626,18 +2805,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2665,7 +2833,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2673,21 +2841,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     def list_resources(
-        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.ScheduledActionResource"]:
         """List resources attached to Scheduled Actions.
 
@@ -2696,6 +2851,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of ScheduledActionResource
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledActionResource]
@@ -2721,7 +2878,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                     resource_group_name=resource_group_name,
                     scheduled_action_name=scheduled_action_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2733,18 +2890,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2772,7 +2918,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2786,6 +2932,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: _models.ResourceAttachRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -2798,6 +2945,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceAttachRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2814,6 +2963,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -2826,6 +2976,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2842,6 +2994,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -2854,6 +3007,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2864,25 +3019,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def attach_resources(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         body: Union[_models.ResourceAttachRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
@@ -2895,6 +3038,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourceAttachRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceAttachRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
@@ -2925,8 +3070,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2950,7 +3095,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -2970,6 +3115,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: _models.ResourceDetachRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -2982,6 +3128,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceDetachRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2998,6 +3146,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3010,6 +3159,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3026,6 +3177,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3038,6 +3190,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3048,25 +3202,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def detach_resources(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         body: Union[_models.ResourceDetachRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
@@ -3079,6 +3221,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourceDetachRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourceDetachRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
@@ -3109,8 +3253,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -3134,7 +3278,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3154,6 +3298,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: _models.ResourcePatchRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3166,6 +3311,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourcePatchRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3182,6 +3329,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3194,6 +3342,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3210,6 +3360,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3222,6 +3373,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3232,25 +3385,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def patch_resources(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         body: Union[_models.ResourcePatchRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
@@ -3263,6 +3404,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          ResourcePatchRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.ResourcePatchRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
@@ -3293,8 +3436,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -3318,7 +3461,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3332,20 +3475,9 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
-    async def disable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> None:
+    async def disable(
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
+    ) -> None:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3353,6 +3485,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3374,7 +3508,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -3392,27 +3526,16 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
-    async def enable(self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any) -> None:
+    async def enable(
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
+    ) -> None:
         """A synchronous resource action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3420,6 +3543,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3441,7 +3566,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -3459,7 +3584,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -3472,6 +3597,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: _models.CancelOccurrenceRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3484,6 +3610,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3500,6 +3628,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3512,6 +3641,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3528,6 +3659,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         scheduled_action_name: str,
         body: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -3540,6 +3672,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type scheduled_action_name: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3550,25 +3684,13 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def cancel_next_occurrence(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
@@ -3581,6 +3703,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :param body: The content of the action request. Is one of the following types:
          CancelOccurrenceRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
@@ -3611,8 +3735,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -3636,7 +3760,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3650,21 +3774,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def trigger_manual_occurrence(
-        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
     ) -> _models.Occurrence:
         """A synchronous resource action.
 
@@ -3673,6 +3784,8 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: Occurrence. The Occurrence is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.Occurrence
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3694,7 +3807,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
             resource_group_name=resource_group_name,
             scheduled_action_name=scheduled_action_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -3717,7 +3830,7 @@ class ScheduledActionsOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3749,17 +3862,16 @@ class ScheduledActionExtensionOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
-    )
-    def list_by_vms(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduledActionResources"]:
+    def list_by_vms(
+        self, resource_uri: str, *, api_version: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ScheduledActionResources"]:
         """List ScheduledActionResources resources by parent.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_uri: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of ScheduledActionResources
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.ScheduledActionResources]
@@ -3783,7 +3895,7 @@ class ScheduledActionExtensionOperations:
 
                 _request = build_scheduled_action_extension_list_by_vms_request(
                     resource_uri=resource_uri,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -3795,18 +3907,7 @@ class ScheduledActionExtensionOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -3834,7 +3935,7 @@ class ScheduledActionExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3860,22 +3961,14 @@ class OccurrencesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "occurrence_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def get(
-        self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        *,
+        api_version: str,
+        **kwargs: Any
     ) -> _models.Occurrence:
         """Get a Occurrence.
 
@@ -3886,6 +3979,8 @@ class OccurrencesOperations:
         :type scheduled_action_name: str
         :param occurrence_id: The name of the Occurrence. Required.
         :type occurrence_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: Occurrence. The Occurrence is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.Occurrence
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3908,7 +4003,7 @@ class OccurrencesOperations:
             scheduled_action_name=scheduled_action_name,
             occurrence_id=occurrence_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -3931,7 +4026,7 @@ class OccurrencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -3945,21 +4040,8 @@ class OccurrencesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     def list_by_scheduled_action(
-        self, resource_group_name: str, scheduled_action_name: str, **kwargs: Any
+        self, resource_group_name: str, scheduled_action_name: str, *, api_version: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.Occurrence"]:
         """List Occurrence resources by ScheduledAction.
 
@@ -3968,6 +4050,8 @@ class OccurrencesOperations:
         :type resource_group_name: str
         :param scheduled_action_name: The name of the ScheduledAction. Required.
         :type scheduled_action_name: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of Occurrence
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.Occurrence]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3992,7 +4076,7 @@ class OccurrencesOperations:
                     resource_group_name=resource_group_name,
                     scheduled_action_name=scheduled_action_name,
                     subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -4004,18 +4088,7 @@ class OccurrencesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -4043,7 +4116,7 @@ class OccurrencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4051,22 +4124,14 @@ class OccurrencesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "occurrence_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     def list_resources(
-        self, resource_group_name: str, scheduled_action_name: str, occurrence_id: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        scheduled_action_name: str,
+        occurrence_id: str,
+        *,
+        api_version: str,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.OccurrenceResource"]:
         """List resources attached to Scheduled Actions for the given occurrence.
 
@@ -4077,6 +4142,8 @@ class OccurrencesOperations:
         :type scheduled_action_name: str
         :param occurrence_id: The name of the Occurrence. Required.
         :type occurrence_id: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of OccurrenceResource
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.OccurrenceResource]
@@ -4103,7 +4170,7 @@ class OccurrencesOperations:
                     scheduled_action_name=scheduled_action_name,
                     occurrence_id=occurrence_id,
                     subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -4115,18 +4182,7 @@ class OccurrencesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -4154,7 +4210,7 @@ class OccurrencesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4169,6 +4225,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: _models.CancelOccurrenceRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -4183,6 +4240,8 @@ class OccurrencesOperations:
         :type occurrence_id: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4200,6 +4259,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -4214,6 +4274,8 @@ class OccurrencesOperations:
         :type occurrence_id: str
         :param body: The content of the action request. Required.
         :type body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4231,6 +4293,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
@@ -4245,6 +4308,8 @@ class OccurrencesOperations:
         :type occurrence_id: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4255,27 +4320,14 @@ class OccurrencesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "occurrence_id",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def cancel(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         occurrence_id: str,
         body: Union[_models.CancelOccurrenceRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> _models.RecurringActionsResourceOperationResult:
         """A synchronous resource action.
@@ -4290,6 +4342,8 @@ class OccurrencesOperations:
         :param body: The content of the action request. Is one of the following types:
          CancelOccurrenceRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.CancelOccurrenceRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: RecurringActionsResourceOperationResult. The RecurringActionsResourceOperationResult
          is compatible with MutableMapping
         :rtype: ~azure.mgmt.computeschedule.models.RecurringActionsResourceOperationResult
@@ -4321,8 +4375,8 @@ class OccurrencesOperations:
             scheduled_action_name=scheduled_action_name,
             occurrence_id=occurrence_id,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4346,7 +4400,7 @@ class OccurrencesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
@@ -4359,27 +4413,14 @@ class OccurrencesOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "occurrence_id",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def _delay_initial(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         occurrence_id: str,
         body: Union[_models.DelayRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4408,8 +4449,8 @@ class OccurrencesOperations:
             scheduled_action_name=scheduled_action_name,
             occurrence_id=occurrence_id,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4432,7 +4473,7 @@ class OccurrencesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(_models.ErrorResponse, response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4455,6 +4496,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: _models.DelayRequest,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
@@ -4469,6 +4511,8 @@ class OccurrencesOperations:
         :type occurrence_id: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.computeschedule.models.DelayRequest
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4487,6 +4531,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: JSON,
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
@@ -4501,6 +4546,8 @@ class OccurrencesOperations:
         :type occurrence_id: str
         :param body: The content of the action request. Required.
         :type body: JSON
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4519,6 +4566,7 @@ class OccurrencesOperations:
         occurrence_id: str,
         body: IO[bytes],
         *,
+        api_version: str,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
@@ -4533,6 +4581,8 @@ class OccurrencesOperations:
         :type occurrence_id: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4544,27 +4594,14 @@ class OccurrencesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={
-            "2025-04-15-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "scheduled_action_name",
-                "occurrence_id",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-04-15-preview"],
-    )
     async def begin_delay(
         self,
         resource_group_name: str,
         scheduled_action_name: str,
         occurrence_id: str,
         body: Union[_models.DelayRequest, JSON, IO[bytes]],
+        *,
+        api_version: str,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.RecurringActionsResourceOperationResult]:
         """A long-running resource action.
@@ -4579,6 +4616,8 @@ class OccurrencesOperations:
         :param body: The content of the action request. Is one of the following types: DelayRequest,
          JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.computeschedule.models.DelayRequest or JSON or IO[bytes]
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An instance of AsyncLROPoller that returns RecurringActionsResourceOperationResult.
          The RecurringActionsResourceOperationResult is compatible with MutableMapping
         :rtype:
@@ -4599,6 +4638,7 @@ class OccurrencesOperations:
                 scheduled_action_name=scheduled_action_name,
                 occurrence_id=occurrence_id,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -4661,19 +4701,16 @@ class OccurrenceExtensionOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-04-15-preview",
-        params_added_on={"2025-04-15-preview": ["api_version", "resource_uri", "accept"]},
-        api_versions_list=["2025-04-15-preview"],
-    )
     def list_occurrence_by_vms(
-        self, resource_uri: str, **kwargs: Any
+        self, resource_uri: str, *, api_version: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.OccurrenceExtensionResource"]:
         """List OccurrenceExtensionResource resources by parent.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_uri: str
+        :keyword api_version: The API version to use for this operation. Required.
+        :paramtype api_version: str
         :return: An iterator like instance of OccurrenceExtensionResource
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computeschedule.models.OccurrenceExtensionResource]
@@ -4697,7 +4734,7 @@ class OccurrenceExtensionOperations:
 
                 _request = build_occurrence_extension_list_occurrence_by_vms_request(
                     resource_uri=resource_uri,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -4709,18 +4746,7 @@ class OccurrenceExtensionOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                _request = HttpRequest("GET", next_link)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -4748,7 +4774,7 @@ class OccurrenceExtensionOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(_models.ErrorResponse, response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
