@@ -58,7 +58,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 try:
     from dotenv import load_dotenv
 
-    load_dotenv('.\.env', override=True)
+    load_dotenv(".\.env", override=True)
 except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
@@ -79,26 +79,28 @@ from azure.ai.voicelive.models import (
     AzureStandardVoice,
     Modality,
     InputAudioFormat,
-    OutputAudioFormat
+    OutputAudioFormat,
 )
 
 # Set up logging
 ## Add folder for logging
-if not os.path.exists('logs'):
-    os.makedirs('logs')
+if not os.path.exists("logs"):
+    os.makedirs("logs")
 
 ## Add timestamp for logfiles
 from datetime import datetime
+
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 ## Set up logging
 logging.basicConfig(
-    filename=f'logs/{timestamp}_voicelive.log',
+    filename=f"logs/{timestamp}_voicelive.log",
     filemode="w",
-    format='%(asctime)s:%(name)s:%(levelname)s:%(message)s',
-    level=logging.INFO
+    format="%(asctime)s:%(name)s:%(levelname)s:%(message)s",
+    level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
+
 
 class AudioProcessor:
     """
@@ -549,12 +551,16 @@ def parse_arguments():
     )
 
     parser.add_argument(
-        "--use-token-credential", help="Use Azure token credential instead of API key", action="store_true", default=True
+        "--use-token-credential",
+        help="Use Azure token credential instead of API key",
+        action="store_true",
+        default=True,
     )
 
     parser.add_argument("--verbose", help="Enable verbose logging", action="store_true")
 
     return parser.parse_args()
+
 
 async def main():
     """Main function."""

@@ -785,9 +785,9 @@ def connect(
     :paramtype type endpoint: str
     :keyword api_version: The API version to use. Defaults to ``"2025-05-01-preview"``.
     :paramtype type api_version: str
-    :keyword model: Model identifier to use for the session. 
-     In most scenarios, this parameter is required. 
-     It may be omitted only when connecting through an **Agent** scenario, 
+    :keyword model: Model identifier to use for the session.
+     In most scenarios, this parameter is required.
+     It may be omitted only when connecting through an **Agent** scenario,
      in which case the service will use the model associated with the Agent.
     :paramtype model: str
     :keyword query: Optional query parameters to include in the WebSocket URL.

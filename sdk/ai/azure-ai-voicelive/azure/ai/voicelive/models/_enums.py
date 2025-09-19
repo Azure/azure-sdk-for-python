@@ -122,6 +122,14 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """G.711 A-law audio format at 8kHz sampling rate"""
 
 
+class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PersonalVoice models."""
+
+    DRAGON_LATEST_NEURAL = "DragonLatestNeural"
+    PHOENIX_LATEST_NEURAL = "PhoenixLatestNeural"
+    PHOENIX_V2_NEURAL = "PhoenixV2Neural"
+
+
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ResponseItemStatus."""
 

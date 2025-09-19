@@ -74,7 +74,7 @@ from azure.ai.voicelive.models import (
     AzureStandardVoice,
     Modality,
     InputAudioFormat,
-    OutputAudioFormat
+    OutputAudioFormat,
 )
 
 # Set up logging
