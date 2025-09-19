@@ -562,18 +562,18 @@ class AzureOpenAIModelConfiguration(TargetConfig, discriminator="AzureOpenAIMode
     :ivar type: Required. Default value is "AzureOpenAIModel".
     :vartype type: str
     :ivar model_deployment_name: Deployment name for AOAI model. Example: gpt-4o if in AIServices
-     or connection based ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``).
+     or connection based ``connection_name/deployment_name`` (e.g. ``my-aoai-connection/gpt-4o``).
      Required.
     :vartype model_deployment_name: str
     """
 
-    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
+    type: Literal["AzureOpenAIModel"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"AzureOpenAIModel\"."""
     model_deployment_name: str = rest_field(
         name="modelDeploymentName", visibility=["read", "create", "update", "delete", "query"]
     )
     """Deployment name for AOAI model. Example: gpt-4o if in AIServices or connection based
-     ``connection_name/deployment_name`` (i.e. ``my-aoai-connection/gpt-4o``). Required."""
+     ``connection_name/deployment_name`` (e.g. ``my-aoai-connection/gpt-4o``). Required."""
 
     @overload
     def __init__(
@@ -766,14 +766,10 @@ class CustomCredential(BaseCredentials, discriminator="CustomKeys"):
 
     :ivar type: The credential type. Required. Custom credential
     :vartype type: str or ~azure.ai.projects.models.CUSTOM
-    :ivar credential_keys: The credential type. Required.
-    :vartype credential_keys: dict[str, str]
     """
 
     type: Literal[CredentialType.CUSTOM] = rest_discriminator(name="type", visibility=["read"])  # type: ignore
     """The credential type. Required. Custom credential"""
-    credential_keys: Dict[str, str] = rest_field(name="keys", visibility=["read"])
-    """The credential type. Required."""
 
     @overload
     def __init__(

@@ -60,6 +60,7 @@ mcp_tool = McpTool(
     allowed_tools=[],  # Optional: specify allowed tools
 )
 
+
 class MyEventHandler(AsyncAgentEventHandler[str]):
 
     def __init__(self, agents_client: AgentsClient) -> None:
@@ -143,9 +144,7 @@ async def main() -> None:
         print(f"Created thread, thread ID {thread.id}")
 
         message = await agents_client.messages.create(
-            thread_id=thread.id,
-            role="user",
-            content="Please summarize the Azure REST API specifications Readme"
+            thread_id=thread.id, role="user", content="Please summarize the Azure REST API specifications Readme"
         )
         print(f"Created message, message ID {message.id}")
 

@@ -48,6 +48,7 @@ class ErrorCategory(Enum):
     PROJECT_ACCESS_ERROR = "PROJECT ACCESS ERROR"
     UNKNOWN = "UNKNOWN"
     UPLOAD_ERROR = "UPLOAD ERROR"
+    NOT_APPLICABLE = "NOT APPLICABLE"
 
 
 class ErrorBlame(Enum):
@@ -84,6 +85,7 @@ class ErrorTarget(Enum):
     FLUENCY_EVALUATOR = "FluencyEvaluator"
     RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
     TASK_ADHERENCE_EVALUATOR = "TaskAdherenceEvaluator"
+    TASK_SUCCESS_EVALUATOR = "TaskSuccessEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"

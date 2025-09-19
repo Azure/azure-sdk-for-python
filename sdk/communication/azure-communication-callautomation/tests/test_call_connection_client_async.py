@@ -12,6 +12,7 @@ from azure.communication.callautomation._generated.models import AddParticipantR
 from unittest_helpers import mock_response
 from azure.communication.callautomation._utils import serialize_identifier
 
+
 class TestCallConnectionClientAsync(IsolatedAsyncioTestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     communication_user_id = "8:acs:123"

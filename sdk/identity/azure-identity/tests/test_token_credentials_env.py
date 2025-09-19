@@ -17,6 +17,7 @@ from azure.identity import (
     SharedTokenCacheCredential,
     WorkloadIdentityCredential,
 )
+from azure.identity._credentials.broker import BrokerCredential
 from azure.identity._constants import EnvironmentVariables
 
 
@@ -39,6 +40,7 @@ def test_token_credentials_env_dev():
         assert AzureCliCredential in actual_classes
         assert AzureDeveloperCliCredential in actual_classes
         assert AzurePowerShellCredential in actual_classes
+        assert BrokerCredential in actual_classes
 
         # Assert no duplicates
         assert len(actual_classes) == len(set(actual_classes))
