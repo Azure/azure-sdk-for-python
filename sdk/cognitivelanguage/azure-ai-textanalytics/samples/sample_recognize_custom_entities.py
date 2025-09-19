@@ -56,9 +56,7 @@ def sample_text_custom_entities():
         "We love this trail and make the trip every year. The views are breathtaking and well worth the hike! "
         "Yesterday was foggy though, so we missed the spectacular views. We tried again today and it was amazing."
     )
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
     action_content = CustomEntitiesActionContent(
         project_name=project_name,
@@ -94,13 +92,14 @@ def sample_text_custom_entities():
                 print(f"\nAction Name: {op_result.task_name}")
                 print(f"Action Status: {op_result.status}")
                 print(f"Kind: {op_result.kind}")
-                for doc in (op_result.results.documents or []):
+                for doc in op_result.results.documents or []:
                     print(f"Document ID: {doc.id}")
-                    for entity in (doc.entities or []):
+                    for entity in doc.entities or []:
                         print(f"  Text: {entity.text}")
                         print(f"  Category: {entity.category}")
                         print(f"  Offset: {entity.offset}, Length: {entity.length}")
                         print(f"  Confidence score: {entity.confidence_score}\n")
+
 
 # [END text_custom_entities]
 

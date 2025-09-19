@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, overload
 
 from azure.core.pipeline import PipelineResponse
@@ -26,9 +26,7 @@ from ._operations import ExportedModelOperations as ExportedModelOperationsGener
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ExportedModelOperations(ExportedModelOperationsGenerated):
@@ -98,7 +96,12 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
 
     @distributed_trace_async
     async def begin_create_or_update_exported_model(
-        self, exported_model_name: str, body: Union[ExportedModelDetails, JSON, IO[bytes]], *, content_type: str = "application/json",**kwargs: Any
+        self,
+        exported_model_name: str,
+        body: Union[ExportedModelDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a new exported model or replaces an existing one.
 
@@ -120,9 +123,7 @@ class ExportedModelOperations(ExportedModelOperationsGenerated):
         )
 
     @distributed_trace_async
-    async def begin_delete_exported_model(
-        self, exported_model_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete_exported_model(self, exported_model_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes an existing exported model.
 
         :param exported_model_name: The exported model name. Required.

@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,7 +9,7 @@ from collections.abc import MutableMapping
 import datetime
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import MatchConditions, PipelineClient
@@ -39,7 +38,7 @@ from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -167,8 +166,6 @@ def build_online_experimentation_delete_metric_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-31-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/experiment-metrics/{experimentMetricId}"
     path_format_arguments = {
@@ -185,7 +182,6 @@ def build_online_experimentation_delete_metric_request(  # pylint: disable=name-
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -223,7 +219,7 @@ def build_online_experimentation_list_metrics_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+class _OnlineExperimentationClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], OnlineExperimentationClientConfiguration]
 ):
 
@@ -783,7 +779,7 @@ class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-lo
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ExperimentMetric]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ExperimentMetric]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -835,7 +831,7 @@ class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-lo
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExperimentMetric], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.ExperimentMetric], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

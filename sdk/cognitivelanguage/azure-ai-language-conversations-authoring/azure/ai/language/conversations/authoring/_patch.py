@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
@@ -36,9 +36,8 @@ if TYPE_CHECKING:
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
 
@@ -51,7 +50,7 @@ class ConversationAuthoringProjectClient(AuthoringProjectClientGenerated):
     #: Trained model operations group
     trained_model: TrainedModelOperations
 
-    def __init__( # pylint: disable=super-init-not-called
+    def __init__(  # pylint: disable=super-init-not-called
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, "TokenCredential"],
@@ -159,7 +158,9 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         )
 
     @distributed_trace
-    def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[None]: # pylint: disable=delete-operation-wrong-return-type
+    def begin_delete_project(
+        self, project_name: str, **kwargs: Any
+    ) -> LROPoller[None]:  # pylint: disable=delete-operation-wrong-return-type
         """Deletes a project.
 
         :param project_name: The name of the project to delete. Required.
@@ -168,9 +169,7 @@ class ConversationAuthoringClient(AuthoringClientGenerated):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return super()._begin_delete_project(
-            project_name=project_name, **kwargs
-        )
+        return super()._begin_delete_project(project_name=project_name, **kwargs)
 
 
 def patch_sdk():

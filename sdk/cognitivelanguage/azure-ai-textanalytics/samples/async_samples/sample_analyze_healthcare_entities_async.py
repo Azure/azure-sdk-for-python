@@ -102,12 +102,12 @@ async def sample_analyze_healthcare_entities_async():
                     print(f"Kind: {op_result.kind}")
 
                     hc_result = op_result.results
-                    for doc in (hc_result.documents or []):
+                    for doc in hc_result.documents or []:
                         print(f"\nDocument ID: {doc.id}")
 
                         # Entities
                         print("Entities:")
-                        for entity in (doc.entities or []):
+                        for entity in doc.entities or []:
                             print(f"  Text: {entity.text}")
                             print(f"  Category: {entity.category}")
                             print(f"  Offset: {entity.offset}")
@@ -121,9 +121,9 @@ async def sample_analyze_healthcare_entities_async():
 
                         # Relations
                         print("Relations:")
-                        for relation in (doc.relations or []):
+                        for relation in doc.relations or []:
                             print(f"  Relation type: {relation.relation_type}")
-                            for rel_entity in (relation.entities or []):
+                            for rel_entity in relation.entities or []:
                                 print(f"    Role: {rel_entity.role}")
                                 print(f"    Ref: {rel_entity.ref}")
                             print()
@@ -136,6 +136,8 @@ async def sample_analyze_healthcare_entities_async():
                         )
                     except Exception:
                         print("\n[Other action present]")
+
+
 # [END analyze_healthcare_entities_async]
 
 
