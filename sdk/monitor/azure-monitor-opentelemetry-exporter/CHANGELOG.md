@@ -3,6 +3,8 @@
 ## 1.0.0b43 (Unreleased)
 
 ### Features Added
+- Adding customer sdkstats to feature statsbeat
+  ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
 
 ### Breaking Changes
 
