@@ -13,7 +13,7 @@
 
 [Source code][text_authoring_client_src]
 | [Package (PyPI)][text_authoring_pypi_package]
-| [API reference][api_reference_text_authoring]
+| [API reference][api_reference_authoring]
 | [Samples][text_authoring_samples]
 | [Product docs][text_authoring_docs]
 | [REST API docs][text_authoring_restdocs]
