@@ -135,9 +135,9 @@ async def sample_text_extractive_summarization_async():
                     print(f"Kind: {op_result.kind}")
 
                     result = op_result.results
-                    for doc in (result.documents or []):
+                    for doc in result.documents or []:
                         print(f"\nDocument ID: {doc.id}")
-                        for sent in (doc.sentences or []):
+                        for sent in doc.sentences or []:
                             # Each sentence is part of the extractive summary
                             print(f"  Sentence: {sent.text}")
                             print(f"    Rank score: {sent.rank_score}")
@@ -151,6 +151,8 @@ async def sample_text_extractive_summarization_async():
                         )
                     except Exception:
                         print("\n[Other action present]")
+
+
 # [END text_extractive_summarization_async]
 
 

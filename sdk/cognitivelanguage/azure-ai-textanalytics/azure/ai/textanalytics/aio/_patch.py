@@ -40,6 +40,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+
 class AnalyzeTextAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Generic[PollingReturnType_co]):
     """Custom **async** poller that returns ``PollingReturnType_co`` and exposes operation metadata."""
 
@@ -62,9 +63,9 @@ class AnalyzeTextAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Generic[Po
         :rtype: Mapping[str, Any]
         """
         try:
-            headers = (
-                getattr(self.polling_method(), "_initial_response").http_response.headers  # type: ignore[attr-defined]
-            )
+            headers = getattr(
+                self.polling_method(), "_initial_response"
+            ).http_response.headers  # type: ignore[attr-defined]
             op_loc = headers.get("Operation-Location") or headers.get("operation-location")
         except (AttributeError, TypeError):
             op_loc = None
@@ -98,6 +99,7 @@ class AnalyzeTextAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Generic[Po
             continuation_token, **kwargs
         )
         return cls(client, initial_response, deserialization_callback, polling_method)
+
 
 class TextAnalysisClient(AnalysisTextClientGenerated):
     """**Async** client for Text Analysis APIs."""
@@ -155,7 +157,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword cancel_after: Optional duration in seconds after which the job will be canceled if not
          completed. Default value is ``None``.
         :paramtype cancel_after: float
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via
          ``.details``.
         :rtype: ~azure.ai.textanalytics.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.textanalytics.models.TextActions]]
@@ -174,7 +176,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is ``"application/json"``.
         :paramtype content_type: str
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via
          ``.details``.
         :rtype: ~azure.ai.textanalytics.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.textanalytics.models.TextActions]]
@@ -193,7 +195,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is ``"application/json"``.
         :paramtype content_type: str
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via
          ``.details``.
         :rtype: ~azure.ai.textanalytics.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.textanalytics.models.TextActions]]
@@ -229,7 +231,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         :keyword cancel_after: Optional duration in seconds after which the job will be canceled if not
          completed. Default value is ``None``.
         :paramtype cancel_after: float
-        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via 
+        :return: A poller whose ``result()`` yields ``AsyncItemPaged[TextActions]`` and exposes metadata via
          ``.details``.
         :rtype: ~azure.ai.textanalytics.AnalyzeTextAsyncLROPoller[
                 ~azure.core.async_paging.AsyncItemPaged[~azure.ai.textanalytics.models.TextActions]]
@@ -239,9 +241,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        polling: Union[
-            bool, AsyncPollingMethod[AsyncItemPaged["TextActions"]]
-        ] = kwargs.pop("polling", True)
+        polling: Union[bool, AsyncPollingMethod[AsyncItemPaged["TextActions"]]] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         cls: ClsType[AsyncItemPaged["TextActions"]] = kwargs.pop("cls", None)
@@ -287,7 +287,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 op_state = AnalyzeTextOperationState(data)
 
                 poller_ref = poller_holder["poller"]
-                poller_ref._record_state_for_details(op_state) # pylint:disable=protected-access
+                poller_ref._record_state_for_details(op_state)  # pylint:disable=protected-access
 
                 paged = _build_pager_from_state(op_state)
                 return cls(pipeline_response, paged, {}) if cls else paged
@@ -309,7 +309,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 continuation_token=cont_token,
             )
 
-        initial_kwargs = dict( # pylint:disable=use-dict-literal
+        initial_kwargs = dict(  # pylint:disable=use-dict-literal
             text_input=text_input,
             actions=actions,
             display_name=display_name,
@@ -333,6 +333,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         poller_holder["poller"] = lro
         return lro
 
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -340,5 +341,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
 
 __all__ = ["TextAnalysisClient", "AnalyzeTextAsyncLROPoller"]

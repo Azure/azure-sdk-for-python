@@ -15,14 +15,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import OnlineExperimentationClientConfiguration
-from ._operations import OnlineExperimentationClientOperationsMixin
+from ._operations import _OnlineExperimentationClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class OnlineExperimentationClient(OnlineExperimentationClientOperationsMixin):
+class OnlineExperimentationClient(_OnlineExperimentationClientOperationsMixin):
     """OnlineExperimentationClient.
 
     :param endpoint: Endpoint URL for the Online Experimentation workspace. Required.
