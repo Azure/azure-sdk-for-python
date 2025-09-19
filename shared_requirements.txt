@@ -81,3 +81,5 @@ python-dotenv
 pyrit
 prompty
 Jinja2
+azure-ai-language-conversations
+azure-ai-textanalytics

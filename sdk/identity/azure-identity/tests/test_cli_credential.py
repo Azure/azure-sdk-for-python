@@ -401,8 +401,9 @@ def test_multitenant_authentication_not_allowed(get_token_method):
 def test_claims_challenge_raises_error(get_token_method):
     """The credential should raise CredentialUnavailableError when claims challenge is provided"""
 
-    claims = "test-claims-challenge"
-    expected_command = f"az login --claims-challenge {claims} --scope scope"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
+    expected_command = f"az login --claims-challenge {expected_encoded_claims} --scope scope"
 
     credential = AzureCliCredential()
     with pytest.raises(CredentialUnavailableError, match=re.escape(expected_command)):
@@ -446,9 +447,10 @@ def test_empty_claims_does_not_raise_error(get_token_method):
 def test_claims_challenge_with_tenant(get_token_method):
     """The credential should include tenant in the error message when claims and tenant are provided"""
 
-    claims = "test-claims-challenge"
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
     tenant_id = "test-tenant-id"
-    expected_command = f"az login --claims-challenge {claims} --tenant {tenant_id} --scope scope"
+    expected_command = f"az login --claims-challenge {expected_encoded_claims} --tenant {tenant_id} --scope scope"
 
     credential = AzureCliCredential()
     with pytest.raises(CredentialUnavailableError, match=re.escape(expected_command)):

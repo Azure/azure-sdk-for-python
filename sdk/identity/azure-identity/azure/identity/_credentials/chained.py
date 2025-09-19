@@ -47,7 +47,7 @@ class ChainedTokenCredential:
     <"https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview">`__.
 
     :param credentials: credential instances to form the chain
-    :type credentials: ~azure.core.credentials.TokenCredential
+    :type credentials: ~azure.core.credentials.TokenProvider
 
     .. admonition:: Example:
 

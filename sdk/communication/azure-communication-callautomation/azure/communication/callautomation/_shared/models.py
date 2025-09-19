@@ -157,14 +157,16 @@ class PhoneNumberIdentifier:
         is_anonymous: bool
 
         if raw_id is not None:
-            phone_number = raw_id[len(PHONE_NUMBER_PREFIX):]
+            phone_number = raw_id[len(PHONE_NUMBER_PREFIX) :]
             is_anonymous = phone_number == PHONE_NUMBER_ANONYMOUS_SUFFIX
             asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
             has_asserted_id = 0 < asserted_id_index < len(phone_number)
-            props = {"value": value, "is_anonymous": is_anonymous}
             if has_asserted_id:
-                props["asserted_id"] = phone_number[asserted_id_index:]
-            self.properties = PhoneNumberProperties(**props)  # type: ignore
+                self.properties = PhoneNumberProperties(
+                    value=value, is_anonymous=is_anonymous, asserted_id=phone_number[asserted_id_index:]
+                )
+            else:
+                self.properties = PhoneNumberProperties(value=value, is_anonymous=is_anonymous)
         else:
             self.properties = PhoneNumberProperties(value=value)
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
@@ -182,6 +184,7 @@ class PhoneNumberIdentifier:
         # validation should only happen server-side, not client-side.
         value = properties["value"]
         return f"{PHONE_NUMBER_PREFIX}{value}"
+
 
 class UnknownIdentifier:
     """Represents an identifier of an unknown type.
@@ -389,14 +392,7 @@ class TeamsExtensionUserIdentifier:
     raw_id: str
     """The raw ID of the identifier."""
 
-    def __init__(
-        self,
-        *,
-        user_id: str,
-        tenant_id: str,
-        resource_id: str,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, user_id: str, tenant_id: str, resource_id: str, **kwargs: Any) -> None:
         """
         :param str user_id: Teams extension user id.
         :param str tenant_id: Tenant id associated with the user.
@@ -434,6 +430,7 @@ class TeamsExtensionUserIdentifier:
             prefix = ACS_USER_PREFIX
         return f"{prefix}{properties['resource_id']}_{properties['tenant_id']}_{properties['user_id']}"
 
+
 def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsExtensionUserIdentifier]:
     segments = suffix.split("_")
     if len(segments) != 3:
@@ -448,6 +445,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
     else:
         raise ValueError("Invalid MRI")
     return TeamsExtensionUserIdentifier(user_id=user_id, tenant_id=tenant_id, resource_id=resource_id, cloud=cloud)
+
 
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """

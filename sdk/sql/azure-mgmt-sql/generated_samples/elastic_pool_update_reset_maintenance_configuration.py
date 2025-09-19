@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/ElasticPoolUpdateResetMaintenanceConfiguration.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/ElasticPoolUpdateResetMaintenanceConfiguration.json
 if __name__ == "__main__":
     main()
