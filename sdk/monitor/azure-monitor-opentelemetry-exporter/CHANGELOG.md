@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Performance Counters
+  ([#43024](https://github.com/Azure/azure-sdk-for-python/pull/43024))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -21,7 +24,7 @@
   ([#42542](https://github.com/Azure/azure-sdk-for-python/pull/42542))
 - Customer Facing SDKStats: Added the export interval env var for customer sdkstats
   ([#42551](https://github.com/Azure/azure-sdk-for-python/pull/42551))
-- Rename Customer Statsbeat to Customer SDKStats as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581
+- Rename Customer Statsbeat to Customer SDKStats as per [Spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/581#issuecomment-3165624749)
   ([#42573](https://github.com/Azure/azure-sdk-for-python/pull/42573))
 - Customer Facing SDKStats: Exception categorization as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/blob/main/ApplicationInsights/sdkstats/customer_facing_sdk_stats.md
   ([#42695](https://github.com/Azure/azure-sdk-for-python/pull/42695))
