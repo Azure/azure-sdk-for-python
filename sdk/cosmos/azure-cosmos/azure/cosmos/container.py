@@ -155,7 +155,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             return None
         return cast(Union[str, int, float, bool, List[Union[str, int, float, bool]]], partition_key)
 
-    def __get_client_container_caches(self) -> Dict[str, Dict[str, Any]]:
+    def __get_client_container_caches(self) -> Dict[str, dict[str, Any]]:
         return self.client_connection._container_properties_cache
 
     @distributed_trace
@@ -169,7 +169,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :param bool populate_partition_key_range_statistics: Enable returning partition key
