@@ -1173,7 +1173,11 @@
         "nbconvert",
         "rollupby",
         "milli",
-        "resourceid"
+        "resourceid",
+        "Exceps",
+        "processiorate",
+        "iowait",
+        "softirq"
       ]
     },
     {
@@ -1193,7 +1197,8 @@
         "psutil",
         "psycopg",
         "uninstrument",
-        "uninstrumented"
+        "uninstrumented",
+        "scputimes"
       ]
     },
     {
