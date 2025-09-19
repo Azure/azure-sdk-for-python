@@ -39,9 +39,7 @@ def test_application_claim_init_with_valid_arguments():
             ),
         )
     except Exception as e:
-        pytest.fail(
-            f"ApplicationClaim __init__ threw an exception with a valid claim {e}"
-        )
+        pytest.fail(f"ApplicationClaim __init__ threw an exception with a valid claim {e}")
 
 
 def test_application_claim_init_with_missing_optional_arguments():
@@ -58,9 +56,7 @@ def test_application_claim_init_with_missing_optional_arguments():
             ),
         )
     except Exception as e:
-        pytest.fail(
-            f"ApplicationClaim __init__ threw an exception with a valid claim {e}"
-        )
+        pytest.fail(f"ApplicationClaim __init__ threw an exception with a valid claim {e}")
 
 
 def test_application_claim_init_throws_exceptions_with_missing_required_fields():
