@@ -45,6 +45,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     def __init__(self, **kwargs: Any) -> None:
         super().__init__()
 
+        self._skip_probe_in_chain = kwargs.pop("_skip_probe_in_chain", False)
         kwargs["retry_policy_class"] = AsyncImdsRetryPolicy
         self._client = AsyncManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **kwargs))
         if EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST in os.environ:
@@ -65,7 +66,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
 
-        if within_credential_chain.get() and not self._endpoint_available:
+        if within_credential_chain.get() and not self._endpoint_available and not self._skip_probe_in_chain:
             # If within a chain (e.g. DefaultAzureCredential), we do a quick check to see if the IMDS endpoint
             # is available to avoid hanging for a long time if the endpoint isn't available.
             try:
