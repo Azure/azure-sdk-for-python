@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional, Callable, Union, Dict
+from typing import Any, Optional, Callable, Union, Dict, List
 
 import msal
 
@@ -83,6 +83,9 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         user_assertion: str,
         password: Optional[Union[bytes, str]] = None,
         send_certificate_chain: bool = False,
+        authority: Optional[str] = None,
+        disable_instance_discovery: Optional[bool] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         self._assertion = user_assertion
@@ -118,7 +121,13 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
             raise TypeError('Either "client_certificate", "client_secret", or "client_assertion_func" must be provided')
 
         super(OnBehalfOfCredential, self).__init__(
-            client_id=client_id, client_credential=credential, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=credential,
+            tenant_id=tenant_id,
+            authority=authority,
+            disable_instance_discovery=disable_instance_discovery,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
         )
         self._auth_record: Optional[AuthenticationRecord] = None
 

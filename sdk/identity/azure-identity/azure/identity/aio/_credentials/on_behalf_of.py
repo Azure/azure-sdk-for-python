@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Optional, Union, Any, Dict, Callable
+from typing import Optional, Union, Any, Dict, Callable, List
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessTokenInfo
@@ -69,6 +69,8 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         client_assertion_func: Optional[Callable[[], str]] = None,
         user_assertion: str,
         password: Optional[Union[str, bytes]] = None,
+        authority: Optional[str] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         super().__init__()
@@ -102,7 +104,13 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
             raise TypeError('Either "client_certificate", "client_secret", or "client_assertion_func" must be provided')
 
         # note AadClient handles "authority" and any pipeline kwargs
-        self._client = AadClient(tenant_id, client_id, **kwargs)
+        self._client = AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
 
     async def __aenter__(self) -> "OnBehalfOfCredential":
         await self._client.__aenter__()

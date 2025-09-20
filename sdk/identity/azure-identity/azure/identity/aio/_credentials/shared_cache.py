@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, cast
+from typing import Any, Optional, cast, TYPE_CHECKING
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._internal.aad_client import AadClientBase
 from ... import CredentialUnavailableError
@@ -12,6 +12,9 @@ from ..._internal.utils import within_dac
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
 from .._internal.decorators import log_get_token_async
+
+if TYPE_CHECKING:
+    from ..._persistent_cache import TokenCachePersistenceOptions
 
 
 class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
@@ -30,6 +33,23 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         will use the persistent cache shared by Microsoft development applications
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
+
+    def __init__(
+        self,
+        username: Optional[str] = None,
+        *,
+        tenant_id: Optional[str] = None,
+        authority: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        **kwargs: Any,
+    ) -> None:
+        super().__init__(
+            username=username,
+            tenant_id=tenant_id,
+            authority=authority,
+            cache_persistence_options=cache_persistence_options,
+            **kwargs,
+        )
 
     async def __aenter__(self) -> "SharedTokenCacheCredential":
         if self._client:

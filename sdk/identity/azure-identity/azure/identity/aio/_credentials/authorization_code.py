@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any, cast
+from typing import Optional, Any, cast, List
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
@@ -58,13 +58,21 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         authorization_code: str,
         redirect_uri: str,
         *,
+        authority: Optional[str] = None,
         client_secret: Optional[str] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
         self._client_secret = client_secret
-        self._client = kwargs.pop("client", None) or AadClient(tenant_id, client_id, **kwargs)
+        self._client = kwargs.pop("client", None) or AadClient(
+            tenant_id,
+            client_id,
+            authority=authority,
+            additionally_allowed_tenants=additionally_allowed_tenants,
+            **kwargs
+        )
         self._redirect_uri = redirect_uri
         super().__init__()
 
