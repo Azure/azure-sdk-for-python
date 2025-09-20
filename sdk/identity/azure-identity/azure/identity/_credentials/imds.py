@@ -82,6 +82,7 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
 
 class ImdsCredential(MsalManagedIdentityClient):
     def __init__(self, **kwargs: Any) -> None:
+        self._skip_probe_in_chain = kwargs.pop("_skip_probe_in_chain", False)
         super().__init__(retry_policy_class=ImdsRetryPolicy, **dict(PIPELINE_SETTINGS, **kwargs))
         self._config = kwargs
 
@@ -101,8 +102,7 @@ class ImdsCredential(MsalManagedIdentityClient):
         self.__exit__()
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-
-        if within_credential_chain.get() and not self._endpoint_available:
+        if within_credential_chain.get() and not self._endpoint_available and not self._skip_probe_in_chain:
             # If within a chain (e.g. DefaultAzureCredential), we do a quick check to see if the IMDS endpoint
             # is available to avoid hanging for a long time if the endpoint isn't available.
             try:
