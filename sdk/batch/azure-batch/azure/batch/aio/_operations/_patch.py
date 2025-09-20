@@ -17,12 +17,6 @@ from azure.batch import models as _models
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     HttpResponseError,
-    ResourceNotFoundError,
-    ClientAuthenticationError,
-    ResourceExistsError,
-    ResourceNotModifiedError,
-    ResourceModifiedError,
-    map_error,
 )
 from azure.core.polling import AsyncLROPoller
 from azure.core.rest import HttpResponse, HttpRequest
@@ -125,7 +119,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         """
 
         def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
-                return pipeline_response
+            return pipeline_response
 
         # cast otherwise mypy complains about incompatible return type
         pipeline_response = cast(
@@ -146,7 +140,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         polling_method = DeleteJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
         # redundant but needed to fix pylint errors in the polling method code
-        return AsyncLROPoller(self, pipeline_response, None, polling_method, **kwargs)
+        return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
     async def begin_disable_job(
@@ -225,7 +219,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = DisableJobPollingMethodAsync(job_id, polling_interval)
+        polling_method = DisableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -298,7 +292,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = EnableJobPollingMethodAsync(job_id, polling_interval)
+        polling_method = EnableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -372,7 +366,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = DeleteJobSchedulePollingMethodAsync(job_schedule_id, polling_interval)
+        polling_method = DeleteJobSchedulePollingMethodAsync(
+            self, pipeline_response, None, job_schedule_id, polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -434,7 +430,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -452,7 +448,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = DeletePoolPollingMethodAsync(pool_id, polling_interval)
+        polling_method = DeletePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -496,7 +492,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -511,7 +507,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = DeleteCertificatePollingMethodAsync(thumbprint_algorithm, thumbprint, polling_interval)
+        polling_method = DeleteCertificatePollingMethodAsync(
+            self, pipeline_response, None, thumbprint_algorithm, thumbprint, polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -549,7 +547,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -565,7 +563,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = DeallocateNodePollingMethodAsync(pool_id, node_id, polling_interval)
+        polling_method = DeallocateNodePollingMethodAsync(
+            self, pipeline_response, None, pool_id, node_id, polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -603,7 +603,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -619,7 +619,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = RebootNodePollingMethodAsync(pool_id, node_id, polling_interval)
+        polling_method = RebootNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -661,7 +661,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -677,7 +677,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = ReimageNodePollingMethodAsync(pool_id, node_id, polling_interval)
+        polling_method = ReimageNodePollingMethodAsync(
+            self, pipeline_response, None, pool_id, node_id, polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -733,7 +735,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -752,7 +754,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = RemoveNodePollingMethodAsync(pool_id, polling_interval)
+        polling_method = RemoveNodePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -812,7 +814,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -831,7 +833,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = ResizePoolPollingMethodAsync(pool_id, polling_interval)
+        polling_method = ResizePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -866,7 +868,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -881,7 +883,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = StartNodePollingMethodAsync(pool_id, node_id, polling_interval)
+        polling_method = StartNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -938,7 +940,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -956,7 +958,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = StopPoolResizePollingMethodAsync(pool_id, polling_interval)
+        polling_method = StopPoolResizePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1019,7 +1021,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -1039,7 +1041,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = TerminateJobPollingMethodAsync(job_id, polling_interval)
+        polling_method = TerminateJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1093,7 +1095,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
         pipeline_response = cast(
@@ -1112,7 +1114,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             )
         )
 
-        polling_method = TerminateJobSchedulePollingMethodAsync(job_schedule_id, polling_interval)
+        polling_method = TerminateJobSchedulePollingMethodAsync(
+            self, pipeline_response, lambda _: None, job_schedule_id, polling_interval
+        )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     # create_task_collection renamed
