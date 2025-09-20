@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Callable, Deque, List, Optional, Iterable, Iterator
+from typing import Any, Callable, cast, Deque, List, Optional, Iterable, Iterator
 import collections
 import logging
 import threading
@@ -120,23 +120,26 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._delete_job_internal(
-            job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            force=force,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_job_internal(
+                job_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = DeleteJobPollingMethod(job_id, polling_interval)
+        polling_method = DeleteJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -197,23 +200,26 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._disable_job_internal(
-            job_id,
-            disable_options=disable_options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._disable_job_internal(
+                job_id,
+                disable_options=disable_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = DisableJobPollingMethod(job_id, polling_interval)
+        polling_method = DisableJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -268,22 +274,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._enable_job_internal(
-            job_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._enable_job_internal(
+                job_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = EnableJobPollingMethod(job_id, polling_interval)
+        polling_method = EnableJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -339,22 +348,27 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._delete_job_schedule_internal(
-            job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_job_schedule_internal(
+                job_schedule_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = DeleteJobSchedulePollingMethod(job_schedule_id, polling_interval)
+        polling_method = DeleteJobSchedulePollingMethod(
+            self, pipeline_response, None, job_schedule_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -416,22 +430,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._delete_pool_internal(
-            pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_pool_internal(
+                pool_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = DeletePoolPollingMethod(pool_id, polling_interval)
+        polling_method = DeletePoolPollingMethod(self, pipeline_response, None, pool_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -475,19 +492,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._delete_certificate_internal(
-            thumbprint_algorithm,
-            thumbprint,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._delete_certificate_internal(
+                thumbprint_algorithm,
+                thumbprint,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = DeleteCertificatePollingMethod(thumbprint_algorithm, thumbprint, polling_interval)
+        polling_method = DeleteCertificatePollingMethod(
+            self, pipeline_response, None, thumbprint_algorithm, thumbprint, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -525,20 +547,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._deallocate_node_internal(
-            pool_id,
-            node_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._deallocate_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = DeallocateNodePollingMethod(pool_id, node_id, polling_interval)
+        polling_method = DeallocateNodePollingMethod(
+            self, pipeline_response, None, pool_id, node_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -576,20 +603,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._reboot_node_internal(
-            pool_id,
-            node_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._reboot_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = RebootNodePollingMethod(pool_id, node_id, polling_interval)
+        polling_method = RebootNodePollingMethod(
+            self, pipeline_response, None, pool_id, node_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -631,20 +663,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._reimage_node_internal(
-            pool_id,
-            node_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._reimage_node_internal(
+                pool_id,
+                node_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = ReimageNodePollingMethod(pool_id, node_id, polling_interval)
+        polling_method = ReimageNodePollingMethod(
+            self, pipeline_response, None, pool_id, node_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -700,23 +737,28 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._remove_nodes_internal(
-            pool_id,
-            remove_options=remove_options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._remove_nodes_internal(
+                pool_id,
+                remove_options=remove_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = RemoveNodePollingMethod(pool_id, polling_interval)
+        polling_method = RemoveNodePollingMethod(
+            self, pipeline_response, None, pool_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -776,23 +818,28 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._resize_pool_internal(
-            pool_id,
-            resize_options=resize_options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._resize_pool_internal(
+                pool_id,
+                resize_options=resize_options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = ResizePoolPollingMethod(pool_id, polling_interval)
+        polling_method = ResizePoolPollingMethod(
+            self, pipeline_response, None, pool_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -827,19 +874,24 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._start_node_internal(
-            pool_id,
-            node_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._start_node_internal(
+                pool_id,
+                node_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = StartNodePollingMethod(pool_id, node_id, polling_interval)
+        polling_method = StartNodePollingMethod(
+            self, pipeline_response, None, pool_id, node_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -896,22 +948,25 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._stop_pool_resize_internal(
-            pool_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._stop_pool_resize_internal(
+                pool_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = StopPoolResizePollingMethod(pool_id, polling_interval)
+        polling_method = StopPoolResizePollingMethod(self, pipeline_response, None, pool_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -974,24 +1029,27 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._terminate_job_internal(
-            job_id,
-            options=options,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            force=force,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._terminate_job_internal(
+                job_id,
+                options=options,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = TerminateJobPollingMethod(job_id, polling_interval)
+        polling_method = TerminateJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1045,23 +1103,28 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        def capture_pipeline_response(pipeline_response, deserialized, response_headers):
+        def capture_pipeline_response(pipeline_response, _deserialized, _response_headers):
             return pipeline_response
 
-        pipeline_response = self._terminate_job_schedule_internal(
-            job_schedule_id,
-            timeout=timeout,
-            ocpdate=ocpdate,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            force=force,
-            etag=etag,
-            match_condition=match_condition,
-            cls=capture_pipeline_response,
-            **kwargs,
+        pipeline_response = cast(
+            PipelineResponse,
+            self._terminate_job_schedule_internal(
+                job_schedule_id,
+                timeout=timeout,
+                ocpdate=ocpdate,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                force=force,
+                etag=etag,
+                match_condition=match_condition,
+                cls=capture_pipeline_response,
+                **kwargs,
+            )
         )
 
-        polling_method = TerminateJobSchedulePollingMethod(job_schedule_id, polling_interval)
+        polling_method = TerminateJobSchedulePollingMethod(
+            self, pipeline_response, None, job_schedule_id, polling_interval
+        )
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     # create_task_collection renamed

@@ -23,58 +23,34 @@ class DeleteJobPollingMethod(PollingMethod):
     It checks the status of the job until it is deleted or an error occurs.
     """
 
-    def __init__(self, job_id: str, polling_interval: int = 5):
-        # remove client to keep in initialize
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._job_id = job_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -91,7 +67,7 @@ class DeleteJobPollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -122,57 +98,34 @@ class DisableJobPollingMethod(PollingMethod):
     It checks the status of the job until it is disabled or an error occurs.
     """
 
-    def __init__(self, job_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
+        self._status = "InProgress"
+        self._finished = False
         self._job_id = job_id
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -189,7 +142,7 @@ class DisableJobPollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -217,57 +170,34 @@ class EnableJobPollingMethod(PollingMethod):
     It checks the status of the job until it is enabled or an error occurs.
     """
 
-    def __init__(self, job_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._job_id = job_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -284,7 +214,7 @@ class EnableJobPollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -312,29 +242,26 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
     It checks the status of the job schedule until it is deleted or an error occurs.
     """
 
-    def __init__(self, job_schedule_id: str, polling_interval: int = 5):
-        # remove client to keep in initialize
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_schedule_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._job_schedule_id = job_schedule_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
         """Should return the current status as a string. The initial status is set by
@@ -348,39 +275,21 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
 
     def run(self) -> None:
-        """The polling loop.
-
-        The polling should call the status monitor, evaluate and set the current status,
-        insert delay between polls, and continue polling until a terminal state is reached.
-        """
         while not self.finished():
             self.update_status()
             if not self.finished():
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -407,58 +316,34 @@ class DeletePoolPollingMethod(PollingMethod):
     It checks the status of the pool until it is deleted or an error occurs.
     """
 
-    def __init__(self, pool_id: str, polling_interval: int = 5):
-        # remove client to keep in initialize
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -475,7 +360,7 @@ class DeletePoolPollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -503,75 +388,48 @@ class DeleteCertificatePollingMethod(PollingMethod):
     It checks the status of the certificate until it is deleted or an error occurs.
     """
 
-    def __init__(self, thumbprint_algorithm: str, thumbprint: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            thumbprint_algorithm: str,
+            thumbprint: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._thumbprint_algorithm = thumbprint_algorithm
         self._thumbprint = thumbprint
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
-
+        pass
+   
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
 
     def run(self) -> None:
-        """The polling loop.
-
-        The polling should call the status monitor, evaluate and set the current status,
-        insert delay between polls, and continue polling until a terminal state is reached.
-        """
         while not self.finished():
             self.update_status()
             if not self.finished():
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -599,58 +457,36 @@ class DeallocateNodePollingMethod(PollingMethod):
     It checks the status of the node until it is deallocated or an error occurs.
     """
 
-    def __init__(self, pool_id: str, node_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            node_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
         self._node_id = node_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -667,7 +503,7 @@ class DeallocateNodePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -696,58 +532,36 @@ class RebootNodePollingMethod(PollingMethod):
     It checks the status of the node until it is rebooted or an error occurs.
     """
 
-    def __init__(self, pool_id: str, node_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            node_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
         self._node_id = node_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -764,7 +578,7 @@ class RebootNodePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -792,58 +606,36 @@ class ReimageNodePollingMethod(PollingMethod):
     It checks the status of the node until it is reimaged or an error occurs.
     """
 
-    def __init__(self, pool_id: str, node_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            node_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
         self._node_id = node_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -860,7 +652,7 @@ class ReimageNodePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -888,57 +680,34 @@ class RemoveNodePollingMethod(PollingMethod):
     It checks the status of the node until it is removed or an error occurs.
     """
 
-    def __init__(self, pool_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -955,7 +724,7 @@ class RemoveNodePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -984,57 +753,34 @@ class ResizePoolPollingMethod(PollingMethod):
     It checks the status of the pool until it is resized or an error occurs.
     """
 
-    def __init__(self, pool_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -1051,7 +797,7 @@ class ResizePoolPollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -1080,58 +826,36 @@ class StartNodePollingMethod(PollingMethod):
     It checks the status of the node until it is started or an error occurs.
     """
 
-    def __init__(self, pool_id: str, node_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            node_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
         self._node_id = node_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -1148,7 +872,7 @@ class StartNodePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -1176,57 +900,34 @@ class StopPoolResizePollingMethod(PollingMethod):
     It checks the status of the pool until it is stopped or an error occurs.
     """
 
-    def __init__(self, pool_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            pool_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._pool_id = pool_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -1243,7 +944,7 @@ class StopPoolResizePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -1272,57 +973,34 @@ class TerminateJobPollingMethod(PollingMethod):
     It checks the status of the job until it is terminated or an error occurs.
     """
 
-    def __init__(self, job_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._job_id = job_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -1339,7 +1017,7 @@ class TerminateJobPollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
@@ -1367,57 +1045,34 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
     It checks the status of the job schedule until it is terminated or an error occurs.
     """
 
-    def __init__(self, job_schedule_id: str, polling_interval: int = 5):
+    def __init__(
+            self,
+            client: Any,
+            initial_response: PipelineResponse,
+            deserialization_callback: Optional[Callable],
+            job_schedule_id: str,
+            polling_interval: int = 5
+        ):
+        self._client = client
+        self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
         self._job_schedule_id = job_schedule_id
+        self._status = "InProgress"
+        self._finished = False
         self._polling_interval = polling_interval
 
     def initialize(
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
-        """Set the initial status of this LRO, verify that we can poll, and
-        initialize anything necessary for polling.
-
-        :param client: An instance of a client. In this example, the generated client.
-        :param initial_response: In this example, the PipelineResponse returned from the initial call.
-        :param deserialization_callback: A callable to transform the final result before returning to the end user.
-        """
-
-        # double checking the 202 (server accepted)
-
-        self._client = client
-        self._initial_response = initial_response
-        self._deserialization_callback = deserialization_callback
-        self._status = "InProgress"
-        self._finished = False
+        pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
-        """Is this polling finished?
-        Controls whether the polling loop should continue to poll.
-
-        :returns: Return True if the operation has reached a terminal state
-            or False if polling should continue.
-        :rtype: bool
-        """
         return self._finished
 
     def resource(self) -> Optional[Any]:
-        """Return the built resource.
-        This is what is returned when to the user when result() is called on the LROPoller.
-
-        This might include a deserialization callback (passed in initialize())
-        to transform or customize the final result, if necessary.
-        """
         if self._deserialization_callback and self._finished:
             return self._deserialization_callback()
         return None
@@ -1434,7 +1089,7 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
                 # add a delay if not done
                 time.sleep(self._polling_interval)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """Update the current status of the LRO by calling the status monitor
         and then using the polling strategy's get_status() to set the status."""
         try:
