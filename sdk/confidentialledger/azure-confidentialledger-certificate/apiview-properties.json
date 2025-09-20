@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": "ConfidentialLedgerCertificate",
+    "CrossLanguageDefinitionId": {
+        "azure.confidentialledger.certificate.models.ConfidentialLedgerError": "ConfidentialLedgerCommon.ConfidentialLedgerError",
+        "azure.confidentialledger.certificate.models.ConfidentialLedgerErrorBody": "ConfidentialLedgerCommon.ConfidentialLedgerErrorBody",
+        "azure.confidentialledger.certificate.models.LedgerIdentityInformation": "ConfidentialLedgerCertificate.LedgerIdentityInformation",
+        "azure.confidentialledger.certificate.ConfidentialLedgerCertificateClient.get_ledger_identity": "ConfidentialLedgerCertificate.getLedgerIdentity",
+        "azure.confidentialledger.certificate.aio.ConfidentialLedgerCertificateClient.get_ledger_identity": "ConfidentialLedgerCertificate.getLedgerIdentity"
+    }
+}
