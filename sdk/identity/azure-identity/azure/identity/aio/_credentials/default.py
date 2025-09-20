@@ -231,10 +231,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except ValueError as ex:
                 credentials.append(AsyncFailedDACCredential("WorkloadIdentityCredential", error=str(ex)))
         if not exclude_managed_identity_credential:
+            managed_identity_only = all(value for cred, value in exclude_flags.items() if cred != "managed_identity")
             credentials.append(
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
+                    _skip_probe_in_chain=managed_identity_only,
                     **kwargs,
                 )
             )
