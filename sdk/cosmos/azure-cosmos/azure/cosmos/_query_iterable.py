@@ -118,9 +118,6 @@ class QueryIterable(PageIterator):
                 raise exceptions.CosmosClientTimeoutError()
 
         block = self._ex_context.fetch_next_block()
-
-
-
         if not block:
             raise StopIteration
         return block

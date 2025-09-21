@@ -67,12 +67,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     """
     # Capture the client timeout and start time at the beginning
     timeout = kwargs.get('timeout')
-    operation_start_time = kwargs.get(_Constants.OperationStartTime)
-
-    # this is just to satisfy python interpreter, operation_start_time will always be there
-    if timeout and operation_start_time is None:
-        operation_start_time = time.time()
-        kwargs[_Constants.OperationStartTime] = operation_start_time
+    operation_start_time = kwargs.get(_Constants.OperationStartTime, time.time())
 
 
     pk_range_wrapper = None

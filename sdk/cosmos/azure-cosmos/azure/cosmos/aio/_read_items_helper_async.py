@@ -30,8 +30,6 @@ from typing import (
     Optional,
     TYPE_CHECKING, Union, Mapping
 )
-import time
-
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
