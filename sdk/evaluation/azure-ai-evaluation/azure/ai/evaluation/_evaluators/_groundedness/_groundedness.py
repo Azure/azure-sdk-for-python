@@ -208,7 +208,6 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         return super().__call__(*args, **kwargs)
 
-
     def has_context(self, eval_input: dict) -> bool:
         """
         Return True if eval_input contains a non-empty 'context' field.
