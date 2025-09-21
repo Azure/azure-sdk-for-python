@@ -15,15 +15,6 @@ class AnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BLENDSHAPES = "blendshapes"
     VISEME_ID = "viseme_id"
-    EMOTION = "emotion"
-
-
-class AudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AudioFormat."""
-
-    PCM16 = "pcm16"
-    G711_ULAW = "g711_ulaw"
-    G711_ALAW = "g711_alaw"
 
 
 class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,10 +54,17 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
+class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputAudioFormat."""
+
+    PCM16 = "pcm16"
+    G711_ULAW = "g711_ulaw"
+    G711_ALAW = "g711_alaw"
+
+
 class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ItemParamStatus."""
 
-    IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
     INCOMPLETE = "incomplete"
 
@@ -109,10 +107,27 @@ class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VERSE = "verse"
 
 
-class Phi4mmVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice identifier for Phi4mm voices."""
+class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OutputAudioFormat."""
 
-    COSYVOICE = "cosyvoice"
+    PCM16 = "pcm16"
+    """16-bit PCM audio format at default sampling rate (24kHz)"""
+    PCM16_8000_HZ = "pcm16-8000hz"
+    """16-bit PCM audio format at 8kHz sampling rate"""
+    PCM16_16000_HZ = "pcm16-16000hz"
+    """16-bit PCM audio format at 16kHz sampling rate"""
+    G711_ULAW = "g711_ulaw"
+    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
+    G711_ALAW = "g711_alaw"
+    """G.711 A-law audio format at 8kHz sampling rate"""
+
+
+class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """PersonalVoice models."""
+
+    DRAGON_LATEST_NEURAL = "DragonLatestNeural"
+    PHOENIX_LATEST_NEURAL = "PhoenixLatestNeural"
+    PHOENIX_V2_NEURAL = "PhoenixV2Neural"
 
 
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -165,7 +180,6 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_AUDIO_DONE = "response.audio.done"
     RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
     RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
-    RESPONSE_EMOTION_HYPOTHESIS = "response.emotion_hypothesis"
     RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
     RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
     RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
