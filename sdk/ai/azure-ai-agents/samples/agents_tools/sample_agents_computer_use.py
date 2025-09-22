@@ -35,9 +35,10 @@ USAGE:
 
 import os, time, base64
 from typing import List
-from azure.ai.agents.models._models import ComputerScreenshot, TypeAction
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
+    ComputerScreenshot,
+    TypeAction,
     MessageRole,
     RunStepToolCallDetails,
     RunStepComputerUseToolCall,

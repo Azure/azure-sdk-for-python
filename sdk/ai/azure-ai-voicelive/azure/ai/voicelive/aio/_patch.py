@@ -611,8 +611,8 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         *,
         credential: Union[AzureKeyCredential, AsyncTokenCredential],
         endpoint: str,
-        model: str,
         api_version: str = "2025-05-01-preview",
+        model: Optional[str] = None,
         extra_query: Mapping[str, Any],
         extra_headers: Mapping[str, Any],
         connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -628,8 +628,9 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             self.__credential_scopes = [raw_scopes]
         else:
             self.__credential_scopes = list(raw_scopes)
-        self.__model = model
         self.__api_version = api_version
+        self.__model = model
+
         self.__connection: Optional[VoiceLiveConnection] = None
         self.__extra_query = extra_query
         self.__extra_headers = extra_headers
@@ -728,7 +729,9 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
             else ("ws" if parsed.scheme.startswith("http") else parsed.scheme)
         )
 
-        params: dict[str, Any] = {"model": self.__model, "api-version": self.__api_version}
+        params: dict[str, Any] = {"api-version": self.__api_version}
+        if self.__model is not None:
+            params["model"] = self.__model
         params.update(dict(self.__extra_query))
 
         existing_params = parse_qs(parsed.query)
@@ -760,8 +763,8 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    model: str,
     api_version: str = "2025-05-01-preview",
+    model: Optional[str] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -780,10 +783,13 @@ def connect(
     :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :paramtype type endpoint: str
-    :keyword model: The model identifier to use for the session.
-    :paramtype type model: str
     :keyword api_version: The API version to use. Defaults to ``"2025-05-01-preview"``.
     :paramtype type api_version: str
+    :keyword model: Model identifier to use for the session.
+     In most scenarios, this parameter is required.
+     It may be omitted only when connecting through an **Agent** scenario,
+     in which case the service will use the model associated with the Agent.
+    :paramtype model: str
     :keyword query: Optional query parameters to include in the WebSocket URL.
     :paramtype type query: Mapping[str, Any]
     :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
@@ -799,8 +805,8 @@ def connect(
     return _VoiceLiveConnectionManager(
         credential=credential,
         endpoint=endpoint,
-        model=model,
         api_version=api_version,
+        model=model,
         extra_query=query or {},
         extra_headers=headers or {},
         connection_options=connection_options or {},

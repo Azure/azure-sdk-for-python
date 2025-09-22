@@ -23,9 +23,9 @@ This directory contains sample applications demonstrating various capabilities o
    ```ini
    AZURE_VOICELIVE_API_KEY=your-voicelive-api-key
    AZURE_VOICELIVE_ENDPOINT=wss://api.voicelive.com/v1
-   VOICELIVE_MODEL=gpt-4o-realtime-preview
-   VOICELIVE_VOICE=alloy
-   VOICELIVE_INSTRUCTIONS=You are a helpful assistant. Keep your responses concise.
+   AZURE_VOICELIVE_MODEL=gpt-4o-realtime-preview
+   AZURE_VOICELIVE_VOICE=alloy
+   AZURE_VOICELIVE_INSTRUCTIONS=You are a helpful assistant. Keep your responses concise.
    ```
 
    You can copy the `.env.template` file and fill in your values:
