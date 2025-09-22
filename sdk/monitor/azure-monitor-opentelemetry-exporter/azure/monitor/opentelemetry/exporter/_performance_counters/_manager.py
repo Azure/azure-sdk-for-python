@@ -296,7 +296,7 @@ def _get_exception_rate(options: CallbackOptions) -> Iterable[Observation]:
         _EXCEPTIONS_COUNT = 0
         yield Observation(exception_rate, {})
     except Exception as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting request rate: %s", e)
+        _logger.exception("Error getting exception rate: %s", e)
         yield Observation(0.0, {})
 
 
