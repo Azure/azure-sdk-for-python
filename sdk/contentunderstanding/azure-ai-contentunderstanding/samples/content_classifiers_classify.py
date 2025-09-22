@@ -101,7 +101,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create a custom classifier using object model
@@ -147,7 +147,8 @@ async def main():
         # Display URL classification results
         print(f"📊 URL Classification Results:")
         for content in url_classification_result.contents:
-            document_content: DocumentContent = content
+            # content is MediaContent, cast to DocumentContent for type safety
+            document_content: DocumentContent = content  # type: ignore[assignment]
             print(f"   Category: {document_content.category}")
             print(f"       Start Page Number: {document_content.start_page_number}")
             print(f"       End Page Number: {document_content.end_page_number}")
@@ -185,10 +186,11 @@ async def main():
         # Display data classification results
         print(f"📊 Data Classification Results:")
         for content in data_classification_result.contents:
-            document_content: DocumentContent = content
-            print(f"   Category: {document_content.category}")
-            print(f"       Start Page Number: {document_content.start_page_number}")
-            print(f"       End Page Number: {document_content.end_page_number}")
+            # content is MediaContent, cast to DocumentContent for type safety
+            document_content_data: DocumentContent = content  # type: ignore[assignment]
+            print(f"   Category: {document_content_data.category}")
+            print(f"       Start Page Number: {document_content_data.start_page_number}")
+            print(f"       End Page Number: {document_content_data.end_page_number}")
 
         # Save the data classification result to a file
         data_saved_file_path = save_json_to_file(
@@ -204,5 +206,9 @@ async def main():
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Classify.json
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
 if __name__ == "__main__":
     asyncio.run(main())

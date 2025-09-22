@@ -54,17 +54,14 @@ async def main() -> None:
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    # Handle credential context manager conditionally
-    if isinstance(credential, AzureKeyCredential):
-        async with ContentUnderstandingClient(
-            endpoint=endpoint, credential=credential
-        ) as client:
-            await analyze_invoice(client)
-    else:
-        async with ContentUnderstandingClient(
-            endpoint=endpoint, credential=credential
-        ) as client, credential:
-            await analyze_invoice(client)
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
+        await analyze_invoice(client)
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 
 async def analyze_invoice(client: ContentUnderstandingClient) -> None:

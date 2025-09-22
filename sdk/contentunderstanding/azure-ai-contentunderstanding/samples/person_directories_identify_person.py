@@ -57,7 +57,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory
@@ -183,5 +183,9 @@ async def main():
 
 
 # x-ms-original-file: 2025-05-01-preview/PersonDirectories_IdentifyPerson.json
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
 if __name__ == "__main__":
     asyncio.run(main())

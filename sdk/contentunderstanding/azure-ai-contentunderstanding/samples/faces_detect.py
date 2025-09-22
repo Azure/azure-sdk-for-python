@@ -50,7 +50,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         """Detect faces in a test image and display results."""
 
         # Load test image from sample files
@@ -89,5 +89,9 @@ async def main():
 
 
 # x-ms-original-file: 2025-05-01-preview/Faces_Detect.json
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
 if __name__ == "__main__":
     asyncio.run(main())

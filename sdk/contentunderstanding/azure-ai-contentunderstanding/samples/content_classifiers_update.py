@@ -95,7 +95,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create initial classifier using object model
@@ -184,5 +184,9 @@ async def main():
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Update.json
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
 if __name__ == "__main__":
     asyncio.run(main())

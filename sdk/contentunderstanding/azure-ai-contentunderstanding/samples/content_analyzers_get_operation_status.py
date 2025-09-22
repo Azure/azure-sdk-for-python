@@ -66,7 +66,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         analyzer_id = (
             f"sdk-sample-analyzer-for-status-{int(asyncio.get_event_loop().time())}"
         )
@@ -146,5 +146,9 @@ async def main():
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetOperationStatus.json
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
+
 if __name__ == "__main__":
     asyncio.run(main())
