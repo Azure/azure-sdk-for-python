@@ -102,7 +102,6 @@ def extract_package_metadata(package_path: str) -> Dict[str, Any]:
 
         # Additional optional fields
         _add_optional_fields(pkg_info, metadata)
-
         return metadata
 
     except Exception as e:
@@ -143,6 +142,9 @@ def _normalize_license_field(pkg_info, metadata: Dict[str, Any]) -> None:
     """Normalize license field from both PEP 566 and PEP 621 formats."""
     if pkg_info.license:
         metadata['license'] = pkg_info.license
+    # Handle license expression (PEP 639) if available
+    if hasattr(pkg_info, 'license_expression') and getattr(pkg_info, 'license_expression', None):
+        metadata['license'] = pkg_info.license_expression
     # Handle license file references if available
     if hasattr(pkg_info, 'license_file') and getattr(pkg_info, 'license_file', None):
         metadata['license'] = pkg_info.license_file
