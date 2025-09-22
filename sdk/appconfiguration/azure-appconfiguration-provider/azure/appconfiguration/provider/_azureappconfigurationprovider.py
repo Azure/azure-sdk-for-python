@@ -381,6 +381,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 if feature_flags:
                     configuration_settings.extend(feature_flags)
             if refreshed_configs or feature_flags:
+                if bool(feature_flags):
+                    # Reset feature flag usage
+                    self._feature_filter_usage = {}
                 self._dict = self._process_configurations(configuration_settings, bool(feature_flags))
                 refreshed = True
             if refreshed_configs:
@@ -503,28 +506,24 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     def _process_configurations(
         self, configuration_settings: List[ConfigurationSetting], refreshed_feature_flags: bool
     ) -> Dict[str, Any]:
-        if refreshed_feature_flags:
-            # Reset feature flag usage
-            self._feature_filter_usage = {}
-
         configuration_settings_processed = {}
         existing_feature_flags = (
             self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, []) if self._feature_flag_enabled else []
         )
         feature_flags_processed = []
-        for config in configuration_settings:
-            if isinstance(config, FeatureFlagConfigurationSetting):
+        for settings in configuration_settings:
+            if isinstance(settings, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
-                feature_flag_value = json.loads(config.value)
-                self._update_ff_telemetry_metadata(self._origin_endpoint, config, feature_flag_value)
-                self._update_feature_filter_telemetry(config)
+                feature_flag_value = json.loads(settings.value)
+                self._update_ff_telemetry_metadata(self._origin_endpoint, settings, feature_flag_value)
+                self._update_feature_filter_telemetry(settings)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
-                    self._refresh_on_feature_flags[(config.key, config.label)] = config.etag
+                    self._refresh_on_feature_flags[(settings.key, settings.label)] = settings.etag
             else:
-                key = self._process_key_name(config)
-                value = self._process_key_value(config)
+                key = self._process_key_name(settings)
+                value = self._process_key_value(settings)
                 configuration_settings_processed[key] = value
         if self._feature_flag_enabled:
             if not refreshed_feature_flags:
@@ -537,7 +536,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         if isinstance(config, SecretReferenceConfigurationSetting):
             return _resolve_keyvault_reference(config, self)
         # Use the base class helper method for non-KeyVault processing
-        return self._process_non_keyvault_value(config)
+        return self._process_key_value_base(config)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):

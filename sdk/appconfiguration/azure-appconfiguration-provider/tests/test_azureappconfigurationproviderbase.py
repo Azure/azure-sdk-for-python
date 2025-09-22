@@ -484,26 +484,26 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertIn("value1", values)
         self.assertIn({"nested": "value"}, values)
 
-    def test_process_non_keyvault_value_plain_text(self):
+    def test_process_key_value_base_plain_text(self):
         """Test processing non-keyvault plain text value."""
         config = Mock()
         config.content_type = "text/plain"
         config.value = "plain text value"
 
-        result = self.provider._process_non_keyvault_value(config)
+        result = self.provider._process_key_value_base(config)
         self.assertEqual(result, "plain text value")
 
-    def test_process_non_keyvault_value_json(self):
+    def test_process_key_value_base_json(self):
         """Test processing non-keyvault JSON value."""
         config = Mock()
         config.content_type = "application/json"
         config.value = '{"key": "value", "number": 42}'
 
-        result = self.provider._process_non_keyvault_value(config)
+        result = self.provider._process_key_value_base(config)
         expected = {"key": "value", "number": 42}
         self.assertEqual(result, expected)
 
-    def test_process_non_keyvault_value_invalid_json(self):
+    def test_process_key_value_base_invalid_json(self):
         """Test processing non-keyvault invalid JSON value."""
         config = Mock()
         config.content_type = "application/json"
@@ -515,26 +515,26 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 json.JSONDecodeError("test", "test", 0),
                 json.JSONDecodeError("test", "test", 0),
             ]
-            result = self.provider._process_non_keyvault_value(config)
+            result = self.provider._process_key_value_base(config)
             self.assertEqual(result, '{"invalid": json}')  # Should return as string
 
-    def test_process_non_keyvault_value_ai_configuration(self):
+    def test_process_key_value_base_ai_configuration(self):
         """Test processing AI configuration content type."""
         config = Mock()
         config.content_type = f"application/json; {APP_CONFIG_AI_MIME_PROFILE}"
         config.value = '{"ai_config": "value"}'
 
-        result = self.provider._process_non_keyvault_value(config)
+        result = self.provider._process_key_value_base(config)
         self.assertTrue(self.provider._uses_ai_configuration)
         self.assertEqual(result, {"ai_config": "value"})
 
-    def test_process_non_keyvault_value_aicc_configuration(self):
+    def test_process_key_value_base_aicc_configuration(self):
         """Test processing AI Chat Completion configuration content type."""
         config = Mock()
         config.content_type = f"application/json; {APP_CONFIG_AICC_MIME_PROFILE}"
         config.value = '{"aicc_config": "value"}'
 
-        result = self.provider._process_non_keyvault_value(config)
+        result = self.provider._process_key_value_base(config)
         self.assertTrue(self.provider._uses_aicc_configuration)
         self.assertEqual(result, {"aicc_config": "value"})
 

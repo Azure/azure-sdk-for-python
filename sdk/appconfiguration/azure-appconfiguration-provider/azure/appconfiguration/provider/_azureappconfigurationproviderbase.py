@@ -531,7 +531,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def __ne__(self, other: Any) -> bool:
         return not self == other
 
-    def _process_non_keyvault_value(self, config: ConfigurationSetting):
+    def _process_key_value_base(self, config: ConfigurationSetting):
         """
         Process configuration values that are not KeyVault references.
 
@@ -540,6 +540,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         :return: The processed configuration value (JSON object if JSON content type, string otherwise).
         :rtype: Union[str, Dict[str, Any]]
         """
+        if config.content_type is None:
+            return config.value
         if is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
