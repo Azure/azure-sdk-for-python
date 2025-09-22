@@ -645,7 +645,7 @@ class _VoiceLiveConnectionManager(AbstractContextManager["VoiceLiveConnection"])
     ) -> None:
         self._credential = credential
         self._endpoint = endpoint
-        self.__credential_scopes = kwargs.pop("credential_scopes", "https://cognitiveservices.azure.com/.default")
+        self.__credential_scopes = kwargs.pop("credential_scopes", "https://ai.azure.com/.default")
         self.__api_version = api_version
         self.__model = model
         self.__connection: Optional[VoiceLiveConnection] = None

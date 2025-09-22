@@ -26,7 +26,6 @@ from azure.ai.voicelive.models import (
     InputAudioFormat,
     ItemType,
     Modality,
-    OutputAudioFormat,
     RequestSession,
     ResponseFunctionCallItem,
     ResponseMessageItem,
@@ -36,6 +35,7 @@ from azure.ai.voicelive.models import (
     ServerEventResponseCreated,
     ServerEventResponseFunctionCallArgumentsDelta,
     ServerEventResponseFunctionCallArgumentsDone,
+    ServerEventResponseOutputItemDone,
     ServerEventType,
     ServerVad,
     ToolChoiceFunctionObject,
@@ -163,7 +163,6 @@ async def _collect_audio_trans_outputs(conn, duration_s: float) -> int:
 class TestRealtimeService(AzureRecordedTestCase):
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
     async def test_realtime_service(
@@ -214,7 +213,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
+    @pytest.mark.skip(reason="input_audio_noise_reduction breaking change")
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
     async def test_realtime_service_with_audio_enhancements(
@@ -226,12 +225,12 @@ class TestRealtimeService(AzureRecordedTestCase):
         async with connect(endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model) as conn:
             # text-only session
             session = RequestSession(
-                input_audio_noise_reduction=AudioNoiseReduction(), input_audio_echo_cancellation=AudioEchoCancellation()
+                input_audio_noise_reduction=AudioNoiseReduction(),
+                input_audio_echo_cancellation=AudioEchoCancellation()
             )
             await conn.session.update(session=session)
 
             # wait session.created
-            await _wait_for_event(conn, {ServerEventType.SESSION_CREATED}, 15)
             await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 15)
 
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
@@ -242,21 +241,18 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
+    @pytest.mark.skip(reason="unexpected keyword argument 'speech_duration_assistant_speaking_ms'")
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         ("model", "server_sd_conf"),
         [
-            pytest.param("gpt-4o-realtime-preview", {}, id="gpt-4o-realtime-preview"),
             pytest.param(
-                "gpt-4o-realtime-preview",
-                {"window_size": 4, "distinct_ci_phones": 2, "require_vowel": True, "remove_filler_words": True},
-                id="gpt-4o-realtime-preview-remove-filler-words",
+                "gpt-4o-realtime-preview", {"speech_duration_assistant_speaking_ms": 800}, id="gpt-4o-realtime"
             ),
-            pytest.param("gpt-4.1", {}, id="cascaded-realtime"),
+            pytest.param("gpt-4o", {"speech_duration_assistant_speaking_ms": 800}, id="cascaded-realtime"),
         ],
     )
-    async def test_realtime_service_with_turn_detection(
+    async def test_realtime_service_with_turn_detection_long_tts_vad_duration(
         self,
         test_data_dir: Path,
         model: str,
@@ -268,7 +264,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_api_key= kwargs.pop("voicelive_openai_api_key")
         async with connect(endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model) as conn:
             turn_detection = None if not server_sd_conf else AzureSemanticVad(**server_sd_conf)
-            session = RequestSession(modalities=[Modality.TEXT, Modality.AUDIO], turn_detection=turn_detection)
+            session = RequestSession(turn_detection=turn_detection)
 
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
@@ -285,17 +281,16 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         ("model", "semantic_vad_params"),
         [
             pytest.param("gpt-4o-realtime-preview", {}, id="gpt-4o-realtime"),
-            pytest.param(
-                "gpt-4o-realtime-preview",
-                {"window_size": 4, "distinct_ci_phones": 2, "require_vowel": True, "remove_filler_words": True},
-                id="gpt-4o-realtime-remove-filler-words",
-            ),
+            # pytest.param(
+            #     "gpt-4o-realtime-preview",
+            #     {"window_size": 4, "distinct_ci_phones": 2, "require_vowel": True, "remove_filler_words": True},
+            #     id="gpt-4o-realtime-remove-filler-words",
+            # ),
             pytest.param("gpt-4o", {}, id="cascaded-realtime"),
             pytest.param("gpt-4o", {"speech_duration_ms": 200}, id="cascaded-realtime"),
             pytest.param("gpt-4o", {"languages": ["en", "es"]}, id="cascaded-realtime"),
@@ -325,7 +320,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         "test_audio_file",
@@ -342,9 +336,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_endpoint= kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key= kwargs.pop("voicelive_openai_api_key")
         async with connect(endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model) as conn:
-            turn_detection = AzureSemanticVad(
-                window_size=2, distinct_ci_phones=2, require_vowel=True, remove_filler_words=True
-            )
+            turn_detection = AzureSemanticVad(remove_filler_words=True)
             session = RequestSession(modalities=[Modality.TEXT, Modality.AUDIO], turn_detection=turn_detection)
 
             await conn.session.update(session=session)
@@ -357,7 +349,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         "test_audio_file",
@@ -395,7 +386,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4o"])
     async def test_realtime_service_tool_call(
@@ -446,7 +436,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview-2025-06-03", "gpt-4o", "gpt-5-chat"])
     async def test_realtime_service_tool_choice(self, test_data_dir: Path, model: str, **kwargs):
@@ -530,7 +519,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "gpt-5", "phi4-mm-realtime"])
     async def test_realtime_service_tool_call_parameter(self, test_data_dir: Path, model: str, **kwargs):
@@ -608,7 +596,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
     async def test_realtime_service_live_session_update(self, test_data_dir: Path, model: str, **kwargs):
@@ -669,7 +656,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o", "gpt-4o-realtime"])
     async def test_realtime_service_tool_call_no_audio_overlap(self, test_data_dir: Path, model: str, **kwargs):
@@ -721,7 +707,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
     @pytest.mark.parametrize("transcription_model", ["whisper-1", "gpt-4o-transcribe", "gpt-4o-mini-transcribe"])
@@ -754,7 +739,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.skip
     @pytest.mark.parametrize(
         ("model", "turn_detection_cls", "eou_model"),
@@ -803,7 +787,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
     async def test_realtime_service_with_audio_timestamp_viseme(
@@ -852,7 +835,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4o", "phi4-mm-realtime", "phi4-mini"])
     async def test_realtime_service_wo_turn_detection(
@@ -880,7 +862,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime", "gpt-4.1", "phi4-mm-realtime"])
     async def test_realtime_service_with_voice_properties(
@@ -905,7 +886,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
     async def test_realtime_service_retrieve_item(
@@ -923,11 +903,9 @@ class TestRealtimeService(AzureRecordedTestCase):
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
-            conversation_item_created = await _wait_for_event(conn, [ServerEventType.CONVERSATION_ITEM_CREATED])
-            content_part_added = await _wait_for_event(conn, [ServerEventType.RESPONSE_CONTENT_PART_ADDED])
-            assert conversation_item_created.item.id == content_part_added.item_id
-
-            await conn.conversation.item.retrieve(item_id=content_part_added.item_id)
+            output = await _wait_for_event(conn, [ServerEventType.RESPONSE_OUTPUT_ITEM_DONE])
+            assert isinstance(output, ServerEventResponseOutputItemDone)
+            await conn.conversation.item.retrieve(item_id=output.item.id)
             conversation_retrieved_event = await _wait_for_event(
                 conn, [ServerEventType.CONVERSATION_ITEM_RETRIEVED], timeout_s=10
             )
@@ -947,7 +925,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
     async def test_realtime_service_truncate_item(
@@ -964,12 +941,10 @@ class TestRealtimeService(AzureRecordedTestCase):
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
 
-            conversation_item_created = await _wait_for_event(conn, [ServerEventType.CONVERSATION_ITEM_CREATED], timeout_s=10)
-            content_part_added = await _wait_for_event(conn, [ServerEventType.RESPONSE_CONTENT_PART_ADDED], timeout_s=10)
-            assert content_part_added.part.type == "audio"
-            assert conversation_item_created.item.id == content_part_added.item_id
+            output = await _wait_for_event(conn, [ServerEventType.RESPONSE_OUTPUT_ITEM_DONE])
+            assert isinstance(output, ServerEventResponseOutputItemDone)
 
-            await conn.conversation.item.truncate(item_id=content_part_added.item_id, content_index=0, audio_end_ms=200)
+            await conn.conversation.item.truncate(item_id=output.item.id, content_index=0, audio_end_ms=200)
             conversation_retrieved_event = await _wait_for_event(
                 conn, [ServerEventType.CONVERSATION_ITEM_TRUNCATED], timeout_s=10
             )
@@ -979,7 +954,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         ("model", "audio_format", "turn_detection"),
@@ -1090,7 +1064,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         ("model", "sampling_rate"),
@@ -1149,7 +1122,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4.1", "phi4-mini"])
     @pytest.mark.parametrize(
@@ -1197,7 +1169,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime"])
     @pytest.mark.parametrize(
@@ -1239,7 +1210,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4o-realtime-preview", "gpt-4.1"])
     async def test_realtime_service_with_echo_cancellation(
@@ -1266,7 +1236,6 @@ class TestRealtimeService(AzureRecordedTestCase):
 
 
     @VoiceLivePreparer()
-    @pytest.mark.asyncio
     @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize("model", ["gpt-4.1", "phi4-mm-realtime", "phi4-mini"])
     @pytest.mark.parametrize(

@@ -622,7 +622,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         self._endpoint = endpoint
         raw_scopes = kwargs.pop(
             "credential_scopes",
-            ["https://cognitiveservices.azure.com/.default"],
+            ["https://ai.azure.com/.default"],
         )
         if isinstance(raw_scopes, str):
             self.__credential_scopes = [raw_scopes]
