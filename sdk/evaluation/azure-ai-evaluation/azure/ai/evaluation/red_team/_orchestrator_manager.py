@@ -192,6 +192,8 @@ class OrchestratorManager:
         :type red_team_info: Dict
         :param task_statuses: Dictionary to track task statuses
         :type task_statuses: Dict
+        :param prompt_to_context: Dictionary mapping prompts to their contexts
+        :type prompt_to_context: Dict[str, str]
         :return: Configured and initialized orchestrator
         :rtype: Orchestrator
         """
@@ -238,52 +240,76 @@ class OrchestratorManager:
             if red_team_info:
                 red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
-            # Process all prompts at once
+            # Process prompts one at a time like multi-turn and crescendo orchestrators
             self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
-            start_time = datetime.now()
 
             # Calculate appropriate timeout for single-turn orchestrator
             calculated_timeout = self._calculate_timeout(timeout, "single")
 
-            try:
-                # Create retry-enabled function using the reusable decorator
-                @network_retry_decorator(self.retry_config, self.logger, strategy_name, risk_category_name)
-                async def send_all_with_retry():
-                    return await asyncio.wait_for(
-                        orchestrator.send_prompts_async(
-                            prompt_list=all_prompts,
-                            memory_labels={
-                                "risk_strategy_path": output_path,
-                                "batch": 1,
-                            },
-                        ),
-                        timeout=calculated_timeout,
+            for prompt_idx, prompt in enumerate(all_prompts):
+                prompt_start_time = datetime.now()
+                self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
+
+                # Get context for this prompt and append it using document tags if available
+                context = prompt_to_context.get(prompt, "") if prompt_to_context else ""
+                processed_prompt = prompt
+                if context:
+                    processed_prompt = f"{prompt}\n\n<context>{context}</context>"
+                    self.logger.debug(f"Appended context to prompt {prompt_idx+1}")
+
+                try:
+                    # Create retry-enabled function using the reusable decorator
+                    @network_retry_decorator(
+                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                    )
+                    async def send_prompt_with_retry():
+                        return await asyncio.wait_for(
+                            orchestrator.send_prompts_async(
+                                prompt_list=[processed_prompt],
+                                memory_labels={
+                                    "risk_strategy_path": output_path,
+                                    "batch": prompt_idx + 1,
+                                    "context": context,
+                                },
+                            ),
+                            timeout=calculated_timeout,
+                        )
+
+                    # Execute the retry-enabled function
+                    await send_prompt_with_retry()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
+                    self.logger.debug(
+                        f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
 
-                # Execute the retry-enabled function
-                await send_all_with_retry()
-                duration = (datetime.now() - start_time).total_seconds()
-                self.logger.debug(
-                    f"Successfully processed all prompts for {strategy_name}/{risk_category_name} in {duration:.2f} seconds"
-                )
-            except (asyncio.TimeoutError, tenacity.RetryError):
-                self.logger.warning(
-                    f"Prompt processing for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
-                )
-                print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}")
-                if task_statuses:
-                    task_statuses[task_key] = TASK_STATUS["TIMEOUT"]
-                if red_team_info:
-                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
-            except Exception as e:
-                log_error(
-                    self.logger,
-                    "Error processing prompts",
-                    e,
-                    f"{strategy_name}/{risk_category_name}",
-                )
-                if red_team_info:
-                    red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    # Print progress to console
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
+                        print(
+                            f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
+                        )
+
+                except (asyncio.TimeoutError, tenacity.RetryError):
+                    self.logger.warning(
+                        f"Prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with remaining prompts"
+                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}")
+                    # Set task status to TIMEOUT for this specific prompt
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
+                    if task_statuses:
+                        task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
+                except Exception as e:
+                    log_error(
+                        self.logger,
+                        f"Error processing prompt {prompt_idx+1}",
+                        e,
+                        f"{strategy_name}/{risk_category_name}",
+                    )
+                    if red_team_info:
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
+                    continue
 
             if task_statuses:
                 task_statuses[task_key] = TASK_STATUS["COMPLETED"]
@@ -381,7 +407,12 @@ class OrchestratorManager:
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
-            context = prompt_to_context.get(prompt, None) if prompt_to_context else None
+            # Get context for this prompt and append it using document tags if available
+            context = prompt_to_context.get(prompt, "") if prompt_to_context else ""
+            processed_prompt = prompt
+            if context:
+                processed_prompt = f"{prompt}\n\n<context>{context}</context>"
+                self.logger.debug(f"Appended context to prompt {prompt_idx+1}")
             try:
                 azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
                     client=self.generated_rai_client,
@@ -422,7 +453,11 @@ class OrchestratorManager:
                         return await asyncio.wait_for(
                             orchestrator.run_attack_async(
                                 objective=prompt,
-                                memory_labels={"risk_strategy_path": output_path, "batch": 1, "context": context},
+                                memory_labels={
+                                    "risk_strategy_path": output_path,
+                                    "batch": prompt_idx + 1,
+                                    "context": context,
+                                },
                             ),
                             timeout=calculated_timeout,
                         )
@@ -546,7 +581,12 @@ class OrchestratorManager:
         for prompt_idx, prompt in enumerate(all_prompts):
             prompt_start_time = datetime.now()
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
-            context = prompt_to_context.get(prompt, None) if prompt_to_context else None
+            # Get context for this prompt and append it using document tags if available
+            context = prompt_to_context.get(prompt, "") if prompt_to_context else ""
+            processed_prompt = prompt
+            if context:
+                processed_prompt = f"{prompt}\n\n<context>{context}</context>"
+                self.logger.debug(f"Appended context to prompt {prompt_idx+1}")
             try:
                 red_llm_scoring_target = RAIServiceEvalChatTarget(
                     logger=self.logger,
