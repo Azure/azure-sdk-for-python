@@ -50,7 +50,7 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
-def verify_whl_root_directory(dist_dir, expected_top_level_module, parsed_pkg):
+def verify_whl_root_directory(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup):
     # Verify metadata compatibility with prior version
     version: str = parsed_pkg.version
     metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
