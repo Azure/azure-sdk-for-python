@@ -10,40 +10,40 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
-    RequestSession,
-    ServerVad,
-    AzureStandardVoice,
-    Modality,
-    AudioFormat,
-    ServerEventType,
-    AudioEchoCancellation,
-    AudioNoiseReduction,
-    AzureSemanticVad,
-    FunctionTool,
-    ToolChoiceLiteral,
-    AudioInputTranscriptionSettings,
-    AudioTimestampType,
     Animation,
     AnimationOutputType,
+    AudioEchoCancellation,
+    AudioInputTranscriptionSettings,
+    AudioNoiseReduction,
+    AudioTimestampType,
+    AzureMultilingualSemanticVad,
+    AzureSemanticVad,
+    AzureStandardVoice,
+    ContentPart,
+    EOUDetection,
+    FunctionCallOutputItem,
+    FunctionTool,
+    InputAudioFormat,
+    ItemType,
+    Modality,
+    OutputAudioFormat,
+    RequestSession,
+    ResponseFunctionCallItem,
+    ResponseMessageItem,
+    ServerEventConversationItemCreated,
     ServerEventConversationItemRetrieved,
     ServerEventConversationItemTruncated,
-    AzureMultilingualSemanticVad,
-    ResponseMessageItem,
-    ContentPart,
-    ItemType,
-    TurnDetection,
-    ToolChoiceFunctionObject,
-    ToolChoiceFunctionObjectFunction,
-    ResponseFunctionCallItem,
-    ServerEventConversationItemCreated,
-    EOUDetection,
-    ServerEventResponseFunctionCallArgumentsDone,
-    ServerEventResponseFunctionCallArgumentsDelta,
-    FunctionCallOutputItem,
     ServerEventResponseCreated,
+    ServerEventResponseFunctionCallArgumentsDelta,
+    ServerEventResponseFunctionCallArgumentsDone,
+    ServerEventType,
+    ServerVad,
+    ToolChoiceFunctionObject,
+    ToolChoiceLiteral,
+    TurnDetection,
 )
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy 
 from .voicelive_preparer import VoiceLivePreparer
 
 def _b64_pcm_from_wav(path: Path) -> str:
@@ -486,7 +486,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                     },
                 ),
             ]
-            tool_choice = ToolChoiceFunctionObject(function=ToolChoiceFunctionObjectFunction(name="get_time"))
+            tool_choice = ToolChoiceFunctionObject(name="get_time")
             session = RequestSession(
                 instructions="You are a helpful assistant with tools.",
                 tools=tools,
@@ -984,53 +984,53 @@ class TestRealtimeService(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         ("model", "audio_format", "turn_detection"),
         [
-            pytest.param("gpt-4o", AudioFormat.G711_ULAW, AzureSemanticVad(), id="gpt4o_g711_ulaw_azure_semantic_vad"),
-            pytest.param("gpt-4o", AudioFormat.G711_ALAW, AzureSemanticVad(), id="gpt4o_g711_alaw_azure_semantic_vad"),
+            pytest.param("gpt-4o", InputAudioFormat.G711_ULAW, AzureSemanticVad(), id="gpt4o_g711_ulaw_azure_semantic_vad"),
+            pytest.param("gpt-4o", InputAudioFormat.G711_ALAW, AzureSemanticVad(), id="gpt4o_g711_alaw_azure_semantic_vad"),
             pytest.param(
                 "gpt-4o-realtime-preview",
-                AudioFormat.G711_ULAW,
+                InputAudioFormat.G711_ULAW,
                 AzureSemanticVad(),
                 id="gpt4o_realtime_preview_g711_ulaw_azure_semantic_vad",
             ),
             pytest.param(
                 "gpt-4o-realtime-preview",
-                AudioFormat.G711_ULAW,
+                InputAudioFormat.G711_ULAW,
                 ServerVad(),
                 id="gpt4o_realtime_preview_g711_ulaw_server_vad",
             ),
             pytest.param(
                 "gpt-4o-realtime-preview",
-                AudioFormat.G711_ALAW,
+                InputAudioFormat.G711_ALAW,
                 AzureSemanticVad(),
                 id="gpt4o_realtime_preview_g711_alaw_azure_semantic_vad",
             ),
             pytest.param(
                 "gpt-4o-realtime-preview",
-                AudioFormat.G711_ALAW,
+                InputAudioFormat.G711_ALAW,
                 ServerVad(),
                 id="gpt4o_realtime_preview_g711_alaw_server_vad",
             ),
             pytest.param(
                 "phi4-mm-realtime",
-                AudioFormat.G711_ULAW,
+                InputAudioFormat.G711_ULAW,
                 AzureSemanticVad(),
                 id="phi4_mm_realtime_g711_ulaw_azure_semantic_vad",
             ),
             pytest.param(
                 "phi4-mm-realtime",
-                AudioFormat.G711_ALAW,
+                InputAudioFormat.G711_ALAW,
                 AzureSemanticVad(),
                 id="phi4_mm_realtime_g711_alaw_azure_semantic_vad",
             ),
             pytest.param(
                 "phi4-mini",
-                AudioFormat.G711_ULAW,
+                InputAudioFormat.G711_ULAW,
                 AzureSemanticVad(),
                 id="phi4_mini_g711_ulaw_azure_semantic_vad",
             ),
             pytest.param(
                 "phi4-mini",
-                AudioFormat.G711_ALAW,
+                InputAudioFormat.G711_ALAW,
                 AzureSemanticVad(),
                 id="phi4_mini_g711_alaw_azure_semantic_vad",
             ),
@@ -1040,7 +1040,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         self,
         test_data_dir: Path,
         model: str,
-        audio_format: AudioFormat,
+        audio_format: InputAudioFormat,
         turn_detection: TurnDetection,
         **kwargs
     ):
@@ -1054,11 +1054,11 @@ class TestRealtimeService(AzureRecordedTestCase):
         voicelive_openai_endpoint= kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key= kwargs.pop("voicelive_openai_api_key")
         # Use the appropriate audio file for each format
-        if audio_format == AudioFormat.PCM16:
+        if audio_format == InputAudioFormat.PCM16:
             audio_file = test_data_dir / "largest_lake.wav"
-        elif audio_format == AudioFormat.G711_ULAW:
+        elif audio_format == InputAudioFormat.G711_ULAW:
             audio_file = test_data_dir / "largest_lake.ulaw"
-        elif audio_format == AudioFormat.G711_ALAW:
+        elif audio_format == InputAudioFormat.G711_ALAW:
             audio_file = test_data_dir / "largest_lake.alaw"
         else:
             raise ValueError(f"Unsupported audio format: {audio_format}")

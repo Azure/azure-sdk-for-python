@@ -12,8 +12,7 @@ stages:
     TestResourceDirectories:
       - ai/azure-ai-voicelive
     EnvVars:
-      AZURE_TEST_RUN_LIVE: 'True'
-      # Turn this OFF if you want recordings for playback:
-      AZURE_SKIP_LIVE_RECORDING: 'True'
-      VOICELIVE_OPENAI_ENDPOINT: $(VOICELIVE_OPENAI_ENDPOINT)
-      VOICELIVE_OPENAI_API_KEY: $(VOICELIVE_OPENAI_API_KEY)
+      AZURE_TEST_RUN_LIVE: 'true'
+      AZURE_SKIP_LIVE_RECORDING: 'true'
+      VOICELIVE_OPENAI_ENDPOINT: $(VoiceLiveOpenAIEndpoint)
+      VOICELIVE_OPENAI_API_KEY: $(VoiceLiveOpenAIApiKey)
