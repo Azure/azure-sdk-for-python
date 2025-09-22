@@ -272,8 +272,7 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         # Import and set up global state
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
         manager_module._EXCEPTIONS_COUNT = 5
-        # Note: The code has a bug - it uses _LAST_REQUEST_RATE_TIME instead of _LAST_EXCEPTION_RATE_TIME
-        manager_module._LAST_REQUEST_RATE_TIME = start_time
+        manager_module._LAST_EXCEPTION_RATE_TIME = start_time
         
         result = list(_get_exception_rate(None))
         
