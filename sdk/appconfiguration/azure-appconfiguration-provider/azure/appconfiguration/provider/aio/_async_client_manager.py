@@ -172,30 +172,29 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return loaded_feature_flags
 
     @distributed_trace
-    async def try_check_watch_keys(
+    async def get_updated_watch_keys(
         self, refresh_on: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
-    ) -> Tuple[bool, Mapping[Tuple[str, str], Optional[str]]]:
+    ) -> Mapping[Tuple[str, str], Optional[str]]:
         """
         Checks if any of the watch keys have changed, and updates them if they have.
 
         :param List[SettingSelector] refresh_on: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
-        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
-        value of the configuration sentinel keys.
-        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None]]
+        :return: Updated value of the configuration sentinel keys.
+        :rtype: Union[Dict[Tuple[str, str], str], None]
         """
-        need_refresh = False
         updated_sentinel_keys = dict(refresh_on)
         for (key, label), etag in updated_sentinel_keys.items():
             changed, updated_sentinel = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
-            if changed:
-                need_refresh = True
-            if updated_sentinel is not None:
+            if changed and updated_sentinel is not None:
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-        return need_refresh, updated_sentinel_keys
+            elif changed:
+                # The key was deleted
+                updated_sentinel_keys[(key, label)] = None
+        return updated_sentinel_keys
 
     @distributed_trace
     async def try_check_feature_flags(
@@ -212,7 +211,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
         for (key, label), etag in feature_flag_sentinel_keys.items():
-            changed = await self._check_configuration_setting(
+            changed, _ = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed:

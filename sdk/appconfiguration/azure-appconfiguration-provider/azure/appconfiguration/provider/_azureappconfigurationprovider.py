@@ -348,11 +348,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._refresh_on and self._refresh_timer.needs_refresh():
                 reset_config_timer = True
 
-                settings_need_refresh, sentinel_keys = client.try_check_watch_keys(
-                    self._refresh_on, headers=headers, **kwargs
-                )
+                sentinel_keys = client.get_updated_watch_keys(self._refresh_on, headers=headers, **kwargs)
 
-                if settings_need_refresh:
+                if len(sentinel_keys) > 0:
                     configuration_settings = client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
@@ -374,7 +372,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._dict = self._process_configurations(configuration_settings, bool(feature_flags))
                 refreshed = True
             if refreshed_configs:
-                self._refresh_on = sentinel_keys
+                # Update the watch keys that have changed
+                self._refresh_on.update(sentinel_keys)
             # Reset timers at the same time as they should load from the same store.
             if reset_config_timer:
                 self._refresh_timer.reset()
