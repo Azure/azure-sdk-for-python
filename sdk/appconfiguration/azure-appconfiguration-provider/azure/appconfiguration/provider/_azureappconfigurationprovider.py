@@ -353,8 +353,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 )
 
                 if settings_need_refresh:
-                    configuration_settings, sentinel_keys = client.load_configuration_settings(
-                        self._selects, self._refresh_on, headers=headers, **kwargs
+                    configuration_settings = client.load_configuration_settings(
+                        self._selects, headers=headers, **kwargs
                     )
 
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
@@ -449,9 +449,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._uses_aicc_configuration,
             )
             try:
-                configuration_settings, sentinel_keys = client.load_configuration_settings(
-                    self._selects, self._refresh_on, headers=headers, **kwargs
-                )
+                configuration_settings = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
+                sentinel_keys = self._update_sentinel_keys(configuration_settings)
+
                 if self._feature_flag_enabled:
                     feature_flags = client.load_feature_flags(
                         self._feature_flag_selectors,

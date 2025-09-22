@@ -135,27 +135,18 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return False, None
 
     @distributed_trace
-    async def load_configuration_settings(
-        self, selects: List[SettingSelector], refresh_on: Mapping[Tuple[str, str], Optional[str]], **kwargs
-    ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
+    async def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
         configuration_settings = []
-        sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
         for select in selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
             )
             async for config in configurations:
-                if isinstance(config, FeatureFlagConfigurationSetting):
+                if not isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
                     # `feature_flag_selectors`
-                    continue
-                configuration_settings.append(config)
-                # Every time we run load_all, we should update the etag of our refresh sentinels
-                # so they stay up-to-date.
-                # Sentinel keys will have unprocessed key names, so we need to use the original key.
-                if (config.key, config.label) in refresh_on:
-                    sentinel_keys[(config.key, config.label)] = config.etag
-        return configuration_settings, sentinel_keys
+                    configuration_settings.append(config)
+        return configuration_settings
 
     @distributed_trace
     async def load_feature_flags(
