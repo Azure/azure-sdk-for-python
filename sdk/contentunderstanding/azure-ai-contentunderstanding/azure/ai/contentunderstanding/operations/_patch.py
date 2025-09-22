@@ -125,8 +125,8 @@ class FacesOperations(FacesOperationsGenerated):
 
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
-        :type kwargs: Any
+        :keyword kwargs: Arbitrary keyword arguments.
+        :paramtype kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -296,8 +296,8 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type analyzer_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
-        :type kwargs: Any
+        :keyword kwargs: Arbitrary keyword arguments.
+        :paramtype kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -472,8 +472,8 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :type classifier_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
-        :type kwargs: Any
+        :keyword kwargs: Arbitrary keyword arguments.
+        :paramtype kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
