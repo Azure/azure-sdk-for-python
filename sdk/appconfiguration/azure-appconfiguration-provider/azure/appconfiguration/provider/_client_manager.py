@@ -170,7 +170,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return loaded_feature_flags
 
     @distributed_trace
-    def get_updated_watch_keys(
+    def get_updated_watched_settings(
         self, refresh_on: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
     ) -> Mapping[Tuple[str, str], Optional[str]]:
         """

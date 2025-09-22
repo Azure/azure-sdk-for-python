@@ -348,7 +348,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._refresh_on and self._refresh_timer.needs_refresh():
                 reset_config_timer = True
 
-                sentinel_keys = client.get_updated_watch_keys(self._refresh_on, headers=headers, **kwargs)
+                sentinel_keys = client.get_updated_watched_settings(self._refresh_on, headers=headers, **kwargs)
 
                 if len(sentinel_keys) > 0:
                     configuration_settings = client.load_configuration_settings(
