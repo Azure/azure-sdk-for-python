@@ -4,6 +4,12 @@
 
 ### Features Added
 - Added support for service version 2026-02-06.
+- Added support for the keywords `if_modified_since`, `if_unmodified_since`, `etag`, and `match_condition` to 
+conditionally perform `BlobClient`'s `set_blob_tags` and `get_blob_tags` operations.
+- Added support for the keyword `start_from` in `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs`
+APIs, which specifies the full path to start listing paths from.
+- Added support for the keyword `user_delegation_oid` to `generate_blob_sas` and `generate_container_sas`, which
+specifies the Entra ID of the user that is authorized to use the generated SAS URL.
 
 ## 12.26.0 (2025-07-16)
 
