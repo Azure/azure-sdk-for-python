@@ -48,12 +48,12 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
-        
+
             # TODO debug
             check_call([executable, "-m", "ensurepip", "--upgrade"])
 
             pip_cmd = get_pip_command(executable)
-            logger.info("Running pip freeze before installing dev reqs:")  
+            logger.info("Running pip freeze before installing dev reqs:")
             try:
                 check_call(pip_cmd + ["freeze"])
             except CalledProcessError as e:
@@ -67,9 +67,9 @@ class pylint(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
-            
+
             # TODO debug
-            logger.info("Running pip freeze AFTER installing dev reqs:") 
+            logger.info("Running pip freeze AFTER installing dev reqs:")
             try:
                 check_call(pip_cmd + ["freeze"])
             except CalledProcessError as e:
@@ -83,13 +83,13 @@ class pylint(Check):
                 cache_dir=None,
                 work_dir=staging_directory,
                 force_create=False,
-                package_type="wheel",
+                package_type="sdist",
                 pre_download_disabled=False,
                 python_executable=executable,
             )
 
             # TODO debug
-            logger.info("Running pip freeze AFTER create package and install:") 
+            logger.info("Running pip freeze AFTER create package and install:")
             try:
                 check_call(pip_cmd + ["freeze"])
             except CalledProcessError as e:
