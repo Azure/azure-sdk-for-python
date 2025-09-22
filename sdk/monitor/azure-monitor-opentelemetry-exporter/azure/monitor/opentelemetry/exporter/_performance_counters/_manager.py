@@ -290,7 +290,7 @@ def _get_exception_rate(options: CallbackOptions) -> Iterable[Observation]:
         # pylint: disable=global-statement
         global _EXCEPTIONS_COUNT
         current_time = datetime.now()
-        elapsed_time_s = (current_time - _LAST_REQUEST_RATE_TIME).total_seconds()
+        elapsed_time_s = (current_time - _LAST_EXCEPTION_RATE_TIME).total_seconds()
         exception_rate = _EXCEPTIONS_COUNT / elapsed_time_s
         _LAST_EXCEPTION_RATE_TIME = current_time
         _EXCEPTIONS_COUNT = 0
