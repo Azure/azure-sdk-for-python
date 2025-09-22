@@ -4,13 +4,6 @@ stages:
 - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
   parameters:
     ServiceDirectory: ai/azure-ai-voicelive
-    BuildTargetingString: azure-ai-voicelive
-    SupportedClouds: 'Public'
-    CloudConfig:
-      Public:
-        Location: 'eastus2'
-    TestResourceDirectories:
-      - ai/azure-ai-voicelive
     EnvVars:
       AZURE_TEST_RUN_LIVE: 'true'
       AZURE_SKIP_LIVE_RECORDING: 'true'
