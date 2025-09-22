@@ -3532,7 +3532,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
     async def test_blob_user_delegation_oid(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         variables = kwargs.pop("variables", {})
-        token_credential = self.get_credential(BlobClient, is_async=True)
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
         data = b"abc123"
 
         service = BlobServiceClient(
