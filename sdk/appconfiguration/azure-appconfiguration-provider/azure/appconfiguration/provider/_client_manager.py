@@ -216,8 +216,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     @distributed_trace
     def refresh_feature_flags(
         self,
-        refresh_on: Mapping[Tuple[str, str], Optional[str]],
         feature_flag_selectors: List[SettingSelector],
+        refresh_on: Mapping[Tuple[str, str], Optional[str]],
         headers: Dict[str, str],
         **kwargs
     ) -> Optional[List[FeatureFlagConfigurationSetting]]:

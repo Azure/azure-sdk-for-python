@@ -29,6 +29,7 @@ from typing import (
     TypeVar,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
+    ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
 from ._models import SettingSelector
@@ -351,7 +352,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 if allocation_id:
                     feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
-    def _feature_flag_appconfig_telemetry(self, feature_flag: FeatureFlagConfigurationSetting):
+    def _record_filter_usage(self, feature_flag: FeatureFlagConfigurationSetting):
         """
         Track feature filter usage for App Configuration telemetry.
 
@@ -530,12 +531,12 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def __ne__(self, other: Any) -> bool:
         return not self == other
 
-    def _process_non_keyvault_value(self, config):
+    def _process_non_keyvault_value(self, config: ConfigurationSetting):
         """
         Process configuration values that are not KeyVault references.
 
         :param config: The configuration setting to process.
-        :type config: Any
+        :type config: ConfigurationSetting
         :return: The processed configuration value (JSON object if JSON content type, string otherwise).
         :rtype: Union[str, Dict[str, Any]]
         """

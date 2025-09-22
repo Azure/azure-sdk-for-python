@@ -38,7 +38,10 @@ from .._azureappconfigurationproviderbase import (
     sdk_allowed_kwargs,
     update_correlation_context_header,
 )
-from ._async_client_manager import AsyncConfigurationClientManager, _AsyncConfigurationClientWrapper
+from ._async_client_manager import (
+    AsyncConfigurationClientManager,
+    _AsyncConfigurationClientWrapper as ConfigurationClient,
+)
 from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
@@ -189,9 +192,6 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         if endpoint is not None:
             raise TypeError("Received multiple values for parameter 'endpoint'.")
         endpoint = args[0]
-        if endpoint is not None:
-            raise TypeError("Received multiple values for parameter 'endpoint'.")
-        endpoint = args[0]
     elif len(args) == 2:
         if credential is not None:
             raise TypeError("Received multiple values for parameter 'credential'.")
@@ -336,34 +336,36 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             "on_refresh_error", None
         )
 
-    async def _configuration_refresh(self, client, headers, **kwargs) -> Tuple[bool, List[ConfigurationSetting]]:
+    async def _configuration_refresh(
+        self, client, headers, **kwargs
+    ) -> Tuple[bool, List[ConfigurationSetting], Mapping[Tuple[str, str], Optional[str]]]:
         configuration_settings: List[ConfigurationSetting] = []
-        need_refresh, self._refresh_on, configuration_settings = await client.refresh_configuration_settings(
+        sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = {}
+        need_refresh, sentinel_keys, configuration_settings = await client.refresh_configuration_settings(
             self._selects, self._refresh_on, headers=headers, **kwargs
         )
         if need_refresh:
-            return True, configuration_settings
-        return False, []
+            return True, configuration_settings, sentinel_keys
+        return False, [], sentinel_keys
 
-    async def _feature_flag_refresh(self, client, headers, **kwargs) -> Tuple[bool, List[ConfigurationSetting]]:
-        feature_flags: List[ConfigurationSetting] = []
-        need_ff_refresh = False
+    async def _feature_flag_refresh(
+        self, client: ConfigurationClient, headers: Dict[str, str], **kwargs
+    ) -> Optional[List[FeatureFlagConfigurationSetting]]:
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
         if self._feature_flag_refresh_enabled:
-            need_ff_refresh, feature_flags = await client.refresh_feature_flags(
-                self._refresh_on_feature_flags,
+            feature_flags = await client.refresh_feature_flags(
                 self._feature_flag_selectors,
+                self._refresh_on_feature_flags,
                 headers,
                 **kwargs,
             )
-        if need_ff_refresh:
-            return True, feature_flags
-        return False, []
+        return feature_flags
 
     async def _attempt_refresh(
-        self, client: _AsyncConfigurationClientWrapper, replica_count: int, is_failover_request: bool, **kwargs
+        self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
     ) -> bool:
         refreshed_configs = False
-        refreshed_feature_flags = False
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
         headers = update_correlation_context_header(
             kwargs.pop("headers", {}),
             "Watch",
@@ -379,25 +381,31 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         configuration_settings: List[ConfigurationSetting] = []
 
         # Timer needs to be reset even if no refresh happened if time had passed
-        tried_refreshing_configs = False
-        tried_refreshing_feature_flags = False
+        reset_config_timer = False
+        reset_feature_flag_timer = False
         refreshed = False
+        sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = {}
         try:
             if self._refresh_on and self._refresh_timer.needs_refresh():
-                tried_refreshing_configs = True
-                refreshed_configs, configuration_settings = await self._configuration_refresh(client, headers, **kwargs)
+                reset_config_timer = True
+                refreshed_configs, configuration_settings, sentinel_keys = await self._configuration_refresh(
+                    client, headers, **kwargs
+                )
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
-                tried_refreshing_feature_flags = True
-                refreshed_feature_flags, feature_flags = await self._feature_flag_refresh(client, headers, **kwargs)
-                if refreshed_feature_flags:
+                reset_feature_flag_timer = True
+                feature_flags = await self._feature_flag_refresh(client, headers, **kwargs)
+                if feature_flags:
                     configuration_settings.extend(feature_flags)
-            if refreshed_configs or refreshed_feature_flags:
-                self._dict = await self._process_configurations(configuration_settings, refreshed_feature_flags)
+            if refreshed_configs or feature_flags:
+                self._dict = await self._process_configurations(configuration_settings, bool(feature_flags))
                 refreshed = True
-            if tried_refreshing_configs or tried_refreshing_feature_flags:
+            if refreshed_configs:
+                self._refresh_on = sentinel_keys
+            # Reset timers at the same time as they should load from the same store.
+            if reset_config_timer:
                 self._refresh_timer.reset()
-                if self._feature_flag_refresh_enabled:
-                    self._feature_flag_refresh_timer.reset()
+            if self._feature_flag_refresh_enabled and reset_feature_flag_timer:
+                self._feature_flag_refresh_timer.reset()
             return refreshed
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
@@ -527,7 +535,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # Feature flags are not processed like other settings
                 feature_flag_value = json.loads(config.value)
                 self._update_ff_telemetry_metadata(self._origin_endpoint, config, feature_flag_value)
-                self._feature_flag_appconfig_telemetry(config)
+                self._record_filter_usage(config)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
@@ -543,7 +551,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             configuration_settings_processed[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = feature_flags_processed
         return configuration_settings_processed
 
-    async def _process_key_value(self, config):
+    async def _process_key_value(self, config: ConfigurationSetting) -> Any:
         if isinstance(config, SecretReferenceConfigurationSetting):
             return await _resolve_keyvault_reference(config, self)
         # Use the base class helper method for non-KeyVault processing
