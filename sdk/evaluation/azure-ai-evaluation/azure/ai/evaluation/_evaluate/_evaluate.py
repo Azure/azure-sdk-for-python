@@ -1028,36 +1028,36 @@ def _preprocess_data(
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
     def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
-        """Pick batch client from kwargs: _use_run_submitter_client and _use_pf_client."""
-        _use_run = cast(Optional[bool], evaluate_kwargs.pop("_use_run_submitter_client", None))
-        _use_pf = cast(Optional[bool], evaluate_kwargs.pop("_use_pf_client", None))
+        """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
+        _use_run_submitter_client = cast(Optional[bool], evaluate_kwargs.pop("_use_run_submitter_client", None))
+        _use_pf_client = cast(Optional[bool], evaluate_kwargs.pop("_use_pf_client", None))
 
-        if _use_run is None and _use_pf is None:
+        if _use_run_submitter_client is None and _use_pf_client is None:
+            # If both are unset, return default
             return "run_submitter"
 
-        if _use_run and _use_pf:
+        if _use_run_submitter_client and _use_pf_client:
             raise EvaluationException(
-                message=("Only one of _use_pf_client and _use_run_submitter_client " "should be set to True."),
+                message="Only one of _use_pf_client and _use_run_submitter_client should be set to True.",
                 target=ErrorTarget.EVALUATE,
                 category=ErrorCategory.INVALID_VALUE,
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        if _use_run is False and _use_pf is False:
+        if _use_run_submitter_client == False and _use_pf_client == False:
             return "code_client"
 
-        if _use_run:
+        if _use_run_submitter_client:
             return "run_submitter"
-        if _use_pf:
+        if _use_pf_client:
             return "pf_client"
 
-        if _use_run is None and _use_pf is False:
+        if _use_run_submitter_client is None and _use_pf_client == False:
             return "run_submitter"
-        if _use_run is False and _use_pf is None:
+        if _use_run_submitter_client == False and _use_pf_client is None:
             return "pf_client"
 
-        # Defensive default
-        return "run_submitter"
+        assert False, "This should be impossible"
 
     client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
 
