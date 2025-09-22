@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fix detector version
+  ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
+
 ### Other Changes
 
 ## 1.8.1 (2025-09-17)

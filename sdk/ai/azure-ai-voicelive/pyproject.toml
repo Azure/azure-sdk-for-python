@@ -70,10 +70,17 @@ version = {attr = "azure.ai.voicelive._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-include = ["azure.ai.voicelive", "azure.ai.voicelive.*"]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "build*",
+    "azure",
+    "azure.ai",
+]
 
 [tool.setuptools.package-data]
-"azure.ai.voicelive" = ["py.typed"]
+pytyped = ["py.typed"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
