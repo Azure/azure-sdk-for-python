@@ -94,7 +94,7 @@ class LogicalOperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MatchingPolicyFieldsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Fields to be considred for matching policy."""
+    """Fields to be considered for matching policy."""
 
     QUESTIONS = "Questions"
     """Include 'Questions' field"""

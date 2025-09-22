@@ -21,7 +21,6 @@ Environment variables:
 """
 
 from __future__ import annotations
-from gc import enable
 
 
 def sample_query_knowledgebase():
