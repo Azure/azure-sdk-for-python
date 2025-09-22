@@ -19,8 +19,8 @@
   - Added model `GroupQuotasEnforcementStatus`
   - Added model `GroupQuotasEnforcementStatusProperties`
   - Added enum `GroupType`
-  - Added model `GroupQuotaLocationSettingsOperations`
-  - Added model `GroupQuotaUsagesOperations`
+  - Added operation group `GroupQuotaLocationSettingsOperations`
+  - Added operation group `GroupQuotaUsagesOperations`
 
 ### Breaking Changes
 
