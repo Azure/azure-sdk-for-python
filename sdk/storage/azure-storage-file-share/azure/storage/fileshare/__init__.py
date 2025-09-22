@@ -17,6 +17,7 @@ from ._shared.models import (
     AccountSasPermissions,
     LocationMode,
     ResourceTypes,
+    UserDelegationKey,
     StorageErrorCode,
     Services,
 )
@@ -58,6 +59,9 @@ __all__ = [
     'ExponentialRetry',
     'FileProperties',
     'FileSasPermissions',
+    'generate_account_sas',
+    'generate_file_sas',
+    'generate_share_sas',
     'Handle',
     'LinearRetry',
     'LocationMode',
@@ -83,9 +87,7 @@ __all__ = [
     'SmbEncryptionInTransit',
     'SmbMultichannel',
     'StorageErrorCode',
-    'generate_account_sas',
-    'generate_file_sas',
-    'generate_share_sas'
+    'UserDelegationKey'
 ]
 
 
