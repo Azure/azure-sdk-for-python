@@ -8,7 +8,6 @@
 from typing import (
     Any, Callable, Dict, List, Optional
 )
-from urllib.parse import unquote
 
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
