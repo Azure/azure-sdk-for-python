@@ -336,36 +336,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             "on_refresh_error", None
         )
 
-    async def _configuration_refresh(
-        self, client, headers, **kwargs
-    ) -> Tuple[bool, List[ConfigurationSetting], Mapping[Tuple[str, str], Optional[str]]]:
-        configuration_settings: List[ConfigurationSetting] = []
-        sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = {}
-        need_refresh, sentinel_keys, configuration_settings = await client.refresh_configuration_settings(
-            self._selects, self._refresh_on, headers=headers, **kwargs
-        )
-        if need_refresh:
-            return True, configuration_settings, sentinel_keys
-        return False, [], sentinel_keys
-
-    async def _feature_flag_refresh(
-        self, client: ConfigurationClient, headers: Dict[str, str], **kwargs
-    ) -> Optional[List[FeatureFlagConfigurationSetting]]:
-        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
-        if self._feature_flag_refresh_enabled:
-            feature_flags = await client.refresh_feature_flags(
-                self._feature_flag_selectors,
-                self._refresh_on_feature_flags,
-                headers,
-                **kwargs,
-            )
-        return feature_flags
-
     async def _attempt_refresh(
         self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
     ) -> bool:
         refreshed_configs = False
-        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
         headers = update_correlation_context_header(
             kwargs.pop("headers", {}),
             "Watch",
@@ -379,6 +353,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._uses_aicc_configuration,
         )
         configuration_settings: List[ConfigurationSetting] = []
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
 
         # Timer needs to be reset even if no refresh happened if time had passed
         reset_config_timer = False
@@ -388,13 +363,27 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         try:
             if self._refresh_on and self._refresh_timer.needs_refresh():
                 reset_config_timer = True
-                refreshed_configs, configuration_settings, sentinel_keys = await self._configuration_refresh(
-                    client, headers, **kwargs
+
+                settings_need_refresh, sentinel_keys = await client.try_check_watch_keys(
+                    self._refresh_on, headers=headers, **kwargs
                 )
+
+                if settings_need_refresh:
+                    configuration_settings, sentinel_keys = await client.load_configuration_settings(
+                        self._selects, self._refresh_on, headers=headers, **kwargs
+                    )
+
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
                 reset_feature_flag_timer = True
-                feature_flags = await self._feature_flag_refresh(client, headers, **kwargs)
-                if feature_flags:
+
+                feature_flags_need_refresh = await client.try_check_feature_flags(
+                    self._refresh_on_feature_flags, headers=headers, **kwargs
+                )
+
+                if feature_flags_need_refresh:
+                    feature_flags = await client.load_feature_flags(
+                        self._feature_flag_selectors, headers=headers, **kwargs
+                    )
                     configuration_settings.extend(feature_flags)
             if refreshed_configs or feature_flags:
                 if bool(feature_flags):

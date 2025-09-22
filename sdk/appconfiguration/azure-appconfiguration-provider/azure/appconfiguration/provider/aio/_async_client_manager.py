@@ -7,7 +7,7 @@ from logging import getLogger
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Any, Optional, Mapping, TYPE_CHECKING
+from typing import Tuple, Union, Dict, List, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -181,23 +181,18 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         return loaded_feature_flags
 
     @distributed_trace
-    async def refresh_configuration_settings(
-        self,
-        selects: List[SettingSelector],
-        refresh_on: Mapping[Tuple[str, str], Optional[str]],
-        headers: Dict[str, str],
-        **kwargs
-    ) -> Tuple[bool, Mapping[Tuple[str, str], Optional[str]], List[Any]]:
+    async def try_check_watch_keys(
+        self, refresh_on: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
+    ) -> Tuple[bool, Mapping[Tuple[str, str], Optional[str]]]:
         """
-        Gets the refreshed configuration settings if they have changed.
+        Checks if any of the watch keys have changed, and updates them if they have.
 
-        :param List[SettingSelector] selects: The selectors to use to load configuration settings
         :param List[SettingSelector] refresh_on: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
-        value of the configuration sentinel keys. The third item is the updated configuration settings.
-        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[ConfigurationSetting], None]]
+        value of the configuration sentinel keys.
+        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None]]
         """
         need_refresh = False
         updated_sentinel_keys = dict(refresh_on)
@@ -209,43 +204,29 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 need_refresh = True
             if updated_sentinel is not None:
                 updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-        # Need to only update once, no matter how many sentinels are updated
-        if need_refresh:
-            configuration_settings, sentinel_keys = await self.load_configuration_settings(
-                selects, refresh_on, **kwargs
-            )
-            return True, sentinel_keys, configuration_settings
-        return False, refresh_on, []
+        return need_refresh, updated_sentinel_keys
 
     @distributed_trace
-    async def refresh_feature_flags(
-        self,
-        feature_flag_selectors: List[SettingSelector],
-        refresh_on: Mapping[Tuple[str, str], Optional[str]],
-        headers: Dict[str, str],
-        **kwargs
-    ) -> Optional[List[FeatureFlagConfigurationSetting]]:
+    async def try_check_feature_flags(
+        self, refresh_on: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
+    ) -> bool:
         """
         Gets the refreshed feature flags if they have changed.
 
         :param Mapping[Tuple[str, str], Optional[str]] refresh_on: The feature flags to check for changes
-        :param List[SettingSelector] feature_flag_selectors: The selectors to use to load feature flags
         :param Mapping[str, str] headers: The headers to use for the request
 
-        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
-        value of the feature flag sentinel keys. The third item is the updated feature flags.
-        :rtype: Optional[List[FeatureFlagConfigurationSetting]]
+        :return: True if any feature flags have changed, False otherwise
+        :rtype: bool
         """
         feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
-        feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
         for (key, label), etag in feature_flag_sentinel_keys.items():
             changed = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed:
-                feature_flags = await self.load_feature_flags(feature_flag_selectors, headers=headers, **kwargs)
-                break
-        return feature_flags
+                return True
+        return False
 
     @distributed_trace
     async def get_configuration_setting(self, key: str, label: str, **kwargs) -> Optional[ConfigurationSetting]:
