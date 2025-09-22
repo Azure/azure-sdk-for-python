@@ -71,8 +71,8 @@ def build_package_in_scenario(scenario_path: str, package_type: str = "wheel") -
 
 
 @pytest.mark.parametrize("package_type,scenario_name,scenario_path", [
-    #("wheel", "stable", "pyproject_metadata_scenario"),
-    #("sdist", "stable", "pyproject_metadata_scenario"),
+    ("wheel", "stable", "pyproject_metadata_scenario"),
+    ("sdist", "stable", "pyproject_metadata_scenario"),
     ("wheel", "beta", "pyproject_beta_metadata_scenario"),
     ("sdist", "beta", "pyproject_beta_metadata_scenario")
 ])
