@@ -20,15 +20,15 @@ Environment variables:
     4) AZURE_QUESTIONANSWERING_DEPLOYMENT - (optional) deployment name (defaults to 'production')
 """
 
-from __future__ import annotations
-
-
 def sample_query_knowledgebase():
     # [START query_knowledgebase]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering import QuestionAnsweringClient
-    from azure.ai.language.questionanswering import models as qna
+    from azure.ai.language.questionanswering.models import (
+        AnswersOptions,
+        ShortAnswerOptions
+    )
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
@@ -39,12 +39,12 @@ def sample_query_knowledgebase():
     with client:
         question = "How long should my Surface battery last?"
 
-        options = qna.AnswersOptions(
+        options = AnswersOptions(
             question=question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
+            short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
         )
         output = client.get_answers(
             options,

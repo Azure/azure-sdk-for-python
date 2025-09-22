@@ -26,7 +26,10 @@ def sample_query_text():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering import QuestionAnsweringClient
-    from azure.ai.language.questionanswering import models as qna
+    from azure.ai.language.questionanswering.models import (
+        AnswersFromTextOptions,
+        TextDocument
+    )
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
@@ -36,10 +39,10 @@ def sample_query_text():
         question = "How long does it take to charge a Surface?"
 
         # Options object call
-        options = qna.AnswersFromTextOptions(
+        options = AnswersFromTextOptions(
             question=question,
             text_documents=[
-                qna.TextDocument(
+                TextDocument(
                     id="doc1",
                     text=(
                         "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully "
@@ -47,7 +50,7 @@ def sample_query_text():
                         "activities like gaming or video streaming while you're charging it."
                     ),
                 ),
-                qna.TextDocument(
+                TextDocument(
                     id="doc2",
                     text=(
                         "You can use the USB port on your Surface Pro 4 power supply to charge other devices, like "
