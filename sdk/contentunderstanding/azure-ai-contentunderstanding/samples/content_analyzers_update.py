@@ -61,7 +61,7 @@ async def main():
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         analyzer_id = (
             f"sdk-sample-analyzer-for-update-{int(asyncio.get_event_loop().time())}"
         )
@@ -126,7 +126,7 @@ async def main():
         # Update the value for tag1, remove tag2 by setting it to an empty string, and add tag3
         updated_analyzer = ContentAnalyzer(
             description=f"Updated description",
-            tags={"tag1": "tag1_updated_value", "tag2": None, "tag3": "tag3_value"},
+            tags={"tag1": "tag1_updated_value", "tag2": "", "tag3": "tag3_value"},
         )
 
         # Update the analyzer
@@ -152,6 +152,10 @@ async def main():
         print(f"🗑️  Deleting analyzer '{analyzer_id}' (demo cleanup)...")
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 
 # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_Update.json

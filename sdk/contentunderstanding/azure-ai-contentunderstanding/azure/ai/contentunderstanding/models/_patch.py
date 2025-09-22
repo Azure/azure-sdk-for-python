@@ -14,7 +14,7 @@ from ._models import (
     AnalyzeInput as AnalyzeInputGenerated
 )
 
-# Type stub to help mypy understand that ContentField has a .value property
+# Type stub to help mypy and pyright understand that ContentField has a .value property
 # This is needed because we monkey-patch the .value property at runtime
 if TYPE_CHECKING:
     # This block is only for type checking, never executed
@@ -23,6 +23,14 @@ if TYPE_CHECKING:
         def value(self) -> Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]:
             """Get the value of this field regardless of its type."""
             ...
+
+# Additional type annotation to help both mypy and pyright understand the .value property
+# This creates a runtime type annotation that type checkers can understand
+from typing import get_type_hints
+
+# Add a type annotation to ContentField to help type checkers understand the .value property
+# This is a runtime annotation that doesn't affect execution but helps static analysis
+ContentField.value: property  # type: ignore[attr-defined]
 
 __all__: List[str] = [
     "StringField", "IntegerField", "NumberField", "BooleanField",

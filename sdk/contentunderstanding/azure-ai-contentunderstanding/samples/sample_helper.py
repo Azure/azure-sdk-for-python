@@ -37,7 +37,7 @@ def get_field_value(fields: Dict[str, ContentField], field_name: str) -> Any:
     field_data = fields[field_name]
 
     # Simply use the .value property which works for all ContentField types
-    return field_data.value
+    return field_data.value  # type: ignore[attr-defined] # pyright: ignore[reportAttributeAccessIssue]
 
 
 class PollerType(Enum):
