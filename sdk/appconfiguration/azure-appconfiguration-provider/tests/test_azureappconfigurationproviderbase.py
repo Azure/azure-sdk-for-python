@@ -560,7 +560,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertIn(FEATURE_FLAG_REFERENCE_KEY, metadata)
         self.assertIn("test_feature", metadata[FEATURE_FLAG_REFERENCE_KEY])
 
-    def test_record_filter_usage(self):
+    def test_update_feature_filter_telemetry(self):
         """Test feature flag app config telemetry tracking."""
         feature_flag = Mock(spec=FeatureFlagConfigurationSetting)
         feature_flag.filters = [
@@ -570,7 +570,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
             {"name": TARGETING_FILTER_NAMES[0]},
         ]
 
-        self.provider._record_filter_usage(feature_flag)
+        self.provider._update_feature_filter_telemetry(feature_flag)
 
         self.assertTrue(self.provider._feature_filter_usage[PERCENTAGE_FILTER_KEY])
         self.assertTrue(self.provider._feature_filter_usage[TIME_WINDOW_FILTER_KEY])

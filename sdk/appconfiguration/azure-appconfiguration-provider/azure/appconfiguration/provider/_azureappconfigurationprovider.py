@@ -517,7 +517,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # Feature flags are not processed like other settings
                 feature_flag_value = json.loads(config.value)
                 self._update_ff_telemetry_metadata(self._origin_endpoint, config, feature_flag_value)
-                self._record_filter_usage(config)
+                self._update_feature_filter_telemetry(config)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:

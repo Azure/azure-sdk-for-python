@@ -352,7 +352,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 if allocation_id:
                     feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
-    def _record_filter_usage(self, feature_flag: FeatureFlagConfigurationSetting):
+    def _update_feature_filter_telemetry(self, feature_flag: FeatureFlagConfigurationSetting):
         """
         Track feature filter usage for App Configuration telemetry.
 
