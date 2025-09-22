@@ -1,6 +1,6 @@
 # coding=utf-8
 # -------------------------------------------------------------------------
-# Runtime async tests: text records querying (authoring removed)
+# Inference async tests: text records querying (authoring removed)
 # -------------------------------------------------------------------------
 import pytest
 

@@ -6,7 +6,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 class QuestionAnsweringTestCase(AzureRecordedTestCase):
     @property
-    def kwargs_for_polling(self):  # retained for any future LROs (none expected in runtime only)
+    def kwargs_for_polling(self): 
         if self.is_playback:
             return {"polling_interval": 0}
         return {}

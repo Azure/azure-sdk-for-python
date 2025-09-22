@@ -3,7 +3,7 @@
 ## 2.0.0b1 (Unreleased)
 
 ### Breaking Changes
-* Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, `QuestionAnsweringProjectsClient`, and related authoring operations have been eliminated from the runtime client distribution.
+* Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, and related authoring operations have been eliminated from the runtime client distribution.
 * Dropped support for Python versions earlier than 3.9 (aligns with Azure SDK Python support policy going forward).
 
 ### Features Added
