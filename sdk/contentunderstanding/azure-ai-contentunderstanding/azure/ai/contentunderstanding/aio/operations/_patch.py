@@ -3,11 +3,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
+# mypy: disable-error-code=override
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Any, Union, overload
+from typing import List, Optional, Any, Union, overload, IO
+from collections.abc import MutableMapping
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
 from ._operations import FacesOperations as FacesOperationsGenerated
@@ -15,6 +17,8 @@ from ...models import DetectFacesResult
 from ._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
 from ... import models as _models
 from ._operations import ContentClassifiersOperations as ContentClassifiersOperationsGenerated
+
+JSON = MutableMapping[str, Any]
 
 __all__: List[str] = [
     "FacesOperations",
@@ -71,6 +75,46 @@ class FacesOperations(FacesOperationsGenerated):
         :keyword max_detected_faces: Maximum number of faces to return (up to 100)
         :paramtype max_detected_faces: int
         :return: DetectFacesResult
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect(
+        self, 
+        body: JSON, 
+        *, 
+        content_type: str = "application/json", 
+        **kwargs: Any
+    ) -> DetectFacesResult:
+        """Detect faces in an image.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DetectFacesResult. The DetectFacesResult is compatible with MutableMapping
+        :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect(
+        self, 
+        body: IO[bytes], 
+        *, 
+        content_type: str = "application/json", 
+        **kwargs: Any
+    ) -> DetectFacesResult:
+        """Detect faces in an image.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DetectFacesResult. The DetectFacesResult is compatible with MutableMapping
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
@@ -171,6 +215,70 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :keyword inputs: Additional inputs to analyze. Only supported in analyzers with mode=pro.
          Default value is None.
         :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_analyze(
+        self,
+        analyzer_id: str,
+        body: JSON,
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+        """Extract content and fields from input.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_analyze(
+        self,
+        analyzer_id: str,
+        body: IO[bytes],
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:
+        """Extract content and fields from input.
+
+        :param analyzer_id: The unique identifier of the analyzer. Required.
+        :type analyzer_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
@@ -282,6 +390,70 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :keyword processing_location: The location where the data may be processed. Known values are:
          "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :return: An instance of AsyncLROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_classify(
+        self,
+        classifier_id: str,
+        body: JSON,
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClassifyResult]:
+        """Classify content with optional splitting.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClassifyResult. The ClassifyResult is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_classify(
+        self,
+        classifier_id: str,
+        body: IO[bytes],
+        *,
+        string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
+        processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClassifyResult]:
+        """Classify content with optional splitting.
+
+        :param classifier_id: The unique identifier of the classifier. Required.
+        :type classifier_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword string_encoding: The encoding format for content spans in the response. Known values
+         are: "codePoint", "utf16", and "utf8". Default value is None.
+        :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
+        :keyword processing_location: The location where the data may be processed. Known values are:
+         "geography", "dataZone", and "global". Default value is None.
+        :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of AsyncLROPoller that returns ClassifyResult. The ClassifyResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
