@@ -13,7 +13,6 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-
 class TestDataProtectionManagementOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DataProtectionMgmtClient)
