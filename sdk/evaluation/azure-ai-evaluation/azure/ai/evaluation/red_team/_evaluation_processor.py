@@ -102,6 +102,16 @@ class EvaluationProcessor:
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
         context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        
+        # Extract tool calls from assistant messages
+        tool_calls = []
+        for msg in messages:
+            if msg.get("role") == "assistant" and "tool_calls" in msg:
+                msg_tool_calls = msg["tool_calls"]
+                if isinstance(msg_tool_calls, list):
+                    tool_calls.extend(msg_tool_calls)
+                else:
+                    tool_calls.append(msg_tool_calls)
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
@@ -127,6 +137,7 @@ class EvaluationProcessor:
                             credential=self.credential,
                             annotation_task=annotation_task,
                             scan_session_id=self.scan_session_id,
+                            tool_calls=tool_calls if tool_calls else None,
                         )
                     except (
                         httpx.ConnectTimeout,

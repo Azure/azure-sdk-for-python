@@ -15,17 +15,26 @@ from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 
 
-def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
+def message_to_dict(message: ChatMessage, context: str = None, tool_calls: str = None) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
     :type message: ChatMessage
     :param context: Additional context to include in the dictionary
     :type context: str
-    :return: Dictionary representation with role and content
-    :rtype: Dict[str, str]
+    :param tool_calls: JSON string of tool calls if available
+    :type tool_calls: str
+    :return: Dictionary representation with role, content, and context
+    :rtype: Dict[str, Any]
     """
-    return {"role": message.role, "content": message.content, "context": context}
+    result = {"role": message.role, "content": message.content, "context": context}
+    # Only add tool_calls to assistant messages (tool calls are made by assistants, not users)
+    if tool_calls and message.role == "assistant":
+        try:
+            result["tool_calls"] = json.loads(tool_calls)
+        except (json.JSONDecodeError, TypeError):
+            pass  # If parsing fails, don't include tool_calls
+    return result
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -194,7 +203,11 @@ def write_pyrit_outputs_to_file(
 
     conversations = [
         [
-            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            (
+                item.to_chat_message(), 
+                prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""),
+                item.labels.get("tool_calls", None) if item.labels else None
+            )
             for item in group
         ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
@@ -221,7 +234,7 @@ def write_pyrit_outputs_to_file(
                         json.dumps(
                             {
                                 "conversation": {
-                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                                    "messages": [message_to_dict(message[0], message[1], message[2] if len(message) > 2 else None) for message in conversation]
                                 }
                             }
                         )
@@ -252,7 +265,7 @@ def write_pyrit_outputs_to_file(
                 json.dumps(
                     {
                         "conversation": {
-                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                            "messages": [message_to_dict(message[0], message[1], message[2] if len(message) > 2 else None) for message in conversation]
                         }
                     }
                 )
