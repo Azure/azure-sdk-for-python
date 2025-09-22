@@ -10,8 +10,15 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List, Optional, Any, Union, overload
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncLROPoller
+from .operations._operations import FacesOperations as FacesOperationsGenerated
+from ..models import DetectFacesResult
+from .operations._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
+from .. import models as _models
 
-__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "FacesOperations",
+    "ContentAnalyzersOperations"
+]
 
 
 def patch_sdk():
@@ -20,18 +27,14 @@ def patch_sdk():
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
+
+    :return: None
+    :rtype: None
     """
-    pass
 
-
-# Make FacesOperations available for import - following WebPubSub pattern
-from .operations._operations import FacesOperations as FacesOperationsGenerated
-from .operations._operations import build_faces_detect_request
-from ..models import DetectFacesResult
 
 class FacesOperations(FacesOperationsGenerated):
     """Extended FacesOperations with url/data mutual exclusivity enforcement."""
-    
     @overload
     async def detect(
         self,
@@ -50,7 +53,6 @@ class FacesOperations(FacesOperationsGenerated):
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
 
     @overload
     async def detect(
@@ -70,7 +72,6 @@ class FacesOperations(FacesOperationsGenerated):
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
 
     @distributed_trace_async
     async def detect(self, *args: Any, **kwargs: Any) -> DetectFacesResult:  # type: ignore[override]
@@ -79,29 +80,30 @@ class FacesOperations(FacesOperationsGenerated):
         This method enforces that url and data cannot be provided simultaneously,
         while allowing all other original behaviors including body parameters.
 
+        :param args: Variable length argument list.
+        :type args: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Validate that url and data are not provided together
-        if 'url' in kwargs and kwargs['url'] is not None and 'data' in kwargs and kwargs['data'] is not None:
-            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
-        
+        if ('url' in kwargs and kwargs['url'] is not None and
+                'data' in kwargs and kwargs['data'] is not None):
+            raise ValueError(
+                "Cannot provide both 'url' and 'data' parameters simultaneously"
+            )
+
         # Handle bytes data - no conversion needed, pass through directly
         # The original detect method will handle bytes data appropriately
-        
+
         # Call the original method for all cases
         return await super().detect(*args, **kwargs)
 
 
-# Make ContentAnalyzersOperations available for import
-from .operations._operations import ContentAnalyzersOperations as ContentAnalyzersOperationsGenerated
-from .. import models as _models
-
-
 class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     """Extended ContentAnalyzersOperations with url/data mutual exclusivity enforcement."""
-    
     @overload
     async def begin_analyze(
         self,
@@ -137,7 +139,6 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
 
     @overload
     async def begin_analyze(
@@ -175,10 +176,11 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        pass
 
     @distributed_trace_async
-    async def begin_analyze(self, analyzer_id: str, *args: Any, **kwargs: Any) -> AsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
+    async def begin_analyze(
+            self, analyzer_id: str, *args: Any, **kwargs: Any
+    ) -> AsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
         """Extract content and fields from input with url/data mutual exclusivity.
 
         This method enforces that url and data cannot be provided simultaneously,
@@ -186,27 +188,35 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
         :type analyzer_id: str
+        :param args: Variable length argument list.
+        :type args: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Validate that url and data are not provided together
-        if 'url' in kwargs and kwargs['url'] is not None and 'data' in kwargs and kwargs['data'] is not None:
-            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
-        
+        if ('url' in kwargs and kwargs['url'] is not None and
+                'data' in kwargs and kwargs['data'] is not None):
+            raise ValueError(
+                "Cannot provide both 'url' and 'data' parameters simultaneously"
+            )
+
         # Handle bytes data by calling begin_analyze_binary for better efficiency
         # Only route to begin_analyze_binary when:
         # 1. data is provided and is bytes (raw binary data)
         # 2. inputs is None (begin_analyze_binary doesn't support inputs parameter)
-        if ('data' in kwargs and kwargs['data'] is not None and isinstance(kwargs['data'], bytes) and
-            ('inputs' not in kwargs or kwargs.get('inputs') is None)):
+        if ('data' in kwargs and kwargs['data'] is not None and
+                isinstance(kwargs['data'], bytes) and
+                ('inputs' not in kwargs or kwargs.get('inputs') is None)):
             data_bytes = kwargs.pop('data')
             # Extract parameters that begin_analyze_binary supports
             string_encoding = kwargs.pop('string_encoding', None)
             processing_location = kwargs.pop('processing_location', None)
             content_type = kwargs.pop('content_type', 'application/octet-stream')
-            
+
             return await super().begin_analyze_binary(
                 analyzer_id=analyzer_id,
                 input=data_bytes,
@@ -215,6 +225,6 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
                 content_type=content_type,
                 **kwargs
             )
-        
+
         # Call the original method for all other cases
         return await super().begin_analyze(analyzer_id, *args, **kwargs)

@@ -8,11 +8,16 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Optional, Any, Union, overload
+from ._models import (
+    StringField, IntegerField, NumberField, BooleanField,
+    DateField, TimeField, ArrayField, ObjectField, ContentField,
+    AnalyzeInput as AnalyzeInputGenerated
+)
 
 __all__: List[str] = [
-    "StringField", "IntegerField", "NumberField", "BooleanField", 
+    "StringField", "IntegerField", "NumberField", "BooleanField",
     "DateField", "TimeField", "ArrayField", "ObjectField", "AnalyzeInput"
-]  # Add all objects you want publicly available to users at this package level
+]
 
 
 def patch_sdk():
@@ -21,16 +26,12 @@ def patch_sdk():
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
+
+    :return: None
+    :rtype: None
     """
-    pass
 
 
-# Import the generated classes and monkey-patch them
-from ._models import (
-    StringField, IntegerField, NumberField, BooleanField, 
-    DateField, TimeField, ArrayField, ObjectField, ContentField,
-    AnalyzeInput as AnalyzeInputGenerated
-)
 
 
 # Monkey-patch the StringField class to add the value property
