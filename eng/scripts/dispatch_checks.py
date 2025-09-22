@@ -81,12 +81,12 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
         # if we have any output collections to complete, do so now here
 
         # finally, we need to clean up any temp dirs created by --isolate
-        # if in_ci():
-        #     isolate_dir = os.path.join(package, f".venv_{check}")
-        #     try:
-        #         shutil.rmtree(isolate_dir)
-        #     except:
-        #         logger.warning(f"Failed to remove isolate dir {isolate_dir} for {package} / {check}")
+        if in_ci():
+            isolate_dir = os.path.join(package, f".venv_{check}")
+            try:
+                shutil.rmtree(isolate_dir)
+            except:
+                logger.warning(f"Failed to remove isolate dir {isolate_dir} for {package} / {check}")
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -299,6 +299,10 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
 
+    # ensure that recursive virtual envs aren't messed with by this call
+    os.environ["VIRTUAL_ENV"] = ""
+    os.environ["PYTHON_HOME"] = ""
+
     if args.filter_type == "None":
         args.filter_type = "Build"
         compatibility_filter = False
@@ -321,6 +325,11 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     if not os.path.exists(os.path.join(root_dir, ".wheels")):
         os.makedirs(os.path.join(root_dir, ".wheels"))
+
+    if in_ci():
+        # prepare a build of eng/tools/azure-sdk-tools
+        # todo: ensure that we honor this .wheels directory when replacing for dev reqs
+        build_whl_for_req("eng/tools/azure-sdk-tools", root_dir, os.path.join(root_dir, ".wheels"))
 
     # so if we have checks whl,import_all and selected package paths `sdk/core/azure-core`, `sdk/storage/azure-storage-blob` we should
     # shell out to `azypysdk <checkname>` with cwd of the package directory, which is what is in `targeted_packages` array

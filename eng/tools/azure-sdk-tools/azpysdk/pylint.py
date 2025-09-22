@@ -119,6 +119,15 @@ class pylint(Check):
             rcFileLocation = os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
 
             try:
+                logger.info([
+                        executable,
+                        "-m",
+                        "pylint",
+                        "--rcfile={}".format(rcFileLocation),
+                        "--output-format=parseable",
+                        os.path.join(package_dir, top_level_module),
+                    ])
+
                 results.append(check_call(
                     [
                         executable,
