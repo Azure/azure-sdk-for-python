@@ -16,8 +16,8 @@ to specify whether granting new directory leases for directories present in a sh
 for the SMB protocol to specify whether encryption in transit is required.
 - Added support for the keyword `file_property_semantics` in `ShareClient`'s `create_directory` and `DirectoryClient`'s
 `create_directory` APIs, which specifies permissions to be configured upon directory creation.
-- Added support for the keywords `data` and `length` to `FileClient`'s `create_file` API, which specifies the
-optional initial data to be uploaded (up to 4MB) and the number of bytes uploaded in the initial data, respectively.
+- Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
+optional initial data to be uploaded (up to 4MB).
 
 ## 12.22.0 (2025-07-16)
 
