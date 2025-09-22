@@ -58,7 +58,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         analyzer_id = (
             f"sdk-sample-analyzer-to-delete-{int(asyncio.get_event_loop().time())}"
         )
@@ -94,6 +94,10 @@ async def main() -> None:
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 if __name__ == "__main__":
     asyncio.run(main())

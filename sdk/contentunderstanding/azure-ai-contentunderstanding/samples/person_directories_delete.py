@@ -53,7 +53,7 @@ async def main() -> None:  # noqa: D401 - simple function signature is fine for 
     # Create a temporary directory first so we have something to delete
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
         print(f"🔧 Creating temporary directory '{directory_id}'...")
         await client.person_directories.create(
@@ -67,6 +67,10 @@ async def main() -> None:  # noqa: D401 - simple function signature is fine for 
         await client.person_directories.delete(person_directory_id=directory_id)
         print("✅ Directory deleted successfully")
 
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 if __name__ == "__main__":
     asyncio.run(main())

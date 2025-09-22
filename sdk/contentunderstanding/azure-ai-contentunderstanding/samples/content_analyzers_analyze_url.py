@@ -57,7 +57,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
         print(
             f"🔍 Analyzing remote document from {file_url} with prebuilt-documentAnalyzer..."
@@ -119,6 +119,10 @@ async def main() -> None:
         # Note: This saves the object model, not the raw JSON response
         # To get the full raw JSON response, see the sample: content_analyzers_analyze_binary_raw_json.py
         # save_json_to_file(result.as_dict(), filename_prefix="content_analyzers_analyze_url")
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 
 if __name__ == "__main__":

@@ -58,7 +58,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         analyzer_id = (
             f"sdk-sample-custom-analyzer-{int(asyncio.get_event_loop().time())}"
         )
@@ -110,6 +110,10 @@ async def main() -> None:
         # - To use the analyzer for analysis: see content_analyzers_analyze_binary.py
         # - To delete the analyzer: see content_analyzers_delete_analyzer.py
 
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 if __name__ == "__main__":
     asyncio.run(main())

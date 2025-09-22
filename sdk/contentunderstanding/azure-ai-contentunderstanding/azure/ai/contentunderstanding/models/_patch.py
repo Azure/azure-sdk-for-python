@@ -7,12 +7,22 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Any, Union, overload
+from typing import List, Optional, Any, Union, overload, TYPE_CHECKING
 from ._models import (
     StringField, IntegerField, NumberField, BooleanField,
     DateField, TimeField, ArrayField, ObjectField, ContentField,
     AnalyzeInput as AnalyzeInputGenerated
 )
+
+# Type stub to help mypy understand that ContentField has a .value property
+# This is needed because we monkey-patch the .value property at runtime
+if TYPE_CHECKING:
+    # This block is only for type checking, never executed
+    class ContentField:
+        @property
+        def value(self) -> Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]:
+            """Get the value of this field regardless of its type."""
+            ...
 
 __all__: List[str] = [
     "StringField", "IntegerField", "NumberField", "BooleanField",

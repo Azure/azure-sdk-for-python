@@ -24,7 +24,8 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-from typing import Any
+from typing import Any, Tuple
+from azure.core.rest import HttpResponse
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
@@ -62,7 +63,7 @@ async def main() -> None:
 
     async with ContentUnderstandingClient(
         endpoint=endpoint, credential=credential
-    ) as client, credential:
+    ) as client:
         with open("sample_files/sample_invoice.pdf", "rb") as f:
             pdf_bytes: bytes = f.read()
 
@@ -88,13 +89,18 @@ async def main() -> None:
 
         # Save the raw JSON response
         save_json_to_file(
-            raw_http_response.json(), filename_prefix="content_analyzers_analyze_binary"
+            raw_http_response.json(),  # type: ignore[attr-defined]
+            filename_prefix="content_analyzers_analyze_binary"
         )
         # Note: For easier data access, see object model samples:
         #    content_analyzers_analyze_binary.py
         #    content_analyzers_analyze_url.py
 
         print("✅ Analysis completed and raw JSON response saved!")
+
+    # Manually close DefaultAzureCredential if it was used
+    if isinstance(credential, DefaultAzureCredential):
+        await credential.close()
 
 
 if __name__ == "__main__":
