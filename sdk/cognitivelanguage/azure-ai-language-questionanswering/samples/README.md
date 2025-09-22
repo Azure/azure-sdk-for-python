@@ -9,7 +9,7 @@ products:
 urlFragment: languagequestionanswering-samples
 ---
 
-# Samples for Azure Language Question Answering (Answering Runtime)
+# Samples for Azure Language Question Answering (Inference)
 
 These samples demonstrate how to use the runtime Question Answering features to query an existing knowledge base
 or ad‑hoc text content. Authoring (project creation / deployment / source management) samples have been moved
