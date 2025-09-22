@@ -18,5 +18,5 @@ class WebpubsubAsyncTest(AzureRecordedTestCase):
             credential=credential,
             endpoint=endpoint,
             hub=hub,
-            reverse_proxy_endpoint=reverse_proxy_endpoint
+            reverse_proxy_endpoint=reverse_proxy_endpoint,
         )

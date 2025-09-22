@@ -29,7 +29,7 @@ def recorded_by_proxy_async(test_func):
     """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
 
     For more details and usage examples, refer to
-    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
+    https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#write-or-run-tests
     """
 
     async def record_wrap(*args, **kwargs):

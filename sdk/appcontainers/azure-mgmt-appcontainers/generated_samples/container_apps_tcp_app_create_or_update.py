@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -32,7 +33,7 @@ def main():
 
     response = client.container_apps.begin_create_or_update(
         resource_group_name="rg",
-        container_app_name="testcontainerapptcp",
+        container_app_name="testcontainerAppTcp",
         container_app_envelope={
             "location": "East US",
             "properties": {
@@ -41,7 +42,7 @@ def main():
                         "exposedPort": 4000,
                         "external": True,
                         "targetPort": 3000,
-                        "traffic": [{"revisionName": "testcontainerapptcp-ab1234", "weight": 100}],
+                        "traffic": [{"revisionName": "testcontainerAppTcp-ab1234", "weight": 100}],
                         "transport": "tcp",
                     }
                 },
@@ -49,8 +50,8 @@ def main():
                 "template": {
                     "containers": [
                         {
-                            "image": "repo/testcontainerapptcp:v1",
-                            "name": "testcontainerapptcp",
+                            "image": "repo/testcontainerAppTcp:v1",
+                            "name": "testcontainerAppTcp",
                             "probes": [
                                 {
                                     "initialDelaySeconds": 3,
@@ -75,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2025-01-01/examples/ContainerApps_TcpApp_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ContainerApps_TcpApp_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

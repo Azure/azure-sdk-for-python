@@ -52,7 +52,9 @@ class SessionContainer(object):
             pk_value: Any,
             container_properties_cache: Dict[str, Dict[str, Any]],
             routing_map_provider: SmartRoutingMapProvider,
-            partition_key_range_id: Optional[int]) -> str:
+            partition_key_range_id: Optional[int],
+            options: Dict[str, Any]
+    ) -> str:
         """Get Session Token for the given collection and partition key information.
 
         :param str resource_path: Self link / path to the resource
@@ -62,6 +64,8 @@ class SessionContainer(object):
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
         :type container_properties_cache: Dict[str, Dict[str, Any]]
         :param int partition_key_range_id: The partition key range ID used for the operation
+        :param options: Options for the operation calling this method
+        :type options: Dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str
@@ -112,7 +116,9 @@ class SessionContainer(object):
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
-                        pk_range = routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
+                        pk_range = routing_map_provider.get_overlapping_ranges(collection_name,
+                                                                               [epk_range],
+                                                                               options)
                         if len(pk_range) > 0:
                             partition_key_range_id = pk_range[0]['id']
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
@@ -139,7 +145,9 @@ class SessionContainer(object):
             pk_value: Any,
             container_properties_cache: Dict[str, Dict[str, Any]],
             routing_map_provider: SmartRoutingMapProviderAsync,
-            partition_key_range_id: Optional[str]) -> str:
+            partition_key_range_id: Optional[str],
+            options: Dict[str, Any]
+    ) -> str:
         """Get Session Token for the given collection and partition key information.
 
         :param str resource_path: Self link / path to the resource
@@ -150,6 +158,8 @@ class SessionContainer(object):
         :type container_properties_cache: Dict[str, Dict[str, Any]]
         :param Any routing_map_provider: The routing map provider containing the partition key range cache logic
         :param str partition_key_range_id: The partition key range ID used for the operation
+        :param options: Options for the operation calling this method
+        :type options: Dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str
@@ -200,7 +210,9 @@ class SessionContainer(object):
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
-                        pk_range = await routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
+                        pk_range = await routing_map_provider.get_overlapping_ranges(collection_name,
+                                                                                     [epk_range],
+                                                                                     options)
                         if len(pk_range) > 0:
                             partition_key_range_id = pk_range[0]['id']
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
@@ -389,11 +401,15 @@ class Session(object):
         self.session_container.set_session_token(client_connection, response_result, response_headers)
 
     def get_session_token(self, resource_path, pk_value, container_properties_cache, routing_map_provider,
-                          partition_key_range_id):
+                          partition_key_range_id, options):
         return self.session_container.get_session_token(resource_path, pk_value, container_properties_cache,
-                                                        routing_map_provider, partition_key_range_id)
+                                                        routing_map_provider, partition_key_range_id, options)
 
     async def get_session_token_async(self, resource_path, pk_value, container_properties_cache, routing_map_provider,
-                                      partition_key_range_id):
-        return await self.session_container.get_session_token_async(resource_path, pk_value, container_properties_cache,
-                                                                    routing_map_provider, partition_key_range_id)
+                                      partition_key_range_id, options):
+        return await self.session_container.get_session_token_async(resource_path,
+                                                                    pk_value,
+                                                                    container_properties_cache,
+                                                                    routing_map_provider,
+                                                                    partition_key_range_id,
+                                                                    options)

@@ -1320,13 +1320,13 @@ class TrackResponse(msrest.serialization.Model):
         "errors": {"key": "errors", "type": "[TelemetryErrorDetails]"},
     }
 
-    def __init__(
+    def __init__(  # type: ignore
         self,
         *,
         items_received: Optional[int] = None,
         items_accepted: Optional[int] = None,
         errors: Optional[List["TelemetryErrorDetails"]] = None,
-        **kwargs
+        **kwargs  # type: Any
     ):
         """
         :keyword items_received: The number of items received.
