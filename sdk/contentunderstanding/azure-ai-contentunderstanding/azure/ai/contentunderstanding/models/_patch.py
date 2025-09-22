@@ -18,17 +18,19 @@ from ._models import (
 # This is needed because we monkey-patch the .value property at runtime
 if TYPE_CHECKING:
     # This block is only for type checking, never executed
-    class ContentField:
+    class ContentFieldTypeStub:
         """Type stub for ContentField to help type checkers understand the .value property."""
-        
+
         @property
-        def value(self) -> Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]:
+        def value(self) -> Union[
+            Optional[str], Optional[float], Optional[int], Optional[bool],
+            Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]
+        ]:
             """Get the value of this field regardless of its type."""
-            ...
+            ...  # pylint: disable=unnecessary-ellipsis
 
 # Additional type annotation to help both mypy and pyright understand the .value property
 # This creates a runtime type annotation that type checkers can understand
-from typing import get_type_hints
 
 # Add a type annotation to ContentField to help type checkers understand the .value property
 # This is a runtime annotation that doesn't affect execution but helps static analysis
@@ -56,7 +58,11 @@ def patch_sdk():
 
 # Monkey-patch the StringField class to add the value property
 def _string_field_value(self) -> Optional[str]:
-    """Get the string value of this field."""
+    """Get the string value of this field.
+    
+    :return: The string value of this field
+    :rtype: Optional[str]
+    """
     return self.value_string
 
 setattr(StringField, 'value', property(_string_field_value))
@@ -64,7 +70,11 @@ setattr(StringField, 'value', property(_string_field_value))
 
 # Monkey-patch the IntegerField class to add the value property
 def _integer_field_value(self) -> Optional[int]:
-    """Get the integer value of this field."""
+    """Get the integer value of this field.
+    
+    :return: The integer value of this field
+    :rtype: Optional[int]
+    """
     return self.value_integer
 
 setattr(IntegerField, 'value', property(_integer_field_value))
@@ -143,14 +153,18 @@ setattr(ObjectField, 'value', property(_object_field_value))
 
 
 # Monkey-patch ContentField to add a generic value property for IntelliSense
-def _content_field_value(self) -> Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]:
+def _content_field_value(self) -> Union[
+    Optional[str], Optional[float], Optional[int], Optional[bool],
+    Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]
+]:
     """Get the value of this field regardless of its type.
     
     This property automatically returns the appropriate value based on the field type.
     IntelliSense will show this property as available on all ContentField instances.
     
     :return: The field value, type depends on the specific field type
-    :rtype: Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]
+    :rtype: Union[Optional[str], Optional[float], Optional[int], Optional[bool],
+         Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]
     """
     # This will work because we've monkey-patched all the individual field types
     # with their own .value properties above
@@ -181,7 +195,6 @@ setattr(ContentField, 'value', property(_content_field_value))
 # Extended AnalyzeInput with mutually exclusive url/data parameters
 class AnalyzeInput(AnalyzeInputGenerated):
     """Extended AnalyzeInput with mutually exclusive url and data parameters."""
-    
     @overload
     def __init__(self, *, url: str, name: Optional[str] = None) -> None:
         """Initialize with URL parameter.
@@ -191,7 +204,6 @@ class AnalyzeInput(AnalyzeInputGenerated):
         :param name: Name of the input
         :type name: Optional[str]
         """
-    
     @overload
     def __init__(self, *, data: bytes, name: Optional[str] = None) -> None:
         """Initialize with data parameter.
@@ -201,8 +213,9 @@ class AnalyzeInput(AnalyzeInputGenerated):
         :param name: Name of the input
         :type name: Optional[str]
         """
-    
-    def __init__(self, *, url: Optional[str] = None, data: Optional[bytes] = None, name: Optional[str] = None) -> None:
+    def __init__(
+        self, *, url: Optional[str] = None, data: Optional[bytes] = None, name: Optional[str] = None
+    ) -> None:
         """Initialize AnalyzeInput with mutually exclusive url or data parameter.
         
         :param url: The URL of the input to analyze
@@ -215,11 +228,13 @@ class AnalyzeInput(AnalyzeInputGenerated):
         """
         # Validate mutually exclusive parameters
         if url is not None and data is not None:
-            raise ValueError("Cannot specify both 'url' and 'data' parameters. Please provide either 'url' or 'data', but not both.")
-        
+            raise ValueError(
+                "Cannot specify both 'url' and 'data' parameters. "
+                "Please provide either 'url' or 'data', but not both."
+            )
+
         if url is None and data is None:
             raise ValueError("Must specify either 'url' or 'data' parameter.")
-        
         # Call parent constructor with validated parameters
         # At this point, we know exactly one of url or data is not None
         if url is not None:

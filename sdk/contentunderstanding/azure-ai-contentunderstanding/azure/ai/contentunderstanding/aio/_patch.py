@@ -80,10 +80,10 @@ class FacesOperations(FacesOperationsGenerated):
 
     @overload
     async def detect(
-        self, 
-        body: JSON, 
-        *, 
-        content_type: str = "application/json", 
+        self,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> DetectFacesResult:
         """Detect faces in an image.
@@ -100,10 +100,10 @@ class FacesOperations(FacesOperationsGenerated):
 
     @overload
     async def detect(
-        self, 
-        body: IO[bytes], 
-        *, 
-        content_type: str = "application/json", 
+        self,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
         **kwargs: Any
     ) -> DetectFacesResult:
         """Detect faces in an image.
@@ -127,8 +127,10 @@ class FacesOperations(FacesOperationsGenerated):
 
         :param args: Variable length argument list.
         :type args: Any
-        :keyword kwargs: Arbitrary keyword arguments.
+        :param kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -299,8 +301,10 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type analyzer_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :keyword kwargs: Arbitrary keyword arguments.
+        :param kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
