@@ -133,6 +133,7 @@ class FacesOperations(FacesOperationsGenerated):
         :paramtype kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
