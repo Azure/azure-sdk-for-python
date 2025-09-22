@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # mypy: disable-error-code=override
 # pyright: reportIncompatibleMethodOverride=false
+# pylint: disable=docstring-should-be-keyword,C4743
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -129,8 +130,8 @@ class FacesOperations(FacesOperationsGenerated):
 
         :param args: Variable length argument list.
         :type args: Any
-        :keyword kwargs: Arbitrary keyword arguments.
-        :paramtype kwargs: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -302,8 +303,8 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type analyzer_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :keyword kwargs: Arbitrary keyword arguments.
-        :paramtype kwargs: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
@@ -480,8 +481,8 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :type classifier_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :keyword kwargs: Arbitrary keyword arguments.
-        :paramtype kwargs: Any
+        :param kwargs: Arbitrary keyword arguments.
+        :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
 
