@@ -32,75 +32,73 @@ python -m pip install azure-ai-language-questionanswering
 
 ### Authenticate the client
 
-In order to interact with the Question Answering service, you'll need to create an instance of the [QuestionAnsweringClient][questionanswering_client_class] class or an instance of the [AuthoringClient][authoring_client_class] for managing projects within your resource. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
+In order to interact with the Question Answering service, you'll create an instance of the [QuestionAnsweringClient][questionanswering_client_class] (or the [AuthoringClient][authoring_client_class] in the separate authoring package). The **recommended** approach is to use Azure Active Directory via `DefaultAzureCredential` from the [azure-identity][azure_identity_credentials] library. This avoids embedding keys, enables managed identity in production, and unifies authentication across Azure SDKs.
 
-#### Get an API key
+> Important: To use Azure AD (AAD) you must use your resource's **custom subdomain** endpoint (for example: `https://<my-subdomain>.cognitiveservices.azure.com/`); legacy regional generic endpoints (e.g., `https://eastus.api.cognitive.microsoft.com`) do **not** support AAD token authentication.
 
-You can get the **endpoint** and an **API key** from the Language resource in the [Azure Portal][azure_portal].
+#### Recommended: DefaultAzureCredential
 
-Alternatively, use the [Azure CLI][azure_cli] command shown below to get the API key from the Language resource.
+Prerequisites for AAD authentication:
+
+* [Install azure-identity][install_azure_identity]
+* [Register an AAD application][register_aad_app]
+* [Grant access][grant_role_access] to the Language resource (e.g., assign the "Cognitive Services Language Reader" role, plus writer roles if needed for authoring)
+
+Set these environment variables only if you’re using a service principal with a client secret (otherwise, if you rely on Azure CLI / VS Code login or Managed Identity, you can skip this step):
+AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+
+Then create the client:
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.questionanswering import QuestionAnsweringClient
+
+endpoint = "https://<my-subdomain>.cognitiveservices.azure.com/"  # custom subdomain endpoint
+credential = DefaultAzureCredential()
+
+client = QuestionAnsweringClient(endpoint, credential)
+```
+
+Authoring (if using the separate authoring package):
+
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.questionanswering.authoring import AuthoringClient
+
+endpoint = "https://<my-subdomain>.cognitiveservices.azure.com/"
+credential = DefaultAzureCredential()
+
+authoring_client = AuthoringClient(endpoint, credential)
+```
+
+#### Alternative: API key credential
+
+For quick starts or scripts where you have not yet configured AAD, you can use an API key with `AzureKeyCredential`. You can obtain the key from the Azure Portal, or via the CLI:
 
 ```powershell
 az cognitiveservices account keys list --resource-group <resource-group-name> --name <resource-name>
 ```
 
-#### Create QuestionAnsweringClient
-
-Once you've determined your **endpoint** and **API key** you can instantiate a [QuestionAnsweringClient][questionanswering_client_class]:
+Then:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering import QuestionAnsweringClient
 
-endpoint = "https://{my-account}.cognitiveservices.azure.com"  # or your regional endpoint
+endpoint = "https://<my-account>.cognitiveservices.azure.com"  # regional or custom subdomain
 credential = AzureKeyCredential("<api-key>")
 
 client = QuestionAnsweringClient(endpoint, credential)
 ```
 
-#### Create AuthoringClient
-With your endpoint and API key, you can instantiate a [AuthoringClient][authoring_client_class]:
+> Note: You can seamlessly switch between key and AAD auth — no code changes beyond the credential object.
 
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import AuthoringClient
+**Why DefaultAzureCredential?**
 
-endpoint = "https://{myaccount}.api.cognitive.microsoft.com"
-credential = AzureKeyCredential("{api-key}")
-
-client = AuthoringClient(endpoint, credential)
-```
-
-#### Create a client with an Azure Active Directory Credential
-
-To use an [Azure Active Directory (AAD) token credential][cognitive_authentication_aad],
-provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
-Note that regional endpoints do not support AAD authentication. Create a [custom subdomain][custom_subdomain]
-name for your resource in order to use this type of authentication.
-
-Authentication with AAD requires some initial setup:
-
-- [Install azure-identity][install_azure_identity]
-- [Register a new AAD application][register_aad_app]
-- [Grant access][grant_role_access] to the Language service by assigning the "Cognitive Services Language Reader" role to your service principal.
-
-After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential]
-can be used to authenticate the client:
-
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
-
-Use the returned token credential to authenticate the client:
-
-```python
-from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.identity import DefaultAzureCredential
-
-credential = DefaultAzureCredential()
-client = QuestionAnsweringClient(endpoint="https://<my-custom-subdomain>.cognitiveservices.azure.com/", credential=credential)
-```
+* Eliminates hard‑coded secrets
+* Works locally (developer tools), in CI (service principal / federated), and in production (Managed Identity)
+* Centralizes token acquisition & caching
+* Supports future auth enhancements without code changes
 
 ## Key concepts
 
@@ -113,30 +111,26 @@ For asynchronous operations, an async `QuestionAnsweringClient` is in the `azure
 
 ## Examples
 
-### QuestionAnsweringClient
+### QuestionAnsweringClient usage examples
+
 The `azure-ai-language-questionanswering` client library provides both synchronous and asynchronous APIs.
 
-- [Ask a question](#ask-a-question "Ask a question")
-- [Ask a follow-up question](#ask-a-follow-up-question "Ask a follow-up question")
-- [Create a new project](#create-a-new-project "Create a new project")
-- [Add a knowledge source](#add-a-knowledge-source "Add a knowledge source")
-- [Deploy your project](#deploy-your-project "Deploy your project")
-- [Asynchronous operations](#asynchronous-operations "Asynchronous operations")
+* [Ask a question](#ask-a-question-options-object)
+* [Ask a follow-up question](#follow-up-question-options-object)
+* [Asynchronous operations](#async-usage-options-object)
 
-#### Ask a question
+#### Ask a question (options object)
 
 The only input required to ask a question using a knowledge base is just the question itself:
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.ai.language.questionanswering.models import AnswersOptions, KnowledgeBaseAnswerContext
+from azure.ai.language.questionanswering.models import AnswersOptions
 
-endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
-key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-
-client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]  # must be a custom subdomain for AAD
+client = QuestionAnsweringClient(endpoint, DefaultAzureCredential())
 
 options = AnswersOptions(
     question="How long should my Surface battery last?",
@@ -154,7 +148,7 @@ for answer in response.answers:
 
 You can also pass optional parameters like `confidence_threshold`, `top`, or `short_answer_options` inside the `AnswersOptions` object.
 
-#### Alternative: Using flattened keyword parameters
+#### Ask a question (flattened)
 
 For convenience, you can also call `get_answers` directly with keyword parameters:
 
@@ -162,7 +156,7 @@ For convenience, you can also call `get_answers` directly with keyword parameter
 # Equivalent flattened form - same result as above
 response = client.get_answers(
     question="How long should my Surface battery last?",
-    project_name="FAQ", 
+    project_name="FAQ",
     deployment_name="production",
     # Optional parameters can be passed directly:
     # confidence_threshold=0.2,
@@ -174,39 +168,13 @@ for answer in response.answers:
     print(f"Source: {answer.source}")
 ```
 
-#### Ask a follow-up question
+#### Follow-up question (options object)
 
 If your knowledge base is configured for [chit-chat][questionanswering_docs_chat], the answers from the knowledge base may include suggested [prompts for follow-up questions][questionanswering_refdocs_prompts] to initiate a conversation. You can ask a follow-up question by providing the ID of your chosen answer as the context for the continued conversation:
 
 ```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering import QuestionAnsweringClient
-from azure.ai.language.questionanswering import models
+from azure.ai.language.questionanswering.models import AnswersOptions, KnowledgeBaseAnswerContext
 
-endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
-key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-
-client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
-
-output = client.get_answers(
-    question="How long should charging take?",
-    answer_context=models.KnowledgeBaseAnswerContext(
-        previous_qna_id=previous_answer.qna_id
-    ),
-    project_name="FAQ",
-    deployment_name="production"
-)
-for candidate in output.answers:
-    print("({}) {}".format(candidate.confidence, candidate.answer))
-    print("Source: {}".format(candidate.source))
-```
-
-#### Alternative: Using flattened keyword parameters
-```python
-from azure.ai.language.questionanswering.models import AnswersOptions
-
-# previous_answer = ... obtain from earlier response above
 follow_up_options = AnswersOptions(
     question="How long should charging take?",
     answer_context=KnowledgeBaseAnswerContext(previous_qna_id=previous_answer.qna_id),
@@ -217,43 +185,65 @@ for answer in follow_up.answers:
     print(f"({answer.confidence:.2f}) {answer.answer}")
 ```
 
-#### Asynchronous operations
+#### Follow-up question (flattened)
+
+```python
+import os
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.questionanswering import QuestionAnsweringClient
+from azure.ai.language.questionanswering.models import KnowledgeBaseAnswerContext
+
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+client = QuestionAnsweringClient(endpoint, DefaultAzureCredential())
+
+output = client.get_answers(
+    question="How long should charging take?",
+    answer_context=KnowledgeBaseAnswerContext(previous_qna_id=previous_answer.qna_id),
+    project_name="FAQ",
+    deployment_name="production"
+)
+for candidate in output.answers:
+    print(f"({candidate.confidence}) {candidate.answer}")
+    print(f"Source: {candidate.source}")
+```
+
+#### Async usage (options object)
 
 The above examples can also be run asynchronously using the clients in the `aio` namespace:
 
 ```python
 import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
-key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-
-client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
-
-output = await client.get_answers(
-    question="How long should my Surface battery last?",
-    project_name="FAQ",
-    deployment_name="production"
-)
-```
-#### Alternative: Using flattened keyword parameters
-```python
-import os
 import asyncio
-from azure.core.credentials import AzureKeyCredential
+from azure.identity import DefaultAzureCredential
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
 from azure.ai.language.questionanswering.models import AnswersOptions
 
 async def main():
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
-    key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
-    client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
+    client = QuestionAnsweringClient(endpoint, DefaultAzureCredential())
     options = AnswersOptions(question="How long should my Surface battery last?")
     response = await client.get_answers(options, project_name="FAQ", deployment_name="production")
     for answer in response.answers:
         print(f"({answer.confidence:.2f}) {answer.answer}")
 
 asyncio.run(main())
+```
+
+#### Async usage (flattened)
+
+```python
+import os
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
+
+endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
+client = QuestionAnsweringClient(endpoint, DefaultAzureCredential())
+
+output = await client.get_answers(
+    question="How long should my Surface battery last?",
+    project_name="FAQ",
+    deployment_name="production"
+)
 ```
 
 ## Optional Configuration
@@ -292,22 +282,22 @@ level.
 Detailed DEBUG level logging, including request/response bodies and unredacted
 headers, can be enabled on a client with the `logging_enable` argument.
 
-See full SDK logging documentation with examples [here][sdk_logging_docs].
+See the full SDK logging documentation with examples in the [logging guidance][sdk_logging_docs].
 
 ## API Usage Notes
 
-This library supports both explicit options objects (like `AnswersOptions` for `get_answers` and `AnswersFromTextOptions` for `get_answers_from_text`) and flattened keyword parameters for convenience. Both approaches are fully supported and equivalent:
+This library supports both explicit options objects (like `AnswersOptions` for `get_answers` and `AnswersFromTextOptions` for `get_answers_from_text`) and flattened keyword parameters for convenience. Both approaches are fully supported and equivalent (and work regardless of whether you use `DefaultAzureCredential` or an API key):
 
-- **Options object approach**: `client.get_answers(AnswersOptions(question="...", top=5), project_name="...", deployment_name="...")`
-- **Flattened parameters**: `client.get_answers(question="...", top=5, project_name="...", deployment_name="...")`
+* **Options object approach**: `client.get_answers(AnswersOptions(question="...", top=5), project_name="...", deployment_name="...")`
+* **Flattened parameters**: `client.get_answers(question="...", top=5, project_name="...", deployment_name="...")`
 
 Choose whichever style best fits your coding preferences - both produce identical results.
 
 ## Next steps
 
-- View our [samples][questionanswering_samples].
-- Read about the different [features][questionanswering_docs_features] of the Question Answering service.
-- Try our service [demos][questionanswering_docs_demos].
+* View our [samples][questionanswering_samples].
+* Read about the different [features][questionanswering_docs_features] of the Question Answering service.
+* Try our service [demos][questionanswering_docs_demos].
 
 ## Contributing
 
@@ -346,12 +336,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [questionanswering_pypi_package]: https://pypi.org/project/azure-ai-language-questionanswering/
 [questionanswering_refdocs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-questionanswering/latest/azure.ai.language.questionanswering.html
 [questionanswering_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-questionanswering/samples/README.md
-[cognitive_authentication_aad]: https://learn.microsoft.com/azure/cognitive-services/authentication#authenticate-with-azure-active-directory
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[custom_subdomain]: https://learn.microsoft.com/azure/cognitive-services/authentication#create-a-resource-with-a-custom-subdomain
 [install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
 [register_aad_app]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://learn.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [questionanswering_rest_docs]: https://learn.microsoft.com/rest/api/language/question-answering?view=rest-language-2025-05-15-preview
-[questionanswering_rest_docs_authoring]: https://learn.microsoft.com/en-us/rest/api/language/question-answering-projects/create-project?view=rest-language-2025-05-15-preview
+[questionanswering_docs_demos]: https://learn.microsoft.com/azure/ai-services/language-service/question-answering/overview#try-it
