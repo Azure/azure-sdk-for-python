@@ -192,6 +192,8 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
                        "Excluded Regions": client_excluded_regions,
                        "Account Read Regions": client_account_read_regions,
                        "Account Write Regions": client_account_write_regions}
+    if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
+        client_settings["Per Partition Automatic Failover"] = True
     if client_settings and isinstance(client_settings, dict):
         logger_str += ''.join([f"\t{k}: {v}\n" for k, v in client_settings.items()])
     return logger_str
