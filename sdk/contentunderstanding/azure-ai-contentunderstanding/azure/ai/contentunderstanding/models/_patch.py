@@ -32,10 +32,6 @@ if TYPE_CHECKING:
 # Additional type annotation to help both mypy and pyright understand the .value property
 # This creates a runtime type annotation that type checkers can understand
 
-# Add a type annotation to ContentField to help type checkers understand the .value property
-# This is a runtime annotation that doesn't affect execution but helps static analysis
-ContentField.value: property  # type: ignore[attr-defined]
-
 __all__: List[str] = [
     "StringField", "IntegerField", "NumberField", "BooleanField",
     "DateField", "TimeField", "ArrayField", "ObjectField", "AnalyzeInput"

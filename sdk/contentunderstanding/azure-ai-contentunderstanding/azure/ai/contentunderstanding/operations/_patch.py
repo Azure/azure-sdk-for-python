@@ -129,6 +129,7 @@ class FacesOperations(FacesOperationsGenerated):
         :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -299,6 +300,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
@@ -474,6 +476,7 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]

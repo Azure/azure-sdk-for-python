@@ -305,6 +305,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
@@ -482,6 +483,7 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :type kwargs: Any
 
         For additional request configuration options, please see https://aka.ms/azsdk/python/options.
+
         :return: An instance of AsyncLROPoller that returns ClassifyResult. The ClassifyResult is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.contentunderstanding.models.ClassifyResult]
