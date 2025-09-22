@@ -25,11 +25,20 @@ parameters:
     default: []
 
 steps:
+  - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+    parameters:
+      ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+        TokenToUseForAuth: $(azuresdk-github-pat)
+      Paths:
+        - '**'
+
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
     inputs:
       versionSpec: $(PythonVersion)
+
+  - template: /eng/pipelines/templates/steps/use-venv.yml
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml@self
     parameters:
@@ -85,21 +94,17 @@ steps:
     parameters:
       PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
-  - template: /eng/pipelines/templates/steps/use-venv.yml
-    parameters:
-      VirtualEnvironmentName: "venv"
-      Activate: false
-      Condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
-
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
       which python
-      python -m pip install --force -r eng/ci_tools.txt
+      $(PIP_EXE) install -r eng/ci_tools.txt
+
       if ($env:AGENT_OS -eq "Linux") {
         Write-Host "Installing release reqs"
-        python -m pip install -r eng/release_requirements.txt
+        $(PIP_EXE) install -r eng/release_requirements.txt
       }
-      python -m pip freeze --all
+      $(PIP_EXE) freeze
     displayName: 'Prep Environment'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
@@ -111,7 +116,6 @@ steps:
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive
     displayName: 'Generate Packages'
@@ -121,7 +125,7 @@ steps:
       CIBW_BUILD_VERBOSITY: 3
 
   - pwsh: |
-      $(VENV_ACTIVATION_SCRIPT)
+      which python
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'

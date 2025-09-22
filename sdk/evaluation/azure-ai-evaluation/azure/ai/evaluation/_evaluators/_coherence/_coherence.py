@@ -74,7 +74,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """Evaluator identifier, experimental to be used only with cloud evaluation"""
 
     @override
-    def __init__(self, model_config, *, threshold=3, **kwargs):
+    def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -84,6 +84,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
+            credential=credential,
             _higher_is_better=self._higher_is_better,
             **kwargs,
         )

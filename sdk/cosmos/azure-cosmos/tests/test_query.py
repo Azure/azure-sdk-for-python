@@ -29,7 +29,7 @@ class TestQuery(unittest.TestCase):
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     is_emulator = config.is_emulator
-    credential = config.credential
+    credential = config.masterKey
 
     @classmethod
     def setUpClass(cls):
@@ -468,6 +468,22 @@ class TestQuery(unittest.TestCase):
         second_page_fetched_with_continuation_token = list(pager.next())[0]
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
+
+    def test_cross_partition_query_with_none_partition_key(self):
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key=None,
+            enable_cross_partition_query=True
+        )
+
+        assert len(list(query_iterable)) >= 2
 
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
                                                                get_mock_result):

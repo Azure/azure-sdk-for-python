@@ -86,6 +86,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         model_config,
         *,
         threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD,
+        credential=None,
         **kwargs,
     ):
         current_dir = os.path.dirname(__file__)
@@ -95,6 +96,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            credential=credential,
             **kwargs,
         )
 

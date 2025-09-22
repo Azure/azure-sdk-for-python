@@ -15,8 +15,8 @@ from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 COLLECTION = "created_collection"
-REGION_1 = "West US 3"
-REGION_2 = "West US"
+REGION_1 = test_config.TestConfig.WRITE_LOCATION
+REGION_2 = test_config.TestConfig.READ_LOCATION
 REGION_3 = "West US 2"
 ACCOUNT_REGIONS = [REGION_1, REGION_2, REGION_3]
 

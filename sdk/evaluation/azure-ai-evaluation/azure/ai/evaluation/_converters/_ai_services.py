@@ -11,7 +11,18 @@ from azure.ai.evaluation._common._experimental import experimental
 from packaging.version import Version
 
 # Constants.
-from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION, _BUILT_IN_DESCRIPTIONS, _BUILT_IN_PARAMS
+from ._models import (
+    _USER,
+    _AGENT,
+    _TOOL,
+    _TOOL_CALL,
+    _TOOL_CALLS,
+    _FUNCTION,
+    _BUILT_IN_DESCRIPTIONS,
+    _BUILT_IN_PARAMS,
+    _OPENAPI,
+    OpenAPIToolDefinition,
+)
 
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
@@ -93,7 +104,7 @@ class AIAgentConverter:
         return tool_calls_chronological
 
     @staticmethod
-    def _extract_function_tool_definitions(thread_run: object) -> List[ToolDefinition]:
+    def _extract_function_tool_definitions(thread_run: object) -> List[Union[ToolDefinition, OpenAPIToolDefinition]]:
         """
         Extracts tool definitions from a thread run.
 
@@ -121,6 +132,26 @@ class AIAgentConverter:
                         parameters=parameters,
                     )
                 )
+            elif tool.type == _OPENAPI:
+                openapi_tool = tool.openapi
+                tool_definition = OpenAPIToolDefinition(
+                    name=openapi_tool.name,
+                    description=openapi_tool.description,
+                    type=_OPENAPI,
+                    spec=openapi_tool.spec,
+                    auth=openapi_tool.auth.as_dict(),
+                    default_params=openapi_tool.default_params.as_dict() if openapi_tool.default_params else None,
+                    functions=[
+                        ToolDefinition(
+                            name=func.get("name"),
+                            description=func.get("description"),
+                            parameters=func.get("parameters"),
+                            type="function",
+                        )
+                        for func in openapi_tool.get("functions")
+                    ],
+                )
+                final_tools.append(tool_definition)
             else:
                 # Add limited support for built-in tools. Descriptions and parameters
                 # are not published, but we'll include placeholders.
