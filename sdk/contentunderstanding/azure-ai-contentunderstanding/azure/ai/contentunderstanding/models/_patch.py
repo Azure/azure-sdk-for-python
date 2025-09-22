@@ -19,6 +19,8 @@ from ._models import (
 if TYPE_CHECKING:
     # This block is only for type checking, never executed
     class ContentField:
+        """Type stub for ContentField to help type checkers understand the .value property."""
+        
         @property
         def value(self) -> Union[Optional[str], Optional[float], Optional[int], Optional[bool], Optional[Any], Optional[List[Any]], Optional[dict[str, Any]]]:
             """Get the value of this field regardless of its type."""
@@ -70,7 +72,11 @@ setattr(IntegerField, 'value', property(_integer_field_value))
 
 # Monkey-patch the NumberField class to add the value property
 def _number_field_value(self) -> Optional[float]:
-    """Get the number value of this field."""
+    """Get the number value of this field.
+    
+    :return: The number value of this field
+    :rtype: Optional[float]
+    """
     return self.value_number
 
 setattr(NumberField, 'value', property(_number_field_value))
@@ -78,7 +84,11 @@ setattr(NumberField, 'value', property(_number_field_value))
 
 # Monkey-patch the BooleanField class to add the value property
 def _boolean_field_value(self) -> Optional[bool]:
-    """Get the boolean value of this field."""
+    """Get the boolean value of this field.
+    
+    :return: The boolean value of this field
+    :rtype: Optional[bool]
+    """
     return self.value_boolean
 
 setattr(BooleanField, 'value', property(_boolean_field_value))
@@ -86,7 +96,11 @@ setattr(BooleanField, 'value', property(_boolean_field_value))
 
 # Monkey-patch the DateField class to add the value property
 def _date_field_value(self) -> Optional[Any]:
-    """Get the date value of this field."""
+    """Get the date value of this field.
+    
+    :return: The date value of this field
+    :rtype: Optional[Any]
+    """
     return self.value_date
 
 setattr(DateField, 'value', property(_date_field_value))
@@ -94,7 +108,11 @@ setattr(DateField, 'value', property(_date_field_value))
 
 # Monkey-patch the TimeField class to add the value property
 def _time_field_value(self) -> Optional[Any]:
-    """Get the time value of this field."""
+    """Get the time value of this field.
+    
+    :return: The time value of this field
+    :rtype: Optional[Any]
+    """
     return self.value_time
 
 setattr(TimeField, 'value', property(_time_field_value))
@@ -102,7 +120,11 @@ setattr(TimeField, 'value', property(_time_field_value))
 
 # Monkey-patch the ArrayField class to add the value property
 def _array_field_value(self) -> Optional[List[Any]]:
-    """Get the array value of this field."""
+    """Get the array value of this field.
+    
+    :return: The array value of this field
+    :rtype: Optional[List[Any]]
+    """
     return self.value_array
 
 setattr(ArrayField, 'value', property(_array_field_value))
@@ -110,7 +132,11 @@ setattr(ArrayField, 'value', property(_array_field_value))
 
 # Monkey-patch the ObjectField class to add the value property
 def _object_field_value(self) -> Optional[dict[str, Any]]:
-    """Get the object value of this field."""
+    """Get the object value of this field.
+    
+    :return: The object value of this field
+    :rtype: Optional[dict[str, Any]]
+    """
     return self.value_object
 
 setattr(ObjectField, 'value', property(_object_field_value))
@@ -165,7 +191,6 @@ class AnalyzeInput(AnalyzeInputGenerated):
         :param name: Name of the input
         :type name: Optional[str]
         """
-        pass
     
     @overload
     def __init__(self, *, data: bytes, name: Optional[str] = None) -> None:
@@ -176,7 +201,6 @@ class AnalyzeInput(AnalyzeInputGenerated):
         :param name: Name of the input
         :type name: Optional[str]
         """
-        pass
     
     def __init__(self, *, url: Optional[str] = None, data: Optional[bytes] = None, name: Optional[str] = None) -> None:
         """Initialize AnalyzeInput with mutually exclusive url or data parameter.

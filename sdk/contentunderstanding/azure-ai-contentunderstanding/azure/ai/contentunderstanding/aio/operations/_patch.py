@@ -129,7 +129,7 @@ class FacesOperations(FacesOperationsGenerated):
 
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
+        :keyword kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
@@ -299,7 +299,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type analyzer_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
+        :keyword kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
         :return: An instance of AsyncLROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
@@ -474,7 +474,7 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :type classifier_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
+        :keyword kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
         :return: An instance of AsyncLROPoller that returns ClassifyResult. The ClassifyResult is compatible
          with MutableMapping

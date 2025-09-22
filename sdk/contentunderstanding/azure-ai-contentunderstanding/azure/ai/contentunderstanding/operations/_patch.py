@@ -26,8 +26,6 @@ __all__: List[str] = [
     "ContentAnalyzersOperations",
     "ContentClassifiersOperations"
 ]
-
-
 def patch_sdk():
     """Do not remove from this file.
 
@@ -38,8 +36,6 @@ def patch_sdk():
     :return: None
     :rtype: None
     """
-
-
 class FacesOperations(FacesOperationsGenerated):
     """Extended FacesOperations with url/data mutual exclusivity enforcement."""
     @overload
@@ -129,7 +125,7 @@ class FacesOperations(FacesOperationsGenerated):
 
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
+        :keyword kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
         :return: DetectFacesResult
         :rtype: ~azure.ai.contentunderstanding.models.DetectFacesResult
@@ -147,8 +143,6 @@ class FacesOperations(FacesOperationsGenerated):
 
         # Call the original method for all cases
         return super().detect(*args, **kwargs)
-
-
 class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     """Extended ContentAnalyzersOperations with url/data mutual exclusivity enforcement."""
     @overload
@@ -299,7 +293,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :type analyzer_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
+        :keyword kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
         :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
          with MutableMapping
@@ -337,8 +331,6 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
 
         # Call the original method for all other cases
         return super().begin_analyze(analyzer_id, *args, **kwargs)
-
-
 class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
     """Extended ContentClassifiersOperations with url/data mutual exclusivity enforcement."""
     @overload
@@ -474,7 +466,7 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :type classifier_id: str
         :param args: Variable length argument list.
         :type args: Any
-        :param kwargs: Arbitrary keyword arguments.
+        :keyword kwargs: Arbitrary keyword arguments.
         :type kwargs: Any
         :return: An instance of LROPoller that returns ClassifyResult. The ClassifyResult is compatible
          with MutableMapping
@@ -508,4 +500,3 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
 
         # Call the original method for all other cases
         return super().begin_classify(classifier_id, *args, **kwargs)
-
