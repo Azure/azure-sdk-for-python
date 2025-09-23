@@ -48,7 +48,6 @@ Analyze documents and extract structured information:
 - **`content_analyzers_update.py`** - Update existing analyzers
 - **`content_analyzers_delete_analyzer.py`** - Delete custom analyzers
 - **`content_analyzers_get_operation_status.py`** - Check analysis operation status
-- **`content_analyzers_get_result.py`** - Retrieve analysis results
 - **`content_analyzers_get_result_file.py`** - Download result files
 
 ### Content Classifiers
@@ -62,7 +61,6 @@ Classify content into categories:
 - **`content_classifiers_update.py`** - Update existing classifiers
 - **`content_classifiers_delete_classifier.py`** - Delete custom classifiers
 - **`content_classifiers_get_operation_status.py`** - Check classification operation status
-- **`content_classifiers_get_result.py`** - Retrieve classification results
 
 ### Face Recognition & Person Management
 Comprehensive face recognition capabilities:

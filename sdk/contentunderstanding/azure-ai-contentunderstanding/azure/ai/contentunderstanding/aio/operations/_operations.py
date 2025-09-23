@@ -1171,7 +1171,7 @@ class ContentAnalyzersOperations:
         )
 
     @distributed_trace_async
-    async def get_result(self, operation_id: str, **kwargs: Any) -> _models.OperationStatusAnalyzeResultError:
+    async def _get_result(self, operation_id: str, **kwargs: Any) -> _models.OperationStatusAnalyzeResultError:
         """Get the result of an analysis operation.
 
         :param operation_id: The unique ID of the operation. Required.

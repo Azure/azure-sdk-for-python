@@ -95,8 +95,6 @@
         "azure.ai.contentunderstanding.aio.operations.ContentAnalyzersOperations.begin_analyze": "ContentUnderstanding.ContentAnalyzers.analyze",
         "azure.ai.contentunderstanding.operations.ContentAnalyzersOperations.begin_analyze_binary": "ContentUnderstanding.ContentAnalyzers.analyzeBinary",
         "azure.ai.contentunderstanding.aio.operations.ContentAnalyzersOperations.begin_analyze_binary": "ContentUnderstanding.ContentAnalyzers.analyzeBinary",
-        "azure.ai.contentunderstanding.operations.ContentAnalyzersOperations.get_result": "ContentUnderstanding.ContentAnalyzers.getResult",
-        "azure.ai.contentunderstanding.aio.operations.ContentAnalyzersOperations.get_result": "ContentUnderstanding.ContentAnalyzers.getResult",
         "azure.ai.contentunderstanding.operations.ContentAnalyzersOperations.get_result_file": "ContentUnderstanding.ContentAnalyzers.getResultFile",
         "azure.ai.contentunderstanding.aio.operations.ContentAnalyzersOperations.get_result_file": "ContentUnderstanding.ContentAnalyzers.getResultFile",
         "azure.ai.contentunderstanding.operations.PersonDirectoriesOperations.create": "ContentUnderstanding.PersonDirectories.create",

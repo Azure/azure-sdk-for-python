@@ -124,14 +124,9 @@ async def main():
         analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
         print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
 
-        # Get the result to see what files are available
-        print(f"🔍 Getting analysis result to find available files...")
-        operation_status = await client.content_analyzers.get_result(
-            operation_id=analysis_operation_id,
-        )
-
-        # The actual analysis result is in operation_status.result
-        operation_result: Any = operation_status.result
+        # Use the analysis result we already have from the poller to see what files are available
+        print(f"🔍 Using analysis result to find available files...")
+        operation_result: Any = analysis_result
         if operation_result is None:
             print("⚠️  No analysis result available")
             return

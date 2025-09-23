@@ -2163,9 +2163,8 @@ class ContentAnalyzersOperations:
         return LROPoller[_models.AnalyzeResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-
     @distributed_trace
-    def get_result(self, operation_id: str, **kwargs: Any) -> _models.OperationStatusAnalyzeResultError:
+    def _get_result(self, operation_id: str, **kwargs: Any) -> _models.OperationStatusAnalyzeResultError:
         """Get the result of an analysis operation.
 
         :param operation_id: The unique ID of the operation. Required.

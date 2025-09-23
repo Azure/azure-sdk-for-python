@@ -685,105 +685,6 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_get_result(self, contentunderstanding_endpoint):
-        """
-        Test Summary:
-        - Create simple analyzer for binary analysis to get operation ID
-        - Read sample invoice PDF file
-        - Begin binary analysis operation with analyzer
-        - Wait for analysis completion
-        - Use get_result to retrieve the analysis result by operation ID
-        - Verify result contents and structure
-        - Assert simple content analyzer result fields
-        - Clean up created analyzer
-        """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
-        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_result")
-        created_analyzer = False
-
-        # Create a simple analyzer for binary analysis
-        content_analyzer = new_simple_content_analyzer_object(
-            analyzer_id=analyzer_id,
-            description=f"test analyzer for get result test: {analyzer_id}",
-            tags={"test_type": "get_result"},
-        )
-
-        try:
-            # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
-            created_analyzer = True
-
-            # Read the sample invoice PDF file using absolute path based on this test file's location
-            test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            pdf_path = os.path.join(test_file_dir, "test_data", "sample_invoice.pdf")
-            with open(pdf_path, "rb") as pdf_file:
-                pdf_content = pdf_file.read()
-
-            print(f"Starting binary analysis to get operation ID")
-
-            # Begin binary analysis operation
-            analysis_poller = client.content_analyzers.begin_analyze(
-                analyzer_id=analyzer_id,
-                data=pdf_content,
-                content_type="application/pdf",
-            )
-
-            # Wait for analysis completion first
-            print(f"Waiting for analysis completion")
-            _ = analysis_poller.result()
-            print(f"  Analysis completed")
-
-            # Extract operation ID for get_result test - this should not fail
-            analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
-            assert analysis_operation_id is not None, "Operation ID should not be None"
-            assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
-            print(f"  Analysis operation ID: {analysis_operation_id}")
-
-            # Now use get_result to retrieve the result by operation ID
-            print(f"  Getting result by operation ID: {analysis_operation_id}")
-            operation_status = client.content_analyzers.get_result(
-                operation_id=analysis_operation_id,
-            )
-
-            # Check operation_status is not None
-            assert operation_status is not None, "Operation status should not be None"
-
-            # Check operation_status has the expected operation status properties
-            assert hasattr(operation_status, "id"), "Operation status should have id property"
-            assert hasattr(operation_status, "status"), "Operation status should have status property"
-            assert hasattr(operation_status, "result"), "Operation status should have result property"
-            if is_live():
-                assert (
-                    operation_status.id == analysis_operation_id
-                ), f"Operation status ID should match operation ID {analysis_operation_id}"
-            assert (
-                operation_status.status == "Succeeded"
-            ), f"Operation status should be Succeeded, got {operation_status.status}"
-
-            # The actual analysis result is in operation_status.result
-            analysis_result = operation_status.result
-            assert analysis_result is not None, "Analysis result should not be None"
-
-            # Get test file directory for saving output
-            test_file_dir = os.path.dirname(os.path.abspath(__file__))
-
-            # Save the analysis result to file (not the wrapper operation_status)
-            output_filename = save_analysis_result_to_file(
-                analysis_result, "test_content_analyzers_get_result", test_file_dir, analysis_operation_id
-            )
-
-            print(f"  Successfully retrieved result for operation {analysis_operation_id}")
-            print(f"  Result contains {len(analysis_result.contents)} contents")
-
-            # Now assert the field results using the same validation as binary test
-            assert_simple_content_analyzer_result(analysis_result, "Get result response")
-
-        finally:
-            # Always clean up the created analyzer, even if the test fails
-            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
-
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
     def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
         """
         Test Summary:
@@ -844,17 +745,8 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
             assert len(analysis_operation_id) > 0, "Operation ID should not be empty"
             print(f"Analysis operation ID: {analysis_operation_id}")
 
-            # Get the result first to see what files are available
-            operation_status = client.content_analyzers.get_result(
-                operation_id=analysis_operation_id,
-            )
-
-            # Check operation_status is not None and has result
-            assert operation_status is not None, "Operation status should not be None"
-            assert hasattr(operation_status, "result"), "Operation status should have result property"
-
-            # The actual analysis result is in operation_status.result
-            result = operation_status.result
+            # Use the analysis result we already have from the poller to see what files are available
+            result = analysis_result
             assert result is not None, "Analysis result should not be None"
             print(f"Analysis result contains {len(result.contents)} contents")
 
