@@ -19,10 +19,6 @@ for the SMB protocol to specify whether encryption in transit is required.
 - Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
 optional initial data to be uploaded (up to 4MB).
 
-### Bugs Fixed
-- Fixed an issue where `ShareClient`'s `list_directories_and_files` API specified with `name_starts_with`
-would not return all results when the share contains a large number of files and directories.
-
 ## 12.22.0 (2025-07-16)
 
 ### Features Added
