@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Union, IO
+from typing import Any, Union, IO, Optional
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.polling import AsyncLROPoller
@@ -57,7 +57,7 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
         )
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> "EmailClient":
+    def from_connection_string(cls, conn_str: Optional[str], **kwargs) -> "EmailClient":
         """Create EmailClient from a Connection String.
 
         :param str conn_str:
