@@ -180,7 +180,6 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
             if timeout:
                 elapsed = time.time() - operation_start_time
-                print(f"_retry_utility_: elapsed time in the except block is {elapsed}")
                 if elapsed >= timeout:
                     raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
 
