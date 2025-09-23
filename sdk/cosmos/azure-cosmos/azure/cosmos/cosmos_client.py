@@ -287,7 +287,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
-            or a Tuple of a DatabaseProxy and the database properties.
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -326,7 +326,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
-            or a Tuple of a DatabaseProxy and the database properties.
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A tuple of `DatabaseProxy` and CosmosDict with the database properties.
         :rtype: tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -359,7 +359,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
-            or a Tuple of a DatabaseProxy and the database properties.
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
             and CosmosDict with the database properties.
         :rtype: ~azure.cosmos.DatabaseProxy or tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
@@ -444,7 +444,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
-            or a Tuple of a DatabaseProxy and the database properties.
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -478,7 +478,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
-            or a Tuple of a DatabaseProxy and the database properties.
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A tuple of `DatabaseProxy` and CosmosDict with the database properties.
         :rtype: tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -507,7 +507,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
-            or a Tuple of a DatabaseProxy and the database properties.
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
             and CosmosDict with the database properties.
         :rtype: ~azure.cosmos.DatabaseProxy or tuple [~azure.cosmos.DatabaseProxy, ~azure.cosmos.CosmosDict]
