@@ -12,6 +12,7 @@
 - Fix logic for message field on Microsoft.ApplicationInsights.Message to sync with Breeze
   ([#43060](https://github.com/Azure/azure-sdk-for-python/pull/43060))
 - Modify logic in PR (#43060) to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
 
 ### Other Changes
 
