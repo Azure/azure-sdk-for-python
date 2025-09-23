@@ -33,7 +33,7 @@ class EmailClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2024-07-01-preview".
+        Default value is "2025-09-01".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -78,7 +78,7 @@ class EmailClient(object):
 
         :param message: Message payload for sending an email. Required.
         :type message: JSON
-        :keyword str continuation_token-kwarg: A continuation token to restart a poller from a saved state.
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :return: An instance of LROPoller that returns JSON object
         :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
