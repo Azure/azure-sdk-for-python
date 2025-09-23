@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.dependencymap import DependencyMapMgmtClient
+from azure.mgmt.dependencymap import DependencyMapClient
 
 """
 # PREREQUISITES
@@ -25,15 +25,16 @@ from azure.mgmt.dependencymap import DependencyMapMgmtClient
 
 
 def main():
-    client = DependencyMapMgmtClient(
+    client = DependencyMapClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.maps.begin_export_dependencies(
+    response = client.maps.begin_export_dependencies(
         resource_group_name="rgdependencyMap",
         map_name="mapsTest1",
         body={
+            "applianceNameList": ["guwwagnitv"],
             "filters": {
                 "dateTime": {
                     "endDateTimeUtc": "2024-03-29T07:35:15.336Z",
@@ -44,8 +45,9 @@ def main():
             "focusedMachineId": "qzjpilzxpurauwfwwanpiiafvz",
         },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-01-31-preview/Maps_ExportDependencies.json
+# x-ms-original-file: 2025-07-01-preview/Maps_ExportDependencies.json
 if __name__ == "__main__":
     main()

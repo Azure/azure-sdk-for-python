@@ -15,7 +15,7 @@ from azure.mgmt.dependencymap import DependencyMapClient
     pip install azure-identity
     pip install azure-mgmt-dependencymap
 # USAGE
-    python discovery_sources_update.py
+    python maps_get_dependency_view_for_all_machines.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.discovery_sources.begin_update(
+    response = client.maps.begin_get_dependency_view_for_all_machines(
         resource_group_name="rgdependencyMap",
-        map_name="mapsTest1",
-        source_name="sourceTest1",
-        properties={"tags": {}},
+        map_name="sfakshfkjsdh",
+        body={"filters": {"processNameFilter": {"operator": "contains", "processNames": ["syovpvhbornjajguuihieb"]}}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/DiscoverySources_Update.json
+# x-ms-original-file: 2025-07-01-preview/Maps_GetDependencyViewForAllMachines.json
 if __name__ == "__main__":
     main()

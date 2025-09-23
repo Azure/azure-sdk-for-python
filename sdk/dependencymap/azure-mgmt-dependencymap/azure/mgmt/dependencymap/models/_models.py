@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,17 +9,16 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import SourceType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DateTimeFilter(_model_base.Model):
+class DateTimeFilter(_Model):
     """UTC DateTime filter for dependency map visualization apis.
 
     :ivar start_date_time_utc: Start date time for dependency map visualization query.
@@ -56,7 +55,7 @@ class DateTimeFilter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DependencyMapVisualizationFilter(_model_base.Model):
+class DependencyMapVisualizationFilter(_Model):
     """Filters for dependency map visualization apis.
 
     :ivar date_time: DateTime filter.
@@ -93,8 +92,38 @@ class DependencyMapVisualizationFilter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class DependencyProcessFilter(_Model):
+    """DependencyProcessFilter model.
+
+    :ivar process_name_filter: Process name filter.
+    :vartype process_name_filter: ~azure.mgmt.dependencymap.models.ProcessNameFilter
+    """
+
+    process_name_filter: Optional["_models.ProcessNameFilter"] = rest_field(
+        name="processNameFilter", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Process name filter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        process_name_filter: Optional["_models.ProcessNameFilter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -122,8 +151,7 @@ class Resource(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -142,7 +170,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -152,7 +180,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -198,7 +226,7 @@ class DiscoverySourceResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.DiscoverySourceResourceProperties"] = None,
     ) -> None: ...
 
@@ -213,7 +241,7 @@ class DiscoverySourceResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class DiscoverySourceResourceProperties(_model_base.Model):
+class DiscoverySourceResourceProperties(_Model):
     """The properties of Discovery Source resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -228,7 +256,7 @@ class DiscoverySourceResourceProperties(_model_base.Model):
     :vartype source_id: str
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -258,21 +286,21 @@ class DiscoverySourceResourceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscoverySourceResourceTagsUpdate(_model_base.Model):
+class DiscoverySourceResourceTagsUpdate(_Model):
     """The type used for updating tags in DiscoverySourceResource resources.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -286,7 +314,7 @@ class DiscoverySourceResourceTagsUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -301,7 +329,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -322,17 +350,16 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.dependencymap.models.ErrorDetail
@@ -359,30 +386,24 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportDependenciesRequest(_model_base.Model):
-    """ExportDependencies request model.
+class ExportDependenciesAdditionalInfo(_Model):
+    """Additional information about the exported dependencies data.
 
-    :ivar focused_machine_id: Machine arm id. Required.
-    :vartype focused_machine_id: str
-    :ivar filters: Filters for ExportDependencies.
-    :vartype filters: ~azure.mgmt.dependencymap.models.DependencyMapVisualizationFilter
+    :ivar available_days_count: Number of days for which data was available in the exported
+     results.
+    :vartype available_days_count: int
     """
 
-    focused_machine_id: str = rest_field(
-        name="focusedMachineId", visibility=["read", "create", "update", "delete", "query"]
+    available_days_count: Optional[int] = rest_field(
+        name="availableDaysCount", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Machine arm id. Required."""
-    filters: Optional["_models.DependencyMapVisualizationFilter"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Filters for ExportDependencies."""
+    """Number of days for which data was available in the exported results."""
 
     @overload
     def __init__(
         self,
         *,
-        focused_machine_id: str,
-        filters: Optional["_models.DependencyMapVisualizationFilter"] = None,
+        available_days_count: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -396,7 +417,167 @@ class ExportDependenciesRequest(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class GetConnectionsForProcessOnFocusedMachineRequest(_model_base.Model):  # pylint: disable=name-too-long
+class ExportDependenciesOperationResult(_Model):
+    """Model representing the result of the export dependencies asynchronous operation.
+
+    :ivar id: The status URL of export dependencies operation.
+    :vartype id: str
+    :ivar name: The resource name of the operation status. It must match the last segment of 'id'
+     field.
+    :vartype name: str
+    :ivar status: The overall arm status of the operation. It has one of the terminal states -
+     Succeeded/Failed/Canceled. Required.
+    :vartype status: str
+    :ivar error: Contains error details if status is Failed/Canceled.
+    :vartype error: ~azure.mgmt.dependencymap.models.ErrorDetail
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar properties: Properties for export dependencies. These should only be set if the status is
+     Succeeded.
+    :vartype properties: ~azure.mgmt.dependencymap.models.ExportDependenciesResultProperties
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status URL of export dependencies operation."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource name of the operation status. It must match the last segment of 'id' field."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The overall arm status of the operation. It has one of the terminal states -
+     Succeeded/Failed/Canceled. Required."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Contains error details if status is Failed/Canceled."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the operation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the operation."""
+    properties: Optional["_models.ExportDependenciesResultProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties for export dependencies. These should only be set if the status is Succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        properties: Optional["_models.ExportDependenciesResultProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExportDependenciesRequest(_Model):
+    """ExportDependencies request model.
+
+    :ivar focused_machine_id: Machine arm id.
+    :vartype focused_machine_id: str
+    :ivar filters: Filters for ExportDependencies.
+    :vartype filters: ~azure.mgmt.dependencymap.models.DependencyMapVisualizationFilter
+    :ivar appliance_name_list: List of Appliance Names.
+    :vartype appliance_name_list: list[str]
+    """
+
+    focused_machine_id: Optional[str] = rest_field(
+        name="focusedMachineId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Machine arm id."""
+    filters: Optional["_models.DependencyMapVisualizationFilter"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filters for ExportDependencies."""
+    appliance_name_list: Optional[list[str]] = rest_field(
+        name="applianceNameList", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of Appliance Names."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        focused_machine_id: Optional[str] = None,
+        filters: Optional["_models.DependencyMapVisualizationFilter"] = None,
+        appliance_name_list: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExportDependenciesResultProperties(_Model):
+    """Model representing properties returned upon successful completion of the export dependencies
+    asynchronous operation.
+
+    :ivar exported_data_sas_uri: The SAS URI of the blob containing the exported dependencies data.
+    :vartype exported_data_sas_uri: str
+    :ivar status_code: A status code returned by the service with additional context about the
+     export dependencies operation. Known values are: "NoMatch", "CompleteMatch", and
+     "PartialMatch".
+    :vartype status_code: str or ~azure.mgmt.dependencymap.models.ExportDependenciesStatusCode
+    :ivar additional_info: Additional information about the exported data.
+    :vartype additional_info: ~azure.mgmt.dependencymap.models.ExportDependenciesAdditionalInfo
+    """
+
+    exported_data_sas_uri: Optional[str] = rest_field(
+        name="exportedDataSasUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SAS URI of the blob containing the exported dependencies data."""
+    status_code: Optional[Union[str, "_models.ExportDependenciesStatusCode"]] = rest_field(
+        name="statusCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A status code returned by the service with additional context about the export dependencies
+     operation. Known values are: \"NoMatch\", \"CompleteMatch\", and \"PartialMatch\"."""
+    additional_info: Optional["_models.ExportDependenciesAdditionalInfo"] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional information about the exported data."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        exported_data_sas_uri: Optional[str] = None,
+        status_code: Optional[Union[str, "_models.ExportDependenciesStatusCode"]] = None,
+        additional_info: Optional["_models.ExportDependenciesAdditionalInfo"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetConnectionsForProcessOnFocusedMachineRequest(_Model):  # pylint: disable=name-too-long
     """GetConnectionsForProcessOnFocusedMachine request model.
 
     :ivar focused_machine_id: Machine arm id. Required.
@@ -440,7 +621,7 @@ class GetConnectionsForProcessOnFocusedMachineRequest(_model_base.Model):  # pyl
         super().__init__(*args, **kwargs)
 
 
-class GetConnectionsWithConnectedMachineForFocusedMachineRequest(_model_base.Model):  # pylint: disable=name-too-long
+class GetConnectionsWithConnectedMachineForFocusedMachineRequest(_Model):  # pylint: disable=name-too-long
     """GetConnectionsWithConnectedMachineForFocusedMachine request model.
 
     :ivar focused_machine_id: Source machine arm id. Required.
@@ -484,7 +665,138 @@ class GetConnectionsWithConnectedMachineForFocusedMachineRequest(_model_base.Mod
         super().__init__(*args, **kwargs)
 
 
-class GetDependencyViewForFocusedMachineRequest(_model_base.Model):  # pylint: disable=name-too-long
+class GetDependencyViewForAllMachinesOperationResult(_Model):  # pylint: disable=name-too-long
+    """Model representing the result of the export dependencies asynchronous operation.
+
+    :ivar id: The status URL of the asynchronous operation.
+    :vartype id: str
+    :ivar name: The resource name of the operation status. It must match the last segment of 'id'
+     field.
+    :vartype name: str
+    :ivar status: The overall arm status of the operation. It has one of the terminal states -
+     Succeeded/Failed/Canceled. Required.
+    :vartype status: str
+    :ivar error: Contains error details if status is Failed/Canceled.
+    :vartype error: ~azure.mgmt.dependencymap.models.ErrorDetail
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar properties: Properties for export dependencies. These should only be set if the status is
+     Succeeded.
+    :vartype properties:
+     ~azure.mgmt.dependencymap.models.GetDependencyViewForAllMachinesResultProperties
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The status URL of the asynchronous operation."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource name of the operation status. It must match the last segment of 'id' field."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The overall arm status of the operation. It has one of the terminal states -
+     Succeeded/Failed/Canceled. Required."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Contains error details if status is Failed/Canceled."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the operation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the operation."""
+    properties: Optional["_models.GetDependencyViewForAllMachinesResultProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties for export dependencies. These should only be set if the status is Succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        properties: Optional["_models.GetDependencyViewForAllMachinesResultProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetDependencyViewForAllMachinesRequest(_Model):
+    """GetDependencyViewForAllMachines request model.
+
+    :ivar filters: Filters for GetDependencyViewForAllMachines.
+    :vartype filters: ~azure.mgmt.dependencymap.models.DependencyProcessFilter
+    """
+
+    filters: Optional["_models.DependencyProcessFilter"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Filters for GetDependencyViewForAllMachines."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        filters: Optional["_models.DependencyProcessFilter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetDependencyViewForAllMachinesResultProperties(_Model):  # pylint: disable=name-too-long
+    """Model representing properties returned upon successful completion of the export dependencies
+    asynchronous operation.
+
+    :ivar layout_file_sas_url: The SAS URI of the blob containing the layout file for the
+     multi-server view. Required.
+    :vartype layout_file_sas_url: str
+    """
+
+    layout_file_sas_url: str = rest_field(
+        name="layoutFileSasUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SAS URI of the blob containing the layout file for the multi-server view. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        layout_file_sas_url: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GetDependencyViewForFocusedMachineRequest(_Model):  # pylint: disable=name-too-long
     """GetDependencyViewForFocusedMachine request model.
 
     :ivar focused_machine_id: Machine arm id. Required.
@@ -553,7 +865,7 @@ class MapsResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.MapsResourceProperties"] = None,
     ) -> None: ...
 
@@ -568,7 +880,7 @@ class MapsResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class MapsResourceProperties(_model_base.Model):
+class MapsResourceProperties(_Model):
     """The properties of Maps resource.
 
     :ivar provisioning_state: Provisioning state of Maps resource. Known values are: "Succeeded",
@@ -583,21 +895,21 @@ class MapsResourceProperties(_model_base.Model):
      \"Provisioning\", \"Updating\", \"Deleting\", and \"Accepted\"."""
 
 
-class MapsResourceTagsUpdate(_model_base.Model):
+class MapsResourceTagsUpdate(_Model):
     """The type used for updating tags in MapsResource resources.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -643,11 +955,12 @@ class OffAzureDiscoverySourceResourceProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, source_type=SourceType.OFF_AZURE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.source_type = SourceType.OFF_AZURE  # type: ignore
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -703,7 +1016,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -734,7 +1047,7 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class ProcessNameFilter(_model_base.Model):
+class ProcessNameFilter(_Model):
     """Process name filter for dependency map visualization apis.
 
     :ivar operator: Operator for process name filter. Required. Known values are: "contains" and
@@ -748,7 +1061,7 @@ class ProcessNameFilter(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Operator for process name filter. Required. Known values are: \"contains\" and \"notContains\"."""
-    process_names: List[str] = rest_field(
+    process_names: list[str] = rest_field(
         name="processNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of process names on which the operator should be applied. Required."""
@@ -758,7 +1071,7 @@ class ProcessNameFilter(_model_base.Model):
         self,
         *,
         operator: Union[str, "_models.ProcessNameFilterOperator"],
-        process_names: List[str],
+        process_names: list[str],
     ) -> None: ...
 
     @overload
@@ -772,7 +1085,7 @@ class ProcessNameFilter(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
