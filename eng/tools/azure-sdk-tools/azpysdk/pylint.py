@@ -3,6 +3,7 @@ import os
 import sys
 
 from typing import Optional, List
+import subprocess
 from subprocess import CalledProcessError, check_call
 
 from .Check import Check
@@ -10,7 +11,7 @@ from ci_tools.functions import install_into_venv, get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled
-from ci_tools.logging import logger
+from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
@@ -68,14 +69,6 @@ class pylint(Check):
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
 
-            # TODO debug
-            logger.info("Running pip freeze AFTER installing dev reqs:")
-            try:
-                check_call(pip_cmd + ["freeze"])
-            except CalledProcessError as e:
-                logger.error(f"Failed to run pip freeze: {e}")
-                return e.returncode
-
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
@@ -88,14 +81,6 @@ class pylint(Check):
                 python_executable=executable,
             )
 
-            # TODO debug
-            logger.info("Running pip freeze AFTER create package and install:")
-            try:
-                check_call(pip_cmd + ["freeze"])
-            except CalledProcessError as e:
-                logger.error(f"Failed to run pip freeze: {e}")
-                return e.returncode
-
             # install pylint
             try:
                 if args.next:
@@ -106,6 +91,19 @@ class pylint(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
+
+            # debug a pip freeze result
+            cmd = pip_cmd + ["freeze"]
+            freeze_result = subprocess.run(
+                cmd,
+                cwd=package_dir,
+                check=False,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT
+            )
+            logger.debug(f"Running pip freeze with {cmd}")
+            logger.debug(freeze_result.stdout)
 
             top_level_module = parsed.namespace.split(".")[0]
 
