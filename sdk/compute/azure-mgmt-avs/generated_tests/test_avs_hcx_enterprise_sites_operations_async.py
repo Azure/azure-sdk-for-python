@@ -21,11 +21,11 @@ class TestAVSHcxEnterpriseSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_hcx_enterprise_sites_list(self, resource_group):
         response = self.client.hcx_enterprise_sites.list(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAVSHcxEnterpriseSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_hcx_enterprise_sites_get(self, resource_group):
         response = await self.client.hcx_enterprise_sites.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             hcx_enterprise_site_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAVSHcxEnterpriseSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_hcx_enterprise_sites_create_or_update(self, resource_group):
         response = await self.client.hcx_enterprise_sites.create_or_update(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
@@ -67,7 +67,7 @@ class TestAVSHcxEnterpriseSitesOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -75,12 +75,12 @@ class TestAVSHcxEnterpriseSitesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_hcx_enterprise_sites_delete(self, resource_group):
         response = await self.client.hcx_enterprise_sites.delete(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             hcx_enterprise_site_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself

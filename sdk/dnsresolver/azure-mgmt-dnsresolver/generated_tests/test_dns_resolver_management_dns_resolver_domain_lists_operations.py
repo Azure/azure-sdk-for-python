@@ -20,13 +20,14 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_dns_resolver_domain_lists_begin_create_or_update(self, resource_group):
         response = self.client.dns_resolver_domain_lists.begin_create_or_update(
             resource_group_name=resource_group.name,
             dns_resolver_domain_list_name="str",
             parameters={
-                "domains": ["str"],
                 "location": "str",
+                "domains": ["str"],
+                "domainsUrl": "str",
                 "etag": "str",
                 "id": "str",
                 "name": "str",
@@ -43,7 +44,7 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -51,12 +52,12 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_dns_resolver_domain_lists_begin_update(self, resource_group):
         response = self.client.dns_resolver_domain_lists.begin_update(
             resource_group_name=resource_group.name,
             dns_resolver_domain_list_name="str",
             parameters={"domains": ["str"], "tags": {"str": "str"}},
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -64,11 +65,11 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_dns_resolver_domain_lists_begin_delete(self, resource_group):
         response = self.client.dns_resolver_domain_lists.begin_delete(
             resource_group_name=resource_group.name,
             dns_resolver_domain_list_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,11 +77,11 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_dns_resolver_domain_lists_get(self, resource_group):
         response = self.client.dns_resolver_domain_lists.get(
             resource_group_name=resource_group.name,
             dns_resolver_domain_list_name="str",
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -88,10 +89,10 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_dns_resolver_domain_lists_list_by_resource_group(self, resource_group):
         response = self.client.dns_resolver_domain_lists.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -99,10 +100,23 @@ class TestDnsResolverManagementDnsResolverDomainListsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_dns_resolver_domain_lists_list(self, resource_group):
         response = self.client.dns_resolver_domain_lists.list(
-            api_version="2023-07-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_dns_resolver_domain_lists_begin_bulk(self, resource_group):
+        response = self.client.dns_resolver_domain_lists.begin_bulk(
+            resource_group_name=resource_group.name,
+            dns_resolver_domain_list_name="str",
+            parameters={"action": "str", "storageUrl": "str"},
+            api_version="2025-05-01",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

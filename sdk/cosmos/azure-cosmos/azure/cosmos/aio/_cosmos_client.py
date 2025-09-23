@@ -34,6 +34,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos.offer import ThroughputProperties
 
 from ..cosmos_client import _parse_connection_str
+from .._constants import _Constants as Constants
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from .._base import build_options as _build_options, _set_throughput_options
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -123,6 +124,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
+    policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
 
 
@@ -159,6 +161,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword int retry_status: Maximum number of retry attempts on error status codes.
     :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
     :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
+    :keyword bool retry_write: Indicates whether the SDK should automatically retry write operations for items, even if
+        the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+        tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
@@ -172,6 +177,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client
+    :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
 
     .. admonition:: Example:
 

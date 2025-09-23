@@ -9,7 +9,8 @@ from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import KeyVaultBackupClientPreparer, get_decorator
+from _async_test_case import KeyVaultBackupClientPreparer
+from _test_case import get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
 all_api_versions = get_decorator(is_async=True)
@@ -45,6 +46,9 @@ class TestExamplesTests(KeyVaultTestCase):
 
         folder_url = backup_operation.folder_url
 
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
+
         # [START begin_restore]
         # begin a full vault restore
         restore_poller = await backup_client.begin_restore(folder_url, use_managed_identity=True)
@@ -76,6 +80,9 @@ class TestExamplesTests(KeyVaultTestCase):
         backup_poller = await backup_client.begin_backup(container_uri, use_managed_identity=True)
         backup_operation = await backup_poller.result()
         folder_url = backup_operation.folder_url
+
+        if self.is_live:
+            await asyncio.sleep(15)  # Additional waiting to ensure backup will be available for restore
 
         # [START begin_selective_restore]
         # begin a restore of a single key from a backed up vault

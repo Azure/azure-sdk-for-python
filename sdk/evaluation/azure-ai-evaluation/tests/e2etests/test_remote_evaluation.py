@@ -21,9 +21,8 @@ from azure.ai.projects.models import Evaluation, Dataset, EvaluatorConfiguration
 # TODO check out https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/evaluation/test_evaluation.py
 # and see if the work here is work bootstrapping
 @pytest.mark.usefixtures("recording_injection", "recorded_test")
-class TestRemoteEvaluation():
+class TestRemoteEvaluation:
 
-    
     @pytest.mark.skipif(True, reason="WIP")
     def test_remote_aoai_evaluation(self, model_config, project_scope):
         sim_grader_config = EvaluatorConfiguration(
@@ -78,12 +77,13 @@ class TestRemoteEvaluation():
         from azure.ai.projects import AIProjectClient
         from azure.ai.projects.models import Evaluation, Dataset
         from azure.identity import DefaultAzureCredential
+
         # Note you might want to change the run name to avoid confusion with others
         run_name = "Test Remote AOAI Evaluation"
         evaluation = Evaluation(
             display_name=run_name,
             description="Evaluation started by test_remote_aoai_evaluation e2e test.",
-            evaluators = {
+            evaluators={
                 "label": label_grader_config,
                 "general": general_grader_config,
                 "string": string_grader_config,
@@ -97,5 +97,3 @@ class TestRemoteEvaluation():
         )
         created_evaluation = project_client.evaluations.create(evaluation)
         retrieved_evaluation = project_client.evaluations.get(created_evaluation.id)
-
-

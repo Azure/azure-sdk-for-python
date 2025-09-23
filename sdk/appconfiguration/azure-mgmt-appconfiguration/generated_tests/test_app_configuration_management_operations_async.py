@@ -21,10 +21,10 @@ class TestAppConfigurationManagementOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_check_name_availability(self, resource_group):
+    async def test_operations_check_name_availability(self, resource_group):
         response = await self.client.operations.check_name_availability(
             check_name_availability_parameters={"name": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2024-06-01",
         )
 
         # please add some check logic here by yourself
@@ -32,9 +32,9 @@ class TestAppConfigurationManagementOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2024-05-01",
+            api_version="2024-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestAppConfigurationManagementOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_regional_check_name_availability(self, resource_group):
+    async def test_operations_regional_check_name_availability(self, resource_group):
         response = await self.client.operations.regional_check_name_availability(
             location="str",
             check_name_availability_parameters={"name": "str", "type": "str"},
-            api_version="2024-05-01",
+            api_version="2024-06-01",
         )
 
         # please add some check logic here by yourself

@@ -23,7 +23,7 @@ class TestNetworkManagementExpressRoutePortsLocationsOperationsAsync(AzureMgmtRe
     @recorded_by_proxy_async
     async def test_express_route_ports_locations_list(self, resource_group):
         response = self.client.express_route_ports_locations.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkManagementExpressRoutePortsLocationsOperationsAsync(AzureMgmtRe
     async def test_express_route_ports_locations_get(self, resource_group):
         response = await self.client.express_route_ports_locations.get(
             location_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

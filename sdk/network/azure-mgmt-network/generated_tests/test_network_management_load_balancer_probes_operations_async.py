@@ -25,7 +25,7 @@ class TestNetworkManagementLoadBalancerProbesOperationsAsync(AzureMgmtRecordedTe
         response = self.client.load_balancer_probes.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementLoadBalancerProbesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             probe_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

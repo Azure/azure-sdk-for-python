@@ -25,7 +25,7 @@ class TestNetworkManagementVerifierWorkspacesOperationsAsync(AzureMgmtRecordedTe
         response = self.client.verifier_workspaces.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementVerifierWorkspacesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             network_manager_name="str",
             workspace_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -53,6 +53,7 @@ class TestNetworkManagementVerifierWorkspacesOperationsAsync(AzureMgmtRecordedTe
             workspace_name="str",
             body={
                 "location": "str",
+                "etag": "str",
                 "id": "str",
                 "name": "str",
                 "properties": {"description": "str", "provisioningState": "str"},
@@ -67,7 +68,7 @@ class TestNetworkManagementVerifierWorkspacesOperationsAsync(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +81,7 @@ class TestNetworkManagementVerifierWorkspacesOperationsAsync(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             network_manager_name="str",
             workspace_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +95,7 @@ class TestNetworkManagementVerifierWorkspacesOperationsAsync(AzureMgmtRecordedTe
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
                 workspace_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -24,10 +24,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
     def _assert_properties_default(self, prop):
         assert prop is not None
 
-        self._assert_logging_equal(prop['analytics_logging'], QueueAnalyticsLogging())
-        self._assert_metrics_equal(prop['hour_metrics'], Metrics())
-        self._assert_metrics_equal(prop['minute_metrics'], Metrics())
-        self._assert_cors_equal(prop['cors'], [])
+        self._assert_logging_equal(prop["analytics_logging"], QueueAnalyticsLogging())
+        self._assert_metrics_equal(prop["hour_metrics"], Metrics())
+        self._assert_metrics_equal(prop["minute_metrics"], Metrics())
+        self._assert_cors_equal(prop["cors"], [])
 
     def _assert_logging_equal(self, log1, log2):
         if log1 is None or log2 is None:
@@ -106,18 +106,14 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         # Act
         resp = qsc.set_service_properties(
-            analytics_logging=QueueAnalyticsLogging(),
-            hour_metrics=Metrics(),
-            minute_metrics=Metrics(),
-            cors=[])
+            analytics_logging=QueueAnalyticsLogging(), hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[]
+        )
 
         # Assert
         assert resp is None
         self._assert_properties_default(qsc.get_service_properties())
 
-
     # --Test cases per feature ---------------------------------------
-
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -127,14 +123,16 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        logging = QueueAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = QueueAnalyticsLogging(
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         qsc.set_service_properties(analytics_logging=logging)
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_logging_equal(received_props['analytics_logging'], logging)
+        self._assert_logging_equal(received_props["analytics_logging"], logging)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -151,7 +149,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_metrics_equal(received_props['hour_metrics'], hour_metrics)
+        self._assert_metrics_equal(received_props["hour_metrics"], hour_metrics)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -161,15 +159,16 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Act
         qsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_metrics_equal(received_props['minute_metrics'], minute_metrics)
+        self._assert_metrics_equal(received_props["minute_metrics"], minute_metrics)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -179,10 +178,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -191,7 +190,8 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -200,7 +200,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = qsc.get_service_properties()
-        self._assert_cors_equal(received_props['cors'], cors)
+        self._assert_cors_equal(received_props["cors"], cors)
 
     # --Test cases for errors ---------------------------------------
     @QueuePreparer()
@@ -209,9 +209,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Assert
-        pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
+        pytest.raises(ValueError, RetentionPolicy, True, None)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -223,11 +221,10 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
         cors = []
         for i in range(0, 6):
-            cors.append(CorsRule(['www.xyz.com'], ['GET']))
+            cors.append(CorsRule(["www.xyz.com"], ["GET"]))
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          qsc.set_service_properties, None, None, None, cors)
+        pytest.raises(HttpResponseError, qsc.set_service_properties, None, None, None, cors)
 
     @QueuePreparer()
     @recorded_by_proxy
@@ -237,15 +234,14 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=366))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366)
+        )
 
         # Assert
-        pytest.raises(HttpResponseError,
-                          qsc.set_service_properties,
-                          None, None, minute_metrics)
+        pytest.raises(HttpResponseError, qsc.set_service_properties, None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

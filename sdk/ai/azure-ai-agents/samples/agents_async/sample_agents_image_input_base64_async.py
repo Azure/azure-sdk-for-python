@@ -13,17 +13,18 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-ai-projects azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 import asyncio
 import os, time, base64
 from typing import List
-from azure.ai.agents.aio import AgentsClient
+from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import (
     ListSortOrder,
@@ -58,54 +59,59 @@ def image_to_base64(image_path: str) -> str:
 
 
 async def main():
-    async with DefaultAzureCredential() as creds:
-        async with AgentsClient(endpoint=os.environ["PROJECT_ENDPOINT"], credential=creds) as agents_client:
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-            agent = await agents_client.create_agent(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                name="my-agent",
-                instructions="You are helpful agent",
-            )
-            print(f"Created agent, agent ID: {agent.id}")
+    async with project_client:
+        agents_client = project_client.agents
 
-            thread = await agents_client.threads.create()
-            print(f"Created thread, thread ID: {thread.id}")
+        agent = await agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are helpful agent",
+        )
+        print(f"Created agent, agent ID: {agent.id}")
 
-            input_message = "Hello, what is in the image ?"
-            image_base64 = image_to_base64(asset_file_path)
-            img_url = f"data:image/png;base64,{image_base64}"
-            url_param = MessageImageUrlParam(url=img_url, detail="high")
-            content_blocks: List[MessageInputContentBlock] = [
-                MessageInputTextBlock(text=input_message),
-                MessageInputImageUrlBlock(image_url=url_param),
-            ]
-            message = await agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
-            print(f"Created message, message ID: {message.id}")
+        thread = await agents_client.threads.create()
+        print(f"Created thread, thread ID: {thread.id}")
 
-            run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
+        input_message = "Hello, what is in the image ?"
+        image_base64 = image_to_base64(asset_file_path)
+        img_url = f"data:image/png;base64,{image_base64}"
+        url_param = MessageImageUrlParam(url=img_url, detail="high")
+        content_blocks: List[MessageInputContentBlock] = [
+            MessageInputTextBlock(text=input_message),
+            MessageInputImageUrlBlock(image_url=url_param),
+        ]
+        message = await agents_client.messages.create(thread_id=thread.id, role="user", content=content_blocks)
+        print(f"Created message, message ID: {message.id}")
 
-            # Poll the run as long as run status is queued or in progress
-            while run.status in ["queued", "in_progress", "requires_action"]:
-                # Wait for a second
-                time.sleep(1)
-                run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
-                print(f"Run status: {run.status}")
+        run = await agents_client.runs.create(thread_id=thread.id, agent_id=agent.id)
 
-            if run.status == "failed":
-                print(f"Run failed: {run.last_error}")
+        # Poll the run as long as run status is queued or in progress
+        while run.status in ["queued", "in_progress", "requires_action"]:
+            # Wait for a second
+            time.sleep(1)
+            run = await agents_client.runs.get(thread_id=thread.id, run_id=run.id)
+            print(f"Run status: {run.status}")
 
-            await agents_client.delete_agent(agent.id)
-            print("Deleted agent")
+        if run.status == "failed":
+            print(f"Run failed: {run.last_error}")
 
-            messages = agents_client.messages.list(
-                thread_id=thread.id,
-                order=ListSortOrder.ASCENDING,
-            )
+        await agents_client.delete_agent(agent.id)
+        print("Deleted agent")
 
-            async for msg in messages:
-                last_part = msg.content[-1]
-                if isinstance(last_part, MessageTextContent):
-                    print(f"{msg.role}: {last_part.text.value}")
+        messages = agents_client.messages.list(
+            thread_id=thread.id,
+            order=ListSortOrder.ASCENDING,
+        )
+
+        async for msg in messages:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

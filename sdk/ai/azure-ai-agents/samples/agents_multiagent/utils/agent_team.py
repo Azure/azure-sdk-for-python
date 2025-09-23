@@ -7,7 +7,7 @@ import os
 import yaml  # type: ignore
 
 from opentelemetry import trace
-from opentelemetry.trace import StatusCode, Span  # noqa: F401 # pylint: disable=unused-import
+from opentelemetry.trace import Span  # noqa: F401 # pylint: disable=unused-import
 from typing import Any, Dict, Optional, Set, List
 from azure.ai.agents import AgentsClient
 from azure.ai.agents.models import FunctionTool, ToolSet, MessageRole, Agent, AgentThread
@@ -329,7 +329,7 @@ class AgentTeam:
                             thread_id=self._agent_thread.id, agent_id=agent.agent_instance.id
                         )
                         print(f"Created and processed run for agent '{agent.name}', run ID: {run.id}")
-                        text_message = self._agents_client.messages.get_last_text_message_by_role(
+                        text_message = self._agents_client.messages.get_last_message_text_by_role(
                             thread_id=self._agent_thread.id, role=MessageRole.AGENT
                         )
                         if text_message and text_message.text:

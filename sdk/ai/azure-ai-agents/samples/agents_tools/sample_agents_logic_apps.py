@@ -7,24 +7,25 @@
 """
 DESCRIPTION:
     This sample demonstrates how to use agents with Logic Apps to execute the task of sending an email.
- 
+
 PREREQUISITES:
     1) Create a Logic App within the same resource group as your Azure AI Project in Azure Portal
-    2) To configure your Logic App to send emails, you must include an HTTP request trigger that is 
+    2) To configure your Logic App to send emails, you must include an HTTP request trigger that is
     configured to accept JSON with 'to', 'subject', and 'body'. The guide to creating a Logic App Workflow
-    can be found here: 
+    can be found here:
     https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/agents-logic-apps#create-logic-apps-workflows-for-function-calling
-    
+
 USAGE:
     python sample_agents_logic_apps.py
- 
+
     Before running the sample:
- 
-    pip install azure-ai-agents azure-identity
+
+    pip install azure-ai-projects azure-ai-agents azure-identity azure-mgmt-logic
 
     Set this environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 
     Replace the following values in the sample with your own values:
@@ -39,28 +40,27 @@ import os
 import sys
 from typing import Set
 
-from azure.ai.agents import AgentsClient
-from azure.ai.agents.models import ToolSet, FunctionTool
+from azure.ai.projects import AIProjectClient
+from azure.ai.agents.models import ListSortOrder, ToolSet, FunctionTool
 from azure.identity import DefaultAzureCredential
 
-# Example user function
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import fetch_current_datetime
 
 # Import AzureLogicAppTool and the function factory from user_logic_apps
 from utils.user_logic_apps import AzureLogicAppTool, create_send_email_function
 
-# [START register_logic_app]
-
 # Create the agents client
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
+# [START register_logic_app]
 # Extract subscription and resource group from the project scope
 subscription_id = os.environ["SUBSCRIPTION_ID"]
 resource_group = os.environ["resource_group_name"]
@@ -84,7 +84,9 @@ functions_to_use: Set = {
 }
 # [END register_logic_app]
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     # Create an agent
     functions = FunctionTool(functions=functions_to_use)
     toolset = ToolSet()
@@ -124,7 +126,7 @@ with agents_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]

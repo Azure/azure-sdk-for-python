@@ -120,18 +120,23 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
 
     def __enter__(self) -> Self:
+        self._client.__enter__()
         self._blob_service_client.__enter__()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self._blob_service_client.close()
-        super(DataLakeServiceClient, self).__exit__(*args)
+        self._blob_service_client.__exit__(*args)
+        self._client.__exit__(*args)
 
     def close(self) -> None:
-        """ This method is to close the sockets opened by the client.
+        """This method is to close the sockets opened by the client.
         It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
         """
-        self.__exit__()
+        self._blob_service_client.close()
+        self._client.close()
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to hostname.

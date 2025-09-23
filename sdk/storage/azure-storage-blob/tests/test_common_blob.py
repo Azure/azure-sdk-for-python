@@ -53,11 +53,7 @@ from azure.storage.blob._generated.models import RehydratePriority
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers import (
-    MockStorageTransport,
-    _build_base_file_share_headers,
-    _create_file_share_oauth,
-)
+from test_helpers import _build_base_file_share_headers, _create_file_share_oauth
 
 # ------------------------------------------------------------------------------
 SMALL_BLOB_SIZE = 1024
@@ -182,7 +178,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
-            source_data
+            source_data,
+            self.is_live
         )
 
         # Set up destination blob without data
@@ -215,12 +212,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             # Assert
             assert destination_blob_data == source_data
         finally:
-            requests.delete(
-                url=base_url,
-                headers=_build_base_file_share_headers(bearer_token_string, 0),
-                params={'restype': 'share'}
-            )
-            blob_service_client.delete_container(self.source_container_name)
+            if self.is_live:
+                requests.delete(
+                    url=base_url,
+                    headers=_build_base_file_share_headers(bearer_token_string, 0),
+                    params={'restype': 'share'}
+                )
+                blob_service_client.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -3596,58 +3594,5 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         result = blob.download_blob().readall()
         assert result == data[:length]
-
-    @BlobPreparer()
-    def test_mock_transport_no_content_validation(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        transport = MockStorageTransport()
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
-            blob_name='test_blob',
-            credential=storage_account_key,
-            transport=transport,
-            retry_total=0
-        )
-
-        content = blob_client.download_blob()
-        assert content is not None
-
-        props = blob_client.get_blob_properties()
-        assert props is not None
-
-        data = b"Hello World!"
-        resp = blob_client.upload_blob(data, overwrite=True)
-        assert resp is not None
-
-        blob_data = blob_client.download_blob().read()
-        assert blob_data == b"Hello World!"  # data is fixed by mock transport
-
-        resp = blob_client.delete_blob()
-        assert resp is None
-
-    @BlobPreparer()
-    def test_mock_transport_with_content_validation(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        transport = MockStorageTransport()
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
-            blob_name='test_blob',
-            credential=storage_account_key,
-            transport=transport,
-            retry_total=0
-        )
-
-        data = b"Hello World!"
-        resp = blob_client.upload_blob(data, overwrite=True, validate_content=True)
-        assert resp is not None
-
-        blob_data = blob_client.download_blob(validate_content=True).read()
-        assert blob_data == b"Hello World!"  # data is fixed by mock transport
 
     # ------------------------------------------------------------------------------

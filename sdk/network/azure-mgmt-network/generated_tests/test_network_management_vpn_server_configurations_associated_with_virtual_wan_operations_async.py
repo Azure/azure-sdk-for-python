@@ -26,7 +26,7 @@ class TestNetworkManagementVpnServerConfigurationsAssociatedWithVirtualWanOperat
             await self.client.vpn_server_configurations_associated_with_virtual_wan.begin_list(
                 resource_group_name=resource_group.name,
                 virtual_wan_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

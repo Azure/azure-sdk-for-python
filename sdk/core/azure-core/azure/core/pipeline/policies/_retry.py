@@ -66,6 +66,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # pylint: disable=enum-must-be-uppercase
+    """Enum for retry modes."""
     Exponential = "exponential"
     Fixed = "fixed"
 
@@ -117,7 +118,7 @@ class RetryPolicyBase:
             "read": options.pop("retry_read", self.read_retries),
             "status": options.pop("retry_status", self.status_retries),
             "backoff": options.pop("retry_backoff_factor", self.backoff_factor),
-            "max_backoff": options.pop("retry_backoff_max", self.BACKOFF_MAX),
+            "max_backoff": options.pop("retry_backoff_max", self.backoff_max),
             "methods": options.pop("retry_on_methods", self._method_whitelist),
             "timeout": options.pop("timeout", self.timeout),
             "history": [],

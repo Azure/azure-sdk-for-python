@@ -26,7 +26,7 @@ from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._mixins import LocalizableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+from azure.ai.ml.entities._util import get_sha256_string, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
@@ -374,20 +374,20 @@ class Environment(Asset, LocalizableMixin):
     ) -> None:
         hash_str = ""
         if source == "image":
-            hash_str = hash_str.join(get_md5_string(self.image))
+            hash_str = hash_str.join(get_sha256_string(self.image))
             if inference_config:
-                hash_str = hash_str.join(get_md5_string(yaml.dump(inference_config, sort_keys=True)))
+                hash_str = hash_str.join(get_sha256_string(yaml.dump(inference_config, sort_keys=True)))
             if conda_file:
-                hash_str = hash_str.join(get_md5_string(conda_file))
+                hash_str = hash_str.join(get_sha256_string(conda_file))
         if source == "build":
             if self.build is not None and not self.build.dockerfile_path:
-                hash_str = hash_str.join(get_md5_string(self._upload_hash))
+                hash_str = hash_str.join(get_sha256_string(self._upload_hash))
             else:
                 if self.build is not None:
-                    hash_str = hash_str.join(get_md5_string(self._upload_hash)).join(
-                        get_md5_string(self.build.dockerfile_path)
+                    hash_str = hash_str.join(get_sha256_string(self._upload_hash)).join(
+                        get_sha256_string(self.build.dockerfile_path)
                     )
-        version_hash = get_md5_string(hash_str)
+        version_hash = get_sha256_string(hash_str)
         self.version = version_hash
         self.name = ANONYMOUS_ENV_NAME
 

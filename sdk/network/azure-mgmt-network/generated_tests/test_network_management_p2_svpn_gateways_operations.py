@@ -24,7 +24,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.p2_svpn_gateways.get(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
                 "vpnGatewayScaleUnit": 0,
                 "vpnServerConfiguration": {"id": "str"},
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             p2_s_vpn_gateway_parameters={"tags": {"str": "str"}},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -126,7 +126,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.p2_svpn_gateways.begin_delete(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -137,7 +137,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
     def test_p2_svpn_gateways_list_by_resource_group(self, resource_group):
         response = self.client.p2_svpn_gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -147,7 +147,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_p2_svpn_gateways_list(self, resource_group):
         response = self.client.p2_svpn_gateways.list(
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -159,7 +159,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.p2_svpn_gateways.begin_reset(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -172,7 +172,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             parameters={"authenticationMethod": "str"},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -184,7 +184,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.p2_svpn_gateways.begin_get_p2_s_vpn_connection_health(
             resource_group_name=resource_group.name,
             gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -197,7 +197,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gateway_name="str",
             request={"outputBlobSasUrl": "str", "vpnUserNamesFilter": ["str"]},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -210,7 +210,7 @@ class TestNetworkManagementP2SVpnGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             p2_s_vpn_gateway_name="str",
             request={"vpnConnectionIds": ["str"]},
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

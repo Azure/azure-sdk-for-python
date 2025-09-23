@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2024-10-01-preview/Organizations_ListByResourceGroup_MaximumSet_Gen.json
+# x-ms-original-file: 2024-10-01/Organizations_ListByResourceGroup_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

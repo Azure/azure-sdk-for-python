@@ -51,6 +51,27 @@ class _Constants:
     HS_MAX_ITEMS_CONFIG_DEFAULT: int = 1000
     MAX_ITEM_BUFFER_VS_CONFIG: str = "AZURE_COSMOS_MAX_ITEM_BUFFER_VECTOR_SEARCH"
     MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT: int = 50000
+    SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG: str = "AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"
+    SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT: str = "True"
+    CIRCUIT_BREAKER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
+    CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
+    AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
+    AAD_DEFAULT_SCOPE: str = "https://cosmos.azure.com/.default"
+
+    # Database Account Retry Policy constants
+    AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES: str = "AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"
+    AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES_DEFAULT: int = 3
+    AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS: str = "AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS"
+    AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS_DEFAULT: int = 100
+
+    # Only applicable when circuit breaker is enabled -------------------------
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ_DEFAULT: int = 10
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE: str = "AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"
+    CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE_DEFAULT: int = 5
+    FAILURE_PERCENTAGE_TOLERATED = "AZURE_COSMOS_FAILURE_PERCENTAGE_TOLERATED"
+    FAILURE_PERCENTAGE_TOLERATED_DEFAULT: int = 90
+    # -------------------------------------------------------------------------
 
     # Error code translations
     ERROR_TRANSLATIONS: Dict[int, str] = {
@@ -68,3 +89,11 @@ class _Constants:
         429: "TOO_MANY_REQUESTS",
         449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
     }
+
+    class Kwargs:
+        """Keyword arguments used in the azure-cosmos package"""
+
+        RETRY_WRITE: Literal["retry_write"] = "retry_write"
+        """Whether to retry write operations if they fail. Used either at client level or request level."""
+
+        EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"

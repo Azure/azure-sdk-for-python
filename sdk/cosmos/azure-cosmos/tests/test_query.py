@@ -17,6 +17,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.partition_key import PartitionKey
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 class TestQuery(unittest.TestCase):
     """Test to ensure escaping of non-ascii characters from partition key"""
@@ -28,11 +29,14 @@ class TestQuery(unittest.TestCase):
     connectionPolicy = config.connectionPolicy
     TEST_DATABASE_ID = config.TEST_DATABASE_ID
     is_emulator = config.is_emulator
-    credential = config.credential
+    credential = config.masterKey
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
+        use_multiple_write_locations = False
+        if os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "False") == "True":
+            use_multiple_write_locations = True
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential, multiple_write_locations=use_multiple_write_locations)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         if cls.host == "https://localhost:8081/":
             os.environ["AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY"] = "True"
@@ -465,6 +469,22 @@ class TestQuery(unittest.TestCase):
 
         self.assertEqual(second_page['id'], second_page_fetched_with_continuation_token['id'])
 
+    def test_cross_partition_query_with_none_partition_key(self):
+        created_collection = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        document_definition = {'pk': 'pk1', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+        document_definition = {'pk': 'pk2', 'id': str(uuid.uuid4())}
+        created_collection.create_item(body=document_definition)
+
+        query = 'SELECT * from c'
+        query_iterable = created_collection.query_items(
+            query=query,
+            partition_key=None,
+            enable_cross_partition_query=True
+        )
+
+        assert len(list(query_iterable)) >= 2
+
     def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
                                                                get_mock_result):
         self.count = 0
@@ -488,6 +508,20 @@ class TestQuery(unittest.TestCase):
         ], enable_cross_partition_query=True)
 
         self.assertListEqual(list(query_results), [None])
+
+    def test_value_max_query_results(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_version"})
+        container.upsert_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_version"})
+        query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
+        query_results = container.query_items(query, parameters=[
+            {"name": "@lookupVersion", "value": "console_version"}  # cspell:disable-line
+        ], enable_cross_partition_query=True)
+        item_list = list(query_results)
+        assert len(item_list) == 1
+        assert item_list[0] == 3
 
     def test_continuation_token_size_limit_query(self):
         container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
@@ -564,6 +598,51 @@ class TestQuery(unittest.TestCase):
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.created_db.delete_container(created_collection.id)
 
+    def test_query_positional_args(self):
+        container = self.created_db.get_container_client(self.config.TEST_MULTI_PARTITION_CONTAINER_ID)
+        partition_key_value1 = "pk1"
+        partition_key_value2 = "pk2"
+
+        num_items = 10
+        new_items = []
+        for pk_value in [partition_key_value1, partition_key_value2]:
+            for i in range(num_items):
+                item = {
+                    self.config.TEST_CONTAINER_PARTITION_KEY: pk_value,
+                    'id': f"{pk_value}_{i}",
+                    'name': 'sample name'
+                }
+                new_items.append(item)
+
+        for item in new_items:
+            container.upsert_item(body=item)
+
+        query = "SELECT * FROM root r WHERE r.name=@name"
+        parameters = [{'name': '@name', 'value': 'sample name'}]
+        partition_key_value = partition_key_value2
+        enable_cross_partition_query = True
+        max_item_count = 3
+        enable_scan_in_query = True
+        populate_query_metrics = True
+        pager = container.query_items(
+            query,
+            parameters,
+            partition_key_value,
+            enable_cross_partition_query,
+            max_item_count,
+            enable_scan_in_query,
+            populate_query_metrics,
+        ).by_page()
+
+        ids = []
+        for page in pager:
+            items = list(page)
+            num_items = len(items)
+            for item in items:
+                assert item['pk'] == partition_key_value
+                ids.append(item['id'])
+            assert num_items <= max_item_count
+        assert ids == [item['id'] for item in new_items if item['pk'] == partition_key_value]
 
     def _MockExecuteFunctionSessionRetry(self, function, *args, **kwargs):
         if args:

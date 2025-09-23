@@ -16,4 +16,4 @@ READ_TIMEOUT = 60
 DEFAULT_OAUTH_SCOPE = "/.default"
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
-SERVICE_HOST_BASE = 'core.windows.net'
+SERVICE_HOST_BASE = "core.windows.net"

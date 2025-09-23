@@ -1,5 +1,46 @@
 # Release History
 
+## 23.1.0 (2025-09-22)
+
+### Features Added
+
+  - Model `AzureFilesIdentityBasedAuthentication` added property `smb_o_auth_settings`
+  - Model `Endpoints` added property `ipv6_endpoints`
+  - Model `NetworkRuleSet` added property `ipv6_rules`
+  - Model `ProtocolSettings` added property `nfs`
+  - Model `SkuInformation` added property `location_info`
+  - Model `SmbSetting` added property `encryption_in_transit`
+  - Model `StorageAccount` added property `zones`
+  - Model `StorageAccount` added property `placement`
+  - Model `StorageAccount` added property `dual_stack_endpoint_preference`
+  - Model `StorageAccountCreateParameters` added property `zones`
+  - Model `StorageAccountCreateParameters` added property `placement`
+  - Model `StorageAccountCreateParameters` added property `dual_stack_endpoint_preference`
+  - Model `StorageAccountUpdateParameters` added property `zones`
+  - Model `StorageAccountUpdateParameters` added property `placement`
+  - Model `StorageAccountUpdateParameters` added property `dual_stack_endpoint_preference`
+  - Added model `DualStackEndpointPreference`
+  - Added model `EncryptionInTransit`
+  - Added enum `IntervalUnit`
+  - Added model `NfsSetting`
+  - Added model `Placement`
+  - Added model `SkuInformationLocationInfoItem`
+  - Added model `SmbOAuthSettings`
+  - Added model `StorageAccountIpv6Endpoints`
+  - Added enum `ZonePlacementPolicy`
+
+## 23.0.1 (2025-06-30)
+
+### Other Changes
+
+  - Fix for StorageTaskAssignmentsOperations
+
+## 23.0.0 (2025-05-15)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
 ## 22.2.0 (2025-04-21)
 
 ### Features Added

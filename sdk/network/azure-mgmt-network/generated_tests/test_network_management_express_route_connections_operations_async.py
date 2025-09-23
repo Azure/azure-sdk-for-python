@@ -52,7 +52,7 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
                     },
                     "routingWeight": 0,
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -66,7 +66,7 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
             connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 express_route_gateway_name="str",
                 connection_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -93,7 +93,7 @@ class TestNetworkManagementExpressRouteConnectionsOperationsAsync(AzureMgmtRecor
         response = await self.client.express_route_connections.list(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself

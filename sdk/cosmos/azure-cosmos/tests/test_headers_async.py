@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import unittest
+from unittest.mock import MagicMock
 
 import pytest
 import uuid
@@ -9,7 +10,6 @@ import uuid
 
 import test_config
 from azure.cosmos import http_constants
-import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, DatabaseProxy
 from azure.cosmos.partition_key import PartitionKey
 
@@ -22,6 +22,12 @@ async def client_raw_response_hook(response):
 async def request_raw_response_hook(response):
     assert (response.http_request.headers[http_constants.HttpHeaders.ThroughputBucket]
             == str(request_throughput_bucket_number))
+
+
+class ClientIDVerificationError(Exception):
+    """Custom exception for client ID verification errors."""
+    pass
+
 
 @pytest.mark.cosmosEmulator
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
@@ -53,15 +59,15 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
     async def test_request_precedence_throughput_bucket_async(self):
         client = CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
-        created_db = await client.create_database("test_db" + str(uuid.uuid4()))
-        created_container = await created_db.create_container(
+        database = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        created_container = await database.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
         await created_container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        await client.delete_database(created_db.id)
+        await database.delete_container(created_container.id)
 
     async def test_container_read_item_throughput_bucket_async(self):
         created_document = await self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
@@ -205,6 +211,25 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert e.status_code == 400
             assert "specified for the header 'x-ms-cosmos-throughput-bucket' is invalid." in e.http_error_message
     """
+
+    async def side_effect_client_id(self, *args, **kwargs):
+        # This is a side effect to verify that the client ID is sent in the request headers
+        assert args[2].get(http_constants.HttpHeaders.ClientId) is not None
+        raise ClientIDVerificationError("Client ID verification complete")
+
+    async def test_client_id(self):
+        # Client ID should be sent on every request, Verify it is sent on a read_item request
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_client_id)
+        try:
+            await self.container.read_item(item="id-1", partition_key="pk-1")
+        except ClientIDVerificationError:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
 
 if __name__ == "__main__":
     unittest.main()

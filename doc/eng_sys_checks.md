@@ -5,6 +5,7 @@
   - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
+    - [Coverage Enforcement](#coverage-enforcement)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
     - [Enable test logging in CI pipelines](#enable-test-logging-in-ci-pipelines)
@@ -13,6 +14,7 @@
     - [Pyright](#pyright)
     - [Verifytypes](#verifytypes)
     - [Pylint](#pylint)
+    - [Sphinx and docstring checker](#sphinx-and-docstring-checker)
     - [Bandit](#bandit)
     - [ApiStubGen](#apistubgen)
     - [black](#black)
@@ -271,7 +273,7 @@ to opt into the black invocation.
 
 ### Change log verification
 
-Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/)
+Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here.](https://azure.github.io/azure-sdk/policies_releases.html#change-logs/)
 
 ## PR Validation Checks
 

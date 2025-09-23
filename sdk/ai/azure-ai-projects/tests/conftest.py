@@ -4,20 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-
 import pytest
-from devtools_testutils import (
-    remove_batch_sanitizers,
-    get_credential,
-    test_proxy,
-    add_general_regex_sanitizer,
-    add_body_key_sanitizer,
-)
 from dotenv import load_dotenv, find_dotenv
-from azure.ai.projects import AIProjectClient
+from devtools_testutils import remove_batch_sanitizers, add_general_regex_sanitizer, add_body_key_sanitizer
 
 if not load_dotenv(find_dotenv(filename="azure_ai_projects_tests.env"), override=True):
-    print("Failed to apply environment variables for azure-ai-projects tests.")
+    print(
+        "Failed to apply environment variables for azure-ai-projects tests. This is expected if running in ADO pipeline."
+    )
 
 
 def pytest_collection_modifyitems(items):
@@ -34,124 +28,80 @@ def pytest_collection_modifyitems(items):
 
 class SanitizedValues:
     SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
-    RESOURCE_GROUP_NAME = "00000"
-    WORKSPACE_NAME = "00000"
-    DATASET_NAME = "00000"
-    TENANT_ID = "00000000-0000-0000-0000-000000000000"
-    USER_OBJECT_ID = "00000000-0000-0000-0000-000000000000"
-    API_KEY = "00000000000000000000000000000000000000000000000000000000000000000000"
-    VECTOR_STORE_NAME = "vs_000000000000000000000000"
-    # cSpell:disable-next-line
-    FILE_BATCH = "vsfb_00000000000000000000000000000000"
+    RESOURCE_GROUP_NAME = "sanitized-resource-group-name"
+    ACCOUNT_NAME = "sanitized-account-name"
+    PROJECT_NAME = "sanitized-project-name"
+    COMPONENT_NAME = "sanitized-component-name"
+    AGENTS_API_VERSION = "sanitized-api-version"
 
 
 @pytest.fixture(scope="session")
-def mock_project_scope():
+def sanitized_values():
     return {
         "subscription_id": f"{SanitizedValues.SUBSCRIPTION_ID}",
         "resource_group_name": f"{SanitizedValues.RESOURCE_GROUP_NAME}",
-        "project_name": f"{SanitizedValues.WORKSPACE_NAME}",
+        "project_name": f"{SanitizedValues.PROJECT_NAME}",
+        "account_name": f"{SanitizedValues.ACCOUNT_NAME}",
+        "component_name": f"{SanitizedValues.COMPONENT_NAME}",
+        "agents_api_version": f"{SanitizedValues.AGENTS_API_VERSION}",
     }
 
 
-@pytest.fixture(scope="session")
-def mock_dataset_name():
-    return {
-        "dataset_name": f"{SanitizedValues.DATASET_NAME}",
-    }
-
-
-@pytest.fixture(scope="session")
-def mock_vector_store_name():
-    return {
-        "vector_store_name": f"{SanitizedValues.VECTOR_STORE_NAME}",
-        "file_batches": f"{SanitizedValues.FILE_BATCH}",
-    }
-
-
+# From: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#start-the-test-proxy-server
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
+# test_proxy auto-starts the test proxy
+# patch_sleep and patch_async_sleep streamline tests by disabling wait times during LRO polling
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     return
 
 
 @pytest.fixture(scope="session", autouse=True)
-def add_sanitizers(test_proxy, mock_project_scope, mock_dataset_name, mock_vector_store_name):
+def add_sanitizers(test_proxy, sanitized_values):
 
-    def azure_workspace_triad_sanitizer():
-        """Sanitize subscription, resource group, and workspace."""
+    def sanitize_url_paths():
 
         add_general_regex_sanitizer(
             regex=r"/subscriptions/([-\w\._\(\)]+)",
-            value=mock_project_scope["subscription_id"],
+            value=sanitized_values["subscription_id"],
             group_for_replace="1",
         )
 
         add_general_regex_sanitizer(
             regex=r"/resource[gG]roups/([-\w\._\(\)]+)",
-            value=mock_project_scope["resource_group_name"],
+            value=sanitized_values["resource_group_name"],
             group_for_replace="1",
         )
 
         add_general_regex_sanitizer(
-            regex=r"/workspaces/([-\w\._\(\)]+)", value=mock_project_scope["project_name"], group_for_replace="1"
+            regex=r"/projects/([-\w\._\(\)]+)", value=sanitized_values["project_name"], group_for_replace="1"
         )
 
-        # TODO (Darren): Check why this is needed in addition to the above
         add_general_regex_sanitizer(
-            regex=r"%2Fsubscriptions%2F([-\w\._\(\)]+)",
-            value=mock_project_scope["subscription_id"],
-            group_for_replace="1",
+            regex=r"/accounts/([-\w\._\(\)]+)", value=sanitized_values["account_name"], group_for_replace="1"
         )
 
-        # TODO (Darren): Check why this is needed in addition to the above
         add_general_regex_sanitizer(
-            regex=r"%2Fresource[gG]roups%2F([-\w\._\(\)]+)",
-            value=mock_project_scope["resource_group_name"],
-            group_for_replace="1",
+            regex=r"/components/([-\w\._\(\)]+)", value=sanitized_values["component_name"], group_for_replace="1"
         )
 
-    azure_workspace_triad_sanitizer()
+        # azure-ai-projects package takes dependency on azure-ai-agents package, but does not specify exactly what
+        # version. When you do the local test recordings, you may have one version of azure-ai-agents installed.
+        # When the tests run in CI pipeline, it will use latest stable version, which may or may not match the
+        # local version you installed. We have tests that return an Agents client, then makes a call. So we want to
+        # remove the api-version from the recordings.
+        add_general_regex_sanitizer(
+            regex=r"/assistants.*?api-version=(.*)", value=sanitized_values["agents_api_version"], group_for_replace="1"
+        )
 
-    add_general_regex_sanitizer(regex=r"/runs/([-\w\._\(\)]+)", value="Sanitized", group_for_replace="1")
+    sanitize_url_paths()
 
-    add_general_regex_sanitizer(
-        regex=r"/data/([-\w\._\(\)]+)", value=mock_dataset_name["dataset_name"], group_for_replace="1"
-    )
+    # Sanitize API key from service response (this includes Application Insights connection string)
+    add_body_key_sanitizer(json_path="credentials.key", value="Sanitized-api-key")
 
-    add_general_regex_sanitizer(
-        regex=r"/vector_stores/([-\w\._\(\)]+)",
-        value=mock_vector_store_name["vector_store_name"],
-        group_for_replace="1",
-    )
-
-    add_general_regex_sanitizer(
-        regex=r"/file_batches/([-\w\._\(\)]+)/", value=mock_vector_store_name["file_batches"], group_for_replace="1"
-    )
-
-    # Sanitize Application Insights connection string from service response (/tests/telemetry)
-    add_body_key_sanitizer(
-        json_path="properties.ConnectionString",
-        value="InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://region.applicationinsights.azure.com/;LiveEndpoint=https://region.livediagnostics.monitor.azure.com/;ApplicationId=00000000-0000-0000-0000-000000000000",
-    )
-
-    add_body_key_sanitizer(
-        json_path="data_sources[*].uri",
-        value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
-    )
-
-    add_body_key_sanitizer(
-        json_path="configuration.data_sources[*].uri",
-        value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
-    )
-
-    add_body_key_sanitizer(
-        json_path="data_source.uri",
-        value="azureml://subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups/00000/workspaces/00000/datastores/workspaceblobstore/paths/LocalUpload/00000000000/product_info_1.md",
-    )
-
-    # Sanitize API key from service response (/tests/connections)
-    add_body_key_sanitizer(json_path="properties.credentials.key", value="Sanitized")
+    # Sanitize SAS URI from Datasets get credential response
+    add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="Sanitized-sas-uri")
+    add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="Sanitized-sas-uri")
 
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3493: $..name

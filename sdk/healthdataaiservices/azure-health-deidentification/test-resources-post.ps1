@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# This script is used to set up SIP Configuration domains for Azure Communication Services SIP Routing SDK GA tests
+# This script is used to set up test resources for the Azure Health Data Services de-identification service.
 
 # It is invoked by the https://github.com/Azure/azure-sdk-for-net/blob/main/eng/New-TestResources.ps1
 # script after the ARM template, defined in https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/storage/test-resources.json,
-# is finished being deployed. The ARM template is responsible for creating the Storage accounts needed for live tests.
+# is finished being deployed. The ARM template is responsible for creating the storage account and permissions needed for live tests.
 
 param (
     [hashtable] $DeploymentOutputs,
@@ -19,7 +19,7 @@ $storageAccountName = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_ACCOUNT_N
 $containerName = $DeploymentOutputs['HEALTHDATAAISERVICES_STORAGE_CONTAINER_NAME']
 
 # Set the local folder path to upload
-$localFolderPath = "tests\data\example_patient_1"
+$localFolderPath = "$PSScriptRoot\tests\data\example_patient_1"
 
 # Check if the connection string is present
 if ([string]::IsNullOrWhiteSpace($storageAccountName)) {
@@ -45,15 +45,14 @@ Start-Sleep -Seconds 30
 Get-AzStorageContainer -Name $containerName -Context $storageContext
 
 # Upload the folder and its contents to the container
-# Gets last folder name + filename. example_patient_1\doctor_dictation.txt
+# Gets last folder name + filename. example_patient_1/doctor_dictation.txt
 Get-ChildItem -Path $localFolderPath -Recurse | ForEach-Object {
     $relativePath = $_.FullName
-    $relativePath = $relativePath.Replace("\\", "\")
-    $folderName = ($relativePath -split "\\")[-2]  # Get only the folder name.
-    $blobName = ($relativePath -split "\\")[-1]  # Get only the file name.
+    $folderName = Split-Path -Path (Split-Path -Path $relativePath -Parent) -Leaf
+    $blobName = Split-Path -Path $relativePath -Leaf
     $destinationBlob = $blobName -replace ":", ""
 
-    $destinationBlob = "$folderName\$destinationBlob"
+    $destinationBlob = "$folderName/$destinationBlob"
     Write-Host "Uploading file '$destinationBlob'"
     Set-AzStorageBlobContent -File $_.FullName -Container $containerName -Blob $destinationBlob -Context $storageContext -Force
 }

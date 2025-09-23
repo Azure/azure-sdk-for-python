@@ -27,21 +27,6 @@ Please note that some of these samples will provision resources to your Azure Su
 * You must have [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/) installed and authenticated.
 * Some of the samples require existing resources to be deployed, please see the description at the beginning of each sample for details.
 
-## Setup
-
-1. Install the Azure Projects client library for Python with [pip](https://pypi.org/project/pip/):
-```bash
-pip install --pre azure-projects
-```
-2. Clone or download this sample repository
-3. Open the sample folder in Visual Studio Code or your IDE of choice.
-
-## Running the samples
-
-1. Open a terminal window and `cd` to the directory that the samples are saved in.
-2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_helloworld.py`
-
 
 <!-- LINKS -->
 

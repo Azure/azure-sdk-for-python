@@ -40,14 +40,31 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
                 resource={
                     "location": "str",
                     "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "properties": {
                         "administrator": {"password": "str", "userName": "str"},
+                        "authConfig": {"allowedModes": ["str"]},
                         "backup": {"earliestRestoreTime": "str"},
                         "clusterStatus": "str",
                         "compute": {"tier": "str"},
                         "connectionString": "str",
                         "createMode": "str",
+                        "dataApi": {"mode": "str"},
+                        "encryption": {
+                            "customerManagedKeyEncryption": {
+                                "keyEncryptionKeyIdentity": {
+                                    "identityType": "str",
+                                    "userAssignedIdentityResourceId": "str",
+                                },
+                                "keyEncryptionKeyUrl": "str",
+                            }
+                        },
                         "highAvailability": {"targetMode": "str"},
                         "infrastructureVersion": "str",
                         "previewFeatures": ["str"],
@@ -83,7 +100,7 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
                         "restoreParameters": {"pointInTimeUTC": "2020-02-20 00:00:00", "sourceResourceId": "str"},
                         "serverVersion": "str",
                         "sharding": {"shardCount": 0},
-                        "storage": {"sizeGb": 0},
+                        "storage": {"iops": 0, "sizeGb": 0, "throughput": 0, "type": "str"},
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -110,16 +127,24 @@ class TestMongoClusterMgmtMongoClustersOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 mongo_cluster_name="str",
                 properties={
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "properties": {
                         "administrator": {"password": "str", "userName": "str"},
+                        "authConfig": {"allowedModes": ["str"]},
                         "backup": {"earliestRestoreTime": "str"},
                         "compute": {"tier": "str"},
+                        "dataApi": {"mode": "str"},
                         "highAvailability": {"targetMode": "str"},
                         "previewFeatures": ["str"],
                         "publicNetworkAccess": "str",
                         "serverVersion": "str",
                         "sharding": {"shardCount": 0},
-                        "storage": {"sizeGb": 0},
+                        "storage": {"iops": 0, "sizeGb": 0, "throughput": 0, "type": "str"},
                     },
                     "tags": {"str": "str"},
                 },

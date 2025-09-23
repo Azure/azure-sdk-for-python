@@ -27,6 +27,8 @@ from ._models import (
     CancelAddParticipantOperationResult,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage,
+    MediaStreamingSubscription,
+    TranscriptionSubscription,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -37,30 +39,34 @@ from ._shared.models import (
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
     UnknownIdentifier,
+    TeamsExtensionUserProperties,
+    TeamsExtensionUserIdentifier,
 )
 from ._generated.models._enums import (
     CallRejectReason,
     RecordingContent,
     RecordingChannel,
     RecordingFormat,
+    RecordingKind,
     RecordingStorageKind,
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
-    MediaStreamingTransportType,
-    TranscriptionTransportType,
+    MediaStreamingSubscriptionState,
+    TranscriptionResultType,
+    TranscriptionSubscriptionState,
+    StreamingTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
     VoiceKind,
-    AudioFormat
+    AudioFormat,
 )
 
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
-
     # models for input
     "FileSource",
     "TextSource",
@@ -71,9 +77,10 @@ __all__ = [
     "TranscriptionOptions",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
-
     # models for output
     "CallConnectionProperties",
+    "MediaStreamingSubscription",
+    "TranscriptionSubscription",
     "CallParticipant",
     "RecordingProperties",
     "AddParticipantResult",
@@ -91,23 +98,27 @@ __all__ = [
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
     "UnknownIdentifier",
-
+    "TeamsExtensionUserProperties",
+    "TeamsExtensionUserIdentifier",
     # enums
     "CallRejectReason",
     "RecordingContent",
     "RecordingChannel",
     "RecordingFormat",
+    "RecordingKind",
     "RecordingStorageKind",
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
-    "MediaStreamingTransportType",
-    "TranscriptionTransportType",
+    "MediaStreamingSubscriptionState",
+    "TranscriptionResultType",
+    "TranscriptionSubscriptionState",
+    "StreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
-    "AudioFormat"
+    "AudioFormat",
 ]
 __version__ = VERSION
 
@@ -137,6 +148,14 @@ def __getattr__(name):
         from ._models import ServerCallLocator
 
         return ServerCallLocator
+    if name == "RoomCallLocator":
+        warnings.warn(
+            "RoomCallLocator is deprecated and should not be used. Please pass in 'room_id' directly.",
+            DeprecationWarning,
+        )
+        from ._models import RoomCallLocator
+
+        return RoomCallLocator
     if name == "MicrosoftBotIdentifier":
         warnings.warn(
             f"{name} is deprecated and should not be used. Please use 'MicrosoftTeamsAppIdentifier' instead.",

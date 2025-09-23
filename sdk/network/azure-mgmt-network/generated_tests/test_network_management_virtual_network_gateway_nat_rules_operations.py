@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
             nat_rule_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperations(AzureMgmtReco
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
             nat_rule_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestNetworkManagementVirtualNetworkGatewayNatRulesOperations(AzureMgmtReco
         response = self.client.virtual_network_gateway_nat_rules.list_by_virtual_network_gateway(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

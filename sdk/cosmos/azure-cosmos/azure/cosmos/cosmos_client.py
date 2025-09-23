@@ -34,6 +34,7 @@ from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._base import build_options, _set_throughput_options
 from .offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
+from ._constants import _Constants as Constants
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
@@ -144,6 +145,7 @@ def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
         )
     policy.ConnectionRetryConfiguration = connection_retry
     policy.ResponsePayloadOnWriteDisabled = kwargs.pop('no_response_on_write', False)
+    policy.RetryNonIdempotentWrites = kwargs.pop(Constants.Kwargs.RETRY_WRITE, False)
     return policy
 
 
@@ -180,6 +182,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword int retry_status: Maximum number of retry attempts on error status codes.
     :keyword list[int] retry_on_status_codes: A list of specific status codes to retry on.
     :keyword float retry_backoff_factor: Factor to calculate wait time between retry attempts.
+    :keyword bool retry_write: Indicates whether the SDK should automatically retry write operations for items, even if
+        the operation is not guaranteed to be idempotent. This should only be enabled if the application can
+        tolerate such risks or has logic to safely detect and handle duplicate operations.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
@@ -191,8 +196,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword ~logging.Logger logger: Logger to be used for collecting request diagnostics. Can be passed in at client
         level (to log all requests) or at a single request level. Requests will be logged at INFO level.
     :keyword bool no_response_on_write: Indicates whether service should be instructed to skip sending 
-        response payloads on rite operations for items.
+        response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
+    :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
 
     .. admonition:: Example:
 

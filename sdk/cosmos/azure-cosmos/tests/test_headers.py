@@ -56,6 +56,11 @@ class TestHeaders(unittest.TestCase):
         assert args[3]["x-ms-cosmos-correlated-activityid"]  # cspell:disable-line
         raise StopIteration
 
+    def side_effect_client_id(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2][http_constants.HttpHeaders.ClientId]
+        raise StopIteration
+
     def test_correlated_activity_id(self):
         query = 'SELECT * from c ORDER BY c._ts'
 
@@ -98,6 +103,20 @@ class TestHeaders(unittest.TestCase):
         except Exception as exception:
             assert isinstance(exception, ValueError)
 
+    def test_client_id(self):
+        # Client ID should be sent on every request, Verify it is sent on a read_item request
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_client_id)
+        try:
+            self.container.read_item(item="id-1", partition_key="pk-1")
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
+
     def test_client_level_throughput_bucket(self):
         cosmos_client.CosmosClient(self.host, self.masterKey,
             throughput_bucket=client_throughput_bucket_number,
@@ -106,7 +125,7 @@ class TestHeaders(unittest.TestCase):
     def test_request_precedence_throughput_bucket(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
                                    throughput_bucket=client_throughput_bucket_number)
-        created_db = client.create_database("test_db" + str(uuid.uuid4()))
+        created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
         created_container = created_db.create_container(
             str(uuid.uuid4()),
             PartitionKey(path="/pk"))
@@ -114,7 +133,7 @@ class TestHeaders(unittest.TestCase):
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
             raw_response_hook=request_raw_response_hook)
-        client.delete_database(created_db.id)
+        created_db.delete_container(created_container.id)
 
     def test_container_read_item_throughput_bucket(self):
         created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})

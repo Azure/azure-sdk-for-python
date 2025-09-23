@@ -22,8 +22,7 @@ jobs:
       - template: /eng/pipelines/templates/variables/globals.yml
 
     pool:
-      name: azsdk-pool-mms-ubuntu-2004-general
-      vmImage: MMSUbuntu20.04
+      name: azsdk-pool
 
     steps:
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -41,7 +40,7 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - script: |
-        python -m pip install tools/azure-sdk-tools[build]
+        python -m pip install eng/tools/azure-sdk-tools[build]
         python -m pip install azure-identity
         python -m pip install azure-storage-blob
       displayName: 'Prep Environment'

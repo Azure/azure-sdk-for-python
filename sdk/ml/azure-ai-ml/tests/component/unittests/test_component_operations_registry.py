@@ -10,8 +10,8 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
+from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.operations import ComponentOperations
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -120,7 +120,7 @@ class TestComponentOperation:
         mock_component_operation._container_operation.get.return_value = component
         mock_component_operation.archive(name=name)
 
-        mock_component_operation._container_operation.create_or_update.assert_called_with(
+        mock_component_operation._container_operation.begin_create_or_update.assert_called_with(
             name=name,
             registry_name=mock_component_operation._registry_name,
             body=component,
@@ -133,7 +133,7 @@ class TestComponentOperation:
         mock_component_operation._container_operation.get.return_value = component
         mock_component_operation.restore(name=name)
 
-        mock_component_operation._container_operation.create_or_update.assert_called_with(
+        mock_component_operation._container_operation.begin_create_or_update.assert_called_with(
             name=name,
             registry_name=mock_component_operation._registry_name,
             body=component,

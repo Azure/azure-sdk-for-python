@@ -16,6 +16,7 @@ from .._generated.models import (
     SearchIndexerStatus,
     DocumentKeysOrIds,
     IndexerResyncOption,
+    IndexerResyncBody,
 )
 from ..models import SearchIndexer, SearchIndexerSkillset, SearchIndexerDataSourceConnection
 from .._utils import (
@@ -174,7 +175,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             properties.
         :paramtype select: list[str]
         :return: List of all the SearchIndexers.
-        :rtype: `list[~azure.search.documents.indexes.models.SearchIndexer]`
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
 
         .. admonition:: Example:
 
@@ -332,7 +333,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
-        await self._client.indexers.resync(name, indexer_resync_options, **kwargs)
+
+        # Create IndexerResyncBody from the list of options
+        resync_body = IndexerResyncBody(options=indexer_resync_options)
+        await self._client.indexers.resync(name, resync_body, **kwargs)
         return
 
     @distributed_trace_async
@@ -474,6 +478,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :type name: str
         :return: The SearchIndexerDataSourceConnection that is fetched.
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+
+        .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_data_source_operations_async.py
                 :start-after: [START get_data_source_connection_async]

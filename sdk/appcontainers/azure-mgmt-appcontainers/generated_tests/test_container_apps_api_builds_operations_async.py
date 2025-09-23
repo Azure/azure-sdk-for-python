@@ -21,12 +21,12 @@ class TestContainerAppsAPIBuildsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_builds_get(self, resource_group):
         response = await self.client.builds.get(
             resource_group_name=resource_group.name,
             builder_name="str",
             build_name="str",
-            api_version="2024-08-02-preview",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerAppsAPIBuildsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_builds_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.builds.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -72,7 +72,7 @@ class TestContainerAppsAPIBuildsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "uploadEndpoint": "str",
                 },
-                api_version="2024-08-02-preview",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -81,13 +81,13 @@ class TestContainerAppsAPIBuildsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_builds_begin_delete(self, resource_group):
         response = await (
             await self.client.builds.begin_delete(
                 resource_group_name=resource_group.name,
                 builder_name="str",
                 build_name="str",
-                api_version="2024-08-02-preview",
+                api_version="2025-02-02-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

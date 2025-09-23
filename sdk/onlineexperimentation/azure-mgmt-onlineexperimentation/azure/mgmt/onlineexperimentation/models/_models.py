@@ -11,14 +11,13 @@
 import datetime
 from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CustomerManagedKeyEncryption(_model_base.Model):
+class CustomerManagedKeyEncryption(_Model):
     """Customer-managed key encryption properties for the resource.
 
     :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
@@ -66,7 +65,7 @@ class CustomerManagedKeyEncryption(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
+class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -81,7 +80,7 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
 
     :ivar code: The error code.
@@ -110,9 +109,8 @@ class ErrorDetail(_model_base.Model):
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.onlineexperimentation.models.ErrorDetail
@@ -139,7 +137,7 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyEncryptionKeyIdentity(_model_base.Model):
+class KeyEncryptionKeyIdentity(_Model):
     """All identity configuration for Customer-managed key settings defining which identity should be
     used to auth to Key Vault.
 
@@ -198,7 +196,7 @@ class KeyEncryptionKeyIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_model_base.Model):
+class ManagedServiceIdentity(_Model):
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -250,48 +248,8 @@ class ManagedServiceIdentity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OnlineExperimentationWorkspaceSku(_model_base.Model):
-    """The SKU (Stock Keeping Unit) assigned to this resource.
-
-    :ivar name: The name of the SKU. Ex - F0, P0. It is typically a letter+number code. Required.
-     Known values are: "F0", "S0", "P0", and "D0".
-    :vartype name: str or
-     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSkuName
-    :ivar tier: The name of the SKU tier. Known values are: "Free", "Standard", "Premium", and
-     "Developer".
-    :vartype tier: str or
-     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSkuTier
-    """
-
-    name: Union[str, "_models.OnlineExperimentationWorkspaceSkuName"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the SKU. Ex - F0, P0. It is typically a letter+number code. Required. Known values
-     are: \"F0\", \"S0\", \"P0\", and \"D0\"."""
-    tier: Optional[Union[str, "_models.OnlineExperimentationWorkspaceSkuTier"]] = rest_field(visibility=["read"])
-    """The name of the SKU tier. Known values are: \"Free\", \"Standard\", \"Premium\", and
-     \"Developer\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Union[str, "_models.OnlineExperimentationWorkspaceSkuName"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -319,8 +277,7 @@ class Resource(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -363,8 +320,8 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class OnlineExperimentWorkspace(TrackedResource):
-    """An online experiment workspace resource.
+class OnlineExperimentationWorkspace(TrackedResource):
+    """An online experimentation workspace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -383,14 +340,14 @@ class OnlineExperimentWorkspace(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties:
-     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspaceProperties
+     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.onlineexperimentation.models.ManagedServiceIdentity
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
     :vartype sku: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSku
     """
 
-    properties: Optional["_models.OnlineExperimentWorkspaceProperties"] = rest_field(
+    properties: Optional["_models.OnlineExperimentationWorkspaceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
@@ -409,7 +366,7 @@ class OnlineExperimentWorkspace(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["_models.OnlineExperimentWorkspaceProperties"] = None,
+        properties: Optional["_models.OnlineExperimentationWorkspaceProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         sku: Optional["_models.OnlineExperimentationWorkspaceSku"] = None,
     ) -> None: ...
@@ -425,8 +382,8 @@ class OnlineExperimentWorkspace(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class OnlineExperimentWorkspacePatch(_model_base.Model):
-    """Partial update of an online experiment workspace resource.
+class OnlineExperimentationWorkspacePatch(_Model):
+    """Partial update of an online experimentation workspace resource.
 
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.onlineexperimentation.models.ManagedServiceIdentity
@@ -434,9 +391,9 @@ class OnlineExperimentWorkspacePatch(_model_base.Model):
     :vartype tags: dict[str, str]
     :ivar sku: The SKU (Stock Keeping Unit) assigned to this resource.
     :vartype sku: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSku
-    :ivar properties: Updatable properties of the online experiment workspace resource.
+    :ivar properties: Updatable properties of the online experimentation workspace resource.
     :vartype properties:
-     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatchProperties
+     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspacePatchProperties
     """
 
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
@@ -449,10 +406,10 @@ class OnlineExperimentWorkspacePatch(_model_base.Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The SKU (Stock Keeping Unit) assigned to this resource."""
-    properties: Optional["_models.OnlineExperimentWorkspacePatchProperties"] = rest_field(
+    properties: Optional["_models.OnlineExperimentationWorkspacePatchProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Updatable properties of the online experiment workspace resource."""
+    """Updatable properties of the online experimentation workspace resource."""
 
     @overload
     def __init__(
@@ -461,7 +418,7 @@ class OnlineExperimentWorkspacePatch(_model_base.Model):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.OnlineExperimentationWorkspaceSku"] = None,
-        properties: Optional["_models.OnlineExperimentWorkspacePatchProperties"] = None,
+        properties: Optional["_models.OnlineExperimentationWorkspacePatchProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -475,34 +432,36 @@ class OnlineExperimentWorkspacePatch(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OnlineExperimentWorkspacePatchProperties(_model_base.Model):
-    """OnlineExperimentWorkspacePatchProperties.
+class OnlineExperimentationWorkspacePatchProperties(_Model):  # pylint: disable=name-too-long
+    """OnlineExperimentationWorkspacePatchProperties.
 
     :ivar log_analytics_workspace_resource_id: The resource identifier of the Log Analytics
-     workspace which online experiment workspace uses for generating experiment analysis results.
+     workspace which online experimentation workspace uses for generating experiment analysis
+     results.
     :vartype log_analytics_workspace_resource_id: str
     :ivar logs_exporter_storage_account_resource_id: The resource identifier of storage account
-     where logs are exported from Log Analytics workspace. Online Experiment workspace uses it
+     where logs are exported from Log Analytics workspace. online experimentation workspace uses it
      generating experiment analysis results.
     :vartype logs_exporter_storage_account_resource_id: str
-    :ivar encryption: The encryption configuration for the online experiment workspace resource.
+    :ivar encryption: The encryption configuration for the online experimentation workspace
+     resource.
     :vartype encryption: ~azure.mgmt.onlineexperimentation.models.ResourceEncryptionConfiguration
     """
 
     log_analytics_workspace_resource_id: Optional[str] = rest_field(
         name="logAnalyticsWorkspaceResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource identifier of the Log Analytics workspace which online experiment workspace uses
-     for generating experiment analysis results."""
+    """The resource identifier of the Log Analytics workspace which online experimentation workspace
+     uses for generating experiment analysis results."""
     logs_exporter_storage_account_resource_id: Optional[str] = rest_field(
         name="logsExporterStorageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource identifier of storage account where logs are exported from Log Analytics
-     workspace. Online Experiment workspace uses it generating experiment analysis results."""
+     workspace. online experimentation workspace uses it generating experiment analysis results."""
     encryption: Optional["_models.ResourceEncryptionConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The encryption configuration for the online experiment workspace resource."""
+    """The encryption configuration for the online experimentation workspace resource."""
 
     @overload
     def __init__(
@@ -524,8 +483,8 @@ class OnlineExperimentWorkspacePatchProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OnlineExperimentWorkspaceProperties(_model_base.Model):
-    """The properties of an online experiment workspace.
+class OnlineExperimentationWorkspaceProperties(_Model):
+    """The properties of an online experimentation workspace.
 
     :ivar workspace_id: The Id of the workspace.
     :vartype workspace_id: str
@@ -534,20 +493,21 @@ class OnlineExperimentWorkspaceProperties(_model_base.Model):
     :vartype provisioning_state: str or
      ~azure.mgmt.onlineexperimentation.models.ResourceProvisioningState
     :ivar log_analytics_workspace_resource_id: The resource identifier of the Log Analytics
-     workspace which online experiment workspace uses for generating experiment analysis results.
-     Required.
+     workspace which online experimentation workspace uses for generating experiment analysis
+     results. Required.
     :vartype log_analytics_workspace_resource_id: str
     :ivar logs_exporter_storage_account_resource_id: The resource identifier of storage account
-     where logs are exported from Log Analytics workspace. Online Experiment workspace uses it
+     where logs are exported from Log Analytics workspace. online experimentation workspace uses it
      generating experiment analysis results. Required.
     :vartype logs_exporter_storage_account_resource_id: str
     :ivar app_configuration_resource_id: The resource identifier of App Configuration with which
-     this online experiment workspace is tied for experimentation. This is a required field for
-     creating an online experiment workspace. Required.
+     this online experimentation workspace is tied for experimentation. This is a required field for
+     creating an online experimentation workspace. Required.
     :vartype app_configuration_resource_id: str
-    :ivar encryption: The encryption configuration for the online experiment workspace resource.
+    :ivar encryption: The encryption configuration for the online experimentation workspace
+     resource.
     :vartype encryption: ~azure.mgmt.onlineexperimentation.models.ResourceEncryptionConfiguration
-    :ivar endpoint: The data plane endpoint for the online experiment workspace resource.
+    :ivar endpoint: The data plane endpoint for the online experimentation workspace resource.
     :vartype endpoint: str
     """
 
@@ -561,24 +521,24 @@ class OnlineExperimentWorkspaceProperties(_model_base.Model):
     log_analytics_workspace_resource_id: str = rest_field(
         name="logAnalyticsWorkspaceResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource identifier of the Log Analytics workspace which online experiment workspace uses
-     for generating experiment analysis results. Required."""
+    """The resource identifier of the Log Analytics workspace which online experimentation workspace
+     uses for generating experiment analysis results. Required."""
     logs_exporter_storage_account_resource_id: str = rest_field(
         name="logsExporterStorageAccountResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource identifier of storage account where logs are exported from Log Analytics
-     workspace. Online Experiment workspace uses it generating experiment analysis results.
+     workspace. online experimentation workspace uses it generating experiment analysis results.
      Required."""
     app_configuration_resource_id: str = rest_field(name="appConfigurationResourceId", visibility=["read", "create"])
-    """The resource identifier of App Configuration with which this online experiment workspace is
-     tied for experimentation. This is a required field for creating an online experiment workspace.
-     Required."""
+    """The resource identifier of App Configuration with which this online experimentation workspace
+     is tied for experimentation. This is a required field for creating an online experimentation
+     workspace. Required."""
     encryption: Optional["_models.ResourceEncryptionConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The encryption configuration for the online experiment workspace resource."""
+    """The encryption configuration for the online experimentation workspace resource."""
     endpoint: Optional[str] = rest_field(visibility=["read"])
-    """The data plane endpoint for the online experiment workspace resource."""
+    """The data plane endpoint for the online experimentation workspace resource."""
 
     @overload
     def __init__(
@@ -601,8 +561,48 @@ class OnlineExperimentWorkspaceProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class OnlineExperimentationWorkspaceSku(_Model):
+    """The SKU (Stock Keeping Unit) assigned to this resource.
+
+    :ivar name: The name of the SKU. Ex - F0, P0. It is typically a letter+number code. Required.
+     Known values are: "F0", "S0", "P0", and "D0".
+    :vartype name: str or
+     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSkuName
+    :ivar tier: The name of the SKU tier. Known values are: "Free", "Standard", "Premium", and
+     "Developer".
+    :vartype tier: str or
+     ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspaceSkuTier
+    """
+
+    name: Union[str, "_models.OnlineExperimentationWorkspaceSkuName"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the SKU. Ex - F0, P0. It is typically a letter+number code. Required. Known values
+     are: \"F0\", \"S0\", \"P0\", and \"D0\"."""
+    tier: Optional[Union[str, "_models.OnlineExperimentationWorkspaceSkuTier"]] = rest_field(visibility=["read"])
+    """The name of the SKU tier. Known values are: \"Free\", \"Standard\", \"Premium\", and
+     \"Developer\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Union[str, "_models.OnlineExperimentationWorkspaceSkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -658,7 +658,7 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
@@ -689,8 +689,8 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class ResourceEncryptionConfiguration(_model_base.Model):
-    """The encryption configuration for the online experiment workspace resource.
+class ResourceEncryptionConfiguration(_Model):
+    """The encryption configuration for the online experimentation workspace resource.
 
     :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
      resource.
@@ -721,7 +721,7 @@ class ResourceEncryptionConfiguration(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -788,16 +788,16 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_model_base.Model):
+class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
     :ivar principal_id: The principal ID of the assigned identity.
     :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
     """
 
-    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
-    """The client ID of the assigned identity."""
     principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
     """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""

@@ -24,7 +24,7 @@ class TestDataBoxEdgeManagementStorageAccountCredentialsOperations(AzureMgmtReco
         response = self.client.storage_account_credentials.list_by_data_box_edge_device(
             device_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestDataBoxEdgeManagementStorageAccountCredentialsOperations(AzureMgmtReco
             device_name="str",
             name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -60,10 +60,18 @@ class TestDataBoxEdgeManagementStorageAccountCredentialsOperations(AzureMgmtReco
                 "id": "str",
                 "name": "str",
                 "storageAccountId": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
                 "userName": "str",
             },
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,7 +84,7 @@ class TestDataBoxEdgeManagementStorageAccountCredentialsOperations(AzureMgmtReco
             device_name="str",
             name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

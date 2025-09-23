@@ -17,7 +17,16 @@ if TYPE_CHECKING:
 def _parse_url(
     account_url: str,
     queue_name: str,
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+    credential: Optional[
+        Union[
+            str,
+            Dict[str, str],
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "AsyncTokenCredential",
+            "TokenCredential",
+        ]
+    ],
 ) -> Tuple["ParseResult", Any]:
     """Performs initial input validation and returns the parsed URL and SAS token.
 
@@ -41,11 +50,11 @@ def _parse_url(
     :rtype: Tuple[ParseResult, Any]
     """
     try:
-        if not account_url.lower().startswith('http'):
+        if not account_url.lower().startswith("http"):
             account_url = "https://" + account_url
     except AttributeError as exc:
         raise ValueError("Account URL must be a string.") from exc
-    parsed_url = urlparse(account_url.rstrip('/'))
+    parsed_url = urlparse(account_url.rstrip("/"))
     if not queue_name:
         raise ValueError("Please specify a queue name.")
     if not parsed_url.netloc:
@@ -56,6 +65,7 @@ def _parse_url(
         raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
 
     return parsed_url, sas_token
+
 
 def _format_url(queue_name: Union[bytes, str], hostname: str, scheme: str, query_str: str) -> str:
     """Format the endpoint URL according to the current location mode hostname.
@@ -68,12 +78,11 @@ def _format_url(queue_name: Union[bytes, str], hostname: str, scheme: str, query
     :rtype: str
     """
     if isinstance(queue_name, str):
-        queue_name = queue_name.encode('UTF-8')
+        queue_name = queue_name.encode("UTF-8")
     else:
         pass
-    return (
-        f"{scheme}://{hostname}"
-        f"/{quote(queue_name)}{query_str}")
+    return f"{scheme}://{hostname}" f"/{quote(queue_name)}{query_str}"
+
 
 def _from_queue_url(queue_url: str) -> Tuple[str, str]:
     """A client to interact with a specific Queue.
@@ -83,23 +92,21 @@ def _from_queue_url(queue_url: str) -> Tuple[str, str]:
     :rtype: Tuple[str, str]
     """
     try:
-        if not queue_url.lower().startswith('http'):
+        if not queue_url.lower().startswith("http"):
             queue_url = "https://" + queue_url
     except AttributeError as exc:
         raise ValueError("Queue URL must be a string.") from exc
-    parsed_url = urlparse(queue_url.rstrip('/'))
+    parsed_url = urlparse(queue_url.rstrip("/"))
 
     if not parsed_url.netloc:
         raise ValueError(f"Invalid URL: {queue_url}")
 
-    queue_path = parsed_url.path.lstrip('/').split('/')
+    queue_path = parsed_url.path.lstrip("/").split("/")
     account_path = ""
     if len(queue_path) > 1:
         account_path = "/" + "/".join(queue_path[:-1])
-    account_url = (
-        f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}"
-        f"{account_path}?{parsed_url.query}")
+    account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}" f"{account_path}?{parsed_url.query}"
     queue_name = unquote(queue_path[-1])
     if not queue_name:
         raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
-    return(account_url, queue_name)
+    return (account_url, queue_name)

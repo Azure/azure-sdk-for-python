@@ -39,43 +39,54 @@ from typing import (
 from ._enums import AgentStreamEvent, AzureAISearchQueryType
 from ._models import (
     AISearchIndexResource,
-    AzureAISearchResource,
+    AzureAISearchToolResource,
     AzureAISearchToolDefinition,
     AzureFunctionDefinition,
     AzureFunctionStorageQueue,
     AzureFunctionToolDefinition,
     AzureFunctionBinding,
-    BingCustomSearchToolDefinition,
     BingGroundingToolDefinition,
+    BrowserAutomationToolConnectionParameters,
+    BrowserAutomationToolDefinition,
+    BrowserAutomationToolParameters,
     CodeInterpreterToolDefinition,
     CodeInterpreterToolResource,
     ConnectedAgentToolDefinition,
     ConnectedAgentDetails,
+    ComputerUseToolDefinition,
+    ComputerUseToolParameters,
     FileSearchToolDefinition,
     FileSearchToolResource,
     FunctionDefinition,
     FunctionToolDefinition,
+    MCPToolDefinition,
+    MCPToolResource,
     MessageImageFileContent,
     MessageTextContent,
     MessageTextFileCitationAnnotation,
     MessageTextUrlCitationAnnotation,
     MessageTextFilePathAnnotation,
-    MicrosoftFabricToolDefinition,
     OpenApiAuthDetails,
     OpenApiToolDefinition,
     OpenApiFunctionDefinition,
     RequiredFunctionToolCall,
     RunStep,
     RunStepDeltaChunk,
-    BingCustomSearchConfiguration,
-    BingCustomSearchConfigurationList,
+    DeepResearchToolDefinition,
+    DeepResearchDetails,
+    DeepResearchBingGroundingConnection,
     BingGroundingSearchConfiguration,
-    BingGroundingSearchConfigurationList,
+    BingGroundingSearchToolParameters,
+    BingCustomSearchToolDefinition,
+    BingCustomSearchConfiguration,
+    BingCustomSearchToolParameters,
     SharepointToolDefinition,
+    SharepointGroundingToolParameters,
+    ToolConnection,
+    MicrosoftFabricToolDefinition,
+    FabricDataAgentToolParameters,
     SubmitToolOutputsAction,
     ThreadRun,
-    ToolConnection,
-    ToolConnectionList,
     ToolDefinition,
     ToolResources,
     MessageDeltaTextContent,
@@ -86,12 +97,68 @@ from ._models import MessageDeltaChunk as MessageDeltaChunkGenerated
 from ._models import ThreadMessage as ThreadMessageGenerated
 from ._models import MessageAttachment as MessageAttachmentGenerated
 
-from .. import _types
+from .. import types as _types
 
 
 logger = logging.getLogger(__name__)
 
-StreamEventData = Union["MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
+StreamEventData = Union["RunStepDeltaChunk", "MessageDeltaChunk", "ThreadMessage", ThreadRun, RunStep, str]
+
+
+def get_tool_resources(tools: List["Tool"]) -> ToolResources:
+    """
+    Get the tool resources from tools.
+
+    :param tools: The list of tool objects whose resources should be merged.
+    :type tools: List[Tool]
+    :return: A new ``ToolResources`` instance representing the merged view.
+    :rtype: ToolResources
+    """
+    tool_resources: Dict[str, Any] = {}
+    for tool in tools:
+        resources = tool.resources
+        for key, value in resources.items():
+            if key in tool_resources:
+                # Special handling for MCP resources - they need to be merged into a single list
+                if isinstance(tool_resources[key], list) and isinstance(value, list):
+                    tool_resources[key].extend(value)
+                elif isinstance(tool_resources[key], dict) and isinstance(value, dict):
+                    tool_resources[key].update(value)
+                else:
+                    # For other types, the new value overwrites the old one
+                    tool_resources[key] = value
+            else:
+                tool_resources[key] = value
+    return _create_tool_resources_from_dict(tool_resources)
+
+
+def get_tool_definitions(tools: List["Tool"]) -> List[ToolDefinition]:
+    """
+    Get the tool definitions from tools.
+
+    :param tools: Tools from which to collect definitions.
+    :type tools: List[Tool]
+    :return: List of collected tool definitions.
+    :rtype: List[ToolDefinition]
+    """
+    return [definition for tool in tools for definition in tool.definitions]
+
+
+def _create_tool_resources_from_dict(resources: Dict[str, Any]) -> ToolResources:
+    """
+    Safely converts a dictionary into a ToolResources instance.
+
+    :param resources: A dictionary of tool resources. Should be a mapping
+        accepted by ~azure.ai.agents.models.AzureAISearchToolResource
+    :type resources: Dict[str, Any]
+    :return: A ToolResources instance.
+    :rtype: ToolResources
+    """
+    try:
+        return ToolResources(**resources)
+    except TypeError as e:
+        logger.error("Error creating ToolResources: %s", e)  # pylint: disable=do-not-log-exceptions-if-not-debug
+        raise ValueError("Invalid resources for ToolResources.") from e
 
 
 def _has_errors_in_toolcalls_output(tool_outputs: List[Dict]) -> bool:
@@ -611,7 +678,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         query_type: AzureAISearchQueryType = AzureAISearchQueryType.SIMPLE,
         filter: str = "",
         top_k: int = 5,
-        index_asset_id: str = "",
+        index_asset_id: Optional[str] = None,
     ):
         """
         Initialize AzureAISearch with an index_connection_id and index_name, with optional params.
@@ -628,7 +695,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :param top_k: Number of documents to retrieve from search and present to the model.
         :type top_k: int
         :param index_asset_id: Index asset ID to be used by tool.
-        :type filter: str
+        :type filter: Optional[str]
         """
         self.index_list = [
             AISearchIndexResource(
@@ -659,7 +726,7 @@ class AzureAISearchTool(Tool[AzureAISearchToolDefinition]):
         :return: ToolResources populated with azure_ai_search associated resources.
         :rtype: ToolResources
         """
-        return ToolResources(azure_ai_search=AzureAISearchResource(index_list=self.index_list))
+        return ToolResources(azure_ai_search=AzureAISearchToolResource(index_list=self.index_list))
 
     def execute(self, tool_call: Any):
         """
@@ -679,7 +746,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         spec: Any,
         auth: OpenApiAuthDetails,
         default_parameters: Optional[List[str]] = None,
@@ -721,7 +788,7 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def add_definition(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         spec: Any,
         auth: Optional[OpenApiAuthDetails] = None,
         default_parameters: Optional[List[str]] = None,
@@ -787,6 +854,176 @@ class OpenApiTool(Tool[OpenApiToolDefinition]):
     def execute(self, tool_call: Any) -> None:
         """
         OpenApiTool does not execute client-side.
+        :param Any tool_call: The tool call to execute.
+        :type tool_call: Any
+        """
+
+
+class McpTool(Tool[MCPToolDefinition]):
+    """
+    A tool that connects to Model Context Protocol (MCP) servers.
+    Initialized with server configuration, this class supports managing MCP server connections
+    and allowed tools dynamically.
+    """
+
+    def __init__(
+        self,
+        server_label: str,
+        server_url: str,
+        allowed_tools: Optional[List[str]] = None,
+    ) -> None:
+        """
+        Constructor initializes the tool with MCP server configuration.
+
+        :param server_label: The label for the MCP server.
+        :type server_label: str
+        :param server_url: The endpoint for the MCP server.
+        :type server_url: str
+        :param allowed_tools: List of allowed tools for MCP server.
+        :type allowed_tools: Optional[List[str]]
+        """
+        self._server_label = server_label
+        self._server_url = server_url
+        self._allowed_tools = allowed_tools or []
+        self._require_approval = "always"
+        self._headers: Dict[str, str] = {}
+        self._definition = MCPToolDefinition(
+            server_label=server_label,
+            server_url=server_url,
+            allowed_tools=self._allowed_tools if self._allowed_tools else None,
+        )
+        self._resource = MCPToolResource(
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+        )
+
+    @property
+    def definitions(self) -> List[MCPToolDefinition]:
+        """
+        Get the MCP tool definition.
+
+        :return: A list containing the MCP tool definition.
+        :rtype: List[MCPToolDefinition]
+        """
+        return [self._definition]
+
+    def allow_tool(self, tool_name: str) -> None:
+        """
+        Add a tool to the list of allowed tools.
+
+        :param tool_name: The name of the tool to allow.
+        :type tool_name: str
+        """
+        if tool_name not in self._allowed_tools:
+            self._allowed_tools.append(tool_name)
+            # Update the definition
+            self._definition = MCPToolDefinition(
+                server_label=self._server_label,
+                server_url=self._server_url,
+                allowed_tools=self._allowed_tools if self._allowed_tools else None,
+            )
+
+    def disallow_tool(self, tool_name: str) -> None:
+        """
+        Remove a tool from the list of allowed tools.
+
+        :param tool_name: The name of the tool to remove from allowed tools.
+        :type tool_name: str
+        :raises ValueError: If the tool is not in the allowed tools list.
+        """
+        if tool_name in self._allowed_tools:
+            self._allowed_tools.remove(tool_name)
+            # Update the definition
+            self._definition = MCPToolDefinition(
+                server_label=self._server_label,
+                server_url=self._server_url,
+                allowed_tools=self._allowed_tools if self._allowed_tools else None,
+            )
+        else:
+            raise ValueError(f"Tool '{tool_name}' is not in the allowed tools list.")
+
+    def set_approval_mode(self, require_approval: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param require_approval: The require_approval setting to update.
+        :type require_approval: str
+        """
+        self._require_approval = require_approval
+        self._resource = MCPToolResource(
+            server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+        )
+
+    def update_headers(self, key: str, value: str) -> None:
+        """
+        Update the headers for the MCP tool.
+
+        :param key: The header key to update.
+        :type key: str
+        :param value: The new value for the header key.
+        :type value: str
+        :raises ValueError: If the key is empty.
+        """
+        if key:
+            self._headers[key] = value
+            self._resource = MCPToolResource(
+                server_label=self._server_label, headers=self._headers, require_approval=self._require_approval
+            )
+        else:
+            raise ValueError("Header key cannot be empty.")
+
+    @property
+    def server_label(self) -> str:
+        """
+        Get the server label for the MCP tool.
+
+        :return: The label identifying the MCP server.
+        :rtype: str
+        """
+        return self._server_label
+
+    @property
+    def server_url(self) -> str:
+        """
+        Get the server URL for the MCP tool.
+
+        :return: The endpoint URL for the MCP server.
+        :rtype: str
+        """
+        return self._server_url
+
+    @property
+    def allowed_tools(self) -> List[str]:
+        """
+        Get the list of allowed tools for the MCP server.
+
+        :return: A copy of the list of tool names that are allowed to be executed on this MCP server.
+        :rtype: List[str]
+        """
+        return self._allowed_tools.copy()
+
+    @property
+    def headers(self) -> Dict[str, str]:
+        """
+        Get the headers for the MCP tool.
+
+        :return: Dictionary of HTTP headers to be sent with MCP server requests.
+        :rtype: Dict[str, str]
+        """
+        return self._resource.headers
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources for the agent.
+
+        :return: ToolResources with MCP configuration.
+        :rtype: ToolResources
+        """
+        return ToolResources(mcp=[self._resource])
+
+    def execute(self, tool_call: Any) -> None:
+        """
+        McpTool approvals should currently be handled client-side.
 
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
@@ -851,7 +1088,7 @@ class AzureFunctionTool(Tool[AzureFunctionToolDefinition]):
 class ConnectionTool(Tool[ToolDefinitionT]):
     """
     A tool that requires connection ids.
-    Used as base class for Bing Grounding, Sharepoint, and Microsoft Fabric
+    Used as base class for Sharepoint and Microsoft Fabric
     """
 
     def __init__(self, connection_id: str):
@@ -859,7 +1096,17 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         Initialize ConnectionTool with a connection_id.
 
         :param connection_id: Connection ID used by tool. All connection tools allow only one connection.
+        :raises ValueError: If the connection ID is invalid.
         """
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
         self.connection_ids = [ToolConnection(connection_id=connection_id)]
 
     @property
@@ -875,6 +1122,145 @@ class ConnectionTool(Tool[ToolDefinitionT]):
         pass
 
 
+class DeepResearchTool(Tool[DeepResearchToolDefinition]):
+    """
+    A tool that uses a Deep Research AI model, together with Bing Grounding, to answer user queries.
+    """
+
+    def __init__(self, bing_grounding_connection_id: str, deep_research_model: str):
+        """
+        Initialize a Deep Research tool with a Bing Grounding Connection ID and Deep Research model deployment name.
+
+        :param bing_grounding_connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param deep_research_model: The Deep Research model deployment name.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(bing_grounding_connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + bing_grounding_connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._deep_research_details = DeepResearchDetails(
+            model=deep_research_model,
+            bing_grounding_connections=[
+                DeepResearchBingGroundingConnection(connection_id=bing_grounding_connection_id)
+            ],
+        )
+
+    @property
+    def definitions(self) -> List[DeepResearchToolDefinition]:
+        """
+        Get the Deep Research tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [DeepResearchToolDefinition(deep_research=self._deep_research_details)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class BrowserAutomationTool(Tool[BrowserAutomationToolDefinition]):
+    """
+    A tool that allows your Agent to perform real-world web browser navigation tasks through natural language prompts.
+    """
+
+    def __init__(self, connection_id: str):
+        """
+        Initialize a Browser Automation tool with the ID of the connection to an Azure Playwright service.
+
+        :param connection_id: Connection ID to an Azure Playwright service, to be used by tool. Browser Automation tool allows only one connection.
+        :raises ValueError: If the connection ID is invalid.
+        """
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._browser_automation_tool_parameters = BrowserAutomationToolParameters(
+            connection=BrowserAutomationToolConnectionParameters(id=connection_id)
+        )
+
+    @property
+    def definitions(self) -> List[BrowserAutomationToolDefinition]:
+        """
+        Get the Browser Automation tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [BrowserAutomationToolDefinition(browser_automation=self._browser_automation_tool_parameters)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:
+        pass
+
+
+class ComputerUseTool(Tool[ComputerUseToolDefinition]):
+    """
+    A tool that enables the agent to perform computer use actions (preview).
+
+    :param display_width: The display width for the computer use tool.
+    :type display_width: int
+    :param display_height: The display height for the computer use tool.
+    :type display_height: int
+    :param environment: The target environment for computer use, e.g. "browser", "windows", "mac", or "linux".
+    :type environment: str
+    """
+
+    def __init__(self, display_width: int, display_height: int, environment: str):
+        self._params = ComputerUseToolParameters(
+            display_width=display_width, display_height=display_height, environment=environment
+        )
+
+    @property
+    def definitions(self) -> List[ComputerUseToolDefinition]:
+        """
+        Get the Computer Use tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [ComputerUseToolDefinition(computer_use_preview=self._params)]
+
+    @property
+    def resources(self) -> ToolResources:
+        """
+        Get the tool resources.
+
+        :rtype: ToolResources
+        """
+        return ToolResources()
+
+    def execute(self, tool_call: Any) -> Any:  # noqa: D401 - client-side execution not applicable
+        pass
+
+
 class BingGroundingTool(Tool[BingGroundingToolDefinition]):
     """
     A tool that searches for information using Bing.
@@ -882,15 +1268,29 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
 
     def __init__(self, connection_id: str, market: str = "", set_lang: str = "", count: int = 5, freshness: str = ""):
         """
-        Initialize Bing Custom Search with a connection_id.
+        Initialize Bing Grounding tool with a connection_id.
 
-        :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
-        :param market:
-        :param set_lang:
-        :param count:
-        :param freshness:
+        :param connection_id: Connection ID used by tool. Bing Grounding tools allow only one connection.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range.
+        :raises ValueError: If the connection ID is invalid.
+
+        .. seealso::
+           `Bing Web Search API Query Parameters <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/query-parameters>`_
         """
-        self.connection_ids = [
+
+        if not _is_valid_connection_id(connection_id):
+            raise ValueError(
+                "Connection ID '"
+                + connection_id
+                + "' does not fit the format:"
+                + "'/subscriptions/<subscription_id>/resourceGroups/<resource_group_name>/"
+                + "providers/<provider_name>/accounts/<account_name>/projects/<project_name>/connections/<connection_name>'"
+            )
+
+        self._search_configurations = [
             BingGroundingSearchConfiguration(
                 connection_id=connection_id, market=market, set_lang=set_lang, count=count, freshness=freshness
             )
@@ -905,7 +1305,7 @@ class BingGroundingTool(Tool[BingGroundingToolDefinition]):
         """
         return [
             BingGroundingToolDefinition(
-                bing_grounding=BingGroundingSearchConfigurationList(search_configurations=self.connection_ids)
+                bing_grounding=BingGroundingSearchToolParameters(search_configurations=self._search_configurations)
             )
         ]
 
@@ -927,25 +1327,46 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
     A tool that searches for information using Bing Custom Search.
     """
 
-    def __init__(self, connection_id: str, instance_name: str):
+    def __init__(
+        self,
+        connection_id: str,
+        instance_name: str,
+        market: str = "",
+        set_lang: str = "",
+        count: int = 5,
+        freshness: str = "",
+    ):
         """
         Initialize Bing Custom Search with a connection_id.
 
         :param connection_id: Connection ID used by tool. Bing Custom Search tools allow only one connection.
         :param instance_name: Config instance name used by tool.
+        :param market: The market where the results come from.
+        :param set_lang: The language to use for user interface strings when calling Bing API.
+        :param count: The number of search results to return in the Bing API response.
+        :param freshness: Filter search results by a specific time range.
         """
-        self.connection_ids = [BingCustomSearchConfiguration(connection_id=connection_id, instance_name=instance_name)]
+        self._search_configurations = [
+            BingCustomSearchConfiguration(
+                connection_id=connection_id,
+                instance_name=instance_name,
+                market=market,
+                set_lang=set_lang,
+                count=count,
+                freshness=freshness,
+            )
+        ]
 
     @property
     def definitions(self) -> List[BingCustomSearchToolDefinition]:
         """
-        Get the Bing grounding tool definitions.
+        Get the Bing Custom Search tool definitions.
 
         :rtype: List[ToolDefinition]
         """
         return [
             BingCustomSearchToolDefinition(
-                bing_custom_search=BingCustomSearchConfigurationList(search_configurations=self.connection_ids)
+                bing_custom_search=BingCustomSearchToolParameters(search_configurations=self._search_configurations)
             )
         ]
 
@@ -960,6 +1381,44 @@ class BingCustomSearchTool(Tool[BingCustomSearchToolDefinition]):
 
     def execute(self, tool_call: Any) -> Any:
         pass
+
+
+class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
+    """
+    A tool that searches for information using Microsoft Fabric.
+    """
+
+    @property
+    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
+        """
+        Get the Microsoft Fabric tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            MicrosoftFabricToolDefinition(
+                fabric_dataagent=FabricDataAgentToolParameters(connection_list=self.connection_ids)
+            )
+        ]
+
+
+class SharepointTool(ConnectionTool[SharepointToolDefinition]):
+    """
+    A tool that searches for information using Sharepoint.
+    """
+
+    @property
+    def definitions(self) -> List[SharepointToolDefinition]:
+        """
+        Get the Sharepoint tool definitions.
+
+        :rtype: List[ToolDefinition]
+        """
+        return [
+            SharepointToolDefinition(
+                sharepoint_grounding=SharepointGroundingToolParameters(connection_list=self.connection_ids)
+            )
+        ]
 
 
 class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
@@ -1005,36 +1464,6 @@ class ConnectedAgentTool(Tool[ConnectedAgentToolDefinition]):
         :param Any tool_call: The tool call to execute.
         :type tool_call: Any
         """
-
-
-class FabricTool(ConnectionTool[MicrosoftFabricToolDefinition]):
-    """
-    A tool that searches for information using Microsoft Fabric.
-    """
-
-    @property
-    def definitions(self) -> List[MicrosoftFabricToolDefinition]:
-        """
-        Get the Microsoft Fabric tool definitions.
-
-        :rtype: List[ToolDefinition]
-        """
-        return [MicrosoftFabricToolDefinition(fabric_dataagent=ToolConnectionList(connection_list=self.connection_ids))]
-
-
-class SharepointTool(ConnectionTool[SharepointToolDefinition]):
-    """
-    A tool that searches for information using Sharepoint.
-    """
-
-    @property
-    def definitions(self) -> List[SharepointToolDefinition]:
-        """
-        Get the Sharepoint tool definitions.
-
-        :rtype: List[ToolDefinition]
-        """
-        return [SharepointToolDefinition(sharepoint_grounding=ToolConnectionList(connection_list=self.connection_ids))]
 
 
 class FileSearchTool(Tool[FileSearchToolDefinition]):
@@ -1099,13 +1528,26 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
     :param file_ids: A list of file IDs to interpret.
     :type file_ids: list[str]
+    :param data_sources: The list of data sources for the enterprise file search.
+    :type data_sources: list[VectorStoreDataSource]
+    :raises: ValueError if both file_ids and data_sources are provided.
     """
 
-    def __init__(self, file_ids: Optional[List[str]] = None):
-        if file_ids is None:
-            self.file_ids = set()
-        else:
+    _INVALID_CONFIGURATION = "file_ids and data_sources are mutually exclusive."
+
+    def __init__(
+        self,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[VectorStoreDataSource]] = None,
+    ):
+        if file_ids and data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.file_ids = set()
+        if file_ids:
             self.file_ids = set(file_ids)
+        self.data_sources: Dict[str, VectorStoreDataSource] = {}
+        if data_sources:
+            self.data_sources = {ds.asset_identifier: ds for ds in data_sources}
 
     def add_file(self, file_id: str) -> None:
         """
@@ -1113,8 +1555,23 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :param file_id: The ID of the file to interpret.
         :type file_id: str
+        :raises: ValueError if data_sources are provided.
         """
+        if self.data_sources:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
         self.file_ids.add(file_id)
+
+    def add_data_source(self, data_source: VectorStoreDataSource) -> None:
+        """
+        Add a data source to the list of data sources to interpret.
+
+        :param data_source: The new data source.
+        :type data_source: VectorStoreDataSource
+        :raises: ValueError if file_ids are provided.
+        """
+        if self.file_ids:
+            raise ValueError(CodeInterpreterTool._INVALID_CONFIGURATION)
+        self.data_sources[data_source.asset_identifier] = data_source
 
     def remove_file(self, file_id: str) -> None:
         """
@@ -1123,7 +1580,16 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
         :param file_id: The ID of the file to remove.
         :type file_id: str
         """
-        self.file_ids.remove(file_id)
+        self.file_ids.discard(file_id)
+
+    def remove_data_source(self, asset_identifier: str) -> None:
+        """
+        Remove The asset from data_sources.
+
+        :param asset_identifier: The asset identifier to remove.
+        :type asset_identifier: str
+        """
+        self.data_sources.pop(asset_identifier, None)
 
     @property
     def definitions(self) -> List[CodeInterpreterToolDefinition]:
@@ -1141,45 +1607,168 @@ class CodeInterpreterTool(Tool[CodeInterpreterToolDefinition]):
 
         :rtype: ToolResources
         """
-        if not self.file_ids:
+        if not self.file_ids and not self.data_sources:
             return ToolResources()
-        return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        if self.file_ids:
+            return ToolResources(code_interpreter=CodeInterpreterToolResource(file_ids=list(self.file_ids)))
+        return ToolResources(
+            code_interpreter=CodeInterpreterToolResource(data_sources=list(self.data_sources.values()))
+        )
 
     def execute(self, tool_call: Any) -> Any:
         pass
 
 
-class BaseToolSet:
-    """
-    Abstract class for a collection of tools that can be used by an agent.
+class BaseToolSet(ABC):
+    """Abstract base class for a collection of tools that can be used by an agent.
+
+    Subclasses must implement ``validate_tool_type`` to enforce any constraints on
+    what tool types are allowed in the set.
     """
 
-    def __init__(self) -> None:
+    def __init__(self) -> None:  # pragma: no cover - simple container init
         self._tools: List[Tool] = []
 
+    @abstractmethod
     def validate_tool_type(self, tool: Tool) -> None:
-        pass
+        """Validate that the provided tool is of an acceptable type for this tool set.
+
+        Implementations should raise ``ValueError`` (or a more specific exception) if
+        the tool type is not permitted.
+
+        :param tool: The tool to validate.
+        :type tool: Tool
+        :return: None
+        :rtype: None
+        :raises ValueError: If the tool type is not permitted for this tool set.
+        """
+        raise NotImplementedError
 
     def add(self, tool: Tool):
         """
         Add a tool to the tool set.
 
         :param Tool tool: The tool to add.
-        :raises ValueError: If a tool of the same type already exists.
+        :raises ValueError: If a tool of the same type already exists, or if an MCP tool with the same server label already exists.
         """
         self.validate_tool_type(tool)
 
+        # Special handling for OpenApiTool - add definitions to existing tool instead of raising error
+        if isinstance(tool, OpenApiTool):
+            # Find existing OpenApiTool if any
+            existing_openapi_tool = next((t for t in self._tools if isinstance(t, OpenApiTool)), None)
+            if existing_openapi_tool:
+                # Add all definitions from the new tool to the existing one
+                for definition in tool.definitions:
+                    existing_openapi_tool.add_definition(
+                        name=definition.openapi.name,
+                        description=definition.openapi.description,
+                        spec=definition.openapi.spec,
+                        auth=definition.openapi.auth,
+                        default_parameters=definition.openapi.default_params,
+                    )
+                return  # Early return since we added to existing tool
+
+        # Special handling for McpTool - check for same server label
+        if isinstance(tool, McpTool):
+            # Check if there's already an MCP tool with the same server label
+            for existing_tool in self._tools:
+                if isinstance(existing_tool, McpTool) and existing_tool.server_label == tool.server_label:
+                    raise ValueError(f"McpTool with server label '{tool.server_label}' already exists in the ToolSet.")
+            # Allow multiple MCP tools (with different server labels)
+            self._tools.append(tool)
+            return
+
         if any(isinstance(existing_tool, type(tool)) for existing_tool in self._tools):
-            raise ValueError("Tool of type {type(tool).__name__} already exists in the ToolSet.")
+            raise ValueError(f"Tool of type {type(tool).__name__} already exists in the ToolSet.")
         self._tools.append(tool)
 
+    @overload
     def remove(self, tool_type: Type[Tool]) -> None:
+        """Remove a tool by name from the toolset.
+
+        :param tool_type: The tool class to target.
+        :type tool_type: Type[Tool]
+
+        """
+        ...
+
+    @overload
+    def remove(self, tool_type: Type[OpenApiTool], *, name: str) -> None:
+        """
+        Remove a specific API definition from an OpenApiTool by name.
+
+        :param tool_type: The tool class to target. Must be OpenApiTool.
+        :type tool_type: Type[OpenApiTool]
+        :keyword name: The name of the OpenAPI definition to remove from the tool.
+        :paramtype name: str
+        :raises ValueError: If the OpenApiTool isn't found or the named definition doesn't exist.
+        """
+        ...
+
+    @overload
+    def remove(self, tool_type: Type[McpTool], *, server_label: str) -> None:
+        """
+        Remove a specific McpTool from the toolset by its server label.
+
+        :param tool_type: The tool class to target. Must be McpTool.
+        :type tool_type: Type[McpTool]
+        :keyword server_label: The unique server label identifying the MCP tool to remove.
+        :paramtype server_label: str
+        :raises ValueError: If no McpTool with the given server label is found.
+        """
+        ...
+
+    def remove(self, tool_type: Type[Tool], *, name: Optional[str] = None, server_label: Optional[str] = None) -> None:
         """
         Remove a tool of the specified type from the tool set.
+        For OpenApiTool, if 'name' is provided, removes a specific API definition by name.
+        For McpTool, if 'server_label' is provided, removes a specific MCP tool by server label.
+        For McpTool without server_label, removes ALL MCP tools from the toolset.
+        Otherwise, removes the entire tool from the toolset.
 
-        :param Type[Tool] tool_type: The type of tool to remove.
+        :param tool_type: The type of tool to remove.
+        :type tool_type: Type[Tool]
+        :keyword name: The name of the OpenAPI definition to remove from the tool.
+        :paramtype name: str
+        :keyword server_label: The unique server label identifying the MCP tool to remove.
+        :paramtype server_label: Optional[str]
+        :return: None
+        :rtype: None
         :raises ValueError: If a tool of the specified type is not found.
         """
+        # Special handling for OpenApiTool with name parameter
+        if tool_type == OpenApiTool and name:
+            for i, tool in enumerate(self._tools):
+                if isinstance(tool, OpenApiTool):
+                    tool.remove_definition(name)  # This will raise ValueError if definition not found
+                    logger.info("API definition '%s' removed from OpenApiTool.", name)
+                    # Check if OpenApiTool has any definitions left
+                    if not tool.definitions:
+                        del self._tools[i]
+                        logger.info("OpenApiTool removed from ToolSet as it has no remaining definitions.")
+                    return
+            raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+
+        # Special handling for McpTool with server_label parameter
+        if tool_type == McpTool:
+
+            if server_label:
+                for i, tool in enumerate(self._tools):
+                    if isinstance(tool, McpTool) and tool.server_label == server_label:
+                        del self._tools[i]
+                        logger.info("McpTool with server label '%s' removed from the ToolSet.", server_label)
+                        return
+                raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
+
+            # Special handling for McpTool without server_label - remove ALL MCP tools
+            filtered_removal = [t for t in self._tools if not isinstance(t, McpTool)]
+            if len(self._tools) == len(filtered_removal):
+                raise ValueError(f"No tools of type {tool_type.__name__} found in the ToolSet.")
+            self._tools = filtered_removal
+            return
+
+        # Standard tool removal
         for i, tool in enumerate(self._tools):
             if isinstance(tool, tool_type):
                 del self._tools[i]
@@ -1194,10 +1783,7 @@ class BaseToolSet:
 
         :rtype: List[ToolDefinition]
         """
-        tools = []
-        for tool in self._tools:
-            tools.extend(tool.definitions)
-        return tools
+        return get_tool_definitions(self._tools)
 
     @property
     def resources(self) -> ToolResources:
@@ -1206,32 +1792,7 @@ class BaseToolSet:
 
         :rtype: ToolResources
         """
-        tool_resources: Dict[str, Any] = {}
-        for tool in self._tools:
-            resources = tool.resources
-            for key, value in resources.items():
-                if key in tool_resources:
-                    if isinstance(tool_resources[key], dict) and isinstance(value, dict):
-                        tool_resources[key].update(value)
-                else:
-                    tool_resources[key] = value
-        return self._create_tool_resources_from_dict(tool_resources)
-
-    def _create_tool_resources_from_dict(self, resources: Dict[str, Any]) -> ToolResources:
-        """
-        Safely converts a dictionary into a ToolResources instance.
-
-        :param resources: A dictionary of tool resources. Should be a mapping
-            accepted by ~azure.ai.agents.models.AzureAISearchResource
-        :type resources: Dict[str, Any]
-        :return: A ToolResources instance.
-        :rtype: ToolResources
-        """
-        try:
-            return ToolResources(**resources)
-        except TypeError as e:
-            logger.error("Error creating ToolResources: %s", e)
-            raise ValueError("Invalid resources for ToolResources.") from e
+        return get_tool_resources(self._tools)
 
     def get_definitions_and_resources(self) -> Dict[str, Any]:
         """
@@ -1245,15 +1806,80 @@ class BaseToolSet:
             "tools": self.definitions,
         }
 
+    @overload
+    def get_tool(self, tool_type: Type[McpTool]) -> McpTool:
+        """
+        Get an MCP tool from the tool set.
+
+        :param tool_type: The MCP tool type to get.
+        :type tool_type: Type[McpTool]
+        :return: The MCP tool.
+        :rtype: McpTool
+        """
+        ...
+
+    @overload
+    def get_tool(self, tool_type: Type[McpTool], *, server_label: str) -> McpTool:
+        """
+        Get an MCP tool with a specific server label from the tool set.
+
+        :param tool_type: The MCP tool type to get.
+        :type tool_type: Type[McpTool]
+        :keyword server_label: The server label of the specific MCP tool to get.
+        :paramtype server_label: str
+        :return: The MCP tool with the specified server label.
+        :rtype: McpTool
+        """
+        ...
+
+    @overload
     def get_tool(self, tool_type: Type[ToolT]) -> ToolT:
         """
         Get a tool of the specified type from the tool set.
 
-        :param Type[Tool] tool_type: The type of tool to get.
+        :param tool_type: The type of tool to get.
+        :type tool_type: Type[Tool]
         :return: The tool of the specified type.
         :rtype: Tool
-        :raises ValueError: If a tool of the specified type is not found.
         """
+        ...
+
+    def get_tool(self, tool_type: Type[ToolT], *, server_label: Optional[str] = None) -> ToolT:
+        """
+        Get a tool of the specified type from the tool set.
+        For McpTool, if 'server_label' is provided, returns the MCP tool with that specific server label.
+        If there are multiple MCP tools and no server_label is provided, raises an error.
+        Otherwise, returns the first (or only) tool of the specified type.
+
+        :param tool_type: The type of tool to get.
+        :type tool_type: Type[Tool]
+        :keyword server_label: The server label of the specific MCP tool to get.
+        :paramtype server_label: Optional[str]
+        :return: The tool of the specified type.
+        :rtype: Tool
+        :raises ValueError: If a tool of the specified type is not found, if no McpTool with the specified server_label is found, or if there are multiple MCP tools but no server_label is provided.
+        """
+        # Special handling for McpTool without server_label - check if there are multiple
+        if tool_type == McpTool:
+            # Special handling for McpTool with server_label parameter
+            if server_label is not None:
+                for tool in self._tools:
+                    if isinstance(tool, McpTool) and tool.server_label == server_label:
+                        return cast(ToolT, tool)
+                raise ValueError(f"McpTool with server label '{server_label}' not found in the ToolSet.")
+            mcp_tools = [tool for tool in self._tools if isinstance(tool, McpTool)]
+            if len(mcp_tools) == 0:
+                raise ValueError(f"Tool of type {tool_type.__name__} not found in the ToolSet.")
+            if len(mcp_tools) > 1:
+                server_labels = [tool.server_label for tool in mcp_tools]
+                raise ValueError(
+                    f"Multiple McpTool instances found with server labels: {server_labels}. "
+                    f"Please specify 'server_label' parameter to identify which MCP tool to retrieve."
+                )
+            # Only one MCP tool found, return it
+            return cast(ToolT, mcp_tools[0])
+
+        # Standard tool retrieval - return first tool of specified type
         for tool in self._tools:
             if isinstance(tool, tool_type):
                 return cast(ToolT, tool)
@@ -1323,29 +1949,27 @@ class AsyncToolSet(BaseToolSet):
                 + "Please use AsyncFunctionTool instead and provide sync and/or async function(s)."
             )
 
+    async def _execute_single_tool_call(self, tool_call: Any):
+        try:
+            tool = self.get_tool(AsyncFunctionTool)
+            output = await tool.execute(tool_call)
+            return {"tool_call_id": tool_call.id, "output": str(output)}
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            return {"tool_call_id": tool_call.id, "output": str(e)}
+
     async def execute_tool_calls(self, tool_calls: List[Any]) -> Any:
         """
-        Execute a tool of the specified type with the provided tool calls.
+        Execute a tool of the specified type with the provided tool calls concurrently.
 
         :param List[Any] tool_calls: A list of tool calls to execute.
         :return: The output of the tool operations.
         :rtype: Any
         """
-        tool_outputs = []
 
-        for tool_call in tool_calls:
-            try:
-                if tool_call.type == "function":
-                    tool = self.get_tool(AsyncFunctionTool)
-                    output = await tool.execute(tool_call)
-                    tool_output = {
-                        "tool_call_id": tool_call.id,
-                        "output": str(output),
-                    }
-                    tool_outputs.append(tool_output)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                tool_output = {"tool_call_id": tool_call.id, "output": str(e)}
-                tool_outputs.append(tool_output)
+        # Execute all tool calls concurrently
+        tool_outputs = await asyncio.gather(
+            *[self._execute_single_tool_call(tc) for tc in tool_calls if tc.type == "function"]
+        )
 
         return tool_outputs
 
@@ -1538,8 +2162,8 @@ class AsyncAgentEventHandler(BaseAsyncAgentEventHandler[Tuple[str, StreamEventDa
                 func_rt = await self.on_unhandled_event(
                     event_type, event_data_obj
                 )  # pylint: disable=assignment-from-none
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error in event handler for event '%s': %s", event_type, e)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.error("Error in event handler for event '%s'", event_type)
         return event_type, event_data_obj, func_rt
 
     async def on_message_delta(
@@ -1665,8 +2289,8 @@ class AgentEventHandler(BaseAgentEventHandler[Tuple[str, StreamEventData, Option
                 func_rt = self.on_done()  # pylint: disable=assignment-from-none
             else:
                 func_rt = self.on_unhandled_event(event_type, event_data_obj)  # pylint: disable=assignment-from-none
-        except Exception as e:  # pylint: disable=broad-exception-caught
-            logger.error("Error in event handler for event '%s': %s", event_type, e)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Error in event handler for event '%s'", event_type)
         return event_type, event_data_obj, func_rt
 
     def on_message_delta(
@@ -1790,6 +2414,30 @@ class AgentRunStream(Generic[BaseAgentEventHandlerT]):
             close_method()
 
 
+def _is_valid_connection_id(connection_id: str) -> bool:
+    """
+    Validates if a string matches the Azure connection resource ID format.
+
+    The expected format is:
+    "/subscriptions/<AZURE_SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP>/
+    providers/<AZURE_PROVIDER>/accounts/<ACCOUNT_NAME>/projects/<PROJECT_NAME>/
+    connections/<CONNECTION_NAME>"
+
+    :param connection_id: The connection ID string to validate
+    :type connection_id: str
+    :return: True if the string matches the expected format, False otherwise
+    :rtype: bool
+    """
+    pattern = (
+        r"^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/[^/]+/accounts/[^/]+/projects/[^/]+/connections/[^/]+$"
+    )
+
+    # Check if the string matches the pattern
+    if re.match(pattern, connection_id):
+        return True
+    return False
+
+
 __all__: List[str] = [
     "AgentEventHandler",
     "AgentRunStream",
@@ -1800,17 +2448,21 @@ __all__: List[str] = [
     "AzureFunctionTool",
     "BaseAsyncAgentEventHandler",
     "BaseAgentEventHandler",
+    "BrowserAutomationTool",
+    "ComputerUseTool",
     "CodeInterpreterTool",
     "ConnectedAgentTool",
+    "DeepResearchTool",
     "AsyncAgentEventHandler",
     "FileSearchTool",
     "FunctionTool",
+    "McpTool",
     "OpenApiTool",
-    "BingCustomSearchTool",
     "BingGroundingTool",
-    "StreamEventData",
-    "SharepointTool",
     "FabricTool",
+    "SharepointTool",
+    "BingCustomSearchTool",
+    "StreamEventData",
     "AzureAISearchTool",
     "Tool",
     "ToolSet",
@@ -1820,6 +2472,8 @@ __all__: List[str] = [
     "MessageTextFileCitationAnnotation",
     "MessageDeltaChunk",
     "MessageAttachment",
+    "get_tool_resources",
+    "get_tool_definitions",
 ]  # Add all objects you want publicly available to users at this package level
 
 

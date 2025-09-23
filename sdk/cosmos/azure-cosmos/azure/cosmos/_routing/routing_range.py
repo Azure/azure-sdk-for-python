@@ -65,6 +65,15 @@ class Range(object):
         )
 
     @classmethod
+    def get_full_range(cls):
+        """Gets a Range object that covers the entire possible range of partition key values.
+
+        :return: A Range object that covers the entire possible range of partition key values.
+        :rtype: ~azure.cosmos._routing.routing_range.Range
+        """
+        return cls(range_min="", range_max="FF", isMinInclusive=True, isMaxInclusive=False)
+
+    @classmethod
     def PartitionKeyRangeToRange(cls, partition_key_range):
         self = cls(
             partition_key_range[PartitionKeyRange.MinInclusive].upper(),
@@ -226,3 +235,27 @@ class Range(object):
         normalized_child_range = self.to_normalized_range()
         return (normalized_parent_range.min <= normalized_child_range.min and
                 normalized_parent_range.max >= normalized_child_range.max)
+
+class PartitionKeyRangeWrapper(object):
+    """Internal class for a representation of a unique partition for an account
+    """
+
+    def __init__(self, partition_key_range: Range, collection_rid: str) -> None:
+        self.partition_key_range = partition_key_range
+        self.collection_rid = collection_rid
+
+
+    def __str__(self) -> str:
+        return (
+            f"PartitionKeyRangeWrapper("
+            f"partition_key_range={self.partition_key_range}, "
+            f"collection_rid={self.collection_rid}, "
+        )
+
+    def __eq__(self, other):
+        if not isinstance(other, PartitionKeyRangeWrapper):
+            return False
+        return self.partition_key_range == other.partition_key_range and self.collection_rid == other.collection_rid
+
+    def __hash__(self):
+        return hash((self.partition_key_range, self.collection_rid))

@@ -19,6 +19,7 @@ from azure.core.pipeline.policies import ProxyPolicy, AsyncRetryPolicy
 
 class AzureEnvironmentMetadata(TypedDict):
     """Configuration for various Azure environments. All endpoints include a trailing slash."""
+
     portal_endpoint: str
     """The management portal for the Azure environment (e.g. https://portal.azure.com/)"""
     resource_manager_endpoint: str
@@ -107,15 +108,15 @@ class AzureEnvironmentClient:
 
         def case_insensitive_match(d: Mapping[str, Any], key: str) -> Optional[Any]:
             key = key.strip().lower()
-            return next((v for k,v in d.items() if k.strip().lower() == key), None)
+            return next((v for k, v in d.items() if k.strip().lower() == key), None)
 
         async with _ASYNC_LOCK:
             cloud = _KNOWN_AZURE_ENVIRONMENTS.get(name) or case_insensitive_match(_KNOWN_AZURE_ENVIRONMENTS, name)
             if cloud:
                 return cloud
-            default_endpoint = (_KNOWN_AZURE_ENVIRONMENTS
-                .get(_DEFAULT_AZURE_ENV_NAME, {})
-                .get("resource_manager_endpoint"))
+            default_endpoint = _KNOWN_AZURE_ENVIRONMENTS.get(_DEFAULT_AZURE_ENV_NAME, {}).get(
+                "resource_manager_endpoint"
+            )
 
         metadata_url = self.get_default_metadata_url(default_endpoint)
         clouds = await self.get_clouds_async(metadata_url=metadata_url, update_cached=update_cached)
@@ -124,10 +125,7 @@ class AzureEnvironmentClient:
         return cloud_metadata
 
     async def get_clouds_async(
-        self,
-        *,
-        metadata_url: Optional[str] = None,
-        update_cached: bool = True
+        self, *, metadata_url: Optional[str] = None, update_cached: bool = True
     ) -> Mapping[str, AzureEnvironmentMetadata]:
         metadata_url = metadata_url or self.get_default_metadata_url()
 
@@ -149,7 +147,8 @@ class AzureEnvironmentClient:
         default_endpoint = default_endpoint or "https://management.azure.com/"
         metadata_url = os.getenv(
             _ENV_ARM_CLOUD_METADATA_URL,
-            f"{default_endpoint}metadata/endpoints?api-version={AzureEnvironmentClient.DEFAULT_API_VERSION}")
+            f"{default_endpoint}metadata/endpoints?api-version={AzureEnvironmentClient.DEFAULT_API_VERSION}",
+        )
         return metadata_url
 
     @staticmethod
@@ -197,7 +196,7 @@ class AzureEnvironmentClient:
 
 def recursive_update(d: Dict, u: Mapping) -> None:
     """Recursively update a dictionary.
-    
+
     :param Dict d: The dictionary to update.
     :param Mapping u: The mapping to update from.
     """

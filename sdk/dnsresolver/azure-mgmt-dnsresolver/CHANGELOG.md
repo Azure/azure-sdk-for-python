@@ -1,5 +1,41 @@
 # Release History
 
+## 1.1.0 (2025-06-16)
+
+### Features Added
+
+  - Client `DnsResolverManagementClient` added operation group `dns_resolver_policies`
+  - Client `DnsResolverManagementClient` added operation group `dns_security_rules`
+  - Client `DnsResolverManagementClient` added operation group `dns_resolver_policy_virtual_network_links`
+  - Client `DnsResolverManagementClient` added operation group `dns_resolver_domain_lists`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added enum `Action`
+  - Added enum `ActionType`
+  - Added model `DnsResolverDomainList`
+  - Added model `DnsResolverDomainListBulk`
+  - Added model `DnsResolverDomainListPatch`
+  - Added model `DnsResolverDomainListResult`
+  - Added model `DnsResolverPolicy`
+  - Added model `DnsResolverPolicyListResult`
+  - Added model `DnsResolverPolicyPatch`
+  - Added model `DnsResolverPolicyVirtualNetworkLink`
+  - Added model `DnsResolverPolicyVirtualNetworkLinkListResult`
+  - Added model `DnsResolverPolicyVirtualNetworkLinkPatch`
+  - Added model `DnsSecurityRule`
+  - Added model `DnsSecurityRuleAction`
+  - Added model `DnsSecurityRuleListResult`
+  - Added model `DnsSecurityRulePatch`
+  - Added enum `DnsSecurityRuleState`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added operation group `DnsResolverDomainListsOperations`
+  - Added operation group `DnsResolverPoliciesOperations`
+  - Added operation group `DnsResolverPolicyVirtualNetworkLinksOperations`
+  - Added operation group `DnsSecurityRulesOperations`
+
 ## 1.1.0b2 (2024-10-21)
 
 ### Features Added

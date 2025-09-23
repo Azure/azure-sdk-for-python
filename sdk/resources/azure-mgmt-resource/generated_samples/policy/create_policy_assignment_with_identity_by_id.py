@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.resource import PolicyClient
+from azure.mgmt.resource.policy import PolicyClient
 
 """
 # PREREQUISITES
@@ -36,6 +37,7 @@ def main():
             "identity": {"type": "SystemAssigned"},
             "location": "eastus",
             "properties": {
+                "definitionVersion": "1.*.*",
                 "description": "Allow only storage accounts of SKU Standard_GRS or Standard_LRS to be created",
                 "displayName": "Enforce storage account SKU",
                 "enforcementMode": "Default",
@@ -48,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/stable/2022-06-01/examples/createPolicyAssignmentWithIdentityById.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/stable/2023-04-01/examples/createPolicyAssignmentWithIdentityById.json
 if __name__ == "__main__":
     main()

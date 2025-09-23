@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from __future__ import annotations
 from typing import Any, cast, Optional, NoReturn, Union, TYPE_CHECKING
 
 from cryptography.exceptions import InvalidSignature
@@ -308,6 +309,14 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
             return all(getattr(self._key, field) == getattr(other, field) for field in self._key._FIELDS)
         return False
 
+    def __copy__(self) -> KeyVaultRSAPublicKey:
+        """Returns this instance since it is treated as immutable.
+
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey
+        """
+        return self
+
     def verifier(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
     ) -> NoReturn:
@@ -481,6 +490,14 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
     ) -> NoReturn:
         """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
         raise NotImplementedError()
+
+    def __copy__(self) -> KeyVaultRSAPrivateKey:
+        """Returns this instance since it is treated as immutable.
+
+        :returns: This instance.
+        :rtype: ~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey
+        """
+        return self
 
 
 class DecryptResult:

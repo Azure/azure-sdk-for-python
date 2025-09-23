@@ -13,15 +13,17 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
-    1) PROJECT_ENDPOINT - the Azure AI Agents endpoint.
-    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in 
+    1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+                          page of your Azure AI Foundry portal.
+    2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 import os, time, sys
-from azure.ai.agents import AgentsClient
+from azure.ai.agents.models._models import FunctionToolOutput
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import (
     FunctionTool,
@@ -31,13 +33,14 @@ from azure.ai.agents.models import (
     ToolOutput,
 )
 
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import user_functions
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -45,7 +48,9 @@ agents_client = AgentsClient(
 # Initialize function tool with user functions
 functions = FunctionTool(functions=user_functions)
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     # Create an agent and run user's request with function calls
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
@@ -86,7 +91,7 @@ with agents_client:
                         print(f"Executing tool call: {tool_call}")
                         output = functions.execute(tool_call)
                         tool_outputs.append(
-                            ToolOutput(
+                            FunctionToolOutput(
                                 tool_call_id=tool_call.id,
                                 output=output,
                             )

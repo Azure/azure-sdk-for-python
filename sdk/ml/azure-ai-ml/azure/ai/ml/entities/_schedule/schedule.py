@@ -55,8 +55,6 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
     :paramtype tags: Optional[dict]]
     :keyword properties: A dictionary of properties to associate with the schedule.
     :paramtype properties: Optional[dict[str, str]]
-    :keyword kwargs: Additional keyword arguments passed to the Resource constructor.
-    :paramtype kwargs: dict
     """
 
     def __init__(

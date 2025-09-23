@@ -33,11 +33,12 @@ from azure.cosmos import DatabaseAccount
 from .. import _constants as constants
 from .. import exceptions
 from .._location_cache import LocationCache
-
+from .._utils import current_time_millis
+from .._request_object import RequestObject
 
 # pylint: disable=protected-access
 
-logger = logging.getLogger("azure.cosmos.aio_GlobalEndpointManager")
+logger = logging.getLogger("azure.cosmos.aio._GlobalEndpointManager")
 
 class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
@@ -47,7 +48,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def __init__(self, client):
         self.client = client
-        self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
@@ -62,9 +62,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.last_refresh_time = 0
         self._database_account_cache = None
 
-    def get_use_multiple_write_locations(self):
-        return self.location_cache.can_use_multiple_write_locations()
-
     def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultEndpointsRefreshTime
 
@@ -74,7 +71,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def get_read_endpoint(self):
         return self.location_cache.get_read_regional_routing_context()
 
-    def resolve_service_endpoint(self, request):
+    def _resolve_service_endpoint(
+            self,
+            request: RequestObject
+    ) -> str:
         return self.location_cache.resolve_service_endpoint(request)
 
     def mark_endpoint_unavailable_for_read(self, endpoint, refresh_cache):
@@ -85,6 +85,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def get_ordered_write_locations(self):
         return self.location_cache.get_ordered_write_locations()
+
+    def get_ordered_read_locations(self):
+        return self.location_cache.get_ordered_read_locations()
 
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
@@ -97,6 +100,15 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def update_location_cache(self):
         self.location_cache.update_location_cache()
 
+    def _mark_endpoint_unavailable(self, endpoint: str):
+        """Marks an endpoint as unavailable for the appropriate operations.
+        :param str endpoint: The endpoint to mark as unavailable.
+        """
+        write_endpoints = self.location_cache.get_all_write_endpoints()
+        self.mark_endpoint_unavailable_for_read(endpoint, False)
+        if endpoint in write_endpoints:
+            self.mark_endpoint_unavailable_for_write(endpoint, False)
+
     async def refresh_endpoint_list(self, database_account, **kwargs):
         if self.refresh_task and self.refresh_task.done():
             try:
@@ -104,7 +116,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 self.refresh_task = None
             except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
                 logger.exception("Health check task failed: %s", exception) #pylint: disable=do-not-use-logging-exception
-        if self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+        if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
             self.refresh_needed = True
         if self.refresh_needed:
             async with self.refresh_lock:
@@ -120,11 +132,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         if database_account and not self.startup:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
-            self.last_refresh_time = self.location_cache.current_time_millis()
+            self.last_refresh_time = current_time_millis()
         else:
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
-                self.last_refresh_time = self.location_cache.current_time_millis()
+                self.last_refresh_time = current_time_millis()
                 if not self.startup:
                     # this will perform getDatabaseAccount calls to check endpoint health
                     # in background
@@ -139,8 +151,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
             self.location_cache.mark_endpoint_available(endpoint)
         except (exceptions.CosmosHttpResponseError, AzureError):
-            self.mark_endpoint_unavailable_for_read(endpoint, False)
-            self.mark_endpoint_unavailable_for_write(endpoint, False)
+            self._mark_endpoint_unavailable(endpoint)
 
     async def _endpoints_health_check(self, **kwargs):
         """Gets the database account for each endpoint.
@@ -189,8 +200,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     self.location_cache.mark_endpoint_available(locational_endpoint)
                     return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    self.mark_endpoint_unavailable_for_read(locational_endpoint, False)
-                    self.mark_endpoint_unavailable_for_write(locational_endpoint, False)
+                    self._mark_endpoint_unavailable(locational_endpoint)
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):

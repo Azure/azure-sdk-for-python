@@ -10,14 +10,9 @@ The instructions below are for running tests locally, on a Windows machine, agai
     ```bash
     pip install -r dev_requirements.txt
     ```
-- Build the package:
+- Install package from sources:
     ```bash
-    pip install wheel
-    python setup.py bdist_wheel
-    ```
-- Install the resulting wheel (update version `1.0.0b5` to the current one):
-    ```bash
-    pip install dist\azure_ai_projects-1.0.0b5-py3-none-any.whl --user --force-reinstall
+    pip install -e .
     ```
 
 ## Log in to Azure
@@ -28,7 +23,8 @@ az login
 
 ## Setup up environment variables
 
-Edit the file `azure_ai_projects_tests.env` located in the folder above. Follow the instructions there on how to set up Azure AI Foundry projects to be used for testing, and enter appropriate values for the environment variables used for the tests you want to run.
+Copy the file `azure_ai_projects_tests.template.env` (located in the above folder), and save it as file named `azure_ai_projects_tests.env`.
+Enter appropriate values for the environment variables used for the tests you want to run.
 
 ## Configure test proxy
 

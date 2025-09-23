@@ -38,7 +38,7 @@ class TestNetworkManagementConfigurationPolicyGroupsOperationsAsync(AzureMgmtRec
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -53,7 +53,7 @@ class TestNetworkManagementConfigurationPolicyGroupsOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 vpn_server_configuration_name="str",
                 configuration_policy_group_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +67,7 @@ class TestNetworkManagementConfigurationPolicyGroupsOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
             configuration_policy_group_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestNetworkManagementConfigurationPolicyGroupsOperationsAsync(AzureMgmtRec
         response = self.client.configuration_policy_groups.list_by_vpn_server_configuration(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

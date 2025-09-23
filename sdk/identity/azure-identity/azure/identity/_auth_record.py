@@ -34,6 +34,7 @@ class AuthenticationRecord:
     def authority(self) -> str:
         """The authority host used to authenticate the account.
 
+        :return: The authority host used to authenticate the account.
         :rtype: str
         """
         return self._authority
@@ -42,6 +43,7 @@ class AuthenticationRecord:
     def client_id(self) -> str:
         """The client ID of the application which performed the original authentication.
 
+        :return: The client ID of the application which performed the original authentication.
         :rtype: str
         """
         return self._client_id
@@ -50,6 +52,7 @@ class AuthenticationRecord:
     def home_account_id(self) -> str:
         """A unique identifier of the account.
 
+        :return: A unique identifier of the account.
         :rtype: str
         """
         return self._home_account_id
@@ -58,6 +61,7 @@ class AuthenticationRecord:
     def tenant_id(self) -> str:
         """The tenant the account should authenticate in.
 
+        :return: The tenant the account should authenticate in.
         :rtype: str
         """
         return self._tenant_id
@@ -66,6 +70,7 @@ class AuthenticationRecord:
     def username(self) -> str:
         """The user principal or service principal name of the account.
 
+        :return: The user principal or service principal name of the account.
         :rtype: str
         """
         return self._username

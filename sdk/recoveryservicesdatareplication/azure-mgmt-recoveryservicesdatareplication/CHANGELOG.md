@@ -1,5 +1,206 @@
 # Release History
 
+## 1.0.0 (2025-05-12)
+
+### Features Added
+
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `fabric_agent`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `job`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `private_endpoint_connections`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `private_endpoint_connection_proxies`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `private_link_resources`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `recovery_point`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `check_name_availability`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `deployment_preflight`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `operation_results`
+  - Client `RecoveryServicesDataReplicationMgmtClient` added operation group `location_based_operation_results`
+  - Model `DeploymentPreflightResource` added property `properties`
+  - Model `EmailConfigurationModelProperties` added property `provisioning_state`
+  - Model `EventModelProperties` added property `provisioning_state`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_block_size`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_logical_sector_size`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_physical_sector_size`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_identifier`
+  - Model `HyperVToAzStackHCIDiskInput` added property `disk_controller`
+  - Model `HyperVToAzStackHCINicInput` added property `is_static_ip_migration_enabled`
+  - Model `HyperVToAzStackHCINicInput` added property `is_mac_migration_enabled`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` added property `disk_block_size`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` added property `disk_logical_sector_size`
+  - Model `HyperVToAzStackHCIProtectedDiskProperties` added property `disk_physical_sector_size`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `source_fabric_agent_name`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` added property `target_fabric_agent_name`
+  - Model `ProtectedItemModelProperties` added property `fabric_agent_id`
+  - Model `ProtectedItemModelProperties` added property `target_fabric_agent_id`
+  - Model `RecoveryPointModelProperties` added property `provisioning_state`
+  - Model `TaskModel` added property `children_jobs`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_block_size`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_logical_sector_size`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_physical_sector_size`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_identifier`
+  - Model `VMwareToAzStackHCIDiskInput` added property `disk_controller`
+  - Model `VMwareToAzStackHCINicInput` added property `is_static_ip_migration_enabled`
+  - Model `VMwareToAzStackHCINicInput` added property `is_mac_migration_enabled`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` added property `disk_block_size`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` added property `disk_logical_sector_size`
+  - Model `VMwareToAzStackHCIProtectedDiskProperties` added property `disk_physical_sector_size`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `source_fabric_agent_name`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` added property `target_fabric_agent_name`
+  - Model `VaultModel` added property `identity`
+  - Model `VaultModelUpdate` added property `identity`
+  - Added model `ConnectionDetails`
+  - Added enum `CreatedByType`
+  - Added model `DiskControllerInputs`
+  - Added model `FabricAgentModel`
+  - Added model `FabricAgentModelCustomProperties`
+  - Added model `FabricAgentModelProperties`
+  - Added model `FailoverJobModelCustomProperties`
+  - Added model `GroupConnectivityInformation`
+  - Added model `HyperVToAzStackHCIProtectedItemModelCustomPropertiesUpdate`
+  - Added model `JobModel`
+  - Added model `JobModelCustomProperties`
+  - Added model `JobModelCustomPropertiesAffectedObjectDetails`
+  - Added model `JobModelProperties`
+  - Added enum `JobObjectType`
+  - Added enum `JobState`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnection`
+  - Added model `PrivateEndpointConnectionProxy`
+  - Added model `PrivateEndpointConnectionProxyProperties`
+  - Added model `PrivateEndpointConnectionResponseProperties`
+  - Added enum `PrivateEndpointConnectionStatus`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnection`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added model `PrivateLinkServiceProxy`
+  - Added model `ProtectedItemModelCustomPropertiesUpdate`
+  - Added model `ProtectedItemModelPropertiesUpdate`
+  - Added model `ProtectedItemModelUpdate`
+  - Added model `ProxyResource`
+  - Added model `RemotePrivateEndpoint`
+  - Added model `RemotePrivateEndpointConnection`
+  - Added model `Resource`
+  - Added model `SystemData`
+  - Added model `TestFailoverCleanupJobModelCustomProperties`
+  - Added model `TestFailoverJobModelCustomProperties`
+  - Added model `TrackedResource`
+  - Added model `UserAssignedIdentity`
+  - Added model `VMwareFabricAgentModelCustomProperties`
+  - Added model `VMwareToAzStackHCIEventModelCustomProperties`
+  - Added model `VMwareToAzStackHCIProtectedItemModelCustomPropertiesUpdate`
+  - Added model `VMwareToAzStackHCIRecoveryPointModelCustomProperties`
+  - Added model `VaultIdentityModel`
+  - Added enum `VaultIdentityType`
+  - Model `EventOperations` added parameter `odata_options` in method `list`
+  - Model `EventOperations` added parameter `page_size` in method `list`
+  - Model `ProtectedItemOperations` added parameter `odata_options` in method `list`
+  - Model `ProtectedItemOperations` added parameter `continuation_token_parameter` in method `list`
+  - Model `ProtectedItemOperations` added parameter `page_size` in method `list`
+  - Model `ProtectedItemOperations` added method `begin_update`
+  - Added operation group `CheckNameAvailabilityOperations`
+  - Added operation group `DeploymentPreflightOperations`
+  - Added operation group `FabricAgentOperations`
+  - Added operation group `JobOperations`
+  - Added operation group `LocationBasedOperationResultsOperations`
+  - Added operation group `OperationResultsOperations`
+  - Added operation group `PrivateEndpointConnectionProxiesOperations`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+  - Added operation group `RecoveryPointOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.dra`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.dra_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.fabric_operations_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.policy_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.protected_item_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.recovery_points`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.replication_extension_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.vault_operation_status`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.workflow`
+  - Deleted or renamed client operation group `RecoveryServicesDataReplicationMgmtClient.workflow_operation_status`
+  - Deleted or renamed client method `RecoveryServicesDataReplicationMgmtClient.check_name_availability`
+  - Deleted or renamed client method `RecoveryServicesDataReplicationMgmtClient.deployment_preflight`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `source_dra_name`
+  - Model `HyperVToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `target_dra_name`
+  - Model `ProtectedItemModelProperties` deleted or renamed its instance variable `dra_id`
+  - Model `ProtectedItemModelProperties` deleted or renamed its instance variable `target_dra_id`
+  - Model `TaskModel` deleted or renamed its instance variable `children_workflows`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `source_dra_name`
+  - Model `VMwareToAzStackHCIProtectedItemModelCustomProperties` deleted or renamed its instance variable `target_dra_name`
+  - Deleted or renamed model `DraModel`
+  - Deleted or renamed model `DraModelCollection`
+  - Deleted or renamed model `DraModelCustomProperties`
+  - Deleted or renamed model `DraModelProperties`
+  - Deleted or renamed model `DraModelSystemData`
+  - Deleted or renamed model `EmailConfigurationModelCollection`
+  - Deleted or renamed model `EmailConfigurationModelSystemData`
+  - Deleted or renamed model `EventModelCollection`
+  - Deleted or renamed model `EventModelSystemData`
+  - Deleted or renamed model `FabricModelCollection`
+  - Deleted or renamed model `FabricModelSystemData`
+  - Deleted or renamed model `FabricModelUpdateSystemData`
+  - Deleted or renamed model `FailoverWorkflowModelCustomProperties`
+  - Deleted or renamed model `OperationModel`
+  - Deleted or renamed model `OperationModelCollection`
+  - Deleted or renamed model `OperationModelProperties`
+  - Deleted or renamed model `PolicyModelCollection`
+  - Deleted or renamed model `PolicyModelSystemData`
+  - Deleted or renamed model `ProtectedItemModelCollection`
+  - Deleted or renamed model `ProtectedItemModelPropertiesCurrentJob`
+  - Deleted or renamed model `ProtectedItemModelPropertiesLastFailedEnableProtectionJob`
+  - Deleted or renamed model `ProtectedItemModelPropertiesLastFailedPlannedFailoverJob`
+  - Deleted or renamed model `ProtectedItemModelPropertiesLastTestFailoverJob`
+  - Deleted or renamed model `ProtectedItemModelSystemData`
+  - Deleted or renamed model `RecoveryPointModelCollection`
+  - Deleted or renamed model `RecoveryPointModelSystemData`
+  - Deleted or renamed model `ReplicationExtensionModelCollection`
+  - Deleted or renamed model `ReplicationExtensionModelSystemData`
+  - Deleted or renamed model `SystemDataModel`
+  - Deleted or renamed model `TestFailoverCleanupWorkflowModelCustomProperties`
+  - Deleted or renamed model `TestFailoverWorkflowModelCustomProperties`
+  - Deleted or renamed model `VMwareDraModelCustomProperties`
+  - Deleted or renamed model `VaultModelCollection`
+  - Deleted or renamed model `VaultModelSystemData`
+  - Deleted or renamed model `VaultModelUpdateSystemData`
+  - Deleted or renamed model `WorkflowModel`
+  - Deleted or renamed model `WorkflowModelCollection`
+  - Deleted or renamed model `WorkflowModelCustomProperties`
+  - Deleted or renamed model `WorkflowModelProperties`
+  - Deleted or renamed model `WorkflowModelSystemData`
+  - Deleted or renamed model `WorkflowObjectType`
+  - Deleted or renamed model `WorkflowState`
+  - Method `EmailConfigurationOperations.create` renamed its instance variable `body` to `resource`
+  - Method `FabricOperations.begin_create` renamed its instance variable `body` to `resource`
+  - Method `FabricOperations.begin_update` renamed its instance variable `body` to `properties`
+  - Method `PolicyOperations.begin_create` renamed its instance variable `body` to `resource`
+  - Method `ProtectedItemOperations.begin_create` renamed its instance variable `body` to `resource`
+  - Method `ReplicationExtensionOperations.begin_create` renamed its instance variable `body` to `resource`
+  - Method `VaultOperations.begin_create` renamed its instance variable `body` to `resource`
+  - Method `VaultOperations.begin_update` renamed its instance variable `body` to `properties`
+  - Method `EventOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `EventOperations.list` deleted or renamed its parameter `filter` of kind `positional_or_keyword`
+  - Method `FabricOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `FabricOperations.list_by_subscription` deleted or renamed its parameter `continuation_token_parameter` of kind `positional_or_keyword`
+  - Method `ProtectedItemOperations.begin_delete` changed its parameter `force_delete` from `positional_or_keyword` to `keyword_only`
+  - Parameter `body` of method `ProtectedItemOperations.begin_planned_failover` is now required
+  - Method `VaultOperations.list` changed its parameter `continuation_token_parameter` from `positional_or_keyword` to `keyword_only`
+  - Method `VaultOperations.list_by_subscription` deleted or renamed its parameter `continuation_token_parameter` of kind `positional_or_keyword`
+  - Deleted or renamed operation group `DraOperationStatusOperations`
+  - Deleted or renamed operation group `DraOperations`
+  - Deleted or renamed operation group `FabricOperationsStatusOperations`
+  - Deleted or renamed operation group `PolicyOperationStatusOperations`
+  - Deleted or renamed operation group `ProtectedItemOperationStatusOperations`
+  - Deleted or renamed operation group `RecoveryPointsOperations`
+  - Deleted or renamed operation group `RecoveryServicesDataReplicationMgmtClientOperationsMixin`
+  - Deleted or renamed operation group `ReplicationExtensionOperationStatusOperations`
+  - Deleted or renamed operation group `VaultOperationStatusOperations`
+  - Deleted or renamed operation group `WorkflowOperationStatusOperations`
+  - Deleted or renamed operation group `WorkflowOperations`
+
 ## 1.0.0b1 (2023-10-23)
 
 * Initial Release

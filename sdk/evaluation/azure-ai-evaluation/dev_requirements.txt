@@ -1,4 +1,4 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 ../../core/azure-core
 ../../identity/azure-identity
 pytest
@@ -7,7 +7,9 @@ pytest-cov
 pytest-mock
 pytest-xdist
 azure-ai-inference>=1.0.0b4
-azure-ai-projects
+azure-ai-projects<=1.0.0b10
 aiohttp
-openai>=1.73.0
+filelock
+promptflow-core>=1.17.1
+promptflow-devkit>=1.17.1
 -e ../azure-ai-evaluation

@@ -132,6 +132,28 @@ class FileSystemClient(StorageAccountHostsMixin):
         self._client = self._build_generated_client(self.url)
         self._datalake_client_for_blob_operation = self._build_generated_client(self._container_client.url)
 
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        self._container_client.__enter__()
+        self._datalake_client_for_blob_operation.__enter__()
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self._datalake_client_for_blob_operation.__exit__(*args)
+        self._container_client.__exit__(*args)
+        self._client.__exit__(*args)
+
+    def close(self) -> None:
+        """This method is to close the sockets opened by the client.
+        It need not be used when using with a context manager.
+
+        :return: None
+        :rtype: None
+        """
+        self._datalake_client_for_blob_operation.close()
+        self._container_client.close()
+        self._client.close()
+
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
@@ -144,17 +166,6 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname: str) -> str:
         return _format_url(self.scheme, hostname, self.file_system_name, self._query_str)
-
-    def __exit__(self, *args: Any) -> None:
-        self._container_client.close()
-        self._datalake_client_for_blob_operation.close()
-        super(FileSystemClient, self).__exit__(*args)
-
-    def close(self) -> None:
-        """This method is to close the sockets opened by the client.
-        It need not be used when using with a context manager.
-        """
-        self.__exit__()
 
     @classmethod
     def from_connection_string(
@@ -688,7 +699,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient with new directory and metadata.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -743,7 +754,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeDirectoryClient after deleting specified directory.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient
 
         .. admonition:: Example:
 
@@ -843,7 +854,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: DataLakeFileClient with new file created.
-        :rtype: ~azure.storage.file.datalake.DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -898,7 +909,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient after deleting specified file.
-        :rtype: azure.storage.file.datalake.DataLakeFileClient
+        :rtype: azure.storage.filedatalake.DataLakeFileClient
 
         .. admonition:: Example:
 
@@ -937,7 +948,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: Returns the DataLake client for the restored soft-deleted path.
-        :rtype: ~azure.storage.file.datalake.DataLakeDirectoryClient or azure.storage.file.datalake.DataLakeFileClient
+        :rtype: ~azure.storage.filedatalake.DataLakeDirectoryClient or azure.storage.filedatalake.DataLakeFileClient
         """
         _, url, undelete_source = _undelete_path_options(deleted_path_name, deletion_id, self.url)
 

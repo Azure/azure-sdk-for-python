@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -30,7 +31,7 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.update_scm_allowed_slot(
+    response = client.web_apps.update_ftp_allowed_slot(
         resource_group_name="rg",
         name="testSite",
         slot="stage",
@@ -39,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/UpdatePublishingCredentialsPolicySlot.json
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/UpdatePublishingCredentialsPolicySlot.json
 if __name__ == "__main__":
     main()

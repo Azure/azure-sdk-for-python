@@ -4,7 +4,7 @@ This package contains a set of C-Extension modules intended to be used with the 
 ## Getting started
 
 ### Prerequisites
-* Python 3.8 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.9 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 
 ### Install the package
 This package is not meant to be used standalone and is meant to accompany other Azure Storage Python SDK libraries. However it can be installed and used standalone as well.

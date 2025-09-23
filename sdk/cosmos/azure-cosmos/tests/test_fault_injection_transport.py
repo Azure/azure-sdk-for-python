@@ -298,7 +298,8 @@ class TestFaultInjectionTransport:
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+        )
         container: ContainerProxy = initialized_objects["col"]
 
         created_document = container.create_item(body=document_definition)
@@ -349,7 +350,9 @@ class TestFaultInjectionTransport:
         initialized_objects = self.setup_method_with_custom_transport(
             custom_transport,
             multiple_write_locations=True,
-            preferred_locations=["First Region", "Second Region"])
+            preferred_locations=["First Region", "Second Region"],
+            multiple_write_locations=True
+        )
         container: ContainerProxy = initialized_objects["col"]
 
         start:float = time.perf_counter()

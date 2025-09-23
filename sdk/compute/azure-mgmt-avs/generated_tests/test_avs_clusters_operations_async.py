@@ -21,11 +21,11 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_clusters_list(self, resource_group):
         response = self.client.clusters.list(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_clusters_get(self, resource_group):
         response = await self.client.clusters.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             cluster_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_clusters_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.clusters.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -71,7 +71,7 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "vsanDatastoreName": "str",
                 },
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +80,7 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_clusters_begin_update(self, resource_group):
         response = await (
             await self.client.clusters.begin_update(
                 resource_group_name=resource_group.name,
@@ -91,7 +91,7 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
                     "hosts": ["str"],
                     "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
                 },
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,13 +100,13 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_clusters_begin_delete(self, resource_group):
         response = await (
             await self.client.clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 private_cloud_name="str",
                 cluster_name="str",
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,12 +115,12 @@ class TestAVSClustersOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_zones(self, resource_group):
+    async def test_clusters_list_zones(self, resource_group):
         response = await self.client.clusters.list_zones(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             cluster_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself

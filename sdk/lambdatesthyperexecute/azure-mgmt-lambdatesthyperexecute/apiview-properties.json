@@ -27,12 +27,19 @@
         "azure.mgmt.lambdatesthyperexecute.models.SingleSignOnType": "LiftrBase.SingleSignOnType",
         "azure.mgmt.lambdatesthyperexecute.models.SingleSignOnStates": "LiftrBase.SingleSignOnStates",
         "azure.mgmt.lambdatesthyperexecute.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.operations.list": "Azure.ResourceManager.Operations.list",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.organizations.get": "LambdaTest.HyperExecute.Organizations.get",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.organizations.begin_create_or_update": "LambdaTest.HyperExecute.Organizations.createOrUpdate",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.organizations.update": "LambdaTest.HyperExecute.Organizations.update",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.organizations.begin_delete": "LambdaTest.HyperExecute.Organizations.delete",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.organizations.list_by_resource_group": "LambdaTest.HyperExecute.Organizations.listByResourceGroup",
-        "azure.mgmt.lambdatesthyperexecute.LambdaTestHyperExecuteMgmtClient.organizations.list_by_subscription": "LambdaTest.HyperExecute.Organizations.listBySubscription"
+        "azure.mgmt.lambdatesthyperexecute.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.lambdatesthyperexecute.operations.OrganizationsOperations.get": "LambdaTest.HyperExecute.Organizations.get",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.OrganizationsOperations.get": "LambdaTest.HyperExecute.Organizations.get",
+        "azure.mgmt.lambdatesthyperexecute.operations.OrganizationsOperations.begin_create_or_update": "LambdaTest.HyperExecute.Organizations.createOrUpdate",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.OrganizationsOperations.begin_create_or_update": "LambdaTest.HyperExecute.Organizations.createOrUpdate",
+        "azure.mgmt.lambdatesthyperexecute.operations.OrganizationsOperations.update": "LambdaTest.HyperExecute.Organizations.update",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.OrganizationsOperations.update": "LambdaTest.HyperExecute.Organizations.update",
+        "azure.mgmt.lambdatesthyperexecute.operations.OrganizationsOperations.begin_delete": "LambdaTest.HyperExecute.Organizations.delete",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.OrganizationsOperations.begin_delete": "LambdaTest.HyperExecute.Organizations.delete",
+        "azure.mgmt.lambdatesthyperexecute.operations.OrganizationsOperations.list_by_resource_group": "LambdaTest.HyperExecute.Organizations.listByResourceGroup",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.OrganizationsOperations.list_by_resource_group": "LambdaTest.HyperExecute.Organizations.listByResourceGroup",
+        "azure.mgmt.lambdatesthyperexecute.operations.OrganizationsOperations.list_by_subscription": "LambdaTest.HyperExecute.Organizations.listBySubscription",
+        "azure.mgmt.lambdatesthyperexecute.aio.operations.OrganizationsOperations.list_by_subscription": "LambdaTest.HyperExecute.Organizations.listBySubscription"
     }
 }

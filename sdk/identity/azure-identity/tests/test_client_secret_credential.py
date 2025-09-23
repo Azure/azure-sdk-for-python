@@ -334,10 +334,11 @@ def test_live_multitenant_authentication(live_service_principal, get_token_metho
         live_service_principal["client_secret"],
         additionally_allowed_tenants=["*"],
     )
+    kwargs = {"tenant_id": live_service_principal["tenant_id"]}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
     # then get a valid token for an actual tenant
-    token = getattr(credential, get_token_method)(
-        "https://vault.azure.net/.default", tenant_id=live_service_principal["tenant_id"]
-    )
+    token = getattr(credential, get_token_method)("https://vault.azure.net/.default", **kwargs)
     assert token.token
     assert token.expires_on
 

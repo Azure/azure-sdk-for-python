@@ -109,6 +109,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         return self
 
     async def close(self) -> None:
+        """Close the credential's underlying HTTP client."""
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
@@ -118,7 +119,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
         # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
         # to change an instance's assertion.
-        refresh_tokens = self._client.get_cached_refresh_tokens(scopes)
+        refresh_tokens = self._client.get_cached_refresh_tokens(scopes, **kwargs)
         if len(refresh_tokens) == 1:  # there should be only one
             try:
                 refresh_token = refresh_tokens[0]["secret"]

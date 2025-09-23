@@ -22,6 +22,97 @@ import struct
 from typing import NoReturn, Tuple, Union
 
 
+class _UInt32:
+    def __init__(self, value: int) -> None:
+        self._value: int = value & 0xFFFFFFFF
+
+    @property
+    def value(self) -> int:
+        return self._value
+
+    @value.setter
+    def value(self, new_value: int) -> None:
+        self._value = new_value & 0xFFFFFFFF
+
+    def __add__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value + (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __sub__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value - (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __mul__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value * (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __xor__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value ^ (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __lshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value << (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __ilshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        self._value = (self.value << (other.value if isinstance(other, _UInt32) else other)) & 0xFFFFFFFF
+        return self
+
+    def __rshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value >> (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __irshift__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        self._value = (self.value >> (other.value if isinstance(other, _UInt32) else other)) & 0xFFFFFFFF
+        return self
+
+    def __and__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        result = self.value & (other.value if isinstance(other, _UInt32) else other)
+        return _UInt32(result & 0xFFFFFFFF)
+
+    def __or__(self, other: Union[int, '_UInt32']) -> '_UInt32':
+        if isinstance(other, _UInt32):
+            return _UInt32(self.value | other.value)
+        if isinstance(other, int):
+            return _UInt32(self.value | other)
+        raise TypeError("Unsupported type for OR operation")
+
+    def __invert__(self) -> '_UInt32':
+        return _UInt32(~self.value & 0xFFFFFFFF)
+
+    def __eq__(self, other: Union[int, '_UInt32', object]) -> bool:
+        return self.value == (other.value if isinstance(other, _UInt32) else other)
+
+    def __ne__(self, other: Union[int, '_UInt32', object]) -> bool:
+        return not self.__eq__(other)
+
+    def __lt__(self, other: Union[int, '_UInt32']) -> bool:
+        return self.value < (other.value if isinstance(other, _UInt32) else other)
+
+    def __gt__(self, other: Union[int, '_UInt32']) -> bool:
+        return self.value > (other.value if isinstance(other, _UInt32) else other)
+
+    def __le__(self, other: Union[int, '_UInt32']) -> bool:
+        return self.value <= (other.value if isinstance(other, _UInt32) else other)
+
+    def __ge__(self, other: Union[int, '_UInt32']) -> bool:
+        return self.value >= (other.value if isinstance(other, _UInt32) else other)
+
+    @staticmethod
+    def encode_double_as_uint32(value: float) -> int:
+        value_in_uint32 = struct.unpack('<I', struct.pack('<f', value))[0]
+        mask = 0x80000000
+        return (value_in_uint32 ^ mask) if value_in_uint32 < mask else (~value_in_uint32) + 1
+
+    @staticmethod
+    def decode_double_from_uint32(value: int) -> int:
+        mask = 0x80000000
+        value = ~(value - 1) if value < mask else value ^ mask
+        return struct.unpack('<f', struct.pack('<I', value))[0]
+
+    def __int__(self) -> int:
+        return self.value
+
 class _UInt64:
     def __init__(self, value: int) -> None:
         self._value: int = value & 0xFFFFFFFFFFFFFFFF
@@ -71,6 +162,32 @@ class _UInt64:
 
     def __invert__(self) -> '_UInt64':
         return _UInt64(~self.value & 0xFFFFFFFFFFFFFFFF)
+
+    def __eq__(self, other: Union[int, '_UInt64', object]) -> bool:
+        return self.value == (other.value if isinstance(other, _UInt64) else other)
+
+    def __ne__(self, other: Union[int, '_UInt64', object]) -> bool:
+        return not self.__eq__(other)
+
+    def __irshift__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+        self._value = (self.value >> (other.value if isinstance(other, _UInt64) else other)) & 0xFFFFFFFFFFFFFFFF
+        return self
+
+    def __ilshift__(self, other: Union[int, '_UInt64']) -> '_UInt64':
+        self._value = (self.value << (other.value if isinstance(other, _UInt64) else other)) & 0xFFFFFFFFFFFFFFFF
+        return self
+
+    def __lt__(self, other: Union[int, '_UInt64']) -> bool:
+        return self.value < (other.value if isinstance(other, _UInt64) else other)
+
+    def __gt__(self, other: Union[int, '_UInt64']) -> bool:
+        return self.value > (other.value if isinstance(other, _UInt64) else other)
+
+    def __le__(self, other: Union[int, '_UInt64']) -> bool:
+        return self.value <= (other.value if isinstance(other, _UInt64) else other)
+
+    def __ge__(self, other: Union[int, '_UInt64']) -> bool:
+        return self.value >= (other.value if isinstance(other, _UInt64) else other)
 
     @staticmethod
     def encode_double_as_uint64(value: float) -> int:

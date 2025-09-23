@@ -21,12 +21,12 @@ class TestAppConfigurationManagementSnapshotsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_snapshots_get(self, resource_group):
         response = await self.client.snapshots.get(
             resource_group_name=resource_group.name,
             config_store_name="str",
             snapshot_name="str",
-            api_version="2024-05-01",
+            api_version="2024-06-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestAppConfigurationManagementSnapshotsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create(self, resource_group):
+    async def test_snapshots_begin_create(self, resource_group):
         response = await (
             await self.client.snapshots.begin_create(
                 resource_group_name=resource_group.name,
@@ -56,7 +56,7 @@ class TestAppConfigurationManagementSnapshotsOperationsAsync(AzureMgmtRecordedTe
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

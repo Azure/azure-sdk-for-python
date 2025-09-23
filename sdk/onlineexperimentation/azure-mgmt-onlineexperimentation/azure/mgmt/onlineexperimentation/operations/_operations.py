@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -34,8 +34,8 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import OnlineExperimentationMgmtClientConfiguration
-from .._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from .._serialization import Deserializer, Serializer
+from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -64,7 +64,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_online_experiment_workspaces_get_request(  # pylint: disable=name-too-long
+def build_online_experimentation_workspaces_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, workspace_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -92,7 +92,7 @@ def build_online_experiment_workspaces_get_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_online_experiment_workspaces_create_or_update_request(  # pylint: disable=name-too-long
+def build_online_experimentation_workspaces_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, workspace_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -123,7 +123,7 @@ def build_online_experiment_workspaces_create_or_update_request(  # pylint: disa
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_online_experiment_workspaces_update_request(  # pylint: disable=name-too-long
+def build_online_experimentation_workspaces_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, workspace_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -154,7 +154,7 @@ def build_online_experiment_workspaces_update_request(  # pylint: disable=name-t
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_online_experiment_workspaces_delete_request(  # pylint: disable=name-too-long
+def build_online_experimentation_workspaces_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, workspace_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -182,7 +182,7 @@ def build_online_experiment_workspaces_delete_request(  # pylint: disable=name-t
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_online_experiment_workspaces_list_by_resource_group_request(  # pylint: disable=name-too-long
+def build_online_experimentation_workspaces_list_by_resource_group_request(  # pylint: disable=name-too-long
     resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -209,7 +209,7 @@ def build_online_experiment_workspaces_list_by_resource_group_request(  # pylint
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_online_experiment_workspaces_list_by_subscription_request(  # pylint: disable=name-too-long
+def build_online_experimentation_workspaces_list_by_subscription_request(  # pylint: disable=name-too-long
     subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -245,7 +245,7 @@ class Operations:
         :attr:`operations` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: OnlineExperimentationMgmtClientConfiguration = (
@@ -255,7 +255,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -338,17 +338,17 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class OnlineExperimentWorkspacesOperations:
+class OnlineExperimentationWorkspacesOperations:  # pylint: disable=name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.onlineexperimentation.OnlineExperimentationMgmtClient`'s
-        :attr:`online_experiment_workspaces` attribute.
+        :attr:`online_experimentation_workspaces` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: OnlineExperimentationMgmtClientConfiguration = (
@@ -358,17 +358,19 @@ class OnlineExperimentWorkspacesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> _models.OnlineExperimentWorkspace:
-        """Gets an experiment workspace.
+    def get(
+        self, resource_group_name: str, workspace_name: str, **kwargs: Any
+    ) -> _models.OnlineExperimentationWorkspace:
+        """Gets an online experimentation workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
-        :return: OnlineExperimentWorkspace. The OnlineExperimentWorkspace is compatible with
+        :return: OnlineExperimentationWorkspace. The OnlineExperimentationWorkspace is compatible with
          MutableMapping
-        :rtype: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace
+        :rtype: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -382,9 +384,9 @@ class OnlineExperimentWorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.OnlineExperimentWorkspace] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OnlineExperimentationWorkspace] = kwargs.pop("cls", None)
 
-        _request = build_online_experiment_workspaces_get_request(
+        _request = build_online_experimentation_workspaces_get_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             subscription_id=self._config.subscription_id,
@@ -417,7 +419,7 @@ class OnlineExperimentWorkspacesOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.OnlineExperimentWorkspace, response.json())
+            deserialized = _deserialize(_models.OnlineExperimentationWorkspace, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -428,7 +430,7 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.OnlineExperimentWorkspace, JSON, IO[bytes]],
+        resource: Union[_models.OnlineExperimentationWorkspace, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -452,7 +454,7 @@ class OnlineExperimentWorkspacesOperations:
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_online_experiment_workspaces_create_or_update_request(
+        _request = build_online_experimentation_workspaces_create_or_update_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             subscription_id=self._config.subscription_id,
@@ -502,27 +504,27 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: _models.OnlineExperimentWorkspace,
+        resource: _models.OnlineExperimentationWorkspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Create an experiment workspace, or update an existing workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Create an online experimentation workspace, or update an existing workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace
+        :type resource: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -535,23 +537,23 @@ class OnlineExperimentWorkspacesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Create an experiment workspace, or update an existing workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Create an online experimentation workspace, or update an existing workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param resource: Resource create parameters. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -564,23 +566,23 @@ class OnlineExperimentWorkspacesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Create an experiment workspace, or update an existing workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Create an online experimentation workspace, or update an existing workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -589,31 +591,31 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.OnlineExperimentWorkspace, JSON, IO[bytes]],
+        resource: Union[_models.OnlineExperimentationWorkspace, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Create an experiment workspace, or update an existing workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Create an online experimentation workspace, or update an existing workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param resource: Resource create parameters. Is one of the following types:
-         OnlineExperimentWorkspace, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace or JSON or
-         IO[bytes]
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+         OnlineExperimentationWorkspace, JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace or JSON
+         or IO[bytes]
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OnlineExperimentWorkspace] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OnlineExperimentationWorkspace] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -633,7 +635,7 @@ class OnlineExperimentWorkspacesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.OnlineExperimentWorkspace, response.json())
+            deserialized = _deserialize(_models.OnlineExperimentationWorkspace, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -651,13 +653,13 @@ class OnlineExperimentWorkspacesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.OnlineExperimentWorkspace].from_continuation_token(
+            return LROPoller[_models.OnlineExperimentationWorkspace].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.OnlineExperimentWorkspace](
+        return LROPoller[_models.OnlineExperimentationWorkspace](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -665,7 +667,7 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.OnlineExperimentWorkspacePatch, JSON, IO[bytes]],
+        properties: Union[_models.OnlineExperimentationWorkspacePatch, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -689,7 +691,7 @@ class OnlineExperimentWorkspacesOperations:
         else:
             _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_online_experiment_workspaces_update_request(
+        _request = build_online_experimentation_workspaces_update_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             subscription_id=self._config.subscription_id,
@@ -737,27 +739,27 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: _models.OnlineExperimentWorkspacePatch,
+        properties: _models.OnlineExperimentationWorkspacePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Patch an experiment workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Patch an online experimentation workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatch
+        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspacePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -770,23 +772,23 @@ class OnlineExperimentWorkspacesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Patch an experiment workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Patch an online experimentation workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -799,23 +801,23 @@ class OnlineExperimentWorkspacesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Patch an experiment workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Patch an online experimentation workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -824,31 +826,31 @@ class OnlineExperimentWorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.OnlineExperimentWorkspacePatch, JSON, IO[bytes]],
+        properties: Union[_models.OnlineExperimentationWorkspacePatch, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.OnlineExperimentWorkspace]:
-        """Patch an experiment workspace.
+    ) -> LROPoller[_models.OnlineExperimentationWorkspace]:
+        """Patch an online experimentation workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Is one of the following types:
-         OnlineExperimentWorkspacePatch, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspacePatch or
-         JSON or IO[bytes]
-        :return: An instance of LROPoller that returns OnlineExperimentWorkspace. The
-         OnlineExperimentWorkspace is compatible with MutableMapping
+         OnlineExperimentationWorkspacePatch, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspacePatch
+         or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns OnlineExperimentationWorkspace. The
+         OnlineExperimentationWorkspace is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.polling.LROPoller[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OnlineExperimentWorkspace] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OnlineExperimentationWorkspace] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -868,7 +870,7 @@ class OnlineExperimentWorkspacesOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.OnlineExperimentWorkspace, response.json())
+            deserialized = _deserialize(_models.OnlineExperimentationWorkspace, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -886,13 +888,13 @@ class OnlineExperimentWorkspacesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.OnlineExperimentWorkspace].from_continuation_token(
+            return LROPoller[_models.OnlineExperimentationWorkspace].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.OnlineExperimentWorkspace](
+        return LROPoller[_models.OnlineExperimentationWorkspace](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -910,7 +912,7 @@ class OnlineExperimentWorkspacesOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_online_experiment_workspaces_delete_request(
+        _request = build_online_experimentation_workspaces_delete_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             subscription_id=self._config.subscription_id,
@@ -953,12 +955,12 @@ class OnlineExperimentWorkspacesOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes an experiment workspace.
+        """Deletes an online experimentation workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the OnlineExperimentWorkspace. Required.
+        :param workspace_name: The name of the OnlineExperimentationWorkspace. Required.
         :type workspace_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -1011,21 +1013,21 @@ class OnlineExperimentWorkspacesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> Iterable["_models.OnlineExperimentWorkspace"]:
-        """Gets all experiment workspaces in a resource group.
+    ) -> ItemPaged["_models.OnlineExperimentationWorkspace"]:
+        """Gets all online experimentation workspaces in a resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :return: An iterator like instance of OnlineExperimentWorkspace
+        :return: An iterator like instance of OnlineExperimentationWorkspace
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OnlineExperimentWorkspace]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.OnlineExperimentationWorkspace]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1038,7 +1040,7 @@ class OnlineExperimentWorkspacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_online_experiment_workspaces_list_by_resource_group_request(
+                _request = build_online_experimentation_workspaces_list_by_resource_group_request(
                     resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
@@ -1076,7 +1078,7 @@ class OnlineExperimentWorkspacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OnlineExperimentWorkspace], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.OnlineExperimentationWorkspace], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1100,18 +1102,18 @@ class OnlineExperimentWorkspacesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.OnlineExperimentWorkspace"]:
-        """Gets all experiment workspaces in the specified subscription.
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.OnlineExperimentationWorkspace"]:
+        """Gets all online experimentation workspaces in the specified subscription.
 
-        :return: An iterator like instance of OnlineExperimentWorkspace
+        :return: An iterator like instance of OnlineExperimentationWorkspace
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.onlineexperimentation.models.OnlineExperimentWorkspace]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.onlineexperimentation.models.OnlineExperimentationWorkspace]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.OnlineExperimentWorkspace]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.OnlineExperimentationWorkspace]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1124,7 +1126,7 @@ class OnlineExperimentWorkspacesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_online_experiment_workspaces_list_by_subscription_request(
+                _request = build_online_experimentation_workspaces_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -1161,7 +1163,7 @@ class OnlineExperimentWorkspacesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.OnlineExperimentWorkspace], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.OnlineExperimentationWorkspace], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)

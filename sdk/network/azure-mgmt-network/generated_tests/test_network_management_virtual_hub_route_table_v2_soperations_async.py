@@ -26,7 +26,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             route_table_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperationsAsync(AzureMgmtRecor
                         {"destinationType": "str", "destinations": ["str"], "nextHopType": "str", "nextHops": ["str"]}
                     ],
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -65,7 +65,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 route_table_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,7 +78,7 @@ class TestNetworkManagementVirtualHubRouteTableV2SOperationsAsync(AzureMgmtRecor
         response = self.client.virtual_hub_route_table_v2_s.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -27,7 +27,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
                 resource_group_name=resource_group.name,
                 virtual_router_name="str",
                 peering_name="str",
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -41,7 +41,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             virtual_router_name="str",
             peering_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2024-05-01",
+                api_version="2024-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,7 +77,7 @@ class TestNetworkManagementVirtualRouterPeeringsOperationsAsync(AzureMgmtRecorde
         response = self.client.virtual_router_peerings.list(
             resource_group_name=resource_group.name,
             virtual_router_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

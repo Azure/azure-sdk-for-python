@@ -424,14 +424,14 @@ class TestDatalakeService(StorageRecordedTestCase):
         file_client = dir_client.get_file_client(file='testfile')
 
         # Mocks
-        self.dsc._blob_service_client.close = MagicMock()
+        self.dsc._blob_service_client.__exit__ = MagicMock()
         self.dsc._client.__exit__ = MagicMock()
         file_system_client._client.__exit__ = MagicMock()
-        file_system_client._datalake_client_for_blob_operation.close = MagicMock()
+        file_system_client._datalake_client_for_blob_operation.__exit__ = MagicMock()
         dir_client._client.__exit__ = MagicMock()
-        dir_client._datalake_client_for_blob_operation.close = MagicMock()
+        dir_client._datalake_client_for_blob_operation.__exit__ = MagicMock()
         file_client._client.__exit__ = MagicMock()
-        file_client._datalake_client_for_blob_operation.close = MagicMock()
+        file_client._datalake_client_for_blob_operation.__exit__ = MagicMock()
 
         # Act
         with self.dsc as dsc:
@@ -444,14 +444,14 @@ class TestDatalakeService(StorageRecordedTestCase):
                         pass
 
         # Assert
-        self.dsc._blob_service_client.close.assert_called_once()
+        self.dsc._blob_service_client.__exit__.assert_called_once()
         self.dsc._client.__exit__.assert_called_once()
         file_system_client._client.__exit__.assert_called_once()
-        file_system_client._datalake_client_for_blob_operation.close.assert_called_once()
+        file_system_client._datalake_client_for_blob_operation.__exit__.assert_called_once()
         dir_client._client.__exit__.assert_called_once()
-        dir_client._datalake_client_for_blob_operation.close.assert_called_once()
+        dir_client._datalake_client_for_blob_operation.__exit__.assert_called_once()
         file_client._client.__exit__.assert_called_once()
-        file_client._datalake_client_for_blob_operation.close.assert_called_once()
+        file_client._datalake_client_for_blob_operation.__exit__.assert_called_once()
 
     @DataLakePreparer()
     @recorded_by_proxy

@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import azure.mgmt.resource
+from azure.mgmt.resource.policy import PolicyClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
@@ -14,7 +14,7 @@ import pytest
 class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(azure.mgmt.resource.policy.PolicyClient)
+        self.client = self.create_mgmt_client(PolicyClient)
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy

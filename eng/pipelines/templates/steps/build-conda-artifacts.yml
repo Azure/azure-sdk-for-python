@@ -18,7 +18,7 @@ steps:
   - pwsh: |
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      python -m pip install "tools/azure-sdk-tools[build,conda]"
+      python -m pip install "eng/tools/azure-sdk-tools[build,conda]"
       python -m pip install disutils
       python -m pip install typing-extensions==4.12.2
     displayName: Install build script requirements

@@ -20,11 +20,11 @@ class TestComputeManagementSharedGalleryImagesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_shared_gallery_images_list(self, resource_group):
         response = self.client.shared_gallery_images.list(
             location="str",
             gallery_unique_name="str",
-            api_version="2020-09-30",
+            api_version="2024-03-03",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestComputeManagementSharedGalleryImagesOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_shared_gallery_images_get(self, resource_group):
         response = self.client.shared_gallery_images.get(
             location="str",
             gallery_unique_name="str",
             gallery_image_name="str",
-            api_version="2020-09-30",
+            api_version="2024-03-03",
         )
 
         # please add some check logic here by yourself

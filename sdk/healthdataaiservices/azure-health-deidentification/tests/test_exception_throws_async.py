@@ -29,20 +29,18 @@ class TestHealthDeidentificationExceptionThrows(DeidBaseTestCase):
                 location=storage_location,
                 prefix="no_files_in_this_folder",
             ),
-            target_location=TargetStorageLocation(
-                location=storage_location, prefix=self.OUTPUT_PATH
-            ),
-            operation=OperationType.SURROGATE,
-            data_type=DocumentDataType.PLAINTEXT,
+            target_location=TargetStorageLocation(location=storage_location, prefix=self.OUTPUT_PATH, overwrite=True),
+            operation_type=DeidentificationOperationType.SURROGATE,
         )
 
-        lro: AsyncLROPoller = await client.begin_create_job(jobname, job)
+        lro: AsyncLROPoller = await client.begin_deidentify_documents(jobname, job)
         with pytest.raises(HttpResponseError):
             await lro.wait()
 
         job = await client.get_job(jobname)
 
-        assert job.status == JobStatus.FAILED
+        assert job.status == OperationStatus.FAILED
         assert job.error is not None
-        assert job.error.code == "JobValidationError"
+        assert job.error.code == "EmptyJob"
+        assert job.error.message is not None
         assert len(job.error.message) > 10

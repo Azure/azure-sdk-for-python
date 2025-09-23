@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,11 +34,11 @@ def main():
     response = client.backups.get(
         resource_group_name="TestGroup",
         server_name="postgresqltestserver",
-        backup_name="daily_20210615T160516",
+        backup_name="daily_20250303T160516",
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2024-08-01/examples/BackupGet.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2025-01-01-preview/examples/BackupGet.json
 if __name__ == "__main__":
     main()

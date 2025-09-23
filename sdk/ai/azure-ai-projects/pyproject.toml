@@ -1,27 +1,17 @@
 [tool.mypy]
 python_version = "3.10"
 exclude = [
-  "downloaded",
-  # In run_mypy.py python version is hardcoded to 3.8. It does not allow
-  # obligatory named parameters as fun(a, *, b=1, c=2).
-  "sample_agents_vector_store_batch_enterprise_file_search_async\\.py",
-  # Error in typing caused by the typespec.
-  "sample_agents_with_file_search_attachment\\.py",
-  "sample_agents_with_code_interpreter_file_attachment\\.py",
-  "sample_agents_code_interpreter_attachment_enterprise_search\\.py",
-  "sample_agents_with_file_search_attachment_async\\.py",
-  "sample_agents_code_interpreter_attachment_enterprise_search_async\\.py",
-  "sample_agents_code_interpreter_attachment_enterprise_search_async\\.py",
-  "sample_agents_code_interpreter_attachment_async\\.py",
   # Chat completion client expects list of parent class type and gets child type instead
   "sample_chat_completions_with_azure_ai_inference_client_and_console_tracing\\.py",
   "sample_chat_completions_with_azure_ai_inference_client_and_azure_monitor_tracing\\.py",
   "sample_chat_completions_with_azure_ai_inference_client\\.py",
-  "sample_inference_client_from_connection.py"
 ]
 warn_unused_configs = true
 ignore_missing_imports = true
 follow_imports_for_stubs = false
+
+[tool.azure-sdk-build]
+verifytypes = false
 
 [tool.isort]
 profile = "black"
@@ -35,7 +25,4 @@ extend_skip_glob = [
   "*/doc/*",
   "*/.tox/*",
 ]
-
-[tool.azure-sdk-build]
-whl_no_aio= false
 

@@ -133,7 +133,7 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             return token
 
         token = cast(AccessTokenInfo, None)
-        for refresh_token in self._client.get_cached_refresh_tokens(scopes):
+        for refresh_token in self._client.get_cached_refresh_tokens(scopes, **kwargs):
             if "secret" in refresh_token:
                 token = await self._client.obtain_token_by_refresh_token(scopes, refresh_token["secret"], **kwargs)
                 if token:

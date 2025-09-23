@@ -1,2 +1,2 @@
-../../core/azure-core
--e ../../../tools/azure-sdk-tools
+-e ../../core/azure-core
+-e ../../../eng/tools/azure-sdk-tools

@@ -30,6 +30,7 @@ from ..models import (
     AnalyzeTextOptions,
     IndexStatisticsSummary,
     KnowledgeAgent,
+    KnowledgeSource,
 )
 
 
@@ -292,7 +293,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :param analyze_request: The text and analyzer or analysis components to test.
         :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
         :return: AnalyzeResult
-        :rtype: ~azure.search.documents.indexes.models.AnalyzeRequest
+        :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
@@ -487,7 +488,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """Get index level statistics for a search service.
 
         :return: Index statistics result.
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
@@ -503,7 +504,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             properties.
         :paramtype select: list[str]
         :return: List of Aliases
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -517,7 +518,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the alias names in an Azure Search service.
 
         :return: List of alias names
-        :rtype: ~azure.core.paging.AsyncItemPaged[str]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -554,7 +555,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag
         :paramtype match_condition: ~azure.core.MatchConditions
-         ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
 
         .. admonition:: Example:
 
@@ -733,9 +734,108 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """List the agents in an Azure Search service.
 
         :return: List of Knowledge Agents
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeAgent]
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
         return cast(AsyncItemPaged[KnowledgeAgent], self._client.knowledge_agents.list(**kwargs))
+
+    @distributed_trace_async
+    async def delete_knowledge_source(
+        self,
+        knowledge_source: Union[str, KnowledgeSource],
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> None:
+        """Deletes an existing knowledge source.
+
+        :param knowledge_source: The knowledge source name or object to delete.
+        :type knowledge_source: str or ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
+        kwargs.update(access_condition)
+        try:
+            source_name = knowledge_source.name  # type: ignore
+        except AttributeError:
+            source_name = knowledge_source
+        await self._client.knowledge_sources.delete(source_name=source_name, error_map=error_map, **kwargs)
+
+    @distributed_trace_async
+    async def create_knowledge_source(self, knowledge_source: KnowledgeSource, **kwargs: Any) -> KnowledgeSource:
+        """Creates a new knowledge source.
+
+        :param knowledge_source: The knowledge source object.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :return: The knowledge source created
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.knowledge_sources.create(knowledge_source, **kwargs)
+        return result
+
+    @distributed_trace_async
+    async def create_or_update_knowledge_source(
+        self,
+        knowledge_source: KnowledgeSource,
+        *,
+        match_condition: MatchConditions = MatchConditions.Unconditionally,
+        **kwargs: Any
+    ) -> KnowledgeSource:
+        """Creates a new knowledge source or updates an existing one.
+
+        :param knowledge_source: The knowledge source object.
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :keyword match_condition: The match condition to use upon the etag
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: The knowledge source created or updated
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the index doesn't exist.
+        :raises ~azure.core.exceptions.ResourceModifiedError: If the index has been modified in the server.
+        :raises ~azure.core.exceptions.ResourceNotModifiedError: If the index hasn't been modified in the server.
+        :raises ~azure.core.exceptions.ResourceNotFoundError: If the index doesn't exist.
+        :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        error_map, access_condition = get_access_conditions(knowledge_source, match_condition)
+        kwargs.update(access_condition)
+        result = await self._client.knowledge_sources.create_or_update(
+            source_name=knowledge_source.name,
+            knowledge_source=knowledge_source,
+            prefer="return=representation",
+            error_map=error_map,
+            **kwargs
+        )
+        return result
+
+    @distributed_trace_async
+    async def get_knowledge_source(self, name: str, **kwargs: Any) -> KnowledgeSource:
+        """
+
+        :param name: The name of the knowledge source to retrieve.
+        :type name: str
+        :return: KnowledgeSource object
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        result = await self._client.knowledge_sources.get(name, **kwargs)
+        return result
+
+    @distributed_trace
+    def list_knowledge_sources(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeSource]:
+        """List the knowledge sources in an Azure Search service.
+
+        :return: List of Knowledge Sources
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.KnowledgeSource]
+        :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
+        """
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        # pylint:disable=protected-access
+        return cast(AsyncItemPaged[KnowledgeSource], self._client.knowledge_sources.list(**kwargs))

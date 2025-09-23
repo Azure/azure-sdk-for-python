@@ -31,6 +31,12 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``bing_custom_search``"""
     CONNECTED_AGENT = "connected_agent"
     """Tool type ``connected_agent``"""
+    DEEP_RESEARCH = "deep_research"
+    """Tool type ``deep_research``"""
+    MCP = "mcp"
+    """Tool type ``mcp``"""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """Tool type ``computer_use_preview``"""
 
 
 class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -146,6 +152,19 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_semantic_hybrid``"""
 
 
+class ComputerUseEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The environment types supported by the computer use tool."""
+
+    WINDOWS = "windows"
+    """Windows environment"""
+    MAC = "mac"
+    """Mac environment"""
+    LINUX = "linux"
+    """Linux environment"""
+    BROWSER = "browser"
+    """Browser environment"""
+
+
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Terminal event indicating the successful end of a stream."""
 
@@ -163,18 +182,10 @@ class ErrorEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FilePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The possible values denoting the intended usage of a file."""
 
-    FINE_TUNE = "fine-tune"
-    """Indicates a file is used for fine tuning input."""
-    FINE_TUNE_RESULTS = "fine-tune-results"
-    """Indicates a file is used for fine tuning results."""
     AGENTS = "assistants"
     """Indicates a file is used as input to agents."""
     AGENTS_OUTPUT = "assistants_output"
     """Indicates a file is used as output by agents."""
-    BATCH = "batch"
-    """Indicates a file is used as input to ."""
-    BATCH_OUTPUT = "batch_output"
-    """Indicates a file is used as output by a vector store batch operation."""
     VISION = "vision"
     """Indicates a file is used as input to a vision operation."""
 
@@ -303,6 +314,21 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
 
 
+class MouseButton(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mouse button types supported by click actions."""
+
+    LEFT = "left"
+    """Left mouse button"""
+    RIGHT = "right"
+    """Right mouse button"""
+    WHEEL = "wheel"
+    """Mouse wheel button"""
+    BACK = "back"
+    """Back mouse button"""
+    FORWARD = "forward"
+    """Forward mouse button"""
+
+
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
@@ -405,6 +431,8 @@ class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a run step to create a message."""
     TOOL_CALLS = "tool_calls"
     """Represents a run step that calls tools."""
+    ACTIVITIES = "activities"
+    """Represents a run step with activities information."""
 
 
 class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

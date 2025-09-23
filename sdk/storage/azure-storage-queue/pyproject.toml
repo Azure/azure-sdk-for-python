@@ -3,4 +3,4 @@ mypy = true
 pyright = false
 type_check_samples = true
 verifytypes = true
-black = false
+black = true

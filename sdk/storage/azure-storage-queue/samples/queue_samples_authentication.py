@@ -40,13 +40,17 @@ class QueueAuthSamples(object):
 
     def authentication_by_connection_string(self):
         if self.connection_string is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: authentication_by_connection_string")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: authentication_by_connection_string"
+            )
             sys.exit(1)
 
         # Instantiate a QueueServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
         # [END auth_from_connection_string]
 
@@ -55,13 +59,17 @@ class QueueAuthSamples(object):
 
     def authentication_by_shared_key(self):
         if self.account_url is None or self.access_key is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: authentication_by_shared_key")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: authentication_by_shared_key"
+            )
             sys.exit(1)
 
         # Instantiate a QueueServiceClient using a shared access key
         # [START create_queue_service_client]
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient(account_url=self.account_url, credential=self.access_key)
         # [END create_queue_service_client]
 
@@ -70,16 +78,21 @@ class QueueAuthSamples(object):
 
     def authentication_by_oauth(self):
         if self.account_url is None:
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: authentication_by_oauth")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: authentication_by_oauth"
+            )
             sys.exit(1)
 
         # [START create_queue_service_client_oauth]
         # Get a token credential for authentication
         from azure.identity import DefaultAzureCredential
+
         token_credential = DefaultAzureCredential()
         # Instantiate a QueueServiceClient using a token credential
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient(account_url=self.account_url, credential=token_credential)
         # [END create_queue_service_client_oauth]
 
@@ -87,17 +100,22 @@ class QueueAuthSamples(object):
         properties = queue_service.get_service_properties()
 
     def authentication_by_shared_access_signature(self):
-        if (self.connection_string is None or
-            self.account_name is None or
-            self.access_key is None or
-            self.account_url is None
+        if (
+            self.connection_string is None
+            or self.account_name is None
+            or self.access_key is None
+            or self.account_url is None
         ):
-            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
-                  "Test: authentication_by_shared_access_signature")
+            print(
+                "Missing required environment variable(s). Please see specific test for more details."
+                + "\n"
+                + "Test: authentication_by_shared_access_signature"
+            )
             sys.exit(1)
 
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue import QueueServiceClient
+
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
@@ -108,7 +126,7 @@ class QueueAuthSamples(object):
             self.access_key,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
         token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
@@ -117,7 +135,7 @@ class QueueAuthSamples(object):
         properties = token_auth_queue_service.get_service_properties()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = QueueAuthSamples()
     sample.authentication_by_connection_string()
     sample.authentication_by_shared_key()

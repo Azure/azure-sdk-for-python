@@ -10,31 +10,21 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DocumentDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum of supported Data Types."""
+class DeidentificationOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of supported Operation Types."""
 
-    PLAINTEXT = "Plaintext"
-    """Plain text data type."""
-
-
-class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List of statuses a job can have."""
-
-    NOT_STARTED = "NotStarted"
-    """Job has been submitted and is waiting to be processed."""
-    RUNNING = "Running"
-    """Job has been started."""
-    SUCCEEDED = "Succeeded"
-    """Job has completed successfully. All documents have succeeded."""
-    PARTIAL_FAILED = "PartialFailed"
-    """Job has completed with at least a single document failing."""
-    FAILED = "Failed"
-    """Job has completed with all documents failing, or a validation failure."""
-    CANCELED = "Canceled"
-    """Job has been canceled after user request."""
+    REDACT = "Redact"
+    """Redact Operation will remove all entities of PHI and replace them with a placeholder value."""
+    SURROGATE = "Surrogate"
+    """Surrogation Operation will replace all entities of PHI with a surrogate value."""
+    TAG = "Tag"
+    """Tag Operation will detect all entities of PHI, their type, and return their locations in the
+    document."""
+    SURROGATE_ONLY = "SurrogateOnly"
+    """SurrogateOnly Operation will replace only specified entities of PHI with surrogate values."""
 
 
-class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum describing allowed operation states."""
 
     NOT_STARTED = "NotStarted"
@@ -49,18 +39,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum of supported Operation Types."""
-
-    REDACT = "Redact"
-    """Redact Operation will remove all entities of PHI and replace them with a placeholder value."""
-    SURROGATE = "Surrogate"
-    """Surrogation Operation will replace all entities of PHI with a surrogate value."""
-    TAG = "Tag"
-    """Tag Operation will detect all entities of PHI, their type, and return their locations in the
-    document."""
-
-
 class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """List of PHI Entities."""
 
@@ -70,7 +48,7 @@ class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account Number."""
     AGE = "Age"
     """Age."""
-    BIO_I_D = "BioID"
+    BIO_ID = "BioID"
     """Biological Identifier, such as a fingerprint or retinal scan."""
     CITY = "City"
     """City."""
@@ -90,9 +68,9 @@ class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health Plan ID Numbers."""
     HOSPITAL = "Hospital"
     """Hospital Name."""
-    I_D_NUM = "IDNum"
+    ID_NUM = "IDNum"
     """Id Number, eg. passport number."""
-    I_P_ADDRESS = "IPAddress"
+    IP_ADDRESS = "IPAddress"
     """IP Address."""
     LICENSE = "License"
     """License, eg. Driver's license or medical license."""
@@ -122,3 +100,14 @@ class PhiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Vehicle IDs, eg. license plate or VIN number."""
     ZIP = "Zip"
     """Zip Code."""
+
+
+class TextEncodingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Encoding type for text offset and length calculations."""
+
+    UTF8 = "Utf8"
+    """UTF-8 encoding."""
+    UTF16 = "Utf16"
+    """UTF-16 encoding. Primary encoding used by .NET, Java, and JavaScript."""
+    CODE_POINT = "CodePoint"
+    """CodePoint encoding. Primary encoding used by Python."""

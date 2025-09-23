@@ -66,8 +66,6 @@ setup(
     ),
     python_requires=">=3.9",
     install_requires=[
-        "promptflow-devkit>=1.17.1",
-        "promptflow-core>=1.17.1",
         "pyjwt>=2.8.0",
         # pickle support for credentials was added to this release
         "azure-identity>=1.16.0",
@@ -77,16 +75,13 @@ setup(
         "httpx>=0.25.1",
         # Dependencies added since Promptflow will soon be made optional
         "pandas>=2.1.2,<3.0.0",
-        "openai>=1.73.0",
+        "openai>=1.108.0",
         "ruamel.yaml>=0.17.10,<1.0.0",
         "msrest>=0.6.21",
         "Jinja2>=3.1.6",
+        "aiohttp>=3.0",
     ],
-    extras_require={
-        "redteam": [
-            "pyrit==0.8.1"
-        ]
-    },
+    extras_require={"redteam": ["pyrit==0.8.1", "duckdb==1.3.2"]},
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
         "Source": "https://github.com/Azure/azure-sdk-for-python",

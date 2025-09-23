@@ -41,7 +41,7 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
                 },
                 "type": "str",
             },
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
         response = self.client.management_group_network_manager_connections.get(
             management_group_id="str",
             network_manager_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
         response = self.client.management_group_network_manager_connections.delete(
             management_group_id="str",
             network_manager_connection_name="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestNetworkManagementManagementGroupNetworkManagerConnectionsOperations(Az
     def test_management_group_network_manager_connections_list(self, resource_group):
         response = self.client.management_group_network_manager_connections.list(
             management_group_id="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

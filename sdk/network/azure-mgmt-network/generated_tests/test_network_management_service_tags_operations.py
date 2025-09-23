@@ -23,7 +23,7 @@ class TestNetworkManagementServiceTagsOperations(AzureMgmtRecordedTestCase):
     def test_service_tags_list(self, resource_group):
         response = self.client.service_tags.list(
             location="str",
-            api_version="2024-05-01",
+            api_version="2024-07-01",
         )
 
         # please add some check logic here by yourself
