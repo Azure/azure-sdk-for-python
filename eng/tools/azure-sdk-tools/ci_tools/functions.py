@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
+from packaging import tags
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from packaging.requirements import Requirement
@@ -612,24 +613,7 @@ def get_interpreter_compatible_tags() -> List[str]:
     This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
     """
 
-    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
-
-    output = subprocess.run(
-        commands,
-        check=True,
-        capture_output=True,
-    ).stdout.decode(encoding="utf-8")
-
-    tag_strings = output.split(os.linesep)
-
-    index = 0
-    for index, value in enumerate(tag_strings):
-        if "Compatible tags" in value:
-            break
-
-    tags = tag_strings[index + 1 :]
-
-    return [tag.strip() for tag in tags if tag]
+    return [str(t) for t in tags.sys_tags()]
 
 
 def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
