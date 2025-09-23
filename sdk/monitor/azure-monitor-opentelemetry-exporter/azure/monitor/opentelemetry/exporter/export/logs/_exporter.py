@@ -189,6 +189,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             severity_level=severity_level,  # type: ignore
             properties=properties,
         )
+        if len(data.message) == 0:
+            data.message = "Log record body cannot be empty. Populating with default message from the exporter for this log record."
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
     return envelope
