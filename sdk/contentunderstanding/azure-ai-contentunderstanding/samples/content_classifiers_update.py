@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -93,9 +94,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create initial classifier using object model
@@ -120,14 +119,10 @@ async def main():
 
         # Get the classifier before update to verify initial state
         print(f"📋 Getting classifier '{classifier_id}' before update...")
-        classifier_before_update = await client.content_classifiers.get(
-            classifier_id=classifier_id
-        )
+        classifier_before_update = await client.content_classifiers.get(classifier_id=classifier_id)
 
         print(f"✅ Initial classifier state verified:")
-        print(
-            f"   Description: {getattr(classifier_before_update, 'description', 'N/A')}"
-        )
+        print(f"   Description: {getattr(classifier_before_update, 'description', 'N/A')}")
         print(f"   Tags: {getattr(classifier_before_update, 'tags', 'N/A')}")
 
         # Create updated classifier with only allowed properties (description and tags)
@@ -143,9 +138,7 @@ async def main():
         }
 
         # Update the classifier
-        print(
-            f"📝 Updating classifier '{classifier_id}' with new description and tags..."
-        )
+        print(f"📝 Updating classifier '{classifier_id}' with new description and tags...")
         response = await client.content_classifiers.update(
             classifier_id=classifier_id,
             resource=updated_classifier,
@@ -157,14 +150,10 @@ async def main():
 
         # Get the classifier after update to verify the changes persisted
         print(f"📋 Getting classifier '{classifier_id}' after update...")
-        classifier_after_update = await client.content_classifiers.get(
-            classifier_id=classifier_id
-        )
+        classifier_after_update = await client.content_classifiers.get(classifier_id=classifier_id)
 
         print(f"✅ Updated classifier state verified:")
-        print(
-            f"   Description: {getattr(classifier_after_update, 'description', 'N/A')}"
-        )
+        print(f"   Description: {getattr(classifier_after_update, 'description', 'N/A')}")
         print(f"   Tags: {getattr(classifier_after_update, 'tags', 'N/A')}")
 
         # Verify the changes were applied correctly
@@ -182,11 +171,11 @@ async def main():
         await client.content_classifiers.delete(classifier_id=classifier_id)
         print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Update.json
+    # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Update.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

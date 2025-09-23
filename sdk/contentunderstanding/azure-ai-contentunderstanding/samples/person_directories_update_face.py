@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -50,9 +51,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory
@@ -105,9 +104,7 @@ async def main():
             person_directory_id=directory_id,
             face_id=face_id,
         )
-        print(
-            f"📋 Initial face assignment: person_id={getattr(initial_face, 'person_id', 'N/A')}"
-        )
+        print(f"📋 Initial face assignment: person_id={getattr(initial_face, 'person_id', 'N/A')}")
 
         # Update the face to associate it with person 2
         print(f"🔄 Updating face to associate with person 2...")

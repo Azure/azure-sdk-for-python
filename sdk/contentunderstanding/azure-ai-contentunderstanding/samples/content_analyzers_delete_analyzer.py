@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -56,12 +57,8 @@ async def main() -> None:
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
-        analyzer_id = (
-            f"sdk-sample-analyzer-to-delete-{int(asyncio.get_event_loop().time())}"
-        )
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        analyzer_id = f"sdk-sample-analyzer-to-delete-{int(asyncio.get_event_loop().time())}"
 
         # First, create an analyzer to delete (for demo purposes)
         print(f"🔧 Creating analyzer '{analyzer_id}' for deletion demo...")
@@ -94,10 +91,10 @@ async def main() -> None:
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
-
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

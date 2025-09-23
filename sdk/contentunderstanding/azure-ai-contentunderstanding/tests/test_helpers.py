@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,8 +19,10 @@ from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCa
 
 from devtools_testutils import is_live, is_live_and_not_recording
 
+
 class PollerType(Enum):
     """Enum to distinguish different types of pollers for operation ID extraction."""
+
     ANALYZER_CREATION = "analyzer_creation"
     ANALYZE_CALL = "analyze_call"
     CLASSIFIER_CREATION = "classifier_creation"
@@ -33,12 +36,14 @@ def generate_analyzer_id_sync(client, test_name: str) -> str:
         client.content_analyzers.delete(analyzer_id=analyzer_id)
     return analyzer_id
 
+
 async def generate_analyzer_id_async(client, test_name: str) -> str:
     """Generate a unique analyzer ID with current date, time, and GUID."""
     analyzer_id = f"python-sdk-analyzer-async-{test_name}"
     if is_live():
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
     return analyzer_id
+
 
 def generate_classifier_id_sync(client, test_name: str) -> str:
     """Generate a unique classifier ID with current date, time, and GUID (sync version)."""
@@ -60,21 +65,21 @@ async def generate_classifier_id_async(client, test_name: str) -> str:
 
 def extract_operation_id_from_poller(poller: Any, poller_type: PollerType) -> str:
     """Extract operation ID from an LROPoller or AsyncLROPoller.
-    
+
     The poller stores the initial response in `_initial_response`, which contains
     the Operation-Location header. The extraction pattern depends on the poller type:
     - AnalyzerCreation: https://endpoint/contentunderstanding/operations/{operation_id}?api-version=...
     - AnalyzeCall: https://endpoint/contentunderstanding/analyzerResults/{operation_id}?api-version=...
     - ClassifierCreation: https://endpoint/contentunderstanding/operations/{operation_id}?api-version=...
     - ClassifyCall: https://endpoint/contentunderstanding/classifierResults/{operation_id}?api-version=...
-    
+
     Args:
         poller: The LROPoller or AsyncLROPoller instance
         poller_type: The type of poller (ANALYZER_CREATION, ANALYZE_CALL, CLASSIFIER_CREATION, or CLASSIFY_CALL) - REQUIRED
-        
+
     Returns:
         str: The operation ID extracted from the poller
-        
+
     Raises:
         ValueError: If no operation ID can be extracted from the poller or if poller_type is not provided
     """
@@ -87,7 +92,7 @@ def extract_operation_id_from_poller(poller: Any, poller_type: PollerType) -> st
     print(f"Operation-Location header: {operation_location}")
     print(f"Poller type: {poller_type}")
     print("---------------")
-    
+
     if operation_location:
         if poller_type == PollerType.ANALYZER_CREATION or poller_type == PollerType.CLASSIFIER_CREATION:
             # Pattern: https://endpoint/.../operations/{operation_id}?api-version=...
@@ -104,18 +109,20 @@ def extract_operation_id_from_poller(poller: Any, poller_type: PollerType) -> st
             if "/classifierResults/" in operation_location:
                 operation_id = operation_location.split("/classifierResults/")[1].split("?")[0]
                 return operation_id
-    
+
     raise ValueError(f"Could not extract operation ID from poller for type {poller_type}")
 
 
-def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentAnalyzer:
+def new_simple_content_analyzer_object(
+    analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+) -> ContentAnalyzer:
     """Create a simple ContentAnalyzer object with default configuration.
-    
+
     Args:
         analyzer_id: The analyzer ID
         description: Optional description for the analyzer
         tags: Optional tags for the analyzer
-        
+
     Returns:
         ContentAnalyzer: A configured ContentAnalyzer object
     """
@@ -123,7 +130,7 @@ def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[s
         description = f"test analyzer: {analyzer_id}"
     if tags is None:
         tags = {"test_type": "simple"}
-        
+
     return ContentAnalyzer(
         base_analyzer_id="prebuilt-documentAnalyzer",
         config=ContentAnalyzerConfig(
@@ -151,14 +158,16 @@ def new_simple_content_analyzer_object(analyzer_id: str, description: Optional[s
     )
 
 
-def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentAnalyzer:
+def new_marketing_video_analyzer_object(
+    analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+) -> ContentAnalyzer:
     """Create a marketing video ContentAnalyzer object based on the marketing video template.
-    
+
     Args:
         analyzer_id: The analyzer ID
         description: Optional description for the analyzer
         tags: Optional tags for the analyzer
-        
+
     Returns:
         ContentAnalyzer: A configured ContentAnalyzer object for video analysis
     """
@@ -166,7 +175,7 @@ def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[
         description = f"marketing video analyzer: {analyzer_id}"
     if tags is None:
         tags = {"test_type": "marketing_video"}
-        
+
     return ContentAnalyzer(
         base_analyzer_id="prebuilt-videoAnalyzer",
         config=ContentAnalyzerConfig(
@@ -179,14 +188,16 @@ def new_marketing_video_analyzer_object(analyzer_id: str, description: Optional[
     )
 
 
-def new_simple_classifier_schema(classifier_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentClassifier:
+def new_simple_classifier_schema(
+    classifier_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+) -> ContentClassifier:
     """Create a simple ContentClassifier object with default configuration.
-    
+
     Args:
         classifier_id: The classifier ID
         description: Optional description for the classifier
         tags: Optional tags for the classifier
-        
+
     Returns:
         ContentClassifier: A configured ContentClassifier object
     """
@@ -194,7 +205,7 @@ def new_simple_classifier_schema(classifier_id: str, description: Optional[str] 
         description = f"test classifier: {classifier_id}"
     if tags is None:
         tags = {"test_type": "simple"}
-        
+
     return ContentClassifier(
         categories={
             "Loan application": ClassifierCategory(
@@ -213,15 +224,17 @@ def new_simple_classifier_schema(classifier_id: str, description: Optional[str] 
     )
 
 
-def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None) -> ContentClassifier:
+def new_enhanced_classifier_schema(
+    classifier_id: str, analyzer_id: str, description: Optional[str] = None, tags: Optional[Dict[str, str]] = None
+) -> ContentClassifier:
     """Create an enhanced ContentClassifier object that uses custom analyzers for specific categories.
-    
+
     Args:
         classifier_id: The classifier ID
         analyzer_id: The analyzer ID to use for loan applications
         description: Optional description for the classifier
         tags: Optional tags for the classifier
-        
+
     Returns:
         ContentClassifier: A configured enhanced ContentClassifier object
     """
@@ -229,16 +242,16 @@ def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, descrip
         description = f"enhanced classifier: {classifier_id}"
     if tags is None:
         tags = {"test_type": "enhanced"}
-        
+
     return ContentClassifier(
         categories={
             "Loan application": ClassifierCategory(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation.",
-                analyzer_id=analyzer_id  # Use custom analyzer for loan applications
+                analyzer_id=analyzer_id,  # Use custom analyzer for loan applications
             ),
             "Invoice": ClassifierCategory(
                 description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
-                analyzer_id="prebuilt-invoice"  # Use prebuilt invoice analyzer
+                analyzer_id="prebuilt-invoice",  # Use prebuilt invoice analyzer
             ),
             "Bank_Statement": ClassifierCategory(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
@@ -253,11 +266,11 @@ def new_enhanced_classifier_schema(classifier_id: str, analyzer_id: str, descrip
 
 def assert_poller_properties(poller: Any, poller_name: str = "Poller") -> None:
     """Assert common poller properties for any LROPoller or AsyncLROPoller.
-    
+
     Args:
         poller: The LROPoller or AsyncLROPoller instance to validate
         poller_name: Optional name for the poller in log messages
-        
+
     Raises:
         AssertionError: If any poller property assertion fails
     """
@@ -270,41 +283,45 @@ def assert_poller_properties(poller: Any, poller_name: str = "Poller") -> None:
 
 def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str = "Analysis result") -> None:
     """Assert simple content analyzer result properties and field extraction.
-    
+
     Args:
         analysis_result: The analysis result object to validate
         result_name: Optional name for the result in log messages
-        
+
     Raises:
         AssertionError: If any analysis result property assertion fails
     """
     print(f"Validating {result_name} properties")
     assert analysis_result is not None, f"{result_name} should not be None"
-    assert analysis_result.__class__.__name__ == "AnalyzeResult", f"{result_name} should be AnalyzeResult, got {analysis_result.__class__.__name__}"
+    assert (
+        analysis_result.__class__.__name__ == "AnalyzeResult"
+    ), f"{result_name} should be AnalyzeResult, got {analysis_result.__class__.__name__}"
     assert analysis_result.contents is not None, f"{result_name} should have contents"
     assert len(analysis_result.contents) > 0, f"{result_name} should have at least one content"
-    
+
     print(f"{result_name} properties verified successfully")
 
     # Verify fields node exists in the first result of contents
-    
+
     first_content = analysis_result.contents[0]
-    assert hasattr(first_content, 'fields'), "First content should have fields"
+    assert hasattr(first_content, "fields"), "First content should have fields"
     print(f"Verified fields node exists in first result")
 
     # Verify total_amount field exists and equals 110
     fields = first_content.fields
-    
+
     # Fields is expected to be a dictionary
     assert isinstance(fields, dict), f"Fields should be a dictionary, got {type(fields)}"
-    assert 'total_amount' in fields, f"Fields should contain total_amount. Available fields: {list(fields.keys())}"
-    
-    total_amount_field = fields['total_amount']
+    assert "total_amount" in fields, f"Fields should contain total_amount. Available fields: {list(fields.keys())}"
+
+    total_amount_field = fields["total_amount"]
     assert total_amount_field is not None, "total_amount field should not be None"
-    assert total_amount_field.__class__.__name__ == "NumberField", f"total_amount field should be of type NumberField, got {total_amount_field.__class__.__name__}"
+    assert (
+        total_amount_field.__class__.__name__ == "NumberField"
+    ), f"total_amount field should be of type NumberField, got {total_amount_field.__class__.__name__}"
 
     total_amount_value = total_amount_field.value
-    
+
     print(f"Total amount field value: {total_amount_value}")
     assert total_amount_value == 110, f"Expected total_amount to be 110, but got {total_amount_value}"
     print(f"Total amount field validation successful")
@@ -312,133 +329,151 @@ def assert_simple_content_analyzer_result(analysis_result: Any, result_name: str
 
 def assert_classifier_result(classifier_result: Any, result_name: str = "Classifier result") -> None:
     """Assert classifier result properties and classification.
-    
+
     Args:
         classifier_result: The classifier result object to validate
         result_name: Optional name for the result in log messages
-        
+
     Raises:
         AssertionError: If any classifier result property assertion fails
     """
     print(f"Validating {result_name} properties")
     assert classifier_result is not None, f"{result_name} should not be None"
-    assert classifier_result.__class__.__name__ == "ClassifyResult", f"{result_name} should be ClassifyResult, got {classifier_result.__class__.__name__}"
+    assert (
+        classifier_result.__class__.__name__ == "ClassifyResult"
+    ), f"{result_name} should be ClassifyResult, got {classifier_result.__class__.__name__}"
     assert classifier_result.contents is not None, f"{result_name} should have contents"
     assert len(classifier_result.contents) > 0, f"{result_name} should have at least one content"
-    
+
     print(f"{result_name} properties verified successfully")
 
     # Verify each content has category and expected page ranges
-    expected_categories_and_pages = [
-        ("Invoice", 1, 1),
-        ("Bank_Statement", 2, 3),
-        ("Loan application", 4, 4)
-    ]
-    
-    assert len(classifier_result.contents) == len(expected_categories_and_pages), f"Expected {len(expected_categories_and_pages)} contents, got {len(classifier_result.contents)}"
-    
+    expected_categories_and_pages = [("Invoice", 1, 1), ("Bank_Statement", 2, 3), ("Loan application", 4, 4)]
+
+    assert len(classifier_result.contents) == len(
+        expected_categories_and_pages
+    ), f"Expected {len(expected_categories_and_pages)} contents, got {len(classifier_result.contents)}"
+
     for i, (expected_category, expected_start_page, expected_end_page) in enumerate(expected_categories_and_pages):
         content = classifier_result.contents[i]
-        assert hasattr(content, 'category'), f"Content {i} should have category"
+        assert hasattr(content, "category"), f"Content {i} should have category"
         assert content.category is not None, f"Content {i} category should not be None"
-        assert content.category == expected_category, f"Content {i} expected category '{expected_category}', got '{content.category}'"
-        
-        assert hasattr(content, 'start_page_number'), f"Content {i} should have start_page_number"
-        assert hasattr(content, 'end_page_number'), f"Content {i} should have end_page_number"
-        assert content.start_page_number == expected_start_page, f"Content {i} expected start page {expected_start_page}, got {content.start_page_number}"
-        assert content.end_page_number == expected_end_page, f"Content {i} expected end page {expected_end_page}, got {content.end_page_number}"
-        
+        assert (
+            content.category == expected_category
+        ), f"Content {i} expected category '{expected_category}', got '{content.category}'"
+
+        assert hasattr(content, "start_page_number"), f"Content {i} should have start_page_number"
+        assert hasattr(content, "end_page_number"), f"Content {i} should have end_page_number"
+        assert (
+            content.start_page_number == expected_start_page
+        ), f"Content {i} expected start page {expected_start_page}, got {content.start_page_number}"
+        assert (
+            content.end_page_number == expected_end_page
+        ), f"Content {i} expected end page {expected_end_page}, got {content.end_page_number}"
+
         print(f"Content {i} category: {content.category}, pages: {content.start_page_number}-{content.end_page_number}")
 
 
-def save_analysis_result_to_file(analysis_result: Any, test_name: str, test_py_file_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_analysis_result_to_file(
+    analysis_result: Any,
+    test_name: str,
+    test_py_file_dir: str,
+    identifier: Optional[str] = None,
+    output_dir: str = "test_output",
+) -> str:
     """Save analysis result to output file using pytest naming convention.
-    
+
     Args:
         analysis_result: The analysis result object to save
         test_name: Name of the test case (e.g., function name)
         test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier for the result (e.g., analyzer_id)
         output_dir: Directory name to save the output file (default: "test_output")
-        
+
     Returns:
         str: Path to the saved output file
-        
+
     Raises:
         OSError: If there are issues creating directory or writing file
     """
     # Create output directory if it doesn't exist
     output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
-    
+
     # Generate output filename with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
+
     # Build filename with test name and optional identifier
     if identifier:
         output_filename = f"{test_name}_{identifier}_{timestamp}.json"
     else:
         output_filename = f"{test_name}_{timestamp}.json"
-    
+
     saved_file_path = os.path.join(output_dir_path, output_filename)
-    
+
     # Save the analysis result
     with open(saved_file_path, "w") as output_file:
         json.dump(analysis_result.as_dict(), output_file, indent=2)
-    
+
     print(f"Analysis result saved to: {saved_file_path}")
     return saved_file_path
 
 
-def save_classifier_result_to_file(classifier_result: Any, test_name: str, test_py_file_dir: str, identifier: Optional[str] = None, output_dir: str = "test_output") -> str:
+def save_classifier_result_to_file(
+    classifier_result: Any,
+    test_name: str,
+    test_py_file_dir: str,
+    identifier: Optional[str] = None,
+    output_dir: str = "test_output",
+) -> str:
     """Save classifier result to output file using pytest naming convention.
-    
+
     Args:
         classifier_result: The classifier result object to save
         test_name: Name of the test case (e.g., function name)
         test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier for the result (e.g., classifier_id)
         output_dir: Directory name to save the output file (default: "test_output")
-        
+
     Returns:
         str: Path to the saved output file
-        
+
     Raises:
         OSError: If there are issues creating directory or writing file
     """
     # Create output directory if it doesn't exist
     output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
-    
+
     # Generate output filename with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    
+
     # Build filename with test name and optional identifier
     if identifier:
         output_filename = f"{test_name}_{identifier}_{timestamp}.json"
     else:
         output_filename = f"{test_name}_{timestamp}.json"
-    
+
     saved_file_path = os.path.join(output_dir_path, output_filename)
-    
+
     # Save the classifier result
     with open(saved_file_path, "w") as output_file:
         json.dump(classifier_result.as_dict(), output_file, indent=2)
-    
+
     print(f"Classifier result saved to: {saved_file_path}")
     return saved_file_path
 
 
 def save_keyframe_image_to_file(
-    image_content: bytes, 
-    keyframe_id: str, 
-    test_name: str, 
-    test_py_file_dir: str, 
+    image_content: bytes,
+    keyframe_id: str,
+    test_name: str,
+    test_py_file_dir: str,
     identifier: Optional[str] = None,
-    output_dir: str = "test_output"
+    output_dir: str = "test_output",
 ) -> str:
     """Save keyframe image to output file using pytest naming convention.
-    
+
     Args:
         image_content: The binary image content to save
         keyframe_id: The keyframe ID (e.g., "keyFrame.1")
@@ -446,33 +481,33 @@ def save_keyframe_image_to_file(
         test_py_file_dir: Directory where pytest files are located
         identifier: Optional unique identifier to avoid conflicts (e.g., analyzer_id)
         output_dir: Directory name to save the output file (default: "test_output")
-        
+
     Returns:
         str: Path to the saved image file
-        
+
     Raises:
         OSError: If there are issues creating directory or writing file
     """
     # Generate timestamp and frame ID
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    frame_id = keyframe_id.replace('keyFrame.', '')
-    
+    frame_id = keyframe_id.replace("keyFrame.", "")
+
     # Create output directory if it doesn't exist
     output_dir_path = os.path.join(test_py_file_dir, output_dir)
     os.makedirs(output_dir_path, exist_ok=True)
-    
+
     # Generate output filename with optional identifier to avoid conflicts
     if identifier:
         output_filename = f"{test_name}_{identifier}_{timestamp}_{frame_id}.jpg"
     else:
         output_filename = f"{test_name}_{timestamp}_{frame_id}.jpg"
-    
+
     saved_file_path = os.path.join(output_dir_path, output_filename)
-    
+
     # Write the image content to file
     with open(saved_file_path, "wb") as image_file:
         image_file.write(image_content)
-    
+
     print(f"Image file saved to: {saved_file_path}")
     return saved_file_path
 
@@ -481,42 +516,40 @@ def save_keyframe_image_to_file(
 def generate_person_directory_id_sync(client, test_name: str) -> str:
     """Generate a unique person directory ID using test name (sync version)."""
     person_directory_id = f"pd-sync-{test_name}"
-    
+
     # Always attempt to delete any existing directory first to avoid conflicts
     try:
         client.person_directories.delete(person_directory_id=person_directory_id)
     except Exception:
         # Ignore errors if directory doesn't exist
         pass
-    
+
     return person_directory_id
 
 
 async def generate_person_directory_id_async(client, test_name: str) -> str:
     """Generate a unique person directory ID using test name (async version)."""
     person_directory_id = f"pd-async-{test_name}"
-    
+
     # Always attempt to delete any existing directory first to avoid conflicts
     try:
         await client.person_directories.delete(person_directory_id=person_directory_id)
     except Exception:
         # Ignore errors if directory doesn't exist
         pass
-    
+
     return person_directory_id
-
-
 
 
 def read_image_bytes(image_path: str) -> bytes:
     """Read image file and return raw bytes.
-    
+
     Args:
         image_path: Path to the image file
-        
+
     Returns:
         bytes: Raw image data as bytes
-        
+
     Raises:
         FileNotFoundError: If the image file doesn't exist
         OSError: If there are issues reading the file
@@ -527,10 +560,10 @@ def read_image_bytes(image_path: str) -> bytes:
 
 def get_test_data_path(relative_path: str) -> str:
     """Get the absolute path to test data files.
-    
+
     Args:
         relative_path: Relative path from the test data directory
-        
+
     Returns:
         str: Absolute path to the test data file
     """
@@ -540,7 +573,7 @@ def get_test_data_path(relative_path: str) -> str:
 
 def get_enrollment_data_path() -> str:
     """Get the absolute path to the enrollment data directory.
-    
+
     Returns:
         str: Absolute path to the enrollment data directory
     """
@@ -549,11 +582,11 @@ def get_enrollment_data_path() -> str:
 
 def get_test_image_path(image_name: str) -> str:
     """Get the absolute path to a test image.
-    
+
     Args:
         image_name: Name of the image file
-        
+
     Returns:
         str: Absolute path to the test image
     """
-    return get_test_data_path(f"face/{image_name}") 
+    return get_test_data_path(f"face/{image_name}")

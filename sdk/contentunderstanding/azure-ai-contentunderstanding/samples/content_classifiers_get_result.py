@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -97,9 +98,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create a custom classifier using object model
@@ -142,17 +141,11 @@ async def main():
         print(f"✅ Classification completed successfully!")
 
         # Extract operation ID for get_result
-        classification_operation_id = extract_operation_id_from_poller(
-            classification_poller, PollerType.CLASSIFY_CALL
-        )
-        print(
-            f"📋 Extracted classification operation ID: {classification_operation_id}"
-        )
+        classification_operation_id = extract_operation_id_from_poller(classification_poller, PollerType.CLASSIFY_CALL)
+        print(f"📋 Extracted classification operation ID: {classification_operation_id}")
 
         # Get the classification result using the operation ID
-        print(
-            f"🔍 Getting classification result using operation ID '{classification_operation_id}'..."
-        )
+        print(f"🔍 Getting classification result using operation ID '{classification_operation_id}'...")
         operation_status = await client.content_classifiers.get_result(
             operation_id=classification_operation_id,
         )
@@ -164,9 +157,7 @@ async def main():
         # The actual classification result is in operation_status.result
         operation_result = getattr(operation_status, "result", None)
         if operation_result is not None:
-            print(
-                f"   Result contains {len(getattr(operation_result, 'contents', []))} contents"
-            )
+            print(f"   Result contains {len(getattr(operation_result, 'contents', []))} contents")
 
         # Save the classification result to a file
         saved_file_path = save_json_to_file(
@@ -180,11 +171,11 @@ async def main():
         await client.content_classifiers.delete(classifier_id=classifier_id)
         print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentClassifiers_GetResult.json
+    # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_GetResult.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

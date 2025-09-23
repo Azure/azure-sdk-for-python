@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -99,9 +100,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create a custom classifier using object model
@@ -125,10 +124,10 @@ async def main():
         print(f"✅ Classifier '{classifier_id}' created successfully!")
 
         # Demonstrate URL classification using the new URL parameter
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("🌐 CLASSIFYING WITH URL PARAMETER")
-        print("="*60)
-        
+        print("=" * 60)
+
         mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
         print(f"🌐 Classifying document from URL: {mixed_docs_url}")
 
@@ -161,10 +160,10 @@ async def main():
         print(f"💾 URL Classification result saved to: {url_saved_file_path}")
 
         # Demonstrate data classification using the new data parameter
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("📄 CLASSIFYING WITH DATA PARAMETER")
-        print("="*60)
-        
+        print("=" * 60)
+
         # Read the mixed financial docs PDF file
         pdf_path = "sample_files/mixed_financial_docs.pdf"
         print(f"📄 Reading document file: {pdf_path}")
@@ -204,11 +203,11 @@ async def main():
         await client.content_classifiers.delete(classifier_id=classifier_id)
         print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Classify.json
+    # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_Classify.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

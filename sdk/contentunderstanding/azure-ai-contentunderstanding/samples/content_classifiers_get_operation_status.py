@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -94,15 +95,11 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         classifier_id = f"sdk-sample-clf-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # First, create a classifier to get an operation ID (for demo purposes)
-        print(
-            f"🔧 Creating classifier '{classifier_id}' to demonstrate operation status..."
-        )
+        print(f"🔧 Creating classifier '{classifier_id}' to demonstrate operation status...")
 
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
@@ -117,9 +114,7 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(
-            poller, PollerType.CLASSIFIER_CREATION
-        )
+        operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
         print(f"📋 Extracted creation operation ID: {operation_id}")
 
         # Get operation status
@@ -151,11 +146,11 @@ async def main():
         await client.content_classifiers.delete(classifier_id=classifier_id)
         print(f"✅ Classifier '{classifier_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentClassifiers_GetOperationStatus.json
+    # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_GetOperationStatus.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

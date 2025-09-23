@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,9 +49,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         print(f"📋 Listing all available analyzers...")
 
         # List all analyzers
@@ -81,9 +80,7 @@ async def main():
             print()
 
         # Show summary statistics
-        prebuilt_count = sum(
-            1 for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-")
-        )
+        prebuilt_count = sum(1 for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-"))
         custom_count = len(analyzers) - prebuilt_count
 
         print(f"📊 Summary:")
@@ -92,21 +89,17 @@ async def main():
         print(f"   Custom analyzers: {custom_count}")
 
         # Check for specific prebuilt analyzers
-        prebuilt_ids = [
-            analyzer.analyzer_id
-            for analyzer in analyzers
-            if analyzer.analyzer_id.startswith("prebuilt-")
-        ]
+        prebuilt_ids = [analyzer.analyzer_id for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-")]
         if "prebuilt-documentAnalyzer" in prebuilt_ids:
             print(f"   ✅ prebuilt-documentAnalyzer is available")
         if "prebuilt-videoAnalyzer" in prebuilt_ids:
             print(f"   ✅ prebuilt-videoAnalyzer is available")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_List.json
+    # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_List.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

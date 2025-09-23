@@ -22,11 +22,7 @@ from ._operations import ContentClassifiersOperations as ContentClassifiersOpera
 
 JSON = MutableMapping[str, Any]
 
-__all__: List[str] = [
-    "FacesOperations",
-    "ContentAnalyzersOperations",
-    "ContentClassifiersOperations"
-]
+__all__: List[str] = ["FacesOperations", "ContentAnalyzersOperations", "ContentClassifiersOperations"]
 
 
 def patch_sdk():
@@ -43,14 +39,9 @@ def patch_sdk():
 
 class FacesOperations(FacesOperationsGenerated):
     """Extended FacesOperations with improved detect method overloads."""
+
     @overload
-    async def detect(
-        self,
-        *,
-        url: str,
-        max_detected_faces: Optional[int] = None,
-        **kwargs: Any
-    ) -> DetectFacesResult:
+    async def detect(self, *, url: str, max_detected_faces: Optional[int] = None, **kwargs: Any) -> DetectFacesResult:
         """Detect faces using image URL.
 
         :keyword url: Image URL. Required.
@@ -64,11 +55,7 @@ class FacesOperations(FacesOperationsGenerated):
 
     @overload
     async def detect(
-        self,
-        *,
-        data: bytes,
-        max_detected_faces: Optional[int] = None,
-        **kwargs: Any
+        self, *, data: bytes, max_detected_faces: Optional[int] = None, **kwargs: Any
     ) -> DetectFacesResult:
         """Detect faces using image data.
 
@@ -82,13 +69,7 @@ class FacesOperations(FacesOperationsGenerated):
         """
 
     @overload
-    async def detect(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> DetectFacesResult:
+    async def detect(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> DetectFacesResult:
         """Detect faces in an image.
 
         :param body: Required.
@@ -103,11 +84,7 @@ class FacesOperations(FacesOperationsGenerated):
 
     @overload
     async def detect(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> DetectFacesResult:
         """Detect faces in an image.
 
@@ -140,11 +117,8 @@ class FacesOperations(FacesOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Validate that url and data are not provided together
-        if ('url' in kwargs and kwargs['url'] is not None and
-                'data' in kwargs and kwargs['data'] is not None):
-            raise ValueError(
-                "Cannot provide both 'url' and 'data' parameters simultaneously"
-            )
+        if "url" in kwargs and kwargs["url"] is not None and "data" in kwargs and kwargs["data"] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
 
         # Handle bytes data - no conversion needed, pass through directly
         # The original detect method will handle bytes data appropriately
@@ -155,6 +129,7 @@ class FacesOperations(FacesOperationsGenerated):
 
 class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
     """Extended ContentAnalyzersOperations with url/data mutual exclusivity enforcement."""
+
     @overload
     async def begin_analyze(
         self,
@@ -292,7 +267,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
 
     @distributed_trace_async
     async def begin_analyze(
-            self, analyzer_id: str, *args: Any, **kwargs: Any
+        self, analyzer_id: str, *args: Any, **kwargs: Any
     ) -> AsyncLROPoller[_models.AnalyzeResult]:  # type: ignore[override]
         """Extract content and fields from input with url/data mutual exclusivity.
 
@@ -314,24 +289,24 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Validate that url and data are not provided together
-        if ('url' in kwargs and kwargs['url'] is not None and
-                'data' in kwargs and kwargs['data'] is not None):
-            raise ValueError(
-                "Cannot provide both 'url' and 'data' parameters simultaneously"
-            )
+        if "url" in kwargs and kwargs["url"] is not None and "data" in kwargs and kwargs["data"] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
 
         # Handle bytes data by calling begin_analyze_binary for better efficiency
         # Only route to begin_analyze_binary when:
         # 1. data is provided and is bytes (raw binary data)
         # 2. inputs is None (begin_analyze_binary doesn't support inputs parameter)
-        if ('data' in kwargs and kwargs['data'] is not None and
-                isinstance(kwargs['data'], bytes) and
-                ('inputs' not in kwargs or kwargs.get('inputs') is None)):
-            data_bytes = kwargs.pop('data')
+        if (
+            "data" in kwargs
+            and kwargs["data"] is not None
+            and isinstance(kwargs["data"], bytes)
+            and ("inputs" not in kwargs or kwargs.get("inputs") is None)
+        ):
+            data_bytes = kwargs.pop("data")
             # Extract parameters that begin_analyze_binary supports
-            string_encoding = kwargs.pop('string_encoding', None)
-            processing_location = kwargs.pop('processing_location', None)
-            content_type = kwargs.pop('content_type', 'application/octet-stream')
+            string_encoding = kwargs.pop("string_encoding", None)
+            processing_location = kwargs.pop("processing_location", None)
+            content_type = kwargs.pop("content_type", "application/octet-stream")
 
             return await super().begin_analyze_binary(
                 analyzer_id=analyzer_id,
@@ -348,6 +323,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
 
 class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
     """Extended ContentClassifiersOperations with url/data mutual exclusivity enforcement."""
+
     @overload
     async def begin_classify(
         self,
@@ -470,7 +446,7 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
 
     @distributed_trace_async
     async def begin_classify(
-            self, classifier_id: str, *args: Any, **kwargs: Any
+        self, classifier_id: str, *args: Any, **kwargs: Any
     ) -> AsyncLROPoller[_models.ClassifyResult]:  # type: ignore[override]
         """Classify content with url/data mutual exclusivity.
 
@@ -492,20 +468,16 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         # Validate that url and data are not provided together
-        if ('url' in kwargs and kwargs['url'] is not None and
-                'data' in kwargs and kwargs['data'] is not None):
-            raise ValueError(
-                "Cannot provide both 'url' and 'data' parameters simultaneously"
-            )
+        if "url" in kwargs and kwargs["url"] is not None and "data" in kwargs and kwargs["data"] is not None:
+            raise ValueError("Cannot provide both 'url' and 'data' parameters simultaneously")
 
         # Handle bytes data by calling begin_classify_binary for better efficiency
-        if ('data' in kwargs and kwargs['data'] is not None and
-                isinstance(kwargs['data'], bytes)):
-            data_bytes = kwargs.pop('data')
+        if "data" in kwargs and kwargs["data"] is not None and isinstance(kwargs["data"], bytes):
+            data_bytes = kwargs.pop("data")
             # Extract parameters that begin_classify_binary supports
-            string_encoding = kwargs.pop('string_encoding', None)
-            processing_location = kwargs.pop('processing_location', None)
-            content_type = kwargs.pop('content_type', 'application/octet-stream')
+            string_encoding = kwargs.pop("string_encoding", None)
+            processing_location = kwargs.pop("processing_location", None)
+            content_type = kwargs.pop("content_type", "application/octet-stream")
 
             return await super().begin_classify_binary(
                 classifier_id=classifier_id,

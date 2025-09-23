@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -39,7 +39,8 @@ from .._utils.serialization import Deserializer, Serializer
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -157,8 +158,6 @@ def build_content_analyzers_delete_request(analyzer_id: str, **kwargs: Any) -> H
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/analyzers/{analyzerId}"
     path_format_arguments = {
@@ -171,7 +170,6 @@ def build_content_analyzers_delete_request(analyzer_id: str, **kwargs: Any) -> H
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -404,8 +402,6 @@ def build_person_directories_delete_request(person_directory_id: str, **kwargs: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/personDirectories/{personDirectoryId}"
     path_format_arguments = {
@@ -418,7 +414,6 @@ def build_person_directories_delete_request(person_directory_id: str, **kwargs: 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -535,8 +530,6 @@ def build_person_directories_delete_person_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/personDirectories/{personDirectoryId}/persons/{personId}"
     path_format_arguments = {
@@ -550,7 +543,6 @@ def build_person_directories_delete_person_request(  # pylint: disable=name-too-
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -674,8 +666,6 @@ def build_person_directories_delete_face_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/personDirectories/{personDirectoryId}/faces/{faceId}"
     path_format_arguments = {
@@ -689,7 +679,6 @@ def build_person_directories_delete_face_request(  # pylint: disable=name-too-lo
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -964,8 +953,6 @@ def build_content_classifiers_delete_request(classifier_id: str, **kwargs: Any) 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/classifiers/{classifierId}"
     path_format_arguments = {
@@ -978,7 +965,6 @@ def build_content_classifiers_delete_request(classifier_id: str, **kwargs: Any) 
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1713,17 +1699,10 @@ class ContentAnalyzersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            # Handle both dict with "value" key and direct list responses
-            if isinstance(deserialized, dict):
-                list_of_elem = _deserialize(List[_models.ContentAnalyzer], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink")
-            else:
-                # API returns list directly
-                list_of_elem = _deserialize(List[_models.ContentAnalyzer], deserialized)
-                next_link = None
+            list_of_elem = _deserialize(List[_models.ContentAnalyzer], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2795,17 +2774,10 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            # Handle both dict with "value" key and direct list responses
-            if isinstance(deserialized, dict):
-                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink")
-            else:
-                # API returns list directly
-                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized)
-                next_link = None
+            list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2830,7 +2802,7 @@ class PersonDirectoriesOperations:
         person_directory_id: str,
         *,
         content_type: str = "application/json",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         face_ids: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.PersonDirectoryPerson:
@@ -2892,7 +2864,7 @@ class PersonDirectoriesOperations:
         person_directory_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         face_ids: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.PersonDirectoryPerson:
@@ -3335,17 +3307,10 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            # Handle both dict with "value" key and direct list responses
-            if isinstance(deserialized, dict):
-                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink")
-            else:
-                # API returns list directly
-                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized)
-                next_link = None
+            list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3885,17 +3850,10 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            # Handle both dict with "value" key and direct list responses
-            if isinstance(deserialized, dict):
-                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink")
-            else:
-                # API returns list directly
-                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized)
-                next_link = None
+            list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -5323,17 +5281,10 @@ class ContentClassifiersOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            # Handle both dict with "value" key and direct list responses
-            if isinstance(deserialized, dict):
-                list_of_elem = _deserialize(List[_models.ContentClassifier], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink")
-            else:
-                # API returns list directly
-                list_of_elem = _deserialize(List[_models.ContentClassifier], deserialized)
-                next_link = None
+            list_of_elem = _deserialize(List[_models.ContentClassifier], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)

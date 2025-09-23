@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,18 +56,14 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory
         print(f"🔧 Creating directory '{directory_id}'...")
         await client.person_directories.create(
             person_directory_id=directory_id,
-            resource=PersonDirectory(
-                description="Temp directory for identify_person demo"
-            ),
+            resource=PersonDirectory(description="Temp directory for identify_person demo"),
         )
 
         # Add Bill as a person
@@ -97,9 +94,7 @@ async def main():
 
         print(f"😀 Enrolling faces for Bill...")
         for i, face_file in enumerate(bill_faces):
-            image_path = os.path.join(
-                sample_file_dir, "sample_files", "face", face_file
-            )
+            image_path = os.path.join(sample_file_dir, "sample_files", "face", face_file)
             with open(image_path, "rb") as image_file:
                 image_data = image_file.read()
 
@@ -119,9 +114,7 @@ async def main():
 
         print(f"😀 Enrolling faces for Clare...")
         for i, face_file in enumerate(clare_faces):
-            image_path = os.path.join(
-                sample_file_dir, "sample_files", "face", face_file
-            )
+            image_path = os.path.join(sample_file_dir, "sample_files", "face", face_file)
             with open(image_path, "rb") as image_file:
                 image_data = image_file.read()
 
@@ -135,9 +128,7 @@ async def main():
 
         # Now identify persons in the family.jpg image
         print(f"\n🔍 Identifying persons in family.jpg...")
-        family_image_path = os.path.join(
-            sample_file_dir, "sample_files", "face", "family.jpg"
-        )
+        family_image_path = os.path.join(sample_file_dir, "sample_files", "face", "family.jpg")
         with open(family_image_path, "rb") as image_file:
             family_image_data = image_file.read()
 
@@ -154,14 +145,14 @@ async def main():
             for i, candidate in enumerate(response.person_candidates, 1):
                 person_id = getattr(candidate, "person_id", "N/A")
                 confidence = getattr(candidate, "confidence", "N/A")
-                
+
                 # Map person ID to name for better display
                 person_name = "Unknown"
                 if person_id == bill_id:
                     person_name = "Bill"
                 elif person_id == clare_id:
                     person_name = "Clare"
-                
+
                 print(f"   Person {i}:")
                 print(f"      Name: {person_name}")
                 print(f"      Person ID: {person_id}")
@@ -181,11 +172,11 @@ async def main():
         await client.person_directories.delete(person_directory_id=directory_id)
         print("✅ Directory deleted - sample complete")
 
-
-# x-ms-original-file: 2025-05-01-preview/PersonDirectories_IdentifyPerson.json
+    # x-ms-original-file: 2025-05-01-preview/PersonDirectories_IdentifyPerson.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

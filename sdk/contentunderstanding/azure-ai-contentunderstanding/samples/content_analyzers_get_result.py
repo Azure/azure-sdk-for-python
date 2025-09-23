@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -67,12 +68,8 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
-        analyzer_id = (
-            f"sdk-sample-analyzer-for-result-{int(asyncio.get_event_loop().time())}"
-        )
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        analyzer_id = f"sdk-sample-analyzer-for-result-{int(asyncio.get_event_loop().time())}"
 
         # Create a custom analyzer using object model
         print(f"🔧 Creating custom analyzer '{analyzer_id}'...")
@@ -115,9 +112,7 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(
-            poller, PollerType.ANALYZER_CREATION
-        )
+        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
         print(f"📋 Extracted creation operation ID: {operation_id}")
 
         # Wait for the analyzer to be created
@@ -145,15 +140,11 @@ async def main():
         print(f"✅ Document analysis completed successfully!")
 
         # Extract operation ID for get_result
-        analysis_operation_id = extract_operation_id_from_poller(
-            analysis_poller, PollerType.ANALYZE_CALL
-        )
+        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
         print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
 
         # Get the analysis result using the operation ID
-        print(
-            f"🔍 Getting analysis result using operation ID '{analysis_operation_id}'..."
-        )
+        print(f"🔍 Getting analysis result using operation ID '{analysis_operation_id}'...")
         operation_status = await client.content_analyzers.get_result(
             operation_id=analysis_operation_id,
         )
@@ -181,11 +172,11 @@ async def main():
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResult.json
+    # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResult.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

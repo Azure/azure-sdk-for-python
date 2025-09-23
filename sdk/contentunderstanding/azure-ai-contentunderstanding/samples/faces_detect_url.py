@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,9 +49,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         """Detect faces in a test image and display results."""
 
         # Use URL instead of local file to test our new overloaded detect method
@@ -58,9 +57,7 @@ async def main():
         print(f"🔍 Detecting faces in image URL: {image_url}")
 
         # Detect faces in the image using the enhanced detect method with URL
-        response: DetectFacesResult = await client.faces.detect(
-            url=image_url, max_detected_faces=10
-        )
+        response: DetectFacesResult = await client.faces.detect(url=image_url, max_detected_faces=10)
 
         if hasattr(response, "detected_faces") and response.detected_faces:
             face_count = len(response.detected_faces)
@@ -81,11 +78,11 @@ async def main():
 
         print("\n🎉 Face detection sample completed successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/Faces_Detect.json
+    # x-ms-original-file: 2025-05-01-preview/Faces_Detect.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

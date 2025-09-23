@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -50,9 +51,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         directory_id = f"sdk-sample-dir-{datetime.now(timezone.utc):%Y%m%d-%H%M%S}-{uuid.uuid4().hex[:8]}"
 
         # Create person directory with initial data
@@ -71,9 +70,7 @@ async def main():
         print("✅ Directory created successfully!")
 
         # Get initial state
-        initial_state = await client.person_directories.get(
-            person_directory_id=directory_id
-        )
+        initial_state = await client.person_directories.get(person_directory_id=directory_id)
         print(f"📋 Initial directory state:")
         print(f"   Description: {getattr(initial_state, 'description', 'N/A')}")
         print(f"   Tags: {getattr(initial_state, 'tags', 'N/A')}")
@@ -103,11 +100,11 @@ async def main():
         await client.person_directories.delete(person_directory_id=directory_id)
         print(f"✅ Directory '{directory_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/PersonDirectories_Update.json
+    # x-ms-original-file: 2025-05-01-preview/PersonDirectories_Update.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

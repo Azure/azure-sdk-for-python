@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -56,12 +57,8 @@ async def main() -> None:
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
-        analyzer_id = (
-            f"sdk-sample-custom-analyzer-{int(asyncio.get_event_loop().time())}"
-        )
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        analyzer_id = f"sdk-sample-custom-analyzer-{int(asyncio.get_event_loop().time())}"
 
         # Create a custom analyzer using object model
         custom_analyzer = ContentAnalyzer(
@@ -110,10 +107,10 @@ async def main() -> None:
         # - To use the analyzer for analysis: see content_analyzers_analyze_binary.py
         # - To delete the analyzer: see content_analyzers_delete_analyzer.py
 
-
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

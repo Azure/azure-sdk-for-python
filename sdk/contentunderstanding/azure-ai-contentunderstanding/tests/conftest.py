@@ -17,10 +17,12 @@ from devtools_testutils import (
 
 load_dotenv()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     # Ensures the test proxy is started for the session
     return
+
 
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)

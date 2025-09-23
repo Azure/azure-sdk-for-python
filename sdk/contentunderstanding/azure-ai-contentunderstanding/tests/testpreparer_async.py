@@ -16,11 +16,11 @@ import functools
 
 def get_content_understanding_credential_async():
     """Get the appropriate async credential for Content Understanding.
-    
+
     Checks for AZURE_CONTENT_UNDERSTANDING_KEY first, then falls back to DefaultAzureCredential.
     """
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-    
+
     if key and key.strip():
         return AzureKeyCredential(key)
     else:
@@ -37,6 +37,7 @@ class ContentUnderstandingClientTestBaseAsync(AzureRecordedTestCase):
             endpoint=endpoint,
             connection_verify=False,  # Disable SSL verification for localhost
         )
+
 
 ContentUnderstandingPreparer = functools.partial(
     PowerShellPreparer,

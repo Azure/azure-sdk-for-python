@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -91,25 +91,25 @@ class AnalyzeResult(_Model):
         name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The date and time when the result was created."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Warnings encountered while analyzing the document."""
     string_encoding: Optional[Union[str, "_models.StringEncoding"]] = rest_field(
         name="stringEncoding", visibility=["read", "create", "update", "delete", "query"]
     )
     """The string encoding used for content spans. Known values are: \"codePoint\", \"utf16\", and
      \"utf8\"."""
-    contents: List["_models.MediaContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    contents: list["_models.MediaContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The extracted content. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        contents: List["_models.MediaContent"],
+        contents: list["_models.MediaContent"],
         analyzer_id: Optional[str] = None,
         api_version: Optional[str] = None,
         created_at: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
         string_encoding: Optional[Union[str, "_models.StringEncoding"]] = None,
     ) -> None: ...
 
@@ -142,11 +142,11 @@ class ContentField(_Model):
     :vartype source: str
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    spans: Optional[List["_models.ContentSpan"]] = rest_field(
+    spans: Optional[list["_models.ContentSpan"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Span(s) associated with the field value in the markdown content."""
@@ -160,7 +160,7 @@ class ContentField(_Model):
         self,
         *,
         type: str,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
     ) -> None: ...
@@ -194,7 +194,7 @@ class ArrayField(ContentField, discriminator="array"):
 
     type: Literal[FieldType.ARRAY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. List of subfields of the same type."""
-    value_array: Optional[List["_models.ContentField"]] = rest_field(
+    value_array: Optional[list["_models.ContentField"]] = rest_field(
         name="valueArray", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array field value."""
@@ -203,10 +203,10 @@ class ArrayField(ContentField, discriminator="array"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
-        value_array: Optional[List["_models.ContentField"]] = None,
+        value_array: Optional[list["_models.ContentField"]] = None,
     ) -> None: ...
 
     @overload
@@ -217,7 +217,8 @@ class ArrayField(ContentField, discriminator="array"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.ARRAY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.ARRAY  # type: ignore
 
 
 class MediaContent(_Model):
@@ -240,7 +241,7 @@ class MediaContent(_Model):
     :vartype fields: dict[str, ~azure.ai.contentunderstanding.models.ContentField]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Content kind. Required. Known values are: \"document\" and \"audioVisual\"."""
     mime_type: Optional[str] = rest_field(name="mimeType", visibility=["read", "create", "update", "delete", "query"])
@@ -251,7 +252,7 @@ class MediaContent(_Model):
     """The path of the content in the input."""
     markdown: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Markdown representation of the content."""
-    fields: Optional[Dict[str, "_models.ContentField"]] = rest_field(
+    fields: Optional[dict[str, "_models.ContentField"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Extracted fields from the content."""
@@ -265,7 +266,7 @@ class MediaContent(_Model):
         category: Optional[str] = None,
         path: Optional[str] = None,
         markdown: Optional[str] = None,
-        fields: Optional[Dict[str, "_models.ContentField"]] = None,
+        fields: Optional[dict[str, "_models.ContentField"]] = None,
     ) -> None: ...
 
     @overload
@@ -328,25 +329,25 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
     """Width of each video frame in pixels, if applicable."""
     height: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Height of each video frame in pixels, if applicable."""
-    camera_shot_times_ms: Optional[List[int]] = rest_field(
+    camera_shot_times_ms: Optional[list[int]] = rest_field(
         name="cameraShotTimesMs", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of camera shot changes in the video, represented by its timestamp in milliseconds.  Only
      if returnDetails is true."""
-    key_frame_times_ms: Optional[List[int]] = rest_field(
-        name="KeyFrameTimesMs", visibility=["read", "create", "update", "delete", "query"]
+    key_frame_times_ms: Optional[list[int]] = rest_field(
+        name="keyFrameTimesMs", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of key frames in the video, represented by its timestamp in milliseconds.  Only if
      returnDetails is true."""
-    transcript_phrases: Optional[List["_models.TranscriptPhrase"]] = rest_field(
+    transcript_phrases: Optional[list["_models.TranscriptPhrase"]] = rest_field(
         name="transcriptPhrases", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of transcript phrases.  Only if returnDetails is true."""
-    persons: Optional[List["_models.DetectedPerson"]] = rest_field(
+    persons: Optional[list["_models.DetectedPerson"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of detected persons in the video.  Only if enableFace and returnDetails are true."""
-    segments: Optional[List["_models.AudioVisualSegment"]] = rest_field(
+    segments: Optional[list["_models.AudioVisualSegment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of audio visual segments.  Only if enableSegmentation and returnDetails are true."""
@@ -361,14 +362,14 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
         category: Optional[str] = None,
         path: Optional[str] = None,
         markdown: Optional[str] = None,
-        fields: Optional[Dict[str, "_models.ContentField"]] = None,
+        fields: Optional[dict[str, "_models.ContentField"]] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        camera_shot_times_ms: Optional[List[int]] = None,
-        key_frame_times_ms: Optional[List[int]] = None,
-        transcript_phrases: Optional[List["_models.TranscriptPhrase"]] = None,
-        persons: Optional[List["_models.DetectedPerson"]] = None,
-        segments: Optional[List["_models.AudioVisualSegment"]] = None,
+        camera_shot_times_ms: Optional[list[int]] = None,
+        key_frame_times_ms: Optional[list[int]] = None,
+        transcript_phrases: Optional[list["_models.TranscriptPhrase"]] = None,
+        persons: Optional[list["_models.DetectedPerson"]] = None,
+        segments: Optional[list["_models.AudioVisualSegment"]] = None,
     ) -> None: ...
 
     @overload
@@ -379,7 +380,8 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=MediaContentKind.AUDIO_VISUAL, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = MediaContentKind.AUDIO_VISUAL  # type: ignore
 
 
 class AudioVisualSegment(_Model):
@@ -440,7 +442,7 @@ class DataSource(_Model):
     :vartype kind: str or ~azure.ai.contentunderstanding.models.DataSourceKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """The kind of data source. Required. \"blob\""""
 
@@ -503,7 +505,8 @@ class BlobDataSource(DataSource, discriminator="blob"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=DataSourceKind.BLOB, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = DataSourceKind.BLOB  # type: ignore
 
 
 class BooleanField(ContentField, discriminator="boolean"):
@@ -532,7 +535,7 @@ class BooleanField(ContentField, discriminator="boolean"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
         value_boolean: Optional[bool] = None,
@@ -546,7 +549,8 @@ class BooleanField(ContentField, discriminator="boolean"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.BOOLEAN, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.BOOLEAN  # type: ignore
 
 
 class BoundingBox(_Model):
@@ -657,25 +661,25 @@ class ClassifyResult(_Model):
         name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The date and time when the result was created."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Warnings encountered while classifying the document."""
     string_encoding: Optional[Union[str, "_models.StringEncoding"]] = rest_field(
         name="stringEncoding", visibility=["read", "create", "update", "delete", "query"]
     )
     """The string encoding used for content spans. Known values are: \"codePoint\", \"utf16\", and
      \"utf8\"."""
-    contents: List["_models.MediaContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    contents: list["_models.MediaContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The classified content. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        contents: List["_models.MediaContent"],
+        contents: list["_models.MediaContent"],
         classifier_id: Optional[str] = None,
         api_version: Optional[str] = None,
         created_at: Optional[datetime.datetime] = None,
-        warnings: Optional[List[ODataV4Format]] = None,
+        warnings: Optional[list[ODataV4Format]] = None,
         string_encoding: Optional[Union[str, "_models.StringEncoding"]] = None,
     ) -> None: ...
 
@@ -772,7 +776,7 @@ class ContentAnalyzer(_Model):
     """The unique identifier of the analyzer. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of the analyzer."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags associated with the analyzer."""
     status: Union[str, "_models.ResourceStatus"] = rest_field(visibility=["read"])
     """The status of the analyzer. Required. Known values are: \"creating\", \"ready\", \"deleting\",
@@ -781,7 +785,7 @@ class ContentAnalyzer(_Model):
     """The date and time when the analyzer was created. Required."""
     last_modified_at: datetime.datetime = rest_field(name="lastModifiedAt", visibility=["read"], format="rfc3339")
     """The date and time when the analyzer was last modified. Required."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read"])
     """Warnings encountered while creating the analyzer."""
     base_analyzer_id: Optional[str] = rest_field(name="baseAnalyzerId", visibility=["read", "create"])
     """The analyzer to incrementally train from."""
@@ -799,7 +803,7 @@ class ContentAnalyzer(_Model):
     mode: Optional[Union[str, "_models.AnalysisMode"]] = rest_field(visibility=["read", "create"])
     """The analysis mode: standard, pro.  Default is standard. Known values are: \"standard\" and
      \"pro\"."""
-    knowledge_sources: Optional[List["_models.KnowledgeSource"]] = rest_field(
+    knowledge_sources: Optional[list["_models.KnowledgeSource"]] = rest_field(
         name="knowledgeSources", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional knowledge sources used to enhance the analyzer."""
@@ -809,14 +813,14 @@ class ContentAnalyzer(_Model):
         self,
         *,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         base_analyzer_id: Optional[str] = None,
         config: Optional["_models.ContentAnalyzerConfig"] = None,
         field_schema: Optional["_models.FieldSchema"] = None,
         training_data: Optional["_models.DataSource"] = None,
         processing_location: Optional[Union[str, "_models.ProcessingLocation"]] = None,
         mode: Optional[Union[str, "_models.AnalysisMode"]] = None,
-        knowledge_sources: Optional[List["_models.KnowledgeSource"]] = None,
+        knowledge_sources: Optional[list["_models.KnowledgeSource"]] = None,
     ) -> None: ...
 
     @overload
@@ -869,7 +873,7 @@ class ContentAnalyzerConfig(_Model):
         name="returnDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """Return all content details."""
-    locales: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of locale hints for speech transcription."""
     enable_face: Optional[bool] = rest_field(
         name="enableFace", visibility=["read", "create", "update", "delete", "query"]
@@ -922,7 +926,7 @@ class ContentAnalyzerConfig(_Model):
         self,
         *,
         return_details: Optional[bool] = None,
-        locales: Optional[List[str]] = None,
+        locales: Optional[list[str]] = None,
         enable_face: Optional[bool] = None,
         person_directory_id: Optional[str] = None,
         enable_ocr: Optional[bool] = None,
@@ -979,7 +983,7 @@ class ContentClassifier(_Model):
     """The unique identifier of the classifier. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of the classifier."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags associated with the classifier."""
     status: Union[str, "_models.ResourceStatus"] = rest_field(visibility=["read"])
     """The status of the classifier. Required. Known values are: \"creating\", \"ready\",
@@ -988,9 +992,9 @@ class ContentClassifier(_Model):
     """The date and time when the classifier was created. Required."""
     last_modified_at: datetime.datetime = rest_field(name="lastModifiedAt", visibility=["read"], format="rfc3339")
     """The date and time when the classifier was last modified. Required."""
-    warnings: Optional[List[ODataV4Format]] = rest_field(visibility=["read"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read"])
     """Warnings encountered while creating the classifier."""
-    categories: Dict[str, "_models.ClassifierCategory"] = rest_field(visibility=["read", "create"])
+    categories: dict[str, "_models.ClassifierCategory"] = rest_field(visibility=["read", "create"])
     """The categories to classify against. Required."""
     split_mode: Optional[Union[str, "_models.ClassifierSplitMode"]] = rest_field(
         name="splitMode", visibility=["read", "create"]
@@ -1007,9 +1011,9 @@ class ContentClassifier(_Model):
     def __init__(
         self,
         *,
-        categories: Dict[str, "_models.ClassifierCategory"],
+        categories: dict[str, "_models.ClassifierCategory"],
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         split_mode: Optional[Union[str, "_models.ClassifierSplitMode"]] = None,
         processing_location: Optional[Union[str, "_models.ProcessingLocation"]] = None,
     ) -> None: ...
@@ -1087,7 +1091,7 @@ class DateField(ContentField, discriminator="date"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
         value_date: Optional[datetime.date] = None,
@@ -1101,7 +1105,8 @@ class DateField(ContentField, discriminator="date"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.DATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.DATE  # type: ignore
 
 
 class DetectedBoundingBox(_Model):
@@ -1181,7 +1186,7 @@ class DetectFacesResult(_Model):
     :vartype detected_faces: list[~azure.ai.contentunderstanding.models.DetectedBoundingBox]
     """
 
-    detected_faces: List["_models.DetectedBoundingBox"] = rest_field(
+    detected_faces: list["_models.DetectedBoundingBox"] = rest_field(
         name="detectedFaces", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of detected faces. Required."""
@@ -1190,7 +1195,7 @@ class DetectFacesResult(_Model):
     def __init__(
         self,
         *,
-        detected_faces: List["_models.DetectedBoundingBox"],
+        detected_faces: list["_models.DetectedBoundingBox"],
     ) -> None: ...
 
     @overload
@@ -1277,7 +1282,7 @@ class DocumentCaption(_Model):
     """Encoded source that identifies the position of the caption in the content."""
     span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Span of the caption in the markdown content."""
-    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the caption."""
 
     @overload
@@ -1287,7 +1292,7 @@ class DocumentCaption(_Model):
         content: str,
         source: Optional[str] = None,
         span: Optional["_models.ContentSpan"] = None,
-        elements: Optional[List[str]] = None,
+        elements: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1356,27 +1361,27 @@ class DocumentContent(MediaContent, discriminator="document"):
     """Length unit used by the width, height, and source properties.
      For images/tiff, the default unit is pixel.  For PDF, the default unit is inch. Known values
      are: \"pixel\" and \"inch\"."""
-    pages: Optional[List["_models.DocumentPage"]] = rest_field(
+    pages: Optional[list["_models.DocumentPage"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of pages in the document."""
-    paragraphs: Optional[List["_models.DocumentParagraph"]] = rest_field(
+    paragraphs: Optional[list["_models.DocumentParagraph"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of paragraphs in the document.  Only if enableOcr and returnDetails are true."""
-    sections: Optional[List["_models.DocumentSection"]] = rest_field(
+    sections: Optional[list["_models.DocumentSection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of sections in the document.  Only if enableLayout and returnDetails are true."""
-    tables: Optional[List["_models.DocumentTable"]] = rest_field(
+    tables: Optional[list["_models.DocumentTable"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of tables in the document.  Only if enableLayout and returnDetails are true."""
-    figures: Optional[List["_models.DocumentFigure"]] = rest_field(
+    figures: Optional[list["_models.DocumentFigure"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of figures in the document.  Only if enableLayout and returnDetails are true."""
-    persons: Optional[List["_models.DetectedPerson"]] = rest_field(
+    persons: Optional[list["_models.DetectedPerson"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of detected persons in the document.  Only if enableFace and returnDetails are true."""
@@ -1391,14 +1396,14 @@ class DocumentContent(MediaContent, discriminator="document"):
         category: Optional[str] = None,
         path: Optional[str] = None,
         markdown: Optional[str] = None,
-        fields: Optional[Dict[str, "_models.ContentField"]] = None,
+        fields: Optional[dict[str, "_models.ContentField"]] = None,
         unit: Optional[Union[str, "_models.LengthUnit"]] = None,
-        pages: Optional[List["_models.DocumentPage"]] = None,
-        paragraphs: Optional[List["_models.DocumentParagraph"]] = None,
-        sections: Optional[List["_models.DocumentSection"]] = None,
-        tables: Optional[List["_models.DocumentTable"]] = None,
-        figures: Optional[List["_models.DocumentFigure"]] = None,
-        persons: Optional[List["_models.DetectedPerson"]] = None,
+        pages: Optional[list["_models.DocumentPage"]] = None,
+        paragraphs: Optional[list["_models.DocumentParagraph"]] = None,
+        sections: Optional[list["_models.DocumentSection"]] = None,
+        tables: Optional[list["_models.DocumentTable"]] = None,
+        figures: Optional[list["_models.DocumentFigure"]] = None,
+        persons: Optional[list["_models.DetectedPerson"]] = None,
     ) -> None: ...
 
     @overload
@@ -1409,7 +1414,8 @@ class DocumentContent(MediaContent, discriminator="document"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=MediaContentKind.DOCUMENT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = MediaContentKind.DOCUMENT  # type: ignore
 
 
 class DocumentFigure(_Model):
@@ -1435,13 +1441,13 @@ class DocumentFigure(_Model):
     """Encoded source that identifies the position of the figure in the content."""
     span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Span of the figure in the markdown content."""
-    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the figure, excluding any caption or footnotes."""
     caption: Optional["_models.DocumentCaption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Figure caption."""
-    footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field(
+    footnotes: Optional[list["_models.DocumentFootnote"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of figure footnotes."""
@@ -1453,9 +1459,9 @@ class DocumentFigure(_Model):
         id: str,  # pylint: disable=redefined-builtin
         source: Optional[str] = None,
         span: Optional["_models.ContentSpan"] = None,
-        elements: Optional[List[str]] = None,
+        elements: Optional[list[str]] = None,
         caption: Optional["_models.DocumentCaption"] = None,
-        footnotes: Optional[List["_models.DocumentFootnote"]] = None,
+        footnotes: Optional[list["_models.DocumentFootnote"]] = None,
     ) -> None: ...
 
     @overload
@@ -1488,7 +1494,7 @@ class DocumentFootnote(_Model):
     """Encoded source that identifies the position of the footnote in the content."""
     span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Span of the footnote in the markdown content."""
-    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the footnote."""
 
     @overload
@@ -1498,7 +1504,7 @@ class DocumentFootnote(_Model):
         content: str,
         source: Optional[str] = None,
         span: Optional["_models.ContentSpan"] = None,
-        elements: Optional[List[str]] = None,
+        elements: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1633,7 +1639,7 @@ class DocumentPage(_Model):
     """Width of the page."""
     height: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Height of the page."""
-    spans: Optional[List["_models.ContentSpan"]] = rest_field(
+    spans: Optional[list["_models.ContentSpan"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Span(s) associated with the page in the markdown content."""
@@ -1641,19 +1647,19 @@ class DocumentPage(_Model):
     """The general orientation of the content in clockwise direction,
      measured in degrees between (-180, 180].
      Only if enableOcr is true."""
-    words: Optional[List["_models.DocumentWord"]] = rest_field(
+    words: Optional[list["_models.DocumentWord"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of words in the page.  Only if enableOcr and returnDetails are true."""
-    lines: Optional[List["_models.DocumentLine"]] = rest_field(
+    lines: Optional[list["_models.DocumentLine"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of lines in the page.  Only if enableOcr and returnDetails are true."""
-    barcodes: Optional[List["_models.DocumentBarcode"]] = rest_field(
+    barcodes: Optional[list["_models.DocumentBarcode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of barcodes in the page.  Only if enableBarcode and returnDetails are true."""
-    formulas: Optional[List["_models.DocumentFormula"]] = rest_field(
+    formulas: Optional[list["_models.DocumentFormula"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of mathematical formulas in the page.  Only if enableFormula and returnDetails are true."""
@@ -1665,12 +1671,12 @@ class DocumentPage(_Model):
         page_number: int,
         width: Optional[float] = None,
         height: Optional[float] = None,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         angle: Optional[float] = None,
-        words: Optional[List["_models.DocumentWord"]] = None,
-        lines: Optional[List["_models.DocumentLine"]] = None,
-        barcodes: Optional[List["_models.DocumentBarcode"]] = None,
-        formulas: Optional[List["_models.DocumentFormula"]] = None,
+        words: Optional[list["_models.DocumentWord"]] = None,
+        lines: Optional[list["_models.DocumentLine"]] = None,
+        barcodes: Optional[list["_models.DocumentBarcode"]] = None,
+        formulas: Optional[list["_models.DocumentFormula"]] = None,
     ) -> None: ...
 
     @overload
@@ -1743,7 +1749,7 @@ class DocumentSection(_Model):
 
     span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Span of the section in the markdown content."""
-    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the section."""
 
     @overload
@@ -1751,7 +1757,7 @@ class DocumentSection(_Model):
         self,
         *,
         span: Optional["_models.ContentSpan"] = None,
-        elements: Optional[List[str]] = None,
+        elements: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1788,7 +1794,7 @@ class DocumentTable(_Model):
     """Number of rows in the table. Required."""
     column_count: int = rest_field(name="columnCount", visibility=["read", "create", "update", "delete", "query"])
     """Number of columns in the table. Required."""
-    cells: List["_models.DocumentTableCell"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cells: list["_models.DocumentTableCell"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cells contained within the table. Required."""
     source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Encoded source that identifies the position of the table in the content."""
@@ -1798,7 +1804,7 @@ class DocumentTable(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Table caption."""
-    footnotes: Optional[List["_models.DocumentFootnote"]] = rest_field(
+    footnotes: Optional[list["_models.DocumentFootnote"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of table footnotes."""
@@ -1809,11 +1815,11 @@ class DocumentTable(_Model):
         *,
         row_count: int,
         column_count: int,
-        cells: List["_models.DocumentTableCell"],
+        cells: list["_models.DocumentTableCell"],
         source: Optional[str] = None,
         span: Optional["_models.ContentSpan"] = None,
         caption: Optional["_models.DocumentCaption"] = None,
-        footnotes: Optional[List["_models.DocumentFootnote"]] = None,
+        footnotes: Optional[list["_models.DocumentFootnote"]] = None,
     ) -> None: ...
 
     @overload
@@ -1872,7 +1878,7 @@ class DocumentTableCell(_Model):
     """Encoded source that identifies the position of the table cell in the content."""
     span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Span of the table cell in the markdown content."""
-    elements: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Child elements of the table cell."""
 
     @overload
@@ -1887,7 +1893,7 @@ class DocumentTableCell(_Model):
         column_span: Optional[int] = None,
         source: Optional[str] = None,
         span: Optional["_models.ContentSpan"] = None,
-        elements: Optional[List[str]] = None,
+        elements: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2033,15 +2039,15 @@ class FieldDefinition(_Model):
         name="items", visibility=["read", "create", "update", "delete", "query"]
     )
     """Field type schema of each array element, if type is array."""
-    properties: Optional[Dict[str, "_models.FieldDefinition"]] = rest_field(
+    properties: Optional[dict[str, "_models.FieldDefinition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Named sub-fields, if type is object."""
-    examples: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    examples: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Examples of field values."""
-    enum: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    enum: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Enumeration of possible field values."""
-    enum_descriptions: Optional[Dict[str, str]] = rest_field(
+    enum_descriptions: Optional[dict[str, str]] = rest_field(
         name="enumDescriptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Descriptions for each enumeration value."""
@@ -2056,10 +2062,10 @@ class FieldDefinition(_Model):
         type: Optional[Union[str, "_models.FieldType"]] = None,
         description: Optional[str] = None,
         items_property: Optional["_models.FieldDefinition"] = None,
-        properties: Optional[Dict[str, "_models.FieldDefinition"]] = None,
-        examples: Optional[List[str]] = None,
-        enum: Optional[List[str]] = None,
-        enum_descriptions: Optional[Dict[str, str]] = None,
+        properties: Optional[dict[str, "_models.FieldDefinition"]] = None,
+        examples: Optional[list[str]] = None,
+        enum: Optional[list[str]] = None,
+        enum_descriptions: Optional[dict[str, str]] = None,
         ref: Optional[str] = None,
     ) -> None: ...
 
@@ -2091,19 +2097,19 @@ class FieldSchema(_Model):
     """The name of the field schema."""
     description: Optional[str] = rest_field(visibility=["read", "create"])
     """A description of the field schema."""
-    fields: Dict[str, "_models.FieldDefinition"] = rest_field(visibility=["read", "create"])
+    fields: dict[str, "_models.FieldDefinition"] = rest_field(visibility=["read", "create"])
     """The fields defined in the schema. Required."""
-    definitions: Optional[Dict[str, "_models.FieldDefinition"]] = rest_field(visibility=["read", "create"])
+    definitions: Optional[dict[str, "_models.FieldDefinition"]] = rest_field(visibility=["read", "create"])
     """Additional definitions referenced by the fields in the schema."""
 
     @overload
     def __init__(
         self,
         *,
-        fields: Dict[str, "_models.FieldDefinition"],
+        fields: dict[str, "_models.FieldDefinition"],
         name: Optional[str] = None,
         description: Optional[str] = None,
-        definitions: Optional[Dict[str, "_models.FieldDefinition"]] = None,
+        definitions: Optional[dict[str, "_models.FieldDefinition"]] = None,
     ) -> None: ...
 
     @overload
@@ -2130,7 +2136,7 @@ class FindSimilarFacesResult(_Model):
         name="detectedFace", visibility=["read", "create", "update", "delete", "query"]
     )
     """Details of the detected face. Required."""
-    similar_faces: List["_models.SimilarFace"] = rest_field(
+    similar_faces: list["_models.SimilarFace"] = rest_field(
         name="similarFaces", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of similar faces. Required."""
@@ -2140,7 +2146,7 @@ class FindSimilarFacesResult(_Model):
         self,
         *,
         detected_face: "_models.DetectedBoundingBox",
-        similar_faces: List["_models.SimilarFace"],
+        similar_faces: list["_models.SimilarFace"],
     ) -> None: ...
 
     @overload
@@ -2167,7 +2173,7 @@ class IdentifyPersonResult(_Model):
         name="detectedFace", visibility=["read", "create", "update", "delete", "query"]
     )
     """Details of the detected face. Required."""
-    person_candidates: List["_models.PersonCandidate"] = rest_field(
+    person_candidates: list["_models.PersonCandidate"] = rest_field(
         name="personCandidates", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of person candidates matching the input face. Required."""
@@ -2177,7 +2183,7 @@ class IdentifyPersonResult(_Model):
         self,
         *,
         detected_face: "_models.DetectedBoundingBox",
-        person_candidates: List["_models.PersonCandidate"],
+        person_candidates: list["_models.PersonCandidate"],
     ) -> None: ...
 
     @overload
@@ -2217,7 +2223,7 @@ class IntegerField(ContentField, discriminator="integer"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
         value_integer: Optional[int] = None,
@@ -2231,7 +2237,8 @@ class IntegerField(ContentField, discriminator="integer"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.INTEGER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.INTEGER  # type: ignore
 
 
 class KnowledgeSource(_Model):
@@ -2244,7 +2251,7 @@ class KnowledgeSource(_Model):
     :vartype kind: str or ~azure.ai.contentunderstanding.models.KnowledgeSourceKind
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """The kind of knowledge source. Required. \"reference\""""
 
@@ -2293,7 +2300,7 @@ class NumberField(ContentField, discriminator="number"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
         value_number: Optional[float] = None,
@@ -2307,7 +2314,8 @@ class NumberField(ContentField, discriminator="number"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.NUMBER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.NUMBER  # type: ignore
 
 
 class ObjectField(ContentField, discriminator="object"):
@@ -2327,7 +2335,7 @@ class ObjectField(ContentField, discriminator="object"):
 
     type: Literal[FieldType.OBJECT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Named list of subfields."""
-    value_object: Optional[Dict[str, "_models.ContentField"]] = rest_field(
+    value_object: Optional[dict[str, "_models.ContentField"]] = rest_field(
         name="valueObject", visibility=["read", "create", "update", "delete", "query"]
     )
     """Object field value."""
@@ -2336,10 +2344,10 @@ class ObjectField(ContentField, discriminator="object"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
-        value_object: Optional[Dict[str, "_models.ContentField"]] = None,
+        value_object: Optional[dict[str, "_models.ContentField"]] = None,
     ) -> None: ...
 
     @overload
@@ -2350,7 +2358,8 @@ class ObjectField(ContentField, discriminator="object"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.OBJECT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.OBJECT  # type: ignore
 
 
 class OperationStatusAnalyzeResultError(_Model):
@@ -2460,7 +2469,7 @@ class PersonCandidate(_Model):
 
     person_id: str = rest_field(name="personId", visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the person. Required."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags associated with the person."""
     confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Confidence score of the person matching the input face. Required."""
@@ -2471,7 +2480,7 @@ class PersonCandidate(_Model):
         *,
         person_id: str,
         confidence: float,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2509,7 +2518,7 @@ class PersonDirectory(_Model):
     """The unique identifier of the person directory. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A description of the person directory."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags associated with the person directory."""
     created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
     """The date and time when the person directory was created. Required."""
@@ -2525,7 +2534,7 @@ class PersonDirectory(_Model):
         self,
         *,
         description: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2592,9 +2601,9 @@ class PersonDirectoryPerson(_Model):
 
     person_id: str = rest_field(name="personId", visibility=["read"])
     """The unique identifier of the person. Required."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tags associated with the person."""
-    face_ids: Optional[List[str]] = rest_field(
+    face_ids: Optional[list[str]] = rest_field(
         name="faceIds", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of faces associated with the person."""
@@ -2603,8 +2612,8 @@ class PersonDirectoryPerson(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
-        face_ids: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        face_ids: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2659,7 +2668,8 @@ class ReferenceKnowledgeSource(KnowledgeSource, discriminator="reference"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=KnowledgeSourceKind.REFERENCE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = KnowledgeSourceKind.REFERENCE  # type: ignore
 
 
 class ResourceOperationStatusContentAnalyzerContentAnalyzerError(_Model):  # pylint: disable=name-too-long
@@ -2829,7 +2839,7 @@ class StringField(ContentField, discriminator="string"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
         value_string: Optional[str] = None,
@@ -2843,7 +2853,8 @@ class StringField(ContentField, discriminator="string"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.STRING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.STRING  # type: ignore
 
 
 class TimeField(ContentField, discriminator="time"):
@@ -2874,7 +2885,7 @@ class TimeField(ContentField, discriminator="time"):
     def __init__(
         self,
         *,
-        spans: Optional[List["_models.ContentSpan"]] = None,
+        spans: Optional[list["_models.ContentSpan"]] = None,
         confidence: Optional[float] = None,
         source: Optional[str] = None,
         value_time: Optional[datetime.time] = None,
@@ -2888,7 +2899,8 @@ class TimeField(ContentField, discriminator="time"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=FieldType.TIME, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = FieldType.TIME  # type: ignore
 
 
 class TranscriptPhrase(_Model):
@@ -2926,7 +2938,7 @@ class TranscriptPhrase(_Model):
     """Confidence of predicting the phrase."""
     span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Span of the phrase in the markdown content."""
-    words: List["_models.TranscriptWord"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    words: list["_models.TranscriptWord"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of words in the phrase. Required."""
 
     @overload
@@ -2936,7 +2948,7 @@ class TranscriptPhrase(_Model):
         start_time_ms: int,
         end_time_ms: int,
         text: str,
-        words: List["_models.TranscriptWord"],
+        words: list["_models.TranscriptWord"],
         speaker: Optional[str] = None,
         locale: Optional[str] = None,
         confidence: Optional[float] = None,

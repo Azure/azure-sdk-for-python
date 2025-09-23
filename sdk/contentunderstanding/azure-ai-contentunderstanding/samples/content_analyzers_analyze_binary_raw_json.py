@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -61,15 +62,11 @@ async def main() -> None:
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         with open("sample_files/sample_invoice.pdf", "rb") as f:
             pdf_bytes: bytes = f.read()
 
-        print(
-            "🔍 Analyzing sample_files/sample_invoice.pdf with prebuilt-documentAnalyzer..."
-        )
+        print("🔍 Analyzing sample_files/sample_invoice.pdf with prebuilt-documentAnalyzer...")
 
         # Use poller callback to save raw JSON response
         # The 'cls' parameter allows us to intercept the response before it gets deserialized as an object model
@@ -89,8 +86,7 @@ async def main() -> None:
 
         # Save the raw JSON response
         save_json_to_file(
-            raw_http_response.json(),  # type: ignore[attr-defined]
-            filename_prefix="content_analyzers_analyze_binary"
+            raw_http_response.json(), filename_prefix="content_analyzers_analyze_binary"  # type: ignore[attr-defined]
         )
         # Note: For easier data access, see object model samples:
         #    content_analyzers_analyze_binary.py

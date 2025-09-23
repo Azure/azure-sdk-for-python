@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -59,12 +60,8 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
-        analyzer_id = (
-            f"sdk-sample-analyzer-for-update-{int(asyncio.get_event_loop().time())}"
-        )
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+        analyzer_id = f"sdk-sample-analyzer-for-update-{int(asyncio.get_event_loop().time())}"
 
         # Create initial analyzer using object model
         print(f"🔧 Creating initial analyzer '{analyzer_id}'...")
@@ -113,9 +110,7 @@ async def main():
 
         # Get the analyzer before update to verify initial state
         print(f"📋 Getting analyzer '{analyzer_id}' before update...")
-        analyzer_before_update = await client.content_analyzers.get(
-            analyzer_id=analyzer_id
-        )
+        analyzer_before_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
 
         print(f"✅ Initial analyzer state verified:")
         print(f"   Description: {analyzer_before_update.description}")
@@ -140,9 +135,7 @@ async def main():
 
         # Get the analyzer after update to verify the changes persisted
         print(f"📋 Getting analyzer '{analyzer_id}' after update...")
-        analyzer_after_update = await client.content_analyzers.get(
-            analyzer_id=analyzer_id
-        )
+        analyzer_after_update = await client.content_analyzers.get(analyzer_id=analyzer_id)
 
         print(f"✅ Updated analyzer state verified:")
         print(f"   Description: {analyzer_after_update.description}")

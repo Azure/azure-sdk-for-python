@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -71,9 +72,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         analyzer_id = f"sdk-sample-video-{datetime.now().strftime('%Y%m%d')}-{datetime.now().strftime('%H%M%S')}-{uuid.uuid4().hex[:8]}"
 
         # Create a marketing video analyzer using object model
@@ -97,9 +96,7 @@ async def main():
         )
 
         # Extract operation ID from the poller
-        operation_id = extract_operation_id_from_poller(
-            poller, PollerType.ANALYZER_CREATION
-        )
+        operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
         print(f"📋 Extracted creation operation ID: {operation_id}")
 
         # Wait for the analyzer to be created
@@ -124,9 +121,7 @@ async def main():
         print(f"✅ Video analysis completed successfully!")
 
         # Extract operation ID for get_result_file
-        analysis_operation_id = extract_operation_id_from_poller(
-            analysis_poller, PollerType.ANALYZE_CALL
-        )
+        analysis_operation_id = extract_operation_id_from_poller(analysis_poller, PollerType.ANALYZE_CALL)
         print(f"📋 Extracted analysis operation ID: {analysis_operation_id}")
 
         # Get the result to see what files are available
@@ -175,9 +170,7 @@ async def main():
             frames_to_download = set(keyframe_files)
 
         files_to_download = list(frames_to_download)
-        print(
-            f"📥 Downloading {len(files_to_download)} keyframe images as examples: {files_to_download}"
-        )
+        print(f"📥 Downloading {len(files_to_download)} keyframe images as examples: {files_to_download}")
 
         for keyframe_id in files_to_download:
             print(f"📥 Getting result file: {keyframe_id}")
@@ -197,9 +190,7 @@ async def main():
                     chunks.append(chunk)
                 image_content = b"".join(chunks)
 
-            print(
-                f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)"
-            )
+            print(f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)")
 
             # Save the image file
             saved_file_path = save_keyframe_image_to_file(
@@ -216,11 +207,11 @@ async def main():
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
         print(f"✅ Analyzer '{analyzer_id}' deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResultFile.json
+    # x-ms-original-file: 2025-05-01-preview/ContentAnalyzers_GetResultFile.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

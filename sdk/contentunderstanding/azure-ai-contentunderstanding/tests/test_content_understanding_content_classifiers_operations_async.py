@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,47 +21,45 @@ from test_helpers import (
     assert_poller_properties,
     assert_classifier_result,
     save_classifier_result_to_file,
-    PollerType
+    PollerType,
 )
 
 
 async def classifier_in_list_async(client, classifier_id: str) -> bool:
     """Check if a classifier with the given ID exists in the list of classifiers (async version).
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         classifier_id: The classifier ID to search for
-        
+
     Returns:
         bool: True if the classifier is found, False otherwise
     """
     response = client.content_classifiers.list()
     async for r in response:
-        if hasattr(r, 'classifier_id') and r.classifier_id == classifier_id:
+        if hasattr(r, "classifier_id") and r.classifier_id == classifier_id:
             return True
     return False
 
 
 async def create_classifier_and_assert_async(
-    client, 
-    classifier_id: str, 
-    resource: Union[ContentClassifier, Dict[str, Any]]
+    client, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
 ) -> Tuple[Any, str]:
     """Create a classifier and perform basic assertions (async version).
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         classifier_id: The classifier ID to create
         resource: The classifier resource dictionary
-        
+
     Returns:
         Tuple[Any, str]: A tuple containing (poller, operation_id)
-        
+
     Raises:
         AssertionError: If the creation fails or assertions fail
     """
     print(f"\nCreating classifier {classifier_id}")
-    
+
     # Start the classifier creation operation
     poller = await client.content_classifiers.begin_create_or_replace(
         classifier_id=classifier_id,
@@ -81,13 +80,13 @@ async def create_classifier_and_assert_async(
     # Verify the operation status response
     assert status_response is not None
     print(f"  Operation status: {status_response}")
-    
+
     # Check that the operation status has expected fields
-    assert hasattr(status_response, 'status') or hasattr(status_response, 'operation_status')
-    assert hasattr(status_response, 'id')
+    assert hasattr(status_response, "status") or hasattr(status_response, "operation_status")
+    assert hasattr(status_response, "id")
     if is_live():
         assert status_response.id == operation_id
-    
+
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
     response = await poller.result()
@@ -95,28 +94,30 @@ async def create_classifier_and_assert_async(
     assert poller.status() == "Succeeded"
     assert poller.done()
     print(f"  Classifier {classifier_id} is created successfully")
-    
+
     # Additional poller assertions
     assert poller is not None
     assert poller.status() is not None
     assert poller.status() != ""
     assert poller.continuation_token() is not None
-    
+
     # Verify the classifier is in the list
-    assert await classifier_in_list_async(client, classifier_id), f"Created classifier with ID '{classifier_id}' was not found in the list"
+    assert await classifier_in_list_async(
+        client, classifier_id
+    ), f"Created classifier with ID '{classifier_id}' was not found in the list"
     print(f"  Verified classifier {classifier_id} is in the list")
-    
+
     return poller, operation_id
 
 
 async def delete_classifier_and_assert(client, classifier_id: str, created_classifier: bool) -> None:
     """Delete a classifier and assert it was deleted successfully.
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         classifier_id: The classifier ID to delete
         created_classifier: Whether the classifier was created (to determine if cleanup is needed)
-        
+
     Raises:
         AssertionError: If the classifier still exists after deletion
     """
@@ -125,7 +126,9 @@ async def delete_classifier_and_assert(client, classifier_id: str, created_class
         try:
             await client.content_classifiers.delete(classifier_id=classifier_id)
             # Verify deletion
-            assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+            assert not await classifier_in_list_async(
+                client, classifier_id
+            ), f"Deleted classifier with ID '{classifier_id}' was found in the list"
             print(f"Classifier {classifier_id} is deleted successfully")
         except Exception as e:
             # If deletion fails, the test should fail
@@ -135,6 +138,7 @@ async def delete_classifier_and_assert(client, classifier_id: str, created_class
 
 
 import pytest
+
 
 class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     @ContentUnderstandingPreparer()
@@ -155,7 +159,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for operation status: {classifier_id}",
-            tags={"test_type": "operation_status"}
+            tags={"test_type": "operation_status"},
         )
 
         try:
@@ -173,17 +177,17 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             # Verify the operation status response
             assert response is not None
             print(f"Operation status response: {response}")
-            
+
             # Check that the operation status has expected fields
-            assert hasattr(response, 'id')
+            assert hasattr(response, "id")
             if is_live():
                 assert response.id == operation_id
-            assert hasattr(response, 'status') or hasattr(response, 'operation_status')
-            
+            assert hasattr(response, "status") or hasattr(response, "operation_status")
+
             # The operation should be completed since we waited for it in create_classifier_and_assert_async
-            if hasattr(response, 'status'):
+            if hasattr(response, "status"):
                 assert response.status in ["Succeeded", "Completed"]
-            elif hasattr(response, 'operation_status'):
+            elif hasattr(response, "operation_status"):
                 assert response.operation_status in ["Succeeded", "Completed"]
 
         finally:
@@ -206,7 +210,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier: {classifier_id}",
-            tags={"tag1_name": "tag1_value"}
+            tags={"tag1_name": "tag1_value"},
         )
 
         try:
@@ -237,12 +241,14 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         initial_classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"Initial classifier for update test: {classifier_id}",
-            tags={"initial_tag": "initial_value"}
+            tags={"initial_tag": "initial_value"},
         )
 
         try:
             # Create the initial classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, initial_classifier_schema)
+            poller, operation_id = await create_classifier_and_assert_async(
+                client, classifier_id, initial_classifier_schema
+            )
             created_classifier = True
 
             # Get the classifier before update to verify initial state
@@ -252,7 +258,9 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             assert classifier_before_update.classifier_id == classifier_id
             assert classifier_before_update.description == f"Initial classifier for update test: {classifier_id}"
             assert classifier_before_update.tags == {"initial_tag": "initial_value"}
-            print(f"Initial classifier state verified - description: {classifier_before_update.description}, tags: {classifier_before_update.tags}")
+            print(
+                f"Initial classifier state verified - description: {classifier_before_update.description}, tags: {classifier_before_update.tags}"
+            )
 
             # Create updated classifier with only allowed properties (description and tags)
             updated_classifier_schema = {
@@ -261,7 +269,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             }
 
             print(f"Updating classifier {classifier_id} with new tag and description")
-            
+
             # Update the classifier
             response = await client.content_classifiers.update(
                 classifier_id=classifier_id,
@@ -271,13 +279,13 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             # Verify the update response
             assert response is not None
             print(f"Update response: {response}")
-            
+
             # Verify the updated classifier has the new tag and updated description
             assert response.classifier_id == classifier_id
             assert "tag1_field" in response.tags
             assert response.tags["tag1_field"] == "updated_value"
             assert response.description == f"Updated classifier for update test: {classifier_id}"
-            
+
             print(f"Successfully updated classifier {classifier_id} with new tag and description")
 
             # Get the classifier after update to verify the changes persisted
@@ -287,10 +295,14 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             assert classifier_after_update.classifier_id == classifier_id
             assert classifier_after_update.description == f"Updated classifier for update test: {classifier_id}"
             assert classifier_after_update.tags == {"initial_tag": "initial_value", "tag1_field": "updated_value"}
-            print(f"Updated classifier state verified - description: {classifier_after_update.description}, tags: {classifier_after_update.tags}")
+            print(
+                f"Updated classifier state verified - description: {classifier_after_update.description}, tags: {classifier_after_update.tags}"
+            )
 
             # Verify the updated classifier is in the list
-            assert await classifier_in_list_async(client, classifier_id), f"Updated classifier with ID '{classifier_id}' was not found in the list"
+            assert await classifier_in_list_async(
+                client, classifier_id
+            ), f"Updated classifier with ID '{classifier_id}' was not found in the list"
 
         finally:
             # Always clean up the created classifier, even if the test fails
@@ -305,7 +317,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Verify classifier properties and status
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        
+
         # First, create a classifier to get
         classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_get")
         created_classifier = False
@@ -313,7 +325,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for get: {classifier_id}",
-            tags={"test_type": "get"}
+            tags={"test_type": "get"},
         )
 
         try:
@@ -355,7 +367,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for deletion: {classifier_id}",
-            tags={"test_type": "deletion"}
+            tags={"test_type": "deletion"},
         )
 
         try:
@@ -364,18 +376,22 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             created_classifier = True
 
             # Verify the classifier is in the list before deletion
-            assert await classifier_in_list_async(client, classifier_id), f"Created classifier with ID '{classifier_id}' was not found in the list"
+            assert await classifier_in_list_async(
+                client, classifier_id
+            ), f"Created classifier with ID '{classifier_id}' was not found in the list"
             print(f"Verified classifier {classifier_id} is in the list before deletion")
 
             # Delete the classifier
             print(f"Deleting classifier {classifier_id}")
             response = await client.content_classifiers.delete(classifier_id=classifier_id)
-            
+
             # Verify the delete response
             assert response is None
-            
+
             # Verify the classifier is no longer in the list after deletion
-            assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+            assert not await classifier_in_list_async(
+                client, classifier_id
+            ), f"Deleted classifier with ID '{classifier_id}' was found in the list"
             print(f"Verified classifier {classifier_id} is no longer in the list after deletion")
 
         finally:
@@ -384,7 +400,9 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
                 print(f"Cleaning up classifier {classifier_id} that was not properly deleted")
                 try:
                     await client.content_classifiers.delete(classifier_id=classifier_id)
-                    assert not await classifier_in_list_async(client, classifier_id), f"Failed to delete classifier {classifier_id} during cleanup"
+                    assert not await classifier_in_list_async(
+                        client, classifier_id
+                    ), f"Failed to delete classifier {classifier_id} during cleanup"
                     print(f"Classifier {classifier_id} is deleted successfully during cleanup")
                 except Exception as e:
                     # If cleanup fails, the test should fail
@@ -404,7 +422,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
         response = client.content_classifiers.list()
         result = [r async for r in response]
-        
+
         # Verify we get at least one classifier in the list (after creating one)
         classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_list")
         created_classifier = False
@@ -412,7 +430,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for list: {classifier_id}",
-            tags={"test_type": "list"}
+            tags={"test_type": "list"},
         )
 
         try:
@@ -423,24 +441,24 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             # Now list all classifiers
             response = client.content_classifiers.list()
             result = [r async for r in response]
-            
+
             # Verify we get at least one classifier in the list
             assert len(result) > 0, "Should have at least one classifier in the list"
             print(f"Found {len(result)} classifiers")
-            
+
             # Verify that our created classifier is in the list
             created_found = False
             for classifier in result:
-                assert hasattr(classifier, 'classifier_id'), "Each classifier should have classifier_id"
-                assert hasattr(classifier, 'description'), "Each classifier should have description"
-                assert hasattr(classifier, 'status'), "Each classifier should have status"
-                assert hasattr(classifier, 'created_at'), "Each classifier should have created_at"
-                
+                assert hasattr(classifier, "classifier_id"), "Each classifier should have classifier_id"
+                assert hasattr(classifier, "description"), "Each classifier should have description"
+                assert hasattr(classifier, "status"), "Each classifier should have status"
+                assert hasattr(classifier, "created_at"), "Each classifier should have created_at"
+
                 if classifier.classifier_id == classifier_id:
                     created_found = True
                     assert classifier.status == "ready", f"Classifier {classifier_id} should be ready"
                     print(f"Found created classifier: {classifier.description}")
-            
+
             assert created_found, f"Created classifier {classifier_id} should be in the list"
             print("List classifiers test completed successfully")
 
@@ -451,7 +469,9 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
                 try:
                     await client.content_classifiers.delete(classifier_id=classifier_id)
                     # Verify deletion
-                    assert not await classifier_in_list_async(client, classifier_id), f"Deleted classifier with ID '{classifier_id}' was found in the list"
+                    assert not await classifier_in_list_async(
+                        client, classifier_id
+                    ), f"Deleted classifier with ID '{classifier_id}' was found in the list"
                     print(f"Classifier {classifier_id} is deleted successfully")
                 except Exception as e:
                     # If deletion fails, the test should fail
@@ -479,7 +499,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for URL classification: {classifier_id}",
-            tags={"test_type": "url_classification"}
+            tags={"test_type": "url_classification"},
         )
 
         try:
@@ -491,7 +511,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
 
             print(f"Starting URL classification with classifier {classifier_id}")
-            
+
             # Begin classification operation with URL
             classification_poller = await client.content_classifiers.begin_classify(
                 classifier_id=classifier_id,
@@ -505,10 +525,12 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             print(f"Waiting for classification completion")
             classification_result = await classification_poller.result()
             print(f"  Classification completed")
-            
+
             # Get test file directory for saving output
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            output_filename = save_classifier_result_to_file(classification_result, "test_content_classifiers_begin_classify", test_file_dir, classifier_id)
+            output_filename = save_classifier_result_to_file(
+                classification_result, "test_content_classifiers_begin_classify", test_file_dir, classifier_id
+            )
 
             # Now assert the classification results
             assert_classifier_result(classification_result, "Classification result")
@@ -538,7 +560,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for binary classification: {classifier_id}",
-            tags={"test_type": "binary_classification"}
+            tags={"test_type": "binary_classification"},
         )
 
         try:
@@ -553,7 +575,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
                 pdf_content = pdf_file.read()
 
             print(f"Starting binary classification with classifier {classifier_id}")
-            
+
             # Begin binary classification operation
             classification_poller = await client.content_classifiers.begin_classify_binary(
                 classifier_id=classifier_id,
@@ -566,8 +588,10 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             print(f"Waiting for classification completion")
             classification_result = await classification_poller.result()
             print(f"  Classification completed")
-            
-            output_filename = save_classifier_result_to_file(classification_result, "test_content_classifiers_begin_classify_binary", test_file_dir, classifier_id)
+
+            output_filename = save_classifier_result_to_file(
+                classification_result, "test_content_classifiers_begin_classify_binary", test_file_dir, classifier_id
+            )
 
             # Now assert the classification results
             assert_classifier_result(classification_result, "Classification result")
@@ -598,7 +622,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         classifier_schema = new_simple_classifier_schema(
             classifier_id=classifier_id,
             description=f"test classifier for get result test: {classifier_id}",
-            tags={"test_type": "get_result"}
+            tags={"test_type": "get_result"},
         )
 
         try:
@@ -613,7 +637,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
                 pdf_content = pdf_file.read()
 
             print(f"Starting binary classification to get operation ID")
-            
+
             # Begin binary classification operation
             classification_poller = await client.content_classifiers.begin_classify_binary(
                 classifier_id=classifier_id,
@@ -627,7 +651,9 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             print(f"  Classification completed")
 
             # Extract operation ID for get_result test - this should not fail
-            classification_operation_id = extract_operation_id_from_poller(classification_poller, PollerType.CLASSIFY_CALL)
+            classification_operation_id = extract_operation_id_from_poller(
+                classification_poller, PollerType.CLASSIFY_CALL
+            )
             assert classification_operation_id is not None, "Operation ID should not be None"
             assert len(classification_operation_id) > 0, "Operation ID should not be empty"
             print(f"  Classification operation ID: {classification_operation_id}")
@@ -637,31 +663,39 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             operation_status = await client.content_classifiers.get_result(
                 operation_id=classification_operation_id,
             )
-            
+
             # Check operation_status is not None
             assert operation_status is not None, "Operation status should not be None"
-            
+
             # Check operation_status has the expected operation status properties
-            assert hasattr(operation_status, 'id'), "Operation status should have id property"
-            assert hasattr(operation_status, 'status'), "Operation status should have status property"
-            assert hasattr(operation_status, 'result'), "Operation status should have result property"
+            assert hasattr(operation_status, "id"), "Operation status should have id property"
+            assert hasattr(operation_status, "status"), "Operation status should have status property"
+            assert hasattr(operation_status, "result"), "Operation status should have result property"
             if is_live():
-                assert operation_status.id == classification_operation_id, f"Operation status ID should match operation ID {classification_operation_id}"
-            assert operation_status.status == "Succeeded", f"Operation status should be Succeeded, got {operation_status.status}"
-            
+                assert (
+                    operation_status.id == classification_operation_id
+                ), f"Operation status ID should match operation ID {classification_operation_id}"
+            assert (
+                operation_status.status == "Succeeded"
+            ), f"Operation status should be Succeeded, got {operation_status.status}"
+
             # Check the class name of the operation status
-            assert operation_status.__class__.__name__ == "OperationStatusClassifyResultError", f"Expected ResourceOperationStatusContentClassifierContentClassifierError, got {operation_status.__class__.__name__}"
-            
+            assert (
+                operation_status.__class__.__name__ == "OperationStatusClassifyResultError"
+            ), f"Expected ResourceOperationStatusContentClassifierContentClassifierError, got {operation_status.__class__.__name__}"
+
             # The actual classification result is in operation_status.result
             classification_result = operation_status.result
             assert classification_result is not None, "Classification result should not be None"
-            
+
             # Get test file directory for saving output
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            
+
             # Save the classification result to file (not the wrapper operation_status)
-            output_filename = save_classifier_result_to_file(classification_result, "test_content_classifiers_get_result", test_file_dir, classification_operation_id)
-            
+            output_filename = save_classifier_result_to_file(
+                classification_result, "test_content_classifiers_get_result", test_file_dir, classification_operation_id
+            )
+
             print(f"  Successfully retrieved result for operation {classification_operation_id}")
             print(f"  Result contains {len(classification_result.contents)} contents")
 
@@ -682,12 +716,16 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Verify classification result properties
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_url_overload")
+        classifier_id = await generate_classifier_id_async(
+            client, "test_content_classifiers_begin_classify_url_overload"
+        )
         created_classifier = False
 
         try:
             # Create classifier for classification test
-            created_classifier, _ = await create_classifier_and_assert_async(client, classifier_id, new_simple_classifier_schema(classifier_id))
+            created_classifier, _ = await create_classifier_and_assert_async(
+                client, classifier_id, new_simple_classifier_schema(classifier_id)
+            )
 
             # Test URL classification using new overload
             mixed_docs_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/mixed_financial_docs.pdf"
@@ -708,7 +746,12 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
             # Get test file directory for saving output
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            output_filename = save_classifier_result_to_file(classify_result, "test_content_classifiers_begin_classify_url_overload_async", test_file_dir, classifier_id)
+            output_filename = save_classifier_result_to_file(
+                classify_result,
+                "test_content_classifiers_begin_classify_url_overload_async",
+                test_file_dir,
+                classifier_id,
+            )
             print(f"URL classification result saved to: {output_filename}")
 
         finally:
@@ -725,12 +768,16 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Verify classification result properties
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_data_overload")
+        classifier_id = await generate_classifier_id_async(
+            client, "test_content_classifiers_begin_classify_data_overload"
+        )
         created_classifier = False
 
         try:
             # Create classifier for classification test
-            created_classifier, _ = await create_classifier_and_assert_async(client, classifier_id, new_simple_classifier_schema(classifier_id))
+            created_classifier, _ = await create_classifier_and_assert_async(
+                client, classifier_id, new_simple_classifier_schema(classifier_id)
+            )
 
             # Read the mixed financial docs PDF file
             pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "mixed_financial_docs.pdf")
@@ -753,7 +800,12 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
             # Get test file directory for saving output
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            output_filename = save_classifier_result_to_file(classify_result, "test_content_classifiers_begin_classify_data_overload_async", test_file_dir, classifier_id)
+            output_filename = save_classifier_result_to_file(
+                classify_result,
+                "test_content_classifiers_begin_classify_data_overload_async",
+                test_file_dir,
+                classifier_id,
+            )
             print(f"Data classification result saved to: {output_filename}")
 
         finally:
@@ -770,12 +822,16 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
         - Verify error handling
         """
         client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_begin_classify_url_data_mutual_exclusivity")
+        classifier_id = await generate_classifier_id_async(
+            client, "test_content_classifiers_begin_classify_url_data_mutual_exclusivity"
+        )
         created_classifier = False
 
         try:
             # Create classifier for classification test
-            created_classifier, _ = await create_classifier_and_assert_async(client, classifier_id, new_simple_classifier_schema(classifier_id))
+            created_classifier, _ = await create_classifier_and_assert_async(
+                client, classifier_id, new_simple_classifier_schema(classifier_id)
+            )
 
             # Read the mixed financial docs PDF file
             pdf_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "mixed_financial_docs.pdf")

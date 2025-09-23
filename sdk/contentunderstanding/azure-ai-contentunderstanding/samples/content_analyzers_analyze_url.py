@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -55,17 +56,10 @@ async def main() -> None:
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
-        print(
-            f"🔍 Analyzing remote document from {file_url} with prebuilt-documentAnalyzer..."
-        )
-        poller = await client.content_analyzers.begin_analyze(
-            analyzer_id="prebuilt-documentAnalyzer", 
-            url=file_url
-        )
+        print(f"🔍 Analyzing remote document from {file_url} with prebuilt-documentAnalyzer...")
+        poller = await client.content_analyzers.begin_analyze(analyzer_id="prebuilt-documentAnalyzer", url=file_url)
         result: AnalyzeResult = await poller.result()
 
         # AnalyzeResult contains the full analysis result and can be used to access various properties
@@ -84,9 +78,7 @@ async def main() -> None:
             print(f"\n📚 Document Information:")
             print(f"Start page: {document_content.start_page_number}")
             print(f"End page: {document_content.end_page_number}")
-            print(
-                f"Total pages: {document_content.end_page_number - document_content.start_page_number + 1}"
-            )
+            print(f"Total pages: {document_content.end_page_number - document_content.start_page_number + 1}")
 
             # Check for pages
             if document_content.pages is not None:
@@ -106,9 +98,7 @@ async def main() -> None:
                     # Get basic table dimensions
                     row_count: int = table.row_count
                     col_count: int = table.column_count
-                    print(
-                        f"  Table {table_counter}: {row_count} rows x {col_count} columns"
-                    )
+                    print(f"  Table {table_counter}: {row_count} rows x {col_count} columns")
                     table_counter += 1
                     # You can use the table object model to get detailed information
                     # such as cell content, borders, spans, etc. (not shown to keep code concise)

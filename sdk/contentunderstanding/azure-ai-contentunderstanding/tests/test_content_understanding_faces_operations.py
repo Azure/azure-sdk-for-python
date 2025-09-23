@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,6 +19,7 @@ from test_helpers import read_image_bytes
 
 import pytest
 
+
 class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
@@ -30,38 +32,38 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Verify detection results
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         with open(image_path, "rb") as image_file:
             image_bytes = image_file.read()
         import base64
+
         image_data = base64.b64encode(image_bytes).decode("utf-8")
-        
+
         print(f"Testing original body method with image: {image_path}")
         response = client.faces.detect(
-            body={
-                "data": image_data,  # image_data is already a string
-                "maxDetectedFaces": 10
-            }
+            body={"data": image_data, "maxDetectedFaces": 10}  # image_data is already a string
         )
-        
+
         # Verify the response
         assert response is not None
-        assert hasattr(response, 'detected_faces')
+        assert hasattr(response, "detected_faces")
         print(f"Original body method: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
-        
+
         # Verify each detected face has required properties
         if response.detected_faces:
             for i, face in enumerate(response.detected_faces):
-                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
-                
+                assert hasattr(face, "bounding_box"), f"Detected face {i} should have bounding_box"
+
                 # Print bounding box information
-                if hasattr(face, 'bounding_box') and face.bounding_box:
+                if hasattr(face, "bounding_box") and face.bounding_box:
                     bbox = face.bounding_box
-                    print(f"Face {i+1}: BoundingBox(left={bbox.left}, top={bbox.top}, width={bbox.width}, height={bbox.height})")
-        
+                    print(
+                        f"Face {i+1}: BoundingBox(left={bbox.left}, top={bbox.top}, width={bbox.width}, height={bbox.height})"
+                    )
+
         print("Original body method test completed successfully")
 
     @ContentUnderstandingPreparer()
@@ -74,26 +76,23 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Verify detection results
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Use a test image URL
         image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
-        
+
         print(f"Testing original url keyword method with URL: {image_url}")
-        response = client.faces.detect(
-            url=image_url,
-            max_detected_faces=10
-        )
-        
+        response = client.faces.detect(url=image_url, max_detected_faces=10)
+
         # Verify the response
         assert response is not None
-        assert hasattr(response, 'detected_faces')
+        assert hasattr(response, "detected_faces")
         print(f"URL keyword method: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
-        
+
         # Verify each detected face has required properties
         if response.detected_faces:
             for i, face in enumerate(response.detected_faces):
-                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
-        
+                assert hasattr(face, "bounding_box"), f"Detected face {i} should have bounding_box"
+
         print("URL keyword method test completed successfully")
 
     @ContentUnderstandingPreparer()
@@ -107,28 +106,27 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Verify detection results
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         image_data = read_image_bytes(image_path)  # Returns raw bytes
-        
+
         print(f"Testing data keyword method with image: {image_path}")
         response = client.faces.detect(
-            data=image_data,  # Our patch will convert bytes to string automatically
-            max_detected_faces=10
+            data=image_data, max_detected_faces=10  # Our patch will convert bytes to string automatically
         )
-        
+
         # Verify the response
         assert response is not None
-        assert hasattr(response, 'detected_faces')
+        assert hasattr(response, "detected_faces")
         print(f"Data keyword method: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
-        
+
         # Verify each detected face has required properties
         if response.detected_faces:
             for i, face in enumerate(response.detected_faces):
-                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
-        
+                assert hasattr(face, "bounding_box"), f"Detected face {i} should have bounding_box"
+
         print("Data keyword method test completed successfully")
 
     @ContentUnderstandingPreparer()
@@ -141,26 +139,25 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Verify detection results
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Use a test image URL
         image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
-        
+
         print(f"Testing new URL keyword overload with URL: {image_url}")
-        response = client.faces.detect(
-            url=image_url,  # URL as keyword argument (new overload)
-            max_detected_faces=10
-        )
-        
+        response = client.faces.detect(url=image_url, max_detected_faces=10)  # URL as keyword argument (new overload)
+
         # Verify the response
         assert response is not None
-        assert hasattr(response, 'detected_faces')
-        print(f"URL positional overload: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
-        
+        assert hasattr(response, "detected_faces")
+        print(
+            f"URL positional overload: Detected {len(response.detected_faces) if response.detected_faces else 0} faces"
+        )
+
         # Verify each detected face has required properties
         if response.detected_faces:
             for i, face in enumerate(response.detected_faces):
-                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
-        
+                assert hasattr(face, "bounding_box"), f"Detected face {i} should have bounding_box"
+
         print("URL positional overload test completed successfully")
 
     @ContentUnderstandingPreparer()
@@ -173,28 +170,29 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Verify detection results
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         image_data = read_image_bytes(image_path)  # Returns raw bytes
-        
+
         print(f"Testing new bytes keyword overload with image: {image_path}")
         response = client.faces.detect(
-            data=image_data,  # Bytes as keyword argument (new overload)
-            max_detected_faces=10
+            data=image_data, max_detected_faces=10  # Bytes as keyword argument (new overload)
         )
-        
+
         # Verify the response
         assert response is not None
-        assert hasattr(response, 'detected_faces')
-        print(f"Bytes positional overload: Detected {len(response.detected_faces) if response.detected_faces else 0} faces")
-        
+        assert hasattr(response, "detected_faces")
+        print(
+            f"Bytes positional overload: Detected {len(response.detected_faces) if response.detected_faces else 0} faces"
+        )
+
         # Verify each detected face has required properties
         if response.detected_faces:
             for i, face in enumerate(response.detected_faces):
-                assert hasattr(face, 'bounding_box'), f"Detected face {i} should have bounding_box"
-        
+                assert hasattr(face, "bounding_box"), f"Detected face {i} should have bounding_box"
+
         print("Bytes positional overload test completed successfully")
 
     @ContentUnderstandingPreparer()
@@ -207,65 +205,66 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Verify comparison results show high similarity
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Load two different images of the same person (Bill)
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         image1_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
         image2_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
-        
+
         with open(image1_path, "rb") as image_file:
             image1_bytes = image_file.read()
         with open(image2_path, "rb") as image_file:
             image2_bytes = image_file.read()
         import base64
+
         image1_data = base64.b64encode(image1_bytes).decode("utf-8")
         image2_data = base64.b64encode(image2_bytes).decode("utf-8")
-        
+
         print(f"Comparing faces between two images of the same person (Bill)")
         print(f"Image 1: {image1_path}")
         print(f"Image 2: {image2_path}")
-        
+
         response = client.faces.compare(
             body={
-                "faceSource1": {
-                    "data": image1_data  # image_data is already a string
-                },
-                "faceSource2": {
-                    "data": image2_data  # image_data is already a string
-                }
+                "faceSource1": {"data": image1_data},  # image_data is already a string
+                "faceSource2": {"data": image2_data},  # image_data is already a string
             }
         )
-        
+
         # Verify the response
         assert response is not None
-        assert hasattr(response, 'detected_face1'), "Response should have detected_face1 property"
-        assert hasattr(response, 'detected_face2'), "Response should have detected_face2 property"
-        assert hasattr(response, 'confidence'), "Response should have confidence property"
-        
+        assert hasattr(response, "detected_face1"), "Response should have detected_face1 property"
+        assert hasattr(response, "detected_face2"), "Response should have detected_face2 property"
+        assert hasattr(response, "confidence"), "Response should have confidence property"
+
         print(f"Face comparison result: Confidence={response.confidence}")
-        
+
         # Verify confidence is a numeric value
         assert isinstance(response.confidence, (int, float)), "Confidence should be a number"
         assert response.confidence >= 0, "Confidence should be non-negative"
-        
+
         # Print detected face information
-        if hasattr(response, 'detected_face1') and response.detected_face1:
+        if hasattr(response, "detected_face1") and response.detected_face1:
             face1 = response.detected_face1
-            if hasattr(face1, 'bounding_box') and face1.bounding_box:
+            if hasattr(face1, "bounding_box") and face1.bounding_box:
                 bbox1 = face1.bounding_box
-                print(f"Detected Face 1: BoundingBox(left={bbox1.left}, top={bbox1.top}, width={bbox1.width}, height={bbox1.height})")
-        
-        if hasattr(response, 'detected_face2') and response.detected_face2:
+                print(
+                    f"Detected Face 1: BoundingBox(left={bbox1.left}, top={bbox1.top}, width={bbox1.width}, height={bbox1.height})"
+                )
+
+        if hasattr(response, "detected_face2") and response.detected_face2:
             face2 = response.detected_face2
-            if hasattr(face2, 'bounding_box') and face2.bounding_box:
+            if hasattr(face2, "bounding_box") and face2.bounding_box:
                 bbox2 = face2.bounding_box
-                print(f"Detected Face 2: BoundingBox(left={bbox2.left}, top={bbox2.top}, width={bbox2.width}, height={bbox2.height})")
+                print(
+                    f"Detected Face 2: BoundingBox(left={bbox2.left}, top={bbox2.top}, width={bbox2.width}, height={bbox2.height})"
+                )
                 # Validate bounding box coordinates
                 assert bbox2.width > 0 and bbox2.height > 0, "Face 2 bounding box should have positive dimensions"
-        
+
         # For faces of the same person, we expect high confidence
         print(f"Confidence score: {response.confidence} (expected high for same person)")
-        
+
         print("Face comparison test completed successfully")
 
     @ContentUnderstandingPreparer()
@@ -275,31 +274,28 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         Test Summary:
         - Test that url and data parameters cannot be provided simultaneously
         - Verify that the enhanced FacesOperations enforces mutual exclusivity
-        
+
         Expected Result:
         - ValueError should be raised when both url and data are provided
         """
         client = self.create_client(endpoint=contentunderstanding_endpoint)
-        
+
         # Test mutual exclusivity validation
         print("Testing mutual exclusivity validation...")
-        
+
         # This should raise a ValueError
         try:
-            response = client.faces.detect(
-                url="https://example.com/test.jpg",
-                data=b"some binary data"
-            )
+            response = client.faces.detect(url="https://example.com/test.jpg", data=b"some binary data")
             # If we get here, the test failed
             assert False, "Expected ValueError for providing both url and data"
-            
+
         except ValueError as e:
             print(f"✅ Mutual exclusivity validation working: {e}")
             assert "Cannot provide both 'url' and 'data' parameters simultaneously" in str(e)
-        
+
         # Test that individual parameters work
         print("Testing individual parameters work...")
-        
+
         # URL only should work
         try:
             response = client.faces.detect(
@@ -307,25 +303,23 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
             )
             assert response is not None
             print("✅ URL-only parameter works correctly")
-            
+
         except Exception as e:
             print(f"ℹ️  URL-only test: {e}")
-        
+
         # Data only should work (if we have a local file)
         try:
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
             image_data = read_image_bytes(image_path)
-            
-            response = client.faces.detect(
-                data=image_data
-            )
+
+            response = client.faces.detect(data=image_data)
             assert response is not None
             print("✅ Data-only parameter works correctly")
-            
+
         except FileNotFoundError:
             print("ℹ️  Local image file not found, skipping data-only test")
         except Exception as e:
             print(f"ℹ️  Data-only test: {e}")
-        
+
         print("Mutual exclusivity test completed successfully")

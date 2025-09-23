@@ -15,16 +15,15 @@ import functools
 
 def get_content_understanding_credential():
     """Get the appropriate credential for Content Understanding.
-    
+
     Checks for AZURE_CONTENT_UNDERSTANDING_KEY first, then falls back to DefaultAzureCredential.
     """
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
-    
+
     if key and key.strip():
         return AzureKeyCredential(key)
     else:
         return DefaultAzureCredential()
-
 
 
 class ContentUnderstandingClientTestBase(AzureRecordedTestCase):

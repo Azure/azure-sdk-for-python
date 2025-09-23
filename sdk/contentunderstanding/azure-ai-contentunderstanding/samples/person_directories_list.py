@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -48,9 +49,7 @@ async def main():
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         created_directories = []
 
         # Create a few directories for the list demo
@@ -88,11 +87,11 @@ async def main():
             print(f"   ✅ Deleted directory: {directory_id}")
         print("✅ All demo directories deleted successfully!")
 
-
-# x-ms-original-file: 2025-05-01-preview/PersonDirectories_List.json
+    # x-ms-original-file: 2025-05-01-preview/PersonDirectories_List.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):
         await credential.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

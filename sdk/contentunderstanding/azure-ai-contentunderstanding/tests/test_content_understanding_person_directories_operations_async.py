@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,20 +14,17 @@ from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.contentunderstanding.models import PersonDirectory
-from test_helpers import (
-    generate_person_directory_id_async,
-    get_enrollment_data_path
-)
+from test_helpers import generate_person_directory_id_async, get_enrollment_data_path
 
 
 async def delete_person_directory_and_assert(client, person_directory_id: str, created_directory: bool) -> None:
     """Delete a person directory and assert it was deleted successfully.
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID to delete
         created_directory: Whether the directory was created (for logging purposes only)
-        
+
     Raises:
         AssertionError: If the directory still exists after deletion
     """
@@ -36,7 +34,9 @@ async def delete_person_directory_and_assert(client, person_directory_id: str, c
         if await person_directory_exists_async(client, person_directory_id):
             await client.person_directories.delete(person_directory_id=person_directory_id)
             # Verify deletion
-            assert not await person_directory_exists_async(client, person_directory_id), f"Deleted person directory with ID '{person_directory_id}' was found"
+            assert not await person_directory_exists_async(
+                client, person_directory_id
+            ), f"Deleted person directory with ID '{person_directory_id}' was found"
             print(f"Person directory {person_directory_id} is deleted successfully")
         else:
             print(f"Person directory {person_directory_id} does not exist, no cleanup needed")
@@ -47,14 +47,14 @@ async def delete_person_directory_and_assert(client, person_directory_id: str, c
 
 async def person_directory_exists_async(client, person_directory_id: str) -> bool:
     """Check if a person directory with the given ID exists (async version).
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID to search for
-        
+
     Returns:
         bool: True if the person directory is found, False otherwise
-        
+
     Raises:
         ResourceNotFoundError: If the person directory doesn't exist
         Other exceptions: Will bubble up for authentication errors, network issues, etc.
@@ -67,188 +67,163 @@ async def person_directory_exists_async(client, person_directory_id: str) -> boo
 
 
 async def create_person_directory_and_assert_async(
-    client, 
-    person_directory_id: str, 
-    description: str = "",
-    tags: Optional[Dict[str, str]] = None
+    client, person_directory_id: str, description: str = "", tags: Optional[Dict[str, str]] = None
 ) -> None:
     """Create a person directory and perform basic assertions (async version).
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID to create
         description: Optional description for the person directory
         tags: Optional tags for the person directory
-        
+
     Raises:
         AssertionError: If the creation fails or assertions fail
     """
     print(f"\nCreating person directory {person_directory_id}")
-    
+
     # Create the person directory
     response = await client.person_directories.create(
-        person_directory_id=person_directory_id,
-        resource={
-            "description": description,
-            "tags": tags or {}
-        }
+        person_directory_id=person_directory_id, resource={"description": description, "tags": tags or {}}
     )
-    
+
     # Verify the response
     assert response is not None
     print(f"Created person directory with ID: {person_directory_id}")
-    
+
     # Verify the person directory exists
-    assert await person_directory_exists_async(client, person_directory_id), f"Created person directory with ID '{person_directory_id}' was not found"
+    assert await person_directory_exists_async(
+        client, person_directory_id
+    ), f"Created person directory with ID '{person_directory_id}' was not found"
     print(f"Verified person directory {person_directory_id} exists")
 
 
 async def build_person_directory_from_enrollment_data_async(
-    client, 
-    person_directory_id: str,
-    enrollment_data_path: Optional[str] = None
+    client, person_directory_id: str, enrollment_data_path: Optional[str] = None
 ) -> Dict[str, str]:
     """Build person directory from enrollment data (async version).
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID
         enrollment_data_path: Path to the enrollment data directory (optional)
-        
+
     Returns:
         Dict[str, str]: Dictionary mapping person names to person IDs
-        
+
     Raises:
         AssertionError: If the enrollment data directory doesn't exist or processing fails
     """
     print(f"\nBuilding Person Directory from enrollment data...")
-    
+
     # Construct the enrollment data path if not provided
     if enrollment_data_path is None:
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
         enrollment_data_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data")
-    
+
     if not os.path.exists(enrollment_data_path):
         raise Exception(f"Enrollment data directory not found: {enrollment_data_path}")
-    
-    subfolders = [d for d in os.listdir(enrollment_data_path) 
-                  if os.path.isdir(os.path.join(enrollment_data_path, d))]
-    
+
+    subfolders = [d for d in os.listdir(enrollment_data_path) if os.path.isdir(os.path.join(enrollment_data_path, d))]
+
     print(f"Found {len(subfolders)} subfolders in enrollment data")
-    
+
     person_name_to_id = {}
-    
+
     for subfolder in subfolders:
         person_name = subfolder
         print(f"Processing person: {person_name}")
-        
+
         # Create person
         person_response = await client.person_directories.add_person(
-            person_directory_id=person_directory_id,
-            body={
-                "tags": {"name": person_name}
-            }
+            person_directory_id=person_directory_id, body={"tags": {"name": person_name}}
         )
-        
+
         person_id = person_response.person_id
         person_name_to_id[person_name] = person_id
         print(f"Created person with ID: {person_id}")
-        
+
         # Process face images
         person_folder = os.path.join(enrollment_data_path, subfolder)
-        image_files = [f for f in os.listdir(person_folder) 
-                      if f.lower().endswith(('.jpg', '.png', '.jpeg'))]
-        
+        image_files = [f for f in os.listdir(person_folder) if f.lower().endswith((".jpg", ".png", ".jpeg"))]
+
         print(f"Found {len(image_files)} face images")
-        
+
         for image_file in image_files:
             image_path = os.path.join(person_folder, image_file)
             filename = os.path.basename(image_file)
             print(f"- Adding face from {filename}... ", end="")
-            
+
             try:
                 # Read image as raw bytes
                 with open(image_path, "rb") as image_file:
                     image_bytes = image_file.read()
-                
+
                 # Add face to person
                 face_response = await client.person_directories.add_face(
                     person_directory_id=person_directory_id,
-                    body={
-                        "faceSource": {
-                            "data": image_bytes
-                        },
-                        "personId": person_id
-                    }
+                    body={"faceSource": {"data": image_bytes}, "personId": person_id},
                 )
-                
+
                 print(f"success! Face ID: {face_response.face_id}")
-                
+
             except Exception as ex:
                 print(f"failed: {ex}")
-    
+
     print(f"\nCompleted building person directory with {len(subfolders)} persons")
     return person_name_to_id
 
 
-async def identify_persons_in_image_async(
-    client, 
-    person_directory_id: str, 
-    image_path: str
-) -> None:
+async def identify_persons_in_image_async(client, person_directory_id: str, image_path: str) -> None:
     """Identify persons in an image using the person directory (async version).
-    
+
     Args:
         client: The ContentUnderstandingClient instance
         person_directory_id: The person directory ID
         image_path: Path to the image file to analyze
-        
+
     Raises:
         AssertionError: If identification fails
     """
     print(f"\nIdentifying Persons in Image...")
     print(f"Processing test image: {os.path.basename(image_path)}")
-    
+
     # Read image as raw bytes
     with open(image_path, "rb") as image_file:
         image_bytes = image_file.read()
-    
+
     # Detect faces first
     # Note: This would require a separate face detection API call
     # For now, we'll assume the image contains faces and proceed with identification
-    
+
     # Identify persons in the image
     try:
         identify_response = await client.person_directories.identify_person(
             person_directory_id=person_directory_id,
-            body={
-                "faceSource": {
-                    "data": image_bytes
-                },
-                "maxPersonCandidates": 5
-            }
+            body={"faceSource": {"data": image_bytes}, "maxPersonCandidates": 5},
         )
-        
+
         if identify_response.person_candidates and len(identify_response.person_candidates) > 0:
             for candidate in identify_response.person_candidates:
                 print(f"Identified person: {candidate.person_id} (Confidence: {candidate.confidence})")
         else:
             print("No persons identified in the image")
-            
+
     except Exception as ex:
         print(f"Error identifying persons: {ex}")
 
 
 import pytest
 
+
 class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstandingClientTestBaseAsync):
     async def asyncTearDown(self):
         """Clean up any remaining resources after each test."""
         # Close any remaining client sessions
-        if hasattr(self, '_client') and self._client:
+        if hasattr(self, "_client") and self._client:
             await self._client.close()
         await super().asyncTearDown()
-        
+
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
     async def test_person_directories_create(self, contentunderstanding_endpoint):
@@ -265,10 +240,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create person directory using the helper function
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory: {person_directory_id}",
-                tags={"test_type": "creation", "environment": "test"}
+                tags={"test_type": "creation", "environment": "test"},
             )
             created_directory = True
 
@@ -294,10 +269,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create the initial person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Initial person directory for update test: {person_directory_id}",
-                tags={"initial_tag": "initial_value"}
+                tags={"initial_tag": "initial_value"},
             )
             created_directory = True
 
@@ -306,13 +281,18 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             directory_before_update = await self._client.person_directories.get(person_directory_id=person_directory_id)
             assert directory_before_update is not None
             assert directory_before_update.person_directory_id == person_directory_id
-            assert directory_before_update.description == f"Initial person directory for update test: {person_directory_id}"
+            assert (
+                directory_before_update.description
+                == f"Initial person directory for update test: {person_directory_id}"
+            )
             assert directory_before_update.tags == {"initial_tag": "initial_value"}
-            print(f"Initial person directory state verified - description: {directory_before_update.description}, tags: {directory_before_update.tags}")
+            print(
+                f"Initial person directory state verified - description: {directory_before_update.description}, tags: {directory_before_update.tags}"
+            )
 
             # Update the person directory with new description and tags
             print(f"Updating person directory {person_directory_id} with new description and tags")
-            
+
             # Create updated person directory with only allowed properties (description and tags)
             updated_person_directory = PersonDirectory(
                 description=f"Updated person directory for update test: {person_directory_id}",
@@ -322,19 +302,19 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             response = await self._client.person_directories.update(
                 person_directory_id=person_directory_id,
                 resource=updated_person_directory,
-                content_type="application/json"
+                content_type="application/json",
             )
 
             # Verify the update response
             assert response is not None
             print(f"Update response: {response}")
-            
+
             # Verify the updated person directory has the new tag and updated description
             assert response.person_directory_id == person_directory_id
             assert "updated_tag" in response.tags
             assert response.tags["updated_tag"] == "updated_value"
             assert response.description == f"Updated person directory for update test: {person_directory_id}"
-            
+
             print(f"Successfully updated person directory {person_directory_id} with new description and tags")
 
             # Get the person directory after update to verify the changes persisted
@@ -342,9 +322,13 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             directory_after_update = await self._client.person_directories.get(person_directory_id=person_directory_id)
             assert directory_after_update is not None
             assert directory_after_update.person_directory_id == person_directory_id
-            assert directory_after_update.description == f"Updated person directory for update test: {person_directory_id}"
+            assert (
+                directory_after_update.description == f"Updated person directory for update test: {person_directory_id}"
+            )
             assert directory_after_update.tags == {"initial_tag": "initial_value", "updated_tag": "updated_value"}
-            print(f"Updated person directory state verified - description: {directory_after_update.description}, tags: {directory_after_update.tags}")
+            print(
+                f"Updated person directory state verified - description: {directory_after_update.description}, tags: {directory_after_update.tags}"
+            )
 
         finally:
             # Always clean up the created person directory, even if the test fails
@@ -366,27 +350,27 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory for testing
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for get operation: {person_directory_id}",
-                tags={"test_type": "get_operation"}
+                tags={"test_type": "get_operation"},
             )
             created_directory = True
 
             # Get the person directory
             print(f"Getting person directory {person_directory_id}")
             response = await self._client.person_directories.get(person_directory_id=person_directory_id)
-            
+
             # Verify the response
             assert response is not None
             assert response.person_directory_id == person_directory_id
             assert response.description == f"Test person directory for get operation: {person_directory_id}"
             assert response.tags == {"test_type": "get_operation"}
-            assert hasattr(response, 'created_at')
-            assert hasattr(response, 'last_modified_at')
-            assert hasattr(response, 'person_count')
-            assert hasattr(response, 'face_count')
-            
+            assert hasattr(response, "created_at")
+            assert hasattr(response, "last_modified_at")
+            assert hasattr(response, "person_count")
+            assert hasattr(response, "face_count")
+
             print(f"Successfully retrieved person directory: {response.person_directory_id}")
             print(f"Description: {response.description}")
             print(f"Tags: {response.tags}")
@@ -414,26 +398,30 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory for deletion test
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for deletion: {person_directory_id}",
-                tags={"test_type": "deletion"}
+                tags={"test_type": "deletion"},
             )
             created_directory = True
 
             # Verify the person directory exists before deletion
-            assert await person_directory_exists_async(self._client, person_directory_id), f"Created person directory with ID '{person_directory_id}' was not found"
+            assert await person_directory_exists_async(
+                self._client, person_directory_id
+            ), f"Created person directory with ID '{person_directory_id}' was not found"
             print(f"Verified person directory {person_directory_id} exists before deletion")
 
             # Delete the person directory
             print(f"Deleting person directory {person_directory_id}")
             response = await self._client.person_directories.delete(person_directory_id=person_directory_id)
-            
+
             # Verify the delete response
             assert response is None
-            
+
             # Verify the person directory is no longer in the list after deletion
-            assert not await person_directory_exists_async(self._client, person_directory_id), f"Deleted person directory with ID '{person_directory_id}' was found"
+            assert not await person_directory_exists_async(
+                self._client, person_directory_id
+            ), f"Deleted person directory with ID '{person_directory_id}' was found"
             print(f"Verified person directory {person_directory_id} is no longer accessible after deletion")
 
             created_directory = False
@@ -458,10 +446,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a test person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for list operation: {person_directory_id}",
-                tags={"test_type": "list_operation"}
+                tags={"test_type": "list_operation"},
             )
             created_directory = True
 
@@ -469,28 +457,32 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Listing all person directories")
             response = self._client.person_directories.list()
             result = [r async for r in response]
-            
+
             # Verify we get at least one person directory in the list
             assert len(result) > 0, "Should have at least one person directory in the list"
             print(f"Found {len(result)} person directories")
-            
+
             # Verify that our created person directory is in the list
             created_directory_found = False
             for directory in result:
-                assert hasattr(directory, 'person_directory_id'), "Each person directory should have person_directory_id"
-                assert hasattr(directory, 'description'), "Each person directory should have description"
-                assert hasattr(directory, 'created_at'), "Each person directory should have created_at"
-                assert hasattr(directory, 'last_modified_at'), "Each person directory should have last_modified_at"
-                assert hasattr(directory, 'person_count'), "Each person directory should have person_count"
-                assert hasattr(directory, 'face_count'), "Each person directory should have face_count"
-                
+                assert hasattr(
+                    directory, "person_directory_id"
+                ), "Each person directory should have person_directory_id"
+                assert hasattr(directory, "description"), "Each person directory should have description"
+                assert hasattr(directory, "created_at"), "Each person directory should have created_at"
+                assert hasattr(directory, "last_modified_at"), "Each person directory should have last_modified_at"
+                assert hasattr(directory, "person_count"), "Each person directory should have person_count"
+                assert hasattr(directory, "face_count"), "Each person directory should have face_count"
+
                 if directory.person_directory_id == person_directory_id:
                     created_directory_found = True
                     assert directory.description == f"Test person directory for list operation: {person_directory_id}"
                     assert directory.tags == {"test_type": "list_operation"}
                     print(f"Found created person directory: {directory.description}")
-            
-            assert created_directory_found, f"Created person directory with ID '{person_directory_id}' should be in the list"
+
+            assert (
+                created_directory_found
+            ), f"Created person directory with ID '{person_directory_id}' should be in the list"
             print("List person directories test completed successfully")
 
         finally:
@@ -514,10 +506,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for add person: {person_directory_id}",
-                tags={"test_type": "add_person"}
+                tags={"test_type": "add_person"},
             )
             created_directory = True
 
@@ -525,39 +517,28 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding person to directory {person_directory_id}")
             response = await self._client.person_directories.add_person(
                 person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "John Doe",
-                        "role": "test_subject",
-                        "department": "engineering"
-                    }
-                }
+                body={"tags": {"name": "John Doe", "role": "test_subject", "department": "engineering"}},
             )
 
             # Verify the response
             assert response is not None
-            assert hasattr(response, 'person_id')
+            assert hasattr(response, "person_id")
             assert response.person_id is not None
             assert len(response.person_id) > 0
-            
+
             person_id = response.person_id
             print(f"Successfully added person with ID: {person_id}")
 
             # Verify the person exists in the directory
             person = await self._client.person_directories.get_person(
-                person_directory_id=person_directory_id,
-                person_id=person_id
+                person_directory_id=person_directory_id, person_id=person_id
             )
-            
+
             assert person is not None
             assert person.person_id == person_id
             if is_live():
-                assert person.tags == {
-                    "name": "John Doe",
-                    "role": "test_subject",
-                    "department": "engineering"
-                }
-            
+                assert person.tags == {"name": "John Doe", "role": "test_subject", "department": "engineering"}
+
             print(f"Verified person {person_id} exists in directory with correct tags")
 
         finally:
@@ -581,44 +562,33 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for update person: {person_directory_id}",
-                tags={"test_type": "update_person"}
+                tags={"test_type": "update_person"},
             )
             created_directory = True
 
             # Add a person to the directory
             print(f"Adding person to directory {person_directory_id}")
             add_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Jane Smith",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "Jane Smith", "role": "test_subject"}}
             )
-            
+
             person_id = add_response.person_id
             print(f"Created person with ID: {person_id}")
 
             # Update the person with new tags
             print(f"Updating person {person_id} with new tags")
             from azure.ai.contentunderstanding.models import PersonDirectoryPerson
-            
+
             response = await self._client.person_directories.update_person(
                 person_directory_id=person_directory_id,
                 person_id=person_id,
                 resource=PersonDirectoryPerson(
-                    tags={
-                        "name": "Jane Smith",
-                        "role": "test_subject",
-                        "department": "research",
-                        "status": "active"
-                    }
+                    tags={"name": "Jane Smith", "role": "test_subject", "department": "research", "status": "active"}
                 ),
-                content_type="application/json"
+                content_type="application/json",
             )
 
             # Verify the response
@@ -627,10 +597,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
             # Verify the person was updated correctly
             updated_person = await self._client.person_directories.get_person(
-                person_directory_id=person_directory_id,
-                person_id=person_id
+                person_directory_id=person_directory_id, person_id=person_id
             )
-            
+
             assert updated_person is not None
             assert updated_person.person_id == person_id
             if is_live():
@@ -638,10 +607,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                     "name": "Jane Smith",
                     "role": "test_subject",
                     "department": "research",
-                    "status": "active"
+                    "status": "active",
                 }
             # face_ids should remain unchanged since we only updated tags
-            assert hasattr(updated_person, 'face_ids')
+            assert hasattr(updated_person, "face_ids")
             print(f"Verified person {updated_person.person_id} was updated with new tags")
 
         finally:
@@ -664,10 +633,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for get person: {person_directory_id}",
-                tags={"test_type": "get_person"}
+                tags={"test_type": "get_person"},
             )
             created_directory = True
 
@@ -675,36 +644,25 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding person to directory {person_directory_id}")
             add_response = await self._client.person_directories.add_person(
                 person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Alice Johnson",
-                        "role": "test_subject",
-                        "department": "marketing"
-                    }
-                }
+                body={"tags": {"name": "Alice Johnson", "role": "test_subject", "department": "marketing"}},
             )
-            
+
             person_id = add_response.person_id
             print(f"Created person with ID: {person_id}")
 
             # Get the person
             print(f"Getting person {person_id} from directory {person_directory_id}")
             response = await self._client.person_directories.get_person(
-                person_directory_id=person_directory_id,
-                person_id=person_id
+                person_directory_id=person_directory_id, person_id=person_id
             )
 
             # Verify the response
             assert response is not None
             if is_live():
                 assert response.person_id == person_id
-                assert response.tags == {
-                    "name": "Alice Johnson",
-                    "role": "test_subject",
-                    "department": "marketing"
-                }
-            assert hasattr(response, 'face_ids')
-            
+                assert response.tags == {"name": "Alice Johnson", "role": "test_subject", "department": "marketing"}
+            assert hasattr(response, "face_ids")
+
             print(f"Successfully retrieved person: {response.person_id}")
             print(f"Tags: {response.tags}")
             print(f"Face IDs: {response.face_ids}")
@@ -731,32 +689,25 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for delete person: {person_directory_id}",
-                tags={"test_type": "delete_person"}
+                tags={"test_type": "delete_person"},
             )
             created_directory = True
 
             # Add a person to the directory
             print(f"Adding person to directory {person_directory_id}")
             add_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Bob Wilson",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "Bob Wilson", "role": "test_subject"}}
             )
-            
+
             person_id = add_response.person_id
             print(f"Created person with ID: {person_id}")
 
             # Verify the person exists before deletion
             person = await self._client.person_directories.get_person(
-                person_directory_id=person_directory_id,
-                person_id=person_id
+                person_directory_id=person_directory_id, person_id=person_id
             )
             assert person is not None
             assert person.person_id == person_id
@@ -765,18 +716,16 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Delete the person
             print(f"Deleting person {person_id}")
             response = await self._client.person_directories.delete_person(
-                person_directory_id=person_directory_id,
-                person_id=person_id
+                person_directory_id=person_directory_id, person_id=person_id
             )
 
             # Verify the delete response
             assert response is None
-            
+
             # Verify the person no longer exists
             try:
                 await self._client.person_directories.get_person(
-                    person_directory_id=person_directory_id,
-                    person_id=person_id
+                    person_directory_id=person_directory_id, person_id=person_id
                 )
                 assert False, f"Person {person_id} should not exist after deletion"
             except Exception:
@@ -803,29 +752,23 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for list persons: {person_directory_id}",
-                tags={"test_type": "list_persons"}
+                tags={"test_type": "list_persons"},
             )
             created_directory = True
 
             # Add multiple persons to the directory
             person_ids = []
             person_names = ["Alice", "Bob", "Charlie"]
-            
+
             for name in person_names:
                 print(f"Adding person {name} to directory {person_directory_id}")
                 add_response = await self._client.person_directories.add_person(
-                    person_directory_id=person_directory_id,
-                    body={
-                        "tags": {
-                            "name": name,
-                            "role": "test_subject"
-                        }
-                    }
+                    person_directory_id=person_directory_id, body={"tags": {"name": name, "role": "test_subject"}}
                 )
-                
+
                 person_id = add_response.person_id
                 person_ids.append(person_id)
                 print(f"Created person {name} with ID: {person_id}")
@@ -834,18 +777,18 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Listing all persons in directory {person_directory_id}")
             response = self._client.person_directories.list_persons(person_directory_id=person_directory_id)
             result = [r async for r in response]
-            
+
             # Verify we get the expected number of persons
             assert len(result) >= len(person_ids), f"Expected at least {len(person_ids)} persons, got {len(result)}"
             print(f"Found {len(result)} persons in directory")
-            
+
             # Verify that our created persons are in the list
             found_persons = set()
             for person in result:
-                assert hasattr(person, 'person_id'), "Each person should have person_id"
-                assert hasattr(person, 'tags'), "Each person should have tags"
-                assert hasattr(person, 'face_ids'), "Each person should have face_ids"
-                
+                assert hasattr(person, "person_id"), "Each person should have person_id"
+                assert hasattr(person, "tags"), "Each person should have tags"
+                assert hasattr(person, "face_ids"), "Each person should have face_ids"
+
                 if person.person_id in person_ids:
                     found_persons.add(person.person_id)
                     # Find the corresponding name
@@ -855,8 +798,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                             person_name = name
                             break
                     print(f"Found created person {person_name}: {person.person_id}")
-            
-            assert len(found_persons) == len(person_ids), f"Expected to find {len(person_ids)} created persons, found {len(found_persons)}"
+
+            assert len(found_persons) == len(
+                person_ids
+            ), f"Expected to find {len(person_ids)} created persons, found {len(found_persons)}"
             print("List persons test completed successfully")
 
         finally:
@@ -880,25 +825,19 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for add face: {person_directory_id}",
-                tags={"test_type": "add_face"}
+                tags={"test_type": "add_face"},
             )
             created_directory = True
 
             # Add a person to the directory
             print(f"Adding person to directory {person_directory_id}")
             add_person_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "David Brown",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "David Brown", "role": "test_subject"}}
             )
-            
+
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
@@ -912,33 +851,27 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding face to person {person_id}")
             response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-            body={
-                "faceSource": {
-                    "data": image_bytes
-                },
-                    "personId": person_id
-                }
+                body={"faceSource": {"data": image_bytes}, "personId": person_id},
             )
 
             # Verify the response
             assert response is not None
-            assert hasattr(response, 'face_id')
+            assert hasattr(response, "face_id")
             assert response.face_id is not None
             assert len(response.face_id) > 0
-            
+
             face_id = response.face_id
             print(f"Successfully added face with ID: {face_id}")
 
             # Verify the face exists in the directory
             face = await self._client.person_directories.get_face(
-                person_directory_id=person_directory_id,
-                face_id=face_id
+                person_directory_id=person_directory_id, face_id=face_id
             )
-            
+
             assert face is not None
             assert face.face_id == face_id
             assert face.person_id == person_id
-            
+
             print(f"Verified face {face_id} exists in directory and is associated with person {person_id}")
 
         finally:
@@ -963,10 +896,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for update face: {person_directory_id}",
-                tags={"test_type": "update_face"}
+                tags={"test_type": "update_face"},
             )
             created_directory = True
 
@@ -974,24 +907,14 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding persons to directory {person_directory_id}")
             person1_response = await self._client.person_directories.add_person(
                 person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Emma Wilson",
-                        "role": "test_subject_1"
-                    }
-                }
+                body={"tags": {"name": "Emma Wilson", "role": "test_subject_1"}},
             )
-            
+
             person2_response = await self._client.person_directories.add_person(
                 person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Frank Davis",
-                        "role": "test_subject_2"
-                    }
-                }
+                body={"tags": {"name": "Frank Davis", "role": "test_subject_2"}},
             )
-            
+
             person1_id = person1_response.person_id
             person2_id = person2_response.person_id
             print(f"Created person 1 with ID: {person1_id}")
@@ -1006,21 +929,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding face to person {person1_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_bytes
-                    },
-                    "personId": person1_id
-                }
+                body={"faceSource": {"data": image_bytes}, "personId": person1_id},
             )
-            
+
             face_id = add_face_response.face_id
             print(f"Created face with ID: {face_id}")
 
             # Verify the face is initially associated with person 1
             face = await self._client.person_directories.get_face(
-                person_directory_id=person_directory_id,
-                face_id=face_id
+                person_directory_id=person_directory_id, face_id=face_id
             )
             assert face.person_id == person1_id
             print(f"Verified face {face_id} is initially associated with person {person1_id}")
@@ -1030,10 +947,8 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             response = await self._client.person_directories.update_face(
                 person_directory_id=person_directory_id,
                 face_id=face_id,
-                resource={
-                    "personId": person2_id
-                },
-                content_type="application/json"
+                resource={"personId": person2_id},
+                content_type="application/json",
             )
 
             # Verify the response
@@ -1042,8 +957,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
             # Verify the face is now associated with person 2
             updated_face = await self._client.person_directories.get_face(
-                person_directory_id=person_directory_id,
-                face_id=face_id
+                person_directory_id=person_directory_id, face_id=face_id
             )
             assert updated_face.person_id == person2_id
             print(f"Verified face {face_id} is now associated with person {person2_id}")
@@ -1069,25 +983,19 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for get face: {person_directory_id}",
-                tags={"test_type": "get_face"}
+                tags={"test_type": "get_face"},
             )
             created_directory = True
 
             # Add a person to the directory
             print(f"Adding person to directory {person_directory_id}")
             add_person_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Grace Lee",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "Grace Lee", "role": "test_subject"}}
             )
-            
+
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
@@ -1100,31 +1008,25 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding face to person {person_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_bytes
-                    },
-                    "personId": person_id
-                }
+                body={"faceSource": {"data": image_bytes}, "personId": person_id},
             )
-            
+
             face_id = add_face_response.face_id
             print(f"Created face with ID: {face_id}")
 
             # Get the face
             print(f"Getting face {face_id} from directory {person_directory_id}")
             response = await self._client.person_directories.get_face(
-                person_directory_id=person_directory_id,
-                face_id=face_id
+                person_directory_id=person_directory_id, face_id=face_id
             )
 
             # Verify the response
             assert response is not None
             assert response.face_id == face_id
             assert response.person_id == person_id
-            assert hasattr(response, 'bounding_box')
-            assert hasattr(response, 'image_reference_id')
-            
+            assert hasattr(response, "bounding_box")
+            assert hasattr(response, "image_reference_id")
+
             print(f"Successfully retrieved face: {response.face_id}")
             print(f"Associated with person: {response.person_id}")
             print(f"Bounding box: {response.bounding_box}")
@@ -1152,25 +1054,19 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for delete face: {person_directory_id}",
-                tags={"test_type": "delete_face"}
+                tags={"test_type": "delete_face"},
             )
             created_directory = True
 
             # Add a person to the directory
             print(f"Adding person to directory {person_directory_id}")
             add_person_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Henry Miller",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "Henry Miller", "role": "test_subject"}}
             )
-            
+
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
@@ -1183,21 +1079,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding face to person {person_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": image_bytes
-                    },
-                    "personId": person_id
-                }
+                body={"faceSource": {"data": image_bytes}, "personId": person_id},
             )
-            
+
             face_id = add_face_response.face_id
             print(f"Created face with ID: {face_id}")
 
             # Verify the face exists before deletion
             face = await self._client.person_directories.get_face(
-                person_directory_id=person_directory_id,
-                face_id=face_id
+                person_directory_id=person_directory_id, face_id=face_id
             )
             assert face is not None
             assert face.face_id == face_id
@@ -1206,19 +1096,15 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Delete the face
             print(f"Deleting face {face_id}")
             response = await self._client.person_directories.delete_face(
-                person_directory_id=person_directory_id,
-                face_id=face_id
+                person_directory_id=person_directory_id, face_id=face_id
             )
 
             # Verify the delete response
             assert response is None
-            
+
             # Verify the face no longer exists
             try:
-                await self._client.person_directories.get_face(
-                    person_directory_id=person_directory_id,
-                    face_id=face_id
-                )
+                await self._client.person_directories.get_face(person_directory_id=person_directory_id, face_id=face_id)
                 assert False, f"Face {face_id} should not exist after deletion"
             except Exception:
                 print(f"Verified face {face_id} no longer exists after deletion")
@@ -1245,25 +1131,19 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for list faces: {person_directory_id}",
-                tags={"test_type": "list_faces"}
+                tags={"test_type": "list_faces"},
             )
             created_directory = True
 
             # Add a person to the directory
             print(f"Adding person to directory {person_directory_id}")
             add_person_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Ivy Chen",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "Ivy Chen", "role": "test_subject"}}
             )
-            
+
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
@@ -1278,14 +1158,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
                 print(f"Adding face {i+1} to person {person_id}")
                 add_face_response = await self._client.person_directories.add_face(
                     person_directory_id=person_directory_id,
-                    body={
-                        "faceSource": {
-                            "data": image_bytes
-                        },
-                        "personId": person_id
-                    }
+                    body={"faceSource": {"data": image_bytes}, "personId": person_id},
                 )
-                
+
                 face_id = add_face_response.face_id
                 face_ids.append(face_id)
                 print(f"Created face {i+1} with ID: {face_id}")
@@ -1294,24 +1169,26 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Listing all faces in directory {person_directory_id}")
             response = self._client.person_directories.list_faces(person_directory_id=person_directory_id)
             result = [r async for r in response]
-            
+
             # Verify we get the expected number of faces
             assert len(result) >= len(face_ids), f"Expected at least {len(face_ids)} faces, got {len(result)}"
             print(f"Found {len(result)} faces in directory")
-            
+
             # Verify that our created faces are in the list
             found_faces = set()
             for face in result:
-                assert hasattr(face, 'face_id'), "Each face should have face_id"
-                assert hasattr(face, 'person_id'), "Each face should have person_id"
-                assert hasattr(face, 'bounding_box'), "Each face should have bounding_box"
-                assert hasattr(face, 'image_reference_id'), "Each face should have image_reference_id"
-                
+                assert hasattr(face, "face_id"), "Each face should have face_id"
+                assert hasattr(face, "person_id"), "Each face should have person_id"
+                assert hasattr(face, "bounding_box"), "Each face should have bounding_box"
+                assert hasattr(face, "image_reference_id"), "Each face should have image_reference_id"
+
                 if face.face_id in face_ids:
                     found_faces.add(face.face_id)
                     print(f"Found created face: {face.face_id}")
-            
-            assert len(found_faces) == len(face_ids), f"Expected to find {len(face_ids)} created faces, found {len(found_faces)}"
+
+            assert len(found_faces) == len(
+                face_ids
+            ), f"Expected to find {len(face_ids)} created faces, found {len(found_faces)}"
             print("List faces test completed successfully")
 
         finally:
@@ -1335,28 +1212,27 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for identify person: {person_directory_id}",
-                tags={"test_type": "identify_person"}
+                tags={"test_type": "identify_person"},
             )
             created_directory = True
 
             # Build person directory from enrollment data
             print(f"Building person directory from enrollment data")
             person_name_to_id = await build_person_directory_from_enrollment_data_async(
-                self._client, 
-                person_directory_id
+                self._client, person_directory_id
             )
-            
+
             print(f"Built person directory with {len(person_name_to_id)} persons")
 
             # Identify persons in a test image
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             test_image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-            
+
             print(f"Identifying persons in test image: {os.path.basename(test_image_path)}")
-            
+
             # Read test image as raw bytes
             with open(test_image_path, "rb") as image_file:
                 image_bytes = image_file.read()
@@ -1364,27 +1240,24 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Identify persons in the image
             response = await self._client.person_directories.identify_person(
                 person_directory_id=person_directory_id,
-            body={
-                "faceSource": {
-                    "data": image_bytes
-                },
-                    "maxPersonCandidates": 5
-                }
+                body={"faceSource": {"data": image_bytes}, "maxPersonCandidates": 5},
             )
 
             # Verify the response
             assert response is not None
-            assert hasattr(response, 'person_candidates')
-            
+            assert hasattr(response, "person_candidates")
+
             if response.person_candidates and len(response.person_candidates) > 0:
                 print(f"Found {len(response.person_candidates)} person candidates")
                 for i, candidate in enumerate(response.person_candidates):
-                    assert hasattr(candidate, 'person_id')
-                    assert hasattr(candidate, 'confidence')
+                    assert hasattr(candidate, "person_id")
+                    assert hasattr(candidate, "confidence")
                     print(f"Candidate {i+1}: Person ID {candidate.person_id}, Confidence {candidate.confidence}")
-                    
+
                     # Verify the person exists in our directory
-                    assert candidate.person_id in person_name_to_id.values(), f"Identified person {candidate.person_id} should be in our directory"
+                    assert (
+                        candidate.person_id in person_name_to_id.values()
+                    ), f"Identified person {candidate.person_id} should be in our directory"
             else:
                 print("No persons identified in the test image")
                 # This is acceptable if the test image doesn't contain recognizable faces
@@ -1407,60 +1280,51 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Clean up created person directory
         """
         self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_find_similar_faces")
+        person_directory_id = await generate_person_directory_id_async(
+            self._client, "test_person_dir_find_similar_faces"
+        )
         created_directory = False
 
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for find similar faces: {person_directory_id}",
-                tags={"test_type": "find_similar_faces"}
+                tags={"test_type": "find_similar_faces"},
             )
             created_directory = True
 
             # Add a person (Bill) to the directory
             print(f"Adding person (Bill) to directory {person_directory_id}")
             add_person_response = await self._client.person_directories.add_person(
-                person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Bill Wilson",
-                        "role": "test_subject"
-                    }
-                }
+                person_directory_id=person_directory_id, body={"tags": {"name": "Bill Wilson", "role": "test_subject"}}
             )
-            
+
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
             # Add two different faces from Bill's family to the person
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            
+
             # Face images to add to the directory
             face_images = [
                 "test_data/face/enrollment_data/Bill/Family1-Dad1.jpg",
-                "test_data/face/enrollment_data/Bill/Family1-Dad2.jpg"
+                "test_data/face/enrollment_data/Bill/Family1-Dad2.jpg",
             ]
-            
+
             face_ids = []
             for i, face_file in enumerate(face_images):
                 image_path = os.path.join(test_file_dir, face_file)
                 with open(image_path, "rb") as image_file:
                     image_bytes = image_file.read()
-                
+
                 print(f"Adding face {i+1} from {face_file} to person {person_id}")
                 add_face_response = await self._client.person_directories.add_face(
                     person_directory_id=person_directory_id,
-                    body={
-                        "faceSource": {
-                            "data": image_bytes
-                        },
-                        "personId": person_id
-                    }
+                    body={"faceSource": {"data": image_bytes}, "personId": person_id},
                 )
-                
+
                 face_id = add_face_response.face_id
                 face_ids.append(face_id)
                 print(f"Created face {i+1} with ID: {face_id}")
@@ -1468,68 +1332,70 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # Test 1: Find similar faces using Family1-Dad3.jpg (same person - Bill)
             # This should find matches since Dad3 is from the same person as Dad1 and Dad2
             print(f"\nTest 1: Finding similar faces using Family1-Dad3.jpg (same person)")
-            dad3_image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad3.jpg")
+            dad3_image_path = os.path.join(
+                test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad3.jpg"
+            )
             with open(dad3_image_path, "rb") as image_file:
                 dad3_image_bytes = image_file.read()
-            
+
             dad3_response = await self._client.person_directories.find_similar_faces(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": dad3_image_bytes
-                    },
-                    "maxSimilarFaces": 10
-                }
+                body={"faceSource": {"data": dad3_image_bytes}, "maxSimilarFaces": 10},
             )
 
             # Verify Test 1 response (should find matches)
             assert dad3_response is not None
-            assert hasattr(dad3_response, 'similar_faces')
-            
+            assert hasattr(dad3_response, "similar_faces")
+
             # We expect to find similar faces since it's the same person
-            assert dad3_response.similar_faces is not None, "Should find similar faces for same person (Dad3 -> Dad1/Dad2)"
+            assert (
+                dad3_response.similar_faces is not None
+            ), "Should find similar faces for same person (Dad3 -> Dad1/Dad2)"
             assert len(dad3_response.similar_faces) > 0, "Should find at least one similar face for same person"
-            
+
             print(f"✅ Test 1 passed: Found {len(dad3_response.similar_faces)} similar faces for same person")
-            
+
             for i, similar_face in enumerate(dad3_response.similar_faces):
-                assert hasattr(similar_face, 'face_id')
-                assert hasattr(similar_face, 'confidence')
-                assert similar_face.face_id in face_ids, f"Similar face {similar_face.face_id} should be in our enrolled faces"
+                assert hasattr(similar_face, "face_id")
+                assert hasattr(similar_face, "confidence")
+                assert (
+                    similar_face.face_id in face_ids
+                ), f"Similar face {similar_face.face_id} should be in our enrolled faces"
                 assert similar_face.confidence > 0.0, f"Confidence should be positive: {similar_face.confidence}"
                 print(f"  Similar face {i+1}: Face ID {similar_face.face_id}, Confidence {similar_face.confidence}")
 
             # Test 2: Find similar faces using Family1-Mom1.jpg (different person - Clare)
             # This should find NO matches since Clare is a different person than Bill
             print(f"\nTest 2: Finding similar faces using Family1-Mom1.jpg (different person)")
-            mom1_image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Clare", "Family1-Mom1.jpg")
+            mom1_image_path = os.path.join(
+                test_file_dir, "test_data", "face", "enrollment_data", "Clare", "Family1-Mom1.jpg"
+            )
             with open(mom1_image_path, "rb") as image_file:
                 mom1_image_bytes = image_file.read()
-            
+
             mom1_response = await self._client.person_directories.find_similar_faces(
                 person_directory_id=person_directory_id,
-                body={
-                    "faceSource": {
-                        "data": mom1_image_bytes
-                    },
-                    "maxSimilarFaces": 10
-                }
+                body={"faceSource": {"data": mom1_image_bytes}, "maxSimilarFaces": 10},
             )
 
             # Verify Test 2 response (should find no matches)
             assert mom1_response is not None
-            assert hasattr(mom1_response, 'similar_faces')
-            
+            assert hasattr(mom1_response, "similar_faces")
+
             # We expect to find NO similar faces since it's a different person
             if mom1_response.similar_faces and len(mom1_response.similar_faces) > 0:
                 # If we unexpectedly find faces, log them but don't fail the test
                 # (face similarity algorithms may have different thresholds)
                 print(f"⚠️  Unexpected: Found {len(mom1_response.similar_faces)} similar faces for different person")
                 for i, similar_face in enumerate(mom1_response.similar_faces):
-                    print(f"  Unexpected match {i+1}: Face ID {similar_face.face_id}, Confidence {similar_face.confidence}")
+                    print(
+                        f"  Unexpected match {i+1}: Face ID {similar_face.face_id}, Confidence {similar_face.confidence}"
+                    )
                     # If confidence is very low, this might be acceptable
                     if similar_face.confidence > 0.5:
-                        print(f"⚠️  High confidence match ({similar_face.confidence}) for different person - this may indicate an issue")
+                        print(
+                            f"⚠️  High confidence match ({similar_face.confidence}) for different person - this may indicate an issue"
+                        )
             else:
                 print("✅ Test 2 passed: No similar faces found for different person (as expected)")
 
@@ -1556,10 +1422,10 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         try:
             # Create a person directory
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Test person directory for verify person: {person_directory_id}",
-                tags={"test_type": "verify_person"}
+                tags={"test_type": "verify_person"},
             )
             created_directory = True
 
@@ -1567,14 +1433,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding person to directory {person_directory_id}")
             add_person_response = await self._client.person_directories.add_person(
                 person_directory_id=person_directory_id,
-                body={
-                    "tags": {
-                        "name": "Kate Anderson",
-                        "role": "test_subject"
-                    }
-                }
+                body={"tags": {"name": "Kate Anderson", "role": "test_subject"}},
             )
-            
+
             person_id = add_person_response.person_id
             print(f"Created person with ID: {person_id}")
 
@@ -1587,40 +1448,29 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"Adding face to person {person_id}")
             add_face_response = await self._client.person_directories.add_face(
                 person_directory_id=person_directory_id,
-            body={
-                "faceSource": {
-                    "data": image_bytes
-                },
-                    "personId": person_id
-                }
+                body={"faceSource": {"data": image_bytes}, "personId": person_id},
             )
-            
+
             face_id = add_face_response.face_id
             print(f"Created face with ID: {face_id}")
 
             # Verify the person using the same image
             print(f"Verifying person {person_id} with test image")
             response = await self._client.person_directories.verify_person(
-                person_directory_id=person_directory_id,
-                person_id=person_id,
-                body={
-                    "faceSource": {
-                        "data": image_bytes
-                    }
-                }
+                person_directory_id=person_directory_id, person_id=person_id, body={"faceSource": {"data": image_bytes}}
             )
 
             # Verify the response
             assert response is not None
-            assert hasattr(response, 'detected_face')
-            assert hasattr(response, 'confidence')
-            
+            assert hasattr(response, "detected_face")
+            assert hasattr(response, "confidence")
+
             print(f"Verification result: Detected face = {response.detected_face}, Confidence = {response.confidence}")
-            
+
             # The verification should return a result with detected face and confidence
             assert response.detected_face is not None, "detected_face should not be None"
             assert isinstance(response.confidence, (int, float)), "confidence should be a number"
-            
+
             print("Person verification test completed successfully")
 
         finally:
@@ -1649,20 +1499,19 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             # 1. Create Person Directory
             print(f"1. Creating Person Directory: {person_directory_id}")
             await create_person_directory_and_assert_async(
-                self._client, 
+                self._client,
                 person_directory_id,
                 description=f"Comprehensive test person directory: {person_directory_id}",
-                tags={"test_type": "comprehensive_workflow", "environment": "test"}
+                tags={"test_type": "comprehensive_workflow", "environment": "test"},
             )
             created_directory = True
 
             # 2. Build Directory from Enrollment Data
             print(f"2. Building Directory from Enrollment Data")
             person_name_to_id = await build_person_directory_from_enrollment_data_async(
-                self._client, 
-                person_directory_id
+                self._client, person_directory_id
             )
-            
+
             print(f"Built person directory with {len(person_name_to_id)} persons:")
             for name, person_id in person_name_to_id.items():
                 print(f"  - {name}: {person_id}")
@@ -1671,29 +1520,25 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             if person_name_to_id:
                 first_person_name = list(person_name_to_id.keys())[0]
                 first_person_id = person_name_to_id[first_person_name]
-                
+
                 print(f"3. Adding new face to existing person: {first_person_name}")
                 test_file_dir = os.path.dirname(os.path.abspath(__file__))
-                image_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg")
-                
+                image_path = os.path.join(
+                    test_file_dir, "test_data", "face", "enrollment_data", "Alex", "Family1-Son1.jpg"
+                )
+
                 if os.path.exists(image_path):
                     with open(image_path, "rb") as image_file:
                         image_bytes = image_file.read()
-                    
+
                     add_face_response = await self._client.person_directories.add_face(
                         person_directory_id=person_directory_id,
-                        body={
-                            "faceSource": {
-                                "data": image_bytes
-                            },
-                            "personId": first_person_id
-                        }
+                        body={"faceSource": {"data": image_bytes}, "personId": first_person_id},
                     )
-                    
+
                     new_face_id = add_face_response.face_id
                     print(f"Added new face with ID: {new_face_id} to person {first_person_name}")
 
-            
             # # 4. Update metadata
             # print(f"4. Updating person directory metadata")
             # update_response = await self._client.person_directories.update(
@@ -1701,13 +1546,13 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             #     resource={
             #         "description": f"Updated comprehensive test person directory: {person_directory_id}",
             #         "tags": {
-            #             "test_type": "comprehensive_workflow", 
+            #             "test_type": "comprehensive_workflow",
             #             "environment": "test",
             #             "updated": "true",
             #             "sample": "true"
             #         }
             #     }
-            # )            
+            # )
             # assert update_response is not None
             # assert "updated" in update_response.tags
             # assert update_response.tags["updated"] == "true"
@@ -1717,21 +1562,16 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             print(f"5. Identifying persons in test image")
             test_file_dir = os.path.dirname(os.path.abspath(__file__))
             test_image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
-            
+
             if os.path.exists(test_image_path):
                 with open(test_image_path, "rb") as image_file:
                     image_bytes = image_file.read()
-                
+
                 identify_response = await self._client.person_directories.identify_person(
                     person_directory_id=person_directory_id,
-                    body={
-                        "faceSource": {
-                            "data": image_bytes
-                        },
-                        "maxPersonCandidates": 5
-                    }
+                    body={"faceSource": {"data": image_bytes}, "maxPersonCandidates": 5},
                 )
-                
+
                 if identify_response.person_candidates and len(identify_response.person_candidates) > 0:
                     print(f"Found {len(identify_response.person_candidates)} person candidates")
                     for candidate in identify_response.person_candidates:

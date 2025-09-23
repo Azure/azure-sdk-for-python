@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -54,9 +55,7 @@ async def main() -> None:
     key = os.getenv("AZURE_CONTENT_UNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(
-        endpoint=endpoint, credential=credential
-    ) as client:
+    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
         await analyze_invoice(client)
 
     # Manually close DefaultAzureCredential if it was used
@@ -66,11 +65,11 @@ async def main() -> None:
 
 async def analyze_invoice(client: ContentUnderstandingClient) -> None:
     """Analyze an invoice and display the extracted fields."""
-    file_url = "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
-    print(f"🔍 Analyzing invoice from {file_url} with prebuilt-invoice analyzer...")
-    poller = await client.content_analyzers.begin_analyze(
-        analyzer_id="prebuilt-invoice", url=file_url
+    file_url = (
+        "https://github.com/Azure-Samples/azure-ai-content-understanding-python/raw/refs/heads/main/data/invoice.pdf"
     )
+    print(f"🔍 Analyzing invoice from {file_url} with prebuilt-invoice analyzer...")
+    poller = await client.content_analyzers.begin_analyze(analyzer_id="prebuilt-invoice", url=file_url)
     result: AnalyzeResult = await poller.result()
 
     # AnalyzeResult contains the full analysis result and can be used to access various properties

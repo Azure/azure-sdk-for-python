@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -81,7 +81,8 @@ from .._configuration import ContentUnderstandingClientConfiguration
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class ContentAnalyzersOperations:
@@ -1780,22 +1781,10 @@ class PersonDirectoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-
-            # Handle both response formats:
-            # 1. Direct array: [...]
-            # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
-            if isinstance(deserialized, list):
-                # API returned array directly
-                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized)
-                next_link = None
-            else:
-                # API returned object with "value" property
-                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink") or None
-
+            list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -1820,7 +1809,7 @@ class PersonDirectoriesOperations:
         person_directory_id: str,
         *,
         content_type: str = "application/json",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         face_ids: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.PersonDirectoryPerson:
@@ -1882,7 +1871,7 @@ class PersonDirectoriesOperations:
         person_directory_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         face_ids: Optional[List[str]] = None,
         **kwargs: Any
     ) -> _models.PersonDirectoryPerson:
@@ -2325,22 +2314,10 @@ class PersonDirectoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-
-            # Handle both response formats:
-            # 1. Direct array: [...]
-            # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
-            if isinstance(deserialized, list):
-                # API returned array directly
-                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized)
-                next_link = None
-            else:
-                # API returned object with "value" property
-                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink") or None
-
+            list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -2879,22 +2856,10 @@ class PersonDirectoriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-
-            # Handle both response formats:
-            # 1. Direct array: [...]
-            # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
-            if isinstance(deserialized, list):
-                # API returned array directly
-                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized)
-                next_link = None
-            else:
-                # API returned object with "value" property
-                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
-                next_link = deserialized.get("nextLink") or None
-
+            list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return next_link, AsyncList(list_of_elem)
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             _request = prepare_request(next_link)
