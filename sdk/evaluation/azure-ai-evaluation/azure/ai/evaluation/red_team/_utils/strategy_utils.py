@@ -90,14 +90,11 @@ def get_converter_for_strategy(
 
 def get_chat_target(
     target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
-    prompt_to_context: Optional[Dict[str, str]] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
     :param target: The target to convert
     :type target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
-    :param prompt_to_context: Optional mapping from prompt content to context
-    :type prompt_to_context: Optional[Dict[str, str]]
     :return: A PromptChatTarget instance
     :rtype: PromptChatTarget
     """
@@ -155,7 +152,7 @@ def get_chat_target(
             has_callback_signature = False
 
         if has_callback_signature:
-            chat_target = _CallbackChatTarget(callback=target, prompt_to_context=prompt_to_context)
+            chat_target = _CallbackChatTarget(callback=target)
         else:
 
             async def callback_target(
@@ -191,7 +188,7 @@ def get_chat_target(
                 messages_list.append(formatted_response)  # type: ignore
                 return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
 
-            chat_target = _CallbackChatTarget(callback=callback_target, prompt_to_context=prompt_to_context)  # type: ignore
+            chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
 
     return chat_target
 

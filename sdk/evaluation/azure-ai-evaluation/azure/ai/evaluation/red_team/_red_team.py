@@ -642,7 +642,7 @@ class RedTeam:
         return selected_cat_objectives
 
     def _extract_objective_content(self, selected_objectives: List) -> List[str]:
-        """Extract content from selected objectives."""
+        """Extract content from selected objectives and build prompt-to-context mapping."""
         selected_prompts = []
         for obj in selected_objectives:
             if "messages" in obj and len(obj["messages"]) > 0:
@@ -651,8 +651,9 @@ class RedTeam:
                     content = message["content"]
                     context = message.get("context", "")
                     selected_prompts.append(content)
-                    # Store mapping of content to context for later evaluation
-                    self.prompt_to_context[content] = context
+                    # Store mapping of content to context for the orchestrator
+                    if context:
+                        self.prompt_to_context[content] = context
         return selected_prompts
 
     def _cache_attack_objectives(
@@ -954,7 +955,7 @@ class RedTeam:
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario)
 
-            chat_target = get_chat_target(target, self.prompt_to_context)
+            chat_target = get_chat_target(target)
             self.chat_target = chat_target
 
             # Execute attacks
