@@ -32,6 +32,17 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class ExportDependenciesStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status codes for export dependencies operation."""
+
+    NO_MATCH = "NoMatch"
+    """Operation completed but no data was found for the requested time range"""
+    COMPLETE_MATCH = "CompleteMatch"
+    """Operation completed with data found for the entire requested time range"""
+    PARTIAL_MATCH = "PartialMatch"
+    """Operation completed with data found for a portion of the requested time range"""
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
