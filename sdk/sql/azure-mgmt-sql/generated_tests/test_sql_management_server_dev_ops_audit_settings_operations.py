@@ -24,7 +24,7 @@ class TestSqlManagementServerDevOpsAuditSettingsOperations(AzureMgmtRecordedTest
         response = self.client.server_dev_ops_audit_settings.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-02-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSqlManagementServerDevOpsAuditSettingsOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             server_name="str",
             dev_ops_auditing_settings_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2022-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestSqlManagementServerDevOpsAuditSettingsOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2024-05-01-preview",
+            api_version="2022-02-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

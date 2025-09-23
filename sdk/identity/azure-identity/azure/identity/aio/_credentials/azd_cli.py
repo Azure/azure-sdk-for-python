@@ -21,10 +21,12 @@ from ..._credentials.azd_cli import (
     EXECUTABLE_NAME,
     get_safe_working_dir,
     NOT_LOGGED_IN,
+    UNKNOWN_CLAIMS_FLAG,
     parse_token,
     sanitize_output,
+    extract_cli_error_message,
 )
-from ..._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from ..._internal import encode_base64, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -87,7 +89,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
     async def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -99,7 +101,8 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -110,11 +113,13 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncAzureDeveloperCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
+            return _SyncAzureDeveloperCliCredential().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
         options: TokenRequestOptions = {}
         if tenant_id:
             options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
 
         token_info = await self._get_token_base(*scopes, options=options, **kwargs)
         return AccessToken(token_info.token, token_info.expires_on)
@@ -152,6 +157,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
             raise ValueError("Missing scope in request. \n")
 
         tenant_id = options.get("tenant_id") if options else None
+        claims = options.get("claims") if options else None
         if tenant_id:
             validate_tenant_id(tenant_id)
         for scope in scopes:
@@ -169,16 +175,22 @@ class AzureDeveloperCliCredential(AsyncContextManager):
 
         if tenant:
             command_args += ["--tenant-id", tenant]
+        if claims:
+            command_args += ["--claims", encode_base64(claims)]
         output = await _run_command(command_args, self._process_timeout)
 
         token = parse_token(output)
         if not token:
-            sanitized_output = sanitize_output(output)
-            message = (
-                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
-                f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
-                f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
-            )
+            extracted = extract_cli_error_message(output)
+            if extracted:
+                message = extracted
+            else:
+                sanitized_output = sanitize_output(output)
+                message = (
+                    f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
+                    f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
+                    f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
+                )
             if within_dac.get():
                 raise CredentialUnavailableError(message=message)
             raise ClientAuthenticationError(message=message)
@@ -226,10 +238,17 @@ async def _run_command(command_args: List[str], timeout: int) -> str:
     if proc.returncode == 127 or stderr.startswith("'azd' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "not logged in, run `azd auth login` to login" in stderr and "AADSTS" not in stderr:
+    combined_text = f"{output}\n{stderr}"
+    if "not logged in, run `azd auth login` to login" in combined_text and "AADSTS" not in combined_text:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
+    if "unknown flag: --claims" in combined_text:
+        raise CredentialUnavailableError(message=UNKNOWN_CLAIMS_FLAG)
 
-    message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"
+    message = (
+        extract_cli_error_message(output)
+        or extract_cli_error_message(stderr)
+        or (sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI")
+    )
     if within_dac.get():
         raise CredentialUnavailableError(message=message)
     raise ClientAuthenticationError(message=message)

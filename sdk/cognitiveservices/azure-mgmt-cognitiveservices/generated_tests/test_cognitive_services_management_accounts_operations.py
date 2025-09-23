@@ -169,7 +169,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -326,7 +326,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -338,7 +338,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
         response = self.client.accounts.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -350,7 +350,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
         response = self.client.accounts.get(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -361,7 +361,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
     def test_accounts_list_by_resource_group(self, resource_group):
         response = self.client.accounts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -371,7 +371,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_accounts_list(self, resource_group):
         response = self.client.accounts.list(
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -383,7 +383,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
         response = self.client.accounts.list_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -396,7 +396,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             account_name="str",
             key_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -408,7 +408,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
         response = self.client.accounts.list_skus(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -420,7 +420,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
         response = self.client.accounts.list_usages(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -432,7 +432,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
         response = self.client.accounts.list_models(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-01-preview",
+            api_version="2025-06-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

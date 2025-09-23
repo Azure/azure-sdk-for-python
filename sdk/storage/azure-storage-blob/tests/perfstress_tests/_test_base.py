@@ -34,20 +34,10 @@ class _ServiceTest(PerfStressTest):
 
         if not _ServiceTest.service_client or self.args.no_client_share:
             if self.args.use_entra_id:
-                tenant_id = self.get_from_env("AZURE-STORAGE-BLOB_TENANT_ID")
-                client_id = self.get_from_env("AZURE-STORAGE-BLOB_CLIENT_ID")
-                client_secret = self.get_from_env("AZURE-STORAGE-BLOB_CLIENT_SECRET")
-                sync_token_credential = SyncClientSecretCredential(
-                    tenant_id,
-                    client_id,
-                    client_secret
-                )
-                async_token_credential = AsyncClientSecretCredential(
-                    tenant_id,
-                    client_id,
-                    client_secret
-                )
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
+                sync_token_credential = self.get_credential(is_async=False)
+                async_token_credential = self.get_credential(is_async=True)
+
                 # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"
                 _ServiceTest.service_client = SyncBlobServiceClient(account_url=url, credential=sync_token_credential, **self._client_kwargs)

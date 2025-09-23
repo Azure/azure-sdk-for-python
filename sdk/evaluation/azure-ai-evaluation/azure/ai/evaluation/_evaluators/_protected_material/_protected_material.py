@@ -50,19 +50,26 @@ class ProtectedMaterialEvaluator(RaiServiceEvaluatorBase[Union[str, bool]]):
 
     """
 
-    id = "azureml://registries/azureml/models/Protected-Material-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/protected_material"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+    _OPTIONAL_PARAMS = ["query"]
 
     @override
     def __init__(
         self,
         credential,
         azure_ai_project,
+        **kwargs,
     ):
+        # Set default for evaluate_query if not provided
+        if "evaluate_query" not in kwargs:
+            kwargs["evaluate_query"] = True
+
         super().__init__(
             eval_metric=EvaluationMetrics.PROTECTED_MATERIAL,
             azure_ai_project=azure_ai_project,
             credential=credential,
+            **kwargs,
         )
 
     @overload

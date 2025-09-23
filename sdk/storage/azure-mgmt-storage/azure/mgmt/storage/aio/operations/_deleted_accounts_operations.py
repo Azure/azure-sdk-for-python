@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -55,7 +55,7 @@ class DeletedAccountsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.DeletedAccount"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.DeletedAccount"]:
         """Lists deleted accounts under the subscription.
 
         :return: An iterator like instance of either DeletedAccount or the result of cls(response)

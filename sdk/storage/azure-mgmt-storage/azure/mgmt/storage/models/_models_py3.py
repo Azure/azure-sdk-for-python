@@ -9862,7 +9862,7 @@ class TriggerParameters(_serialization.Model):
      ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
      ExecutionTrigger.properties.type is 'RunOnce'.
     :vartype end_by: ~datetime.datetime
-    :ivar start_on: When to start task execution. This is an optional field when
+    :ivar start_on: When to start task execution. This is a required field when
      ExecutionTrigger.properties.type is 'RunOnce'; this property should not be present when
      ExecutionTrigger.properties.type is 'OnSchedule'.
     :vartype start_on: ~datetime.datetime
@@ -9907,7 +9907,7 @@ class TriggerParameters(_serialization.Model):
          ExecutionTrigger.properties.type is 'OnSchedule'; this property should not be present when
          ExecutionTrigger.properties.type is 'RunOnce'.
         :paramtype end_by: ~datetime.datetime
-        :keyword start_on: When to start task execution. This is an optional field when
+        :keyword start_on: When to start task execution. This is a required field when
          ExecutionTrigger.properties.type is 'RunOnce'; this property should not be present when
          ExecutionTrigger.properties.type is 'OnSchedule'.
         :paramtype start_on: ~datetime.datetime

@@ -21,7 +21,7 @@ class TestDnsManagementDnsResourceReferenceOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_target_resources(self, resource_group):
+    async def test_dns_resource_reference_get_by_target_resources(self, resource_group):
         response = await self.client.dns_resource_reference.get_by_target_resources(
             parameters={"targetResources": [{"id": "str"}]},
             api_version="2018-05-01",

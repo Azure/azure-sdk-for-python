@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,22 +13,24 @@ from typing import Any, List, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DeidentificationContent(_model_base.Model):
+class DeidentificationContent(_Model):
     """Request body for de-identification operation.
 
     :ivar input_text: Input text to de-identify. Required.
     :vartype input_text: str
     :ivar operation_type: Operation to perform on the input documents. Known values are: "Redact",
-     "Surrogate", and "Tag".
+     "Surrogate", "Tag", and "SurrogateOnly".
     :vartype operation_type: str or
      ~azure.health.deidentification.models.DeidentificationOperationType
+    :ivar tagged_entities: Grouped PHI entities with single encoding specification for
+     SurrogateOnly operation.
+    :vartype tagged_entities: ~azure.health.deidentification.models.TaggedPhiEntities
     :ivar customizations: Customization parameters to override default service behaviors.
     :vartype customizations:
      ~azure.health.deidentification.models.DeidentificationCustomizationOptions
@@ -38,8 +41,12 @@ class DeidentificationContent(_model_base.Model):
     operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
         name="operation", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
-     \"Tag\"."""
+    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\",
+     \"Tag\", and \"SurrogateOnly\"."""
+    tagged_entities: Optional["_models.TaggedPhiEntities"] = rest_field(
+        name="taggedEntities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Grouped PHI entities with single encoding specification for SurrogateOnly operation."""
     customizations: Optional["_models.DeidentificationCustomizationOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -51,6 +58,7 @@ class DeidentificationContent(_model_base.Model):
         *,
         input_text: str,
         operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = None,
+        tagged_entities: Optional["_models.TaggedPhiEntities"] = None,
         customizations: Optional["_models.DeidentificationCustomizationOptions"] = None,
     ) -> None: ...
 
@@ -65,7 +73,7 @@ class DeidentificationContent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationCustomizationOptions(_model_base.Model):
+class DeidentificationCustomizationOptions(_Model):
     """Customizations options to override default service behaviors for synchronous usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
@@ -76,6 +84,9 @@ class DeidentificationCustomizationOptions(_model_base.Model):
     :vartype redaction_format: str
     :ivar surrogate_locale: Locale in which the output surrogates are written.
     :vartype surrogate_locale: str
+    :ivar input_locale: Locale of the input text. Used for better PHI detection. Defaults to
+     'en-US'.
+    :vartype input_locale: str
     """
 
     redaction_format: Optional[str] = rest_field(
@@ -90,6 +101,10 @@ class DeidentificationCustomizationOptions(_model_base.Model):
         name="surrogateLocale", visibility=["read", "create", "update", "delete", "query"]
     )
     """Locale in which the output surrogates are written."""
+    input_locale: Optional[str] = rest_field(
+        name="inputLocale", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Locale of the input text. Used for better PHI detection. Defaults to 'en-US'."""
 
     @overload
     def __init__(
@@ -97,6 +112,7 @@ class DeidentificationCustomizationOptions(_model_base.Model):
         *,
         redaction_format: Optional[str] = None,
         surrogate_locale: Optional[str] = None,
+        input_locale: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -110,7 +126,7 @@ class DeidentificationCustomizationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationDocumentDetails(_model_base.Model):
+class DeidentificationDocumentDetails(_Model):
     """Details of a single document in a job.
 
     :ivar id: Id of the document details. Required.
@@ -166,7 +182,7 @@ class DeidentificationDocumentDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationDocumentLocation(_model_base.Model):
+class DeidentificationDocumentLocation(_Model):
     """Location of a document.
 
     :ivar location: Location of document in storage. Required.
@@ -198,13 +214,13 @@ class DeidentificationDocumentLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationJob(_model_base.Model):
+class DeidentificationJob(_Model):
     """A job containing a batch of documents to de-identify.
 
     :ivar job_name: The name of a job. Required.
     :vartype job_name: str
     :ivar operation_type: Operation to perform on the input documents. Known values are: "Redact",
-     "Surrogate", and "Tag".
+     "Surrogate", "Tag", and "SurrogateOnly".
     :vartype operation_type: str or
      ~azure.health.deidentification.models.DeidentificationOperationType
     :ivar source_location: Storage location to perform the operation on. Required.
@@ -238,8 +254,8 @@ class DeidentificationJob(_model_base.Model):
     operation_type: Optional[Union[str, "_models.DeidentificationOperationType"]] = rest_field(
         name="operation", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\", and
-     \"Tag\"."""
+    """Operation to perform on the input documents. Known values are: \"Redact\", \"Surrogate\",
+     \"Tag\", and \"SurrogateOnly\"."""
     source_location: "_models.SourceStorageLocation" = rest_field(
         name="sourceLocation", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -291,7 +307,7 @@ class DeidentificationJob(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationJobCustomizationOptions(_model_base.Model):
+class DeidentificationJobCustomizationOptions(_Model):
     """Customizations options to override default service behaviors for job usage.
 
     :ivar redaction_format: Format of the redacted output. Only valid when Operation is Redact.
@@ -302,6 +318,9 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
     :vartype redaction_format: str
     :ivar surrogate_locale: Locale in which the output surrogates are written.
     :vartype surrogate_locale: str
+    :ivar input_locale: Locale of the input text. Used for better PHI detection. Defaults to
+     'en-US'.
+    :vartype input_locale: str
     """
 
     redaction_format: Optional[str] = rest_field(
@@ -316,6 +335,10 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
         name="surrogateLocale", visibility=["read", "create", "update", "delete", "query"]
     )
     """Locale in which the output surrogates are written."""
+    input_locale: Optional[str] = rest_field(
+        name="inputLocale", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Locale of the input text. Used for better PHI detection. Defaults to 'en-US'."""
 
     @overload
     def __init__(
@@ -323,6 +346,7 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
         *,
         redaction_format: Optional[str] = None,
         surrogate_locale: Optional[str] = None,
+        input_locale: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -336,7 +360,7 @@ class DeidentificationJobCustomizationOptions(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationJobSummary(_model_base.Model):
+class DeidentificationJobSummary(_Model):
     """Summary metrics of a job.
 
     :ivar successful_count: Number of documents that have completed. Required.
@@ -384,7 +408,7 @@ class DeidentificationJobSummary(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class DeidentificationResult(_model_base.Model):
+class DeidentificationResult(_Model):
     """Response body for de-identification operation.
 
     :ivar output_text: Output text after de-identification. Not available for "Tag" operation.
@@ -421,7 +445,7 @@ class DeidentificationResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PhiEntity(_model_base.Model):
+class PhiEntity(_Model):
     """PHI Entity tag in the input.
 
     :ivar category: PHI Category of the entity. Required. Known values are: "Unknown", "Account",
@@ -479,7 +503,7 @@ class PhiEntity(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class PhiTaggerResult(_model_base.Model):
+class PhiTaggerResult(_Model):
     """Result of the "Tag" operation.
 
     :ivar entities: List of entities detected in the input. Required.
@@ -507,7 +531,59 @@ class PhiTaggerResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SourceStorageLocation(_model_base.Model):
+class SimplePhiEntity(_Model):
+    """Simple PHI entity with encoding-specific offset and length values.
+
+    :ivar category: PHI Category of the entity. Required. Known values are: "Unknown", "Account",
+     "Age", "BioID", "City", "CountryOrRegion", "Date", "Device", "Doctor", "Email", "Fax",
+     "HealthPlan", "Hospital", "IDNum", "IPAddress", "License", "LocationOther", "MedicalRecord",
+     "Organization", "Patient", "Phone", "Profession", "SocialSecurity", "State", "Street", "Url",
+     "Username", "Vehicle", and "Zip".
+    :vartype category: str or ~azure.health.deidentification.models.PhiCategory
+    :ivar offset: Starting index of the location from within the input text using the group's
+     encoding. Required.
+    :vartype offset: int
+    :ivar length: Length of the input text using the group's encoding. Required.
+    :vartype length: int
+    :ivar text: Text of the entity (optional).
+    :vartype text: str
+    """
+
+    category: Union[str, "_models.PhiCategory"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """PHI Category of the entity. Required. Known values are: \"Unknown\", \"Account\", \"Age\",
+     \"BioID\", \"City\", \"CountryOrRegion\", \"Date\", \"Device\", \"Doctor\", \"Email\", \"Fax\",
+     \"HealthPlan\", \"Hospital\", \"IDNum\", \"IPAddress\", \"License\", \"LocationOther\",
+     \"MedicalRecord\", \"Organization\", \"Patient\", \"Phone\", \"Profession\",
+     \"SocialSecurity\", \"State\", \"Street\", \"Url\", \"Username\", \"Vehicle\", and \"Zip\"."""
+    offset: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Starting index of the location from within the input text using the group's encoding. Required."""
+    length: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Length of the input text using the group's encoding. Required."""
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Text of the entity (optional)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        category: Union[str, "_models.PhiCategory"],
+        offset: int,
+        length: int,
+        text: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SourceStorageLocation(_Model):
     """Storage location.
 
     :ivar location: URL to storage location. Required.
@@ -545,7 +621,7 @@ class SourceStorageLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class StringIndex(_model_base.Model):
+class StringIndex(_Model):
     """String index encoding model.
 
     :ivar utf8: The offset or length of the substring in UTF-8 encoding. Required.
@@ -591,7 +667,44 @@ class StringIndex(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetStorageLocation(_model_base.Model):
+class TaggedPhiEntities(_Model):
+    """Grouped PHI entities with shared encoding specification.
+
+    :ivar encoding: The encoding type used for all entities in this group. Required. Known values
+     are: "Utf8", "Utf16", and "CodePoint".
+    :vartype encoding: str or ~azure.health.deidentification.models.TextEncodingType
+    :ivar entities: List of PHI entities using the specified encoding. Required.
+    :vartype entities: list[~azure.health.deidentification.models.SimplePhiEntity]
+    """
+
+    encoding: Union[str, "_models.TextEncodingType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The encoding type used for all entities in this group. Required. Known values are: \"Utf8\",
+     \"Utf16\", and \"CodePoint\"."""
+    entities: List["_models.SimplePhiEntity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of PHI entities using the specified encoding. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encoding: Union[str, "_models.TextEncodingType"],
+        entities: List["_models.SimplePhiEntity"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TargetStorageLocation(_Model):
     """Storage location.
 
     :ivar location: URL to storage location. Required.

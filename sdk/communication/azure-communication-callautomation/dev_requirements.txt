@@ -1,8 +1,7 @@
--e ../../../tools/azure-sdk-tools
+-e ../../../eng/tools/azure-sdk-tools
 -e ../../identity/azure-identity
 -e ../azure-communication-identity
 -e ../azure-communication-phonenumbers
 -e ../../servicebus/azure-servicebus
 ../../core/azure-core
 aiohttp>=3.0
-python-dateutil>=2.8.1

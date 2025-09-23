@@ -13,6 +13,8 @@
         "azure.mgmt.mongodbatlas.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
         "azure.mgmt.mongodbatlas.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
         "azure.mgmt.mongodbatlas.models.OrganizationResource": "MongoDB.Atlas.OrganizationResource",
+        "azure.mgmt.mongodbatlas.models.OrganizationResourceUpdate": "Azure.ResourceManager.Foundations.ResourceUpdateModel",
+        "azure.mgmt.mongodbatlas.models.OrganizationResourceUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
         "azure.mgmt.mongodbatlas.models.PartnerProperties": "MongoDB.Atlas.PartnerProperties",
         "azure.mgmt.mongodbatlas.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.mongodbatlas.models.UserAssignedIdentity": "Azure.ResourceManager.CommonTypes.UserAssignedIdentity",

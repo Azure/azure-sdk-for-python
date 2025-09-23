@@ -295,7 +295,7 @@ additional questions or comments.
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
 [cancer_profiling_docs]: https://learn.microsoft.com/azure/azure-health-insights/oncophenotype/overview
-[cancer_profiling_api_documentation]: https://learn.microsoft.com/rest/api/cognitiveservices/healthinsights/onco-phenotype
+[cancer_profiling_api_documentation]: https://learn.microsoft.com/rest/api/healthinsights/onco-phenotype
 [hi_pypi]: https://pypi.org/project/azure-healthinsights-cancerprofiling/
 [product_docs]: https://learn.microsoft.com/azure/azure-health-insights/oncophenotype/
 [hi_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples

@@ -1,7 +1,7 @@
 # Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Policy Insights Client Library.
-This package has been tested with Python 3.7+.
+This package has been tested with Python 3.9+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
 
 ## _Disclaimer_
@@ -12,7 +12,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 ### Prerequisites
 
-- Python 3.7+ is required to use this package.
+- Python 3.9+ is required to use this package.
 - [Azure subscription](https://azure.microsoft.com/free/)
 
 ### Install the package
@@ -24,7 +24,7 @@ pip install azure-identity
 
 ### Authentication
 
-By default, [Azure Active Directory](https://aka.ms/awps/aad) token authentication depends on correct configure of following environment variables.
+By default, [Azure Active Directory](https://aka.ms/awps/aad) token authentication depends on correct configuration of the following environment variables.
 
 - `AZURE_CLIENT_ID` for Azure client ID.
 - `AZURE_TENANT_ID` for Azure tenant ID.
@@ -45,7 +45,9 @@ client = PolicyInsightsClient(credential=DefaultAzureCredential(), subscription_
 
 ## Examples
 
-Code samples for this package can be found at [Policy Insights](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com and [Samples Repo](https://github.com/Azure-Samples/azure-samples-python-management/tree/main/samples/policyinsights)
+Code samples for this package can be found at:
+- [Search Policy Insights](https://docs.microsoft.com/samples/browse/?languages=python&term=Getting%20started%20-%20Managing&terms=Getting%20started%20-%20Managing) on docs.microsoft.com
+- [Azure Python Mgmt SDK Samples Repo](https://aka.ms/azsdk/python/mgmt/samples)
 
 
 ## Troubleshooting
@@ -57,6 +59,3 @@ Code samples for this package can be found at [Policy Insights](https://docs.mic
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project. 
-
-
-

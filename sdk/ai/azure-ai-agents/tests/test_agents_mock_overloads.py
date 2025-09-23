@@ -137,3 +137,22 @@ class TestSignatures:
         await async_agent.runs.stream(thread_id, body=dict_to_io_bytes(body))
 
         assertion.same_http_requests_from(operation_count=6, api_per_operation_count=1)
+
+    @pytest.mark.asyncio
+    @assert_same_http_requests
+    async def test_update_agents(
+        self, agent: AgentsClient, async_agent: AsyncAgentsClient, assertion: OverloadAssertion
+    ):
+        model = "model"
+        agent_id = "agent_id"
+        body = {"model": model}
+
+        agent.update_agent(agent_id, model=model)
+        agent.update_agent(agent_id, body=body)
+        agent.update_agent(agent_id, body=dict_to_io_bytes(body))
+
+        await async_agent.update_agent(agent_id, model=model)
+        await async_agent.update_agent(agent_id, body=body)
+        await async_agent.update_agent(agent_id, body=dict_to_io_bytes(body))
+
+        assertion.same_http_requests_from(operation_count=6, api_per_operation_count=1)

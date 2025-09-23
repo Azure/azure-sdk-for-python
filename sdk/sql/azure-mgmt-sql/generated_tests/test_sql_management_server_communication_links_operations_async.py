@@ -21,7 +21,7 @@ class TestSqlManagementServerCommunicationLinksOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_server_communication_links_delete(self, resource_group):
         response = await self.client.server_communication_links.delete(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -34,7 +34,7 @@ class TestSqlManagementServerCommunicationLinksOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_server_communication_links_get(self, resource_group):
         response = await self.client.server_communication_links.get(
             resource_group_name=resource_group.name,
             server_name="str",
@@ -47,7 +47,7 @@ class TestSqlManagementServerCommunicationLinksOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_server_communication_links_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.server_communication_links.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -71,7 +71,7 @@ class TestSqlManagementServerCommunicationLinksOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_server(self, resource_group):
+    async def test_server_communication_links_list_by_server(self, resource_group):
         response = self.client.server_communication_links.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",

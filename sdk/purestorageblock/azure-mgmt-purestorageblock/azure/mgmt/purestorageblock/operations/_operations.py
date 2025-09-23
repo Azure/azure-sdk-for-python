@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_reservations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_reservations_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_reservations_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +161,7 @@ def build_reservations_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,7 +189,7 @@ def build_reservations_list_by_resource_group_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,7 +216,7 @@ def build_reservations_list_by_subscription_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +242,7 @@ def build_reservations_get_resource_limits_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -270,7 +270,7 @@ def build_reservations_get_billing_status_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,7 +298,7 @@ def build_reservations_get_billing_report_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -326,7 +326,7 @@ def build_storage_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_storage_pools_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,7 +386,7 @@ def build_storage_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -416,7 +416,7 @@ def build_storage_pools_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -444,7 +444,7 @@ def build_storage_pools_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -471,7 +471,7 @@ def build_storage_pools_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -497,7 +497,7 @@ def build_storage_pools_get_health_status_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -525,7 +525,7 @@ def build_storage_pools_get_avs_connection_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -553,7 +553,7 @@ def build_storage_pools_get_avs_status_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -582,7 +582,7 @@ def build_storage_pools_enable_avs_connection_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -612,7 +612,7 @@ def build_storage_pools_disable_avs_connection_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -641,7 +641,7 @@ def build_storage_pools_finalize_avs_connection_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -671,7 +671,7 @@ def build_storage_pools_repair_avs_connection_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -699,7 +699,7 @@ def build_avs_storage_containers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -728,7 +728,7 @@ def build_avs_storage_containers_delete_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -757,7 +757,7 @@ def build_avs_storage_containers_list_by_storage_pool_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -791,7 +791,7 @@ def build_avs_storage_container_volumes_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -828,7 +828,7 @@ def build_avs_storage_container_volumes_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -863,7 +863,7 @@ def build_avs_storage_container_volumes_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -893,7 +893,7 @@ def build_avs_storage_container_volumes_list_by_avs_storage_container_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -923,7 +923,7 @@ def build_avs_vms_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -954,7 +954,7 @@ def build_avs_vms_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -983,7 +983,7 @@ def build_avs_vms_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1012,7 +1012,7 @@ def build_avs_vms_list_by_storage_pool_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1046,7 +1046,7 @@ def build_avs_vm_volumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1083,7 +1083,7 @@ def build_avs_vm_volumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1118,7 +1118,7 @@ def build_avs_vm_volumes_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1148,7 +1148,7 @@ def build_avs_vm_volumes_list_by_avs_vm_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1191,7 +1191,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -1934,7 +1934,7 @@ class ReservationsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.Reservation"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.Reservation"]:
         """List reservations by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2022,7 +2022,7 @@ class ReservationsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.Reservation"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.Reservation"]:
         """List reservations by Azure subscription ID.
 
         :return: An iterator like instance of Reservation
@@ -2996,7 +2996,7 @@ class StoragePoolsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> Iterable["_models.StoragePool"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.StoragePool"]:
         """List storage pools by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3084,7 +3084,7 @@ class StoragePoolsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.StoragePool"]:
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.StoragePool"]:
         """List storage pools by Azure subscription ID.
 
         :return: An iterator like instance of StoragePool
@@ -4268,7 +4268,7 @@ class AvsStorageContainersOperations:
     @distributed_trace
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
-    ) -> Iterable["_models.AvsStorageContainer"]:
+    ) -> ItemPaged["_models.AvsStorageContainer"]:
         """List AVS storage containers by storage pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4860,7 +4860,7 @@ class AvsStorageContainerVolumesOperations:
     @distributed_trace
     def list_by_avs_storage_container(
         self, resource_group_name: str, storage_pool_name: str, storage_container_name: str, **kwargs: Any
-    ) -> Iterable["_models.AvsStorageContainerVolume"]:
+    ) -> ItemPaged["_models.AvsStorageContainerVolume"]:
         """List volumes in an AVS storage container.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5411,7 +5411,7 @@ class AvsVmsOperations:
     @distributed_trace
     def list_by_storage_pool(
         self, resource_group_name: str, storage_pool_name: str, **kwargs: Any
-    ) -> Iterable["_models.AvsVm"]:
+    ) -> ItemPaged["_models.AvsVm"]:
         """List AVS VMs by storage pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -5982,7 +5982,7 @@ class AvsVmVolumesOperations:
     @distributed_trace
     def list_by_avs_vm(
         self, resource_group_name: str, storage_pool_name: str, avs_vm_id: str, **kwargs: Any
-    ) -> Iterable["_models.AvsVmVolume"]:
+    ) -> ItemPaged["_models.AvsVmVolume"]:
         """List volumes in an AVS VM.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
