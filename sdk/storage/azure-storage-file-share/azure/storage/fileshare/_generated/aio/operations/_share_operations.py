@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -48,7 +48,7 @@ from ...operations._share_operations import (
 from .._configuration import AzureFileStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class ShareOperations:
@@ -74,7 +74,7 @@ class ShareOperations:
     async def create(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         quota: Optional[int] = None,
         access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
         enabled_protocols: Optional[str] = None,
@@ -85,6 +85,7 @@ class ShareOperations:
         paid_bursting_max_iops: Optional[int] = None,
         share_provisioned_iops: Optional[int] = None,
         share_provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new share under the specified account. If the share with the same name already
@@ -131,6 +132,11 @@ class ShareOperations:
          in mebibytes per second (MiBps). If this is not specified, the provisioned bandwidth is set to
          value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_bandwidth_mibps: int
+        :param enable_smb_directory_lease: SMB only, default is true.  Specifies whether granting of
+         new directory leases for directories present in a share are to be enabled or disabled. An input
+         of true specifies that granting of new directory leases is to be allowed. An input of false
+         specifies that granting of new directory leases is to be blocked. Default value is None.
+        :type enable_smb_directory_lease: bool
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -163,6 +169,7 @@ class ShareOperations:
             paid_bursting_max_iops=paid_bursting_max_iops,
             share_provisioned_iops=share_provisioned_iops,
             share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
+            enable_smb_directory_lease=enable_smb_directory_lease,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             version=self._config.version,
@@ -334,6 +341,9 @@ class ShareOperations:
         )
         response_headers["x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-share-next-allowed-provisioned-bandwidth-downgrade-time")
+        )
+        response_headers["x-ms-enable-smb-directory-lease"] = self._deserialize(
+            "bool", response.headers.get("x-ms-enable-smb-directory-lease")
         )
 
         if cls:
@@ -896,7 +906,7 @@ class ShareOperations:
 
     @distributed_trace_async
     async def create_snapshot(
-        self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, timeout: Optional[int] = None, metadata: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """Creates a read-only snapshot of a share.
 
@@ -1189,6 +1199,7 @@ class ShareOperations:
         paid_bursting_max_iops: Optional[int] = None,
         share_provisioned_iops: Optional[int] = None,
         share_provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1230,6 +1241,11 @@ class ShareOperations:
          in mebibytes per second (MiBps). If this is not specified, the provisioned bandwidth is set to
          value calculated based on recommendation formula. Default value is None.
         :type share_provisioned_bandwidth_mibps: int
+        :param enable_smb_directory_lease: SMB only, default is true.  Specifies whether granting of
+         new directory leases for directories present in a share are to be enabled or disabled. An input
+         of true specifies that granting of new directory leases is to be allowed. An input of false
+         specifies that granting of new directory leases is to be blocked. Default value is None.
+        :type enable_smb_directory_lease: bool
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
         :return: None or the result of cls(response)
@@ -1268,6 +1284,7 @@ class ShareOperations:
             paid_bursting_max_iops=paid_bursting_max_iops,
             share_provisioned_iops=share_provisioned_iops,
             share_provisioned_bandwidth_mibps=share_provisioned_bandwidth_mibps,
+            enable_smb_directory_lease=enable_smb_directory_lease,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
@@ -1325,7 +1342,7 @@ class ShareOperations:
     async def set_metadata(
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -1406,7 +1423,7 @@ class ShareOperations:
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> list[_models.SignedIdentifier]:
         """Returns information about stored access policies specified on the share.
 
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -1433,7 +1450,7 @@ class ShareOperations:
 
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -1483,7 +1500,7 @@ class ShareOperations:
         self,
         timeout: Optional[int] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
-        share_acl: Optional[List[_models.SignedIdentifier]] = None,
+        share_acl: Optional[list[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """Sets a stored access policy for use with shared access signatures.
@@ -1514,7 +1531,8 @@ class ShareOperations:
 
         restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if share_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None

@@ -48,6 +48,13 @@ class FilePermissionFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BINARY = "Binary"
 
 
+class FilePropertySemantics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FilePropertySemantics."""
+
+    NEW = "New"
+    RESTORE = "Restore"
+
+
 class FileRangeWriteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FileRangeWriteType."""
 

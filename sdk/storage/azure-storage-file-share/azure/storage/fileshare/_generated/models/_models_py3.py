@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -616,7 +616,7 @@ class FilesAndDirectoriesListSegment(_serialization.Model):
     _xml_map = {"name": "Entries"}
 
     def __init__(
-        self, *, directory_items: List["_models.DirectoryItem"], file_items: List["_models.FileItem"], **kwargs: Any
+        self, *, directory_items: list["_models.DirectoryItem"], file_items: list["_models.FileItem"], **kwargs: Any
     ) -> None:
         """
         :keyword directory_items: Required.
@@ -693,7 +693,7 @@ class HandleItem(_serialization.Model):
         open_time: datetime.datetime,
         parent_id: Optional[str] = None,
         last_reconnect_time: Optional[datetime.datetime] = None,
-        access_right_list: Optional[List[Union[str, "_models.AccessRight"]]] = None,
+        access_right_list: Optional[list[Union[str, "_models.AccessRight"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -730,6 +730,38 @@ class HandleItem(_serialization.Model):
         self.open_time = open_time
         self.last_reconnect_time = last_reconnect_time
         self.access_right_list = access_right_list
+
+
+class KeyInfo(_serialization.Model):
+    """Key information.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar start: The date-time the key is active in ISO 8601 UTC time.
+    :vartype start: str
+    :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
+    :vartype expiry: str
+    """
+
+    _validation = {
+        "expiry": {"required": True},
+    }
+
+    _attribute_map = {
+        "start": {"key": "Start", "type": "str"},
+        "expiry": {"key": "Expiry", "type": "str"},
+    }
+
+    def __init__(self, *, expiry: str, start: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword start: The date-time the key is active in ISO 8601 UTC time.
+        :paramtype start: str
+        :keyword expiry: The date-time the key expires in ISO 8601 UTC time. Required.
+        :paramtype expiry: str
+        """
+        super().__init__(**kwargs)
+        self.start = start
+        self.expiry = expiry
 
 
 class LeaseAccessConditions(_serialization.Model):
@@ -887,7 +919,7 @@ class ListHandlesResponse(_serialization.Model):
     _xml_map = {"name": "EnumerationResults"}
 
     def __init__(
-        self, *, next_marker: str, handle_list: Optional[List["_models.HandleItem"]] = None, **kwargs: Any
+        self, *, next_marker: str, handle_list: Optional[list["_models.HandleItem"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword handle_list:
@@ -946,7 +978,7 @@ class ListSharesResponse(_serialization.Model):
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
-        share_items: Optional[List["_models.ShareItemInternal"]] = None,
+        share_items: Optional[list["_models.ShareItemInternal"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1083,8 +1115,8 @@ class ShareFileRangeList(_serialization.Model):
     def __init__(
         self,
         *,
-        ranges: Optional[List["_models.FileRange"]] = None,
-        clear_ranges: Optional[List["_models.ClearRange"]] = None,
+        ranges: Optional[list["_models.FileRange"]] = None,
+        clear_ranges: Optional[list["_models.ClearRange"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1140,7 +1172,7 @@ class ShareItemInternal(_serialization.Model):
         snapshot: Optional[str] = None,
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1164,6 +1196,51 @@ class ShareItemInternal(_serialization.Model):
         self.version = version
         self.properties = properties
         self.metadata = metadata
+
+
+class ShareNfsSettings(_serialization.Model):
+    """Settings for SMB protocol.
+
+    :ivar encryption_in_transit: Enable or disable encryption in transit.
+    :vartype encryption_in_transit:
+     ~azure.storage.fileshare.models.ShareNfsSettingsEncryptionInTransit
+    """
+
+    _attribute_map = {
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "ShareNfsSettingsEncryptionInTransit"},
+    }
+    _xml_map = {"name": "NFS"}
+
+    def __init__(
+        self, *, encryption_in_transit: Optional["_models.ShareNfsSettingsEncryptionInTransit"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword encryption_in_transit: Enable or disable encryption in transit.
+        :paramtype encryption_in_transit:
+         ~azure.storage.fileshare.models.ShareNfsSettingsEncryptionInTransit
+        """
+        super().__init__(**kwargs)
+        self.encryption_in_transit = encryption_in_transit
+
+
+class ShareNfsSettingsEncryptionInTransit(_serialization.Model):
+    """Enable or disable encryption in transit.
+
+    :ivar required: If encryption in transit is required.
+    :vartype required: bool
+    """
+
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword required: If encryption in transit is required.
+        :paramtype required: bool
+        """
+        super().__init__(**kwargs)
+        self.required = required
 
 
 class SharePermission(_serialization.Model):
@@ -1262,6 +1339,8 @@ class SharePropertiesInternal(_serialization.Model):
     :vartype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
     :ivar next_allowed_provisioned_bandwidth_downgrade_time:
     :vartype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+    :ivar enable_smb_directory_lease:
+    :vartype enable_smb_directory_lease: bool
     """
 
     _validation = {
@@ -1303,6 +1382,7 @@ class SharePropertiesInternal(_serialization.Model):
             "key": "NextAllowedProvisionedBandwidthDowngradeTime",
             "type": "rfc-1123",
         },
+        "enable_smb_directory_lease": {"key": "EnableSmbDirectoryLease", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1334,6 +1414,7 @@ class SharePropertiesInternal(_serialization.Model):
         max_burst_credits_for_iops: Optional[int] = None,
         next_allowed_provisioned_iops_downgrade_time: Optional[datetime.datetime] = None,
         next_allowed_provisioned_bandwidth_downgrade_time: Optional[datetime.datetime] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1392,6 +1473,8 @@ class SharePropertiesInternal(_serialization.Model):
         :paramtype next_allowed_provisioned_iops_downgrade_time: ~datetime.datetime
         :keyword next_allowed_provisioned_bandwidth_downgrade_time:
         :paramtype next_allowed_provisioned_bandwidth_downgrade_time: ~datetime.datetime
+        :keyword enable_smb_directory_lease:
+        :paramtype enable_smb_directory_lease: bool
         """
         super().__init__(**kwargs)
         self.last_modified = last_modified
@@ -1420,6 +1503,7 @@ class SharePropertiesInternal(_serialization.Model):
         self.max_burst_credits_for_iops = max_burst_credits_for_iops
         self.next_allowed_provisioned_iops_downgrade_time = next_allowed_provisioned_iops_downgrade_time
         self.next_allowed_provisioned_bandwidth_downgrade_time = next_allowed_provisioned_bandwidth_downgrade_time
+        self.enable_smb_directory_lease = enable_smb_directory_lease
 
 
 class ShareProtocolSettings(_serialization.Model):
@@ -1427,20 +1511,32 @@ class ShareProtocolSettings(_serialization.Model):
 
     :ivar smb: Settings for SMB protocol.
     :vartype smb: ~azure.storage.fileshare.models.ShareSmbSettings
+    :ivar nfs: Settings for NFS protocol.
+    :vartype nfs: ~azure.storage.fileshare.models.ShareNfsSettings
     """
 
     _attribute_map = {
         "smb": {"key": "Smb", "type": "ShareSmbSettings"},
+        "nfs": {"key": "Nfs", "type": "ShareNfsSettings"},
     }
     _xml_map = {"name": "ProtocolSettings"}
 
-    def __init__(self, *, smb: Optional["_models.ShareSmbSettings"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        smb: Optional["_models.ShareSmbSettings"] = None,
+        nfs: Optional["_models.ShareNfsSettings"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword smb: Settings for SMB protocol.
         :paramtype smb: ~azure.storage.fileshare.models.ShareSmbSettings
+        :keyword nfs: Settings for NFS protocol.
+        :paramtype nfs: ~azure.storage.fileshare.models.ShareNfsSettings
         """
         super().__init__(**kwargs)
         self.smb = smb
+        self.nfs = nfs
 
 
 class ShareSmbSettings(_serialization.Model):
@@ -1448,20 +1544,54 @@ class ShareSmbSettings(_serialization.Model):
 
     :ivar multichannel: Settings for SMB Multichannel.
     :vartype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+    :ivar encryption_in_transit: Enable or disable encryption in transit.
+    :vartype encryption_in_transit:
+     ~azure.storage.fileshare.models.ShareSmbSettingsEncryptionInTransit
     """
 
     _attribute_map = {
         "multichannel": {"key": "Multichannel", "type": "SmbMultichannel"},
+        "encryption_in_transit": {"key": "EncryptionInTransit", "type": "ShareSmbSettingsEncryptionInTransit"},
     }
     _xml_map = {"name": "SMB"}
 
-    def __init__(self, *, multichannel: Optional["_models.SmbMultichannel"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        multichannel: Optional["_models.SmbMultichannel"] = None,
+        encryption_in_transit: Optional["_models.ShareSmbSettingsEncryptionInTransit"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword multichannel: Settings for SMB Multichannel.
         :paramtype multichannel: ~azure.storage.fileshare.models.SmbMultichannel
+        :keyword encryption_in_transit: Enable or disable encryption in transit.
+        :paramtype encryption_in_transit:
+         ~azure.storage.fileshare.models.ShareSmbSettingsEncryptionInTransit
         """
         super().__init__(**kwargs)
         self.multichannel = multichannel
+        self.encryption_in_transit = encryption_in_transit
+
+
+class ShareSmbSettingsEncryptionInTransit(_serialization.Model):
+    """Enable or disable encryption in transit.
+
+    :ivar required: If encryption in transit is required.
+    :vartype required: bool
+    """
+
+    _attribute_map = {
+        "required": {"key": "Required", "type": "bool"},
+    }
+
+    def __init__(self, *, required: Optional[bool] = None, **kwargs: Any) -> None:
+        """
+        :keyword required: If encryption in transit is required.
+        :paramtype required: bool
+        """
+        super().__init__(**kwargs)
+        self.required = required
 
 
 class ShareStats(_serialization.Model):
@@ -1687,7 +1817,7 @@ class StorageServiceProperties(_serialization.Model):
         *,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         protocol: Optional["_models.ShareProtocolSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -1734,3 +1864,83 @@ class StringEncoded(_serialization.Model):
         super().__init__(**kwargs)
         self.encoded = encoded
         self.content = content
+
+
+class UserDelegationKey(_serialization.Model):
+    """A user delegation key.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar signed_oid: The Azure Active Directory object ID in GUID format. Required.
+    :vartype signed_oid: str
+    :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
+    :vartype signed_tid: str
+    :ivar signed_start: The date-time the key is active. Required.
+    :vartype signed_start: ~datetime.datetime
+    :ivar signed_expiry: The date-time the key expires. Required.
+    :vartype signed_expiry: ~datetime.datetime
+    :ivar signed_service: Abbreviation of the Azure Storage service that accepts the key. Required.
+    :vartype signed_service: str
+    :ivar signed_version: The service version that created the key. Required.
+    :vartype signed_version: str
+    :ivar value: The key as a base64 string. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        "signed_oid": {"required": True},
+        "signed_tid": {"required": True},
+        "signed_start": {"required": True},
+        "signed_expiry": {"required": True},
+        "signed_service": {"required": True},
+        "signed_version": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "signed_oid": {"key": "SignedOid", "type": "str"},
+        "signed_tid": {"key": "SignedTid", "type": "str"},
+        "signed_start": {"key": "SignedStart", "type": "iso-8601"},
+        "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
+        "signed_service": {"key": "SignedService", "type": "str"},
+        "signed_version": {"key": "SignedVersion", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        signed_oid: str,
+        signed_tid: str,
+        signed_start: datetime.datetime,
+        signed_expiry: datetime.datetime,
+        signed_service: str,
+        signed_version: str,
+        value: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword signed_oid: The Azure Active Directory object ID in GUID format. Required.
+        :paramtype signed_oid: str
+        :keyword signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
+        :paramtype signed_tid: str
+        :keyword signed_start: The date-time the key is active. Required.
+        :paramtype signed_start: ~datetime.datetime
+        :keyword signed_expiry: The date-time the key expires. Required.
+        :paramtype signed_expiry: ~datetime.datetime
+        :keyword signed_service: Abbreviation of the Azure Storage service that accepts the key.
+         Required.
+        :paramtype signed_service: str
+        :keyword signed_version: The service version that created the key. Required.
+        :paramtype signed_version: str
+        :keyword value: The key as a base64 string. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.signed_oid = signed_oid
+        self.signed_tid = signed_tid
+        self.signed_start = signed_start
+        self.signed_expiry = signed_expiry
+        self.signed_service = signed_service
+        self.signed_version = signed_version
+        self.value = value
