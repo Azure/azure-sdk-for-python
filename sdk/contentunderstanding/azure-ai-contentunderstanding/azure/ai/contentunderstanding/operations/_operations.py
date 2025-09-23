@@ -2774,10 +2774,22 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
+
+            # Handle both response formats:
+            # 1. Direct array: [...]
+            # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
+            if isinstance(deserialized, list):
+                # API returned array directly
+                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized)
+                next_link = None
+            else:
+                # API returned object with "value" property
+                list_of_elem = _deserialize(List[_models.PersonDirectory], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink") or None
+
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3307,10 +3319,22 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
+
+            # Handle both response formats:
+            # 1. Direct array: [...]
+            # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
+            if isinstance(deserialized, list):
+                # API returned array directly
+                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized)
+                next_link = None
+            else:
+                # API returned object with "value" property
+                list_of_elem = _deserialize(List[_models.PersonDirectoryPerson], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink") or None
+
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -3850,10 +3874,22 @@ class PersonDirectoriesOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
+
+            # Handle both response formats:
+            # 1. Direct array: [...]
+            # 2. Wrapped in "value" property: {"value": [...], "nextLink": "..."}
+            if isinstance(deserialized, list):
+                # API returned array directly
+                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized)
+                next_link = None
+            else:
+                # API returned object with "value" property
+                list_of_elem = _deserialize(List[_models.PersonDirectoryFace], deserialized.get("value", []))
+                next_link = deserialized.get("nextLink") or None
+
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return next_link, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
