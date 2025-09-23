@@ -579,7 +579,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
             # Begin binary classification operation
             classify_poller = client.content_classifiers.begin_classify_binary(
                 classifier_id=classifier_id,
-                input=pdf_content,
+                binary_input=pdf_content,
                 content_type="application/pdf",
             )
             assert_poller_properties(classify_poller, "Classification poller")

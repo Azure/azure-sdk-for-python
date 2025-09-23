@@ -579,7 +579,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
             # Begin binary classification operation
             classification_poller = await client.content_classifiers.begin_classify_binary(
                 classifier_id=classifier_id,
-                input=pdf_content,
+                binary_input=pdf_content,
                 content_type="application/pdf",
             )
             assert_poller_properties(classification_poller, "Classification poller")

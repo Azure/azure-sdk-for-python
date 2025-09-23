@@ -13,7 +13,7 @@ from datetime import datetime
 import uuid
 
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
+from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategoryDefinition
 from typing import Optional, Dict
 
 from sample_helper import (
@@ -64,13 +64,13 @@ def new_simple_classifier_schema(
 
     return ContentClassifier(
         categories={
-            "Loan application": ClassifierCategory(
+            "Loan application": ClassifierCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
             ),
-            "Invoice": ClassifierCategory(
+            "Invoice": ClassifierCategoryDefinition(
                 description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
             ),
-            "Bank_Statement": ClassifierCategory(
+            "Bank_Statement": ClassifierCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
             ),
         },

@@ -1016,7 +1016,7 @@ class ContentAnalyzersOperations:
     async def _analyze_binary_initial(
         self,
         analyzer_id: str,
-        input: bytes,
+        binary_input: bytes,
         *,
         string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
@@ -1036,7 +1036,7 @@ class ContentAnalyzersOperations:
         content_type: str = kwargs.pop("content_type")
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _content = input
+        _content = binary_input
 
         _request = build_content_analyzers_analyze_binary_request(
             analyzer_id=analyzer_id,
@@ -1085,7 +1085,7 @@ class ContentAnalyzersOperations:
     async def begin_analyze_binary(
         self,
         analyzer_id: str,
-        input: bytes,
+        binary_input: bytes,
         *,
         string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
@@ -1095,8 +1095,8 @@ class ContentAnalyzersOperations:
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
         :type analyzer_id: str
-        :param input: The binary content of the document to analyze. Required.
-        :type input: bytes
+        :param binary_input: The binary content of the document to analyze. Required.
+        :type binary_input: bytes
         :keyword string_encoding: The encoding format for content spans in the response. Known values
          are: "codePoint", "utf16", and "utf8". Default value is None.
         :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
@@ -1119,7 +1119,7 @@ class ContentAnalyzersOperations:
         if cont_token is None:
             raw_result = await self._analyze_binary_initial(
                 analyzer_id=analyzer_id,
-                input=input,
+                binary_input=binary_input,
                 string_encoding=string_encoding,
                 processing_location=processing_location,
                 content_type=content_type,
@@ -4626,7 +4626,7 @@ class ContentClassifiersOperations:
     async def _classify_binary_initial(
         self,
         classifier_id: str,
-        input: bytes,
+        binary_input: bytes,
         *,
         string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
@@ -4646,7 +4646,7 @@ class ContentClassifiersOperations:
         content_type: str = kwargs.pop("content_type")
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _content = input
+        _content = binary_input
 
         _request = build_content_classifiers_classify_binary_request(
             classifier_id=classifier_id,
@@ -4695,7 +4695,7 @@ class ContentClassifiersOperations:
     async def begin_classify_binary(
         self,
         classifier_id: str,
-        input: bytes,
+        binary_input: bytes,
         *,
         string_encoding: Optional[Union[str, _models.StringEncoding]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
@@ -4705,8 +4705,8 @@ class ContentClassifiersOperations:
 
         :param classifier_id: The unique identifier of the classifier. Required.
         :type classifier_id: str
-        :param input: The binary content of the document to classify. Required.
-        :type input: bytes
+        :param binary_input: The binary content of the document to classify. Required.
+        :type binary_input: bytes
         :keyword string_encoding: The encoding format for content spans in the response. Known values
          are: "codePoint", "utf16", and "utf8". Default value is None.
         :paramtype string_encoding: str or ~azure.ai.contentunderstanding.models.StringEncoding
@@ -4730,7 +4730,7 @@ class ContentClassifiersOperations:
         if cont_token is None:
             raw_result = await self._classify_binary_initial(
                 classifier_id=classifier_id,
-                input=input,
+                binary_input=binary_input,
                 string_encoding=string_encoding,
                 processing_location=processing_location,
                 content_type=content_type,

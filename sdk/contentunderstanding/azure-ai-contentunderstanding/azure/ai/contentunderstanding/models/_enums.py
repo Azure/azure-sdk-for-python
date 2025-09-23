@@ -30,6 +30,27 @@ class ClassifierSplitMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Split the input into content objects based on the input and category definitions."""
 
 
+class ContentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Semantic data type of the field value."""
+
+    STRING = "string"
+    """Plain text."""
+    DATE = "date"
+    """Date, normalized to ISO 8601 (YYYY-MM-DD) format."""
+    TIME = "time"
+    """Time, normalized to ISO 8601 (hh:mm:ss) format."""
+    NUMBER = "number"
+    """Number as double precision floating point."""
+    INTEGER = "integer"
+    """Integer as 64-bit signed integer."""
+    BOOLEAN = "boolean"
+    """Boolean value."""
+    ARRAY = "array"
+    """List of subfields of the same type."""
+    OBJECT = "object"
+    """Named list of subfields."""
+
+
 class DataSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data source kind."""
 
@@ -98,27 +119,6 @@ class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Description of the row headers, usually located at the top left corner of a table."""
     DESCRIPTION = "description"
     """Description of the content in (parts of) the table."""
-
-
-class FieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Semantic data type of the field value."""
-
-    STRING = "string"
-    """Plain text."""
-    DATE = "date"
-    """Date, normalized to ISO 8601 (YYYY-MM-DD) format."""
-    TIME = "time"
-    """Time, normalized to ISO 8601 (hh:mm:ss) format."""
-    NUMBER = "number"
-    """Number as double precision floating point."""
-    INTEGER = "integer"
-    """Integer as 64-bit signed integer."""
-    BOOLEAN = "boolean"
-    """Boolean value."""
-    ARRAY = "array"
-    """List of subfields of the same type."""
-    OBJECT = "object"
-    """Named list of subfields."""
 
 
 class GenerationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):

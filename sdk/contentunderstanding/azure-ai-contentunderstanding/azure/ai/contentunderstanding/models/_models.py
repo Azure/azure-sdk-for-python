@@ -14,7 +14,7 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 from azure.core.exceptions import ODataV4Format
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import DataSourceKind, FieldType, KnowledgeSourceKind, MediaContentKind
+from ._enums import ContentFieldType, DataSourceKind, KnowledgeSourceKind, MediaContentKind
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -133,7 +133,7 @@ class ContentField(_Model):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -181,7 +181,7 @@ class ArrayField(ContentField, discriminator="array"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -199,7 +199,7 @@ class ArrayField(ContentField, discriminator="array"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.ARRAY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.ARRAY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. List of subfields of the same type."""
     value_array: Optional[list["_models.ContentField"]] = rest_field(
         name="valueArray", visibility=["read", "create", "update", "delete", "query"]
@@ -226,7 +226,7 @@ class ArrayField(ContentField, discriminator="array"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.ARRAY  # type: ignore
+        self.field_type = ContentFieldType.ARRAY  # type: ignore
 
 
 class MediaContent(_Model):
@@ -522,7 +522,7 @@ class BooleanField(ContentField, discriminator="boolean"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -539,7 +539,7 @@ class BooleanField(ContentField, discriminator="boolean"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.BOOLEAN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.BOOLEAN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Boolean value."""
     value_boolean: Optional[bool] = rest_field(
         name="valueBoolean", visibility=["read", "create", "update", "delete", "query"]
@@ -566,7 +566,7 @@ class BooleanField(ContentField, discriminator="boolean"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.BOOLEAN  # type: ignore
+        self.field_type = ContentFieldType.BOOLEAN  # type: ignore
 
 
 class BoundingBox(_Model):
@@ -612,7 +612,7 @@ class BoundingBox(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassifierCategory(_Model):
+class ClassifierCategoryDefinition(_Model):
     """A classifier category.
 
     :ivar description: The description of the category.
@@ -986,7 +986,8 @@ class ContentClassifier(_Model):
     :ivar warnings: Warnings encountered while creating the classifier.
     :vartype warnings: list[~azure.core.ODataV4Format]
     :ivar categories: The categories to classify against. Required.
-    :vartype categories: dict[str, ~azure.ai.contentunderstanding.models.ClassifierCategory]
+    :vartype categories: dict[str,
+     ~azure.ai.contentunderstanding.models.ClassifierCategoryDefinition]
     :ivar split_mode: Mode used to split input into content objects. Known values are: "noSplit",
      "perPage", and "auto".
     :vartype split_mode: str or ~azure.ai.contentunderstanding.models.ClassifierSplitMode
@@ -1010,7 +1011,7 @@ class ContentClassifier(_Model):
     """The date and time when the classifier was last modified. Required."""
     warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read"])
     """Warnings encountered while creating the classifier."""
-    categories: dict[str, "_models.ClassifierCategory"] = rest_field(visibility=["read", "create"])
+    categories: dict[str, "_models.ClassifierCategoryDefinition"] = rest_field(visibility=["read", "create"])
     """The categories to classify against. Required."""
     split_mode: Optional[Union[str, "_models.ClassifierSplitMode"]] = rest_field(
         name="splitMode", visibility=["read", "create"]
@@ -1027,7 +1028,7 @@ class ContentClassifier(_Model):
     def __init__(
         self,
         *,
-        categories: dict[str, "_models.ClassifierCategory"],
+        categories: dict[str, "_models.ClassifierCategoryDefinition"],
         description: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         split_mode: Optional[Union[str, "_models.ClassifierSplitMode"]] = None,
@@ -1084,7 +1085,7 @@ class DateField(ContentField, discriminator="date"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -1102,7 +1103,7 @@ class DateField(ContentField, discriminator="date"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.DATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.DATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Date, normalized to ISO 8601 (YYYY-MM-DD)
      format."""
     value_date: Optional[datetime.date] = rest_field(
@@ -1130,7 +1131,7 @@ class DateField(ContentField, discriminator="date"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.DATE  # type: ignore
+        self.field_type = ContentFieldType.DATE  # type: ignore
 
 
 class DetectedBoundingBox(_Model):
@@ -2031,11 +2032,11 @@ class FieldDefinition(_Model):
     :vartype method: str or ~azure.ai.contentunderstanding.models.GenerationMethod
     :ivar type: Semantic data type of the field value. Known values are: "string", "date", "time",
      "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar description: Field description.
     :vartype description: str
-    :ivar items_property: Field type schema of each array element, if type is array.
-    :vartype items_property: ~azure.ai.contentunderstanding.models.FieldDefinition
+    :ivar item_definition: Field type schema of each array element, if type is array.
+    :vartype item_definition: ~azure.ai.contentunderstanding.models.FieldDefinition
     :ivar properties: Named sub-fields, if type is object.
     :vartype properties: dict[str, ~azure.ai.contentunderstanding.models.FieldDefinition]
     :ivar examples: Examples of field values.
@@ -2052,14 +2053,14 @@ class FieldDefinition(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Generation method. Known values are: \"generate\", \"extract\", and \"classify\"."""
-    type: Optional[Union[str, "_models.FieldType"]] = rest_field(
+    type: Optional[Union[str, "_models.ContentFieldType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Semantic data type of the field value. Known values are: \"string\", \"date\", \"time\",
      \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Field description."""
-    items_property: Optional["_models.FieldDefinition"] = rest_field(
+    item_definition: Optional["_models.FieldDefinition"] = rest_field(
         name="items", visibility=["read", "create", "update", "delete", "query"]
     )
     """Field type schema of each array element, if type is array."""
@@ -2083,9 +2084,9 @@ class FieldDefinition(_Model):
         self,
         *,
         method: Optional[Union[str, "_models.GenerationMethod"]] = None,
-        type: Optional[Union[str, "_models.FieldType"]] = None,
+        type: Optional[Union[str, "_models.ContentFieldType"]] = None,
         description: Optional[str] = None,
-        items_property: Optional["_models.FieldDefinition"] = None,
+        item_definition: Optional["_models.FieldDefinition"] = None,
         properties: Optional[dict[str, "_models.FieldDefinition"]] = None,
         examples: Optional[list[str]] = None,
         enum: Optional[list[str]] = None,
@@ -2226,7 +2227,7 @@ class IntegerField(ContentField, discriminator="integer"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -2244,7 +2245,7 @@ class IntegerField(ContentField, discriminator="integer"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.INTEGER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.INTEGER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Integer as 64-bit signed integer."""
     value_integer: Optional[int] = rest_field(
         name="valueInteger", visibility=["read", "create", "update", "delete", "query"]
@@ -2271,7 +2272,7 @@ class IntegerField(ContentField, discriminator="integer"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.INTEGER  # type: ignore
+        self.field_type = ContentFieldType.INTEGER  # type: ignore
 
 
 class KnowledgeSource(_Model):
@@ -2311,7 +2312,7 @@ class NumberField(ContentField, discriminator="number"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -2329,7 +2330,7 @@ class NumberField(ContentField, discriminator="number"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.NUMBER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.NUMBER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Number as double precision floating point."""
     value_number: Optional[float] = rest_field(
         name="valueNumber", visibility=["read", "create", "update", "delete", "query"]
@@ -2356,7 +2357,7 @@ class NumberField(ContentField, discriminator="number"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.NUMBER  # type: ignore
+        self.field_type = ContentFieldType.NUMBER  # type: ignore
 
 
 class ObjectField(ContentField, discriminator="object"):
@@ -2364,7 +2365,7 @@ class ObjectField(ContentField, discriminator="object"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -2381,7 +2382,7 @@ class ObjectField(ContentField, discriminator="object"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.OBJECT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.OBJECT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Named list of subfields."""
     value_object: Optional[dict[str, "_models.ContentField"]] = rest_field(
         name="valueObject", visibility=["read", "create", "update", "delete", "query"]
@@ -2408,7 +2409,7 @@ class ObjectField(ContentField, discriminator="object"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.OBJECT  # type: ignore
+        self.field_type = ContentFieldType.OBJECT  # type: ignore
 
 
 class OperationStatusAnalyzeResultError(_Model):
@@ -2867,7 +2868,7 @@ class StringField(ContentField, discriminator="string"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -2884,7 +2885,7 @@ class StringField(ContentField, discriminator="string"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Plain text."""
     value_string: Optional[str] = rest_field(
         name="valueString", visibility=["read", "create", "update", "delete", "query"]
@@ -2911,7 +2912,7 @@ class StringField(ContentField, discriminator="string"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.STRING  # type: ignore
+        self.field_type = ContentFieldType.STRING  # type: ignore
 
 
 class TimeField(ContentField, discriminator="time"):
@@ -2919,7 +2920,7 @@ class TimeField(ContentField, discriminator="time"):
 
     :ivar type: Semantic data type of the field value. Required. Known values are: "string",
      "date", "time", "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.FieldType
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
     :ivar spans: Span(s) associated with the field value in the markdown content.
     :vartype spans: list[~azure.ai.contentunderstanding.models.ContentSpan]
     :ivar confidence: Confidence of predicting the field value.
@@ -2937,7 +2938,7 @@ class TimeField(ContentField, discriminator="time"):
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    field_type: Literal[FieldType.TIME] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    field_type: Literal[ContentFieldType.TIME] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. Time, normalized to ISO 8601 (hh:mm:ss)
      format."""
     value_time: Optional[datetime.time] = rest_field(
@@ -2965,7 +2966,7 @@ class TimeField(ContentField, discriminator="time"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.field_type = FieldType.TIME  # type: ignore
+        self.field_type = ContentFieldType.TIME  # type: ignore
 
 
 class TranscriptPhrase(_Model):

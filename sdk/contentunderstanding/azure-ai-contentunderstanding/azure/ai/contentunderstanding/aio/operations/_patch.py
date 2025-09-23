@@ -310,7 +310,7 @@ class ContentAnalyzersOperations(ContentAnalyzersOperationsGenerated):
 
             return await super().begin_analyze_binary(
                 analyzer_id=analyzer_id,
-                input=data_bytes,
+                binary_input=data_bytes,
                 string_encoding=string_encoding,
                 processing_location=processing_location,
                 content_type=content_type,
@@ -481,7 +481,7 @@ class ContentClassifiersOperations(ContentClassifiersOperationsGenerated):
 
             return await super().begin_classify_binary(
                 classifier_id=classifier_id,
-                input=data_bytes,
+                binary_input=data_bytes,
                 string_encoding=string_encoding,
                 processing_location=processing_location,
                 content_type=content_type,

@@ -73,7 +73,7 @@ async def main() -> None:
         # We return a tuple: (deserialized_object, raw_http_response)
         poller = await client.content_analyzers.begin_analyze_binary(
             analyzer_id="prebuilt-documentAnalyzer",
-            input=pdf_bytes,
+            binary_input=pdf_bytes,
             content_type="application/pdf",
             cls=lambda pipeline_response, deserialized_obj, response_headers: (
                 deserialized_obj,

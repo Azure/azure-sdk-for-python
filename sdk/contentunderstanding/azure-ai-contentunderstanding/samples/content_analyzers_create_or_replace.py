@@ -32,7 +32,7 @@ from azure.ai.contentunderstanding.models import (
     ContentAnalyzerConfig,
     FieldSchema,
     FieldDefinition,
-    FieldType,
+    ContentFieldType,
     GenerationMethod,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -76,12 +76,12 @@ async def main() -> None:
                 description="Schema for extracting company information",
                 fields={
                     "company_name": FieldDefinition(
-                        type=FieldType.STRING,
+                        type=ContentFieldType.STRING,
                         method=GenerationMethod.EXTRACT,
                         description="Name of the company",
                     ),
                     "total_amount": FieldDefinition(
-                        type=FieldType.NUMBER,
+                        type=ContentFieldType.NUMBER,
                         method=GenerationMethod.EXTRACT,
                         description="Total amount on the document",
                     ),

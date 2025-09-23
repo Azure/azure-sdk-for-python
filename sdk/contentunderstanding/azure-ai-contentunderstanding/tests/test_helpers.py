@@ -14,8 +14,8 @@ from datetime import datetime
 from typing import Optional, Dict, Any, List
 from enum import Enum
 from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, FieldDefinition
-from azure.ai.contentunderstanding.models import GenerationMethod, FieldType, AnalysisMode, ProcessingLocation
-from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategory
+from azure.ai.contentunderstanding.models import GenerationMethod, ContentFieldType, AnalysisMode, ProcessingLocation
+from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategoryDefinition
 
 from devtools_testutils import is_live, is_live_and_not_recording
 
@@ -146,7 +146,7 @@ def new_simple_content_analyzer_object(
                 "total_amount": FieldDefinition(
                     description="Total amount of this table",
                     method=GenerationMethod.EXTRACT,
-                    type=FieldType.NUMBER,
+                    type=ContentFieldType.NUMBER,
                 )
             },
             description="schema description here",
@@ -208,13 +208,13 @@ def new_simple_classifier_schema(
 
     return ContentClassifier(
         categories={
-            "Loan application": ClassifierCategory(
+            "Loan application": ClassifierCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation."
             ),
-            "Invoice": ClassifierCategory(
+            "Invoice": ClassifierCategoryDefinition(
                 description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms."
             ),
-            "Bank_Statement": ClassifierCategory(
+            "Bank_Statement": ClassifierCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
             ),
         },
@@ -245,15 +245,15 @@ def new_enhanced_classifier_schema(
 
     return ContentClassifier(
         categories={
-            "Loan application": ClassifierCategory(
+            "Loan application": ClassifierCategoryDefinition(
                 description="Documents submitted by individuals or businesses to request funding, typically including personal or business details, financial history, loan amount, purpose, and supporting documentation.",
                 analyzer_id=analyzer_id,  # Use custom analyzer for loan applications
             ),
-            "Invoice": ClassifierCategory(
+            "Invoice": ClassifierCategoryDefinition(
                 description="Billing documents issued by sellers or service providers to request payment for goods or services, detailing items, prices, taxes, totals, and payment terms.",
                 analyzer_id="prebuilt-invoice",  # Use prebuilt invoice analyzer
             ),
-            "Bank_Statement": ClassifierCategory(
+            "Bank_Statement": ClassifierCategoryDefinition(
                 description="Official statements issued by banks that summarize account activity over a period, including deposits, withdrawals, fees, and balances."
                 # No analyzer specified - uses default processing
             ),

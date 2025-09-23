@@ -20,7 +20,7 @@ from azure.ai.contentunderstanding.models import (
     ContentAnalyzerConfig,
     FieldSchema,
     FieldDefinition,
-    FieldType,
+    ContentFieldType,
     GenerationMethod,
     AnalysisMode,
     ProcessingLocation,

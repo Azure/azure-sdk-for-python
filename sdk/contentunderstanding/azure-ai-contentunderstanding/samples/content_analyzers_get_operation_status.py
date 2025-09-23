@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding.models import (
     ContentAnalyzerConfig,
     FieldSchema,
     FieldDefinition,
-    FieldType,
+    ContentFieldType,
     GenerationMethod,
     AnalysisMode,
     ProcessingLocation,
@@ -87,7 +87,7 @@ async def main():
                     "total_amount": FieldDefinition(
                         description="Total amount of this table",
                         method=GenerationMethod.EXTRACT,
-                        type=FieldType.NUMBER,
+                        type=ContentFieldType.NUMBER,
                     )
                 },
                 description="Schema for operation status demo",

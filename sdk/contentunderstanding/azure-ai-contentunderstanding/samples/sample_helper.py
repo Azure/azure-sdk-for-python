@@ -16,7 +16,7 @@ from typing import Any, Optional, Dict
 from enum import Enum
 from azure.ai.contentunderstanding.models import (
     ContentClassifier,
-    ClassifierCategory,
+    ClassifierCategoryDefinition,
     ContentField,
 )
 
