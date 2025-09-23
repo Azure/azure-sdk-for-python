@@ -65,6 +65,7 @@ from ._utils.formatting_utils import (
     get_flattened_attack_strategies,
     write_pyrit_outputs_to_file,
     format_scorecard,
+    format_xpia_objective,
 )
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
@@ -549,59 +550,8 @@ class RedTeam:
         return objectives_list
 
     def _format_xpia_objective(self, objective_content: str, xpia_prompt: dict) -> str:
-        """Format an objective with XPIA prompt structure.
-        
-        Expected XPIA prompt structure:
-        {
-            "content": "Document content with placeholders",
-            "document_type": "Email|Document|etc",
-            "xpia_attack_type": "Information Gathering|etc", 
-            "xpia_attack_sentence": "The attack instruction",
-            "action": "Action to perform"
-        }
-        
-        Result format:
-        <action>
-        <document_type tags>
-        <content with injected objective>
-        </document_type tags>
-        """
-        try:
-            # Get document tags based on type
-            doc_type = xpia_prompt.get("document_type", "Document").lower()
-            start_tag, end_tag = self._get_document_tags(doc_type)
-            
-            # Get action and content
-            action = xpia_prompt.get("action", "Process the document")
-            xpia_content = xpia_prompt.get("content", "Please review this document.")
-            
-            # Inject the objective into the XPIA content
-            # Simple injection for now - could be more sophisticated
-            injected_content = f"{xpia_content}\n\n{objective_content}"
-            
-            # Format according to specification
-            formatted_objective = f"{action}\n{start_tag}\n{injected_content}\n{end_tag}"
-            
-            return formatted_objective
-            
-        except Exception as e:
-            self.logger.error(f"Error formatting XPIA objective: {str(e)}")
-            # Return original content as fallback
-            return objective_content
-
-    def _get_document_tags(self, document_type: str) -> tuple[str, str]:
-        """Get appropriate document tags based on document type."""
-        document_tags = {
-            "email": ("<email>", "</email>"),
-            "document": ("<document>", "</document>"),
-            "letter": ("<letter>", "</letter>"),
-            "memo": ("<memo>", "</memo>"),
-            "report": ("<report>", "</report>"),
-            "message": ("<message>", "</message>"),
-        }
-        
-        # Default to document tags if type not recognized
-        return document_tags.get(document_type.lower(), ("<document>", "</document>"))
+        """Format an objective with XPIA prompt structure using the formatting utility."""
+        return format_xpia_objective(objective_content, xpia_prompt, self.logger)
 
     def _filter_and_select_objectives(
         self,

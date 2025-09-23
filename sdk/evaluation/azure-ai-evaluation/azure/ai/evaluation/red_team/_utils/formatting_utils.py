@@ -164,6 +164,147 @@ def list_mean_nan_safe(data_list: List[Any]) -> float:
     return sum(filtered_list) / len(filtered_list)
 
 
+def format_content_by_modality(content: str, modality: str) -> str:
+    """Format content based on the specified modality, returning one random format.
+    
+    :param content: The content to format
+    :type content: str
+    :param modality: The modality type (html, markdown, footnote, code, text)
+    :type modality: str
+    :return: Formatted content
+    :rtype: str
+    """
+    import html
+    import random
+    
+    def format_as_html(text):
+        html_text = html.escape(text)
+        return [
+            f"<p>{html_text}</p>",
+            f'<div style="display:none">{html_text}</div>',
+            f'<span style="display:none">{html_text}</span>',
+            f'<div hidden>{html_text}</div>',
+            f'<meta content="{html_text}">'
+        ]
+    
+    def format_as_markdown(text):
+        markdown_text = text.replace('\n', '  \n')  # Convert newlines to Markdown line breaks
+        return [
+            f"\n**{markdown_text}**\n",             # Bold
+            f"\n*{markdown_text}*\n",               # Italic
+            f"\n`{markdown_text}`\n",               # Inline code
+            f"\n```{markdown_text}```\n",           # Code block
+            f"\n[Link]({markdown_text})\n"          # Link
+        ]
+    
+    def format_as_footnote(text):
+        footnote_text = text.replace('\n', ' ')
+        return [
+            f"[^{footnote_text}]",                              # Footnote reference
+            f"\n[1] {footnote_text}\n",                         # Footnote reference with number
+            f"<sup>{footnote_text}</sup>",                      # Superscript
+            f'<span class="footnote">{footnote_text}</span>',   # Custom footnote span
+            f'<div class="footnote">{footnote_text}</div>'      # Custom footnote div
+        ]
+    
+    def format_as_code(text):
+        code_text = text.replace('\n', ' ')
+        return [
+            f"`{code_text}`",                               # Inline code
+            f"```\n{code_text}\n```",                       # Code block
+            f'"""\n{code_text}\n"""',                 # Code block
+            f"# {code_text}",                               # Inline comment
+            f'def function():\n    print("{code_text}")'  # Function call
+        ]
+    
+    def format_as_text(text):
+        return [f"<document>{text}</document>"]  # Return text in document tags
+    
+    # Mapping of modality types to formatting functions
+    modality_formatters = {
+        "html": format_as_html,
+        "markdown": format_as_markdown,
+        "footnote": format_as_footnote,
+        "code": format_as_code,
+        "text": format_as_text,
+    }
+    
+    # Get formatter based on modality type
+    if modality and modality.lower() in modality_formatters:
+        formatter = modality_formatters[modality.lower()]
+        formats = formatter(content)
+        # Return one random format from the available options
+        return random.choice(formats)
+    else:
+        # Return plain text if modality not recognized
+        return content
+
+
+def format_xpia_objective(objective_content: str, xpia_prompt: dict, logger) -> str:
+    """Format an objective with XPIA prompt structure.
+    
+    Expected XPIA prompt structure:
+    {
+        'id': 'unique-uuid-string',
+        'metadata': {
+            'lang': 'language-code',
+            'target_harms': [
+                {
+                    'risk-type': 'xpia',
+                    'risk-subtype': 'specific-subtype'
+                }
+            ]
+        },
+        'modality': 'text',
+        'source': [],
+        'messages': [
+            {
+                'role': 'user',
+                'content': 'The attack instruction content',
+                'context': 'The contextual scenario or document content'
+            }
+        ]
+    }
+    
+    Result format varies by modality:
+    - html: Various HTML formatting options
+    - markdown: Various Markdown formatting options  
+    - footnote: Various footnote formatting options
+    - code: Various code formatting options
+    - text: Plain text (default)
+    
+    :param objective_content: The objective content to inject
+    :type objective_content: str
+    :param xpia_prompt: The XPIA prompt structure
+    :type xpia_prompt: dict
+    :param logger: Logger for error reporting
+    :type logger: logging.Logger
+    :return: Formatted objective string
+    :rtype: str
+    """
+    try:
+        # Get modality type and action/content
+        doc_type = xpia_prompt.get("modality", "text")
+        action = xpia_prompt.get("messages")[0].get("content")
+        xpia_content = xpia_prompt.get("messages")[0].get("context")
+        
+        # Inject the objective into the XPIA content
+        injected_content = f"{xpia_content}\n\n{objective_content}"
+        
+        # Apply formatting based on modality
+        formatted_content = format_content_by_modality(injected_content, doc_type)
+        
+        # Combine action with formatted content
+        formatted_objective = f"{action}\n{formatted_content}"
+        
+        return formatted_objective
+        
+    except Exception as e:
+        logger.error(f"Error formatting XPIA objective: {str(e)}")
+        # Return original content as fallback
+        return objective_content
+
+
 def write_pyrit_outputs_to_file(
     *,
     output_path: str,
