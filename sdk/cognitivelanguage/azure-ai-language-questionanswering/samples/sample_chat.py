@@ -29,7 +29,11 @@ def sample_chit_chat():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.language.questionanswering import QuestionAnsweringClient
-    from azure.ai.language.questionanswering import models as qna
+    from azure.ai.language.questionanswering.models import (
+        AnswersOptions,
+        ShortAnswerOptions,
+        KnowledgeBaseAnswerContext,
+    )
 
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
@@ -40,12 +44,12 @@ def sample_chit_chat():
     with client:
         first_question = "How long should my Surface battery last?"
 
-        first_options = qna.AnswersOptions(
+        first_options = AnswersOptions(
             question=first_question,
             top=3,
             confidence_threshold=0.2,
             include_unstructured_sources=True,
-            short_answer_options=qna.ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
+            short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
         )
         first_output = client.get_answers(
             first_options,
@@ -66,15 +70,15 @@ def sample_chit_chat():
         if best_candidate.qna_id:
             followup_question = "How long does it take to charge a Surface?"
             # Use answer_context to provide previous QnA selection for disambiguation.
-            followup_options = qna.AnswersOptions(
+            followup_options = AnswersOptions(
                 question=followup_question,
                 top=3,
                 confidence_threshold=0.2,
-                answer_context=qna.KnowledgeBaseAnswerContext(
+                answer_context=KnowledgeBaseAnswerContext(
                     previous_question=first_question,
                     previous_qna_id=best_candidate.qna_id,
                 ),
-                short_answer_options=qna.ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
+                short_answer_options=ShortAnswerOptions(enable=True, confidence_threshold=0.2, top=1),
                 include_unstructured_sources=True,
             )
             followup_output = client.get_answers(
