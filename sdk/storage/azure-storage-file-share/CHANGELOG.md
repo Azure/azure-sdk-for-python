@@ -5,6 +5,10 @@
 ### Features Added
 - Stable release of features from 12.23.0b1
 
+### Bugs Fixed
+- Fixed an issue where `ShareClient`'s `list_directories_and_files` API specified with `name_starts_with`
+would not return all results when the share contains a large number of files and directories.
+
 ### Other Changes
 - Migrated any previously documented `kwarg` arguments to be named keywords. 
 Some public types may have been adjusted if they were previously erroneous or incomplete.
