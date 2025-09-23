@@ -29,7 +29,7 @@ to a separate location and are intentionally not referenced here.
 
 ## Prerequisites
 
-- Python 3.8+ (match the package's `python_requires`)
+- Python 3.9+ (match the package's `python_requires`)
 - An [Azure subscription][azure_subscription]
 - A deployed Language Question Answering resource (project + deployment for knowledge base queries)
 
