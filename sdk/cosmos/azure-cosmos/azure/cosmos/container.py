@@ -661,25 +661,25 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options = build_options(kwargs)
 
         change_feed_state_context = {}
-        if "mode" in kwargs:
-            change_feed_state_context["mode"] = kwargs.pop("mode")
-        if "partition_key_range_id" in kwargs:
-            change_feed_state_context["partitionKeyRangeId"] = kwargs.pop("partition_key_range_id")
-        if "is_start_from_beginning" in kwargs and kwargs.pop('is_start_from_beginning') is True:
-            change_feed_state_context["startTime"] = "Beginning"
-        elif "start_time" in kwargs:
-            change_feed_state_context["startTime"] = kwargs.pop("start_time")
+        if _Kwargs.MODE in kwargs:
+            change_feed_state_context[_InternalOptions.MODE] = kwargs.pop(_Kwargs.MODE)
+        if _Kwargs.PARTITION_KEY_RANGE_ID in kwargs:
+            change_feed_state_context[_InternalOptions.PARTITION_KEY_RANGE_ID] = kwargs.pop(_Kwargs.PARTITION_KEY_RANGE_ID)
+        if _Kwargs.IS_START_FROM_BEGINNING in kwargs and kwargs.pop(_Kwargs.IS_START_FROM_BEGINNING) is True:
+            change_feed_state_context[_InternalOptions.START_TIME] = "Beginning"
+        elif _Kwargs.START_TIME in kwargs:
+            change_feed_state_context[_InternalOptions.START_TIME] = kwargs.pop(_Kwargs.START_TIME)
 
         container_properties = self._get_properties_with_options(feed_options)
         if _Kwargs.PARTITION_KEY in kwargs:
             partition_key = kwargs.pop(_Kwargs.PARTITION_KEY)
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
-            change_feed_state_context["partitionKeyFeedRange"] = \
+            change_feed_state_context[_InternalOptions.PARTITION_KEY_FEED_RANGE] = \
                 get_epk_range_for_partition_key(container_properties, partition_key)
         if _Kwargs.FEED_RANGE in kwargs:
-            change_feed_state_context["feedRange"] = kwargs.pop(_Kwargs.FEED_RANGE)
-        if "continuation" in feed_options:
-            change_feed_state_context["continuation"] = feed_options.pop("continuation")
+            change_feed_state_context[_InternalOptions.FEED_RANGE] = kwargs.pop(_Kwargs.FEED_RANGE)
+        if _InternalOptions.CONTINUATION in feed_options:
+            change_feed_state_context[_InternalOptions.CONTINUATION] = feed_options.pop(_InternalOptions.CONTINUATION)
 
         feed_options[_InternalOptions.CHANGE_FEED_STATE_CONTEXT] = change_feed_state_context
         feed_options[
@@ -949,51 +949,43 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         container_properties = self._get_properties_with_options(feed_options)
 
         # Update 'feed_options' from 'kwargs'
-        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
+        if utils.valid_key_value_exist(kwargs, _Kwargs.ENABLE_CROSS_PARTITION_QUERY):
             feed_options[
-
                 _InternalOptions.ENABLE_CROSS_PARTITION_QUERY
-
-            ] = kwargs.pop("enable_cross_partition_query")
-        if utils.valid_key_value_exist(kwargs, "max_item_count"):
-            feed_options[_InternalOptions.MAX_ITEM_COUNT] = kwargs.pop("max_item_count")
-        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
-            feed_options[_InternalOptions.POPULATE_QUERY_METRICS] = kwargs.pop("populate_query_metrics")
-        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
-            feed_options[_InternalOptions.POPULATE_INDEX_METRICS] = kwargs.pop("populate_index_metrics")
-        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
-            feed_options[_InternalOptions.ENABLE_SCAN_IN_QUERY] = kwargs.pop("enable_scan_in_query")
-        if utils.valid_key_value_exist(kwargs, "max_integrated_cache_staleness_in_ms"):
-            max_integrated_cache_staleness_in_ms = kwargs.pop("max_integrated_cache_staleness_in_ms")
+            ] = kwargs.pop(_Kwargs.ENABLE_CROSS_PARTITION_QUERY)
+        if utils.valid_key_value_exist(kwargs, _Kwargs.MAX_ITEM_COUNT):
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = kwargs.pop(_Kwargs.MAX_ITEM_COUNT)
+        if utils.valid_key_value_exist(kwargs, _Kwargs.POPULATE_QUERY_METRICS):
+            feed_options[_InternalOptions.POPULATE_QUERY_METRICS] = kwargs.pop(_Kwargs.POPULATE_QUERY_METRICS)
+        if utils.valid_key_value_exist(kwargs, _Kwargs.POPULATE_INDEX_METRICS):
+            feed_options[_InternalOptions.POPULATE_INDEX_METRICS] = kwargs.pop(_Kwargs.POPULATE_INDEX_METRICS)
+        if utils.valid_key_value_exist(kwargs, _Kwargs.ENABLE_SCAN_IN_QUERY):
+            feed_options[_InternalOptions.ENABLE_SCAN_IN_QUERY] = kwargs.pop(_Kwargs.ENABLE_SCAN_IN_QUERY)
+        if utils.valid_key_value_exist(kwargs, _Kwargs.MAX_INTEGRATED_CACHE_STALENESS_IN_MS):
+            max_integrated_cache_staleness_in_ms = kwargs.pop(_Kwargs.MAX_INTEGRATED_CACHE_STALENESS_IN_MS)
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options[
-
                 _InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
-
             ] = max_integrated_cache_staleness_in_ms
-        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
+        if utils.valid_key_value_exist(kwargs, _Kwargs.CONTINUATION_TOKEN_LIMIT):
             feed_options[
-
                 _InternalOptions.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB
-
-            ] = kwargs.pop("continuation_token_limit")
+            ] = kwargs.pop(_Kwargs.CONTINUATION_TOKEN_LIMIT)
         feed_options[_InternalOptions.CORRELATED_ACTIVITY_ID] = GenerateGuidId()
         feed_options[
-
             _InternalOptions.CONTAINER_RID
-
         ] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
-        if utils.valid_key_value_exist(kwargs, "parameters"):
-            query = {"query": kwargs.pop("query", None), "parameters": kwargs.pop("parameters", None)}
+        if utils.valid_key_value_exist(kwargs, _Kwargs.PARAMETERS):
+            query = {"query": kwargs.pop(_Kwargs.QUERY, None), "parameters": kwargs.pop(_Kwargs.PARAMETERS, None)}
         else:
-            query = kwargs.pop("query", None)
+            query = kwargs.pop(_Kwargs.QUERY, None)
 
         # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
-        utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        if utils.valid_key_value_exist(kwargs, "partition_key"):
-            partition_key_value = self._set_partition_key(kwargs["partition_key"])
+        utils.verify_exclusive_arguments([_Kwargs.FEED_RANGE, _Kwargs.PARTITION_KEY], **kwargs)
+        if utils.valid_key_value_exist(kwargs, _Kwargs.PARTITION_KEY):
+            partition_key_value = self._set_partition_key(kwargs[_Kwargs.PARTITION_KEY])
             partition_key_obj = _build_partition_key_from_properties(container_properties)
             if partition_key_obj._is_prefix_partition_key(partition_key_value):
                 kwargs[_Kwargs.PREFIX_PARTITION_KEY_OBJECT] = partition_key_obj

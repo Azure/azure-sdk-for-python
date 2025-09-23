@@ -270,6 +270,21 @@ class _InternalOptions:
     MATCH_CONDITION: Final[str] = "matchCondition"
     """Match condition for conditional operations."""
 
+    MODE: Final[str] = "mode"
+    """Mode for change feed operations."""
+
+    PARTITION_KEY_RANGE_ID: Final[str] = "partitionKeyRangeId"
+    """Partition key range ID for change feed operations."""
+
+    START_TIME: Final[str] = "startTime"
+    """Start time for change feed operations."""
+
+    PARTITION_KEY_FEED_RANGE: Final[str] = "partitionKeyFeedRange"
+    """Partition key feed range for change feed operations."""
+
+    FEED_RANGE: Final[str] = "feedRange"
+    """Feed range for change feed operations."""
+
 
 class _Kwargs:
     """Public-facing keyword argument names used in the azure-cosmos package
@@ -433,3 +448,27 @@ class _Kwargs:
 
     MATCH_CONDITION: Final[str] = "match_condition"
     """Match condition kwarg for conditional operations."""
+
+    MODE: Final[str] = "mode"
+    """Mode kwarg for change feed operations."""
+
+    PARTITION_KEY_RANGE_ID: Final[str] = "partition_key_range_id"
+    """Partition key range ID kwarg for change feed operations."""
+
+    IS_START_FROM_BEGINNING: Final[str] = "is_start_from_beginning"
+    """Whether to start from beginning kwarg for change feed operations."""
+
+    START_TIME: Final[str] = "start_time"
+    """Start time kwarg for change feed operations."""
+
+    MAX_INTEGRATED_CACHE_STALENESS_IN_MS: Final[str] = "max_integrated_cache_staleness_in_ms"
+    """Maximum integrated cache staleness in milliseconds kwarg."""
+
+    CONTINUATION_TOKEN_LIMIT: Final[str] = "continuation_token_limit"
+    """Continuation token size limit kwarg."""
+
+    PARAMETERS: Final[str] = "parameters"
+    """Query parameters kwarg."""
+
+    QUERY: Final[str] = "query"
+    """Query string kwarg."""
