@@ -2,4 +2,3 @@
 pyright = false
 pylint = true
 bandit = true
-
