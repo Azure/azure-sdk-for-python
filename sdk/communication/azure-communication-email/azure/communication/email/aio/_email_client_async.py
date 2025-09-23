@@ -70,7 +70,7 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace_async
-    async def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]:
+    async def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]: # pylint: disable=docstring-keyword-should-match-keyword-only
         # cSpell:disable
         """Queues an email message to be sent to one or more recipients.
 

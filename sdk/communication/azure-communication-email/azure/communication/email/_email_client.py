@@ -70,7 +70,7 @@ class EmailClient(object):
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace
-    def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
+    def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]: # pylint: disable=docstring-keyword-should-match-keyword-only
         # cSpell:disable
         """Queues an email message to be sent to one or more recipients.
 
