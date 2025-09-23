@@ -27,13 +27,14 @@ from ..._operations._patch import _get_answers_from_text_prepare_options, _get_a
 class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
     async def get_answers(
-        self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
+        self, knowledge_base_query_options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
-        :param options: Positional only. POST body of the request. Provide either `options`, OR
-         individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
+        :param knowledge_base_query_options: Positional only. POST body of the request. 
+         Provide either `knowledge_base_query_options`, OR individual keyword arguments. 
+         If both are provided, only the options object will be used.
+        :type knowledge_base_query_options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -148,12 +149,14 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         return await super().get_answers(options, **kwargs)  # type: ignore
 
     @overload  # type: ignore
-    async def get_answers_from_text(self, options: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
+    async def get_answers_from_text(
+        self, text_query_options: AnswersFromTextOptions, **kwargs: Any
+    ) -> AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
-        :param options: Positional only. POST body of the request. Provide either `options`, OR
+        :param text_query_options: Positional only. POST body of the request. Provide either `text_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions
+        :type text_query_options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
