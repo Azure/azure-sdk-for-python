@@ -116,6 +116,7 @@ def test_groundedness_reasoning_flag_plumbed_via_module_asyncprompty():
         mock_async_prompty.load = MagicMock(return_value=MagicMock())
 
         from azure.ai.evaluation._evaluators._groundedness._groundedness import GroundednessEvaluator
+
         # Also patch base __call__ to avoid executing real evaluation; we only want to trigger the re-load path
         with patch(
             "azure.ai.evaluation._evaluators._common._base_prompty_eval.PromptyEvaluatorBase.__call__",
@@ -168,7 +169,9 @@ def test_qa_evaluator_propagates_is_reasoning_model_to_components():
         ("_evaluators/_task_success/task_success.prompty", "temperature", 0.0, 1500),
     ],
 )
-def test_prompty_yaml_contains_expected_parameters(prompty_rel_path, expected_temp_key, expected_temp_val, expected_max_tokens):
+def test_prompty_yaml_contains_expected_parameters(
+    prompty_rel_path, expected_temp_key, expected_temp_val, expected_max_tokens
+):
     # Validate that prompty files define temperature and max_tokens in YAML
     base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
     prompty_path = os.path.join(base_dir, "azure", "ai", "evaluation", prompty_rel_path)

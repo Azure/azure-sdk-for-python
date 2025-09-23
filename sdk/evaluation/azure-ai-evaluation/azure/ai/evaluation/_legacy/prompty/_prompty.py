@@ -145,13 +145,16 @@ class AsyncPrompty:
         configs, self._template = self._parse_prompty(path)
 
         if is_reasoning_model:
-            parameters = configs.get("model", {}).get("parameters", {})
+            parameters = configs.get("model", {}).get("parameters") or {}
             if "max_tokens" in parameters:
                 parameters.pop("max_tokens", None)
                 parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
             # Remove unsupported parameters for reasoning models
             for key in ["temperature", "top_p", "presence_penalty", "frequency_penalty"]:
                 parameters.pop(key, None)
+            # Write back sanitized parameters in case original was None
+            if "model" in configs:
+                configs["model"]["parameters"] = parameters
 
         configs = resolve_references(configs, base_path=path.parent)
         configs = update_dict_recursively(configs, resolve_references(kwargs, base_path=path.parent))
