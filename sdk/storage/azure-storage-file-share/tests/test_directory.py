@@ -995,6 +995,30 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_list_pagination_name_starts_with(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name, prefix = "dir", "samples_"
+        directory = share_client.create_directory(directory_name)
+
+        for i in range(6):
+            directory.upload_file(f"{prefix}{i}", "data1")
+            directory.upload_file(f"not_{i}", "data2")
+
+        list_all = list(share_client.list_directories_and_files(
+            directory_name=directory_name,
+            name_starts_with=prefix,
+            results_per_page=2
+        ))
+        assert len(list_all) == 6
+        for i in range(6):
+            assert list_all[i]["name"] == f"{prefix}{i}"
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_delete_directory_with_existing_share(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

@@ -16,7 +16,6 @@ from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
-
 ADDITIONAL_LOCKED_DEPENDENCIES = [
   "types-chardet==5.0.4.6",
   "types-requests==2.31.0.6",
@@ -52,25 +51,23 @@ class mypy(Check):
         for parsed in targeted:
             package_dir = parsed.folder
             package_name = parsed.name
-            dev_requirements = os.path.join(package_dir, "dev_requirements.txt")
             additional_requirements = ADDITIONAL_LOCKED_DEPENDENCIES
 
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for mypy check")
 
             # # need to install dev_requirements to ensure that type-hints properly resolve
-            if os.path.exists(dev_requirements):
-                additional_requirements += ["-r", dev_requirements]
+            self.install_dev_reqs(executable, args, package_dir)
 
             # install mypy
             try:
                 if args.next:
                     # use latest version of mypy
-                    install_into_venv(executable, ["mypy"] + additional_requirements)
+                    install_into_venv(executable, ["mypy"] + additional_requirements, package_dir)
                 else:
-                    install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements)
+                    install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements, package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install mypy:", e)
+                logger.error(f"Failed to install mypy: {e}")
                 return e.returncode
 
             logger.info(f"Running mypy against {package_name}")
