@@ -1,0 +1,6 @@
+{"query": "What is the capital of France?", "response": "Paris is the capital of France.", "context": "France info context line 0"}
+{"query": "What is the capital of Japan?", "response": "Tokyo is the capital of Japan.", "context": "Japan info context line 1"}
+{"query": "What is the capital of Spain?", "response": "Madrid is the capital of Spain.", "context": "Spain info context line 2"}
+{"query": "What is the capital of Italy?", "response": "Rome is the capital of Italy.", "context": "Italy info context line 3"}
+{"query": "What is the capital of Germany?", "response": "Berlin is the capital of Germany.", "context": "Germany info context line 4"}
+{"query": "What is the capital of Canada?", "response": "Ottawa is the capital of Canada.", "context": "Canada info context line 5"}
