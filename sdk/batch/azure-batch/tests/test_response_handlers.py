@@ -23,8 +23,8 @@ class TestBatchErrorFormat(unittest.TestCase):
         }
 
         batch_error = BatchErrorFormat(odata_error)
-        self.assertEqual(batch_error.details[0]["code"], "property1")
-        self.assertEqual(batch_error.details[1]["code"], "property2")
+        self.assertEqual(batch_error.details[0].code, "property1")
+        self.assertEqual(batch_error.details[1].code, "property2")
 
     def test_batch_error_format_without_values(self):
         odata_error = {

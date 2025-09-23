@@ -9,7 +9,7 @@
 import time
 from typing import Any, Callable, Optional
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import AzureError, ResourceNotFoundError
 from azure.core.pipeline import PipelineResponse
 from azure.core.polling import PollingMethod
 
@@ -85,7 +85,7 @@ class DeleteJobPollingMethod(PollingMethod):
             # Job no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -157,7 +157,7 @@ class DisableJobPollingMethod(PollingMethod):
             # Job no longer exists, unexpected for disable operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -229,7 +229,7 @@ class EnableJobPollingMethod(PollingMethod):
             # Job no longer exists, unexpected for enable operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -304,7 +304,7 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
             # Job schedule no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -375,7 +375,7 @@ class DeletePoolPollingMethod(PollingMethod):
             # Pool no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -410,7 +410,7 @@ class DeleteCertificatePollingMethod(PollingMethod):
         self, client: Any, initial_response: PipelineResponse, deserialization_callback: Optional[Callable]
     ) -> None:
         pass
-   
+
     def status(self) -> str:
         return self._status
 
@@ -444,7 +444,7 @@ class DeleteCertificatePollingMethod(PollingMethod):
             # Certificate no longer exists, deletion is complete
             self._status = "Succeeded"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -519,7 +519,7 @@ class DeallocateNodePollingMethod(PollingMethod):
             # Node no longer exists, might have been removed from pool
             self._status = "Succeeded"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -593,7 +593,7 @@ class RebootNodePollingMethod(PollingMethod):
             # Node no longer exists, unexpected for reboot operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -667,7 +667,7 @@ class ReimageNodePollingMethod(PollingMethod):
             # Node no longer exists, unexpected for reimage operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -740,7 +740,7 @@ class RemoveNodePollingMethod(PollingMethod):
             # Pool no longer exists, unexpected for remove node operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -813,7 +813,7 @@ class ResizePoolPollingMethod(PollingMethod):
             # Pool no longer exists, unexpected for resize operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -887,7 +887,7 @@ class StartNodePollingMethod(PollingMethod):
             # Node no longer exists, unexpected for start operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -960,7 +960,7 @@ class StopPoolResizePollingMethod(PollingMethod):
             # Pool no longer exists, unexpected for stop resize operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -1032,7 +1032,7 @@ class TerminateJobPollingMethod(PollingMethod):
             # Job no longer exists, unexpected for terminate operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False
@@ -1104,7 +1104,7 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
             # Job schedule no longer exists, unexpected for terminate operation
             self._status = "Failed"
             self._finished = True
-        except Exception:
+        except AzureError:
             # Some other error occurred, continue polling
             self._status = "InProgress"
             self._finished = False

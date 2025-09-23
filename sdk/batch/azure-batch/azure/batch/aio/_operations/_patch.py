@@ -1115,7 +1115,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = TerminateJobSchedulePollingMethodAsync(
-            self, pipeline_response, lambda _: None, job_schedule_id, polling_interval
+            self, pipeline_response, None, job_schedule_id, polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
