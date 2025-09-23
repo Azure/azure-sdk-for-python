@@ -91,12 +91,21 @@ def _handle_metadata_filter_conversion(options_input):
         in_class = False
     if not metadata_input:
         return options
-    try:
-        if any(t for t in metadata_input if len(t) != 2):
-            raise ValueError("'metadata' must be a sequence of key-value tuples.")
-    except TypeError as exc:
-        raise ValueError("'metadata' must be a sequence of key-value tuples.") from exc
-    metadata_modified = [{"key": m[0], "value": m[1]} for m in metadata_input]
+    
+    # Handle both MetadataRecord objects and tuples
+    metadata_modified = []
+    for m in metadata_input:
+        if hasattr(m, 'key') and hasattr(m, 'value'):
+            # MetadataRecord object
+            metadata_modified.append({"key": m.key, "value": m.value})
+        else:
+            # Assume it's a tuple or sequence
+            try:
+                if len(m) != 2:
+                    raise ValueError("'metadata' must be a sequence of key-value tuples.")
+                metadata_modified.append({"key": m[0], "value": m[1]})
+            except (TypeError, AttributeError) as exc:
+                raise ValueError("'metadata' must be a sequence of key-value tuples or MetadataRecord objects.") from exc
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
     else:
@@ -143,7 +152,7 @@ def _get_answers_from_text_prepare_options(
     return options, kwargs
 
 
-class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
+class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
     def get_answers(
         self, knowledge_base_query_options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
@@ -346,7 +355,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
 
 
 __all__: List[str] = [
-    "QuestionAnsweringClientOperationsMixin"
+    "_QuestionAnsweringClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
