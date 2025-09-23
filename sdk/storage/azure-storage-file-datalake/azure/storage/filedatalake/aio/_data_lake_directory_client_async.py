@@ -131,6 +131,9 @@ class DataLakeDirectoryClient(PathClient):
         :param directory_name:
             The name of directory to interact with. The directory is under file system.
         :type directory_name: str
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
