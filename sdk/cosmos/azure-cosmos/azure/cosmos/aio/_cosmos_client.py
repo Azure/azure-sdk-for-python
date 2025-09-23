@@ -34,7 +34,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos.offer import ThroughputProperties
 
 from ..cosmos_client import _parse_connection_str
-from .._constants import _Constants as Constants, _InternalOptions, _Kwargs
+from .._constants import _InternalOptions, _Kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from .._base import build_options as _build_options, _set_throughput_options
 from ._retry_utility_async import _ConnectionRetryPolicy

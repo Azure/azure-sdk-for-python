@@ -36,7 +36,7 @@ from .._base import (
     _deserialize_throughput,
     _replace_throughput
 )
-from .._constants import _Constants as Constants, _InternalOptions, _Kwargs
+from .._constants import _InternalOptions, _Kwargs
 from ._container import ContainerProxy
 from ..offer import ThroughputProperties
 from ..http_constants import StatusCodes

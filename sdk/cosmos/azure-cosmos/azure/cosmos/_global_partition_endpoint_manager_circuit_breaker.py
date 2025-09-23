@@ -23,7 +23,7 @@
 """
 from typing import TYPE_CHECKING, Optional
 
-from azure.cosmos._constants import _Constants as Constants, _InternalOptions, _Kwargs
+from azure.cosmos._constants import _Kwargs
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition
 from azure.cosmos._global_partition_endpoint_manager_circuit_breaker_core import \
     _GlobalPartitionEndpointManagerForCircuitBreakerCore

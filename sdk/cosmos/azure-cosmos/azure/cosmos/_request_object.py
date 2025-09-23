@@ -24,7 +24,7 @@
 from typing import Optional, Mapping, Any, Dict, List
 from .documents import _OperationType
 from .http_constants import ResourceType
-from ._constants import _Constants as Constants, _InternalOptions, _Kwargs
+from ._constants import _Kwargs
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(

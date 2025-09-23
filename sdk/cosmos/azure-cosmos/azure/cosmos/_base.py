@@ -38,7 +38,7 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
-from ._constants import _Constants as Constants, _InternalOptions, _Kwargs
+from ._constants import _InternalOptions, _Kwargs
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
