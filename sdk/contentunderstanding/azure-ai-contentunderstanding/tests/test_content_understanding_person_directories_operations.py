@@ -7,11 +7,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, cast
 from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.contentunderstanding.models import PersonDirectory
+from azure.ai.contentunderstanding import ContentUnderstandingClient
 from test_helpers import generate_person_directory_id_sync, get_enrollment_data_path
 
 
@@ -222,7 +223,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person directory was created successfully
         - Clean up the created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_create")
         created_directory = False
 
@@ -251,7 +252,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Get person directory after update to verify changes persisted
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_update")
         created_directory = False
 
@@ -332,7 +333,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Get the person directory and verify its properties
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_get")
         created_directory = False
 
@@ -380,7 +381,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Delete the person directory
         - Verify person directory no longer exists after deletion
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_delete")
         created_directory = False
 
@@ -428,7 +429,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the created person directory is in the list
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_list")
         created_directory = False
 
@@ -488,7 +489,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person was added successfully
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_add_person")
         created_directory = False
 
@@ -542,7 +543,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person was updated successfully
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_update_person")
         created_directory = False
 
@@ -613,7 +614,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Get the person and verify its properties
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_get_person")
         created_directory = False
 
@@ -669,7 +670,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person no longer exists
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_delete_person")
         created_directory = False
 
@@ -728,7 +729,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify all created persons are in the list
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_list_persons")
         created_directory = False
 
@@ -801,7 +802,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the face was added successfully
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_add_face")
         created_directory = False
 
@@ -870,7 +871,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the face association was updated
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_update_face")
         created_directory = False
 
@@ -953,7 +954,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Get the face and verify its properties
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_get_face")
         created_directory = False
 
@@ -1022,7 +1023,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the face no longer exists
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_delete_face")
         created_directory = False
 
@@ -1091,7 +1092,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify both positive and negative cases with proper assertions
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_find_similar_faces")
         created_directory = False
 
@@ -1225,7 +1226,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the verification results
         - Clean up created person directory
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_verify_person")
         created_directory = False
 

@@ -8,11 +8,12 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from typing import Tuple, Union, Dict, Any, Optional
+from typing import Tuple, Union, Dict, Any, Optional, cast
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.ai.contentunderstanding.models import ContentClassifier
+from azure.ai.contentunderstanding import ContentUnderstandingClient
 from test_helpers import (
     generate_classifier_id_sync,
     extract_operation_id_from_poller,
@@ -150,7 +151,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify operation status response properties
         - Clean up created classifier
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get_operation_status")
         created_classifier = False
 
@@ -203,7 +204,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify classifier exists in list after creation
         - Clean up created classifier
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_create_or_replace")
         created_classifier = False
 
@@ -239,7 +240,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify updated classifier properties
         - Clean up created classifier
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_update")
         created_classifier = False
 
@@ -322,7 +323,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify classifier properties match expected values
         - Clean up created classifier
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get")
         created_classifier = False
 
@@ -364,7 +365,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify classifier no longer exists in list after deletion
         - Clean up if deletion failed
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_delete")
         created_classifier = False
 
@@ -424,7 +425,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify list response contains expected classifiers
         - Verify each classifier has required properties
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         response = client.content_classifiers.list()
         result = [r for r in response]
 
@@ -483,7 +484,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Save classification result to file
         - Clean up created classifier
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify")
         created_classifier = False
 
@@ -552,7 +553,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Save classification result to file
         - Clean up created classifier
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_binary")
         created_classifier = False
 
@@ -621,7 +622,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Classify content using URL parameter with new overload
         - Verify classification result properties
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_url_overload")
         created_classifier = False
 
@@ -667,7 +668,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Classify content using data (bytes) parameter with new overload
         - Verify classification result properties
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_data_overload")
         created_classifier = False
 
@@ -715,7 +716,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Test that providing both url and data parameters raises ValueError
         - Verify error handling
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         classifier_id = generate_classifier_id_sync(
             client, "test_content_classifiers_begin_classify_url_data_mutual_exclusivity"
         )

@@ -10,12 +10,13 @@ import pytest
 import os
 import uuid
 from datetime import datetime
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, cast
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.core.exceptions import ResourceNotFoundError
 from test_helpers import read_image_bytes
+from azure.ai.contentunderstanding import ContentUnderstandingClient
 
 import pytest
 
@@ -31,7 +32,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Detect faces using JSON body
         - Verify detection results
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -75,7 +76,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Use a URL to detect faces
         - Verify detection results
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Use a test image URL
         image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
@@ -105,7 +106,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Detect faces using data keyword parameter
         - Verify detection results
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -138,7 +139,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Use URL as positional argument
         - Verify detection results
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Use a test image URL
         image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
@@ -169,7 +170,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Load image as bytes and use as positional argument
         - Verify detection results
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Load test image
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -204,7 +205,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Compare faces between the images
         - Verify comparison results show high similarity
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Load two different images of the same person (Bill)
         test_file_dir = os.path.dirname(os.path.abspath(__file__))
@@ -278,7 +279,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         Expected Result:
         - ValueError should be raised when both url and data are provided
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
 
         # Test mutual exclusivity validation
         print("Testing mutual exclusivity validation...")

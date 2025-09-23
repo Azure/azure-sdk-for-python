@@ -9,11 +9,12 @@
 import pytest
 import os
 import re
-from typing import Tuple, Union, Dict, Any, Optional
+from typing import Tuple, Union, Dict, Any, Optional, cast
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer import ContentUnderstandingClientTestBase
 from azure.ai.contentunderstanding.models import ContentAnalyzer
+from azure.ai.contentunderstanding import ContentUnderstandingClient
 from test_helpers import (
     generate_analyzer_id_sync,
     extract_operation_id_from_poller,
@@ -255,7 +256,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Check final operation status after completion
         - Clean up created analyzer
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_operation_status")
         created_analyzer = False
 
@@ -292,7 +293,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify analyzer creation and poller properties
         - Clean up created analyzer
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_create_with_content_analyzer")
         created_analyzer = False
 
@@ -318,7 +319,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify analyzer creation and poller properties
         - Clean up created analyzer
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_create_with_json")
         created_analyzer = False
 
@@ -374,7 +375,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Get analyzer after update to verify changes persisted
         - Clean up created analyzer
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_update")
         created_analyzer = False
 
@@ -455,7 +456,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Get existing prebuilt analyzer
         - Verify analyzer properties and status
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         response = client.content_analyzers.get(
             analyzer_id="prebuilt-documentAnalyzer",
         )
@@ -478,7 +479,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify analyzer no longer exists in list after deletion
         - Clean up if deletion failed
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_delete")
         created_analyzer = False
 
@@ -538,7 +539,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify list response contains expected prebuilt analyzers
         - Verify each analyzer has required properties
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         response = client.content_analyzers.list()
         result = [r for r in response]
 
@@ -575,7 +576,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify total_amount field exists and equals 110
         - Clean up created analyzer
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_url")
         created_analyzer = False
 
@@ -635,7 +636,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify total_amount field exists and equals 110
         - Clean up created analyzer
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_binary")
         created_analyzer = False
 
@@ -698,7 +699,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         """
         if not is_live_and_not_recording():
             return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_result_file")
         created_analyzer = False
 
@@ -768,7 +769,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         Expected Result:
         - ValueError should be raised when both url and data are provided
         """
-        client = self.create_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_mutual_exclusivity")
         created_analyzer = False
 

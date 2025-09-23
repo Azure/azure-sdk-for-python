@@ -9,10 +9,11 @@
 import pytest
 import os
 import re
-from typing import Tuple, Union, Dict, Any, Optional
+from typing import Tuple, Union, Dict, Any, Optional, cast
 from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync, ContentUnderstandingPreparer
 from azure.ai.contentunderstanding.models import ContentAnalyzer
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from test_helpers import (
     generate_analyzer_id_async,
     extract_operation_id_from_poller,
@@ -257,7 +258,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Check final operation status after completion
         - Clean up created analyzer
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_get_operation_status")
         created_analyzer = False
 
@@ -294,7 +295,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify analyzer creation and poller properties
         - Clean up created analyzer
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(
             client, "test_content_analyzers_begin_create_with_content_analyzer"
         )
@@ -322,7 +323,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify analyzer creation and poller properties
         - Clean up created analyzer
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_create_with_json")
         created_analyzer = False
 
@@ -378,7 +379,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Get analyzer after update to verify changes persisted
         - Clean up created analyzer
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_update")
         created_analyzer = False
 
@@ -459,7 +460,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Get existing prebuilt analyzer
         - Verify analyzer properties and status
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         response = await client.content_analyzers.get(
             analyzer_id="prebuilt-documentAnalyzer",
         )
@@ -482,7 +483,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify analyzer no longer exists in list after deletion
         - Clean up if deletion failed
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_delete")
         created_analyzer = False
 
@@ -542,7 +543,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify list response contains expected prebuilt analyzers
         - Verify each analyzer has required properties
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         response = client.content_analyzers.list()
         result = [r async for r in response]
 
@@ -579,7 +580,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify total_amount field exists and equals 110
         - Clean up created analyzer
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_analyze_url")
         created_analyzer = False
 
@@ -639,7 +640,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         - Verify total_amount field exists and equals 110
         - Clean up created analyzer
         """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_begin_analyze_binary")
         created_analyzer = False
 
@@ -701,7 +702,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
                 "This test requires live mode to run, as it involves large video files that are too big for test proxy to record"
             )
             return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        client = cast(ContentUnderstandingClient, self.create_async_client(endpoint=contentunderstanding_endpoint))
         analyzer_id = await generate_analyzer_id_async(client, "test_content_analyzers_get_result_file")
         created_analyzer = False
 

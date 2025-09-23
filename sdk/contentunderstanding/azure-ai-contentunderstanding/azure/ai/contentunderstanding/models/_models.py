@@ -774,8 +774,8 @@ class ContentAnalyzer(_Model):
     :vartype base_analyzer_id: str
     :ivar config: Analyzer configuration settings.
     :vartype config: ~azure.ai.contentunderstanding.models.ContentAnalyzerConfig
-    :ivar field_schema: The schema of fields to extracted.
-    :vartype field_schema: ~azure.ai.contentunderstanding.models.FieldSchema
+    :ivar content_field_schema: The schema of fields to extracted.
+    :vartype content_field_schema: ~azure.ai.contentunderstanding.models.ContentFieldSchema
     :ivar training_data: The data source containing training data for the analyzer.
     :vartype training_data: ~azure.ai.contentunderstanding.models.DataSource
     :ivar processing_location: The location where the data may be processed. Known values are:
@@ -807,7 +807,9 @@ class ContentAnalyzer(_Model):
     """The analyzer to incrementally train from."""
     config: Optional["_models.ContentAnalyzerConfig"] = rest_field(visibility=["read", "create"])
     """Analyzer configuration settings."""
-    field_schema: Optional["_models.FieldSchema"] = rest_field(name="fieldSchema", visibility=["read", "create"])
+    content_field_schema: Optional["_models.ContentFieldSchema"] = rest_field(
+        name="fieldSchema", visibility=["read", "create"]
+    )
     """The schema of fields to extracted."""
     training_data: Optional["_models.DataSource"] = rest_field(name="trainingData", visibility=["read", "create"])
     """The data source containing training data for the analyzer."""
@@ -832,7 +834,7 @@ class ContentAnalyzer(_Model):
         tags: Optional[dict[str, str]] = None,
         base_analyzer_id: Optional[str] = None,
         config: Optional["_models.ContentAnalyzerConfig"] = None,
-        field_schema: Optional["_models.FieldSchema"] = None,
+        content_field_schema: Optional["_models.ContentFieldSchema"] = None,
         training_data: Optional["_models.DataSource"] = None,
         processing_location: Optional[Union[str, "_models.ProcessingLocation"]] = None,
         mode: Optional[Union[str, "_models.AnalysisMode"]] = None,
@@ -1033,6 +1035,129 @@ class ContentClassifier(_Model):
         tags: Optional[dict[str, str]] = None,
         split_mode: Optional[Union[str, "_models.ClassifierSplitMode"]] = None,
         processing_location: Optional[Union[str, "_models.ProcessingLocation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContentFieldDefinition(_Model):
+    """Definition of the field using a JSON Schema like syntax.
+
+    :ivar method: Generation method. Known values are: "generate", "extract", and "classify".
+    :vartype method: str or ~azure.ai.contentunderstanding.models.GenerationMethod
+    :ivar type: Semantic data type of the field value. Known values are: "string", "date", "time",
+     "number", "integer", "boolean", "array", and "object".
+    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
+    :ivar description: Field description.
+    :vartype description: str
+    :ivar item_definition: Field type schema of each array element, if type is array.
+    :vartype item_definition: ~azure.ai.contentunderstanding.models.ContentFieldDefinition
+    :ivar properties: Named sub-fields, if type is object.
+    :vartype properties: dict[str, ~azure.ai.contentunderstanding.models.ContentFieldDefinition]
+    :ivar examples: Examples of field values.
+    :vartype examples: list[str]
+    :ivar enum: Enumeration of possible field values.
+    :vartype enum: list[str]
+    :ivar enum_descriptions: Descriptions for each enumeration value.
+    :vartype enum_descriptions: dict[str, str]
+    :ivar ref: Reference to another field definition.
+    :vartype ref: str
+    """
+
+    method: Optional[Union[str, "_models.GenerationMethod"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Generation method. Known values are: \"generate\", \"extract\", and \"classify\"."""
+    type: Optional[Union[str, "_models.ContentFieldType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Semantic data type of the field value. Known values are: \"string\", \"date\", \"time\",
+     \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Field description."""
+    item_definition: Optional["_models.ContentFieldDefinition"] = rest_field(
+        name="items", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Field type schema of each array element, if type is array."""
+    properties: Optional[dict[str, "_models.ContentFieldDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Named sub-fields, if type is object."""
+    examples: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Examples of field values."""
+    enum: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Enumeration of possible field values."""
+    enum_descriptions: Optional[dict[str, str]] = rest_field(
+        name="enumDescriptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptions for each enumeration value."""
+    ref: Optional[str] = rest_field(name="$ref", visibility=["read", "create", "update", "delete", "query"])
+    """Reference to another field definition."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        method: Optional[Union[str, "_models.GenerationMethod"]] = None,
+        type: Optional[Union[str, "_models.ContentFieldType"]] = None,
+        description: Optional[str] = None,
+        item_definition: Optional["_models.ContentFieldDefinition"] = None,
+        properties: Optional[dict[str, "_models.ContentFieldDefinition"]] = None,
+        examples: Optional[list[str]] = None,
+        enum: Optional[list[str]] = None,
+        enum_descriptions: Optional[dict[str, str]] = None,
+        ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContentFieldSchema(_Model):
+    """Schema of fields to be extracted from documents.
+
+    :ivar name: The name of the field schema.
+    :vartype name: str
+    :ivar description: A description of the field schema.
+    :vartype description: str
+    :ivar fields: The fields defined in the schema. Required.
+    :vartype fields: dict[str, ~azure.ai.contentunderstanding.models.ContentFieldDefinition]
+    :ivar definitions: Additional definitions referenced by the fields in the schema.
+    :vartype definitions: dict[str, ~azure.ai.contentunderstanding.models.ContentFieldDefinition]
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create"])
+    """The name of the field schema."""
+    description: Optional[str] = rest_field(visibility=["read", "create"])
+    """A description of the field schema."""
+    fields: dict[str, "_models.ContentFieldDefinition"] = rest_field(visibility=["read", "create"])
+    """The fields defined in the schema. Required."""
+    definitions: Optional[dict[str, "_models.ContentFieldDefinition"]] = rest_field(visibility=["read", "create"])
+    """Additional definitions referenced by the fields in the schema."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        fields: dict[str, "_models.ContentFieldDefinition"],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        definitions: Optional[dict[str, "_models.ContentFieldDefinition"]] = None,
     ) -> None: ...
 
     @overload
@@ -2014,129 +2139,6 @@ class FaceSource(_Model):
         data: Optional[bytes] = None,
         image_reference_id: Optional[str] = None,
         target_bounding_box: Optional["_models.BoundingBox"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FieldDefinition(_Model):
-    """Definition of the field using a JSON Schema like syntax.
-
-    :ivar method: Generation method. Known values are: "generate", "extract", and "classify".
-    :vartype method: str or ~azure.ai.contentunderstanding.models.GenerationMethod
-    :ivar type: Semantic data type of the field value. Known values are: "string", "date", "time",
-     "number", "integer", "boolean", "array", and "object".
-    :vartype type: str or ~azure.ai.contentunderstanding.models.ContentFieldType
-    :ivar description: Field description.
-    :vartype description: str
-    :ivar item_definition: Field type schema of each array element, if type is array.
-    :vartype item_definition: ~azure.ai.contentunderstanding.models.FieldDefinition
-    :ivar properties: Named sub-fields, if type is object.
-    :vartype properties: dict[str, ~azure.ai.contentunderstanding.models.FieldDefinition]
-    :ivar examples: Examples of field values.
-    :vartype examples: list[str]
-    :ivar enum: Enumeration of possible field values.
-    :vartype enum: list[str]
-    :ivar enum_descriptions: Descriptions for each enumeration value.
-    :vartype enum_descriptions: dict[str, str]
-    :ivar ref: Reference to another field definition.
-    :vartype ref: str
-    """
-
-    method: Optional[Union[str, "_models.GenerationMethod"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Generation method. Known values are: \"generate\", \"extract\", and \"classify\"."""
-    type: Optional[Union[str, "_models.ContentFieldType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Semantic data type of the field value. Known values are: \"string\", \"date\", \"time\",
-     \"number\", \"integer\", \"boolean\", \"array\", and \"object\"."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Field description."""
-    item_definition: Optional["_models.FieldDefinition"] = rest_field(
-        name="items", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Field type schema of each array element, if type is array."""
-    properties: Optional[dict[str, "_models.FieldDefinition"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Named sub-fields, if type is object."""
-    examples: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Examples of field values."""
-    enum: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Enumeration of possible field values."""
-    enum_descriptions: Optional[dict[str, str]] = rest_field(
-        name="enumDescriptions", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Descriptions for each enumeration value."""
-    ref: Optional[str] = rest_field(name="$ref", visibility=["read", "create", "update", "delete", "query"])
-    """Reference to another field definition."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        method: Optional[Union[str, "_models.GenerationMethod"]] = None,
-        type: Optional[Union[str, "_models.ContentFieldType"]] = None,
-        description: Optional[str] = None,
-        item_definition: Optional["_models.FieldDefinition"] = None,
-        properties: Optional[dict[str, "_models.FieldDefinition"]] = None,
-        examples: Optional[list[str]] = None,
-        enum: Optional[list[str]] = None,
-        enum_descriptions: Optional[dict[str, str]] = None,
-        ref: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FieldSchema(_Model):
-    """Schema of fields to be extracted from documents.
-
-    :ivar name: The name of the field schema.
-    :vartype name: str
-    :ivar description: A description of the field schema.
-    :vartype description: str
-    :ivar fields: The fields defined in the schema. Required.
-    :vartype fields: dict[str, ~azure.ai.contentunderstanding.models.FieldDefinition]
-    :ivar definitions: Additional definitions referenced by the fields in the schema.
-    :vartype definitions: dict[str, ~azure.ai.contentunderstanding.models.FieldDefinition]
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create"])
-    """The name of the field schema."""
-    description: Optional[str] = rest_field(visibility=["read", "create"])
-    """A description of the field schema."""
-    fields: dict[str, "_models.FieldDefinition"] = rest_field(visibility=["read", "create"])
-    """The fields defined in the schema. Required."""
-    definitions: Optional[dict[str, "_models.FieldDefinition"]] = rest_field(visibility=["read", "create"])
-    """Additional definitions referenced by the fields in the schema."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        fields: dict[str, "_models.FieldDefinition"],
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        definitions: Optional[dict[str, "_models.FieldDefinition"]] = None,
     ) -> None: ...
 
     @overload

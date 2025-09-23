@@ -13,7 +13,12 @@ import json
 from datetime import datetime
 from typing import Optional, Dict, Any, List
 from enum import Enum
-from azure.ai.contentunderstanding.models import ContentAnalyzer, ContentAnalyzerConfig, FieldSchema, FieldDefinition
+from azure.ai.contentunderstanding.models import (
+    ContentAnalyzer,
+    ContentAnalyzerConfig,
+    ContentFieldSchema,
+    ContentFieldDefinition,
+)
 from azure.ai.contentunderstanding.models import GenerationMethod, ContentFieldType, AnalysisMode, ProcessingLocation
 from azure.ai.contentunderstanding.models import ContentClassifier, ClassifierCategoryDefinition
 
@@ -141,9 +146,9 @@ def new_simple_content_analyzer_object(
             return_details=True,
         ),
         description=description,
-        field_schema=FieldSchema(
+        content_field_schema=ContentFieldSchema(
             fields={
-                "total_amount": FieldDefinition(
+                "total_amount": ContentFieldDefinition(
                     description="Total amount of this table",
                     method=GenerationMethod.EXTRACT,
                     type=ContentFieldType.NUMBER,

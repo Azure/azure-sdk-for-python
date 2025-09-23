@@ -18,8 +18,8 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
-    FieldSchema,
-    FieldDefinition,
+    ContentFieldSchema,
+    ContentFieldDefinition,
     ContentFieldType,
     GenerationMethod,
     AnalysisMode,

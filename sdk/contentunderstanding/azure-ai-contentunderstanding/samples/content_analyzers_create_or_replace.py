@@ -30,8 +30,8 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
-    FieldSchema,
-    FieldDefinition,
+    ContentFieldSchema,
+    ContentFieldDefinition,
     ContentFieldType,
     GenerationMethod,
 )
@@ -71,16 +71,16 @@ async def main() -> None:
                 estimate_field_source_and_confidence=True,
                 return_details=True,
             ),
-            field_schema=FieldSchema(
+            content_field_schema=ContentFieldSchema(
                 name="company_schema",
                 description="Schema for extracting company information",
                 fields={
-                    "company_name": FieldDefinition(
+                    "company_name": ContentFieldDefinition(
                         type=ContentFieldType.STRING,
                         method=GenerationMethod.EXTRACT,
                         description="Name of the company",
                     ),
-                    "total_amount": FieldDefinition(
+                    "total_amount": ContentFieldDefinition(
                         type=ContentFieldType.NUMBER,
                         method=GenerationMethod.EXTRACT,
                         description="Total amount on the document",

@@ -30,8 +30,8 @@ from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
     ContentAnalyzer,
     ContentAnalyzerConfig,
-    FieldSchema,
-    FieldDefinition,
+    ContentFieldSchema,
+    ContentFieldDefinition,
     ContentFieldType,
     GenerationMethod,
 )
@@ -66,11 +66,11 @@ async def main() -> None:
             base_analyzer_id="prebuilt-documentAnalyzer",
             description="Temporary analyzer for deletion demo",
             config=ContentAnalyzerConfig(return_details=True),
-            field_schema=FieldSchema(
+            content_field_schema=ContentFieldSchema(
                 name="demo_schema",
                 description="Schema for deletion demo",
                 fields={
-                    "demo_field": FieldDefinition(
+                    "demo_field": ContentFieldDefinition(
                         type=ContentFieldType.STRING,
                         method=GenerationMethod.EXTRACT,
                         description="Demo field for deletion",
