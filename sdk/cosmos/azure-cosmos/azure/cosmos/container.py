@@ -43,7 +43,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, _InternalOptions, _Kwargs
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -58,10 +58,6 @@ from .partition_key import (
     _return_undefined_or_empty_partition_key, NullPartitionKeyValue,
 )
 from .scripts import ScriptsProxy
-
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 
 __all__ = ("ContainerProxy",)
 

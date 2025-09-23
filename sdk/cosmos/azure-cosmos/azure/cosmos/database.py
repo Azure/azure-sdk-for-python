@@ -31,17 +31,13 @@ from azure.cosmos.partition_key import PartitionKey
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, _InternalOptions, _Kwargs
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
 from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
-
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 
 __all__ = ("DatabaseProxy",)
 

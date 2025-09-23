@@ -102,7 +102,8 @@ class _Constants:
         )
     }
 
-    class InternalOptions:
+
+class _InternalOptions:
         """Internal option names used in request processing
 
         These constants represent the internal option keys used in the azure-cosmos package
@@ -269,7 +270,8 @@ class _Constants:
         MATCH_CONDITION: Final[str] = "matchCondition"
         """Match condition for conditional operations."""
 
-    class Kwargs:
+
+class _Kwargs:
         """Public-facing keyword argument names used in the azure-cosmos package
 
         These constants should be used instead of hardcoded strings for kwargs in public APIs

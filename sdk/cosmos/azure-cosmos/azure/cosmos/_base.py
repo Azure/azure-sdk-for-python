@@ -38,7 +38,7 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
-from ._constants import _Constants as Constants
+from ._constants import _Constants as Constants, _InternalOptions, _Kwargs
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -48,12 +48,8 @@ if TYPE_CHECKING:
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
     from ._request_object import RequestObject
 
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
-
 # InternalOptions alias for cleaner access to internal option constants
-InternalOptions = Constants.InternalOptions
+InternalOptions = _InternalOptions
 
 # pylint: disable=protected-access
 

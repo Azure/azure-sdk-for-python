@@ -60,7 +60,7 @@ from .._change_feed.change_feed_state import ChangeFeedState
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
-from .._constants import _Constants as Constants
+from .._constants import _Constants as Constants, _InternalOptions, _Kwargs
 from .._cosmos_responses import CosmosDict, CosmosList
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
@@ -82,10 +82,6 @@ from ..partition_key import (
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
-
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 
 
 

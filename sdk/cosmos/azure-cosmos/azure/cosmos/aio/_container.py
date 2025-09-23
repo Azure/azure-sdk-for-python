@@ -46,7 +46,7 @@ from .._base import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
-from .._constants import _Constants as Constants
+from .._constants import _Constants as Constants, _InternalOptions, _Kwargs
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -55,10 +55,6 @@ from ..partition_key import (
     _return_undefined_or_empty_partition_key,
     _get_partition_key_from_partition_key_definition, NullPartitionKeyValue, _PartitionKeyType
 )
-
-# Shorter aliases for convenient usage
-_InternalOptions = Constants.InternalOptions
-_Kwargs = Constants.Kwargs
 
 __all__ = ("ContainerProxy",)
 
