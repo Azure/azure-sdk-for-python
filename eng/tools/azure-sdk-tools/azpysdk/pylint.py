@@ -49,17 +49,7 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
-
-            # TODO debug
-            check_call([executable, "-m", "ensurepip", "--upgrade"])
-
             pip_cmd = get_pip_command(executable)
-            logger.info("Running pip freeze before installing dev reqs:")
-            try:
-                check_call(pip_cmd + ["freeze"])
-            except CalledProcessError as e:
-                logger.error(f"Failed to run pip freeze: {e}")
-                return e.returncode
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
