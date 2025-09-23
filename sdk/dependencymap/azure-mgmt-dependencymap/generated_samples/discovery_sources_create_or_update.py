@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.dependencymap import DependencyMapMgmtClient
+from azure.mgmt.dependencymap import DependencyMapClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.dependencymap import DependencyMapMgmtClient
 
 
 def main():
-    client = DependencyMapMgmtClient(
+    client = DependencyMapClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -36,13 +36,13 @@ def main():
         source_name="sourceTest1",
         resource={
             "location": "y",
-            "properties": {"sourceId": "wzlrkzumplzjmixbqv", "sourceType": "DiscoverySourceResourceProperties"},
+            "properties": {"sourceId": "wzlrkzumplzjmixbqv", "sourceType": "OffAzure"},
             "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-01-31-preview/DiscoverySources_CreateOrUpdate.json
+# x-ms-original-file: 2025-07-01-preview/DiscoverySources_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
