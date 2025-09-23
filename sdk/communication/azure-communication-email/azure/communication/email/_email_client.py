@@ -78,7 +78,7 @@ class EmailClient(object):
 
         :param message: Message payload for sending an email. Required.
         :type message: JSON
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword str continuation_token-kwarg: A continuation token to restart a poller from a saved state.
         :return: An instance of LROPoller that returns JSON object
         :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -161,6 +161,8 @@ class EmailClient(object):
                         "target": "str"  # Optional. The error target.
                     }
                 }
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
         """
         # cSpell:enable
 
