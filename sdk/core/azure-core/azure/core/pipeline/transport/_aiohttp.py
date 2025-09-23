@@ -87,6 +87,18 @@ except ImportError:
 
     class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
 
+try:
+    from cchardet import detect  # type: ignore
+except ImportError:  # pragma: no cover
+    try:
+        from chardet import detect  # type: ignore[no-redef]
+    except ImportError:  # pragma: no cover
+        try:
+            from charset_normalizer import detect  # type: ignore[no-redef]
+        except ImportError as e:  # pragma: no cover
+            err = e
+            def detect(_: bytes) -> dict[str, Any]:  # type: ignore[no-untyped-def]
+                raise err
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
@@ -525,16 +537,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             elif body is None:
                 raise RuntimeError("Cannot guess the encoding of a not yet read body")
             else:
-                try:
-                    import cchardet as chardet
-                except ImportError:  # pragma: no cover
-                    try:
-                        import chardet  # type: ignore
-                    except ImportError:  # pragma: no cover
-                        import charset_normalizer as chardet  # type: ignore[no-redef]
                 # While "detect" can return a dict of float, in this context this won't happen
                 # The cast is for pyright to be happy
-                encoding = cast(Optional[str], chardet.detect(body)["encoding"])
+                encoding = cast(Optional[str], detect(body)["encoding"])
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 
