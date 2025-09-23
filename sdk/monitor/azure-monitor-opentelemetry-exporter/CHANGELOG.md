@@ -36,6 +36,7 @@
 - Fix logic for message field on Microsoft.ApplicationInsights.Message to sync with Breeze
   ([#43060](https://github.com/Azure/azure-sdk-for-python/pull/43060))
 - Modify logic in PR (#43060) to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
 - Skip tests from test_storage.py causing transient build pipeline failures
   ([#43122](https://github.com/Azure/azure-sdk-for-python/pull/43122))
 - Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
