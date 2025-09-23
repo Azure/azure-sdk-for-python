@@ -147,7 +147,10 @@ class IssueProcessPython(IssueProcess):
         emitters = yaml_contents.get("options", {})
         for emitter_name in emitters:
             if "/typespec-python" in emitter_name:
-                self.package_name = emitters[emitter_name].get("emitter-output-dir", "").split("/")[-1]
+                for dir in ["package-dir", "emitter-output-dir"]:
+                    self.package_name = emitters[emitter_name].get(dir, "").split("/")[-1]
+                    if self.package_name:
+                        break
                 break
 
     @property
