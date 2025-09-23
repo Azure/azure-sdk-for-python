@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #_____
+- Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #43092
 
 ### Other Changes
 
