@@ -5,13 +5,21 @@
 # license information.
 # --------------------------------------------------------------------------
 import base64
+from functools import partial
 from json import JSONEncoder
-from typing import Dict, List, Optional, Union, cast, Any
+from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
 
-__all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "attribute_list"]
+__all__ = [
+    "NULL",
+    "AzureJSONEncoder",
+    "is_generated_model",
+    "as_attribute_dict",
+    "attribute_list",
+    "TypeHandlerRegistry",
+]
 TZ_UTC = timezone.utc
 
 
@@ -27,6 +35,136 @@ NULL = _Null()
 A falsy sentinel object which is supposed to be used to specify attributes
 with no data. This gets serialized to `null` on the wire.
 """
+
+
+class TypeHandlerRegistry:
+    """A registry for custom serializers and deserializers for specific types or conditions."""
+
+    def __init__(self) -> None:
+        self._serialize_map: Dict[Type, Callable] = {}
+        self._deserializers: Dict[Type, Callable] = {}
+        self._serialize_predicates: List[Tuple[Callable[[Any], bool], Callable]] = []
+        self._deserialize_predicates: List[Tuple[Callable[[Any], bool], Callable]] = []
+
+    def register_serializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
+        """Decorator to register a serializer.
+
+        - If the condition is a type, we add it to a fast-path map.
+        - If the condition is a callable function, we add it to a predicate list.
+
+        The handler function is expected to take a single argument, the object to serialize,
+        and return a dictionary representation of that object.
+
+        Examples:
+
+        .. code-block:: python
+
+            @registry.register_serializer(CustomModel)
+            def serialize_single_type(value: CustomModel) -> dict:
+                return value.to_dict()
+
+            @registry.register_serializer(lambda x: isinstance(x, BaseModel))
+            def serialize_with_condition(value: BaseModel) -> dict:
+                return value.to_dict()
+
+        :param condition: A type or a callable predicate function that takes an object and returns a bool.
+        :type condition: Union[Type, Callable[[Any], bool]]
+        :return: A decorator that registers the handler function.
+        :rtype: Callable
+        :raises TypeError: If the condition is neither a type nor a callable.
+        """
+
+        def decorator(handler_func: Callable[[Any], Dict]) -> Callable[[Any], Dict]:
+            if isinstance(condition, type):
+                self._serialize_map[condition] = handler_func
+            elif callable(condition):
+                self._serialize_predicates.append((condition, handler_func))
+            else:
+                raise TypeError("Condition must be a type or a callable predicate function.")
+            return handler_func
+
+        return decorator
+
+    def register_deserializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
+        """Decorator to register a deserializer.
+
+        - If the condition is a type, we add it to a fast-path map.
+        - If the condition is a callable function, we add it to a predicate list.
+
+        The handler function is expected to take two arguments: the target type and the data dictionary,
+        and return an instance of the target type.
+
+        Examples:
+
+        .. code-block:: python
+
+            @registry.register_deserializer(CustomModel)
+            def deserialize_single_type(cls: Type[CustomModel], data: dict) -> CustomModel:
+                return cls(**data)
+
+            @registry.register_deserializer(lambda t: issubclass(t, BaseModel))
+            def deserialize_with_condition(cls: Type[BaseModel], data: dict) -> BaseModel:
+                return cls(**data)
+
+        :param condition: A type or a callable predicate function that takes an object and returns a bool.
+        :type condition: Union[Type, Callable[[Any], bool]]
+        :return: A decorator that registers the handler function.
+        :rtype: Callable
+        :raises TypeError: If the condition is neither a type nor a callable.
+        """
+
+        def decorator(handler_func: Callable[[Type, Dict[str, Any]], Any]) -> Callable[[Type, Dict[str, Any]], Any]:
+            if isinstance(condition, type):
+                self._deserializers[condition] = handler_func
+            elif callable(condition):
+                self._deserialize_predicates.append((condition, handler_func))
+            else:
+                raise TypeError("Condition must be a type or a callable predicate function.")
+            return handler_func
+
+        return decorator
+
+    def get_serializer(self, obj: Any) -> Optional[Callable]:
+        """Gets the appropriate serializer for an object.
+
+        It first checks the fast-path dictionary for a direct type match.
+        If no match is found, it iterates through the predicate list to find a match.
+
+        :param obj: The object to serialize.
+        :type obj: any
+        :return: The serializer function if found, otherwise None.
+        :rtype: Optional[Callable]
+        """
+        handler = self._serialize_map.get(type(obj))
+        if handler:
+            return handler
+
+        for predicate, handler in self._serialize_predicates:
+            if predicate(obj):
+                return handler
+
+        return None
+
+    def get_deserializer(self, cls: Type) -> Optional[Callable]:
+        """Gets the appropriate deserializer for a class.
+
+        It first checks the fast-path dictionary for a direct type match.
+        If no match is found, it iterates through the predicate list to find a match.
+
+        :param cls: The class to deserialize.
+        :type cls: type
+        :return: The deserializer function wrapped with the class if found, otherwise None.
+        :rtype: Optional[Callable]
+        """
+        handler = self._deserializers.get(cls)
+        if handler:
+            return partial(handler, cls)
+
+        for predicate, handler in self._deserialize_predicates:
+            if predicate(cls):
+                return partial(handler, cls)
+
+        return None
 
 
 def _timedelta_as_isostr(td: timedelta) -> str:
