@@ -207,9 +207,9 @@ setattr(ContentField, "value", property(_content_field_value))
 
 # Example usage:
 # Instead of:
-#   if field.type == "string":
+#   if field.field_type == "string":
 #       value = field.value_string
-#   elif field.type == "integer":
+#   elif field.field_type == "integer":
 #       value = field.value_integer
 #   # etc.
 #
