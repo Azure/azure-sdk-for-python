@@ -27,7 +27,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             ip_config_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -3671,7 +3671,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                     },
                     "type": "str",
                 },
-                api_version="2024-07-01",
+                api_version="2024-10-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3686,7 +3686,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
                 resource_group_name=resource_group.name,
                 virtual_hub_name="str",
                 ip_config_name="str",
-                api_version="2024-07-01",
+                api_version="2024-10-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -3699,7 +3699,7 @@ class TestNetworkManagementVirtualHubIpConfigurationOperationsAsync(AzureMgmtRec
         response = self.client.virtual_hub_ip_configuration.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
