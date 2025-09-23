@@ -420,6 +420,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
+
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -454,6 +455,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
+
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
@@ -483,6 +485,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ..note::
             This function does not check or update existing database settings or
             offer throughput if they differ from what is passed in.
+
         :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword offer_throughput: The provisioned throughput for this offer.
