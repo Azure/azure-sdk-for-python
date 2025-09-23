@@ -69,6 +69,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     timeout = kwargs.get('timeout')
     operation_start_time = kwargs.get(_Constants.OperationStartTime, time.time())
 
+    # Track the last error for chaining
+    last_error = None
 
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
@@ -121,7 +123,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
         if timeout:
             elapsed = time.time() - operation_start_time
             if elapsed >= timeout:
-                raise exceptions.CosmosClientTimeoutError()
+                raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
 
         try:
             if args:
@@ -133,7 +135,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             if timeout:
                 elapsed = time.time() - operation_start_time
                 if elapsed >= timeout:
-                    raise exceptions.CosmosClientTimeoutError()
+                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
 
             if not client.last_response_headers:
                 client.last_response_headers = {}
@@ -175,10 +177,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
 
             return result
         except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
+            # Store the last error
+            last_error = e
+
             if timeout:
                 elapsed = time.time() - operation_start_time
                 if elapsed >= timeout:
-                    raise exceptions.CosmosClientTimeoutError()
+                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
 
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:
@@ -408,10 +413,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
-                # for read timeouts azure-core returns a ServiceResponseError
-                if isinstance(err.exc_value, requests.exceptions.ReadTimeout):
-                   message = "Read timed out. {}".format(err)
-                   raise exceptions.CosmosClientTimeoutError(message)
+
                 raise err
             except CosmosHttpResponseError as err:
                 raise err

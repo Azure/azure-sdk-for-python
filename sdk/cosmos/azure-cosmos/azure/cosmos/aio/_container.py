@@ -104,12 +104,14 @@ class ContainerProxy:
 
     async def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
-        if options and "excludedLocations" in options:
-            kwargs['excluded_locations'] = options['excludedLocations']
-        if options and Constants.OperationStartTime in options:
-            kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-        if options and "timeout" in options:
-            kwargs['timeout'] = options['timeout']
+        if options:
+           if "excludedLocations" in options:
+               kwargs['excluded_locations'] = options['excludedLocations']
+           if Constants.OperationStartTime in options:
+               kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
+           if "timeout" in options:
+               kwargs['timeout'] = options['timeout']
+
         return await self._get_properties(**kwargs)
 
     async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:

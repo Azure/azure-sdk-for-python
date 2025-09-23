@@ -71,6 +71,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
     timeout = kwargs.get('timeout')
     operation_start_time = kwargs.get(_Constants.OperationStartTime, time.time())
 
+    # Track the last error for chaining
+    last_error = None
+
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
         pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(args[0])
@@ -119,9 +122,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         # Check timeout before executing function
         if timeout:
             elapsed = time.time() - operation_start_time
-            print(f"_retry_utility_: before executing function elapsed time  is {elapsed}")
             if elapsed >= timeout:
-                raise exceptions.CosmosClientTimeoutError()
+                raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
         try:
             if args:
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
@@ -131,9 +133,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 # Check timeout after successful execution
                 if timeout:
                     elapsed = time.time() - operation_start_time
-                    print(f"_retry_utility_: after executing function elapsed time  is {elapsed}")
                     if elapsed >= timeout:
-                        raise exceptions.CosmosClientTimeoutError()
+                        raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -174,11 +175,14 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
             return result
         except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
+            # Store the last error
+            last_error = e
+
             if timeout:
                 elapsed = time.time() - operation_start_time
                 print(f"_retry_utility_: elapsed time in the except block is {elapsed}")
                 if elapsed >= timeout:
-                    raise exceptions.CosmosClientTimeoutError()
+                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
 
             if isinstance(e, exceptions.CosmosHttpResponseError):
                 if request:
@@ -365,11 +369,6 @@ class _ConnectionRetryPolicy(AsyncRetryPolicy):
                             if retry_active:
                                 await self.sleep(retry_settings, request.context.transport)
                                 continue
-                        if isinstance(err, ServiceResponseTimeoutError) or isinstance(
-                                getattr(err, "exc_value", None), requests.exceptions.ReadTimeout
-                        ):
-                            message = "Read timed out. {}".format(err)
-                            raise exceptions.CosmosClientTimeoutError(message)
 
                 except ImportError:
                     raise err # pylint: disable=raise-missing-from
