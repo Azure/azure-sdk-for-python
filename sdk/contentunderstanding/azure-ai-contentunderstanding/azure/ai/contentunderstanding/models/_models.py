@@ -26,8 +26,8 @@ class AnalyzeInput(_Model):
     :ivar url: The URL of the input to analyze.  Only one of url or data should be specified.
      Required.
     :vartype url: str
-    :ivar data: Base64-encoded binary content of the input to analyze.  Only one of url or data
-     should be specified.
+    :ivar data: Raw image bytes. Provide bytes-like object; do not base64-encode. Only one of url
+     or data should be specified.
     :vartype data: bytes
     :ivar name: Name of the input.
     :vartype name: str
@@ -36,8 +36,8 @@ class AnalyzeInput(_Model):
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URL of the input to analyze.  Only one of url or data should be specified. Required."""
     data: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64")
-    """Base64-encoded binary content of the input to analyze.  Only one of url or data should be
-     specified."""
+    """Raw image bytes. Provide bytes-like object; do not base64-encode. Only one of url or data
+     should be specified."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the input."""
 
@@ -1983,7 +1983,8 @@ class FaceSource(_Model):
 
     :ivar url: Image URL.  Only one of url or data should be specified.
     :vartype url: str
-    :ivar data: Base64-encoded image data.  Only one of url or data should be specified.
+    :ivar data: Raw image bytes. Provide bytes-like object; do not base64-encode. Only one of url
+     or data should be specified.
     :vartype data: bytes
     :ivar image_reference_id: User provided identifier for the source image.
     :vartype image_reference_id: str
@@ -1994,7 +1995,8 @@ class FaceSource(_Model):
     url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Image URL.  Only one of url or data should be specified."""
     data: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64")
-    """Base64-encoded image data.  Only one of url or data should be specified."""
+    """Raw image bytes. Provide bytes-like object; do not base64-encode. Only one of url or data
+     should be specified."""
     image_reference_id: Optional[str] = rest_field(
         name="imageReferenceId", visibility=["read", "create", "update", "delete", "query"]
     )
