@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
+from azure.mgmt.compute import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_proximity_placement_groups_list_by_subscription(self, resource_group):
         response = self.client.proximity_placement_groups.list_by_subscription(
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
     def test_proximity_placement_groups_list_by_resource_group(self, resource_group):
         response = self.client.proximity_placement_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
         response = self.client.proximity_placement_groups.get(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +118,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
                 ],
                 "zones": ["str"],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -131,7 +131,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -143,7 +143,7 @@ class TestComputeManagementProximityPlacementGroupsOperations(AzureMgmtRecordedT
         response = self.client.proximity_placement_groups.delete(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

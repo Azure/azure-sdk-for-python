@@ -47,7 +47,7 @@ def main():
                         "tags": {"updated-filtertag3": "updated-value3", "updated-filtertag4": "updated-value4"},
                     }
                 ],
-                "sku": "Premium",
+                "sku": "Free",
                 "workspaceRoots": ["/subscriptions/b79cb3ba-745e-5d9a-8903-4a02327a7e09"],
             }
         },

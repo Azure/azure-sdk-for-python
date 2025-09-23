@@ -13,6 +13,7 @@ from azure.core.credentials_async import (
     AsyncSupportsTokenInfo,
     AsyncTokenProvider,
 )
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
@@ -39,7 +40,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
     :type credential: ~azure.core.credentials_async.AsyncTokenProvider
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) on all requested
-        tokens. Defaults to False.
+        tokens. Defaults to True.
     """
 
     def __init__(self, credential: AsyncTokenProvider, *scopes: str, **kwargs: Any) -> None:
@@ -48,7 +49,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         self._scopes = scopes
         self._lock_instance = None
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
-        self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._enable_cae: bool = kwargs.get("enable_cae", True)
 
     @property
     def _lock(self):
@@ -110,7 +111,21 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
             if "WWW-Authenticate" in response.http_response.headers:
-                request_authorized = await self.on_challenge(request, response)
+                try:
+                    request_authorized = await self.on_challenge(request, response)
+                except Exception as ex:
+                    # If the response is streamed, read it so the error message is immediately available to the user.
+                    # Otherwise, a generic error message will be given and the user will have to read the response
+                    # body to see the actual error.
+                    if response.context.options.get("stream"):
+                        try:
+                            await response.http_response.read()  # type: ignore
+                        except Exception:  # pylint:disable=broad-except
+                            pass
+
+                    # Raise the exception from the token request with the original 401 response
+                    raise ex from HttpResponseError(response=response.http_response)
+
                 if request_authorized:
                     # if we receive a challenge response, we retrieve a new token
                     # which matches the new target. In this case, we don't want to remove
@@ -145,14 +160,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
             if not encoded_claims:
                 return False
-            try:
-                padding_needed = -len(encoded_claims) % 4
-                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
-                if claims:
-                    await self.authorize_request(request, *self._scopes, claims=claims)
-                    return True
-            except Exception:  # pylint:disable=broad-except
-                return False
+            padding_needed = -len(encoded_claims) % 4
+            claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+            if claims:
+                await self.authorize_request(request, *self._scopes, claims=claims)
+                return True
         return False
 
     def on_response(

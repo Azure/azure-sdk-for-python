@@ -45,6 +45,9 @@ parameters:
     default: false
   - name: OSName
     type: string
+  - name: EnvVars
+    type: object
+    default: {}
 
 jobs:
   - job:
@@ -79,6 +82,13 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+          TokenToUseForAuth: $(azuresdk-github-pat)
+        Paths:
+          - '**'
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -105,3 +115,4 @@ jobs:
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        EnvVars: ${{ parameters.EnvVars }}

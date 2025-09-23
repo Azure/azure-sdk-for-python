@@ -20,11 +20,11 @@ class TestComputeManagementCommunityGalleriesOperations(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_community_galleries_get(self, resource_group):
         response = self.client.community_galleries.get(
             location="str",
             public_gallery_name="str",
-            api_version="2021-07-01",
+            api_version="2024-03-03",
         )
 
         # please add some check logic here by yourself
