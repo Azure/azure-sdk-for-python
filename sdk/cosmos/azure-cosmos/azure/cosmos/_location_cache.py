@@ -58,7 +58,7 @@ class RegionalRoutingContext(object):
     def __str__(self):
         return "Primary: " + self.primary_endpoint
 
-def get_regional_routing_contexts_by_loc(new_locations: List[Dict[str, str]):
+def get_regional_routing_contexts_by_loc(new_locations: List[Dict[str, str]]):
     # construct from previous object
     regional_routing_contexts_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
     parsed_locations = []
@@ -78,9 +78,9 @@ def get_regional_routing_contexts_by_loc(new_locations: List[Dict[str, str]):
                 raise e
 
     # Also store a hash map of endpoints for each location
-    locations_by_endpoints = {value.get_primary(): key for key, value in regional_routing_context_by_location.items()}
+    locations_by_endpoints = {value.get_primary(): key for key, value in regional_routing_contexts_by_location.items()}
 
-    return regional_routing_context_by_location, locations_by_endpoints, parsed_locations
+    return regional_routing_contexts_by_location, locations_by_endpoints, parsed_locations
 
 def _get_health_check_endpoints(regional_routing_contexts) -> Set[str]:
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
