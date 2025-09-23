@@ -191,23 +191,3 @@ def get_chat_target(
             chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
 
     return chat_target
-
-
-def get_orchestrators_for_attack_strategies(
-    attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-) -> List[Callable]:
-    """
-    Gets a list of orchestrator functions to use based on the attack strategies.
-
-    :param attack_strategies: The list of attack strategies
-    :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
-    :return: A list of orchestrator functions
-    :rtype: List[Callable]
-    """
-    call_to_orchestrators = []
-
-    # Since we're just returning one orchestrator type for now, simplify the logic
-    # This can be expanded later if different orchestrators are needed for different strategies
-    return [
-        lambda chat_target, all_prompts, converter, strategy_name, risk_category: None
-    ]  # This will be replaced with the actual orchestrator function in the main class

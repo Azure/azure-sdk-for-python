@@ -10,7 +10,6 @@ from azure.ai.evaluation.red_team._utils.strategy_utils import (
     strategy_converter_map,
     get_converter_for_strategy,
     get_chat_target,
-    get_orchestrators_for_attack_strategies,
 )
 from azure.ai.evaluation.red_team._attack_strategy import AttackStrategy
 from azure.ai.evaluation.red_team._callback_chat_target import _CallbackChatTarget
@@ -232,25 +231,3 @@ class TestChatTargetFunctions:
 
         # Verify we get a callback target
         assert isinstance(result, _CallbackChatTarget)
-
-
-@pytest.mark.unittest
-class TestOrchestratorFunctions:
-    """Test orchestrator related functions."""
-
-    def test_get_orchestrators_for_attack_strategies(self):
-        """Test getting orchestrators for attack strategies."""
-        strategies = [AttackStrategy.Base64, AttackStrategy.Flip]
-        orchestrators = get_orchestrators_for_attack_strategies(strategies)
-
-        assert isinstance(orchestrators, list)
-        assert len(orchestrators) == 1
-        assert callable(orchestrators[0])
-
-        # Test the orchestrator function returns None (since it's a placeholder)
-        mock_chat_target = MagicMock()
-        mock_prompts = ["test prompt"]
-        mock_converter = MagicMock()
-
-        result = orchestrators[0](mock_chat_target, mock_prompts, mock_converter, "test-strategy", "test-risk")
-        assert result is None
