@@ -10,10 +10,13 @@ package_folder_path = PACKAGE_NAME.replace('-', '/')
 namespace_name = PACKAGE_NAME.replace('-', '.')
 
 version_file = os.path.join(package_folder_path, "_version.py")
-with open(version_file, 'r', encoding='utf-8') as fd:
-    version = re.search(r'^VERSION\\s*=\\s*[\'\"]([^\'\"]*)[\'\"]', fd.read(), re.MULTILINE).group(1)
-if not version:
-    raise RuntimeError('Cannot find version information')
+# Read version file robustly (handle BOM, optional leading whitespace) to avoid AttributeError
+with open(version_file, 'r', encoding='utf-8-sig') as fd:
+    content = fd.read()
+match = re.search(r'^[ \t]*VERSION\s*=\s*[\'\"]([^\'\"]+)[\'\"]', content, re.MULTILINE)
+if not match:
+    raise RuntimeError(f'Cannot find version information in {version_file}')
+version = match.group(1)
 
 with open('README.md', encoding='utf-8') as f:
     long_description = f.read()
