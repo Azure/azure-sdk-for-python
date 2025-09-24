@@ -1020,7 +1020,8 @@ class ContainerProxy:
         if _Kwargs.MODE in kwargs:
             change_feed_state_context[_InternalOptions.MODE] = kwargs.pop(_Kwargs.MODE)
         if _Kwargs.PARTITION_KEY_RANGE_ID in kwargs:
-            change_feed_state_context[_InternalOptions.PARTITION_KEY_RANGE_ID] = kwargs.pop(_Kwargs.PARTITION_KEY_RANGE_ID)
+            change_feed_state_context[_InternalOptions.PARTITION_KEY_RANGE_ID] = kwargs.pop(
+                _Kwargs.PARTITION_KEY_RANGE_ID)
         if _Kwargs.IS_START_FROM_BEGINNING in kwargs and kwargs.pop(_Kwargs.IS_START_FROM_BEGINNING) is True:
             change_feed_state_context[_InternalOptions.START_TIME] = "Beginning"
         elif _Kwargs.START_TIME in kwargs:
@@ -1029,7 +1030,8 @@ class ContainerProxy:
             partition_key_value = kwargs.pop(_Kwargs.PARTITION_KEY)
             change_feed_state_context["partitionKey"] = self._set_partition_key(
                 cast(PartitionKeyType, partition_key_value))
-            change_feed_state_context[_InternalOptions.PARTITION_KEY_FEED_RANGE] = self._get_epk_range_for_partition_key(
+            change_feed_state_context[
+                _InternalOptions.PARTITION_KEY_FEED_RANGE] = self._get_epk_range_for_partition_key(
                 partition_key_value, feed_options)
         if _Kwargs.FEED_RANGE in kwargs:
             change_feed_state_context[_InternalOptions.FEED_RANGE] = kwargs.pop(_Kwargs.FEED_RANGE)

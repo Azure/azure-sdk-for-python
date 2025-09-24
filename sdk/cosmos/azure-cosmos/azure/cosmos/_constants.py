@@ -282,9 +282,6 @@ class _InternalOptions:
     PARTITION_KEY_FEED_RANGE: Final[str] = "partitionKeyFeedRange"
     """Partition key feed range for change feed operations."""
 
-    FEED_RANGE: Final[str] = "feedRange"
-    """Feed range for change feed operations."""
-
 
 class _Kwargs:
     """Public-facing keyword argument names used in the azure-cosmos package
