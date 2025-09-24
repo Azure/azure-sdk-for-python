@@ -26,7 +26,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST,
     _DEPENDENCY,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat._state import set_statsbeat_customer_sdkstats_feature_set
 from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
     get_compute_type,
@@ -189,7 +188,6 @@ class CustomerSdkStatsManager(metaclass=Singleton): # pylint: disable=too-many-i
 
             # Set status to active after successful initialization
             self._status = CustomerSdkStatsStatus.ACTIVE
-            set_statsbeat_customer_sdkstats_feature_set()
             return True
 
         except Exception:  # pylint: disable=broad-except
