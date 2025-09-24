@@ -22,7 +22,6 @@
 """Class for defining internal constants in the Azure Cosmos database service.
 """
 
-
 from typing import Dict, Final
 from typing_extensions import Literal
 
@@ -38,8 +37,8 @@ class _Constants:
     ReadableLocations: Literal["readableLocations"] = "readableLocations"
     Name: Literal["name"] = "name"
     DatabaseAccountEndpoint: Literal["databaseAccountEndpoint"] = "databaseAccountEndpoint"
-    DefaultEndpointsRefreshTime: int = 5 * 60 * 1000 # milliseconds
-    UnavailableEndpointDBATimeouts: int = 1 # seconds
+    DefaultEndpointsRefreshTime: int = 5 * 60 * 1000  # milliseconds
+    UnavailableEndpointDBATimeouts: int = 1  # seconds
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal[
@@ -55,7 +54,7 @@ class _Constants:
     MAX_ITEM_BUFFER_VS_CONFIG_DEFAULT: int = 50000
     SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG: str = "AZURE_COSMOS_SESSION_TOKEN_FALSE_PROGRESS_MERGE"
     SESSION_TOKEN_FALSE_PROGRESS_MERGE_CONFIG_DEFAULT: str = "True"
-    CIRCUIT_BREAKER_ENABLED_CONFIG: str =  "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
+    CIRCUIT_BREAKER_ENABLED_CONFIG: str = "AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"
     CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
     AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
     AAD_DEFAULT_SCOPE: str = "https://cosmos.azure.com/.default"
