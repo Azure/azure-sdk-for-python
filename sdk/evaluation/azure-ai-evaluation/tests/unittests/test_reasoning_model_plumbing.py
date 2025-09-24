@@ -38,12 +38,13 @@ def test_is_reasoning_model_plumbed_to_asyncprompty_load():
         source_path = kwargs.get("source")
         assert isinstance(source_path, str) and source_path.endswith("fluency.prompty")
 
-        # Ensure we do not override prompty temperature/max_tokens in model parameters
-        # Only extra_headers should be present in parameters added by code
+        # For reasoning models, temperature and max_tokens should be removed from parameters.
+        # Only extra_headers should be present in parameters added by code.
         model_cfg = kwargs.get("model")
         assert isinstance(model_cfg, dict)
         params = model_cfg.get("parameters", {})
-        # Our code only sets extra_headers inside parameters; temperature/max_tokens come from prompty
+        # Our code only sets extra_headers inside parameters; temperature/max_tokens are intentionally
+        # omitted for reasoning models.
         assert "extra_headers" in params
         assert "temperature" not in params
         assert "max_tokens" not in params
