@@ -187,6 +187,8 @@ class verify_whl(Check):
 
             top_level_module = parsed.namespace.split(".")[0]
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
