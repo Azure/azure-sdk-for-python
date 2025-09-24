@@ -65,7 +65,7 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-def get_epk_range_for_partition_key(
+def _get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],
         partition_key_value: _PartitionKeyType) -> Range:
     partition_key_obj: PartitionKey = _build_partition_key_from_properties(container_properties)
@@ -657,7 +657,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             partition_key = kwargs.pop("partition_key")
             change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
-                get_epk_range_for_partition_key(container_properties, partition_key)
+                _get_epk_range_for_partition_key(container_properties, partition_key)
         if "feed_range" in kwargs:
             change_feed_state_context["feedRange"] = kwargs.pop('feed_range')
         if "continuation" in feed_options:
@@ -1910,7 +1910,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         container_properties = self._get_properties()
         partition_key_value = self._set_partition_key(partition_key)
-        epk_range_for_partition_key = get_epk_range_for_partition_key(container_properties, partition_key_value)
+        epk_range_for_partition_key = _get_epk_range_for_partition_key(container_properties, partition_key_value)
         return FeedRangeInternalEpk(epk_range_for_partition_key).to_dict()
 
     def is_feed_range_subset(self, parent_feed_range: Dict[str, Any], child_feed_range: Dict[str, Any]) -> bool:

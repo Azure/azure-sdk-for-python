@@ -75,15 +75,15 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self.ReservedDocumentStorageInMB: int = 0
         self.ProvisionedDocumentStorageInMB: int = 0
         self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
-        self._WritableLocations: List[dict] = []
-        self._ReadableLocations: List[dict] = []
+        self._WritableLocations: List[Dict[Any, Any]] = []
+        self._ReadableLocations: List[Dict[Any, Any]] = []
         self._EnableMultipleWritableLocations = False
 
     @property
     def WritableLocations(self) -> List[Dict[Any, Any]]:
         """The list of writable locations for a geo-replicated database account.
         :returns: List of writable locations for the database account.
-        :rtype: List[str]
+        :rtype: List[Dict[Any, Any]]
         """
         return self._WritableLocations
 
@@ -91,7 +91,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
     def ReadableLocations(self) -> List[Dict[Any, Any]]:
         """The list of readable locations for a geo-replicated database account.
         :returns: List of readable locations for the database account.
-        :rtype: List[str]
+        :rtype: List[Dict[Any, Any]]
         """
         return self._ReadableLocations
 
@@ -368,7 +368,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: bool = False
 
-    def override_dba_timeouts(
+    def _override_dba_timeouts(
             self,
             connection_timeout: Optional[int] = None,
             read_timeout: Optional[int] = None
