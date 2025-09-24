@@ -35,10 +35,6 @@
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
   ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Configuration manager/worker fetch via OneSettings part 1 - Change detection
