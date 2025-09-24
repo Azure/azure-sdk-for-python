@@ -19,7 +19,7 @@ _REQUEST_RATE = (
     "\\ASP.NET Applications(??APP_W3SVC_PROC??)\\Requests/Sec"
 )
 _PROCESS_CPU = (
-    "azuremonitor.performancecounter.processortime",
+    "azuremonitor.performancecounter.processtime",
     "\\Process(??APP_WIN32_PROC??)\\% Processor Time"
 )
 _PROCESS_CPU_NORMALIZED = (
@@ -27,11 +27,11 @@ _PROCESS_CPU_NORMALIZED = (
     "\\Process(??APP_WIN32_PROC??)\\% Processor Time Normalized"
 )
 _PROCESS_IO_RATE = (
-    "azuremonitor.performancecounter.processiorate",
+    "azuremonitor.performancecounter.processiobytessec",
     "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec"
 )
 _PROCESS_PRIVATE_BYTES = (
-    "azuremonitor.performancecounter.memorycommittedbytes",
+    "azuremonitor.performancecounter.processprivatebytes",
     "\\Process(??APP_WIN32_PROC??)\\Private Bytes"
 )
 _PROCESSOR_TIME = (

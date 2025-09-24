@@ -55,7 +55,7 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         """Test process CPU constant values."""
         self.assertIsInstance(_PROCESS_CPU, tuple)
         self.assertEqual(len(_PROCESS_CPU), 2)
-        self.assertEqual(_PROCESS_CPU[0], "azuremonitor.performancecounter.processortime")
+        self.assertEqual(_PROCESS_CPU[0], "azuremonitor.performancecounter.processtime")
         self.assertEqual(_PROCESS_CPU[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time")
 
     def test_process_cpu_normalized_constant(self):
@@ -69,14 +69,14 @@ class TestPerformanceCounterConstants(unittest.TestCase):
         """Test process I/O rate constant values."""
         self.assertIsInstance(_PROCESS_IO_RATE, tuple)
         self.assertEqual(len(_PROCESS_IO_RATE), 2)
-        self.assertEqual(_PROCESS_IO_RATE[0], "azuremonitor.performancecounter.processiorate")
+        self.assertEqual(_PROCESS_IO_RATE[0], "azuremonitor.performancecounter.processiobytessec")
         self.assertEqual(_PROCESS_IO_RATE[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec")
 
     def test_process_private_bytes_constant(self):
         """Test process private bytes constant values."""
         self.assertIsInstance(_PROCESS_PRIVATE_BYTES, tuple)
         self.assertEqual(len(_PROCESS_PRIVATE_BYTES), 2)
-        self.assertEqual(_PROCESS_PRIVATE_BYTES[0], "azuremonitor.performancecounter.memorycommittedbytes")
+        self.assertEqual(_PROCESS_PRIVATE_BYTES[0], "azuremonitor.performancecounter.processprivatebytes")
         self.assertEqual(_PROCESS_PRIVATE_BYTES[1], "\\Process(??APP_WIN32_PROC??)\\Private Bytes")
 
     def test_processor_time_constant(self):

@@ -329,7 +329,7 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         counter = ProcessCpu(self.meter)
         
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processortime")
+        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processtime")
         self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\% Processor Time")
 
     def test_process_cpu_normalized_initialization(self):
@@ -345,7 +345,7 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         counter = ProcessIORate(self.meter)
         
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processiorate")
+        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processiobytessec")
         self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\IO Data Bytes/sec")
 
     def test_process_private_bytes_initialization(self):
@@ -353,7 +353,7 @@ class TestPerformanceCounterClasses(unittest.TestCase):
         counter = ProcessPrivateBytes(self.meter)
         
         self.assertIsNotNone(counter.gauge)
-        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.memorycommittedbytes")
+        self.assertEqual(counter.NAME[0], "azuremonitor.performancecounter.processprivatebytes")
         self.assertEqual(counter.NAME[1], "\\Process(??APP_WIN32_PROC??)\\Private Bytes")
 
     def test_processor_time_initialization(self):
@@ -718,9 +718,9 @@ class TestPerformanceCountersMetricsIntegration(unittest.TestCase):
         
         # Verify that process memory metric was created
         metric_names = self._get_metric_names(metrics_data)
-        self.assertIn("azuremonitor.performancecounter.memorycommittedbytes", metric_names)
+        self.assertIn("azuremonitor.performancecounter.processprivatebytes", metric_names)
         
         # Verify the metric value
-        memory_value = self._get_metric_value(metrics_data, "azuremonitor.performancecounter.memorycommittedbytes")
+        memory_value = self._get_metric_value(metrics_data, "azuremonitor.performancecounter.processprivatebytes")
         self.assertEqual(memory_value, 104857600)  # Should match our mocked value
 

@@ -35,8 +35,8 @@ from azure.monitor.opentelemetry.exporter._utils import (
 _logger = logging.getLogger(__name__)
 
 # Global process instance for efficiency.
-# They are separated for each performance counter so the interval is not reset when
-# one performance counter triggers immediately before another.
+# A separate object is used for the normalized performance counter so the interval
+# is not reset when one performance counter triggers immediately before another.
 # Process CPU %
 _PROCESS = psutil.Process()
 # Process CPU % Normalized
@@ -45,7 +45,7 @@ _PROCESS = psutil.Process()
 _PROCESS_FOR_CPU_NORMALIZED = psutil.Process()
 NUM_CPUS = psutil.cpu_count()
 # Process I/O Rates
-# TODO: _PROCESS.io_counters() is not available on Mac OS and some Linux distros. Find alternative.
+# _PROCESS.io_counters() is not available on Mac OS and some Linux distros.
 _IO_AVAILABLE = hasattr(_PROCESS, "io_counters")
 _IO_LAST_COUNT = 0
 if _IO_AVAILABLE:
