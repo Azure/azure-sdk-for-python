@@ -116,11 +116,10 @@ if __name__ == "__main__":
         # Only data-plane libraries run strict sphinx at the moment
         fail_on_warning = not is_mgmt_package(pkg_details.name)
 
-        logging.info(f"PIP FREEZE for {target_dir}")
-        check_call(["pip", "freeze"], cwd=target_dir)
-        
         logging.info(f"PIP FREEZE for {package_dir}")
         check_call(["pip", "freeze"], cwd=package_dir)
+        logging.info(f"os.cwd={os.getcwd()}")
+        logging.info(f"PATH: {os.environ.get('PATH','')}")
 
         sphinx_build(
             target_dir,
