@@ -1172,6 +1172,7 @@
         "resourceid",
         "Exceps",
         "processiorate",
+        "processiobytessec",
         "iowait",
         "softirq"
       ]
