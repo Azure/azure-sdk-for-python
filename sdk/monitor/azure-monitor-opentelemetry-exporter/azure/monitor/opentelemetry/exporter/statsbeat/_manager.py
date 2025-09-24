@@ -186,7 +186,6 @@ class StatsbeatManager(metaclass=Singleton):
             if self._initialized:
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
-                    logger.warning("Statsbeat re-initialized with the same configuration.")
                     return True
                 # If config is different, reconfigure
                 return self._reconfigure(config)

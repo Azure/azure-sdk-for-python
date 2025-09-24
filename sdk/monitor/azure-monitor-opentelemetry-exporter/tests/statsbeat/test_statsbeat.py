@@ -39,6 +39,17 @@ class TestStatsbeat(unittest.TestCase):
             _STATSBEAT_STATE["SHUTDOWN"] = False
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
+            _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+
+    def tearDown(self):
+        """Clean up after tests."""
+        StatsbeatManager().shutdown()
+        os.environ.pop(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_STATS_SHORT_EXPORT_INTERVAL_ENV_NAME, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_STATS_LONG_EXPORT_INTERVAL_ENV_NAME, None)
+        # Reset singleton state - only clear StatsbeatManager instances
+        if StatsbeatManager in StatsbeatManager._instances:
+            del StatsbeatManager._instances[StatsbeatManager]
 
     def tearDown(self):
         """Clean up after tests."""

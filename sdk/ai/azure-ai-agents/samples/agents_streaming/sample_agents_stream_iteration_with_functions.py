@@ -25,7 +25,6 @@ USAGE:
 from typing import Any
 
 import os, sys
-from azure.ai.agents.models._models import FunctionToolOutput
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     FunctionTool,
@@ -109,7 +108,7 @@ with project_client:
                             try:
                                 output = functions.execute(tool_call)
                                 tool_outputs.append(
-                                    FunctionToolOutput(
+                                    ToolOutput(
                                         tool_call_id=tool_call.id,
                                         output=output,
                                     )

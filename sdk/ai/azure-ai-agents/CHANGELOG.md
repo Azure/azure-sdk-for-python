@@ -2,6 +2,15 @@
 
 # Release History
 
+## 1.2.0b5 (Unreleased)
+
+### Features Added
+
+### Bugs Fixed
+- Added `RunStepDeltaChunk` to `StreamEventData` model (GitHub issues [43022](https://github.com/Azure/azure-sdk-for-python/issues/43022))
+- Fixed regression, reverted ToolOutput type signature and usage in tool_output submission.  
+- Added `RunStepDeltaComputerUseDetails` and `RunStepDeltaComputerUseToolCall` classes for streaming computer use scenarios.
+
 ## 1.2.0b4 (2025-09-12)
 
 ### Features Added
