@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore fstring
-# pylint: disable=logging-fstring-interpolation
 import abc
 import logging
 import time
@@ -132,7 +130,12 @@ class GetTokenMixin(abc.ABC):
         enable_cae = options.get("enable_cae", False)
 
         _CACHE_LOGGER.info(
-            f"{self.__class__.__name__}.{base_method_name} called with scopes: {scopes} and options: {options}"
+            "%s: %s.%s called with scopes: %s and options: %s",
+            id(self),
+            self.__class__.__name__,
+            base_method_name,
+            list(scopes),
+            options,
         )
         try:
             token = await self._acquire_token_silently(

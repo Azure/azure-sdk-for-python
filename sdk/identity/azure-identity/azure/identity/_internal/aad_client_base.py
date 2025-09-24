@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore fstring
-# pylint: disable=logging-fstring-interpolation
 import abc
 import base64
 import json
@@ -92,33 +90,45 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
+        scope_list = list(scopes)
         results = list(
             cache.search(
                 TokenCache.CredentialType.ACCESS_TOKEN,
-                target=list(scopes),
+                target=scope_list,
                 query={"client_id": self._client_id, "realm": tenant},
             )
         )
-        _CACHE_LOGGER.info(f"Using cache with ID {id(self._cache)}, credential client ID: {id(self)}")
         _CACHE_LOGGER.info(
-            f"Cache {id(self._cache)} contains {len(results)} access tokens for resource '{list(scopes)}', "
-            f"tenant '{tenant}', "
-            f"client_id '{self._client_id}'"
+            "Cache %s for credential/client %s contains %s access tokens for resource '%s', "
+            "tenant '%s', "
+            "client_id '%s'",
+            id(self._cache),
+            id(self),
+            len(results),
+            scope_list,
+            tenant,
+            self._client_id,
         )
         for token in results:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
                 _CACHE_LOGGER.info(
-                    f"{id(self)}: Cache hit for resource '{list(scopes)}', tenant '{tenant}', "
-                    f"client_id '{self._client_id}'"
+                    "%s: Cache hit for resource '%s', tenant: '%s', client_id: '%s'",
+                    id(self),
+                    scope_list,
+                    tenant,
+                    self._client_id,
                 )
-                _CACHE_LOGGER.debug(f"{id(self)}: Cache hit contents: {token}")
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
         _CACHE_LOGGER.info(
-            f"{id(self)}: Cache miss for resource '{list(scopes)}', tenant '{tenant}', client_id '{self._client_id}'"
+            "%s: Cache miss for resource '%s', tenant: '%s', client_id: '%s'",
+            id(self),
+            scope_list,
+            tenant,
+            self._client_id,
         )
         return None
 
@@ -202,18 +212,19 @@ class AadClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
-        _CACHE_LOGGER.info(
-            f"{id(self)}: Token Response received from Entra for credential " f"Expires on: {expires_on}. "
-        )
+        _CACHE_LOGGER.info("%s: Token Response received from Entra. Expires on: %s. ", id(self), expires_on)
         token = AccessTokenInfo(
             content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
         )
 
         # caching is the final step because 'add' mutates 'content'
         _CACHE_LOGGER.info(
-            f"Adding token to cache with ID {id(self._cache)}, credential client with ID: {id(self)}, "
-            f"App client_id: {self._client_id}, scope: {response.http_request.body['scope'].split()}, "
-            f"token_endpoint: {response.http_request.url}"
+            "%s: Adding token to cache with ID %s, client_id: %s, scope: %s, token_endpoint: %s",
+            id(self),
+            id(self._cache),
+            self._client_id,
+            response.http_request.body["scope"].split(),
+            response.http_request.url,
         )
         cache.add(
             event={

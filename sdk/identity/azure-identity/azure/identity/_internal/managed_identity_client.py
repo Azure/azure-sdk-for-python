@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# cspell:ignore fstring
-# pylint: disable=logging-fstring-interpolation
 import abc
 import time
 import logging
@@ -82,8 +80,9 @@ class ManagedIdentityClientBase(abc.ABC):
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
         _CACHE_LOGGER.info(
-            f"Token Response received from Entra for credential/client with ID: {id(self)}. "
-            f"Expires on: {expires_on}. "
+            "%s: Token Response received from Entra. Expires on: %s. ",
+            id(self),
+            expires_on,
         )
         token = AccessTokenInfo(
             content["access_token"],
@@ -94,8 +93,10 @@ class ManagedIdentityClientBase(abc.ABC):
 
         # caching is the final step because TokenCache.add mutates its "event"
         _CACHE_LOGGER.info(
-            f"Adding token to cache with ID {id(self._cache)}, credential/client ID: {id(self)}, "
-            f"scope: {content['resource']}"
+            "%s; Adding token to cache with ID %s, scope: %s",
+            id(self),
+            id(self._cache),
+            content["resource"],
         )
         self._cache.add(
             event={"response": content, "scope": [content["resource"]]},
@@ -109,18 +110,22 @@ class ManagedIdentityClientBase(abc.ABC):
         now = time.time()
         results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]))
 
-        _CACHE_LOGGER.info(f"Using cache with ID {id(self._cache)}, credential/client ID: {id(self)}")
-        _CACHE_LOGGER.info(f"Cache {id(self._cache)} contains {len(results)} access tokens for resource '{resource}'")
+        _CACHE_LOGGER.info(
+            "Cache %s for credential/client %s contains %s access tokens for resource '%s'",
+            id(self._cache),
+            id(self),
+            len(results),
+            resource,
+        )
         for token in results:
             expires_on = int(token["expires_on"])
             refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
             if expires_on > now and (not refresh_on or refresh_on > now):
-                _CACHE_LOGGER.info(f"{id(self)}: Cache hit for resource '{resource}'")
-                _CACHE_LOGGER.debug(f"{id(self)}: Cache hit contents: {token}")
+                _CACHE_LOGGER.info("%s: Cache hit for resource '%s'", id(self), resource)
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
-        _CACHE_LOGGER.info(f"{id(self)}: Cache miss for resource '{resource}'")
+        _CACHE_LOGGER.info("%s: Cache miss for resource '%s'", id(self), resource)
         return None
 
     @abc.abstractmethod
