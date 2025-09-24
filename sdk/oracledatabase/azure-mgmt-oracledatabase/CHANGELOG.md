@@ -9,12 +9,6 @@
   - Client `OracleDatabaseMgmtClient` added operation group `resource_anchors`
   - Client `OracleDatabaseMgmtClient` added operation group `db_systems`
   - Client `OracleDatabaseMgmtClient` added operation group `db_versions`
-  - Model `AutonomousDatabaseBaseProperties` added property `scheduled_operations_list`
-  - Model `AutonomousDatabaseCloneProperties` added property `scheduled_operations_list`
-  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` added property `scheduled_operations_list`
-  - Model `AutonomousDatabaseFromBackupTimestampProperties` added property `scheduled_operations_list`
-  - Model `AutonomousDatabaseProperties` added property `scheduled_operations_list`
-  - Model `AutonomousDatabaseUpdateProperties` added property `scheduled_operations_list`
   - Model `CloudExadataInfrastructureProperties` added property `exascale_config`
   - Model `CloudVmClusterProperties` added property `exascale_db_storage_vault_id`
   - Model `CloudVmClusterProperties` added property `storage_management_type`
@@ -56,21 +50,21 @@
   - Model `CloudExadataInfrastructuresOperations` added method `begin_configure_exascale`
   - Model `DbSystemShapesOperations` added parameter `shape_attribute` in method `list_by_location`
   - Model `GiVersionsOperations` added parameter `shape_attribute` in method `list_by_location`
-  - Added model `DbSystemsOperations`
-  - Added model `DbVersionsOperations`
-  - Added model `NetworkAnchorsOperations`
-  - Added model `ResourceAnchorsOperations`
+  - Added operation group `DbSystemsOperations`
+  - Added operation group `DbVersionsOperations`
+  - Added operation group `NetworkAnchorsOperations`
+  - Added operation group `ResourceAnchorsOperations`
 
 ### Breaking Changes
 
   - Deleted or renamed client operation group `OracleDatabaseMgmtClient.list_actions`
-  - Model `AutonomousDatabaseBaseProperties` deleted or renamed its instance variable `scheduled_operations`
-  - Model `AutonomousDatabaseCloneProperties` deleted or renamed its instance variable `scheduled_operations`
-  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` deleted or renamed its instance variable `scheduled_operations`
-  - Model `AutonomousDatabaseFromBackupTimestampProperties` deleted or renamed its instance variable `scheduled_operations`
-  - Model `AutonomousDatabaseProperties` deleted or renamed its instance variable `scheduled_operations`
-  - Model `AutonomousDatabaseUpdateProperties` deleted or renamed its instance variable `scheduled_operations`
-  - Deleted or renamed model `ListActionsOperations`
+  - Model `AutonomousDatabaseBaseProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseCloneProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseCrossRegionDisasterRecoveryProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseFromBackupTimestampProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Model `AutonomousDatabaseUpdateProperties` renamed its instance variable `scheduled_operations` to `scheduled_operations_list`
+  - Deleted or renamed operation group `ListActionsOperations`
 
 ## 2.0.0 (2025-06-05)
 
