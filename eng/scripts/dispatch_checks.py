@@ -299,6 +299,10 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
 
+    # ensure that recursive virtual envs aren't messed with by this call
+    os.environ.pop("VIRTUAL_ENV", None)
+    os.environ.pop("PYTHON_HOME", None)
+
     if args.filter_type == "None":
         args.filter_type = "Build"
         compatibility_filter = False
