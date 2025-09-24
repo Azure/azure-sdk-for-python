@@ -2,8 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore fstring
+# pylint: disable=logging-fstring-interpolation
 import abc
 import time
+import logging
 from typing import Any, Callable, Dict, Optional
 
 from msal import TokenCache
@@ -18,13 +21,16 @@ from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
 
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
+
+
 class ManagedIdentityClientBase(abc.ABC):
     def __init__(
         self,
         request_factory: Callable[[str, dict], HttpRequest],
         client_id: Optional[str] = None,
         identity_config: Optional[Dict] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._custom_cache = False
         self._cache = kwargs.pop("_cache", None)
@@ -75,6 +81,10 @@ class ManagedIdentityClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
+        _CACHE_LOGGER.info(
+            f"Token Response received from Entra for credential/client with ID: {id(self)}. "
+            f"Expires on: {expires_on}. "
+        )
         token = AccessTokenInfo(
             content["access_token"],
             content["expires_on"],
@@ -83,6 +93,10 @@ class ManagedIdentityClientBase(abc.ABC):
         )
 
         # caching is the final step because TokenCache.add mutates its "event"
+        _CACHE_LOGGER.info(
+            f"Adding token to cache with ID {id(self._cache)}, credential/client ID: {id(self)}, "
+            f"scope: {content['resource']}"
+        )
         self._cache.add(
             event={"response": content, "scope": [content["resource"]]},
             now=request_time,
@@ -93,14 +107,20 @@ class ManagedIdentityClientBase(abc.ABC):
     def get_cached_token(self, *scopes: str) -> Optional[AccessTokenInfo]:
         resource = _scopes_to_resource(*scopes)
         now = time.time()
-        for token in self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]):
+        results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]))
+
+        _CACHE_LOGGER.info(f"Using cache with ID {id(self._cache)}, credential/client ID: {id(self)}")
+        _CACHE_LOGGER.info(f"Cache {id(self._cache)} contains {len(results)} access tokens for resource '{resource}'")
+        for token in results:
             expires_on = int(token["expires_on"])
             refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
             if expires_on > now and (not refresh_on or refresh_on > now):
+                _CACHE_LOGGER.info(f"{id(self)}: Cache hit for resource '{resource}'")
+                _CACHE_LOGGER.debug(f"{id(self)}: Cache hit contents: {token}")
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
-
+        _CACHE_LOGGER.info(f"{id(self)}: Cache miss for resource '{resource}'")
         return None
 
     @abc.abstractmethod

@@ -2,9 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore fstring
+# pylint: disable=logging-fstring-interpolation
 import abc
 import base64
 import json
+import logging
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
@@ -31,6 +34,7 @@ if TYPE_CHECKING:
     TransportType = Union[AsyncHttpTransport, HttpTransport]
 
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 
 class AadClientBase(abc.ABC):
@@ -45,7 +49,7 @@ class AadClientBase(abc.ABC):
         cae_cache: Optional[TokenCache] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
@@ -88,17 +92,34 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
-        for token in cache.search(
-            TokenCache.CredentialType.ACCESS_TOKEN,
-            target=list(scopes),
-            query={"client_id": self._client_id, "realm": tenant},
-        ):
+        results = list(
+            cache.search(
+                TokenCache.CredentialType.ACCESS_TOKEN,
+                target=list(scopes),
+                query={"client_id": self._client_id, "realm": tenant},
+            )
+        )
+        _CACHE_LOGGER.info(f"Using cache with ID {id(self._cache)}, credential client ID: {id(self)}")
+        _CACHE_LOGGER.info(
+            f"Cache {id(self._cache)} contains {len(results)} access tokens for resource '{list(scopes)}', "
+            f"tenant '{tenant}', "
+            f"client_id '{self._client_id}'"
+        )
+        for token in results:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
+                _CACHE_LOGGER.info(
+                    f"{id(self)}: Cache hit for resource '{list(scopes)}', tenant '{tenant}', "
+                    f"client_id '{self._client_id}'"
+                )
+                _CACHE_LOGGER.debug(f"{id(self)}: Cache hit contents: {token}")
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
+        _CACHE_LOGGER.info(
+            f"{id(self)}: Cache miss for resource '{list(scopes)}', tenant '{tenant}', client_id '{self._client_id}'"
+        )
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
@@ -181,11 +202,19 @@ class AadClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
+        _CACHE_LOGGER.info(
+            f"{id(self)}: Token Response received from Entra for credential " f"Expires on: {expires_on}. "
+        )
         token = AccessTokenInfo(
             content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
         )
 
         # caching is the final step because 'add' mutates 'content'
+        _CACHE_LOGGER.info(
+            f"Adding token to cache with ID {id(self._cache)}, credential client with ID: {id(self)}, "
+            f"App client_id: {self._client_id}, scope: {response.http_request.body['scope'].split()}, "
+            f"token_endpoint: {response.http_request.url}"
+        )
         cache.add(
             event={
                 "client_id": self._client_id,
@@ -293,7 +322,7 @@ class AadClientBase(abc.ABC):
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         user_assertion: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> HttpRequest:
         data = {
             "assertion": user_assertion,
@@ -348,7 +377,7 @@ class AadClientBase(abc.ABC):
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         refresh_token: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",

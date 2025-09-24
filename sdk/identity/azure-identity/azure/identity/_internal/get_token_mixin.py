@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# cspell:ignore fstring
+# pylint: disable=logging-fstring-interpolation
 import abc
 import logging
 import time
@@ -12,6 +14,7 @@ from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
 _LOGGER = logging.getLogger(__name__)
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 
 class GetTokenMixin(abc.ABC):
@@ -127,6 +130,10 @@ class GetTokenMixin(abc.ABC):
         claims = options.get("claims")
         tenant_id = options.get("tenant_id")
         enable_cae = options.get("enable_cae", False)
+
+        _CACHE_LOGGER.info(
+            f"{self.__class__.__name__}.{base_method_name} called with scopes: {scopes} and options: {options}"
+        )
 
         try:
             token = self._acquire_token_silently(
