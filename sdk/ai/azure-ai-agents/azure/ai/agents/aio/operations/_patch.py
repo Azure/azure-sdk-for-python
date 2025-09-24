@@ -1067,7 +1067,7 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -1082,7 +1082,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -1146,7 +1146,7 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = _Unset,
         tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -1162,7 +1162,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -1231,7 +1231,7 @@ class RunsOperations(RunsOperationsGenerated):
         thread_id: str,
         run_id: str,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = None,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
         tool_approvals: Optional[List[_models.ToolApproval]] = None,
         content_type: str = "application/json",
         event_handler: _models.BaseAsyncAgentEventHandler,
@@ -1247,7 +1247,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type run_id: str
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
@@ -1267,7 +1267,7 @@ class RunsOperations(RunsOperationsGenerated):
         run_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tool_outputs: Optional[List[_models.ToolOutput]] = _Unset,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = _Unset,
         tool_approvals: Optional[List[_models.ToolApproval]] = _Unset,
         event_handler: _models.BaseAsyncAgentEventHandler,
         **kwargs: Any,
@@ -1284,7 +1284,7 @@ class RunsOperations(RunsOperationsGenerated):
         :type body: JSON or IO[bytes]
         :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
          is None.
-        :paramtype tool_outputs: list[~azure.ai.agents.models.ToolOutput]
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
         :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
          value is None.
         :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
