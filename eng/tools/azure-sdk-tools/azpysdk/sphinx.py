@@ -155,11 +155,16 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: 
             logger.info("Sphinx api-doc command: {}".format(command_array))
 
             # TODO debug
-            logger.info(f"DEBUG: PIP FREEZE BEFORE SPHINX APIDOC directly invoking executable {executable}")
+            logger.info(f"DEBUG: PIP FREEZE BEFORE SPHINX APIDOC with exe {executable}")
             pip_cmd = get_pip_command(executable)
             logger.info(f"RUN PIP FREEZE ON {target_dir}")
-            check_call(pip_cmd + ["freeze"], cwd=target_dir)
-            
+            cmd = pip_cmd + ["freeze"]
+            logger.info(cmd)
+            check_call(cmd, cwd=target_dir)
+            logger.info(f"os.cwd={os.getcwd()}")
+            logger.info(f"PATH: {os.environ.get('PATH','')}")
+            ###
+
             check_call(command_array, cwd=target_dir)
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
             # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
