@@ -1,7 +1,15 @@
-# Azure Ai Language Questionanswering Authoring client library for Python
-<!-- write necessary description of service -->
+# Azure AI Language Question Answering Authoring client library for Python
 
-## Getting started
+This package provides **authoring / management operations** for Azure AI Language Question Answering as a **standalone** package, separated from the runtime Q&A client (`azure-ai-language-questionanswering`). It lets you create, update, import/export, and deploy Question Answering projects and manage sources, QnAs, and synonyms.
+
+> NOTE: This is an initial preview (`1.0.0b1`) and includes support for a preview service API version. Surface may change before GA.
+
+## Getting Started
+
+### Prerequisites
+- Python 3.9+
+- An Azure subscription
+- An Azure AI Language resource with Question Answering enabled
 
 ### Install the package
 
@@ -15,7 +23,49 @@ python -m pip install azure-ai-language-questionanswering-authoring
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure Ai Language Questionanswering Authoring instance.
 
+```
 
+### Create a client
+```python
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+
+endpoint = "https://<resource-name>.cognitiveservices.azure.com"
+credential = AzureKeyCredential("<api-key>")
+client = QuestionAnsweringAuthoringClient(endpoint, credential)
+```
+
+### List projects
+```python
+for proj in client.list_projects():
+	print(proj.name, proj.last_modified_date)
+```
+
+### Create or update a project (simplified example)
+```python
+body = {"language": "en", "description": "FAQ project"}
+client.create_project(project_name="FAQ", body=body)
+```
+
+### Export project (long-running operation)
+```python
+poller = client.begin_export(project_name="FAQ", format="json")
+export = poller.result()
+print(export.status)
+```
+
+### Authentication
+This client supports either `AzureKeyCredential` (with an API key) or Azure Active Directory credentials (e.g. `DefaultAzureCredential`). For AAD you must use a custom sub‑domain endpoint (not the regional shared endpoint).
+
+### Versioning
+The client targets the latest GA API plus preview version `2025-05-15-preview` defined in the accompanying TypeSpec. Preview operations may change.
+
+### Logging
+Enable `azure.core` logging for diagnostics:
+```python
+import logging
+logging.basicConfig(level=logging.INFO)
+```
 ## Contributing
 
 This project welcomes contributions and suggestions. Most contributions require

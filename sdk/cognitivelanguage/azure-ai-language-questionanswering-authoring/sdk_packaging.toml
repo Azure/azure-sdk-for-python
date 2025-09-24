@@ -1,0 +1,41 @@
+[packaging]
+auto_update = false
+
+[package]
+name = "azure-ai-language-questionanswering-authoring"
+display_name = "Azure AI Language Question Answering Authoring"
+description = "Authoring client for Azure AI Language Question Answering (preview)."
+keywords = ["azure", "cognitive services", "language", "question answering", "authoring"]
+license = "MIT"
+repository_url = "https://github.com/Azure/azure-sdk-for-python"
+# First preview version; adjust if coordinating with broader release plan
+version = "1.0.0b1"
+# Minimum Python version (align with repo policy; many language packages now require >=3.8)
+python_min = "3.9"
+
+[package.readme]
+path = "README.md"
+
+[package.changelog]
+path = "CHANGELOG.md"
+
+[package.namespace]
+# Root import path
+name = "azure.ai.language.questionanswering.authoring"
+
+[dependencies]
+azure-core = ">=1.28.0"  # aligned with setup.py requirement
+isodate = ">=0.6.1"
+typing-extensions = ">=4.0.1; python_version<'3.11'"
+
+[dev-dependencies]
+azure-identity = ">=1.15.0"
+pytest = "*"
+
+[build]
+# Standard artifacts
+artifacts = ["sdist", "wheel"]
+
+[metadata]
+# Extra metadata fields consumed by doc generation or release tooling
+service_name = "cognitivelanguage"
