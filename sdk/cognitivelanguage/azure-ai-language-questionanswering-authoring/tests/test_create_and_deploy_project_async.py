@@ -2,8 +2,8 @@ import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
-from .helpers import AuthoringAsyncTestHelper
-from .testcase import QuestionAnsweringAuthoringTestCase
+from helpers import AuthoringAsyncTestHelper
+from testcase import QuestionAnsweringAuthoringTestCase
 
 
 class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
