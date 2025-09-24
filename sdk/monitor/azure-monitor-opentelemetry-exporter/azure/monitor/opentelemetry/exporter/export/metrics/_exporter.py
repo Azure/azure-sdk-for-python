@@ -254,7 +254,7 @@ def _convert_point_to_envelope(
     # truncation logic
     properties = _utils._filter_custom_properties(point.attributes)
 
-    # Map OTel-friendly name to Performance Counter
+    # Map OTel-friendly name to Breeze Performance Counter name
     # Note that Performance Counters are not counted as "Autocollected standard metrics"
     if name in _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS:
         name = _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS.get(name)  # type: ignore

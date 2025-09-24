@@ -581,8 +581,6 @@ class _PerformanceCountersManager(metaclass=Singleton):
         :param meter_provider: OpenTelemetry meter provider, if None uses global provider.
         :type meter_provider: ~opentelemetry.metrics.MeterProvider or None
         """
-        print("Initializing Performance Counters Manager")
-        print(f"Meter provider: {meter_provider}")
         self._meter = None
         self._performance_counters = []
         self._requests_count = 0
