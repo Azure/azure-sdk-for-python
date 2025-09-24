@@ -68,8 +68,8 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         options = {}
         if request.excluded_locations:
             options[_Constants.Kwargs.EXCLUDED_LOCATIONS] = request.excluded_locations
-        if HttpHeaders.PartitionKey in request.headers:
-            partition_key_value = request.headers[HttpHeaders.PartitionKey]
+        if request.pk_val:
+            partition_key_value = request.pk_val
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
             partition_ranges = (self.client._routing_map_provider # pylint: disable=protected-access

@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-08-02",
+  "commit": "222af3670e36c5083cb0dc8a9c2677a8f77f8958",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/fist/IotFirmwareDefense.Management",
+  "emitterVersion": "0.48.2"
+}
