@@ -40,6 +40,9 @@ from azure.ai.projects.models import (
     EvaluatorConfiguration,
     EvaluatorIds,
     DatasetVersion,
+    ModelResponseGenerationTarget,
+    SystemMessage,
+    DeveloperMessage,
 )
 
 endpoint = os.environ[
@@ -67,16 +70,29 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
             name=dataset_name,
             version=dataset_version,
             file_path=data_file,
-            connection_name=connection_name,
         )
         print(dataset)
-
         print("Create an evaluation")
         evaluation: Evaluation = Evaluation(
             display_name="Sample Evaluation Test",
             description="Sample evaluation for testing",
             # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
             data=InputDataset(id=dataset.id if dataset.id else ""),
+            target=ModelResponseGenerationTarget(
+                base_messages=[
+                    SystemMessage(content= "You are an AI assistant helping users"),
+                    DeveloperMessage(content="Could you please provide answers to my questions")
+                ],
+                model_deployment_name="tiger5/gpt-4o-mini", 
+                model_params={
+                        "max_tokens": 1024,
+                        "temperature": 0.7,
+                        "dataMapping": {
+                            "query": "${data.query}",
+                            "response": "${data.response}",
+                        },
+                    },
+                ),
             evaluators={
                 "relevance": EvaluatorConfiguration(
                     id=EvaluatorIds.RELEVANCE.value,
@@ -116,5 +132,12 @@ with DefaultAzureCredential(exclude_interactive_browser_credential=False) as cre
         print("List evaluations")
         for evaluation in project_client.evaluations.list():
             print(evaluation)
-
+            
+        print("Canceling the evaluation")
+        # project_client.evaluations.cancel(get_evaluation_response.name)
+        print(evaluation_response)
+        
+        print("deleting the evaluation")
+        project_client.evaluations.delete(get_evaluation_response.name)
+        
         # [END evaluations_sample]
