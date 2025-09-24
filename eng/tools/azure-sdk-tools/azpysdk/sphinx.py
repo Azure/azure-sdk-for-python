@@ -158,7 +158,7 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: 
             logger.info(f"DEBUG: PIP FREEZE BEFORE SPHINX APIDOC directly invoking executable {executable}")
             pip_cmd = get_pip_command(executable)
             logger.info(f"RUN PIP FREEZE ON {target_dir}")
-            check_call([f"{executable}", "-m"] + pip_cmd + ["freeze"], cwd=target_dir)
+            check_call(pip_cmd + ["freeze"], cwd=target_dir)
             
             check_call(command_array, cwd=target_dir)
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
