@@ -90,7 +90,7 @@ except ImportError:
 
 
 try:
-    from cchardet import detect  # type: ignore
+    from cchardet import detect
 except ImportError:  # pragma: no cover
     try:
         from chardet import detect  # type: ignore[no-redef]
