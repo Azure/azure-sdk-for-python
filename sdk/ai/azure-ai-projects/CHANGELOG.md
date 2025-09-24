@@ -1,20 +1,20 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
-
-### Features added
-
-* File `setup.py` was updated to indicate the dependency `azure-ai-agents>=1.2.0b1`
-instead of `azure-ai-agents>=1.0.0`. This means that in a clean environment installing
-this version of `azure-ai-projects` will install latest beta version of `azure-ai-agents`
-(which has lots of features in preview) instead of latest stable version (which does
-not include preview features).
-
-### Breaking changes
+## 1.1.0b4 (2025-09-12)
 
 ### Bugs Fixed
 
-### Sample updates
+* Fix getting secret keys for connections of type "Custom Keys" ([GitHub issue 52355](https://github.com/Azure/azure-sdk-for-net/issues/52355))
+
+## 1.1.0b3 (2025-08-26)
+
+### Features added
+
+* File `setup.py` was updated to indicate the dependency `azure-ai-agents>=1.2.0b3`
+instead of `azure-ai-agents>=1.0.0`. This means that in a clean environment, installing
+via `pip install --pre azure-ai-projects` will install latest beta version of `azure-ai-agents`
+(which has features in preview) instead of latest stable version (which does
+not include preview features).
 
 ## 1.1.0b2 (2025-08-05)
 

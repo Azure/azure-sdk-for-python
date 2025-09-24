@@ -4,7 +4,9 @@ import os
 import threading
 from typing import Dict, Union
 
-from azure.monitor.opentelemetry.exporter._constants import _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL
+)
 
 _REQUESTS_MAP: Dict[str, Union[int, Dict[int, int]]] = {}
 _REQUESTS_MAP_LOCK = threading.Lock()
@@ -15,21 +17,10 @@ _STATSBEAT_STATE = {
     "SHUTDOWN": False,
     "CUSTOM_EVENTS_FEATURE_SET": False,
     "LIVE_METRICS_FEATURE_SET": False,
+    "CUSTOMER_SDKSTATS_FEATURE_SET": False,
 }
 _STATSBEAT_STATE_LOCK = threading.Lock()
 _STATSBEAT_FAILURE_COUNT_THRESHOLD = 3
-
-_CUSTOMER_SDKSTATS_STATE = {
-    "SHUTDOWN": False,
-}
-_CUSTOMER_SDKSTATS_STATE_LOCK = threading.Lock()
-
-_LOCAL_STORAGE_SETUP_STATE = {
-    "READONLY": False,
-    "EXCEPTION_OCCURRED": ""
-}
-
-_LOCAL_STORAGE_SETUP_STATE_LOCK = threading.Lock()
 
 def is_statsbeat_enabled():
     disabled = os.environ.get(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL)
@@ -80,19 +71,14 @@ def set_statsbeat_live_metrics_feature_set():
     with _STATSBEAT_STATE_LOCK:
         _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = True
 
-def get_customer_sdkstats_shutdown():
-    return _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"]
 
-def get_local_storage_setup_state_readonly():
-    return _LOCAL_STORAGE_SETUP_STATE["READONLY"]
+def set_statsbeat_shutdown(shutdown: bool):
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["SHUTDOWN"] = shutdown
 
-def set_local_storage_setup_state_readonly():
-    with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-        _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
+def get_statsbeat_customer_sdkstats_feature_set(): # pylint: disable=name-too-long
+    return _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"]
 
-def get_local_storage_setup_state_exception():
-    return _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-
-def set_local_storage_setup_state_exception(value):
-    with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-        _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = value
+def set_statsbeat_customer_sdkstats_feature_set(): # pylint: disable=name-too-long
+    with _STATSBEAT_STATE_LOCK:
+        _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = True

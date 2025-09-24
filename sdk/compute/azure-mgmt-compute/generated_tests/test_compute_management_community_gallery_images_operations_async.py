@@ -21,12 +21,24 @@ class TestComputeManagementCommunityGalleryImagesOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_community_gallery_images_list(self, resource_group):
+        response = self.client.community_gallery_images.list(
+            location="str",
+            public_gallery_name="str",
+            api_version="2024-03-03",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_community_gallery_images_get(self, resource_group):
         response = await self.client.community_gallery_images.get(
             location="str",
             public_gallery_name="str",
             gallery_image_name="str",
-            api_version="2021-07-01",
+            api_version="2024-03-03",
         )
 
         # please add some check logic here by yourself

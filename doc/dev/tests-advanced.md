@@ -3,15 +3,17 @@ This guide covers advanced testing scenarios for Azure SDK for Python libraries.
 
 ## Table of contents
 
-- [Mixin classes](#test-mixin-classes)
+- [Mixin classes](#mixin-classes)
 - [Pre-test setup](#pre-test-setup)
   - [xunit-style setup](#xunit-style-setup)
   - [Fixture setup](#fixture-setup)
+- [Use HTTPS test proxy endpoint](#use-https-test-proxy-endpoint)
 
 ## Mixin classes
 Many of our test suites use a base/mixin class to consolidate shared test logic. Mixin classes can define instance attributes to handle environment variables, make complex assertions, and more. By inheriting from these mixins, test classes can then share this logic throughout multiple files.
 
-For example, in the Tables test suite there is a `_shared` directory containing two of these mixin classes: a [sync version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/testcase.py) and an [async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/asynctestcase.py).
+For example, in the Tables test suite there is a `_shared` directory containing two of these mixin classes: a
+[sync version][mixin_sync] and an [async version][mixin_async].
 
 ```python
 class TableTestCase(object):
@@ -86,8 +88,7 @@ Tests will often use shared resources that make sense to set up before tests exe
 approaches for this kind of setup, with each having benefits and drawbacks.
 
 ### xunit-style setup
-Pytest has documentation describing this setup style: https://docs.pytest.org/en/latest/how-to/xunit_setup.html. For
-example:
+Pytest has [documentation][xunit_setup] describing this setup style. For example:
 
 ```python
 from devtools_testutils.azure_recorded_testcase import get_credential
@@ -115,8 +116,8 @@ instance attributes on the class. You can still set attributes on the test class
 module-level utilities can be used in place of instance attributes, as shown in the example above.
 
 ### Fixture setup
-Pytest has documentation explaining how to implement and use fixtures:
-https://docs.pytest.org/en/latest/how-to/fixtures.html. For example, in a library's `conftest.py`:
+Pytest has [documentation][fixtures] explaining how to implement and use fixtures. For example, in a library's
+`conftest.py`:
 
 ```python
 from devtools_testutils.azure_recorded_testcase import get_credential
@@ -141,10 +142,8 @@ class TestService(AzureRecordedTestCase):
 By requesting a fixture from the test class, the fixture will execute before any tests in the class do. Fixtures are the
 preferred solution from pytest's perspective and offer a great deal of modular functionality.
 
-As shown in the example above, the
-[`yield`](https://docs.pytest.org/latest/how-to/fixtures.html#yield-fixtures-recommended) command will defer to test
-execution -- after tests finish running, the fixture code after `yield` will execute. This enables the use of a fixture
-for both setup and teardown.
+As shown in the example above, the [`yield`][fixture_yield] command will defer to test execution -- after tests finish
+running, the fixture code after `yield` will execute. This enables the use of a fixture for both setup and teardown.
 
 However, fixtures in this context have similar drawbacks to the `setup_class` method described in
 [xunit-style setup](#xunit-style-setup). Since their scope is outside of the test class, test class instance utilities
@@ -152,3 +151,27 @@ can't be accessed and class state can't be modified.
 
 By convention, fixtures should be defined in a library's `tests/conftest.py` file. This will provide access to the
 fixture across test files, and the fixture can be requested without having to manually import it.
+
+## Use HTTPS test proxy endpoint
+
+By default, the test proxy is reached at `http://localhost:5000`. Service requests are ultimately made as usual with a
+secure connection, but some libraries may require that the immediate proxy endpoint uses an SSL connection.
+
+In that scenario, you can set the `PROXY_URL` environment variable to target the test proxy at an HTTPS URL:
+
+```text
+PROXY_URL='https://localhost:5001'
+```
+
+The test proxy's certificate is [automatically configured][cert_setup] during proxy startup, though async tests may
+exhibit [inconsistent behavior][async_cert_troubleshoot].
+
+<!-- Links -->
+
+[async_cert_troubleshoot]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md#servicerequesterror-cannot-connect-to-host
+[cert_setup]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py#L210
+[fixture_yield]: https://docs.pytest.org/latest/how-to/fixtures.html#yield-fixtures-recommended
+[fixtures]: https://docs.pytest.org/en/latest/how-to/fixtures.html
+[mixin_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/asynctestcase.py
+[mixin_sync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/_shared/testcase.py
+[xunit_setup]: https://docs.pytest.org/en/latest/how-to/xunit_setup.html

@@ -32,7 +32,7 @@ class AvailablePhoneNumber(_serialization.Model):
     :ivar capabilities: Capabilities of a phone number. Required.
     :vartype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
     :ivar phone_number_type: Represents the number type of the offering. Required. Known values
-     are: "geographic" and "tollFree".
+     are: "geographic", "tollFree", and "mobile".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar assignment_type: Represents the assignment type of the offering. Also known as the use
      case. Required. Known values are: "person" and "application".
@@ -93,7 +93,7 @@ class AvailablePhoneNumber(_serialization.Model):
         :keyword capabilities: Capabilities of a phone number. Required.
         :paramtype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
         :keyword phone_number_type: Represents the number type of the offering. Required. Known values
-         are: "geographic" and "tollFree".
+         are: "geographic", "tollFree", and "mobile".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword assignment_type: Represents the assignment type of the offering. Also known as the use
          case. Required. Known values are: "person" and "application".
@@ -854,7 +854,7 @@ class PhoneNumberOffering(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar phone_number_type: Represents the number type of the offering. Known values are:
-     "geographic" and "tollFree".
+     "geographic", "tollFree", and "mobile".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar assignment_type: Represents the assignment type of the offering. Known values are:
      "person" and "application".
@@ -889,7 +889,7 @@ class PhoneNumberOffering(_serialization.Model):
     ) -> None:
         """
         :keyword phone_number_type: Represents the number type of the offering. Known values are:
-         "geographic" and "tollFree".
+         "geographic", "tollFree", and "mobile".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword assignment_type: Represents the assignment type of the offering. Known values are:
          "person" and "application".
@@ -1028,7 +1028,7 @@ class PhoneNumbersBrowseRequest(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar phone_number_type: Represents the number type of the offering. Required. Known values
-     are: "geographic" and "tollFree".
+     are: "geographic", "tollFree", and "mobile".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar capabilities: The minimum desired capabilities for the browse operation request.
     :vartype capabilities:
@@ -1064,7 +1064,7 @@ class PhoneNumbersBrowseRequest(_serialization.Model):
     ) -> None:
         """
         :keyword phone_number_type: Represents the number type of the offering. Required. Known values
-         are: "geographic" and "tollFree".
+         are: "geographic", "tollFree", and "mobile".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword capabilities: The minimum desired capabilities for the browse operation request.
         :paramtype capabilities:
@@ -1116,8 +1116,8 @@ class PhoneNumberSearchRequest(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar phone_number_type: The type of phone numbers to search for, e.g. geographic, or tollFree.
-     Required. Known values are: "geographic" and "tollFree".
+    :ivar phone_number_type: The type of phone numbers to search for, e.g. geographic, tollFree,
+     mobile. Required. Known values are: "geographic", "tollFree", and "mobile".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar assignment_type: The assignment type of the phone numbers to search for. A phone number
      can be assigned to a person, or to an application. Required. Known values are: "person" and
@@ -1158,8 +1158,8 @@ class PhoneNumberSearchRequest(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword phone_number_type: The type of phone numbers to search for, e.g. geographic, or
-         tollFree. Required. Known values are: "geographic" and "tollFree".
+        :keyword phone_number_type: The type of phone numbers to search for, e.g. geographic, tollFree,
+         mobile. Required. Known values are: "geographic", "tollFree", and "mobile".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword assignment_type: The assignment type of the phone numbers to search for. A phone
          number can be assigned to a person, or to an application. Required. Known values are: "person"
@@ -1191,8 +1191,8 @@ class PhoneNumberSearchResult(_serialization.Model):
     :ivar phone_numbers: The phone numbers that are available. Can be fewer than the desired search
      quantity. Required.
     :vartype phone_numbers: list[str]
-    :ivar phone_number_type: The phone number's type, e.g. geographic, or tollFree. Required. Known
-     values are: "geographic" and "tollFree".
+    :ivar phone_number_type: The phone number's type, e.g. geographic, tollFree, mobile. Required.
+     Known values are: "geographic", "tollFree", and "mobile".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar assignment_type: Phone number's assignment type. Required. Known values are: "person" and
      "application".
@@ -1264,8 +1264,8 @@ class PhoneNumberSearchResult(_serialization.Model):
         :keyword phone_numbers: The phone numbers that are available. Can be fewer than the desired
          search quantity. Required.
         :paramtype phone_numbers: list[str]
-        :keyword phone_number_type: The phone number's type, e.g. geographic, or tollFree. Required.
-         Known values are: "geographic" and "tollFree".
+        :keyword phone_number_type: The phone number's type, e.g. geographic, tollFree, mobile.
+         Required. Known values are: "geographic", "tollFree", and "mobile".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword assignment_type: Phone number's assignment type. Required. Known values are: "person"
          and "application".
@@ -1431,8 +1431,8 @@ class PurchasedPhoneNumber(_serialization.Model):
     :vartype phone_number: str
     :ivar country_code: The ISO 3166-2 code of the phone number's country, e.g. US. Required.
     :vartype country_code: str
-    :ivar phone_number_type: The phone number's type, e.g. geographic, tollFree. Required. Known
-     values are: "geographic" and "tollFree".
+    :ivar phone_number_type: The phone number's type, e.g. geographic, tollFree, mobile. Required.
+     Known values are: "geographic", "tollFree", and "mobile".
     :vartype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
     :ivar capabilities: Capabilities of a phone number. Required.
     :vartype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities
@@ -1489,8 +1489,8 @@ class PurchasedPhoneNumber(_serialization.Model):
         :paramtype phone_number: str
         :keyword country_code: The ISO 3166-2 code of the phone number's country, e.g. US. Required.
         :paramtype country_code: str
-        :keyword phone_number_type: The phone number's type, e.g. geographic, tollFree. Required. Known
-         values are: "geographic" and "tollFree".
+        :keyword phone_number_type: The phone number's type, e.g. geographic, tollFree, mobile.
+         Required. Known values are: "geographic", "tollFree", and "mobile".
         :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword capabilities: Capabilities of a phone number. Required.
         :paramtype capabilities: ~azure.communication.phonenumbers.models.PhoneNumberCapabilities

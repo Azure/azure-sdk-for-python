@@ -20,13 +20,103 @@ class TestComputeManagementGalleryApplicationsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_gallery_applications_list_by_gallery(self, resource_group):
+        response = self.client.gallery_applications.list_by_gallery(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            api_version="2024-03-03",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_gallery_applications_get(self, resource_group):
+        response = self.client.gallery_applications.get(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            gallery_application_name="str",
+            api_version="2024-03-03",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_gallery_applications_begin_create_or_update(self, resource_group):
         response = self.client.gallery_applications.begin_create_or_update(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_application_name="str",
             gallery_application={
                 "location": "str",
+                "customActions": [
+                    {
+                        "name": "str",
+                        "script": "str",
+                        "description": "str",
+                        "parameters": [
+                            {
+                                "name": "str",
+                                "defaultValue": "str",
+                                "description": "str",
+                                "required": bool,
+                                "type": "str",
+                            }
+                        ],
+                    }
+                ],
+                "description": "str",
+                "endOfLifeDate": "2020-02-20 00:00:00",
+                "eula": "str",
+                "id": "str",
+                "name": "str",
+                "privacyStatementUri": "str",
+                "releaseNoteUri": "str",
+                "supportedOSType": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
+                "tags": {"str": "str"},
+                "type": "str",
+            },
+            api_version="2024-03-03",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_gallery_applications_begin_update(self, resource_group):
+        response = self.client.gallery_applications.begin_update(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            gallery_application_name="str",
+            gallery_application={
+                "customActions": [
+                    {
+                        "name": "str",
+                        "script": "str",
+                        "description": "str",
+                        "parameters": [
+                            {
+                                "name": "str",
+                                "defaultValue": "str",
+                                "description": "str",
+                                "required": bool,
+                                "type": "str",
+                            }
+                        ],
+                    }
+                ],
                 "description": "str",
                 "endOfLifeDate": "2020-02-20 00:00:00",
                 "eula": "str",
@@ -38,7 +128,7 @@ class TestComputeManagementGalleryApplicationsOperations(AzureMgmtRecordedTestCa
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2019-03-01",
+            api_version="2024-03-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -46,38 +136,13 @@ class TestComputeManagementGalleryApplicationsOperations(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
-        response = self.client.gallery_applications.get(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            gallery_application_name="str",
-            api_version="2019-03-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_gallery_applications_begin_delete(self, resource_group):
         response = self.client.gallery_applications.begin_delete(
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_application_name="str",
-            api_version="2019-03-01",
+            api_version="2024-03-03",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_list_by_gallery(self, resource_group):
-        response = self.client.gallery_applications.list_by_gallery(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            api_version="2019-03-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

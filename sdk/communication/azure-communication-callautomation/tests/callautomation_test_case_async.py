@@ -18,29 +18,24 @@ from azure.identity import AzureCliCredential
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.helpers import get_test_id
 
-from azure.communication.callautomation import (
-    CommunicationIdentifierKind,
-    CommunicationIdentifier
-)
-from azure.communication.callautomation.aio import (
-    CallAutomationClient,
-    CallConnectionClient
-)
+from azure.communication.callautomation import CommunicationIdentifierKind, CommunicationIdentifier
+from azure.communication.callautomation.aio import CallAutomationClient, CallConnectionClient
 from azure.communication.callautomation._shared.models import identifier_from_raw_id
 from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
+
 
 class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
     @classmethod
     def setup_class(cls):
         if is_live():
             print("Live Test")
-            cls.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
-            cls.servicebus_str = os.environ.get('SERVICEBUS_STRING')
-            cls.dispatcher_endpoint = os.environ.get('DISPATCHER_ENDPOINT')
-            cls.file_source_url = os.environ.get('FILE_SOURCE_URL')
-            cls.cognitive_service_endpoint = os.environ.get('COGNITIVE_SERVICE_ENDPOINT')
-            cls.transport_url = os.environ.get('TRANSPORT_URL')
+            cls.connection_str = os.environ.get("COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING")
+            cls.servicebus_str = os.environ.get("SERVICEBUS_STRING")
+            cls.dispatcher_endpoint = os.environ.get("DISPATCHER_ENDPOINT")
+            cls.file_source_url = os.environ.get("FILE_SOURCE_URL")
+            cls.cognitive_service_endpoint = os.environ.get("COGNITIVE_SERVICE_ENDPOINT")
+            cls.transport_url = os.environ.get("TRANSPORT_URL")
         else:
             print("Recorded Test")
             cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
@@ -48,8 +43,7 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
             cls.file_source_url = "https://REDACTED/prompt.wav"
             cls.cognitive_service_endpoint = "https://sanitized/"
-            cls.transport_url ="wss://sanitized/ws"
-
+            cls.transport_url = "wss://sanitized/ws"
 
         cls.credential = AzureCliCredential()
         cls.dispatcher_callback = cls.dispatcher_endpoint + "/api/servicebuscallback/events"
@@ -57,8 +51,8 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         cls.identity_client = None
         cls.phonenumber_client = PhoneNumbersClient.from_connection_string(cls.connection_str)
         cls.service_bus_client = ServiceBusClient(
-            fully_qualified_namespace=cls.servicebus_str,
-            credential=cls.credential)
+            fully_qualified_namespace=cls.servicebus_str, credential=cls.credential
+        )
 
         cls.wait_for_event_flags = []
         cls.event_store: Dict[str, Dict[str, Any]] = {}
@@ -76,8 +70,8 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
             self.test_name = get_test_id().split("/")[-1]
         except (AttributeError, TypeError):
             # Fallback when get_test_id() returns None or fails
-            self.test_name = getattr(method, '__name__', 'unknown_test')
-        
+            self.test_name = getattr(method, "__name__", "unknown_test")
+
         self.event_store: Dict[str, Dict[str, Any]] = {}
         self.event_to_save: Dict[str, Dict[str, Any]] = {}
         self._prepare_events_recording()
@@ -87,12 +81,12 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
     def teardown_method(self, method):
         # Close the identity client properly
         async def close_identity_client():
-            if hasattr(self, 'identity_client') and self.identity_client:
+            if hasattr(self, "identity_client") and self.identity_client:
                 try:
                     await self.identity_client.close()
                 except Exception as e:
                     print(f"Error closing identity client in teardown_method: {e}")
-        
+
         try:
             loop = asyncio.get_event_loop()
             if not loop.is_closed():
@@ -107,7 +101,7 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
                 loop.close()
         except Exception as e:
             print(f"Error in teardown_method: {e}")
-        
+
         self._record_method_events()
         self.event_store: Dict[str, Dict[str, Any]] = {}
         self.event_to_save: Dict[str, Dict[str, Any]] = {}
@@ -190,9 +184,9 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         # only save during live
         try:
             if is_live():
-                file_path = self._get_test_event_file_name()                
+                file_path = self._get_test_event_file_name()
                 keys_to_redact = ["incomingCallContext", "callerDisplayName"]
-                redacted_dict  = self.redact_by_key(self.event_to_save, keys_to_redact)
+                redacted_dict = self.redact_by_key(self.event_to_save, keys_to_redact)
                 with open(file_path, "w") as json_file:
                     json.dump(redacted_dict, json_file)
         except Exception as e:
@@ -210,25 +204,32 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
             time.sleep(1)
         return None
 
-    async def establish_callconnection_voip(self, caller, target, *, cognitive_service_enabled: Optional[bool] = False) -> tuple:
-        return await self._establish_callconnection(
-            caller, target, cognitive_service_enabled=cognitive_service_enabled
-        )
+    async def establish_callconnection_voip(
+        self, caller, target, *, cognitive_service_enabled: Optional[bool] = False
+    ) -> tuple:
+        return await self._establish_callconnection(caller, target, cognitive_service_enabled=cognitive_service_enabled)
 
     async def establish_callconnection_pstn(self, caller, target) -> tuple:
         return await self._establish_callconnection(caller, target, is_pstn=True)
 
-
-
-    async def establish_callconnection_voip_with_streaming_options(self, caller, target, options, is_transcription) -> tuple:
-        return await self._establish_callconnection(
-            caller, target, options=options, is_transcription=is_transcription
-        )
+    async def establish_callconnection_voip_with_streaming_options(
+        self, caller, target, options, is_transcription
+    ) -> tuple:
+        return await self._establish_callconnection(caller, target, options=options, is_transcription=is_transcription)
 
     async def establish_callconnection_voip_connect_call(self, caller, target) -> tuple:
         return await self._establish_callconnection(caller, target, connect_call=True)
 
-    async def _establish_callconnection(self, caller, target, cognitive_service_enabled: Optional[bool] = False, is_pstn: bool = False, options=None, is_transcription: bool = False, connect_call: bool = False) -> tuple:
+    async def _establish_callconnection(
+        self,
+        caller,
+        target,
+        cognitive_service_enabled: Optional[bool] = False,
+        is_pstn: bool = False,
+        options=None,
+        is_transcription: bool = False,
+        connect_call: bool = False,
+    ) -> tuple:
         call_automation_client_caller = self._create_call_automation_client(caller)
         call_automation_client_target = self._create_call_automation_client(target)
 
@@ -238,7 +239,14 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
 
         callback_url = f"{self.dispatcher_callback}?q={unique_id}"
         create_call_result = await self._create_call(
-            call_automation_client_caller, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
+            call_automation_client_caller,
+            caller,
+            target,
+            unique_id,
+            cognitive_service_enabled,
+            is_pstn,
+            options,
+            is_transcription,
         )
         caller_connection_id = self._validate_create_call_result(create_call_result)
 
@@ -250,7 +258,13 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         self.open_call_connections[unique_id] = call_connection_caller
 
         if connect_call:
-            return unique_id, call_connection_caller, call_connection_target, call_automation_client_caller, callback_url
+            return (
+                unique_id,
+                call_connection_caller,
+                call_connection_target,
+                call_automation_client_caller,
+                callback_url,
+            )
 
         return unique_id, call_connection_caller, call_connection_target
 
@@ -270,7 +284,9 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         thread = threading.Thread(target=self._message_awaiter, args=(unique_id,))
         thread.start()
 
-    async def _create_call(self, client, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription):
+    async def _create_call(
+        self, client, caller, target, unique_id, cognitive_service_enabled, is_pstn, options, is_transcription
+    ):
         if is_pstn:
             return await client.create_call(
                 target_participant=target,
@@ -283,13 +299,13 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
                 callback_url=f"{self.dispatcher_callback}?q={unique_id}",
                 media_streaming=options if not is_transcription else None,
                 transcription=options if is_transcription else None,
-                cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None
+                cognitive_services_endpoint=self.cognitive_service_endpoint if is_transcription else None,
             )
         else:
             return await client.create_call(
                 target_participant=target,
                 callback_url=f"{self.dispatcher_callback}?q={unique_id}",
-                cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None
+                cognitive_services_endpoint=self.cognitive_service_endpoint if cognitive_service_enabled else None,
             )
 
     def _validate_create_call_result(self, result):
@@ -309,9 +325,7 @@ class CallAutomationRecordedTestCaseAsync(AzureRecordedTestCase):
         return incoming_call_event["incomingCallContext"]
 
     async def _answer_call(self, client, context):
-        result = await client.answer_call(
-            incoming_call_context=context, callback_url=self.dispatcher_callback
-        )
+        result = await client.answer_call(incoming_call_context=context, callback_url=self.dispatcher_callback)
         if result is None:
             raise ValueError("Invalid answer_call result")
         return result
