@@ -1,12 +1,10 @@
 import argparse
 import logging
 import os
-from tox_helper_tasks import (
-    unzip_file_to_directory,
-)
 from verify_whl import cleanup, should_verify_package, get_prior_version, verify_prior_version_metadata, get_path_to_zip
 from typing import List, Mapping, Any, Dict, Optional
-
+import tarfile 
+import zipfile
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from ci_tools.functions import verify_package_classifiers
 import argparse
@@ -25,7 +23,18 @@ EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure", "azure-common"]
 
 EXCLUDED_CLASSIFICATION_PACKAGES = []
 
-
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
+        
 def get_root_directories_in_source(package_dir: str) -> List[str]:
     """
     Find all allowed directories in source path.
