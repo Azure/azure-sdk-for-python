@@ -679,11 +679,16 @@ class BasicVoiceAssistant:
             # Stop current assistant audio playback (interruption handling)
             await ap.stop_playback()
 
-            # Cancel any ongoing response
-            try:
-                await conn.response.cancel()
-            except Exception as e:
-                logger.debug(f"No response to cancel: {e}")
+            # Only cancel response in live mode, not in audio file mode
+            if not self.audio_file:
+                try:
+                    await conn.response.cancel()
+                except Exception as e:
+                    logger.debug(f"No response to cancel: {e}")
+
+        elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_COMMITTED:
+            logger.info("🎵 Audio buffer committed - entire audio file processed")
+            print("🎵 Audio file fully processed!")
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
