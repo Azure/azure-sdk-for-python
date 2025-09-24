@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Sequence, Union, Optional, TYPE_CHECKING, AsyncIterable, overload
+from typing import Sequence, Union, Optional, TYPE_CHECKING, AsyncIterable, overload, Dict
 from urllib.parse import urlparse
 import warnings
 
@@ -16,6 +16,8 @@ from ._call_connection_client_async import CallConnectionClient
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
+from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from .._credential.credential_utils import get_custom_enabled, get_custom_url
 from .._shared.models import CommunicationIdentifier
 from .._generated.models import (
     CreateCallRequest,
@@ -149,7 +151,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
-    def get_call_connection(  # pylint: disable=client-method-missing-tracing-decorator
+    def get_call_connection(
         self, call_connection_id: str, **kwargs
     ) -> CallConnectionClient:
         """Get CallConnectionClient object.
@@ -280,7 +282,7 @@ class CallAutomationClient:
     @distributed_trace_async
     async def connect_call(self, callback_url: str, **kwargs) -> CallConnectionProperties:
         cognitive_services_endpoint = kwargs.pop("cognitive_services_endpoint", None)
-        backup_cognitive_services_endpoint = kwargs.pop("backup_cognitive_services_endpoint", None) 
+        backup_cognitive_services_endpoint = kwargs.pop("backup_cognitive_services_endpoint", None)
         call_intelligence_options = (
             CallIntelligenceOptions(cognitive_services_endpoint=cognitive_services_endpoint,
                                     backup_cognitive_services_endpoint=backup_cognitive_services_endpoint)
@@ -527,6 +529,13 @@ class CallAutomationClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomCallingContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
+
         call_intelligence_options = (
             CallIntelligenceOptions(cognitive_services_endpoint=cognitive_services_endpoint,
                                     backup_cognitive_services_endpoint=backup_cognitive_services_endpoint)
@@ -546,6 +555,7 @@ class CallAutomationClient:
             answered_by=serialize_communication_user_identifier(self.source) if self.source else None,
             call_intelligence_options=call_intelligence_options,
             operation_context=operation_context,
+            custom_calling_context=user_custom_context,
         )
 
         process_repeatability_first_sent(kwargs)
@@ -585,9 +595,14 @@ class CallAutomationClient:
 
         user_custom_context = None
         if sip_headers or voip_headers:
-            user_custom_context = CustomCallingContext(voip_headers=voip_headers, sip_headers=sip_headers)
+            user_custom_context = CustomCallingContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         redirect_call_request = RedirectCallRequest(
-            incoming_call_context=incoming_call_context, target=serialize_identifier(target_participant), custom_calling_context=user_custom_context,
+            incoming_call_context=incoming_call_context,
+            target=serialize_identifier(target_participant),
+            custom_calling_context=user_custom_context,
         )
 
         process_repeatability_first_sent(kwargs)

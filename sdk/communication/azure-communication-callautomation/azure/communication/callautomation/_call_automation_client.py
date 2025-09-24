@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Sequence, Union, Optional, TYPE_CHECKING, Iterable, overload
+from typing import List, Sequence, Union, Optional, TYPE_CHECKING, Iterable, overload, Dict
 from urllib.parse import urlparse
 import warnings
 
@@ -148,7 +148,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
-    def get_call_connection(  # pylint: disable=client-method-missing-tracing-decorator
+    def get_call_connection(
         self, call_connection_id: str, **kwargs
     ) -> CallConnectionClient:
         """Get CallConnectionClient object.
@@ -553,6 +553,7 @@ class CallAutomationClient:
                 transcription._to_generated() if transcription else None  # pylint:disable=protected-access
             ),
             operation_context=operation_context,
+            custom_calling_context=user_custom_context,
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.answer_call(answer_call_request=answer_call_request, **kwargs)

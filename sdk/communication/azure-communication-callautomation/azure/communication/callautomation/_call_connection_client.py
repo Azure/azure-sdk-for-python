@@ -632,7 +632,11 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         play_request = PlayRequest(
             play_sources=play_sources,
             play_to=audience,
-            play_options=PlayOptions(loop=loop, interrupt_call_media_operation=interrupt_call_media_operation, interrupt_hold_audio=interrupt_hold_audio),
+            play_options=PlayOptions(
+                loop=loop,
+                interrupt_call_media_operation=interrupt_call_media_operation,
+                interrupt_hold_audio=interrupt_hold_audio
+            ),
             operation_context=operation_context,
             operation_callback_uri=operation_callback_url,
             **kwargs,

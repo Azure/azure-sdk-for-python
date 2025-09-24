@@ -17,6 +17,8 @@ from azure.core.credentials import AzureKeyCredential
 
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
+from .._credential.credential_utils import get_custom_enabled, get_custom_url
 from .._utils import serialize_phone_identifier, serialize_identifier, process_repeatability_first_sent
 from .._models import (
     CallParticipant,
