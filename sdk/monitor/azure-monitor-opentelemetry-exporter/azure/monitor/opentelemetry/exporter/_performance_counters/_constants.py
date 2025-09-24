@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# (OpenTelemetry metric name, Quickpulse metric name)
+# (OpenTelemetry metric name, Breeze metric name)
 _AVAILABLE_MEMORY = (
     "azuremonitor.performancecounter.memoryavailablebytes",
     "\\Memory\\Available Bytes"
