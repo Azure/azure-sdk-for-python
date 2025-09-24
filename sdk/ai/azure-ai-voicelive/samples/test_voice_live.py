@@ -7,16 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: basic_voice_assistant.py
+FILE: test_voice_live.py
 
 DESCRIPTION:
     This sample demonstrates the fundamental capabilities of the VoiceLive SDK by creating
-    a basic voice assistant that can engage in natural conversation with proper interruption
-    handling. This serves as the foundational example that showcases the core value 
-    proposition of unified speech-to-speech interaction.
+    a comprehensive voice assistant that can engage in natural conversation with proper interruption
+    handling. It includes advanced audio processing features and optional function calling
+    capabilities for time and weather information. This serves as the foundational example 
+    that showcases the core value proposition of unified speech-to-speech interaction.
 
 USAGE:
-    python basic_voice_assistant.py
+    python test_voice_live.py
+    python test_voice_live.py --enable-function-calling
     
     Set the environment variables with your own values before running the sample:
     1) AZURE_VOICELIVE_KEY - The Azure VoiceLive API key
@@ -38,8 +40,10 @@ import argparse
 import signal
 import threading
 import queue
+import json
+import datetime
 from azure.ai.voicelive.models import ServerEventType
-from typing import Union, Optional, TYPE_CHECKING, cast
+from typing import Union, Optional, TYPE_CHECKING, cast, Dict, Any, Mapping, Callable
 from concurrent.futures import ThreadPoolExecutor
 import logging
 
@@ -82,6 +86,15 @@ from azure.ai.voicelive.models import (
     AudioInputTranscriptionSettings,
     AudioNoiseReduction,
     AudioEchoCancellation,
+    FunctionTool,
+    FunctionCallItem,
+    FunctionCallOutputItem,
+    ItemType,
+    ToolChoiceLiteral,
+    ResponseFunctionCallItem,
+    ServerEventConversationItemCreated,
+    ServerEventResponseFunctionCallArgumentsDone,
+    Tool,
 )
 
 # Set up logging
@@ -94,6 +107,26 @@ def _load_audio_b64(path: str) -> str:
     with open(path, "rb") as f:
         audio_bytes = f.read()
     return base64.b64encode(audio_bytes).decode("utf-8")
+
+
+async def _wait_for_event(conn, wanted_types: set, timeout_s: float = 10.0):
+    """Wait until we receive any event whose type is in wanted_types."""
+    async def _next():
+        while True:
+            evt = await conn.recv()
+            if evt.type in wanted_types:
+                return evt
+    return await asyncio.wait_for(_next(), timeout=timeout_s)
+
+
+async def _wait_for_match(conn, predicate: Callable[[Any], bool], timeout_s: float = 10.0):
+    """Wait until we receive an event that satisfies the given predicate."""
+    async def _next():
+        while True:
+            evt = await conn.recv()
+            if predicate(evt):
+                return evt
+    return await asyncio.wait_for(_next(), timeout=timeout_s)
 
 
 class AudioProcessor:
@@ -356,6 +389,8 @@ class BasicVoiceAssistant:
         agent_access_token: Optional[str] = None,
         phrase_list: Optional[str] = None,
         audio_file: Optional[str] = None,
+        # Function calling parameters
+        enable_function_calling: bool = False,
     ):
 
         self.endpoint = endpoint
@@ -384,10 +419,21 @@ class BasicVoiceAssistant:
         self.agent_access_token = agent_access_token
         self.phrase_list = phrase_list
         self.audio_file = audio_file
+        self.enable_function_calling = enable_function_calling
         self.connection: Optional["VoiceLiveConnection"] = None
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
         self.conversation_started = False
+        
+        # Function calling state
+        self.function_call_in_progress: bool = False
+        self.active_call_id: Optional[str] = None
+        
+        # Define available functions
+        self.available_functions: Dict[str, Callable[[Union[str, Mapping[str, Any]]], Mapping[str, Any]]] = {
+            "get_current_time": self.get_current_time,
+            "get_current_weather": self.get_current_weather,
+        }
 
     async def start(self):
         """Start the voice assistant session."""
@@ -443,8 +489,15 @@ class BasicVoiceAssistant:
                     # Live microphone mode
                     logger.info("Voice assistant ready! Start speaking...")
                     print("\n" + "=" * 60)
-                    print("🎤 VOICE ASSISTANT READY")
-                    print("Start speaking to begin conversation")
+                    if self.enable_function_calling:
+                        print("🎤 VOICE ASSISTANT WITH FUNCTION CALLING READY")
+                        print("Try saying:")
+                        print("  • 'What's the current time?'")
+                        print("  • 'What's the weather in Seattle?'")
+                        print("  • 'What time is it in UTC?'")
+                    else:
+                        print("🎤 VOICE ASSISTANT READY")
+                        print("Start speaking to begin conversation")
                     print("Press Ctrl+C to exit")
                     print("=" * 60 + "\n")
 
@@ -541,6 +594,46 @@ class BasicVoiceAssistant:
             else:
                 logger.warning("⚠️  Empty phrase list provided")
         
+        # Create function tools if function calling is enabled
+        function_tools: Optional[list[Tool]] = None
+        if self.enable_function_calling:
+            function_tools = [
+                FunctionTool(
+                    name="get_current_time",
+                    description="Get the current time",
+                    parameters={
+                        "type": "object",
+                        "properties": {
+                            "timezone": {
+                                "type": "string",
+                                "description": "The timezone to get the current time for, e.g., 'UTC', 'local'",
+                            }
+                        },
+                        "required": [],
+                    },
+                ),
+                FunctionTool(
+                    name="get_current_weather",
+                    description="Get the current weather in a given location",
+                    parameters={
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "The city and state, e.g., 'San Francisco, CA'",
+                            },
+                            "unit": {
+                                "type": "string",
+                                "enum": ["celsius", "fahrenheit"],
+                                "description": "The unit of temperature to use (celsius or fahrenheit)",
+                            },
+                        },
+                        "required": ["location"],
+                    },
+                ),
+            ]
+            logger.info("Function calling enabled with time and weather functions")
+        
         # Debug logging
         logger.info(f"Language: {self.language}")
         logger.info(f" Model: {self.model}")
@@ -573,6 +666,8 @@ class BasicVoiceAssistant:
             input_audio_transcription=input_audio_transcription,
             input_audio_noise_reduction=input_audio_noise_reduction,
             input_audio_echo_cancellation=input_audio_echo_cancellation,
+            tools=function_tools,
+            tool_choice=ToolChoiceLiteral.AUTO if function_tools else None,
         )
 
         conn = self.connection
@@ -718,15 +813,149 @@ class BasicVoiceAssistant:
 
         elif event.type == ServerEventType.CONVERSATION_ITEM_CREATED:
             logger.debug(f"Conversation item created: {event.item.id}")
+            
+            # Handle function calls if function calling is enabled
+            if self.enable_function_calling and event.item.type == ItemType.FUNCTION_CALL:
+                print(f"🔧 Calling function: {event.item.name}")
+                await self._handle_function_call_with_improved_pattern(event, conn)
 
         else:
             logger.debug(f"Unhandled event type: {event.type}")
+
+    async def _handle_function_call_with_improved_pattern(self, conversation_created_event, connection):
+        """Handle function call using the improved pattern from the test."""
+        # Validate the event structure
+        if not isinstance(conversation_created_event, ServerEventConversationItemCreated):
+            logger.error("Expected ServerEventConversationItemCreated")
+            return
+
+        if not isinstance(conversation_created_event.item, ResponseFunctionCallItem):
+            logger.error("Expected ResponseFunctionCallItem")
+            return
+
+        function_call_item = conversation_created_event.item
+        function_name = function_call_item.name
+        call_id = function_call_item.call_id
+        previous_item_id = function_call_item.id
+
+        logger.info(f"Function call detected: {function_name} with call_id: {call_id}")
+
+        try:
+            # Set tracking variables
+            self.function_call_in_progress = True
+            self.active_call_id = call_id
+
+            # Wait for the function arguments to be complete
+            function_done = await _wait_for_event(connection, {ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE})
+
+            if not isinstance(function_done, ServerEventResponseFunctionCallArgumentsDone):
+                logger.error("Expected ServerEventResponseFunctionCallArgumentsDone")
+                return
+
+            if function_done.call_id != call_id:
+                logger.warning(f"Call ID mismatch: expected {call_id}, got {function_done.call_id}")
+                return
+
+            arguments = function_done.arguments
+            logger.info(f"Function arguments received: {arguments}")
+
+            # Wait for response to be done before proceeding
+            await _wait_for_event(connection, {ServerEventType.RESPONSE_DONE})
+
+            # Execute the function if we have it
+            if function_name in self.available_functions:
+                logger.info(f"Executing function: {function_name}")
+                result = self.available_functions[function_name](arguments)
+
+                # Create function call output item
+                function_output = FunctionCallOutputItem(call_id=call_id, output=json.dumps(result))
+
+                # Send the result back to the conversation with proper previous_item_id
+                await connection.conversation.item.create(previous_item_id=previous_item_id, item=function_output)
+                logger.info(f"Function result sent: {result}")
+
+                # Create a new response to process the function result
+                await connection.response.create()
+                logger.info("Function result response created - audio will be generated automatically")
+
+            else:
+                logger.error(f"Unknown function: {function_name}")
+
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout waiting for function call completion for {function_name}")
+        except Exception as e:
+            logger.error(f"Error executing function {function_name}: {e}")
+        finally:
+            self.function_call_in_progress = False
+            self.active_call_id = None
+
+    def get_current_time(self, arguments: Optional[Union[str, Mapping[str, Any]]] = None) -> Dict[str, Any]:
+        """Get the current time."""
+        # Parse arguments if provided as string
+        if isinstance(arguments, str):
+            try:
+                args = json.loads(arguments)
+            except json.JSONDecodeError:
+                args = {}
+        elif isinstance(arguments, dict):
+            args = arguments
+        else:
+            args = {}
+
+        timezone = args.get("timezone", "local")
+        now = datetime.datetime.now()
+
+        if timezone.lower() == "utc":
+            now = datetime.datetime.now(datetime.timezone.utc)
+            timezone_name = "UTC"
+        else:
+            timezone_name = "local"
+
+        formatted_time = now.strftime("%I:%M:%S %p")
+        formatted_date = now.strftime("%A, %B %d, %Y")
+
+        return {"time": formatted_time, "date": formatted_date, "timezone": timezone_name}
+
+    def get_current_weather(self, arguments: Union[str, Mapping[str, Any]]):
+        """Get the current weather for a location."""
+        # Parse arguments if provided as string
+        if isinstance(arguments, str):
+            try:
+                args = json.loads(arguments)
+            except json.JSONDecodeError:
+                logger.error(f"Failed to parse weather arguments: {arguments}")
+                return {"error": "Invalid arguments"}
+        elif isinstance(arguments, dict):
+            args = arguments
+        else:
+            return {"error": "No arguments provided"}
+
+        location = args.get("location", "Unknown")
+        unit = args.get("unit", "celsius")
+
+        # In a real application, you would call a weather API
+        # This is a simulated response
+        try:
+            weather_data = {
+                "location": location,
+                "temperature": 22 if unit == "celsius" else 72,
+                "unit": unit,
+                "condition": "Partly Cloudy",
+                "humidity": 65,
+                "wind_speed": 10,
+            }
+
+            return weather_data
+
+        except Exception as e:
+            logger.error(f"Error getting weather: {e}")
+            return {"error": str(e)}
 
 
 def parse_arguments():
     """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        description="Basic Voice Assistant using Azure VoiceLive SDK",
+        description="Comprehensive Voice Assistant using Azure VoiceLive SDK with optional function calling",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
 
@@ -940,6 +1169,14 @@ def parse_arguments():
         default=None,
     )
 
+    # Function calling
+    parser.add_argument(
+        "--enable-function-calling",
+        help="Enable function calling capabilities (time and weather functions)",
+        action="store_true",
+        default=os.environ.get("VOICELIVE_ENABLE_FUNCTION_CALLING", "false").lower() == "true",
+    )
+
     return parser.parse_args()
 
 
@@ -973,13 +1210,18 @@ async def main():
             credential = AzureKeyCredential(args.api_key)
             logger.info("Using API key credential")
 
+        # Modify instructions if function calling is enabled
+        instructions = args.instructions
+        if args.enable_function_calling:
+            instructions += " You have access to functions for getting the current time and weather information. Use these functions when appropriate to provide accurate, real-time information."
+
         # Create and start voice assistant
         assistant = BasicVoiceAssistant(
             endpoint=args.endpoint,
             credential=credential,
             model=args.model,
             voice=args.voice,
-            instructions=args.instructions,
+            instructions=instructions,
             language=args.language,
             noise_reduction=args.noise_reduction,
             echo_cancellation=args.echo_cancellation,
@@ -1001,6 +1243,7 @@ async def main():
             agent_access_token=args.agent_access_token,
             phrase_list=args.phrase_list,
             audio_file=args.audio_file,
+            enable_function_calling=args.enable_function_calling,
         )
 
         # Setup signal handlers for graceful shutdown
