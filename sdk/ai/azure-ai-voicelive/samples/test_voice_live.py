@@ -89,6 +89,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
+def _load_audio_b64(path: str) -> str:
+    """Load audio file and return base64 encoded string."""
+    with open(path, "rb") as f:
+        audio_bytes = f.read()
+    return base64.b64encode(audio_bytes).decode("utf-8")
+
+
 class AudioProcessor:
     """
     Handles real-time audio capture and playback for the voice assistant.
@@ -348,6 +355,7 @@ class BasicVoiceAssistant:
         agent_connection_string: Optional[str] = None,
         agent_access_token: Optional[str] = None,
         phrase_list: Optional[str] = None,
+        audio_file: Optional[str] = None,
     ):
 
         self.endpoint = endpoint
@@ -375,6 +383,7 @@ class BasicVoiceAssistant:
         self.agent_connection_string = agent_connection_string
         self.agent_access_token = agent_access_token
         self.phrase_list = phrase_list
+        self.audio_file = audio_file
         self.connection: Optional["VoiceLiveConnection"] = None
         self.audio_processor: Optional[AudioProcessor] = None
         self.session_ready = False
@@ -422,12 +431,22 @@ class BasicVoiceAssistant:
                 # Start audio systems
                 await ap.start_playback()
 
-                logger.info("Voice assistant ready! Start speaking...")
-                print("\n" + "=" * 60)
-                print("🎤 VOICE ASSISTANT READY")
-                print("Start speaking to begin conversation")
-                print("Press Ctrl+C to exit")
-                print("=" * 60 + "\n")
+                if self.audio_file:
+                    # Audio file mode
+                    logger.info(f"Audio file mode: {self.audio_file}")
+                    print("\n" + "=" * 60)
+                    print("🎵 AUDIO FILE MODE")
+                    print(f"Processing audio file: {self.audio_file}")
+                    print("Press Ctrl+C to exit")
+                    print("=" * 60 + "\n")
+                else:
+                    # Live microphone mode
+                    logger.info("Voice assistant ready! Start speaking...")
+                    print("\n" + "=" * 60)
+                    print("🎤 VOICE ASSISTANT READY")
+                    print("Start speaking to begin conversation")
+                    print("Press Ctrl+C to exit")
+                    print("=" * 60 + "\n")
 
                 # Process events
                 await self._process_events()
@@ -562,6 +581,31 @@ class BasicVoiceAssistant:
 
         logger.info("Session configuration sent")
 
+    async def _send_audio_file(self):
+        """Send audio file to the VoiceLive service."""
+        if not self.audio_file:
+            return
+            
+        try:
+            # Check if file exists
+            if not os.path.exists(self.audio_file):
+                logger.error(f"Audio file not found: {self.audio_file}")
+                return
+                
+            logger.info(f"Loading audio file: {self.audio_file}")
+            audio_b64 = _load_audio_b64(self.audio_file)
+            
+            conn = self.connection
+            assert conn is not None, "Connection must be established before sending audio"
+            
+            logger.info("Sending audio file to VoiceLive service...")
+            await conn.input_audio_buffer.append(audio=audio_b64)
+            logger.info("Audio file sent successfully")
+            
+        except Exception as e:
+            logger.error(f"Error sending audio file: {e}")
+            raise
+
     def _get_input_audio_transcription_config(self):
         """Get input audio transcription configuration based on model and language."""
         # For English, no language configuration needed (automatic multilingual)
@@ -621,8 +665,12 @@ class BasicVoiceAssistant:
             logger.info(f"Session ready: {event.session.id}")
             self.session_ready = True
 
-            # Start audio capture once session is ready
-            await ap.start_capture()
+            if self.audio_file:
+                # In audio file mode, send the file after session is ready
+                await self._send_audio_file()
+            else:
+                # Start audio capture once session is ready (live mode)
+                await ap.start_capture()
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
             logger.info("🎤 User started speaking - stopping playback")
@@ -879,6 +927,14 @@ def parse_arguments():
 
     parser.add_argument("--verbose", help="Enable verbose logging", action="store_true")
 
+    # Audio file input
+    parser.add_argument(
+        "--audio-file",
+        help="Path to audio file to send instead of live microphone input (supports .wav, .mp3, .m4a, etc.)",
+        type=str,
+        default=None,
+    )
+
     return parser.parse_args()
 
 
@@ -895,6 +951,11 @@ async def main():
         print("❌ Error: No authentication provided")
         print("Please provide an API key using --api-key or set AZURE_VOICELIVE_API_KEY environment variable,")
         print("or use --use-token-credential for Azure authentication.")
+        sys.exit(1)
+
+    # Validate audio file if provided
+    if args.audio_file and not os.path.exists(args.audio_file):
+        print(f"❌ Error: Audio file not found: {args.audio_file}")
         sys.exit(1)
 
     try:
@@ -934,6 +995,7 @@ async def main():
             agent_connection_string=args.agent_connection_string,
             agent_access_token=args.agent_access_token,
             phrase_list=args.phrase_list,
+            audio_file=args.audio_file,
         )
 
         # Setup signal handlers for graceful shutdown
