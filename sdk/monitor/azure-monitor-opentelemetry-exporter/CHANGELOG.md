@@ -16,6 +16,7 @@
 - Fix logic for message field on Microsoft.ApplicationInsights.Message to sync with Breeze
   ([#43060](https://github.com/Azure/azure-sdk-for-python/pull/43060))
 - Removed tests from test_storage.py that were causing transient build pipeline failures
+  ([#43122](https://github.com/Azure/azure-sdk-for-python/pull/43122))
 
 ### Other Changes
 
