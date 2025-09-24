@@ -1027,10 +1027,10 @@ def _preprocess_data(
     batch_run_client: BatchClient
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
-    def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
+    def get_client_type(kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
         """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
-        _use_run_submitter_client = cast(Optional[bool], evaluate_kwargs.pop("_use_run_submitter_client", None))
-        _use_pf_client = cast(Optional[bool], evaluate_kwargs.pop("_use_pf_client", None))
+        _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
+        _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
 
         if _use_run_submitter_client is None and _use_pf_client is None:
             # If both are unset, return default
