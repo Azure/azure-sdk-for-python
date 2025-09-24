@@ -96,9 +96,9 @@ except ImportError:  # pragma: no cover
         try:
             from charset_normalizer import detect  # type: ignore[no-redef]
         except ImportError as e:  # pragma: no cover
-            err = e
+            charset_import_err = e
             def detect(_: bytes) -> dict[str, Any]:  # type: ignore[no-untyped-def]
-                raise err
+                raise charset_import_err
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
