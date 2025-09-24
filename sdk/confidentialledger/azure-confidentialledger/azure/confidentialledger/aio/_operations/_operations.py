@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -71,7 +71,7 @@ from .._configuration import ConfidentialLedgerClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-public-methods
@@ -155,7 +155,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ConsortiumMember]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ConsortiumMember]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -204,7 +204,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ConsortiumMember], deserialized.get("members", []))
+            list_of_elem = _deserialize(list[_models.ConsortiumMember], deserialized.get("members", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -304,7 +304,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Collection]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Collection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -353,7 +353,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Collection], deserialized.get("collections", []))
+            list_of_elem = _deserialize(list[_models.Collection], deserialized.get("collections", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -407,7 +407,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.LedgerEntry]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.LedgerEntry]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -460,7 +460,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.LedgerEntry], deserialized.get("entries", []))
+            list_of_elem = _deserialize(list[_models.LedgerEntry], deserialized.get("entries", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -945,7 +945,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.LedgerUser]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.LedgerUser]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -994,7 +994,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.LedgerUser], deserialized.get("ledgerUsers", []))
+            list_of_elem = _deserialize(list[_models.LedgerUser], deserialized.get("ledgerUsers", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1031,7 +1031,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.LedgerUserMultipleRoles]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.LedgerUserMultipleRoles]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1080,7 +1080,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.LedgerUserMultipleRoles], deserialized.get("ledgerUsers", []))
+            list_of_elem = _deserialize(list[_models.LedgerUserMultipleRoles], deserialized.get("ledgerUsers", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2100,7 +2100,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.UserDefinedFunction]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.UserDefinedFunction]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2149,7 +2149,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UserDefinedFunction], deserialized.get("functions", []))
+            list_of_elem = _deserialize(list[_models.UserDefinedFunction], deserialized.get("functions", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2571,9 +2571,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if user_defined_function_execution_properties else None
         cls: ClsType[_models.UserDefinedFunctionExecutionResponse] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if user_defined_function_execution_properties else None
         _content = None
         if isinstance(user_defined_function_execution_properties, (IOBase, bytes)):
             _content = user_defined_function_execution_properties
@@ -2626,7 +2627,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_user_defined_role(self, *, role_name: str, **kwargs: Any) -> List[_models.Role]:
+    async def get_user_defined_role(self, *, role_name: str, **kwargs: Any) -> list[_models.Role]:
         """Gets role actions for user defined roles.
 
         user defined roles allow users to define and manage app specific AuthZ policy.
@@ -2648,7 +2649,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Role]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Role]] = kwargs.pop("cls", None)
 
         _request = build_confidential_ledger_get_user_defined_role_request(
             role_name=role_name,
@@ -2683,7 +2684,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.Role], response.json())
+            deserialized = _deserialize(list[_models.Role], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2692,7 +2693,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def create_user_defined_role(
-        self, roles: List[_models.Role], *, content_type: str = "application/json", **kwargs: Any
+        self, roles: list[_models.Role], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Creates new roles and their actions.
 
@@ -2700,6 +2701,24 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         :param roles: Request body. Required.
         :type roles: list[~azure.confidentialledger.models.Role]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_user_defined_role(
+        self, roles: list[JSON], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Creates new roles and their actions.
+
+        User defined roles allow users to define and manage app specific AuthZ policy.
+
+        :param roles: Request body. Required.
+        :type roles: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2727,13 +2746,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @distributed_trace_async
-    async def create_user_defined_role(self, roles: Union[List[_models.Role], IO[bytes]], **kwargs: Any) -> None:
+    async def create_user_defined_role(
+        self, roles: Union[list[_models.Role], list[JSON], IO[bytes]], **kwargs: Any
+    ) -> None:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Is either a [Role] type or a IO[bytes] type. Required.
-        :type roles: list[~azure.confidentialledger.models.Role] or IO[bytes]
+        :param roles: Request body. Is one of the following types: [Role], [JSON], IO[bytes] Required.
+        :type roles: list[~azure.confidentialledger.models.Role] or list[JSON] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2790,7 +2811,7 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def update_user_defined_role(
-        self, roles: List[_models.Role], *, content_type: str = "application/json", **kwargs: Any
+        self, roles: list[_models.Role], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
@@ -2799,6 +2820,25 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         :param roles: Request body. Required.
         :type roles: list[~azure.confidentialledger.models.Role]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_user_defined_role(
+        self, roles: list[JSON], *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Patch replaces the allowed action on existing roles,if the desire is to remove
+        an existing action, the role must be deleted and recreated.
+
+        User defined roles allow users to define and manage app specific AuthZ policy.
+
+        :param roles: Request body. Required.
+        :type roles: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2827,14 +2867,16 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
         """
 
     @distributed_trace_async
-    async def update_user_defined_role(self, roles: Union[List[_models.Role], IO[bytes]], **kwargs: Any) -> None:
+    async def update_user_defined_role(
+        self, roles: Union[list[_models.Role], list[JSON], IO[bytes]], **kwargs: Any
+    ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Is either a [Role] type or a IO[bytes] type. Required.
-        :type roles: list[~azure.confidentialledger.models.Role] or IO[bytes]
+        :param roles: Request body. Is one of the following types: [Role], [JSON], IO[bytes] Required.
+        :type roles: list[~azure.confidentialledger.models.Role] or list[JSON] or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

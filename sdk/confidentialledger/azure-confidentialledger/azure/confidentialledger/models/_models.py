@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=useless-super-delegation
 
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -71,7 +71,7 @@ class Bundle(_Model):
 
     metadata: "_models.Metadata" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata information for the bundle. Required."""
-    modules: List["_models.ModuleDef"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    modules: list["_models.ModuleDef"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Any object. Required."""
 
     @overload
@@ -79,7 +79,7 @@ class Bundle(_Model):
         self,
         *,
         metadata: "_models.Metadata",
-        modules: List["_models.ModuleDef"],
+        modules: list["_models.ModuleDef"],
     ) -> None: ...
 
     @overload
@@ -169,7 +169,7 @@ class ConfidentialLedgerEnclaves(_Model):
 
     current_node_id: str = rest_field(name="currentNodeId", visibility=["read", "create", "update", "delete", "query"])
     """Id of the Confidential Ledger node responding to the request. Required."""
-    enclave_quotes: Dict[str, "_models.EnclaveQuote"] = rest_field(
+    enclave_quotes: dict[str, "_models.EnclaveQuote"] = rest_field(
         name="enclaveQuotes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Dictionary of enclave quotes, indexed by node id. Required."""
@@ -179,7 +179,7 @@ class ConfidentialLedgerEnclaves(_Model):
         self,
         *,
         current_node_id: str,
-        enclave_quotes: Dict[str, "_models.EnclaveQuote"],
+        enclave_quotes: dict[str, "_models.EnclaveQuote"],
     ) -> None: ...
 
     @overload
@@ -354,7 +354,7 @@ class EndpointProperties(_Model):
     :vartype redirection_strategy: str or ~azure.confidentialledger.models.RedirectionStrategy
     """
 
-    authn_policies: List[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    authn_policies: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Authentication policies for the endpoint. Required."""
     forwarding_required: Union[str, "_models.ForwardingRequired"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -372,7 +372,7 @@ class EndpointProperties(_Model):
     mode: Optional[Union[str, "_models.Mode"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The operation mode for this endpoint. Known values are: \"readwrite\", \"readonly\", and
      \"historical\"."""
-    openapi: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    openapi: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Anything."""
     openapi_hidden: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Openapi hidden."""
@@ -385,13 +385,13 @@ class EndpointProperties(_Model):
     def __init__(
         self,
         *,
-        authn_policies: List[Dict[str, Any]],
+        authn_policies: list[dict[str, Any]],
         forwarding_required: Union[str, "_models.ForwardingRequired"],
         interpreter_reuse: Optional["_models.InterpreterReusePolicy"] = None,
         js_function: Optional[str] = None,
         js_module: Optional[str] = None,
         mode: Optional[Union[str, "_models.Mode"]] = None,
-        openapi: Optional[Dict[str, Any]] = None,
+        openapi: Optional[dict[str, Any]] = None,
         openapi_hidden: Optional[bool] = None,
         redirection_strategy: Optional[Union[str, "_models.RedirectionStrategy"]] = None,
     ) -> None: ...
@@ -513,12 +513,12 @@ class LedgerEntry(_Model):
     transaction_id: Optional[str] = rest_field(name="transactionId", visibility=["read"])
     """A unique identifier for the state of the ledger. If returned as part of a
      LedgerEntry, it indicates the state from which the entry was read."""
-    pre_hooks: Optional[List["_models.UserDefinedFunctionHook"]] = rest_field(
+    pre_hooks: Optional[list["_models.UserDefinedFunctionHook"]] = rest_field(
         name="preHooks", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of user defined function hooks to be executed before the ledger entry is
      written."""
-    post_hooks: Optional[List["_models.UserDefinedFunctionHook"]] = rest_field(
+    post_hooks: Optional[list["_models.UserDefinedFunctionHook"]] = rest_field(
         name="postHooks", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of user defined function hooks to be executed after the ledger entry is
@@ -529,8 +529,8 @@ class LedgerEntry(_Model):
         self,
         *,
         contents: str,
-        pre_hooks: Optional[List["_models.UserDefinedFunctionHook"]] = None,
-        post_hooks: Optional[List["_models.UserDefinedFunctionHook"]] = None,
+        pre_hooks: Optional[list["_models.UserDefinedFunctionHook"]] = None,
+        post_hooks: Optional[list["_models.UserDefinedFunctionHook"]] = None,
     ) -> None: ...
 
     @overload
@@ -680,7 +680,7 @@ class LedgerUserMultipleRoles(_Model):
     :vartype user_id: str
     """
 
-    assigned_roles: List[Union[str, "_models.ConfidentialLedgerUserRoleName"]] = rest_field(
+    assigned_roles: list[Union[str, "_models.ConfidentialLedgerUserRoleName"]] = rest_field(
         name="assignedRoles", visibility=["read", "create", "update", "delete", "query"]
     )
     """Represents an assignable role. Required."""
@@ -692,7 +692,7 @@ class LedgerUserMultipleRoles(_Model):
     def __init__(
         self,
         *,
-        assigned_roles: List[Union[str, "_models.ConfidentialLedgerUserRoleName"]],
+        assigned_roles: list[Union[str, "_models.ConfidentialLedgerUserRoleName"]],
     ) -> None: ...
 
     @overload
@@ -742,7 +742,7 @@ class Metadata(_Model):
     :vartype endpoints: dict[str, ~azure.confidentialledger.models.MethodToEndpointProperties]
     """
 
-    endpoints: Dict[str, "_models.MethodToEndpointProperties"] = rest_field(
+    endpoints: dict[str, "_models.MethodToEndpointProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A map of path to method endpoints for the path. Required."""
@@ -751,7 +751,7 @@ class Metadata(_Model):
     def __init__(
         self,
         *,
-        endpoints: Dict[str, "_models.MethodToEndpointProperties"],
+        endpoints: dict[str, "_models.MethodToEndpointProperties"],
     ) -> None: ...
 
     @overload
@@ -878,11 +878,11 @@ class ReceiptContents(_Model):
     """Leaf components of the receipt."""
     node_id: str = rest_field(name="nodeId", visibility=["read", "create", "update", "delete", "query"])
     """Node identifier. Required."""
-    proof: List["_models.ReceiptElement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    proof: list["_models.ReceiptElement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Proof. Required."""
     root: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Root."""
-    service_endorsements: Optional[List[str]] = rest_field(
+    service_endorsements: Optional[list[str]] = rest_field(
         name="serviceEndorsements", visibility=["read", "create", "update", "delete", "query"]
     )
     """Service endorsements."""
@@ -894,13 +894,13 @@ class ReceiptContents(_Model):
         self,
         *,
         node_id: str,
-        proof: List["_models.ReceiptElement"],
+        proof: list["_models.ReceiptElement"],
         signature: str,
         cert: Optional[str] = None,
         leaf: Optional[str] = None,
         leaf_components: Optional["_models.ReceiptLeafComponents"] = None,
         root: Optional[str] = None,
-        service_endorsements: Optional[List[str]] = None,
+        service_endorsements: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1002,7 +1002,7 @@ class Role(_Model):
 
     role_name: Optional[str] = rest_field(name="roleName", visibility=["read", "create", "update", "delete", "query"])
     """name of the user defined role."""
-    role_actions: Optional[List[str]] = rest_field(
+    role_actions: Optional[list[str]] = rest_field(
         name="roleActions", visibility=["read", "create", "update", "delete", "query"]
     )
     """role actions."""
@@ -1012,7 +1012,7 @@ class Role(_Model):
         self,
         *,
         role_name: Optional[str] = None,
-        role_actions: Optional[List[str]] = None,
+        role_actions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1040,7 +1040,7 @@ class TransactionReceipt(_Model):
     :vartype transaction_id: str
     """
 
-    application_claims: Optional[List["_models.ApplicationClaim"]] = rest_field(
+    application_claims: Optional[list["_models.ApplicationClaim"]] = rest_field(
         name="applicationClaims", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of application claims."""
@@ -1062,7 +1062,7 @@ class TransactionReceipt(_Model):
         *,
         state: Union[str, "_models.ConfidentialLedgerQueryState"],
         transaction_id: str,
-        application_claims: Optional[List["_models.ApplicationClaim"]] = None,
+        application_claims: Optional[list["_models.ApplicationClaim"]] = None,
         receipt: Optional["_models.ReceiptContents"] = None,
     ) -> None: ...
 
@@ -1190,7 +1190,7 @@ class UserDefinedFunctionExecutionProperties(_Model):
     :vartype runtime_options: ~azure.confidentialledger.models.JsRuntimeOptions
     """
 
-    arguments: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    arguments: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Runtime arguments of the user defined function. Defaults to an empty list."""
     exported_function_name: Optional[str] = rest_field(
         name="exportedFunctionName", visibility=["read", "create", "update", "delete", "query"]
@@ -1206,7 +1206,7 @@ class UserDefinedFunctionExecutionProperties(_Model):
     def __init__(
         self,
         *,
-        arguments: Optional[List[str]] = None,
+        arguments: Optional[list[str]] = None,
         exported_function_name: Optional[str] = None,
         runtime_options: Optional["_models.JsRuntimeOptions"] = None,
     ) -> None: ...
