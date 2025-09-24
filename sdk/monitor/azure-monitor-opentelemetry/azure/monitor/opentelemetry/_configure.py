@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from functools import cached_property
 from logging import getLogger, Formatter
-from typing import Dict, List, Optional, cast
+from typing import Dict, List, Optional, cast, Any, Mapping, Sequence, TYPE_CHECKING
 
 from opentelemetry.instrumentation.instrumentor import (  # type: ignore
     BaseInstrumentor,
@@ -15,7 +15,7 @@ from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.metrics.view import View
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace import TracerProvider, SpanProcessor
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
 from opentelemetry.util._importlib_metadata import (
@@ -41,7 +41,7 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
-    enable_live_metrics,
+    enable_live_metrics as _enable_live_metrics,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._processor import (  # pylint: disable=import-error,no-name-in-module
     _QuickpulseLogRecordProcessor,
@@ -64,15 +64,32 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _is_instrumentation_enabled,
+    _Unset,
 )
 from azure.monitor.opentelemetry._utils.instrumentation import (
     get_dist_dependency_conflicts,
 )
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
 _logger = getLogger(__name__)
 
 
-def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
+def configure_azure_monitor(
+    *,
+    connection_string: str = _Unset,
+    credential: "TokenCredential" = _Unset,
+    disable_offline_storage: bool = _Unset,
+    logger_name: str = _Unset,
+    instrumentation_options: Mapping[str, Any] = _Unset,
+    resource: Resource = _Unset,
+    span_processors: Sequence[SpanProcessor] = _Unset,
+    enable_live_metrics: bool = _Unset,
+    storage_directory: str = _Unset,
+    views: Sequence[View] = _Unset,
+    **kwargs
+) -> None:
     """This function works as a configuration layer that allows the
     end user to configure OpenTelemetry and Azure monitor components. The
     configuration can be done via arguments passed to this function.
@@ -104,7 +121,19 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
     _send_attach_warning()
 
-    configurations = _get_configurations(**kwargs)
+    configurations = _get_configurations(
+        connection_string=connection_string,
+        credential=credential,
+        disable_offline_storage=disable_offline_storage,
+        logger_name=logger_name,
+        instrumentation_options=instrumentation_options,
+        resource=resource,
+        span_processors=span_processors,
+        enable_live_metrics=enable_live_metrics,
+        storage_directory=storage_directory,
+        views=views,
+        **kwargs
+    )
 
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
@@ -262,7 +291,7 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_live_metrics(configurations):
-    enable_live_metrics(**configurations)
+    _enable_live_metrics(**configurations)
 
 
 class _EntryPointDistFinder:

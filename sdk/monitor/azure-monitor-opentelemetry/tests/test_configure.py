@@ -577,7 +577,7 @@ class TestConfigure(unittest.TestCase):
         reader_mock.assert_called_once_with(metric_exp_init_mock)
 
     @patch(
-        "azure.monitor.opentelemetry._configure.enable_live_metrics",
+        "azure.monitor.opentelemetry._configure._enable_live_metrics",
     )
     def test_setup_live_metrics(
         self,
