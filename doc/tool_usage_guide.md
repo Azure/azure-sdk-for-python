@@ -22,6 +22,7 @@ This repo is currently migrating all checks from a slower `tox`-based framework,
 |`black`| Runs `black` checks. | `azpysdk black .` |
 |`verifytypes`| Runs `verifytypes` checks. | `azpysdk verifytypes .` |
 |`ruff`| Runs `ruff` checks. | `azpysdk ruff .` |
+|`verifysdist`| Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py. | `azpysdk verifysdist .` |
 |`import_all`| Installs the package w/ default dependencies, then attempts to `import *` from the base namespace. Ensures that all imports will resolve after a base install and import. | `azpysdk import_all .` |
 
 ## Common arguments
