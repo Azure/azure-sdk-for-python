@@ -9,7 +9,7 @@ from subprocess import CalledProcessError, check_call
 from pathlib import Path
 
 from .Check import Check
-from ci_tools.functions import install_into_venv
+from ci_tools.functions import install_into_venv, get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.variables import discover_repo_root
@@ -312,6 +312,11 @@ class sphinx(Check):
                 write_version(site_folder, parsed.version)
             else:
                 logger.info("Skipping sphinx prep for {}".format(package_name))
+
+            # TODO debug
+            pip_cmd = get_pip_command(executable)
+            logger.info(f"RUN PIP FREEZE ON {package_dir}")
+            check_call(pip_cmd + ["freeze"], cwd=package_dir)
 
             # run apidoc
             if should_build_docs(parsed.name):
