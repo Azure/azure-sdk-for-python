@@ -145,7 +145,10 @@ class AsyncPrompty:
         configs, self._template = self._parse_prompty(path)
 
         if is_reasoning_model:
-            parameters = configs.get("model", {}).get("parameters") or {}
+            model_cfg = configs.get("model") or {}
+            parameters = model_cfg.get("parameters") or {}
+            if not isinstance(parameters, dict):
+                parameters = {}
             if "max_tokens" in parameters:
                 parameters.pop("max_tokens", None)
                 parameters["max_completion_tokens"] = DEFAULT_MAX_COMPLETION_TOKENS_REASONING_MODELS
