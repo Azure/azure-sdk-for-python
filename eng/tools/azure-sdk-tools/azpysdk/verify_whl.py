@@ -12,6 +12,7 @@ from packaging.version import Version
 from typing import Dict, Any, Optional, List
 
 from .Check import Check
+from ci_tools.functions import get_pip_command
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from pypi_tools.pypi import retrieve_versions_from_pypi
@@ -55,13 +56,13 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
-def verify_whl_root_directory(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup) -> bool:
+def verify_whl_root_directory(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup, executable: str) -> bool:
     # Verify metadata compatibility with prior version
     version: str = parsed_pkg.version
     metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
     prior_version = get_prior_version(parsed_pkg.name, version)
     if prior_version:
-        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata):
+        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, executable):
             return False
 
     # This method ensures root directory in whl is the directory indicated by our top level namespace
@@ -116,14 +117,15 @@ def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
 
 
 def verify_prior_version_metadata(
-    package_name: str, prior_version: str, current_metadata: Dict[str, Any], package_type: str = "*.whl"
+    package_name: str, prior_version: str, current_metadata: Dict[str, Any], executable: str, package_type: str = "*.whl"
 ) -> bool:
     """Download prior version and verify metadata compatibility."""
+    pip_cmd = get_pip_command(executable)
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
             is_binary = "--only-binary=:all:" if package_type == "*.whl" else "--no-binary=:all:"
             subprocess.run(
-                ["pip", "download", "--no-deps", is_binary, f"{package_name}=={prior_version}", "--dest", tmp_dir],
+                pip_cmd + ["download", "--no-deps", is_binary, f"{package_name}=={prior_version}", "--dest", tmp_dir],
                 check=True,
                 capture_output=True,
             )
@@ -203,7 +205,7 @@ class verify_whl(Check):
 
             if should_verify_package(package_name):
                 logger.info(f"Verifying whl for package: {package_name}")
-                if verify_whl_root_directory(staging_directory, top_level_module, parsed):
+                if verify_whl_root_directory(staging_directory, top_level_module, parsed, executable):
                     logger.info(f"Verified whl for package {package_name}")
                 else:
                     logger.error(f"Failed to verify whl for package {package_name}")
