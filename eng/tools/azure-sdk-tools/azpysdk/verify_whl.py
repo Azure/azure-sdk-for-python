@@ -48,7 +48,7 @@ def extract_whl(dist_dir, version):
     cleanup(zip_file)
     os.rename(path_to_whl, zip_file)
 
-    # Extrat renamed gz file to unzipped folder
+    # Extract renamed gz file to unzipped folder
     extract_location = os.path.join(dist_dir, "unzipped")
     cleanup(extract_location)
     unzip_file_to_directory(zip_file, extract_location)
