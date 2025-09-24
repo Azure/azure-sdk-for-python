@@ -26,6 +26,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST,
     _DEPENDENCY,
 )
+
 from azure.monitor.opentelemetry.exporter._utils import (
     Singleton,
     get_compute_type,
