@@ -333,7 +333,7 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
     # Fall back to regular print if tqdm.write fails (e.g., when progress bar is closed)
     try:
         tqdm.write(f'Evaluation results saved to "{p.resolve()}".\n')
-    except ValueError:
+    except Exception:
         print(f'Evaluation results saved to "{p.resolve()}".\n')
 
 
