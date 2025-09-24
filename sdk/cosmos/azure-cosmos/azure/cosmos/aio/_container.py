@@ -46,7 +46,7 @@ from .._base import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
-from .._constants import _Constants, _InternalOptions, _Kwargs
+from .._constants import _Constants, _InternalOptions, _Kwargs, _Warn
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -193,7 +193,7 @@ class ContainerProxy:
         session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
-                _Constants.SESSION_TOKEN_WARNING + " It will now be removed in the future.",
+                _Warn.SESSION_TOKEN_WARNING + " It will now be removed in the future.",
                 DeprecationWarning)
 
         if priority is not None:
@@ -273,7 +273,7 @@ class ContainerProxy:
         match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
-                _Constants.MATCH_CONDITION_WARNING +
+                _Warn.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1666,7 +1666,7 @@ class ContainerProxy:
         match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
-                _Constants.MATCH_CONDITION_WARNING +
+                _Warn.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1738,7 +1738,7 @@ class ContainerProxy:
         match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
-                _Constants.MATCH_CONDITION_WARNING +
+                _Warn.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 

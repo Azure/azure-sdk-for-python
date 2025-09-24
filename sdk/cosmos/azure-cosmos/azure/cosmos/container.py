@@ -43,7 +43,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _Constants, _InternalOptions, _Kwargs
+from ._constants import _Constants, _InternalOptions, _Kwargs, _Warn
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -190,7 +190,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
-                _Constants.SESSION_TOKEN_WARNING + " It will now be removed in the future.",
+                _Warn.SESSION_TOKEN_WARNING + " It will now be removed in the future.",
                 DeprecationWarning)
         if priority is not None:
             kwargs[_Kwargs.PRIORITY] = priority
@@ -201,7 +201,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         if populate_query_metrics:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
         if populate_partition_key_range_statistics is not None:
@@ -285,7 +285,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -424,7 +424,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if populate_query_metrics is not None:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             feed_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1097,7 +1097,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1194,7 +1194,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1270,13 +1270,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                _Constants.ETAG_WARNING +
+                _Warn.ETAG_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                _Constants.MATCH_CONDITION_WARNING +
+                _Warn.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1302,7 +1302,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = not enable_automatic_id_generation
         if populate_query_metrics:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1466,13 +1466,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                _Constants.ETAG_WARNING +
+                _Warn.ETAG_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                _Constants.MATCH_CONDITION_WARNING +
+                _Warn.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1576,7 +1576,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
-                _Constants.POPULATE_QUERY_METRICS_WARNING,
+                _Warn.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1605,7 +1605,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         warnings.warn(
-            _Constants.READ_OFFER_DEPRECATION_WARNING,
+            _Warn.READ_OFFER_DEPRECATION_WARNING,
             DeprecationWarning
         )
         return self.get_throughput(**kwargs)
@@ -1879,13 +1879,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                _Constants.ETAG_WARNING +
+                _Warn.ETAG_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                _Constants.MATCH_CONDITION_WARNING +
+                _Warn.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 

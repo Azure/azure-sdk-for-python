@@ -112,20 +112,37 @@ class _Constants:
     CLEAR: Literal["clear"] = "clear"
     """The clear method name for response hooks."""
 
-    # Warning messages
-    SESSION_TOKEN_WARNING: str = "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+
+class _Warn:
+    """Warning message constants used throughout the azure-cosmos package
+    
+    These constants provide centralized warning messages to ensure consistency
+    across the SDK when warning users about deprecated or ignored parameters.
+    """
+
+    SESSION_TOKEN_WARNING: str = (
+        "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+    )
     """Warning message for session token parameter."""
 
-    POPULATE_QUERY_METRICS_WARNING: str = "the populate_query_metrics flag does not apply to this method and will be removed in the future"
+    POPULATE_QUERY_METRICS_WARNING: str = (
+        "the populate_query_metrics flag does not apply to this method and will be removed in the future"
+    )
     """Warning message for populate query metrics parameter."""
 
-    ETAG_WARNING: str = "The 'etag' flag does not apply to this method and is always ignored even if passed."
+    ETAG_WARNING: str = (
+        "The 'etag' flag does not apply to this method and is always ignored even if passed."
+    )
     """Warning message for etag parameter."""
 
-    MATCH_CONDITION_WARNING: str = "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+    MATCH_CONDITION_WARNING: str = (
+        "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+    )
     """Warning message for match condition parameter."""
 
-    READ_OFFER_DEPRECATION_WARNING: str = "read_offer is a deprecated method name, use get_throughput instead"
+    READ_OFFER_DEPRECATION_WARNING: str = (
+        "read_offer is a deprecated method name, use get_throughput instead"
+    )
     """Warning message for deprecated read_offer method."""
 
 
