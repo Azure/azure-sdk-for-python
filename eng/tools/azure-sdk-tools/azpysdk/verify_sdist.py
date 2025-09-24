@@ -1,9 +1,6 @@
 import argparse
-import logging
 import os
 from typing import List, Mapping, Any, Dict, Optional
-import tarfile 
-import zipfile
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from ci_tools.functions import verify_package_classifiers
 import argparse
@@ -12,6 +9,7 @@ import sys
 
 from typing import Optional, List
 from .verify_whl import cleanup, should_verify_package, get_prior_version, verify_prior_version_metadata, get_path_to_zip, unzip_file_to_directory
+from ci_tools.scenario.generation import create_package_and_install
 from .Check import Check
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.logging import logger
@@ -45,7 +43,7 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     return sdist_folders
 
 
-def verify_sdist_helper(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup) -> bool:
+def verify_sdist_helper(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup, executable: str) -> bool:
     """
     Compares the root directories in source against root directories present within a sdist.
     Also verifies metadata compatibility with prior stable version.
@@ -53,24 +51,24 @@ def verify_sdist_helper(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup
     version = parsed_pkg.version
     # Extract metadata from zip file to ensure we're checking the built package metadata
     metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version, package_type="*.tar.gz"))
-
+    
     source_folders = get_root_directories_in_source(package_dir)
     sdist_folders = get_root_directories_in_sdist(dist_dir, version)
 
     # compare folders in source directory against unzipped sdist
     missing_folders = set(source_folders) - set(sdist_folders)
     for folder in missing_folders:
-        logging.error("Source folder [%s] is not included in sdist", folder)
+        logger.error("Source folder [%s] is not included in sdist", folder)
 
     if missing_folders:
-        logging.info("Directories in source: %s", source_folders)
-        logging.info("Directories in sdist: %s", sdist_folders)
+        logger.info("Directories in source: %s", source_folders)
+        logger.info("Directories in sdist: %s", sdist_folders)
         return False
 
     # Verify metadata compatibility with prior version
     prior_version = get_prior_version(parsed_pkg.name, version)
     if prior_version:
-        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, package_type="*.tar.gz"):
+        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, package_type="*.tar.gz", executable=executable):
             return False
 
     return True
@@ -86,14 +84,14 @@ def verify_sdist_pytyped(
     manifest_location = os.path.join(pkg_dir, "MANIFEST.in")
 
     if include_package_data is None or False:
-        logging.info(
+        logger.info(
             "Ensure that the setup.py present in directory {} has kwarg 'include_package_data' defined and set to 'True'."
         )
         result = False
 
     if package_metadata:
         if not any([key for key in package_metadata if "py.typed" in str(package_metadata[key])]):
-            logging.info(
+            logger.info(
                 "At least one value in the package_metadata map should include a reference to the py.typed file."
             )
             result = False
@@ -102,12 +100,12 @@ def verify_sdist_pytyped(
         with open(manifest_location, "r") as f:
             lines = f.readlines()
             if not any([include for include in lines if "py.typed" in include]):
-                logging.info("Ensure that the MANIFEST.in includes at least one path that leads to a py.typed file.")
+                logger.info("Ensure that the MANIFEST.in includes at least one path that leads to a py.typed file.")
                 result = False
 
     pytyped_file_path = os.path.join(pkg_dir, *namespace.split("."), "py.typed")
     if not os.path.exists(pytyped_file_path):
-        logging.info(
+        logger.info(
             "The py.typed file must exist in the base namespace for your package. Traditionally this would mean the furthest depth, EG 'azure/storage/blob/py.typed'."
         )
         result = False
@@ -146,11 +144,25 @@ class verify_sdist(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for verify_sdist check")
 
+            self.install_dev_reqs(executable, args, package_dir)
+
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="sdist",
+                pre_download_disabled=False,
+                python_executable=executable,
+            )
+
             error_occurred = False
 
             if should_verify_package(package_name):
                 logger.info(f"Verifying sdist folders and metadata for package {package_name}")
-                if verify_sdist_helper(package_dir, staging_directory, parsed):
+                if verify_sdist_helper(package_dir, staging_directory, parsed, executable):
                     logger.info(f"Verified sdist folders and metadata for package {package_name}")
                 else:
                     logger.error(f"Failed to verify sdist folders and metadata for package {package_name}")
@@ -171,13 +183,13 @@ class verify_sdist(Check):
                     error_occurred = True
 
             if package_name not in EXCLUDED_CLASSIFICATION_PACKAGES and "-nspkg" not in package_name:
-                logging.info(f"Verifying package classifiers: {package_name}")
+                logger.info(f"Verifying package classifiers: {package_name}")
 
                 status, message = verify_package_classifiers(package_name, parsed.version, parsed.classifiers)
                 if status:
-                    logging.info(f"Package classifiers are set properly: {package_name}")
+                    logger.info(f"Package classifiers are set properly: {package_name}")
                 else:
-                    logging.error(f"{message}")
+                    logger.error(f"{message}")
                     error_occurred = True
 
             if error_occurred:
