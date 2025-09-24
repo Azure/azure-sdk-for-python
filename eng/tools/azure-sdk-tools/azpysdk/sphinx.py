@@ -128,7 +128,7 @@ def mgmt_apidoc(output_dir: str, target_folder: str, executable: str) -> int:
     return 0
 
 
-def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
+def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: str) -> int:
     working_doc_folder = os.path.join(output_dir, "doc")
     command_array = [
         "sphinx-apidoc",
@@ -153,6 +153,14 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
         # otherwise, we will run sphinx-apidoc to generate the sources
         else:
             logger.info("Sphinx api-doc command: {}".format(command_array))
+            
+            # TODO
+            logger.info(f"RUNNING SPHINX APIDOC ON and with cwd= {target_dir}")
+            # TODO debug
+            pip_cmd = get_pip_command(executable)
+            logger.info(f"RUN PIP FREEZE ON {target_dir}")
+            check_call(pip_cmd + ["freeze"], cwd=target_dir)
+            
             check_call(command_array, cwd=target_dir)
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
             # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
@@ -261,9 +269,9 @@ class sphinx(Check):
             logger.info(f"Processing {package_name} for sphinx check")
 
             # check Python version
-            if sys.version_info < (3, 11):
-                logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
-                return 1
+            # if sys.version_info < (3, 11):
+            #     logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
+            #     return 1
 
             self.install_dev_reqs(executable, args, package_dir)
 
@@ -313,17 +321,12 @@ class sphinx(Check):
             else:
                 logger.info("Skipping sphinx prep for {}".format(package_name))
 
-            # TODO debug
-            pip_cmd = get_pip_command(executable)
-            logger.info(f"RUN PIP FREEZE ON {package_dir}")
-            check_call(pip_cmd + ["freeze"], cwd=package_dir)
-
             # run apidoc
             if should_build_docs(parsed.name):
                 if is_mgmt_package(parsed.name):
                     results.append(mgmt_apidoc(doc_folder, package_dir, executable))
                 else:
-                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace))
+                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace, executable))
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
 
