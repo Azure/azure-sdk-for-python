@@ -16,6 +16,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
+from .._internal.utils import sanitize_dict
 from .._internal.pipeline import build_pipeline
 
 
@@ -91,12 +92,17 @@ class ManagedIdentityClientBase(abc.ABC):
             refresh_on=refresh_on,
         )
 
+        sanitized_content = sanitize_dict(
+            content, sensitive_fields={"access_token", "refresh_token", "id_token", "username"}
+        )
+
         # caching is the final step because TokenCache.add mutates its "event"
         _CACHE_LOGGER.info(
-            "%s; Adding token to cache with ID %s, scope: %s",
+            "%s: Adding token to cache with ID %s, scope: %s, response: %s",
             id(self),
             id(self._cache),
             content["resource"],
+            sanitized_content,
         )
         self._cache.add(
             event={"response": content, "scope": [content["resource"]]},
@@ -109,9 +115,16 @@ class ManagedIdentityClientBase(abc.ABC):
         resource = _scopes_to_resource(*scopes)
         now = time.time()
         results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]))
+        total_results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
+
+        _CACHE_LOGGER.debug("All %s access tokens in MSAL cache %s", len(total_results), id(self._cache))
+        for token in total_results:
+            _CACHE_LOGGER.debug(
+                "  Cache ID: %s, access token: %s", id(self._cache), sanitize_dict(token, sensitive_fields=["secret"])
+            )
 
         _CACHE_LOGGER.info(
-            "Cache %s for credential/client %s contains %s access tokens for resource '%s'",
+            "Cache %s for credential/client %s contains %s access tokens for resource '%s'.",
             id(self._cache),
             id(self),
             len(results),

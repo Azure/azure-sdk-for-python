@@ -12,6 +12,7 @@ from typing import List, Optional
 
 from urllib.parse import urlparse
 
+import msal
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
@@ -19,6 +20,7 @@ within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
 
 _LOGGER = logging.getLogger(__name__)
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 VALID_TENANT_ID_CHARACTERS = frozenset(ascii_letters + digits + "-.")
 VALID_SCOPE_CHARACTERS = frozenset(ascii_letters + digits + "_-.:/")
@@ -229,3 +231,31 @@ def is_wsl() -> bool:
 def encode_base64(s: str) -> str:
     encoded = base64.b64encode(s.encode("utf-8"))
     return encoded.decode("utf-8")
+
+
+def sanitize_dict(dictionary, sensitive_fields):
+    return {k: "********" if k in sensitive_fields else v for k, v in dictionary.items()}
+
+
+def log_cache_modify(func):
+    def wrapper(*args, **kwargs):
+        try:
+            if args[1] == msal.TokenCache.CredentialType.ACCESS_TOKEN:
+                # Log the key that will be generated for the token being cached
+                key = args[0].key_makers[msal.TokenCache.CredentialType.ACCESS_TOKEN](**args[2])
+                _CACHE_LOGGER.info(
+                    "MSAL adding to Cache ID: %s, Access Token Cache Key: %s\nCache entry: %s",
+                    id(args[0]),
+                    key,
+                    sanitize_dict(args[2], sensitive_fields=["secret"]),
+                )
+        except Exception as ex:  # pylint: disable=broad-except
+            _CACHE_LOGGER.warning("Error logging MSAL cache modify: %s", ex)
+
+        # Call the original function and return its result
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+msal.TokenCache.modify = log_cache_modify(msal.TokenCache.modify)

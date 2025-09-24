@@ -17,7 +17,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
-from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .utils import get_default_authority, normalize_authority, resolve_tenant, sanitize_dict
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
 
@@ -98,6 +98,14 @@ class AadClientBase(abc.ABC):
                 query={"client_id": self._client_id, "realm": tenant},
             )
         )
+        total_results = list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
+
+        _CACHE_LOGGER.debug("All %s access tokens in MSAL cache %s", len(total_results), id(self._cache))
+        for token in total_results:
+            _CACHE_LOGGER.debug(
+                "  Cache ID: %s, access token: %s", id(self._cache), sanitize_dict(token, sensitive_fields=["secret"])
+            )
+
         _CACHE_LOGGER.info(
             "Cache %s for credential/client %s contains %s access tokens for resource '%s', "
             "tenant '%s', "
@@ -219,12 +227,13 @@ class AadClientBase(abc.ABC):
 
         # caching is the final step because 'add' mutates 'content'
         _CACHE_LOGGER.info(
-            "%s: Adding token to cache with ID %s, client_id: %s, scope: %s, token_endpoint: %s",
+            "%s: Adding token to cache with ID %s, client_id: %s, scope: %s, token_endpoint: %s, response: %s",
             id(self),
             id(self._cache),
             self._client_id,
             response.http_request.body["scope"].split(),
             response.http_request.url,
+            sanitize_dict(content, sensitive_fields={"access_token", "refresh_token", "id_token", "username"}),
         )
         cache.add(
             event={
