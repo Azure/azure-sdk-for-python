@@ -516,7 +516,7 @@ def gen_typespec(
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
-        tsp_client = "npx --prefix eng/common/tsp-client tsp-client"
+        tsp_client = "npx --no --prefix eng/common/tsp-client tsp-client"
         if spec_folder:
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
