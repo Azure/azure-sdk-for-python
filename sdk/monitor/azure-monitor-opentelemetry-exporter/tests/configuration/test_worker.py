@@ -94,7 +94,7 @@ class TestConfigurationWorker(unittest.TestCase):
         
         try:
             # Verify random.uniform was called with correct range
-            mock_random.assert_called_once_with(0.0, 15.0)
+            mock_random.assert_called_once_with(5.0, 15.0)
         finally:
             worker.shutdown()
 
@@ -329,8 +329,8 @@ class TestConfigurationWorker(unittest.TestCase):
             finally:
                 worker.shutdown()
 
-    def test_interval_lock_protects_refresh_interval(self):
-        """Test that interval lock properly protects refresh interval access."""
+    def test_lock_protects_worker_state(self):
+        """Test that single lock properly protects worker state access."""
         with patch('random.uniform', return_value=0.01):
             worker = _ConfigurationWorker(self.mock_configuration_manager, 1000)
             
@@ -341,9 +341,10 @@ class TestConfigurationWorker(unittest.TestCase):
                 
                 # Test thread safety by accessing from current thread
                 # (We can't easily test cross-thread locking without risking deadlock)
-                with worker._interval_lock:
+                with worker._lock:
                     # While holding lock, verify we can still access internal state
                     self.assertEqual(worker._refresh_interval, 1000)
+                    self.assertTrue(worker._running)
                     
             finally:
                 worker.shutdown()
