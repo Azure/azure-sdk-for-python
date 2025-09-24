@@ -25,6 +25,7 @@ from .pyright import pyright
 from .next_pyright import next_pyright
 from .ruff import ruff
 from .verifytypes import verifytypes
+from .verify_whl import verify_whl
 from .verify_sdist import verify_sdist
 
 from ci_tools.logging import configure_logging, logger
@@ -94,6 +95,7 @@ def build_parser() -> argparse.ArgumentParser:
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
+    verify_whl().register(subparsers, [common])
 
     return parser
 
