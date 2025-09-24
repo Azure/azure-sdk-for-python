@@ -35,6 +35,7 @@ from typing import (
     Union,
     Type,
     MutableMapping,
+    NoReturn,
 )
 from types import TracebackType
 from collections.abc import AsyncIterator
@@ -87,6 +88,7 @@ except ImportError:
 
     class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
 
+
 try:
     from cchardet import detect  # type: ignore
 except ImportError:  # pragma: no cover
@@ -97,8 +99,10 @@ except ImportError:  # pragma: no cover
             from charset_normalizer import detect  # type: ignore[no-redef]
         except ImportError as e:  # pragma: no cover
             charset_import_err = e
-            def detect(_: bytes) -> dict[str, Any]:  # type: ignore[no-untyped-def]
+
+            def detect(_: bytes) -> NoReturn:
                 raise charset_import_err
+
 
 class AioHttpTransport(AsyncHttpTransport):
     """AioHttp HTTP sender implementation.
