@@ -46,16 +46,6 @@ from azure.ai.voicelive.models import (
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy 
 from .voicelive_preparer import VoiceLivePreparer
 
-def _b64_pcm_from_wav(path: Path) -> str:
-    """Load 16-bit PCM WAV and return base64-encoded PCM16LE bytes (mono)."""
-    import soundfile as sf  # local import; only needed for file-based tests
-
-    audio, sr = sf.read(str(path), dtype="int16", always_2d=False)
-    if audio.ndim > 1:
-        audio = audio[:, 0]  # take first channel
-    return base64.b64encode(audio.tobytes()).decode("utf-8")
-
-
 def _load_audio_b64(path: Path) -> str:
     with open(path, "rb") as f:
         audio_bytes = f.read()
@@ -112,7 +102,7 @@ async def _wait_for_match(
 
 
 async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10):
-    evts = 0
+    events = 0
     audio_bytes = 0
     loop = asyncio.get_event_loop()
     end = loop.time() + timeout
@@ -128,12 +118,12 @@ async def _collect_event(conn, *, event_type: ServerEventType, timeout: int = 10
             break  # no event arrived before the overall timeout
 
         if evt.type == event_type:
-            evts += 1
+            events += 1
 
         if evt.type == ServerEventType.RESPONSE_AUDIO_DELTA:
             audio_bytes += len(evt.delta)
 
-    return evts, audio_bytes
+    return events, audio_bytes
 
 
 async def _collect_audio_trans_outputs(conn, duration_s: float) -> int:
@@ -189,7 +179,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             await _wait_for_event(conn, {ServerEventType.SESSION_CREATED}, 15)
             await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 15)
 
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
 
             # Observe that we do NOT get a response.* automatically; we should at least see input_* events
             evt = await _wait_for_event(
@@ -242,7 +232,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             # wait session.created
             await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 15)
 
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             audio_segments, _ = await _collect_event(
                 conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED
             )
@@ -277,7 +267,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             session = RequestSession(turn_detection=turn_detection)
 
             await conn.session.update(session=session)
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             audio_delta_evt = await _wait_for_event(
                 conn,
                 {
@@ -320,7 +310,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         async with connect(endpoint=voicelive_openai_endpoint, credential=AzureKeyCredential(voicelive_openai_api_key), model=model) as conn:
             session = RequestSession(turn_detection=AzureMultilingualSemanticVad(**semantic_vad_params))
             await conn.session.update(session=session)
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
 
             audio_segments, audio_bytes = await _collect_event(
@@ -353,7 +343,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             await conn.session.update(session=session)
             evt  = await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             audio_segments, _ = await _collect_event(
                 conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED
             )
@@ -390,7 +380,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                 turn_detection=AzureMultilingualSemanticVad(**server_sd_conf),
                 input_audio_transcription=_get_speech_recognition_setting(model=model))
             await conn.session.update(session=session)
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
             await conn.input_audio_buffer.append(audio=_get_trailing_silence_bytes())
             audio_segments, _ = await _collect_event(
                 conn, event_type=ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED
@@ -423,7 +413,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             )
 
             await conn.session.update(session=session)
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(audio_file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
             timeout_s = 10
             conversation_created_events = []
             function_call_results = []
@@ -683,7 +673,7 @@ class TestRealtimeService(AzureRecordedTestCase):
         tools=[
             FunctionTool(
                 name="fetch_merchant_details",
-                description="Get category name-Payments & Settlements':funds transferred to merchant’s bank post-deductions,issues collecting payments via QR/scanner,failed payments,MDR,payment mode activation/deactivation(wallet,credit card,postpaid,etc),customer details for payment,payment limits,payments not visible in app.'Lending':merchant loans via Paytm,loan applications,closure,offers,Easy Daily Instalments,loan settlement,payments towards EMI/EDI.'Profile':merchant account details,KYC,bank info,settlement timing/frequency requests,display name,address,shop details,account activation/deactivation,bank account update,settlement strategies (X times/day,next day).'Device':hardware issue with Soundbox/EDC,recurring rental charges,device return/deactivation,activation,accumulated dues,commission charges for payments,hardware malfunction for Soundbox/EDC.'Wealth':buying,storing,selling 24K digital gold via Gold Locker in P4B app,activating/canceling/restarting investment plans,viewing gold balance/investment history in Gold Locker.",
+                description="Get category name-Payments & Settlements':funds transferred to merchant’s bank post-deductions,issues collecting payments via QR/scanner,failed payments,MDR,payment mode activation/deactivation(wallet,credit card,postpaid,etc),customer details for payment,payment limits,payments not visible in app.'Lending':merchant loans via Pay,loan applications,closure,offers,Easy Daily Instalments,loan settlement,payments towards EMI/EDI.'Profile':merchant account details,KYC,bank info,settlement timing/frequency requests,display name,address,shop details,account activation/deactivation,bank account update,settlement strategies (X times/day,next day).'Device':hardware issue with Soundbox/EDC,recurring rental charges,device return/deactivation,activation,accumulated dues,commission charges for payments,hardware malfunction for Soundbox/EDC.'Wealth':buying,storing,selling 24K digital gold via Gold Locker in P4B app,activating/canceling/restarting investment plans,viewing gold balance/investment history in Gold Locker.",
                 parameters={
                     "type": "object",
                     "properties": {
@@ -702,7 +692,6 @@ class TestRealtimeService(AzureRecordedTestCase):
                     input_audio_transcription=_get_speech_recognition_setting(model=model),
                     tools=tools,
                     tool_choice=ToolChoiceLiteral.AUTO,
-                    voice=AzureStandardVoice(name="hi-IN-AartiNeural"),
                 )
             await conn.session.update(session=session)
             await conn.input_audio_buffer.append(audio=_load_audio_b64(audio_file))
@@ -827,7 +816,7 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             await conn.session.update(session=session)
             await _wait_for_event(conn, {ServerEventType.SESSION_UPDATED}, 10)
-            await conn.input_audio_buffer.append(audio=_b64_pcm_from_wav(file))
+            await conn.input_audio_buffer.append(audio=_load_audio_b64(file))
 
             timeout_s = 10
             start = asyncio.get_event_loop().time()
