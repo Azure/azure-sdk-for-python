@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -167,21 +167,21 @@ class AttestationResult(_Model):
     nbf: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The not before time before which the token cannot be considered valid, in the
      number of seconds since 1970-01-0T00:00:00Z UTC."""
-    cnf: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cnf: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An RFC 7800 Proof of Possession Key."""
     nonce: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The Nonce input to the attestation request, if provided."""
     version: Optional[str] = rest_field(name="x-ms-ver", visibility=["read", "create", "update", "delete", "query"])
     """The Schema version of this structure. Current Value: 1.0."""
-    runtime_claims: Optional[Dict[str, str]] = rest_field(
+    runtime_claims: Optional[dict[str, str]] = rest_field(
         name="x-ms-runtime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Runtime Claims."""
-    inittime_claims: Optional[Dict[str, str]] = rest_field(
+    inittime_claims: Optional[dict[str, str]] = rest_field(
         name="x-ms-inittime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Inittime Claims."""
-    policy_claims: Optional[Dict[str, str]] = rest_field(
+    policy_claims: Optional[dict[str, str]] = rest_field(
         name="x-ms-policy", visibility=["read", "create", "update", "delete", "query"]
     )
     """Policy Generated Claims."""
@@ -219,7 +219,7 @@ class AttestationResult(_Model):
         name="x-ms-sgx-ehd", visibility=["read", "create", "update", "delete", "query"], format="base64"
     )
     """A copy of the RuntimeData specified as an input to the attest call."""
-    sgx_collateral: Optional[Dict[str, str]] = rest_field(
+    sgx_collateral: Optional[dict[str, str]] = rest_field(
         name="x-ms-sgx-collateral", visibility=["read", "create", "update", "delete", "query"]
     )
     """The SGX SVN value for the enclave."""
@@ -231,7 +231,7 @@ class AttestationResult(_Model):
         name="is-debuggable", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-is-debuggable claim."""
-    deprecated_sgx_collateral: Optional[Dict[str, str]] = rest_field(
+    deprecated_sgx_collateral: Optional[dict[str, str]] = rest_field(
         name="maa-attestationcollateral", visibility=["read", "create", "update", "delete", "query"]
     )
     """DEPRECATED: Private Preview version of x-ms-sgx-collateral claim."""
@@ -283,12 +283,12 @@ class AttestationResult(_Model):
         iat: Optional[float] = None,
         exp: Optional[float] = None,
         nbf: Optional[float] = None,
-        cnf: Optional[Dict[str, str]] = None,
+        cnf: Optional[dict[str, str]] = None,
         nonce: Optional[str] = None,
         version: Optional[str] = None,
-        runtime_claims: Optional[Dict[str, str]] = None,
-        inittime_claims: Optional[Dict[str, str]] = None,
-        policy_claims: Optional[Dict[str, str]] = None,
+        runtime_claims: Optional[dict[str, str]] = None,
+        inittime_claims: Optional[dict[str, str]] = None,
+        policy_claims: Optional[dict[str, str]] = None,
         verifier_type: Optional[str] = None,
         policy_signer: Optional["_models.JsonWebKey"] = None,
         policy_hash: Optional[bytes] = None,
@@ -298,10 +298,10 @@ class AttestationResult(_Model):
         mr_signer: Optional[str] = None,
         svn: Optional[float] = None,
         enclave_held_data: Optional[bytes] = None,
-        sgx_collateral: Optional[Dict[str, str]] = None,
+        sgx_collateral: Optional[dict[str, str]] = None,
         deprecated_version: Optional[str] = None,
         deprecated_is_debuggable: Optional[bool] = None,
-        deprecated_sgx_collateral: Optional[Dict[str, str]] = None,
+        deprecated_sgx_collateral: Optional[dict[str, str]] = None,
         deprecated_enclave_held_data: Optional[bytes] = None,
         deprecated_enclave_held_data2: Optional[bytes] = None,
         deprecated_product_id: Optional[float] = None,
@@ -621,7 +621,7 @@ class JsonWebKey(_Model):
      on data. Values are commonly \"sig\" (signature) or \"enc\" (encryption)."""
     x: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """X coordinate for the Elliptic Curve point."""
-    x5_c: Optional[List[str]] = rest_field(name="x5c", visibility=["read", "create", "update", "delete", "query"])
+    x5_c: Optional[list[str]] = rest_field(name="x5c", visibility=["read", "create", "update", "delete", "query"])
     """The \"x5c\" (X.509 certificate chain) parameter contains a chain of one
      or more PKIX certificates [RFC5280].  The certificate chain is
      represented as a JSON array of certificate value strings.  Each
@@ -651,7 +651,7 @@ class JsonWebKey(_Model):
         qi: Optional[str] = None,
         use: Optional[str] = None,
         x: Optional[str] = None,
-        x5_c: Optional[List[str]] = None,
+        x5_c: Optional[list[str]] = None,
         y: Optional[str] = None,
     ) -> None: ...
 
@@ -677,7 +677,7 @@ class JsonWebKeySet(_Model):
     :vartype keys_property: list[~azure.security.attestation.models.JsonWebKey]
     """
 
-    keys_property: Optional[List["_models.JsonWebKey"]] = rest_field(
+    keys_property: Optional[list["_models.JsonWebKey"]] = rest_field(
         name="keys", visibility=["read", "create", "update", "delete", "query"]
     )
     """The value of the \"keys\" parameter is an array of JWK values.  By
@@ -690,7 +690,7 @@ class JsonWebKeySet(_Model):
     def __init__(
         self,
         *,
-        keys_property: Optional[List["_models.JsonWebKey"]] = None,
+        keys_property: Optional[list["_models.JsonWebKey"]] = None,
     ) -> None: ...
 
     @overload
@@ -721,11 +721,11 @@ class OpenIDConfigurationResponse(_Model):
     :vartype claims_supported: list[str]
     """
 
-    response_types_supported: Optional[List[str]] = rest_field(
+    response_types_supported: Optional[list[str]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Types supported in the OpenID metadata API."""
-    id_token_signing_alg_values_supported: Optional[List[str]] = rest_field(
+    id_token_signing_alg_values_supported: Optional[list[str]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of the supported signing algorithms."""
@@ -735,19 +735,19 @@ class OpenIDConfigurationResponse(_Model):
     """Issuer tenant base endpoint."""
     jwks_uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The URI to retrieve the signing keys."""
-    claims_supported: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    claims_supported: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Set of claims supported by the OpenID metadata endpoint."""
 
     @overload
     def __init__(
         self,
         *,
-        response_types_supported: Optional[List[str]] = None,
-        id_token_signing_alg_values_supported: Optional[List[str]] = None,
+        response_types_supported: Optional[list[str]] = None,
+        id_token_signing_alg_values_supported: Optional[list[str]] = None,
         revocation_endpoint: Optional[str] = None,
         issuer: Optional[str] = None,
         jwks_uri: Optional[str] = None,
-        claims_supported: Optional[List[str]] = None,
+        claims_supported: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1168,7 +1168,7 @@ class TcbBaselineResult(_Model):
     :vartype tcb_baselines: list[~azure.security.attestation.models.TcbBaseline]
     """
 
-    tcb_baselines: Optional[List["_models.TcbBaseline"]] = rest_field(
+    tcb_baselines: Optional[list["_models.TcbBaseline"]] = rest_field(
         name="tcbBaselines", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of all Azure supported baseline details for the a TEE type along with an
@@ -1178,7 +1178,7 @@ class TcbBaselineResult(_Model):
     def __init__(
         self,
         *,
-        tcb_baselines: Optional[List["_models.TcbBaseline"]] = None,
+        tcb_baselines: Optional[list["_models.TcbBaseline"]] = None,
     ) -> None: ...
 
     @overload

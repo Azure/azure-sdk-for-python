@@ -78,12 +78,12 @@ def create_x509_certificate(key_pem, subject_name):  # type: (str, str) -> str
     builder = builder.not_valid_before(datetime.datetime.today() - one_day)
     builder = builder.not_valid_after(datetime.datetime.today() + (one_day * 30))
     builder = builder.serial_number(x509.random_serial_number())
-    builder = builder.public_key(signing_key.public_key()) # type: ignore
+    builder = builder.public_key(signing_key.public_key())  # type: ignore
     builder = builder.add_extension(SubjectAlternativeName([x509.DNSName(subject_name)]), critical=False)
     builder = builder.add_extension(BasicConstraints(ca=False, path_length=None), critical=True)
     return (
         builder.sign(
-            private_key=signing_key, # type: ignore
+            private_key=signing_key,  # type: ignore
             algorithm=hashes.SHA256(),
             backend=default_backend(),
         )
