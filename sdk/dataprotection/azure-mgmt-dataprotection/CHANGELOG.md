@@ -55,8 +55,6 @@
   - Method `DppResourceGuardProxyOperations.unlock_delete` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `FetchSecondaryRecoveryPointsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `RecoveryPointsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `BackupInstancesOperations.begin_suspend_backups` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'backup_instance_name', 'x_ms_authorization_auxiliary', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'backup_instance_name', 'parameters', 'x_ms_authorization_auxiliary', 'kwargs']`
-  - Method `BackupInstancesOperations.begin_stop_protection` re-ordered its parameters from `['self', 'resource_group_name', 'vault_name', 'backup_instance_name', 'x_ms_authorization_auxiliary', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vault_name', 'backup_instance_name', 'parameters', 'x_ms_authorization_auxiliary', 'kwargs']`
 
 ## 1.4.0 (2024-07-22)
 

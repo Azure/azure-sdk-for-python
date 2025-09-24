@@ -23,7 +23,6 @@ class TestDataProtectionManagementResourceGuardsOperationsAsync(AzureMgmtRecorde
     async def test_list_by_resource_group(self, resource_group):
         response = self.client.resource_guards.get_resources_in_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-04-01",
         )
         result = [r async for r in response]
         assert result == []
@@ -31,8 +30,6 @@ class TestDataProtectionManagementResourceGuardsOperationsAsync(AzureMgmtRecorde
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_by_subscription(self, resource_group):
-        response = self.client.resource_guards.get_resources_in_subscription(
-            api_version="2024-04-01",
-        )
+        response = self.client.resource_guards.get_resources_in_subscription()
         result = [r async for r in response]
         assert response
