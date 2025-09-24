@@ -177,8 +177,12 @@ def create_package_and_install(
 
             pip_cmd = get_pip_command(python_exe)
             commands = pip_cmd + ["install", built_pkg_path]
+
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
+
+            if pip_cmd[0] == "uv":
+                commands += ["--python", python_exe]
 
             if work_dir and os.path.exists(work_dir):
                 logger.info("Executing command from {0}:{1}".format(work_dir, commands))

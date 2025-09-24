@@ -45,10 +45,16 @@ from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     _exception_categories,
 )
-# from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
-from azure.monitor.opentelemetry.exporter._utils import _get_auth_policy
+from azure.monitor.opentelemetry.exporter._utils import (
+    _get_auth_policy,
+    _get_os,
+    _get_attach_type,
+    _get_rp,
+    ext_version,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     get_statsbeat_initial_success,
     get_statsbeat_shutdown,
@@ -101,9 +107,8 @@ class BaseExporter:
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
 
-        # TODO: Re-add this once all parts of OneSettings is finished
-        # Initialize the configuration manager to begin fetching settings
-        # self._configuration_manager = _ConfigurationManager()
+        # Get the configuration manager
+        self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
         # We do not need to use entra Id if this is a sdkStats exporter
@@ -144,6 +149,8 @@ class BaseExporter:
         self._distro_version = kwargs.get(
             _AZURE_MONITOR_DISTRO_VERSION_ARG, ""
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
+        # specifies whether current exporter is used for collection of instrumentation metrics
+        self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -166,6 +173,14 @@ class BaseExporter:
         self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
+        self._configuration_manager.initialize(
+            os=_get_os(),
+            rp=_get_rp(),
+            attach=_get_attach_type(),
+            component="ext",
+            version=ext_version,
+            region=self._region,
+        )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self.storage = LocalFileStorage(  # pyright: ignore
@@ -176,8 +191,6 @@ class BaseExporter:
                 name="{} Storage".format(self.__class__.__name__),
                 lease_period=self._storage_min_retry_interval,
             )
-        # specifies whether current exporter is used for collection of instrumentation metrics
-        self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
         # statsbeat initialization
         if self._should_collect_stats():
@@ -202,11 +215,16 @@ class BaseExporter:
             # give a few more seconds for blob lease operation
             # to reduce the chance of race (for perf consideration)
             if blob.lease(self._timeout + 5):
-                envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob.get()]
-                result = self._transmit(envelopes)
-                if result == ExportResult.FAILED_RETRYABLE:
-                    blob.lease(1)
+                blob_data = blob.get()
+                if blob_data is not None:
+                    envelopes = [_format_storage_telemetry_item(TelemetryItem.from_dict(x)) for x in blob_data]
+                    result = self._transmit(envelopes)
+                    if result == ExportResult.FAILED_RETRYABLE:
+                        blob.lease(1)
+                    else:
+                        blob.delete()
                 else:
+                    # If blob.get() returns None, delete the corrupted blob
                     blob.delete()
 
 

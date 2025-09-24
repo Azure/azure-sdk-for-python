@@ -247,6 +247,7 @@
     "dpkg",
     "dtlk",
     "dtlksd",
+    "duckdb",
     "DWORD",
     "eastus",
     "Easm",
@@ -899,6 +900,10 @@
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
+    },
+    {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
+      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
