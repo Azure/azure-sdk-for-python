@@ -3,9 +3,10 @@
 ## 1.0.0b43 (Unreleased)
 
 ### Features Added
-
 - OneSettings control plane: Add live metrics feature control
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
+- Adding customer sdkstats to feature statsbeat
+  ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
 
 ### Breaking Changes
 

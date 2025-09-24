@@ -39,6 +39,7 @@ class TestStatsbeat(unittest.TestCase):
             _STATSBEAT_STATE["SHUTDOWN"] = False
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
+            _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
 
     def tearDown(self):
         """Clean up after tests."""
