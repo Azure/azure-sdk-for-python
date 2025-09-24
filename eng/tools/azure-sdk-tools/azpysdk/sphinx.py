@@ -121,7 +121,7 @@ def mgmt_apidoc(output_dir: str, target_folder: str, executable: str) -> int:
     try:
         logger.info("Command to generate management sphinx sources: {}".format(command_array))
 
-        check_call(command_array)
+        check_call(command_array, cwd=target_folder)
     except CalledProcessError as e:
         logger.error("script failed for path {} exited with error {}".format(output_dir, e.returncode))
         return 1
@@ -153,7 +153,7 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
         # otherwise, we will run sphinx-apidoc to generate the sources
         else:
             logger.info("Sphinx api-doc command: {}".format(command_array))
-            check_call(command_array)
+            check_call(command_array, cwd=target_dir)
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
             # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
             base_path = Path(os.path.join(output_dir, "docgen/"))
@@ -321,6 +321,12 @@ class sphinx(Check):
                     results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace))
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
+
+            # shutil.copytree(
+            #     os.path.join(package_dir, "samples"),
+            #     os.path.join(staging_directory, "samples"),
+            #     dirs_exist_ok=True
+            # )
 
             # build
             if should_build_docs(package_name):

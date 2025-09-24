@@ -72,6 +72,7 @@ steps:
           "$(TargetingString)"
           --service="${{ parameters.ServiceDirectory }}"
           --checks="sphinx"
+          --wheel_dir="$(Build.ArtifactStagingDirectory)"
 
   - ${{ if eq(parameters.RunApiStubGen, 'true') }}:
     - template: /eng/pipelines/templates/steps/run_apistub.yml
