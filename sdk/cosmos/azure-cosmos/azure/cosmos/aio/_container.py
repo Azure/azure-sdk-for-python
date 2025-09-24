@@ -46,7 +46,7 @@ from .._base import (
 )
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._cosmos_responses import CosmosDict, CosmosList
-from .._constants import _InternalOptions, _Kwargs
+from .._constants import _Constants, _InternalOptions, _Kwargs
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..offer import ThroughputProperties
@@ -137,12 +137,12 @@ class ContainerProxy:
     def _get_document_link(self, item_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(item_or_link, str):
             return "{}/docs/{}".format(self.container_link, item_or_link)
-        return item_or_link["_self"]
+        return item_or_link[_Constants.SELF]
 
     def _get_conflict_link(self, conflict_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(conflict_or_link, str):
             return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
-        return conflict_or_link["_self"]
+        return conflict_or_link[_Constants.SELF]
 
     async def _set_partition_key(
         self,
@@ -193,8 +193,7 @@ class ContainerProxy:
         session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
+                _Constants.SESSION_TOKEN_WARNING + " It will now be removed in the future.",
                 DeprecationWarning)
 
         if priority is not None:
@@ -274,7 +273,7 @@ class ContainerProxy:
         match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                _Constants.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -437,7 +436,7 @@ class ContainerProxy:
                 _InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
             ] = max_integrated_cache_staleness_in_ms
         response_hook = kwargs.pop("response_hook", None)
-        if response_hook and hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, _Constants.CLEAR):
             response_hook.clear()
         if self.container_link in self.__get_client_container_caches():
             feed_options[
@@ -799,7 +798,7 @@ class ContainerProxy:
 
         # Set 'response_hook'
         response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
-        if response_hook and hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, _Constants.CLEAR):
             response_hook.clear()
 
         items = self.client_connection.QueryItems(
@@ -1042,7 +1041,7 @@ class ContainerProxy:
         feed_options[_InternalOptions.CONTAINER_PROPERTIES] = self._get_properties_with_options(feed_options)
 
         response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
-        if hasattr(response_hook, "clear"):
+        if hasattr(response_hook, _Constants.CLEAR):
             response_hook.clear()
 
         if self.container_link in self.__get_client_container_caches():
@@ -1428,7 +1427,7 @@ class ContainerProxy:
         """
         throughput_properties: List[Dict[str, Any]]
         properties = await self._get_properties()
-        link = properties["_self"]
+        link = properties[_Constants.SELF]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
@@ -1463,7 +1462,7 @@ class ContainerProxy:
         """
         throughput_properties: List[Dict[str, Any]]
         properties = await self._get_properties()
-        link = properties["_self"]
+        link = properties[_Constants.SELF]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
@@ -1474,7 +1473,7 @@ class ContainerProxy:
 
         new_offer = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
+        data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0][_Constants.SELF],
                                                          offer=throughput_properties[0], **kwargs)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
@@ -1667,7 +1666,7 @@ class ContainerProxy:
         match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                _Constants.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1739,7 +1738,7 @@ class ContainerProxy:
         match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                _Constants.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 

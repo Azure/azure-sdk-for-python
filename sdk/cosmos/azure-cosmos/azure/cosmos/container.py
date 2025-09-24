@@ -43,7 +43,7 @@ from ._base import (
     _build_properties_cache
 )
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
-from ._constants import _InternalOptions, _Kwargs
+from ._constants import _Constants, _InternalOptions, _Kwargs
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
@@ -138,12 +138,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def _get_document_link(self, item_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(item_or_link, str):
             return "{}/docs/{}".format(self.container_link, item_or_link)
-        return item_or_link["_self"]
+        return item_or_link[_Constants.SELF]
 
     def _get_conflict_link(self, conflict_or_link: Union[str, Mapping[str, Any]]) -> str:
         if isinstance(conflict_or_link, str):
             return "{}/conflicts/{}".format(self.container_link, conflict_or_link)
-        return conflict_or_link["_self"]
+        return conflict_or_link[_Constants.SELF]
 
     def _set_partition_key(
         self,
@@ -190,8 +190,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
-                "The 'session_token' flag does not apply to this method and is always ignored even if passed."
-                " It will now be removed in the future.",
+                _Constants.SESSION_TOKEN_WARNING + " It will now be removed in the future.",
                 DeprecationWarning)
         if priority is not None:
             kwargs[_Kwargs.PRIORITY] = priority
@@ -202,7 +201,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options = build_options(kwargs)
         if populate_query_metrics:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
         if populate_partition_key_range_statistics is not None:
@@ -286,7 +285,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -304,7 +303,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -425,7 +424,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         if populate_query_metrics is not None:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             feed_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -436,7 +435,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 _InternalOptions.MAX_INTEGRATED_CACHE_STALENESS
 
             ] = max_integrated_cache_staleness_in_ms
-        if response_hook and hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, _Constants.CLEAR):
             response_hook.clear()
 
         self._get_properties_with_options(feed_options)
@@ -444,7 +443,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -686,10 +685,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = container_properties["_rid"]
+        ] = container_properties[_Constants.RID]
 
         response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
-        if hasattr(response_hook, "clear"):
+        if hasattr(response_hook, _Constants.CLEAR):
             response_hook.clear()
 
         result = self.client_connection.QueryItemsChangeFeed(
@@ -974,7 +973,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options[_InternalOptions.CORRELATED_ACTIVITY_ID] = GenerateGuidId()
         feed_options[
             _InternalOptions.CONTAINER_RID
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         # Set query with 'query' and 'parameters' from kwargs
         if utils.valid_key_value_exist(kwargs, _Kwargs.PARAMETERS):
@@ -1000,7 +999,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         # Set 'response_hook'
         response_hook = kwargs.pop(_Kwargs.RESPONSE_HOOK, None)
-        if response_hook and hasattr(response_hook, "clear"):
+        if response_hook and hasattr(response_hook, _Constants.CLEAR):
             response_hook.clear()
 
         items = self.client_connection.QueryItems(
@@ -1097,7 +1096,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1107,7 +1106,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
         result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
@@ -1194,7 +1193,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = True
         if populate_query_metrics is not None:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1203,7 +1202,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
@@ -1270,13 +1269,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                _Constants.ETAG_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                _Constants.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1302,7 +1301,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.DISABLE_AUTOMATIC_ID_GENERATION] = not enable_automatic_id_generation
         if populate_query_metrics:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1313,7 +1312,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result
@@ -1413,7 +1412,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
             document_link=item_link,
@@ -1466,13 +1465,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                _Constants.ETAG_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                _Constants.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1496,7 +1495,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = container_properties["_rid"]
+        ] = container_properties[_Constants.RID]
 
         return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
@@ -1576,7 +1575,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options[_InternalOptions.PARTITION_KEY] = self._set_partition_key(partition_key)
         if populate_query_metrics is not None:
             warnings.warn(
-                "the populate_query_metrics flag does not apply to this method and will be removed in the future",
+                _Constants.POPULATE_QUERY_METRICS_WARNING,
                 DeprecationWarning,
             )
             request_options[_InternalOptions.POPULATE_QUERY_METRICS] = populate_query_metrics
@@ -1589,7 +1588,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -1605,7 +1604,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         warnings.warn(
-            "read_offer is a deprecated method name, use get_throughput instead",
+            _Constants.READ_OFFER_DEPRECATION_WARNING,
             DeprecationWarning
         )
         return self.get_throughput(**kwargs)
@@ -1634,7 +1633,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options = {"containerRID": properties[_Constants.RID]}
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
 
         if response_hook:
@@ -1666,7 +1665,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options = {"containerRID": properties[_Constants.RID]}
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
@@ -1699,7 +1698,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
                 _InternalOptions.CONTAINER_RID
 
-            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1755,7 +1754,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
                 _InternalOptions.CONTAINER_RID
 
-            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1797,7 +1796,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
                 _InternalOptions.CONTAINER_RID
 
-            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1835,7 +1834,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
                 _InternalOptions.CONTAINER_RID
 
-            ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+            ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1879,13 +1878,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
-                "The 'etag' flag does not apply to this method and is always ignored even if passed."
+                _Constants.ETAG_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
         match_condition = kwargs.get('match_condition')
         if match_condition is not None:
             warnings.warn(
-                "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+                _Constants.MATCH_CONDITION_WARNING +
                 " It will now be removed in the future.",
                 DeprecationWarning)
 
@@ -1907,7 +1906,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
             _InternalOptions.CONTAINER_RID
 
-        ] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        ] = self.__get_client_container_caches()[self.container_link][_Constants.RID]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)

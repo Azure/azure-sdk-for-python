@@ -102,6 +102,33 @@ class _Constants:
         )
     }
 
+    # Container and document properties
+    SELF: Literal["_self"] = "_self"
+    """The self-link property for documents and containers."""
+
+    RID: Literal["_rid"] = "_rid"
+    """The resource ID property for documents and containers."""
+
+    # Method names for hasattr checks
+    CLEAR: Literal["clear"] = "clear"
+    """The clear method name for response hooks."""
+
+    # Warning messages
+    SESSION_TOKEN_WARNING: str = "The 'session_token' flag does not apply to this method and is always ignored even if passed."
+    """Warning message for session token parameter."""
+
+    POPULATE_QUERY_METRICS_WARNING: str = "the populate_query_metrics flag does not apply to this method and will be removed in the future"
+    """Warning message for populate query metrics parameter."""
+
+    ETAG_WARNING: str = "The 'etag' flag does not apply to this method and is always ignored even if passed."
+    """Warning message for etag parameter."""
+
+    MATCH_CONDITION_WARNING: str = "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
+    """Warning message for match condition parameter."""
+
+    READ_OFFER_DEPRECATION_WARNING: str = "read_offer is a deprecated method name, use get_throughput instead"
+    """Warning message for deprecated read_offer method."""
+
 
 class _InternalOptions:
     """Internal option names used in request processing
