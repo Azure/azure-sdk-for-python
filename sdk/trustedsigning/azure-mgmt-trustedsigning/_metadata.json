@@ -1,6 +1,7 @@
 {
-  "commit": "e6fde2ac19d0202f0e72217a3e0f9edb63dba273",
+  "apiVersion": "2024-09-30-preview",
+  "commit": "c61b9d303824f2fa9fa7faf9f4ae9897584ad132",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/codesigning/CodeSigning.Management",
-  "@azure-tools/typespec-python": "0.33.0"
+  "emitterVersion": "0.50.0"
 }
