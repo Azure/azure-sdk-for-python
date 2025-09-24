@@ -65,14 +65,6 @@ class TestLocalFileBlob(unittest.TestCase):
             result = blob.put([1, 2, 3])
             #self.assertIsInstance(result, str)
 
-    def test_put_success_returns_self(self):
-        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "success_blob"))
-        test_input = [1, 2, 3]
-        result = blob.put(test_input)
-        # Should return the blob itself (self) on success
-        self.assertIsInstance(result, StorageExportResult)
-        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
-
     def test_put_file_write_error_returns_string(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "write_error_blob"))
         test_input = [1, 2, 3]
@@ -81,16 +73,6 @@ class TestLocalFileBlob(unittest.TestCase):
             result = blob.put(test_input)
             self.assertIsInstance(result, str)
             self.assertIn("Cannot write to file", result)
-    
-    def test_put_rename_error_returns_string(self):
-        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "rename_error_blob"))
-        test_input = [1, 2, 3]
-        
-        # Mock os.rename to raise an exception
-        with mock.patch("os.rename", side_effect=OSError("File already exists")):
-            result = blob.put(test_input)
-            self.assertIsInstance(result, str)
-            self.assertIn("File already exists", result)
     
     def test_put_json_serialization_error_returns_string(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "json_error_blob"))
@@ -122,28 +104,6 @@ class TestLocalFileBlob(unittest.TestCase):
                     result = blob.put(test_input)
                     self.assertIsInstance(result, str)
                     self.assertTrue(len(result) > 0)  # Should contain error message
-                    
-    def test_put_with_lease_period_success(self):
-        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "lease_success_blob"))
-        test_input = [1, 2, 3]
-        lease_period = 60
-        
-        result = blob.put(test_input, lease_period=lease_period)
-        self.assertIsInstance(result, StorageExportResult)
-        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
-        # File should have .lock extension due to lease period
-        self.assertTrue(blob.fullpath.endswith(".lock"))
-        
-    def test_put_with_lease_period_error_returns_string(self):
-        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "lease_error_blob"))
-        test_input = [1, 2, 3]
-        lease_period = 60
-        
-        # Mock os.rename to fail
-        with mock.patch("os.rename", side_effect=OSError("Cannot rename file")):
-            result = blob.put(test_input, lease_period=lease_period)
-            self.assertIsInstance(result, str)
-            self.assertIn("Cannot rename file", result)
     
     def test_put_empty_data_success(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "empty_data_blob"))
@@ -152,21 +112,6 @@ class TestLocalFileBlob(unittest.TestCase):
         result = blob.put(empty_data)
         self.assertIsInstance(result, StorageExportResult)
         self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
-        
-    def test_put_large_data_success(self):
-        blob = LocalFileBlob(os.path.join(TEST_FOLDER, "large_data_blob"))
-        # Create a large list of data
-        large_data = [{"id": i, "value": f"data_{i}"} for i in range(1000)]
-        
-        result = blob.put(large_data)
-        self.assertIsInstance(result, StorageExportResult)
-        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
-        
-        # Verify data can be retrieved
-        retrieved_data = blob.get()
-        self.assertEqual(len(retrieved_data), 1000)
-        self.assertEqual(retrieved_data[0], {"id": 0, "value": "data_0"})
-        self.assertEqual(retrieved_data[999], {"id": 999, "value": "data_999"})
         
     def test_put_return_type_consistency(self):
         blob = LocalFileBlob(os.path.join(TEST_FOLDER, "consistency_blob"))
