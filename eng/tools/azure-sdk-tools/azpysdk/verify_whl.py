@@ -5,12 +5,11 @@ import sys
 import glob
 import shutil
 import tempfile
+import zipfile
+import tarfile
 import subprocess
 from packaging.version import Version
 from typing import Dict, Any, Optional, List
-from tox_helper_tasks import (
-    unzip_file_to_directory,
-)
 
 from .Check import Check
 from ci_tools.scenario.generation import create_package_and_install
@@ -28,6 +27,17 @@ EXCLUDED_PACKAGES = [
     "azure-loganalytics",
 ]
 
+def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
+    if path_to_zip_file.endswith(".zip"):
+        with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
+            zip_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(os.path.splitext(path_to_zip_file)[0])
+            return os.path.join(extract_location, extracted_dir)
+    else:
+        with tarfile.open(path_to_zip_file) as tar_ref:
+            tar_ref.extractall(extract_location)
+            extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
+            return os.path.join(extract_location, extracted_dir)
 
 def extract_whl(dist_dir, version):
     # Find whl for the package
@@ -60,6 +70,7 @@ def verify_whl_root_directory(dist_dir: str, expected_top_level_module: str, par
 
     # check for non 'azure' folder as root folder
     non_azure_folders = [d for d in root_folders if d != expected_top_level_module and not d.endswith(".dist-info")]
+
     if non_azure_folders:
         logging.error(
             "whl has following incorrect directory at root level [%s]",
@@ -153,7 +164,7 @@ class verify_whl(Check):
         """Register the verify_whl check. The verify_whl check verifies that the root directory in whl is azure, and verifies manifest so that all directories in source are included in sdist."""
         parents = parent_parsers or []
         p = subparsers.add_parser(
-            "verify_whl",
+            "verifywhl",
             parents=parents,
             help="Verify directories included in whl, contents in manifest file, and metadata compatibility",
         )
@@ -174,7 +185,7 @@ class verify_whl(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for verify_whl check")
 
-            top_level_module = package_name.split(".")[0]
+            top_level_module = parsed.namespace.split(".")[0]
 
             create_package_and_install(
                 distribution_directory=staging_directory,
