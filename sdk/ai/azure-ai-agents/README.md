@@ -522,7 +522,9 @@ Here's an example that demonstrates manual MCP tool call approval using a `RunHa
 
 ```python
 class MyRunHandler(RunHandler):
-    def submit_mcp_tool_approval(self, *, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs: Any) -> ToolApproval:
+    def submit_mcp_tool_approval(
+        self, *, run: ThreadRun, tool_call: RequiredMcpToolCall, **kwargs: Any
+    ) -> ToolApproval:
         return ToolApproval(
             tool_call_id=tool_call.id,
             approve=True,
@@ -537,7 +539,7 @@ To use the RunHandler with `create_and_process` for MCP tools:
 <!-- SNIPPET:sample_agents_mcp_in_create_and_process.create_and_process -->
 
 ```python
-run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
+run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler())
 ```
 
 <!-- END SNIPPET -->
@@ -1405,6 +1407,7 @@ Here's an example that demonstrates manual function calls using a `RunHandler`:
 class MyRunHandler(RunHandler):
     def submit_function_call_output(
         self,
+        *,
         run: ThreadRun,
         tool_call: RequiredFunctionToolCall,
         tool_call_details: RequiredFunctionToolCallDetails,
@@ -1425,7 +1428,7 @@ To use the RunHandler with `create_and_process`:
 <!-- SNIPPET:sample_agents_functions_in_create_and_process.create_and_process -->
 
 ```python
-run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
+run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler())
 ```
 
 <!-- END SNIPPET -->

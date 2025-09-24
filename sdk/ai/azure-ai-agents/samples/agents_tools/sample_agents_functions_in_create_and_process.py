@@ -115,7 +115,7 @@ with project_client:
     print(f"Created message, ID: {message.id}")
 
     # [START create_and_process]
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler())
     # [END create_and_process]
 
     print(f"Run completed with status: {run.status}")

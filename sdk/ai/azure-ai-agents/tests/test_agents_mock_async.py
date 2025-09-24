@@ -28,7 +28,7 @@ from azure.ai.agents.models import (
     SubmitToolApprovalDetails,
     SubmitToolOutputsAction,
     SubmitToolOutputsDetails,
-    ToolOutput,
+    ToolApproval,
     AsyncAgentEventHandler,
     ThreadRun,
 )
@@ -470,6 +470,7 @@ class TestAgentsMock:
         class MyRunHandler(AsyncRunHandler):
             async def submit_function_call_output(
                 self,
+                *,
                 run: ThreadRun,
                 tool_call: RequiredFunctionToolCall,
                 tool_call_details: RequiredFunctionToolCallDetails,
@@ -524,6 +525,7 @@ class TestAgentsMock:
         class MyRunHandler(AsyncRunHandler):
             def submit_mcp_tool_approval(
                 self,
+                *,
                 run: ThreadRun,
                 tool_call: RequiredMcpToolCall,
                 **kwargs: Any,
@@ -776,7 +778,13 @@ class TestAgentsMock:
 class TestIntegrationAgentsClient:
 
     def submit_tool_outputs(
-        self, thread_id: str, run_id: str, *, tool_outputs: List[StructuredToolOutput], stream_parameter: bool, stream: bool
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        tool_outputs: List[StructuredToolOutput],
+        stream_parameter: bool,
+        stream: bool,
     ) -> AsyncIterator[bytes]:
         assert thread_id == "thread_01"
         assert run_id == "run_01"

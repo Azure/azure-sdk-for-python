@@ -23,7 +23,6 @@ from typing import (
     Iterator,
     List,
     Optional,
-    Type,
     Union,
     cast,
     overload,
@@ -442,7 +441,7 @@ class RunsOperations(RunsOperationsGenerated):
         response_format: Optional["_types.AgentsResponseFormatOption"] = None,
         parallel_tool_calls: Optional[bool] = None,
         metadata: Optional[Dict[str, str]] = None,
-        run_handler: Union[_models.RunHandler, Type[_models.RunHandler]] = _models.RunHandler,
+        run_handler: Optional[_models.RunHandler] = None,
         polling_interval: int = 1,
         **kwargs: Any,
     ) -> _models.ThreadRun:
@@ -525,7 +524,7 @@ class RunsOperations(RunsOperationsGenerated):
         :paramtype metadata: dict[str, str]
         :keyword run_handler: Optional handler to customize run processing and tool execution.
             Default value is None.
-        :paramtype run_handler: Union[~azure.ai.agents.models.RunHandler, Type[~azure.ai.agents.models.RunHandler]]
+        :paramtype run_handler: ~azure.ai.agents.models.RunHandler
         :keyword polling_interval: The time in seconds to wait between polling the service for run status.
             Default value is 1.
         :paramtype polling_interval: int
@@ -557,7 +556,7 @@ class RunsOperations(RunsOperationsGenerated):
         )
 
         # Monitor and process the run status
-        run_handler_obj = run_handler() if isinstance(run_handler, type) else run_handler
+        run_handler_obj = run_handler or _models.RunHandler()
 
         return run_handler_obj._start(self, run, polling_interval)  # pylint: disable=protected-access
 

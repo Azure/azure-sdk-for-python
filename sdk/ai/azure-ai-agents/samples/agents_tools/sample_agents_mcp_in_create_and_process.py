@@ -113,7 +113,7 @@ with project_client:
 
     # mcp_tool.set_approval_mode("never")  # Uncomment to disable approval requirement
     # [START create_and_process]
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler)
+    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id, run_handler=MyRunHandler())
     # [END create_and_process]
     print(f"Created run, ID: {run.id}")
 

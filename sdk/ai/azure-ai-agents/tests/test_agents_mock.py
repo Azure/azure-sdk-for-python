@@ -774,7 +774,13 @@ class TestAgentsMock:
 class TestIntegrationAgentsMock:
 
     def submit_tool_outputs(
-        self, thread_id: str, run_id: str, *, tool_outputs: List[StructuredToolOutput], stream_parameter: bool, stream: bool
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        tool_outputs: List[StructuredToolOutput],
+        stream_parameter: bool,
+        stream: bool,
     ) -> Iterator[bytes]:
         assert thread_id == "thread_01"
         assert run_id == "run_01"
