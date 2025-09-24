@@ -13,12 +13,12 @@ from typing import Any, Callable, Set, Optional
 from azure.ai.agents.telemetry import trace_function
 
 
-# Add parent directory to sys.path to import user_functions
+# Add package directory to sys.path to import user_functions
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.abspath(os.path.join(current_dir, "..", "..", ".."))
-if parent_dir not in sys.path:
-    sys.path.insert(0, parent_dir)
-from samples.utils.user_functions import fetch_current_datetime, fetch_weather, send_email
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
+from samples.utils.user_functions import fetch_weather, send_email
 
 
 async def send_email_async(recipient: str, subject: str, body: str) -> str:

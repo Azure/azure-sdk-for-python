@@ -20,6 +20,21 @@ class TestSqlManagementJobTargetExecutionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_job_target_executions_list_by_job_execution(self, resource_group):
+        response = self.client.job_target_executions.list_by_job_execution(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            job_agent_name="str",
+            job_name="str",
+            job_execution_id="str",
+            api_version="2020-11-01-preview",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_job_target_executions_list_by_step(self, resource_group):
         response = self.client.job_target_executions.list_by_step(
             resource_group_name=resource_group.name,
@@ -28,7 +43,7 @@ class TestSqlManagementJobTargetExecutionsOperations(AzureMgmtRecordedTestCase):
             job_name="str",
             job_execution_id="str",
             step_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,23 +60,8 @@ class TestSqlManagementJobTargetExecutionsOperations(AzureMgmtRecordedTestCase):
             job_execution_id="str",
             step_name="str",
             target_id="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_job_target_executions_list_by_job_execution(self, resource_group):
-        response = self.client.job_target_executions.list_by_job_execution(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            job_agent_name="str",
-            job_name="str",
-            job_execution_id="str",
-            api_version="2024-11-01-preview",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

@@ -1,16 +1,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import errno
 import os
 import shutil
 import unittest
-import json
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceRequestTimeoutError
-from requests import ConnectTimeout, ReadTimeout, Timeout, ConnectionError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from requests import ReadTimeout
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
@@ -21,9 +19,10 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
-from azure.monitor.opentelemetry.exporter.statsbeat._state import _REQUESTS_MAP, _STATSBEAT_STATE, _LOCAL_STORAGE_SETUP_STATE
-from azure.monitor.opentelemetry.exporter.statsbeat import _customer_sdkstats
-from azure.monitor.opentelemetry.exporter.statsbeat._customer_sdkstats import _CUSTOMER_SDKSTATS_STATE, CustomerSdkStatsMetrics
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (
+    _REQUESTS_MAP, 
+    _STATSBEAT_STATE, 
+)
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
 from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -34,7 +33,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
-    DropCode,
     RetryCode,
     _UNKNOWN,
     _exception_categories,
@@ -53,13 +51,6 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryExceptionData,
     TelemetryItem,
     TrackResponse,
-)
-
-from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
-    _track_retry_items,
-    _track_successful_items,
-    _track_dropped_items,
-    _determine_client_retry_code,
 )
 
 TEST_AUTH_POLICY = "TEST_AUTH_POLICY"
@@ -94,8 +85,10 @@ class TestBaseExporter(unittest.TestCase):
         # Clear environ so the mocks from past tests do not interfere.
         os.environ.pop("APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL", None)
         os.environ.pop("APPINSIGHTS_INSTRUMENTATIONKEY", None)
+        os.environ.pop("APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW", None)
         os.environ["APPINSIGHTS_INSTRUMENTATIONKEY"] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
+        os.environ["APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"] = "false"
         cls._base = BaseExporter()
         cls._envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now())]
 
@@ -113,13 +106,6 @@ class TestBaseExporter(unittest.TestCase):
             "CUSTOM_EVENTS_FEATURE_SET": False,
             "LIVE_METRICS_FEATURE_SET": False,
         })
-        _CUSTOMER_SDKSTATS_STATE.clear()
-        _CUSTOMER_SDKSTATS_STATE.update({
-            "SHUTDOWN": False,
-        })
-        # Reset customer sdkstats singleton for test isolation
-        _customer_sdkstats._STATSBEAT_METRICS = None
-        _CUSTOMER_SDKSTATS_STATE["SHUTDOWN"] = False
 
     def tearDown(self):
         clean_folder(self._base.storage._path)
@@ -319,6 +305,28 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.lease.assert_called_once()
         blob_mock.delete.assert_not_called()
 
+    def test_transmit_from_storage_blob_get_returns_none(self):
+        """Test that when blob.get() returns None, it's handled properly without TypeError."""
+        exporter = BaseExporter()
+        exporter.storage = mock.Mock()
+        blob_mock = mock.Mock()
+        blob_mock.lease.return_value = True
+        
+        blob_mock.get.return_value = None
+        exporter.storage.gets.return_value = [blob_mock]
+        transmit_mock = mock.Mock()
+        exporter._transmit = transmit_mock
+        
+        # This should not raise a TypeError
+        exporter._transmit_from_storage()
+        
+        # Verify that the blob was leased and deleted (since data was None)
+        exporter.storage.gets.assert_called_once()
+        blob_mock.lease.assert_called_once()
+        blob_mock.get.assert_called_once()
+        blob_mock.delete.assert_called_once()  # Corrupted blob should be deleted
+        transmit_mock.assert_not_called()  # No transmission should occur
+
 
     def test_format_storage_telemetry_item(self):
         time = datetime.now()
@@ -490,15 +498,10 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(format_ti.data.base_type, "RequestData")
         self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
-    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._utils._track_dropped_items")
-    def test_handle_transmit_from_storage_success_result(self, mock_track_dropped1, mock_track_dropped2):
+    def test_handle_transmit_from_storage_success_result(self):
         """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
         the method continues without any special handling."""
         exporter = BaseExporter(disable_offline_storage=False)
-        mock_customer_sdkstats = mock.Mock()
-        exporter._customer_sdkstats_metrics = mock_customer_sdkstats
-        exporter._should_collect_customer_sdkstats = mock.Mock(return_value=True)
         
         # Mock storage.put() to return success
         exporter.storage = mock.Mock()
@@ -510,11 +513,6 @@ class TestBaseExporter(unittest.TestCase):
         
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
-        # Verify that no dropped items were tracked (since it was a success)
-        mock_track_dropped1.assert_not_called()
-        mock_track_dropped2.assert_not_called()
-        # Verify that the customer sdkstats wasn't invoked
-        mock_customer_sdkstats.assert_not_called()
 
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
@@ -542,174 +540,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNone(exporter.storage)
         
         exporter._transmit_from_storage()
-
-    def test_local_storage_state_exception_get_set_operations(self):
-        """Test the validity of get and set operations for exception state in local storage state"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_setup_state_exception,
-            set_local_storage_setup_state_exception,
-            _LOCAL_STORAGE_SETUP_STATE,
-            _LOCAL_STORAGE_SETUP_STATE_LOCK
-        )
-        
-        # Save original state
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        
-        try:
-            # Test 1: Initial state should be None
-            self.assertEqual(get_local_storage_setup_state_exception(), "")
-            
-            # Test 2: Set string value and verify get operation
-            test_error = "Test storage exception"
-            set_local_storage_setup_state_exception(test_error)
-            self.assertEqual(get_local_storage_setup_state_exception(), test_error)
-            
-            # Test 3: Set empty string and verify get operation
-            set_local_storage_setup_state_exception("")
-            self.assertEqual(get_local_storage_setup_state_exception(), "")
-            
-            # Test 4: Set complex error message and verify get operation
-            complex_error = "OSError: [Errno 28] No space left on device: '/tmp/storage/file.blob'"
-            set_local_storage_setup_state_exception(complex_error)
-            self.assertEqual(get_local_storage_setup_state_exception(), complex_error)
-            
-            # Test 5: Verify thread safety by directly accessing state
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                direct_value = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-            self.assertEqual(direct_value, complex_error)
-            self.assertEqual(get_local_storage_setup_state_exception(), direct_value)
-            
-            # Test 6: Test multiple rapid set/get operations
-            test_values = [
-                "Error 1",
-                "Error 2", 
-                "Error 3",
-                "",
-                "Final error"
-            ]
-            
-            for value in test_values:
-                with self.subTest(value=value):
-                    set_local_storage_setup_state_exception(value)
-                    self.assertEqual(get_local_storage_setup_state_exception(), value)
-            
-            # Test 8: Verify that set operation doesn't affect other state values
-            original_readonly = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-            set_local_storage_setup_state_exception("New exception")
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["READONLY"], original_readonly)
-            self.assertEqual(get_local_storage_setup_state_exception(), "New exception")
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
-    def test_local_storage_state_exception_concurrent_access(self):
-        """Test concurrent access to exception state get/set operations"""
-        import threading
-        import time
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_setup_state_exception,
-            set_local_storage_setup_state_exception,
-            _LOCAL_STORAGE_SETUP_STATE
-        )
-        
-        # Save original state
-        original_exception_state = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-        results = []
-        errors = []
-        
-        def worker_thread(thread_id):
-            try:
-                for i in range(10):
-                    # Set a unique value
-                    value = f"Thread-{thread_id}-Error-{i}"
-                    set_local_storage_setup_state_exception(value)
-                    
-                    # Small delay to increase chance of race conditions
-                    time.sleep(0.001)
-                    
-                    # Get the value and verify it's either our value or another thread's value
-                    retrieved_value = get_local_storage_setup_state_exception()
-                    results.append((thread_id, i, value, retrieved_value))
-                    
-                    # Verify it's a valid value (either ours or from another thread)
-                    if retrieved_value is not None:
-                        self.assertIsInstance(retrieved_value, str)
-                        self.assertTrue(retrieved_value.startswith("Thread-"))
-            except Exception as e:
-                errors.append(f"Thread {thread_id}: {e}")
-        
-        try:
-            # Reset to original state
-            set_local_storage_setup_state_exception("")
-            
-            # Start multiple threads
-            threads = []
-            for i in range(5):
-                thread = threading.Thread(target=worker_thread, args=(i,))
-                threads.append(thread)
-                thread.start()
-            
-            # Wait for all threads to complete
-            for thread in threads:
-                thread.join()
-            
-            # Verify no errors occurred
-            self.assertEqual(len(errors), 0, f"Errors in concurrent access: {errors}")
-            
-            # Verify we got results from all threads
-            self.assertEqual(len(results), 50)  # 5 threads * 10 operations each
-            
-            # Verify final state is valid
-            final_value = get_local_storage_setup_state_exception()
-            if final_value is not None:
-                self.assertIsInstance(final_value, str)
-                self.assertTrue(final_value.startswith("Thread-"))
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"] = original_exception_state
-
-    def test_local_storage_state_readonly_get_operations(self):
-        """Test the get operation for readonly state in local storage state"""
-        from azure.monitor.opentelemetry.exporter.statsbeat._state import (
-            get_local_storage_setup_state_readonly,
-            _LOCAL_STORAGE_SETUP_STATE,
-            _LOCAL_STORAGE_SETUP_STATE_LOCK
-        )
-        
-        # Save original state
-        original_readonly_state = _LOCAL_STORAGE_SETUP_STATE["READONLY"]
-        
-        try:
-            # Test 1: Initial state should be False
-            self.assertEqual(get_local_storage_setup_state_readonly(), False)
-            
-            # Test 2: Set True directly and verify get operation
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
-            self.assertEqual(get_local_storage_setup_state_readonly(), True)
-            
-            # Test 3: Set False directly and verify get operation
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = False
-            self.assertEqual(get_local_storage_setup_state_readonly(), False)
-            
-            # Test 4: Verify get operation doesn't affect other state values
-            original_exception = _LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"]
-            with _LOCAL_STORAGE_SETUP_STATE_LOCK:
-                _LOCAL_STORAGE_SETUP_STATE["READONLY"] = True
-            
-            # Get readonly state multiple times
-            for _ in range(5):
-                self.assertEqual(get_local_storage_setup_state_readonly(), True)
-            
-            # Verify exception state wasn't affected
-            self.assertEqual(_LOCAL_STORAGE_SETUP_STATE["EXCEPTION_OCCURRED"], original_exception)
-            
-        finally:
-            # Restore original state
-            _LOCAL_STORAGE_SETUP_STATE["READONLY"] = original_readonly_state
 
     # ========================================================================
     # TRANSMISSION TESTS
@@ -1379,19 +1209,6 @@ class TestBaseExporter(unittest.TestCase):
         mock_managed_identity.assert_not_called()
 
     @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=foobar;ClientId=TEST_CLIENT_ID"
-    })
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
-    def test_get_authentication_credential_no_aad(self, mock_managed_identity):
-        MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL = "MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL"
-        mock_managed_identity.return_value = MOCK_MANAGED_IDENTITY_CLIENT_ID_CREDENTIAL
-        result = _get_authentication_credential(
-            foo="bar"
-        )
-        self.assertIsNone(result)
-        mock_managed_identity.assert_not_called()
-
-    @mock.patch.dict("os.environ", {
         "APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD;ClientId=TEST_CLIENT_ID"
     })
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.ManagedIdentityCredential")
@@ -1404,167 +1221,6 @@ class TestBaseExporter(unittest.TestCase):
         )
         self.assertIsNone(result)
         mock_managed_identity.assert_called_once_with(client_id="TEST_CLIENT_ID")
-
-    # Custom Breeze Message Handling Tests
-    # These tests verify that custom error messages from Azure Monitor service (Breeze)
-    # are properly preserved and passed through the error handling chain.
-
-    # ========================================================================
-    # UTILITY AND HELPER FUNCTION TESTS
-    # ========================================================================
-
-    def test_determine_client_retry_code_telemetry_error_details_with_custom_message(self):
-        """Test that TelemetryErrorDetails with custom message preserves the message for specific status codes."""
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        # Test various specific status codes with custom messages
-        test_cases = [
-            (401, "Authentication failed. Please check your instrumentation key."),
-            (403, "Forbidden access. Verify your permissions for this resource."),
-            (408, "Request timeout. The service took too long to respond."),
-            (429, "Rate limit exceeded for instrumentation key. Current rate: 1000 req/min, limit: 500 req/min."),
-            (500, "Internal server error. Please try again later."),
-            (502, "Bad gateway. The upstream server is unavailable."),
-            (503, "Service unavailable. The monitoring service is temporarily down."),
-            (504, "Gateway timeout. The request timed out while waiting for the upstream server."),
-        ]
-        
-        for status_code, custom_message in test_cases:
-            with self.subTest(status_code=status_code):
-                error = TelemetryErrorDetails(
-                    index=0,
-                    status_code=status_code,
-                    message=custom_message
-                )
-                
-                retry_code, message = _determine_client_retry_code(error)
-                self.assertEqual(retry_code, status_code)
-                self.assertEqual(message, custom_message)
-
-    def test_determine_client_retry_code_telemetry_error_details_without_message(self):
-        """Test that TelemetryErrorDetails without message returns _UNKNOWN for specific status codes."""
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        status_codes = [401, 403, 408, 429, 500, 502, 503, 504]
-        
-        for status_code in status_codes:
-            with self.subTest(status_code=status_code):
-                error = TelemetryErrorDetails(
-                    index=0,
-                    status_code=status_code,
-                    message=None
-                )
-                
-                retry_code, message = _determine_client_retry_code(error)
-                self.assertEqual(retry_code, status_code)
-                self.assertEqual(message, _UNKNOWN)
-
-    def test_determine_client_retry_code_telemetry_error_details_empty_message(self):
-        """Test that TelemetryErrorDetails with empty message returns _UNKNOWN for specific status codes."""
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        status_codes = [401, 403, 408, 429, 500, 502, 503, 504]
-        
-        for status_code in status_codes:
-            with self.subTest(status_code=status_code):
-                error = TelemetryErrorDetails(
-                    index=0,
-                    status_code=status_code,
-                    message=""
-                )
-                
-                retry_code, message = _determine_client_retry_code(error)
-                self.assertEqual(retry_code, status_code)
-                self.assertEqual(message, _UNKNOWN)
-
-    def test_determine_client_retry_code_http_response_error_with_custom_message(self):
-        """Test that HttpResponseError with custom message preserves the message for specific status codes."""
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        test_cases = [
-            (429, "Rate limit exceeded. Please reduce your request rate."),
-            (500, "Internal server error occurred during telemetry processing."),
-            (503, "Service temporarily unavailable due to high load."),
-        ]
-        
-        for status_code, custom_message in test_cases:
-            with self.subTest(status_code=status_code):
-                error = HttpResponseError()
-                error.status_code = status_code
-                error.message = custom_message
-                
-                retry_code, message = _determine_client_retry_code(error)
-                self.assertEqual(retry_code, status_code)
-                self.assertEqual(message, custom_message)
-
-    def test_determine_client_retry_code_generic_error_with_message_attribute(self):
-        """Test that generic errors with message attribute preserve the message for specific status codes."""
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        test_cases = [
-            (401, "Custom auth error from service"),
-            (429, "Custom rate limit message"),
-            (500, "Custom server error message"),
-        ]
-        
-        for status_code, custom_message in test_cases:
-            with self.subTest(status_code=status_code):
-                error = mock.Mock()
-                error.status_code = status_code
-                error.message = custom_message
-                
-                retry_code, message = _determine_client_retry_code(error)
-                self.assertEqual(retry_code, status_code)
-                self.assertEqual(message, custom_message)
-
-    def test_determine_client_retry_code_non_specific_status_codes(self):
-        """Test that non-specific status codes are handled with CLIENT_EXCEPTION."""
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        # Test non-specific status codes
-        non_specific_codes = [400, 404, 410, 413]
-        
-        for status_code in non_specific_codes:
-            with self.subTest(status_code=status_code):
-                error = mock.Mock()
-                error.status_code = status_code
-                error.message = f"Error message for {status_code}"
-                
-                retry_code, message = _determine_client_retry_code(error)
-                self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-                self.assertEqual(message, _exception_categories.CLIENT_EXCEPTION.value)
-
-    def test_determine_client_retry_code_http_status_codes(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        status_codes = [401, 403, 408, 429, 500, 502, 503, 504]
-        
-        for status_code in status_codes:
-            # Create mock without message attribute to test _UNKNOWN fallback
-            error = mock.Mock(spec=['status_code'])
-            error.status_code = status_code
-            
-            retry_code, message = _determine_client_retry_code(error)
-            self.assertEqual(retry_code, status_code)
-            self.assertEqual(message, _UNKNOWN)
-
-    def test_determine_client_retry_code_service_request_error(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        error = ServiceRequestError("Connection failed")
-        
-        retry_code, message = _determine_client_retry_code(error)
-        self.assertEqual(retry_code, RetryCode.CLIENT_EXCEPTION)
-        self.assertEqual(message, _exception_categories.CLIENT_EXCEPTION.value)
-
-    def test_determine_client_retry_code_service_request_error_with_message(self):
-        exporter = BaseExporter(disable_offline_storage=True)
-        
-        error = ReadTimeout("Network error")
-        
-        retry_code, message = _determine_client_retry_code(error)
-        self.assertEqual(retry_code, RetryCode.CLIENT_TIMEOUT)
-        self.assertEqual(message, _exception_categories.TIMEOUT_EXCEPTION.value)
 
 
 def validate_telemetry_item(item1, item2):

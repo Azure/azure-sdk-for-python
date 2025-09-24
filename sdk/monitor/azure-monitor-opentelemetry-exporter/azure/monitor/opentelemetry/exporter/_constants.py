@@ -80,6 +80,7 @@ _MICROSOFT_CUSTOM_EVENT_NAME = "microsoft.custom_event.name"
 
 # ONE SETTINGS
 _ONE_SETTINGS_PYTHON_KEY = "python"
+_ONE_SETTINGS_PYTHON_TARGETING = {"namespaces": _ONE_SETTINGS_PYTHON_KEY}
 _ONE_SETTINGS_CHANGE_VERSION_KEY = "CHANGE_VERSION"
 _ONE_SETTINGS_CNAME = "https://settings.sdk.monitor.azure.com"
 _ONE_SETTINGS_PATH = "/AzMonSDKDynamicConfiguration"
@@ -87,6 +88,11 @@ _ONE_SETTINGS_CHANGE_PATH = "/AzMonSDKDynamicConfigurationChanges"
 _ONE_SETTINGS_CONFIG_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_PATH
 _ONE_SETTINGS_CHANGE_URL = _ONE_SETTINGS_CNAME + _ONE_SETTINGS_CHANGE_PATH
 _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS = 3600  # 60 minutes
+
+## ONE SETTINGS CONFIGS
+_ONE_SETTINGS_DEFAULT_STATS_CONNECTION_STRING_KEY = "DEFAULT_STATS_CONNECTION_STRING"
+_ONE_SETTINGS_SUPPORTED_DATA_BOUNDARIES_KEY = "SUPPORTED_DATA_BOUNDARIES"
+_ONE_SETTINGS_FEATURE_LOCAL_STORAGE = "FEATURE_LOCAL_STORAGE"
 
 # Statsbeat
 # (OpenTelemetry metric name, Statsbeat metric name)
@@ -148,6 +154,7 @@ _TRACE = "TRACE"
 _UNKNOWN = "UNKNOWN"
 
 # Customer Facing SDKStats
+
 _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW = "APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW"
 _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL = "APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL"
 _CUSTOMER_SDKSTATS_LANGUAGE = "python"
@@ -173,27 +180,18 @@ class CustomerSdkStatsMetricName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ITEM_DROP_COUNT = "preview.item.dropped.count"
     ITEM_RETRY_COUNT = "preview.item.retry.count"
 
-class CustomerSdkStatsProperties:
-    language: str
-    version: str
-    compute_type: str
-    def __init__(self, language: str, version: str, compute_type: str):
-        self.language = language
-        self.version = version
-        self.compute_type = compute_type
-
-## Map from Azure Monitor envelope names to TelemetryType
+## Map from Azure Monitor envelope base_types to TelemetryType
 _TYPE_MAP = {
-                _EVENT_ENVELOPE_NAME: _CUSTOM_EVENT,
-                _METRIC_ENVELOPE_NAME: _CUSTOM_METRIC,
-                _REMOTE_DEPENDENCY_ENVELOPE_NAME: _DEPENDENCY,
-                _EXCEPTION_ENVELOPE_NAME: _EXCEPTION,
-                _PAGE_VIEW_ENVELOPE_NAME: _PAGE_VIEW,
-                _MESSAGE_ENVELOPE_NAME: _TRACE,
-                _REQUEST_ENVELOPE_NAME: _REQUEST,
-                _PERFORMANCE_COUNTER_ENVELOPE_NAME: _PERFORMANCE_COUNTER,
-                _AVAILABILITY_ENVELOPE_NAME: _AVAILABILITY,
-            }
+    "EventData": _CUSTOM_EVENT,
+    "MetricData": _CUSTOM_METRIC,
+    "RemoteDependencyData": _DEPENDENCY,
+    "ExceptionData": _EXCEPTION,
+    "PageViewData": _PAGE_VIEW,
+    "MessageData": _TRACE,
+    "RequestData": _REQUEST,
+    "PerformanceCounterData": _PERFORMANCE_COUNTER,
+    "AvailabilityData": _AVAILABILITY,
+}
 
 # Exception categories
 class _exception_categories(Enum):

@@ -21,6 +21,39 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_galleries_list(self, resource_group):
+        response = self.client.galleries.list(
+            api_version="2024-03-03",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_galleries_list_by_resource_group(self, resource_group):
+        response = self.client.galleries.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2024-03-03",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_galleries_get(self, resource_group):
+        response = await self.client.galleries.get(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            api_version="2024-03-03",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_galleries_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.galleries.begin_create_or_update(
@@ -31,6 +64,12 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
                     "description": "str",
                     "id": "str",
                     "identifier": {"uniqueName": "str"},
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "provisioningState": "str",
                     "sharingProfile": {
@@ -50,10 +89,18 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
                         "summary": [{"details": "str", "region": "str", "state": "str"}],
                     },
                     "softDeletePolicy": {"isSoftDeleteEnabled": bool},
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2023-07-03",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -71,6 +118,12 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
                     "description": "str",
                     "id": "str",
                     "identifier": {"uniqueName": "str"},
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "name": "str",
                     "provisioningState": "str",
                     "sharingProfile": {
@@ -93,21 +146,9 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2023-07-03",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_galleries_get(self, resource_group):
-        response = await self.client.galleries.get(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            api_version="2023-07-03",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -119,30 +160,9 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.galleries.begin_delete(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
-                api_version="2023-07-03",
+                api_version="2024-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_galleries_list_by_resource_group(self, resource_group):
-        response = self.client.galleries.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2023-07-03",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_galleries_list(self, resource_group):
-        response = self.client.galleries.list(
-            api_version="2023-07-03",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

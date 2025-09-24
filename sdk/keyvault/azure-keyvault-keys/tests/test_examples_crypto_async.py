@@ -7,7 +7,8 @@ from azure.keyvault.keys.crypto.aio import CryptographyClient
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import AsyncKeysClientPreparer, get_decorator
+from _async_test_case import AsyncKeysClientPreparer
+from _test_case import get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
 all_api_versions = get_decorator(is_async=True, only_vault=True)

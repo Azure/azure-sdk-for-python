@@ -1,12 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
+
+from openai.types.graders import TextSimilarityGrader
 from typing_extensions import Literal
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.graders import TextSimilarityGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
 
@@ -47,6 +49,8 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
     :type reference: str
     :param name: The name of the grader.
     :type name: str
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 
@@ -76,6 +80,7 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
         pass_threshold: float,
         reference: str,
         name: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = TextSimilarityGrader(
@@ -86,4 +91,4 @@ class AzureOpenAITextSimilarityGrader(AzureOpenAIGrader):
             reference=reference,
             type="text_similarity",
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)
