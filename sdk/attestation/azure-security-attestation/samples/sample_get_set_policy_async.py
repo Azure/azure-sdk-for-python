@@ -55,10 +55,7 @@ from azure.security.attestation import (
     AttestationPolicyToken,
 )
 
-from azure.security.attestation.models import (
-    AttestationType,
-    CertificateModification
-)
+from azure.security.attestation.models import AttestationType, CertificateModification
 
 from sample_collateral import sample_open_enclave_report, sample_runtime_data
 from sample_utils import (

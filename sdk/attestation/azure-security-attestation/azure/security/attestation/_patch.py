@@ -134,7 +134,7 @@ class AttestationClient:
 
         """
         signing_certificates = self._client.signing_certificates.get(**kwargs)
-        return [AttestationSigner._from_generated(key) for key in signing_certificates["keys"]] # type: ignore
+        return [AttestationSigner._from_generated(key) for key in signing_certificates["keys"]]  # type: ignore
 
     @distributed_trace
     def attest_sgx_enclave(
@@ -210,14 +210,14 @@ class AttestationClient:
 
         # Handle explicit validation parameters
         validation_args = {
-            'validate_token': validate_token,
-            'validation_callback': validation_callback,
-            'validate_signature': validate_signature,
-            'validate_expiration': validate_expiration,
-            'issuer': issuer,
-            'validation_slack': validation_slack,
-            'validate_issuer': validate_issuer,
-            'validate_not_before_time': validate_not_before_time,
+            "validate_token": validate_token,
+            "validation_callback": validation_callback,
+            "validate_signature": validate_signature,
+            "validate_expiration": validate_expiration,
+            "issuer": issuer,
+            "validation_slack": validation_slack,
+            "validate_issuer": validate_issuer,
+            "validate_not_before_time": validate_not_before_time,
         }
         # Remove None values
         validation_args = {k: v for k, v in validation_args.items() if v is not None}
@@ -363,14 +363,14 @@ class AttestationClient:
 
         # Handle explicit validation parameters
         validation_args = {
-            'validate_token': validate_token,
-            'validation_callback': validation_callback,
-            'validate_signature': validate_signature,
-            'validate_expiration': validate_expiration,
-            'issuer': issuer,
-            'validation_slack': validation_slack,
-            'validate_issuer': validate_issuer,
-            'validate_not_before_time': validate_not_before_time,
+            "validate_token": validate_token,
+            "validation_callback": validation_callback,
+            "validate_signature": validate_signature,
+            "validate_expiration": validate_expiration,
+            "issuer": issuer,
+            "validation_slack": validation_slack,
+            "validate_issuer": validate_issuer,
+            "validate_not_before_time": validate_not_before_time,
         }
         # Remove None values
         validation_args = {k: v for k, v in validation_args.items() if v is not None}
@@ -441,12 +441,12 @@ class AttestationClient:
         """
 
         response = self._client.attestation.attest_tpm(data=content, **kwargs)
-        result = TpmAttestationResult(cast(bytes,response.data))
+        result = TpmAttestationResult(cast(bytes, response.data))
         return result
 
     def _get_signers(self, **kwargs: Any) -> list[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens.
-        
+
         :return: A list of attestation signers used to validate tokens.
         :rtype: list[AttestationSigner]
         """
@@ -457,7 +457,7 @@ class AttestationClient:
                 self._signing_certificates = []
                 for key in signing_certificates["keys"]:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    self._signing_certificates.append(AttestationSigner._from_generated(key)) # type: ignore
+                    self._signing_certificates.append(AttestationSigner._from_generated(key))  # type: ignore
             signers = self._signing_certificates
         return signers
 
@@ -754,7 +754,7 @@ class AttestationAdministrationClient:
             token._validate_token(self._get_signers(**kwargs), **options)
 
         return (
-            AttestationPolicyResult._from_generated(token._get_body()), #type: ignore
+            AttestationPolicyResult._from_generated(token._get_body()),  # type: ignore
             token,
         )
 
@@ -838,9 +838,9 @@ class AttestationAdministrationClient:
         # If the caller provided a signing key and certificate, validate that,
         # otherwise use the default values from the service.
         if not signing_key:
-            signing_key = self._signing_key # type: ignore
+            signing_key = self._signing_key  # type: ignore
         if not signing_certificate:
-            signing_certificate = self._signing_certificate # type: ignore
+            signing_certificate = self._signing_certificate  # type: ignore
 
         policy_token = AttestationToken(body=None, signing_key=signing_key, signing_certificate=signing_certificate)
 
@@ -870,7 +870,7 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return (AttestationPolicyResult._from_generated(token._get_body()), token) #type: ignore
+        return (AttestationPolicyResult._from_generated(token._get_body()), token)  # type: ignore
 
     @distributed_trace
     def get_policy_management_certificates(
@@ -1028,9 +1028,9 @@ class AttestationAdministrationClient:
         """
 
         if not signing_key:
-            signing_key = self._signing_key # type: ignore
+            signing_key = self._signing_key  # type: ignore
         if not signing_certificate:
-            signing_certificate = self._signing_certificate # type: ignore
+            signing_certificate = self._signing_certificate  # type: ignore
 
         if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to add_policy_management_certificate.")
@@ -1068,7 +1068,7 @@ class AttestationAdministrationClient:
         validation_args.update(kwargs)
         options = merge_validation_args(self._config._kwargs, validation_args)
 
-        cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs) # type: ignore
+        cert_response = self._client.policy_certificates.add(cert_add_token.to_jwt_string(), **kwargs)  # type: ignore
         token = AttestationToken(
             token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult,
@@ -1077,7 +1077,7 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
         return (
-            AttestationPolicyCertificateResult._from_generated(token._get_body()), # type: ignore
+            AttestationPolicyCertificateResult._from_generated(token._get_body()),  # type: ignore
             token,
         )
 
@@ -1147,9 +1147,9 @@ class AttestationAdministrationClient:
         """
 
         if not signing_key:
-            signing_key = self._signing_key # type: ignore
+            signing_key = self._signing_key  # type: ignore
         if not signing_certificate:
-            signing_certificate = self._signing_certificate # type: ignore
+            signing_certificate = self._signing_certificate  # type: ignore
 
         if not signing_key or not signing_certificate:
             raise ValueError("A signing certificate and key must be provided to remove_policy_management_certificate.")
@@ -1186,7 +1186,7 @@ class AttestationAdministrationClient:
         validation_args.update(kwargs)
         options = merge_validation_args(self._config._kwargs, validation_args)
 
-        cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs) # type: ignore
+        cert_response = self._client.policy_certificates.remove(cert_add_token.to_jwt_string(), **kwargs)  # type: ignore
         token = AttestationToken(
             token=cert_response.token,
             body_type=GeneratedPolicyCertificatesModificationResult,
@@ -1201,7 +1201,7 @@ class AttestationAdministrationClient:
 
     def _get_signers(self, **kwargs: Any) -> List[AttestationSigner]:
         """Returns the set of signing certificates used to sign attestation tokens.
-        
+
         :return: A list of attestation signers used to validate tokens.
         :rtype: List[AttestationSigner]
         """
@@ -1212,7 +1212,7 @@ class AttestationAdministrationClient:
                 self._signing_certificates = []
                 for key in signing_certificates["keys"]:
                     # Convert the returned certificate chain into an array of X.509 Certificates.
-                    self._signing_certificates.append(AttestationSigner._from_generated(key)) # type: ignore
+                    self._signing_certificates.append(AttestationSigner._from_generated(key))  # type: ignore
             signers: list[AttestationSigner] = self._signing_certificates
         return signers
 

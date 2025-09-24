@@ -64,7 +64,7 @@ class AttestationSigner:
         self.key_id = key_id
 
     @classmethod
-    def _from_generated(cls, generated: JSONWebKey) -> Optional['AttestationSigner']:
+    def _from_generated(cls, generated: JSONWebKey) -> Optional["AttestationSigner"]:
         if not generated:
             return None
         if generated.x5_c is None or generated.kid is None:
@@ -90,9 +90,8 @@ class AttestationPolicyCertificateResult:
 
     @classmethod
     def _from_generated(
-        cls,
-        generated: GeneratedPolicyCertificatesModificationResult
-    ) -> Optional['AttestationPolicyCertificateResult']:
+        cls, generated: GeneratedPolicyCertificatesModificationResult
+    ) -> Optional["AttestationPolicyCertificateResult"]:
         if not generated:
             return None
         if generated.certificate_thumbprint is None or generated.certificate_resolution is None:
@@ -124,7 +123,7 @@ class AttestationPolicyResult:
         self,
         policy_resolution: Union[str, PolicyModification],
         policy_signer: AttestationSigner,
-        policy_token_hash: str
+        policy_token_hash: str,
     ) -> None:
         self.policy_resolution = policy_resolution
         self.policy_signer = policy_signer
@@ -135,7 +134,9 @@ class AttestationPolicyResult:
         # If we have a generated policy result or policy text, return that.
         if not generated:
             return None
-        signer = AttestationSigner._from_generated(cast(JSONWebKey,generated.policy_signer))  # pylint: disable=protected-access
+        signer = AttestationSigner._from_generated(
+            cast(JSONWebKey, generated.policy_signer)
+        )  # pylint: disable=protected-access
 
         if generated.policy_resolution is None or generated.policy_token_hash is None or signer is None:
             return None
@@ -331,7 +332,9 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
 
         :rtype: ~azure.security.attestation.AttestationSigner or None
         """
-        return AttestationSigner._from_generated(cast(JSONWebKey, self._policy_signer))  # pylint: disable=protected-access
+        return AttestationSigner._from_generated(
+            cast(JSONWebKey, self._policy_signer)
+        )  # pylint: disable=protected-access
 
     @property
     def policy_hash(self) -> str:
@@ -422,7 +425,7 @@ class StoredAttestationPolicy:
         """
         self._policy = policy.encode("ascii")
 
-    def serialize(self, **kwargs: Any) -> str: # pylint: disable=unused-argument
+    def serialize(self, **kwargs: Any) -> str:  # pylint: disable=unused-argument
         return _serialize(GeneratedStoredAttestationPolicy(attestation_policy=self._policy))
 
     @classmethod
@@ -637,7 +640,7 @@ class AttestationToken:
         :rtype: JSONWebKey or None
         """
         jwk = self._header.get("jwk")
-        return JSONWebKey._deserialize(jwk, []) # pylint: disable=protected-access
+        return JSONWebKey._deserialize(jwk, [])  # pylint: disable=protected-access
 
     def to_jwt_string(self) -> str:
         """Returns a string serializing the JSON Web Token
@@ -794,7 +797,7 @@ class AttestationToken:
                         SHA256(),
                     )
                 else:
-                    signer_key.verify(self.signature_bytes, signed_data.encode("utf-8"), SHA256()) # type: ignore
+                    signer_key.verify(self.signature_bytes, signed_data.encode("utf-8"), SHA256())  # type: ignore
                 return signer
             except InvalidSignature as ex:
                 raise AttestationTokenValidationException("Could not verify signature of attestation token.") from ex
@@ -863,7 +866,7 @@ class AttestationToken:
         return return_value
 
     @staticmethod
-    def _create_secured_jwt(body, *, key=None, certificate=None, **kwargs) -> str: # pylint: disable=unused-argument
+    def _create_secured_jwt(body, *, key=None, certificate=None, **kwargs) -> str:  # pylint: disable=unused-argument
         """Return a secured JWT expressing the body, secured with the specified signing key.
 
         :param Any body: The body of the token to be serialized.
