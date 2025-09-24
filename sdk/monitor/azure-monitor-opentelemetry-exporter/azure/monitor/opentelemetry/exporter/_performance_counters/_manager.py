@@ -71,7 +71,7 @@ def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
     
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
-    :returns: CPU usage percentage observations.
+    :returns: Process CPU usage percentage observations.
     :rtype: ~typing.Iterable[~opentelemetry.metrics.Observation]
     """
     try:
@@ -93,7 +93,7 @@ def _get_process_cpu_normalized(options: CallbackOptions) -> Iterable[Observatio
     
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
-    :returns: Normalized CPU usage percentage observations.
+    :returns: Normalized process CPU usage percentage observations.
     :rtype: ~typing.Iterable[~opentelemetry.metrics.Observation]
     """
     try:
@@ -110,7 +110,7 @@ def _get_process_cpu_normalized(options: CallbackOptions) -> Iterable[Observatio
 
         yield Observation(normalized_cpu_percent, {})
     except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting process CPU usage: %s", e)  # pylint: disable=logging-not-lazy
+        _logger.exception("Error getting normalized process CPU usage: %s", e)  # pylint: disable=logging-not-lazy
         yield Observation(0.0, {})
 
 
@@ -130,7 +130,6 @@ def _get_available_memory(options: CallbackOptions) -> Iterable[Observation]:
         # Available memory in bytes
         available_memory = psutil.virtual_memory().available
         yield Observation(available_memory, {})
-        # yield Observation(1, {})
     except Exception as e:  # pylint: disable=broad-except
         _logger.exception("Error getting available memory: %s", e)  # pylint: disable=logging-not-lazy
         yield Observation(0, {})
@@ -159,10 +158,10 @@ def _get_process_memory(options: CallbackOptions) -> Iterable[Observation]:
 
 #  pylint: disable=unused-argument
 def _get_process_io(options: CallbackOptions) -> Iterable[Observation]:
-    """Get process io rate in bytes per second.
+    """Get process I/O rate in bytes per second.
 
-    Includes both read and write operations for both network and disk io.
-    
+    Includes both read and write operations for both network and disk I/O.
+
     :param options: Callback options for OpenTelemetry observable gauge.
     :type options: ~opentelemetry.metrics.CallbackOptions
     :returns: Process I/O rate in bytes per second observations.
@@ -186,9 +185,8 @@ def _get_process_io(options: CallbackOptions) -> Iterable[Observation]:
         _IO_LAST_TIME = current_time
         io_rate = rw_diff / elapsed_time_s
         yield Observation(io_rate, {})
-        # yield Observation(0, {})
     except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting process i/o rate: %s", e)
+        _logger.exception("Error getting process I/O rate: %s", e)
         yield Observation(0, {})
 
 def _get_cpu_times_total(cpu_times):
@@ -357,7 +355,7 @@ class ExceptionRate:
 
 
 class RequestExecutionTime:
-    """Performance counter for request execution time in milliseconds."""
+    """Performance counter for average request execution time in milliseconds."""
 
     NAME = _REQUEST_EXECUTION_TIME
 
@@ -475,18 +473,19 @@ class ProcessCpuNormalized:
 
 
 class ProcessIORate:
-    """Performance counter for process i/o rate."""
+    """Performance counter for process I/O rate."""
+
     NAME = _PROCESS_IO_RATE
 
     def __init__(self, meter):
-        """Initialize the process i/o metric.
+        """Initialize the process I/O metric.
 
         :param meter: OpenTelemetry meter instance.
         :type meter: ~opentelemetry.metrics.Meter
         """
         self._gauge = meter.create_observable_gauge(
             name=self.NAME[0],
-            description="performance counter rate of i/o operations per second",
+            description="performance counter rate of I/O operations per second",
             unit="byte/sec",
             callbacks=[_get_process_io]
         )
@@ -503,6 +502,7 @@ class ProcessIORate:
 
 class ProcessPrivateBytes:
     """Performance counter for process private bytes."""
+
     NAME = _PROCESS_PRIVATE_BYTES
 
     def __init__(self, meter):
@@ -556,7 +556,9 @@ class ProcessorTime:
         return self._gauge
 
 
-# List of all available performance counter metrics
+# List of all performance counter metrics
+# Note: ProcessIORate may not be available on all platforms. It is filtered out in
+# _PerformanceCountersManager
 PERFORMANCE_COUNTER_METRICS = [
     AvailableMemory,
     ExceptionRate,
@@ -579,6 +581,8 @@ class _PerformanceCountersManager(metaclass=Singleton):
         :param meter_provider: OpenTelemetry meter provider, if None uses global provider.
         :type meter_provider: ~opentelemetry.metrics.MeterProvider or None
         """
+        print("Initializing Performance Counters Manager")
+        print(f"Meter provider: {meter_provider}")
         self._meter = None
         self._performance_counters = []
         self._requests_count = 0
@@ -594,7 +598,7 @@ class _PerformanceCountersManager(metaclass=Singleton):
             # Initialize all performance counter metrics
             for metric_class in PERFORMANCE_COUNTER_METRICS:
                 try:
-                    # TODO: _PROCESS.io_counters() is not available on Mac OS and some Linux distros. Find alternative.
+                    # Note: ProcessIORate may not be available on all platforms
                     if metric_class == ProcessIORate and not _IO_AVAILABLE:
                         _logger.warning("Process I/O Rate performance counter is not available on this platform.")
                         continue
@@ -623,7 +627,6 @@ class _PerformanceCountersManager(metaclass=Singleton):
             if span.end_time and span.start_time:
                 duration_ms = (span.end_time - span.start_time) / 1e9  # type: ignore
             self._request_duration_histogram.record(duration_ms)
-
             if span.events:
                 for event in span.events:
                     if event.name == "exception":
