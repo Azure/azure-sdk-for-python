@@ -3427,7 +3427,7 @@ class ServerEvent(_Model):
     def deserialize(cls, payload: dict[str, Any]) -> "ServerEvent":
         # public, linter-friendly entrypoint
         # pylint: disable-next=protected-access
-        return cls._deserialize(payload, [])    
+        return cls._deserialize(payload, [])
 
 
 class ServerEventConversationItemCreated(ServerEvent, discriminator="conversation.item.created"):
