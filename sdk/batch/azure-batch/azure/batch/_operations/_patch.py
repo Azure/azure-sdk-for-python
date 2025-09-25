@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Callable, cast, Deque, List, Optional, Iterable, Iterator
+from typing import Any, Callable, cast, Deque, Dict, List, Optional, Iterable, Iterator, TypeVar
 import collections
 import logging
 import threading
@@ -43,9 +43,6 @@ from ._polling import (
 from ._operations import (
     _BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
 )
-
-# Type definitions
-from typing import Dict, TypeVar
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -113,7 +110,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 30.
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
         :paramtype polling_interval: int
         :return: An LROPoller that can be used to wait for the job deletion to complete
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -136,7 +133,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = DeleteJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
@@ -195,6 +192,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -216,7 +215,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = DisableJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
@@ -269,6 +268,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -289,7 +290,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = EnableJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
@@ -363,7 +364,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = DeleteJobSchedulePollingMethod(
@@ -425,6 +426,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -445,7 +448,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = DeletePoolPollingMethod(self, pipeline_response, None, pool_id, polling_interval)
@@ -487,6 +490,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -504,7 +509,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 ocpdate=ocpdate,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = DeleteCertificatePollingMethod(
@@ -542,6 +547,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -560,12 +567,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 ocpdate=ocpdate,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
-        polling_method = DeallocateNodePollingMethod(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
-        )
+        polling_method = DeallocateNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -598,6 +603,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -616,12 +623,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 ocpdate=ocpdate,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
-        polling_method = RebootNodePollingMethod(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
-        )
+        polling_method = RebootNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -658,6 +663,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -676,12 +683,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 ocpdate=ocpdate,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
-        polling_method = ReimageNodePollingMethod(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
-        )
+        polling_method = ReimageNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -732,6 +737,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -753,12 +760,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
-        polling_method = RemoveNodePollingMethod(
-            self, pipeline_response, None, pool_id, polling_interval
-        )
+        polling_method = RemoveNodePollingMethod(self, pipeline_response, None, pool_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -813,6 +818,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -834,12 +841,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
-        polling_method = ResizePoolPollingMethod(
-            self, pipeline_response, None, pool_id, polling_interval
-        )
+        polling_method = ResizePoolPollingMethod(self, pipeline_response, None, pool_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -869,6 +874,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -886,12 +893,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 ocpdate=ocpdate,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
-        polling_method = StartNodePollingMethod(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
-        )
+        polling_method = StartNodePollingMethod(self, pipeline_response, None, pool_id, node_id, polling_interval)
         return LROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -943,6 +948,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -963,7 +970,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = StopPoolResizePollingMethod(self, pipeline_response, None, pool_id, polling_interval)
@@ -1024,6 +1031,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1046,7 +1055,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = TerminateJobPollingMethod(self, pipeline_response, None, job_id, polling_interval)
@@ -1098,6 +1107,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
+        :paramtype polling_interval: int
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1119,7 +1130,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 match_condition=match_condition,
                 cls=capture_pipeline_response,
                 **kwargs,
-            )
+            ),
         )
 
         polling_method = TerminateJobSchedulePollingMethod(
@@ -1161,8 +1172,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
         :param concurrencies: number of threads to use in parallel when adding tasks. If specified
-        and greater than 0, will start additional threads to submit requests and wait for them to finish.
-        Otherwise will submit create_task_collection requests sequentially on main thread
+         and greater than 0, will start additional threads to submit requests and wait for them to finish.
+         Otherwise will submit create_task_collection requests sequentially on main thread
         :type concurrencies: int
         :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
@@ -1174,11 +1185,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :keyword content_type: Type of content. Default value is "application/json;
          odata=minimalmetadata".
         :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
-        :raises ~azure.batch.custom.CreateTasksError
+        :raises ~azure.batch.custom.CreateTasksError:
         """
 
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
@@ -1193,7 +1202,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 raise ValueError("Concurrencies must be positive or 0")
 
             active_threads = []
-            for i in range(concurrencies):
+            for _ in range(concurrencies):
                 active_threads.append(
                     threading.Thread(
                         target=task_workflow_manager.task_collection_thread_handler,
@@ -1261,8 +1270,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1318,22 +1325,31 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchFileProperties
         :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
-            url=headers["ocp-batch-file-url"],
-            is_directory=headers["ocp-batch-file-isdirectory"],
-            last_modified=headers["Last-Modified"],
-            content_length=headers["Content-Length"],
-            creation_time=headers["ocp-creation-time"],
-            # content_type=headers["Content-Type"], # need to add to typespec
-            file_mode=headers["ocp-batch-file-mode"],
-        )
+        def cls(_pipeline_response, _json_response, headers):
+            return _models.BatchFileProperties(
+                url=headers["ocp-batch-file-url"],
+                is_directory=headers["ocp-batch-file-isdirectory"],
+                last_modified=headers["Last-Modified"],
+                content_length=headers["Content-Length"],
+                creation_time=headers["ocp-creation-time"],
+                # content_type=headers["Content-Type"], # need to add to typespec
+                file_mode=headers["ocp-batch-file-mode"],
+            )
+
+        # cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
+        #     url=headers["ocp-batch-file-url"],
+        #     is_directory=headers["ocp-batch-file-isdirectory"],
+        #     last_modified=headers["Last-Modified"],
+        #     content_length=headers["Content-Length"],
+        #     creation_time=headers["ocp-creation-time"],
+        #     # content_type=headers["Content-Type"], # need to add to typespec
+        #     file_mode=headers["ocp-batch-file-mode"],
+        # )
 
         get_response: _models.BatchFileProperties = super()._get_node_file_properties_internal(  # type: ignore
             pool_id,
@@ -1387,22 +1403,31 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: BatchFileProperties
         :rtype: ~azure.batch.models.BatchFileProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
-            url=headers["ocp-batch-file-url"],
-            is_directory=headers["ocp-batch-file-isdirectory"],
-            last_modified=headers["Last-Modified"],
-            content_length=headers["Content-Length"],
-            creation_time=headers["ocp-creation-time"],
-            # content_type=headers["Content-Type"], # need to add to typespec
-            file_mode=headers["ocp-batch-file-mode"],
-        )
+        def cls(_pipeline_response, _json_response, headers):
+            return _models.BatchFileProperties(
+                url=headers["ocp-batch-file-url"],
+                is_directory=headers["ocp-batch-file-isdirectory"],
+                last_modified=headers["Last-Modified"],
+                content_length=headers["Content-Length"],
+                creation_time=headers["ocp-creation-time"],
+                # content_type=headers["Content-Type"], # need to add to typespec
+                file_mode=headers["ocp-batch-file-mode"],
+            )
+
+        # cls = lambda pipeline_response, json_response, headers: _models.BatchFileProperties(
+        #     url=headers["ocp-batch-file-url"],
+        #     is_directory=headers["ocp-batch-file-isdirectory"],
+        #     last_modified=headers["Last-Modified"],
+        #     content_length=headers["Content-Length"],
+        #     creation_time=headers["ocp-creation-time"],
+        #     # content_type=headers["Content-Type"], # need to add to typespec
+        #     file_mode=headers["ocp-batch-file-mode"],
+        # )
 
         get_response: _models.BatchFileProperties = super()._get_task_file_properties_internal(  # type: ignore
             job_id,
@@ -1461,8 +1486,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1596,7 +1619,7 @@ class _TaskWorkflowManager:
                     self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
                     self._bulk_add_tasks(results_queue, chunk_tasks_to_add[:midpoint])
             # Retry server side errors
-            elif 500 <= e.response.status_code <= 599: # type: ignore
+            elif 500 <= e.response.status_code <= 599:  # type: ignore
                 self.tasks_to_add.extendleft(chunk_tasks_to_add)
             else:
                 # Re-add to pending queue as unknown status / don't have result
