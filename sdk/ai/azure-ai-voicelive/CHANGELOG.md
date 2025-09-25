@@ -16,24 +16,34 @@
   - `gop_size` parameter for Group of Pictures (GOP) size control, affecting compression efficiency and seeking performance
 - **Improved Type Safety**: Added `TurnDetectionType` enum for better type safety and IntelliSense support
 - **Package Structure Modernization**: Simplified package initialization with namespace package support
+- **Enhanced Error Handling**: Added `ConnectionError` and `ConnectionClosed` exception classes to the async API for better WebSocket error management
 
 ### Breaking Changes
 
+- **Removed Deprecated Parameters**: Completely removed deprecated parameters from semantic detection classes:
+  - Removed `threshold` parameter from all semantic detection classes (`AzureSemanticDetection`, `AzureSemanticDetectionEn`, `AzureSemanticDetectionMultilingual`)
+  - Removed `timeout` parameter from all semantic detection classes
+  - Users must now use `threshold_level` and `timeout_ms` parameters respectively
+- **Removed Synchronous API**: Completely removed synchronous WebSocket operations to focus exclusively on async patterns:
+  - Removed sync `connect()` function and sync `VoiceLiveConnection` class from main patch implementation
+  - Removed sync `basic_voice_assistant.py` sample (only async version remains)
+  - Simplified sync patch to minimal structure with empty exports
+  - All functionality now available only through async patterns
+- **Updated Dependencies**: Modified package dependencies to reflect async-only architecture:
+  - Moved `aiohttp>=3.9.0,<4.0.0` from optional to required dependency
+  - Removed `websockets` optional dependency as sync API no longer exists
+  - Removed optional dependency groups `websockets`, `aiohttp`, and `all-websockets`
 - **Model Rename**: Renamed `AzureMultilingualSemanticVad` to `AzureSemanticVadMultilingual` for naming consistency with other multilingual variants
 - **Enhanced Type Safety**: Turn detection discriminator types now use enum values instead of string literals for better type safety
 
-### Deprecations
-
-- **Semantic Detection Parameters**: Deprecated the following parameters in favor of new recommended alternatives:
-  - `threshold` parameter → use `threshold_level` instead
-  - `timeout` parameter → use `timeout_ms` instead
-  - These deprecated parameters are still supported but will be removed in future versions
-
 ### Other Changes
 
-- **Code Quality**: Improved type casting in serialization utilities
+- **Documentation Updates**: Comprehensive updates to all markdown documentation:
+  - Updated README.md to reflect async-only nature with updated examples and installation instructions
+  - Updated samples README.md to remove sync sample references
+  - Enhanced BASIC_VOICE_ASSISTANT.md with comprehensive async implementation guide
+  - Added MIGRATION_GUIDE.md for users upgrading from previous versions
 - **API Documentation**: Updated API view properties to reflect model structure changes
-- **Sample Improvements**: Minor formatting improvements in async voice assistant sample
 
 ## 1.0.0b4 (2025-09-19)
 

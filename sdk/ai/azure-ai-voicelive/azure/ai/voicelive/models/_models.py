@@ -586,30 +586,22 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
 
     :ivar model: Required. Default value is "semantic_detection_v1".
     :vartype model: str
-    :ivar threshold: To be deprecated: use ``threshold_level`` instead.
-    :vartype threshold: float
     :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
      ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
      Literal["medium"], Literal["high"], Literal["default"]
     :vartype threshold_level: str
-    :ivar timeout: To be deprecated: use ``timeout_ms`` instead. Timeout in seconds.
-    :vartype timeout: float
     :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
     :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """To be deprecated: use ``threshold_level`` instead."""
     threshold_level: Optional[Literal["low", "medium", "high", "default"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
      ``high``, or ``default``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
      Literal[\"high\"], Literal[\"default\"]"""
-    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """To be deprecated: use ``timeout_ms`` instead. Timeout in seconds."""
     timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
@@ -617,9 +609,7 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
         threshold_level: Optional[Literal["low", "medium", "high", "default"]] = None,
-        timeout: Optional[float] = None,
         timeout_ms: Optional[int] = None,
     ) -> None: ...
 
@@ -640,30 +630,22 @@ class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v
 
     :ivar model: Required. Default value is "semantic_detection_v1_en".
     :vartype model: str
-    :ivar threshold: To be deprecated: use ``threshold_level`` instead.
-    :vartype threshold: float
     :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
      ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
      Literal["medium"], Literal["high"], Literal["default"]
     :vartype threshold_level: str or str or str or str
-    :ivar timeout: To be deprecated: use ``timeout_ms`` instead. Timeout in seconds.
-    :vartype timeout: float
     :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
     :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1_en"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1_en\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """To be deprecated: use ``threshold_level`` instead."""
     threshold_level: Optional[Literal["low", "medium", "high", "default"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
      ``high``, or ``default``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
      Literal[\"high\"], Literal[\"default\"]"""
-    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """To be deprecated: use ``timeout_ms`` instead. Timeout in seconds."""
     timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
@@ -671,9 +653,7 @@ class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
         threshold_level: Optional[Literal["low", "medium", "high", "default"]] = None,
-        timeout: Optional[float] = None,
         timeout_ms: Optional[int] = None,
     ) -> None: ...
 
@@ -694,30 +674,22 @@ class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_d
 
     :ivar model: Required. Default value is "semantic_detection_v1_multilingual".
     :vartype model: str
-    :ivar threshold: To be deprecated: use ``threshold_level`` instead.
-    :vartype threshold: float
     :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
      ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
      Literal["medium"], Literal["high"], Literal["default"]
     :vartype threshold_level: str or str or str or str
-    :ivar timeout: To be deprecated: use ``timeout_ms`` instead. Timeout in seconds.
-    :vartype timeout: float
     :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
     :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1_multilingual"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1_multilingual\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """To be deprecated: use ``threshold_level`` instead."""
     threshold_level: Optional[Literal["low", "medium", "high", "default"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
      ``high``, or ``default``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
      Literal[\"high\"], Literal[\"default\"]"""
-    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """To be deprecated: use ``timeout_ms`` instead. Timeout in seconds."""
     timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
@@ -725,9 +697,7 @@ class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_d
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
         threshold_level: Optional[Literal["low", "medium", "high", "default"]] = None,
-        timeout: Optional[float] = None,
         timeout_ms: Optional[int] = None,
     ) -> None: ...
 
