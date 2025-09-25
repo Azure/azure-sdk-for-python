@@ -7,6 +7,12 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._patch import *  # pylint: disable=unused-wildcard-import
+
+
 from ._models import (  # type: ignore
     AgentConfig,
     Animation,
@@ -16,15 +22,16 @@ from ._models import (  # type: ignore
     AudioNoiseReduction,
     AvatarConfig,
     AzureCustomVoice,
-    AzureMultilingualSemanticVad,
     AzurePersonalVoice,
     AzureSemanticDetection,
     AzureSemanticDetectionEn,
     AzureSemanticDetectionMultilingual,
     AzureSemanticVad,
     AzureSemanticVadEn,
+    AzureSemanticVadMultilingual,
     AzureStandardVoice,
     AzureVoice,
+    Background,
     CachedTokenDetails,
     ClientEvent,
     ClientEventConversationItemCreate,
@@ -147,7 +154,11 @@ from ._enums import (  # type: ignore
     ServerEventType,
     ToolChoiceLiteral,
     ToolType,
+    TurnDetectionType,
 )
+from ._patch import __all__ as _patch_all
+from ._patch import *
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AgentConfig",
@@ -158,15 +169,16 @@ __all__ = [
     "AudioNoiseReduction",
     "AvatarConfig",
     "AzureCustomVoice",
-    "AzureMultilingualSemanticVad",
     "AzurePersonalVoice",
     "AzureSemanticDetection",
     "AzureSemanticDetectionEn",
     "AzureSemanticDetectionMultilingual",
     "AzureSemanticVad",
     "AzureSemanticVadEn",
+    "AzureSemanticVadMultilingual",
     "AzureStandardVoice",
     "AzureVoice",
+    "Background",
     "CachedTokenDetails",
     "ClientEvent",
     "ClientEventConversationItemCreate",
@@ -286,4 +298,7 @@ __all__ = [
     "ServerEventType",
     "ToolChoiceLiteral",
     "ToolType",
+    "TurnDetectionType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
+_patch_sdk()

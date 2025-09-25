@@ -11,7 +11,15 @@
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import ClientEventType, ContentPartType, ItemType, ResponseStatus, ServerEventType, ToolType
+from ._enums import (
+    ClientEventType,
+    ContentPartType,
+    ItemType,
+    ResponseStatus,
+    ServerEventType,
+    ToolType,
+    TurnDetectionType,
+)
 
 if TYPE_CHECKING:
     from .. import _types, models as _models
@@ -492,112 +500,6 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
         self.type = "azure-custom"  # type: ignore
 
 
-class TurnDetection(_Model):
-    """Top-level union for turn detection configuration.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureSemanticVad, AzureSemanticVadEn, AzureMultilingualSemanticVad, ServerVad
-
-    :ivar type: Required. Is one of the following types: Literal["server_vad"],
-     Literal["azure_semantic_vad"], Literal["azure_semantic_vad_en"],
-     Literal["azure_semantic_vad_multilingual"]
-    :vartype type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Is one of the following types: Literal[\"server_vad\"],
-     Literal[\"azure_semantic_vad\"], Literal[\"azure_semantic_vad_en\"],
-     Literal[\"azure_semantic_vad_multilingual\"]"""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzureMultilingualSemanticVad(TurnDetection, discriminator="azure_semantic_vad_multilingual"):
-    """Server Speech Detection (Azure semantic VAD).
-
-    :ivar type: Required. Default value is "azure_semantic_vad_multilingual".
-    :vartype type: str
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar prefix_padding_ms:
-    :vartype prefix_padding_ms: int
-    :ivar silence_duration_ms:
-    :vartype silence_duration_ms: int
-    :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
-    :ivar speech_duration_ms:
-    :vartype speech_duration_ms: int
-    :ivar remove_filler_words:
-    :vartype remove_filler_words: bool
-    :ivar languages:
-    :vartype languages: list[str]
-    :ivar auto_truncate:
-    :vartype auto_truncate: bool
-    :ivar create_response:
-    :vartype create_response: bool
-    :ivar interrupt_response:
-    :vartype interrupt_response: bool
-    """
-
-    type: Literal["azure_semantic_vad_multilingual"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad_multilingual\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    create_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    interrupt_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
-    @overload
-    def __init__(
-        self,
-        *,
-        threshold: Optional[float] = None,
-        prefix_padding_ms: Optional[int] = None,
-        silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
-        speech_duration_ms: Optional[int] = None,
-        remove_filler_words: Optional[bool] = None,
-        languages: Optional[list[str]] = None,
-        auto_truncate: Optional[bool] = None,
-        create_response: Optional[bool] = None,
-        interrupt_response: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "azure_semantic_vad_multilingual"  # type: ignore
-
-
 class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     """Azure personal voice configuration.
 
@@ -684,23 +586,41 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
 
     :ivar model: Required. Default value is "semantic_detection_v1".
     :vartype model: str
-    :ivar threshold:
+    :ivar threshold: To be deprecated: use ``threshold_level`` instead.
     :vartype threshold: float
-    :ivar timeout:
+    :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
+     ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
+     Literal["medium"], Literal["high"], Literal["default"]
+    :vartype threshold_level: str
+    :ivar timeout: To be deprecated: use ``timeout_ms`` instead. Timeout in seconds.
     :vartype timeout: float
+    :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
+    :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1\"."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """To be deprecated: use ``threshold_level`` instead."""
+    threshold_level: Optional[Literal["low", "medium", "high", "default"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
+     ``high``, or ``default``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
+     Literal[\"high\"], Literal[\"default\"]"""
     timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """To be deprecated: use ``timeout_ms`` instead. Timeout in seconds."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
     @overload
     def __init__(
         self,
         *,
         threshold: Optional[float] = None,
+        threshold_level: Optional[Literal["low", "medium", "high", "default"]] = None,
         timeout: Optional[float] = None,
+        timeout_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -720,23 +640,41 @@ class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v
 
     :ivar model: Required. Default value is "semantic_detection_v1_en".
     :vartype model: str
-    :ivar threshold:
+    :ivar threshold: To be deprecated: use ``threshold_level`` instead.
     :vartype threshold: float
-    :ivar timeout:
+    :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
+     ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
+     Literal["medium"], Literal["high"], Literal["default"]
+    :vartype threshold_level: str or str or str or str
+    :ivar timeout: To be deprecated: use ``timeout_ms`` instead. Timeout in seconds.
     :vartype timeout: float
+    :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
+    :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1_en"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1_en\"."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """To be deprecated: use ``threshold_level`` instead."""
+    threshold_level: Optional[Literal["low", "medium", "high", "default"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
+     ``high``, or ``default``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
+     Literal[\"high\"], Literal[\"default\"]"""
     timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """To be deprecated: use ``timeout_ms`` instead. Timeout in seconds."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
     @overload
     def __init__(
         self,
         *,
         threshold: Optional[float] = None,
+        threshold_level: Optional[Literal["low", "medium", "high", "default"]] = None,
         timeout: Optional[float] = None,
+        timeout_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -756,23 +694,41 @@ class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_d
 
     :ivar model: Required. Default value is "semantic_detection_v1_multilingual".
     :vartype model: str
-    :ivar threshold:
+    :ivar threshold: To be deprecated: use ``threshold_level`` instead.
     :vartype threshold: float
-    :ivar timeout:
+    :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
+     ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
+     Literal["medium"], Literal["high"], Literal["default"]
+    :vartype threshold_level: str or str or str or str
+    :ivar timeout: To be deprecated: use ``timeout_ms`` instead. Timeout in seconds.
     :vartype timeout: float
+    :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
+    :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1_multilingual"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1_multilingual\"."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """To be deprecated: use ``threshold_level`` instead."""
+    threshold_level: Optional[Literal["low", "medium", "high", "default"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
+     ``high``, or ``default``. Is one of the following types: Literal[\"low\"], Literal[\"medium\"],
+     Literal[\"high\"], Literal[\"default\"]"""
     timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """To be deprecated: use ``timeout_ms`` instead. Timeout in seconds."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
     @overload
     def __init__(
         self,
         *,
         threshold: Optional[float] = None,
+        threshold_level: Optional[Literal["low", "medium", "high", "default"]] = None,
         timeout: Optional[float] = None,
+        timeout_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -787,11 +743,45 @@ class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_d
         self.model = "semantic_detection_v1_multilingual"  # type: ignore
 
 
+class TurnDetection(_Model):
+    """Top-level union for turn detection configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureSemanticVad, AzureSemanticVadEn, AzureSemanticVadMultilingual, ServerVad
+
+    :ivar type: Required. Known values are: "server_vad", "azure_semantic_vad",
+     "azure_semantic_vad_en", and "azure_semantic_vad_multilingual".
+    :vartype type: str or ~azure.ai.voicelive.models.TurnDetectionType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"server_vad\", \"azure_semantic_vad\", \"azure_semantic_vad_en\",
+     and \"azure_semantic_vad_multilingual\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     """Server Speech Detection (Azure semantic VAD, default variant).
 
-    :ivar type: Required. Default value is "azure_semantic_vad".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD
     :ivar threshold:
     :vartype threshold: float
     :ivar prefix_padding_ms:
@@ -814,8 +804,8 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     :vartype interrupt_response: bool
     """
 
-    type: Literal["azure_semantic_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad\"."""
+    type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -854,14 +844,14 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure_semantic_vad"  # type: ignore
+        self.type = TurnDetectionType.AZURE_SEMANTIC_VAD  # type: ignore
 
 
 class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     """Server Speech Detection (Azure semantic VAD, English-only).
 
-    :ivar type: Required. Default value is "azure_semantic_vad_en".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD_EN
     :ivar threshold:
     :vartype threshold: float
     :ivar prefix_padding_ms:
@@ -882,8 +872,8 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     :vartype interrupt_response: bool
     """
 
-    type: Literal["azure_semantic_vad_en"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad_en\"."""
+    type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD_EN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -920,7 +910,77 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure_semantic_vad_en"  # type: ignore
+        self.type = TurnDetectionType.AZURE_SEMANTIC_VAD_EN  # type: ignore
+
+
+class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_vad_multilingual"):
+    """Server Speech Detection (Azure semantic VAD).
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD_MULTILINGUAL
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar prefix_padding_ms:
+    :vartype prefix_padding_ms: int
+    :ivar silence_duration_ms:
+    :vartype silence_duration_ms: int
+    :ivar end_of_utterance_detection:
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :ivar speech_duration_ms:
+    :vartype speech_duration_ms: int
+    :ivar remove_filler_words:
+    :vartype remove_filler_words: bool
+    :ivar languages:
+    :vartype languages: list[str]
+    :ivar auto_truncate:
+    :vartype auto_truncate: bool
+    :ivar create_response:
+    :vartype create_response: bool
+    :ivar interrupt_response:
+    :vartype interrupt_response: bool
+    """
+
+    type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    create_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interrupt_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        threshold: Optional[float] = None,
+        prefix_padding_ms: Optional[int] = None,
+        silence_duration_ms: Optional[int] = None,
+        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        speech_duration_ms: Optional[int] = None,
+        remove_filler_words: Optional[bool] = None,
+        languages: Optional[list[str]] = None,
+        auto_truncate: Optional[bool] = None,
+        create_response: Optional[bool] = None,
+        interrupt_response: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL  # type: ignore
 
 
 class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
@@ -987,6 +1047,41 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = "azure-standard"  # type: ignore
+
+
+class Background(_Model):
+    """Defines a video background, either a solid color or an image URL (mutually exclusive).
+
+    :ivar color: Background color in hex format (e.g., ``#00FF00FF``). Cannot be set if
+     ``image_url`` is provided.
+    :vartype color: str
+    :ivar image_url: Background image URL. Cannot be set if ``color`` is provided.
+    :vartype image_url: str
+    """
+
+    color: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Background color in hex format (e.g., ``#00FF00FF``). Cannot be set if ``image_url`` is
+     provided."""
+    image_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Background image URL. Cannot be set if ``color`` is provided."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        color: Optional[str] = None,
+        image_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CachedTokenDetails(_Model):
@@ -5176,8 +5271,8 @@ class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
 class ServerVad(TurnDetection, discriminator="server_vad"):
     """Base model for VAD-based turn detection.
 
-    :ivar type: Required. Default value is "server_vad".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.SERVER_VAD
     :ivar threshold:
     :vartype threshold: float
     :ivar prefix_padding_ms:
@@ -5194,8 +5289,8 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     :vartype interrupt_response: bool
     """
 
-    type: Literal["server_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"server_vad\"."""
+    type: Literal[TurnDetectionType.SERVER_VAD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5228,7 +5323,7 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "server_vad"  # type: ignore
+        self.type = TurnDetectionType.SERVER_VAD  # type: ignore
 
 
 class SessionBase(_Model):
@@ -5486,6 +5581,12 @@ class VideoParams(_Model):
     :vartype crop: ~azure.ai.voicelive.models.VideoCrop
     :ivar resolution: Optional resolution settings for the video stream.
     :vartype resolution: ~azure.ai.voicelive.models.VideoResolution
+    :ivar background: Optional background settings for the video. Allows specifying either a solid
+     color or an image URL.
+    :vartype background: ~azure.ai.voicelive.models.Background
+    :ivar gop_size: Group of Pictures (GOP) size for video encoding. Controls the interval between
+     keyframes, affecting compression efficiency and seeking performance.
+    :vartype gop_size: int
     """
 
     bitrate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5498,6 +5599,12 @@ class VideoParams(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional resolution settings for the video stream."""
+    background: Optional["_models.Background"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional background settings for the video. Allows specifying either a solid color or an image
+     URL."""
+    gop_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Group of Pictures (GOP) size for video encoding. Controls the interval between keyframes,
+     affecting compression efficiency and seeking performance."""
 
     @overload
     def __init__(
@@ -5507,6 +5614,8 @@ class VideoParams(_Model):
         codec: Optional[Literal["h264"]] = None,
         crop: Optional["_models.VideoCrop"] = None,
         resolution: Optional["_models.VideoResolution"] = None,
+        background: Optional["_models.Background"] = None,
+        gop_size: Optional[int] = None,
     ) -> None: ...
 
     @overload

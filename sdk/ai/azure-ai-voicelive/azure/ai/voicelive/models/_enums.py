@@ -205,3 +205,12 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
+
+
+class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TurnDetectionType."""
+
+    SERVER_VAD = "server_vad"
+    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"

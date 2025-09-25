@@ -1,5 +1,40 @@
 # Release History
 
+## 1.0.0b5 (Unreleased)
+
+### Features Added
+
+- **Enhanced Semantic Detection**: Added improved configuration options for all semantic detection classes:
+  - Added `threshold_level` parameter with options: `"low"`, `"medium"`, `"high"`, `"default"` (recommended over deprecated `threshold`)
+  - Added `timeout_ms` parameter for timeout configuration in milliseconds (recommended over deprecated `timeout`)
+- **Video Background Support**: Added new `Background` model for video background customization:
+  - Support for solid color backgrounds in hex format (e.g., `#00FF00FF`)
+  - Support for image URL backgrounds
+  - Mutually exclusive color and image URL options
+- **Enhanced Video Parameters**: Extended `VideoParams` model with:
+  - `background` parameter for configuring video backgrounds using the new `Background` model
+  - `gop_size` parameter for Group of Pictures (GOP) size control, affecting compression efficiency and seeking performance
+- **Improved Type Safety**: Added `TurnDetectionType` enum for better type safety and IntelliSense support
+- **Package Structure Modernization**: Simplified package initialization with namespace package support
+
+### Breaking Changes
+
+- **Model Rename**: Renamed `AzureMultilingualSemanticVad` to `AzureSemanticVadMultilingual` for naming consistency with other multilingual variants
+- **Enhanced Type Safety**: Turn detection discriminator types now use enum values instead of string literals for better type safety
+
+### Deprecations
+
+- **Semantic Detection Parameters**: Deprecated the following parameters in favor of new recommended alternatives:
+  - `threshold` parameter → use `threshold_level` instead
+  - `timeout` parameter → use `timeout_ms` instead
+  - These deprecated parameters are still supported but will be removed in future versions
+
+### Other Changes
+
+- **Code Quality**: Improved type casting in serialization utilities
+- **API Documentation**: Updated API view properties to reflect model structure changes
+- **Sample Improvements**: Minor formatting improvements in async voice assistant sample
+
 ## 1.0.0b4 (2025-09-19)
 
 ### Features Added
