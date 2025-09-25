@@ -117,56 +117,52 @@ class TestStatsbeat(unittest.TestCase):
         flush_mock.assert_called_once()
         mock_statsbeat_metrics_instance.init_non_initial_metrics.assert_called_once()
 
-    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._ConfigurationManager")
-    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager._StatsbeatMetrics")
-    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
-    # @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
-    # @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    # def test_collect_statsbeat_metrics_registers_configuration_callback(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_config_manager_cls):
-    #     """Test that collect_statsbeat_metrics registers a configuration callback when initialized successfully."""
-    #     # Arrange
-    #     exporter = mock.Mock()
-    #     exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
-    #     exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
-    #     exporter._disable_offline_storage = False
-    #     exporter._credential = None
-    #     exporter._distro_version = ""
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_configuration_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
+    @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
+    def test_collect_statsbeat_metrics_registers_configuration_callback(self, mock_exporter, mock_reader, mock_meter_provider, mock_get_manager, mock_get_configuration_manager):
+        """Test that collect_statsbeat_metrics registers a configuration callback when initialized successfully."""
+        # Arrange
+        exporter = mock.Mock()
+        exporter._endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        exporter._instrumentation_key = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        exporter._disable_offline_storage = False
+        exporter._credential = None
+        exporter._distro_version = ""
         
-    #     # Set up mock returns
-    #     mock_exporter_instance = mock.Mock()
-    #     mock_exporter.return_value = mock_exporter_instance
+        # Set up mock returns
+        mock_exporter_instance = mock.Mock()
+        mock_exporter.return_value = mock_exporter_instance
         
-    #     mock_reader_instance = mock.Mock()
-    #     mock_reader.return_value = mock_reader_instance
+        mock_reader_instance = mock.Mock()
+        mock_reader.return_value = mock_reader_instance
         
-    #     mock_meter_provider_instance = mock.Mock()
-    #     mock_meter_provider.return_value = mock_meter_provider_instance
-    #     flush_mock = mock.Mock()
-    #     mock_meter_provider_instance.force_flush = flush_mock
+        mock_meter_provider_instance = mock.Mock()
+        mock_meter_provider.return_value = mock_meter_provider_instance
+        flush_mock = mock.Mock()
+        mock_meter_provider_instance.force_flush = flush_mock
+        
+        manager = mock.Mock()
+        manager.initialize.return_value = True
+        mock_get_manager.return_value = manager
 
-    #     mock_statsbeat_metrics_instance = mock.Mock()
-    #     mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
+        mock_config_manager_instance = mock.Mock()
+        mock_get_configuration_manager.return_value = mock_config_manager_instance
         
-    #     # Mock the configuration manager instance
-    #     mock_config_manager_instance = mock.Mock()
-    #     mock_config_manager_cls.return_value = mock_config_manager_instance
+        # Act
+        _statsbeat.collect_statsbeat_metrics(exporter)
         
-    #     manager = StatsbeatManager()
-    #     self.assertFalse(manager._initialized)
+        # Assert - verify manager is initialized
+        self.assertTrue(manager._initialized)
         
-    #     # Act
-    #     _statsbeat.collect_statsbeat_metrics(exporter)
-        
-    #     # Assert - verify manager is initialized
-    #     self.assertTrue(manager._initialized)
-        
-    #     # Verify that the configuration manager callback was registered
-    #     mock_config_manager_cls.assert_called_once()
-    #     mock_config_manager_instance.register_callback.assert_called_once()
-        
-    #     # Verify the callback function passed is the expected one
-    #     registered_callback = mock_config_manager_instance.register_callback.call_args[0][0]
-    #     self.assertEqual(registered_callback, _statsbeat.get_statsbeat_configuration_callback)
+        # Verify that the configuration manager callback was registered
+        mock_config_manager_instance.register_callback.assert_called_once()
+
+        # Verify the callback function passed is the expected one
+        registered_callback = mock_config_manager_instance.register_callback.call_args[0][0]
+        self.assertEqual(registered_callback, _statsbeat.get_statsbeat_configuration_callback)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
@@ -194,9 +190,45 @@ class TestStatsbeat(unittest.TestCase):
         _statsbeat.get_statsbeat_configuration_callback(settings)
         
         # Assert
+        mock_evaluate_feature.assert_called_once()
         mock_get_manager.assert_called_once()
+        mock_manager_instance.get_current_config.assert_called_once()
         mock_statsbeat_config_cls.from_config.assert_called_once_with(current_config, settings)
         mock_manager_instance.initialize.assert_called_once_with(updated_config)
+        mock_manager_instance.shutdown.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.StatsbeatConfig")
+    def test_get_statsbeat_configuration_callback_disable_sdkstats(self, mock_statsbeat_config_cls, mock_get_manager, mock_evaluate_feature):
+        """Test that configuration callback successfully updates configuration when statsbeat is initialized."""
+        # Arrange
+        mock_manager_instance = mock.Mock()
+        mock_get_manager.return_value = mock_manager_instance
+        
+        # Create mock current config
+        current_config = mock.Mock()
+        mock_manager_instance.get_current_config.return_value = current_config
+        
+        # Create mock updated config
+        updated_config = mock.Mock()
+        mock_statsbeat_config_cls.from_config.return_value = updated_config
+
+        # mock evaluate_feature to return False (indicating SDK stats should be disabled)
+        mock_evaluate_feature.return_value = False
+        
+        settings = {"disable_offline_storage": "true"}
+        
+        # Act
+        _statsbeat.get_statsbeat_configuration_callback(settings)
+        
+        # Assert
+        mock_evaluate_feature.assert_called_once()
+        mock_get_manager.assert_called_once()
+        mock_manager_instance.get_current_config.assert_not_called()
+        mock_statsbeat_config_cls.from_config.assert_not_called()
+        mock_manager_instance.initialize.assert_not_called()
+        mock_manager_instance.shutdown.assert_called_once()
 
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.evaluate_feature")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.get_statsbeat_manager")
@@ -207,6 +239,8 @@ class TestStatsbeat(unittest.TestCase):
         mock_manager_instance = mock.Mock()
         mock_get_manager.return_value = mock_manager_instance
         mock_manager_instance.get_current_config.return_value = None
+        # mock evaluate_feature to return True (indicating SDK stats should be enabled)
+        mock_evaluate_feature.return_value = True
         
         settings = {"disable_offline_storage": "true"}
         
@@ -231,6 +265,9 @@ class TestStatsbeat(unittest.TestCase):
         # Create mock current config
         current_config = mock.Mock()
         mock_manager_instance.get_current_config.return_value = current_config
+
+        # mock evaluate_feature to return True (indicating SDK stats should be enabled)
+        mock_evaluate_feature.return_value = True
         
         # Mock from_config to return False (indicating no valid update)
         mock_statsbeat_config_cls.from_config.return_value = False
