@@ -677,7 +677,7 @@ class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_d
     :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
      ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
      Literal["medium"], Literal["high"], Literal["default"]
-    :vartype threshold_level: str or str or str or str
+    :vartype threshold_level: str
     :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
     :vartype timeout_ms: int
     """
