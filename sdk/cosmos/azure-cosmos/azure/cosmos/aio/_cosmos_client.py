@@ -31,6 +31,8 @@ from azure.core.pipeline.policies import RetryMode
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+
+from azure.cosmos import CrossRegionHedgingStrategy
 from azure.cosmos.offer import ThroughputProperties
 
 from ..cosmos_client import _parse_connection_str
@@ -179,6 +181,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
+    :keyword availability_strategy: The strategy for routing requests across regions based on latency and availability.
+        When enabled, requests are automatically routed to other regions
+        based on latency thresholds if the primary region is unavailable or slow.
+        This helps optimize performance and availability for multi-region accounts.
+        The default value is None.
+    :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
 
     .. admonition:: Example:
 
@@ -197,16 +205,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, Dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
+            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url,
+            url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
+            availability_strategy=availability_strategy,
             **kwargs
         )
 

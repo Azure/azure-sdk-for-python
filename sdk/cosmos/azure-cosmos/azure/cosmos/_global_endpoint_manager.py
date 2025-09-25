@@ -24,7 +24,7 @@ database service.
 """
 
 import threading
-from typing import Tuple
+from typing import Tuple, List, Optional
 
 from azure.core.exceptions import AzureError
 
@@ -32,7 +32,7 @@ from . import _constants as constants
 from . import exceptions
 from ._request_object import RequestObject
 from .documents import DatabaseAccount
-from ._location_cache import LocationCache
+from ._location_cache import LocationCache, RegionalRoutingContext
 from ._utils import current_time_millis
 
 
@@ -85,6 +85,38 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
     def get_ordered_read_locations(self):
         return self.location_cache.get_ordered_read_locations()
+
+    def get_applicable_read_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Get the list of applicable read endpoints based on request parameters and excluded locations.
+
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for read operations
+        :rtype: List[RegionalRoutingContext]
+        """
+        return self.location_cache.get_applicable_read_regional_routing_contexts(request)
+
+    def get_applicable_write_regional_routing_contexts(self, request: RequestObject) -> List[RegionalRoutingContext]: # pylint: disable=name-too-long
+        """Get the list of applicable write endpoints based on request parameters and excluded locations.
+
+        :param request: Request object containing operation parameters and exclusion lists
+        :type request: RequestObject
+        :returns: List of regional routing contexts available for write operations
+        :rtype: List[RegionalRoutingContext]
+        """
+        return self.location_cache.get_applicable_write_regional_routing_contexts(request)
+
+    def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
+        """Get the region name associated with an endpoint.
+
+        :param endpoint: The endpoint URL to get the region name for
+        :type endpoint: str
+        :param is_write_operation: Whether the endpoint is being used for write operations
+        :type is_write_operation: bool
+        :returns: The region name associated with the endpoint, or None if not found
+        :rtype: Optional[str]
+        """
+        return self.location_cache.get_region_name(endpoint, is_write_operation)
 
     def can_use_multiple_write_locations(self, request):
         return self.location_cache.can_use_multiple_write_locations_for_request(request)
