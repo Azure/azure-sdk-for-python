@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinkReferencesOperations(Azur
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             link_reference_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinkReferencesOperations(Azur
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             link_reference_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinkReferencesOperations(Azur
         response = self.client.network_security_perimeter_link_references.list(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

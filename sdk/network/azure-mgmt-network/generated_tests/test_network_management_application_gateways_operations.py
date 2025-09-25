@@ -25,7 +25,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_delete(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.get(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -4252,6 +4252,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                         "authenticationCertificates": [{"id": "str"}],
                         "connectionDraining": {"drainTimeoutInSec": 0, "enabled": bool},
                         "cookieBasedAffinity": "str",
+                        "dedicatedBackendConnection": bool,
                         "etag": "str",
                         "hostName": "str",
                         "id": "str",
@@ -4264,8 +4265,11 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                         "protocol": "str",
                         "provisioningState": "str",
                         "requestTimeout": 0,
+                        "sniName": "str",
                         "trustedRootCertificates": [{"id": "str"}],
                         "type": "str",
+                        "validateCertChainAndExpiry": True,
+                        "validateSNI": True,
                     }
                 ],
                 "backendSettingsCollection": [
@@ -10325,7 +10329,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 },
                 "zones": ["str"],
             },
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10338,7 +10342,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -10349,7 +10353,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     def test_application_gateways_list(self, resource_group):
         response = self.client.application_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -10359,7 +10363,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_all(self, resource_group):
         response = self.client.application_gateways.list_all(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -10371,7 +10375,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_start(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10383,7 +10387,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_stop(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10395,7 +10399,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_backend_health(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10417,7 +10421,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 "protocol": "str",
                 "timeout": 0,
             },
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10427,7 +10431,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_server_variables(self, resource_group):
         response = self.client.application_gateways.list_available_server_variables(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -10437,7 +10441,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_request_headers(self, resource_group):
         response = self.client.application_gateways.list_available_request_headers(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -10447,7 +10451,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_response_headers(self, resource_group):
         response = self.client.application_gateways.list_available_response_headers(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -10457,7 +10461,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_waf_rule_sets(self, resource_group):
         response = self.client.application_gateways.list_available_waf_rule_sets(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -10467,7 +10471,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_ssl_options(self, resource_group):
         response = self.client.application_gateways.list_available_ssl_options(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
@@ -10477,7 +10481,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_ssl_predefined_policies(self, resource_group):
         response = self.client.application_gateways.list_available_ssl_predefined_policies(
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -10488,7 +10492,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     def test_application_gateways_get_ssl_predefined_policy(self, resource_group):
         response = self.client.application_gateways.get_ssl_predefined_policy(
             predefined_policy_name="str",
-            api_version="2024-07-01",
+            api_version="2024-10-01",
         )
 
         # please add some check logic here by yourself
