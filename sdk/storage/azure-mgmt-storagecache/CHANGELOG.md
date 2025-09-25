@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0 (2025-09-22)
+## 3.0.0 (2025-09-25)
 
 ### Features Added
 
@@ -30,13 +30,13 @@
   - Added enum `AutoImportJobUpdatePropertiesAdminStatus`
   - Added model `AutoImportJobsListResult`
   - Added enum `ImportJobAdminStatus`
-  - Added model `AutoExportJobsOperations`
-  - Added model `AutoImportJobsOperations`
+  - Added operation group `AutoExportJobsOperations`
+  - Added operation group `AutoImportJobsOperations`
 
 ### Breaking Changes
 
-  - Method `ImportJob.__init__` parameter `conflict_resolution_mode` changed default value from `str` to `none`
-  - Deleted or renamed model `StorageCacheManagementClientOperationsMixin`
+  - Parameter `conflict_resolution_mode` of method `ImportJob.__init__` is now optional
+  - Deleted or renamed operation group `StorageCacheManagementClientOperationsMixin`
 
 ## 2.0.0 (2024-05-20)
 
