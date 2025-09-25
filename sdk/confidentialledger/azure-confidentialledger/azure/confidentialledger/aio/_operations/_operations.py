@@ -2693,14 +2693,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def create_user_defined_role(
-        self, roles: list[_models.Role], *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.CreateUserDefinedRoleRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Required.
-        :type roles: list[~azure.confidentialledger.models.Role]
+        :param body: Request body. Required.
+        :type body: ~azure.confidentialledger.models.CreateUserDefinedRoleRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2711,14 +2711,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def create_user_defined_role(
-        self, roles: list[JSON], *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Required.
-        :type roles: list[JSON]
+        :param body: Request body. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2729,14 +2729,14 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def create_user_defined_role(
-        self, roles: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Required.
-        :type roles: IO[bytes]
+        :param body: Request body. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2747,14 +2747,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @distributed_trace_async
     async def create_user_defined_role(
-        self, roles: Union[list[_models.Role], list[JSON], IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CreateUserDefinedRoleRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Creates new roles and their actions.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Is one of the following types: [Role], [JSON], IO[bytes] Required.
-        :type roles: list[~azure.confidentialledger.models.Role] or list[JSON] or IO[bytes]
+        :param body: Request body. Is one of the following types: CreateUserDefinedRoleRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.confidentialledger.models.CreateUserDefinedRoleRequest or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2775,10 +2776,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(roles, (IOBase, bytes)):
-            _content = roles
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(roles, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_confidential_ledger_create_user_defined_role_request(
             content_type=content_type,
@@ -2811,15 +2812,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def update_user_defined_role(
-        self, roles: list[_models.Role], *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.CreateUserDefinedRoleRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Required.
-        :type roles: list[~azure.confidentialledger.models.Role]
+        :param body: Request body. Required.
+        :type body: ~azure.confidentialledger.models.CreateUserDefinedRoleRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2830,15 +2831,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def update_user_defined_role(
-        self, roles: list[JSON], *, content_type: str = "application/json", **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Required.
-        :type roles: list[JSON]
+        :param body: Request body. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2849,15 +2850,15 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @overload
     async def update_user_defined_role(
-        self, roles: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Required.
-        :type roles: IO[bytes]
+        :param body: Request body. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2868,15 +2869,16 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
     @distributed_trace_async
     async def update_user_defined_role(
-        self, roles: Union[list[_models.Role], list[JSON], IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CreateUserDefinedRoleRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> None:
         """Patch replaces the allowed action on existing roles,if the desire is to remove
         an existing action, the role must be deleted and recreated.
 
         User defined roles allow users to define and manage app specific AuthZ policy.
 
-        :param roles: Request body. Is one of the following types: [Role], [JSON], IO[bytes] Required.
-        :type roles: list[~azure.confidentialledger.models.Role] or list[JSON] or IO[bytes]
+        :param body: Request body. Is one of the following types: CreateUserDefinedRoleRequest, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.confidentialledger.models.CreateUserDefinedRoleRequest or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2897,10 +2899,10 @@ class _ConfidentialLedgerClientOperationsMixin(  # pylint: disable=too-many-publ
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(roles, (IOBase, bytes)):
-            _content = roles
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(roles, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_confidential_ledger_update_user_defined_role_request(
             content_type=content_type,
