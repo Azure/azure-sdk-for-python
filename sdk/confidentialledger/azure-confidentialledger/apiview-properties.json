@@ -10,6 +10,7 @@
         "azure.confidentialledger.models.ConfidentialLedgerErrorBody": "ConfidentialLedgerCommon.ConfidentialLedgerErrorBody",
         "azure.confidentialledger.models.ConsortiumMember": "ConfidentialLedger.ConsortiumMember",
         "azure.confidentialledger.models.Constitution": "ConfidentialLedger.Constitution",
+        "azure.confidentialledger.models.CreateUserDefinedRoleRequest": "ConfidentialLedger.createUserDefinedRole.Request.anonymous",
         "azure.confidentialledger.models.EnclaveQuote": "ConfidentialLedger.EnclaveQuote",
         "azure.confidentialledger.models.EndpointProperties": "ConfidentialLedger.EndpointProperties",
         "azure.confidentialledger.models.InterpreterReusePolicy": "ConfidentialLedger.InterpreterReusePolicy",
