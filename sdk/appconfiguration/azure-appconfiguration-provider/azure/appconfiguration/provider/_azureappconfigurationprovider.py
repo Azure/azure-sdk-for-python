@@ -344,6 +344,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         reset_feature_flag_timer = False
         refreshed = False
         sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = {}
+        backup_feature_flag_usage = self._feature_filter_usage.copy()
         try:
             if self._refresh_on and self._refresh_timer.needs_refresh():
                 reset_config_timer = True
@@ -365,22 +366,20 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
                 if feature_flags_need_refresh:
                     feature_flags = client.load_feature_flags(self._feature_flag_selectors, headers=headers, **kwargs)
-            processed_settings = {}
-            processed_feature_flags = []
+
+            # Default to existing settings if no refresh occurred
+            processed_settings = self._dict
+
+            processed_feature_flags = self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
+
             if refreshed_configs:
                 # Configuration Settings have been refreshed
                 processed_settings = self._process_configurations(configuration_settings)
-            else:
-                # Use existing settings if no refresh occurred
-                processed_settings = self._dict
 
             if feature_flags:
                 # Reset feature flag usage
                 self._feature_filter_usage = {}
                 processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
-            else:
-                # Use existing feature flags if no refresh occurred
-                processed_feature_flags = self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
 
             if self._feature_flag_enabled:
                 # Create the feature management schema and add feature flags
@@ -402,6 +401,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
             self._replica_client_manager.backoff(client)
+            # Restore feature flag usage on failure
+            self._feature_filter_usage = backup_feature_flag_usage
             raise e
 
     def refresh(self, **kwargs) -> None:
@@ -514,10 +515,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _process_configurations(
-        self,
-        configuration_settings: List[ConfigurationSetting],
-    ) -> Dict[str, Any]:
+    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
         configuration_settings_processed = {}
         feature_flags_processed = []
         for settings in configuration_settings:
