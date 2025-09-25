@@ -1,5 +1,39 @@
 # Release History
 
+## 11.0.0 (2025-10-20)
+
+### Features Added
+
+  - Model `AdvisorsOperations` added parameter `kwargs` in method `__init__`
+  - Model `CheckNameAvailabilityOperations` added parameter `kwargs` in method `__init__`
+  - Model `ConfigurationsOperations` added parameter `kwargs` in method `__init__`
+  - Model `DatabasesOperations` added parameter `kwargs` in method `__init__`
+  - Model `FirewallRulesOperations` added parameter `kwargs` in method `__init__`
+  - Model `LocationBasedPerformanceTierOperations` added parameter `kwargs` in method `__init__`
+  - Model `LocationBasedRecommendedActionSessionsOperationStatusOperations` added parameter `kwargs` in method `__init__`
+  - Model `LocationBasedRecommendedActionSessionsResultOperations` added parameter `kwargs` in method `__init__`
+  - Model `LogFilesOperations` added parameter `kwargs` in method `__init__`
+  - Model `Operations` added parameter `kwargs` in method `__init__`
+  - Model `PrivateEndpointConnectionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `PrivateLinkResourcesOperations` added parameter `kwargs` in method `__init__`
+  - Model `QueryTextsOperations` added parameter `kwargs` in method `__init__`
+  - Model `RecommendedActionsOperations` added parameter `kwargs` in method `__init__`
+  - Model `RecoverableServersOperations` added parameter `kwargs` in method `__init__`
+  - Model `ReplicasOperations` added parameter `kwargs` in method `__init__`
+  - Model `ServerAdministratorsOperations` added parameter `kwargs` in method `__init__`
+  - Model `ServerBasedPerformanceTierOperations` added parameter `kwargs` in method `__init__`
+  - Model `ServerKeysOperations` added parameter `kwargs` in method `__init__`
+  - Model `ServerParametersOperations` added parameter `kwargs` in method `__init__`
+  - Model `ServerSecurityAlertPoliciesOperations` added parameter `kwargs` in method `__init__`
+  - Model `ServersOperations` added parameter `kwargs` in method `__init__`
+  - Model `TopQueryStatisticsOperations` added parameter `kwargs` in method `__init__`
+  - Model `VirtualNetworkRulesOperations` added parameter `kwargs` in method `__init__`
+  - Model `WaitStatisticsOperations` added parameter `kwargs` in method `__init__`
+
+### Breaking Changes
+
+  - Deleted or renamed function `patch_sdk`
+
 ## 10.2.0b18 (2024-10-11)
 
 ### Other Changes
