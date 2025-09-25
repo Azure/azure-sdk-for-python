@@ -1,13 +1,26 @@
 ## Release History
 
-### 4.14.0b3 (Unreleased)
+### 4.14.0b5 (Unreleased)
+
+#### Features Added
+* Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+
+### 4.14.0b4 (2025-09-11)
+
+#### Bugs Fixed
+* Fixed bug where client provided session token was not respected when client-side session management was disabled. See [PR 42965](https://github.com/Azure/azure-sdk-for-python/pull/42965)
+ 
+### 4.14.0b3 (2025-09-09)
 
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
 * Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
-
-#### Breaking Changes
 
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).

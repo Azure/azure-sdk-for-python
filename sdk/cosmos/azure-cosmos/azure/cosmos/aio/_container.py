@@ -176,7 +176,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the container properties.
 
         :keyword bool populate_partition_key_range_statistics: Enable returning partition key
