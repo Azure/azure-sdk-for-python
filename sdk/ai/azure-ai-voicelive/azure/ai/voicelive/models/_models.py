@@ -251,7 +251,7 @@ class AudioEchoCancellation(_Model):
         self.type: Literal["server_echo_cancellation"] = "server_echo_cancellation"
 
 
-class AudioInputTranscriptionSettings(_Model):
+class AudioInputTranscriptionOptions(_Model):
     """Configuration for input audio transcription.
 
     :ivar model: The transcription model to use. Supported values:
@@ -555,7 +555,7 @@ class EOUDetection(_Model):
 
     :ivar model: Required. Is one of the following types: Literal["semantic_detection_v1"],
      Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"]
-    :vartype model: str
+    :vartype model: str or str or str
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -589,7 +589,7 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
     :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
      ``low``, ``medium``, ``high``, or ``default``. Is one of the following types: Literal["low"],
      Literal["medium"], Literal["high"], Literal["default"]
-    :vartype threshold_level: str
+    :vartype threshold_level: str or str or str or str
     :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
     :vartype timeout_ms: int
     """
@@ -2448,7 +2448,7 @@ class RequestSession(_Model):
     :ivar avatar:
     :vartype avatar: ~azure.ai.voicelive.models.AvatarConfig
     :ivar input_audio_transcription:
-    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionSettings
+    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionOptions
     :ivar output_audio_timestamp_types:
     :vartype output_audio_timestamp_types: list[str or
      ~azure.ai.voicelive.models.AudioTimestampType]
@@ -2496,7 +2496,7 @@ class RequestSession(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     avatar: Optional["_models.AvatarConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = rest_field(
+    input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = rest_field(
@@ -2527,7 +2527,7 @@ class RequestSession(_Model):
         input_audio_noise_reduction: Optional["_models.AudioNoiseReduction"] = None,
         input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = None,
         avatar: Optional["_models.AvatarConfig"] = None,
-        input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = None,
+        input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = None,
         output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
@@ -2616,7 +2616,7 @@ class Response(_Model):
      modalities,
      the model will pick one, for example if ``modalities`` is ``["text", "audio"]``, the model
      could be responding in either text or audio.
-    :vartype modalities: list[str]
+    :vartype modalities: list[str or str]
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
      ``g711_alaw``. Known values are: "pcm16", "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and
      "g711_alaw".
@@ -2787,7 +2787,7 @@ class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled")
     :vartype type: str or ~azure.ai.voicelive.models.CANCELLED
     :ivar reason: Required. Is either a Literal["turn_detected"] type or a
      Literal["client_cancelled"] type.
-    :vartype reason: str
+    :vartype reason: str or str
     """
 
     type: Literal[ResponseStatus.CANCELLED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3134,7 +3134,7 @@ class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete
     :vartype type: str or ~azure.ai.voicelive.models.INCOMPLETE
     :ivar reason: Required. Is either a Literal["max_output_tokens"] type or a
      Literal["content_filter"] type.
-    :vartype reason: str
+    :vartype reason: str or str
     """
 
     type: Literal[ResponseStatus.INCOMPLETE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3249,7 +3249,7 @@ class ResponseSession(RequestSession):
     :ivar avatar:
     :vartype avatar: ~azure.ai.voicelive.models.AvatarConfig
     :ivar input_audio_transcription:
-    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionSettings
+    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionOptions
     :ivar output_audio_timestamp_types:
     :vartype output_audio_timestamp_types: list[str or
      ~azure.ai.voicelive.models.AudioTimestampType]
@@ -3288,7 +3288,7 @@ class ResponseSession(RequestSession):
         input_audio_noise_reduction: Optional["_models.AudioNoiseReduction"] = None,
         input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = None,
         avatar: Optional["_models.AvatarConfig"] = None,
-        input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = None,
+        input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = None,
         output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
@@ -3423,24 +3423,18 @@ class ServerEvent(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-    @classmethod
-    def deserialize(cls, payload: dict[str, Any]) -> "ServerEvent":
-        # public, linter-friendly entrypoint
-        # pylint: disable-next=protected-access
-        return cls._deserialize(payload, [])
-
 
 class ServerEventConversationItemCreated(ServerEvent, discriminator="conversation.item.created"):
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    The server is generating a Response, which if successful will produce
+    * The server is generating a Response, which if successful will produce
     either one or two Items, which will be of type `message`
     (role `assistant`) or type `function_call`.
-    The input audio buffer has been committed, either by the client or the
+    * The input audio buffer has been committed, either by the client or the
     server (in `server_vad` mode). The server will take the content of the
     input audio buffer and add it to a new user message Item.
-    The client has sent a `conversation.item.create` event to add a new Item
+    * The client has sent a `conversation.item.create` event to add a new Item
     to the Conversation.
 
     :ivar event_id:

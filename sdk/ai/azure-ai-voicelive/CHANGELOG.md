@@ -33,7 +33,9 @@
   - Moved `aiohttp>=3.9.0,<4.0.0` from optional to required dependency
   - Removed `websockets` optional dependency as sync API no longer exists
   - Removed optional dependency groups `websockets`, `aiohttp`, and `all-websockets`
-- **Model Rename**: Renamed `AzureMultilingualSemanticVad` to `AzureSemanticVadMultilingual` for naming consistency with other multilingual variants
+- **Model Rename**:
+  - Renamed `AudioInputTranscriptionSettings` to `AudioInputTranscriptionOptions` for consistency with naming conventions
+  - Renamed `AzureMultilingualSemanticVad` to `AzureSemanticVadMultilingual` for naming consistency with other multilingual variants
 - **Enhanced Type Safety**: Turn detection discriminator types now use enum values instead of string literals for better type safety
 
 ### Other Changes

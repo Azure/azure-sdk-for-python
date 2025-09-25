@@ -7,7 +7,7 @@
         "azure.ai.voicelive.models.MessageItem": "VoiceLive.MessageItem",
         "azure.ai.voicelive.models.AssistantMessageItem": "VoiceLive.AssistantMessageItem",
         "azure.ai.voicelive.models.AudioEchoCancellation": "VoiceLive.AudioEchoCancellation",
-        "azure.ai.voicelive.models.AudioInputTranscriptionSettings": "VoiceLive.AudioInputTranscriptionSettings",
+        "azure.ai.voicelive.models.AudioInputTranscriptionOptions": "VoiceLive.AudioInputTranscriptionOptions",
         "azure.ai.voicelive.models.AudioNoiseReduction": "VoiceLive.AudioNoiseReduction",
         "azure.ai.voicelive.models.AvatarConfig": "VoiceLive.AvatarConfig",
         "azure.ai.voicelive.models.AzureVoice": "VoiceLive.AzureVoice",
