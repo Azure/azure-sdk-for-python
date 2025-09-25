@@ -3,7 +3,6 @@
 # ---------------------------------------------------------
 import os
 import logging
-from inspect import signature
 from typing import Dict, List, Optional, Union
 
 from typing_extensions import overload, override
@@ -210,18 +209,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 self._DEFAULT_OPEN_API_VERSION,
                 UserAgentSingleton().value,
             )
-
-            if self._has_is_reasoning_model_param:
-                self._flow = AsyncPrompty.load(
-                    source=self._prompty_file,
-                    model=prompty_model_config,
-                    is_reasoning_model=self._is_reasoning_model,
-                )
-            else:
-                self._flow = AsyncPrompty.load(
-                    source=self._prompty_file,
-                    model=prompty_model_config,
-                )
+            self._flow = AsyncPrompty.load(
+                source=self._prompty_file,
+                model=prompty_model_config,
+                is_reasoning_model=self._is_reasoning_model,
+            )
 
         return super().__call__(*args, **kwargs)
 
