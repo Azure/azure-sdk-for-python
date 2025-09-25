@@ -22,7 +22,11 @@
 """Iterable query results in the Azure Cosmos database service.
 """
 from azure.core.paging import PageIterator  # type: ignore
+
+from azure.cosmos._constants import _Constants
 from azure.cosmos._execution_context import execution_dispatcher
+import time
+from azure.cosmos import exceptions
 
 # pylint: disable=protected-access
 
@@ -71,6 +75,10 @@ class QueryIterable(PageIterator):
         self._options = options
         if continuation_token:
             options['continuation'] = continuation_token
+        # Capture timeout and start time
+        self.timeout = options.get('timeout')
+        self.use_operation_timeout = options.get(_Constants.UseOperationTimeout)
+
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
@@ -99,6 +107,16 @@ class QueryIterable(PageIterator):
         :return: List of results.
         :rtype: list
         """
+        # reset the operation start time if it's a paged request
+        if self.timeout and not self.use_operation_timeout:
+            self._options[_Constants.OperationStartTime] = time.time()
+
+        # Check timeout before fetching next block
+        if self.timeout:
+            elapsed = time.time() - self._options.get(_Constants.OperationStartTime)
+            if elapsed >= self.timeout:
+                raise exceptions.CosmosClientTimeoutError()
+
         block = self._ex_context.fetch_next_block()
         if not block:
             raise StopIteration
