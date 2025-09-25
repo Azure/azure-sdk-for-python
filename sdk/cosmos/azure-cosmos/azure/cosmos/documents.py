@@ -22,7 +22,7 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING, Union
 
 from typing_extensions import Literal, TypedDict
 
@@ -307,14 +307,14 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         taking into consideration the order specified in PreferredLocations. The
         locations in this list are specified as the names of the azure Cosmos
         locations like, 'West US', 'East US', 'Central India' and so on.
-    :vartype PreferredLocations: List[str]
+    :vartype PreferredLocations: list[str]
     :ivar ExcludedLocations:
         Gets or sets the excluded locations for geo-replicated database
         accounts. When ExcludedLocations is non-empty, the client will skip this
         set of locations from the final location evaluation. The locations in
         this list are specified as the names of the azure Cosmos locations like,
         'West US', 'East US', 'Central India' and so on.
-    :vartype ExcludedLocations: List[str]
+    :vartype ExcludedLocations: list[str]
     :ivar RetryOptions:
         Gets or sets the retry options to be applied to all requests when
         retrying.
@@ -359,8 +359,8 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.SSLConfiguration: Optional[SSLConfiguration] = None
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
-        self.PreferredLocations: List[str] = []
-        self.ExcludedLocations: Optional[List[str]] = None
+        self.PreferredLocations: list[str] = []
+        self.ExcludedLocations: Optional[list[str]] = None
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
