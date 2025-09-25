@@ -15,7 +15,7 @@ Run with: python sample_create_and_deploy_project.py
 
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient, models as _models
 
 
 def sample_create_and_deploy_project():
@@ -28,7 +28,7 @@ def sample_create_and_deploy_project():
         project_name = "IsaacNewton"
         project = client.create_project(
             project_name=project_name,
-            options={
+            body={
                 "description": "Biography of Sir Isaac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -48,28 +48,28 @@ def sample_create_and_deploy_project():
 
         update_sources_poller = client.begin_update_sources(
             project_name=project_name,
-            sources=[
-                {
-                    "op": "add",
-                    "value": {
-                        "displayName": "Isaac Newton Bio",
-                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
-                        "sourceKind": "url",
-                    },
-                }
+            body=[
+                _models.UpdateSourceRecord(
+                    op="add",
+                    value=_models.UpdateQnaSourceRecord(
+                        display_name="Isaac Newton Bio",
+                        source="https://wikipedia.org/wiki/Isaac_Newton",  # source id
+                        source_uri="https://wikipedia.org/wiki/Isaac_Newton",
+                        source_kind="url",
+                        content_structure_kind="unstructured",
+                        refresh=False,
+                    ),
+                )
             ],
         )
-        sources = update_sources_poller.result()
-
-        print("Knowledge sources:")
-        for source in sources:
-            print(f"  {source.get('displayName', 'N/A')} -> {source.get('sourceUri', 'N/A')}")
+        update_sources_poller.result()  # completes; no return payload
+        print("Knowledge sources updated (1 URL added)")
 
         deployment_poller = client.begin_deploy_project(
             project_name=project_name, deployment_name="production"
         )
-        deployment = deployment_poller.result()
-        print(f"Deployment created: {deployment['deploymentName']}")
+        deployment_poller.result()  # LRO completes; no deployment payload returned in current SDK
+        print("Deployment created: production")
 
         print("Project deployments:")
         for d in client.list_deployments(project_name=project_name):

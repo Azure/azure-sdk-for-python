@@ -3,6 +3,7 @@ import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
+from azure.ai.language.questionanswering.authoring import models as _models
 
 
 async def sample_create_and_deploy_project_async():
@@ -15,7 +16,7 @@ async def sample_create_and_deploy_project_async():
         project_name = "IsaacNewton"
         project = await client.create_project(
             project_name=project_name,
-            options={
+            body={
                 "description": "Biography of Sir Isaac Newton",
                 "language": "en",
                 "multilingualResource": True,
@@ -31,27 +32,28 @@ async def sample_create_and_deploy_project_async():
 
         update_sources_poller = await client.begin_update_sources(
             project_name=project_name,
-            sources=[
-                {
-                    "op": "add",
-                    "value": {
-                        "displayName": "Isaac Newton Bio",
-                        "sourceUri": "https://wikipedia.org/wiki/Isaac_Newton",
-                        "sourceKind": "url",
-                    },
-                }
+            body=[
+                _models.UpdateSourceRecord(
+                    op="add",
+                    value=_models.UpdateQnaSourceRecord(
+                        display_name="Isaac Newton Bio",
+                        source="https://wikipedia.org/wiki/Isaac_Newton",
+                        source_uri="https://wikipedia.org/wiki/Isaac_Newton",
+                        source_kind="url",
+                        content_structure_kind="unstructured",
+                        refresh=False,
+                    ),
+                )
             ],
         )
-        sources = await update_sources_poller.result()
-        print("Knowledge sources:")
-        async for source in sources:
-            print(f"  {source.get('displayName', 'N/A')} -> {source.get('sourceUri', 'N/A')}")
+        await update_sources_poller.result()
+        print("Knowledge sources updated (1 URL added)")
 
         deployment_poller = await client.begin_deploy_project(
             project_name=project_name, deployment_name="production"
         )
-        deployment = await deployment_poller.result()
-        print(f"Deployment created: {deployment['deploymentName']}")
+        await deployment_poller.result()  # completes; no payload
+        print("Deployment created: production")
 
         print("Project deployments:")
         async for d in client.list_deployments(project_name=project_name):

@@ -1,96 +1,215 @@
-# 迁移指南：从合并包到独立 Authoring 包
+# Migration Guide: From Combined Package to Authoring-only Package
 
-本文帮助你从原来的 `azure-ai-language-questionanswering` 合并包迁移到新的 **仅 Authoring** 包：`azure-ai-language-questionanswering-authoring`。
+This guide helps you migrate from the previous combined `azure-ai-language-questionanswering` package to the new **authoring‑only** package: `azure-ai-language-questionanswering-authoring`.
 
-## 1. 为什么拆分
-原包同时包含：
-* 运行时 (Runtime / Query) 能力：对部署后的项目进行问答查询。
-* Authoring 管理能力：创建/导入/导出/更新项目、知识源、QnA、同义词等。
+## 1. Why the Split
 
-很多用户只需要其中一类能力。拆分后：
-* `azure-ai-language-questionanswering-authoring` 专注于项目管理（Authoring）。
-* （未来）若需要查询，将使用运行时专用包或保留原包作为聚合层（视后续策略）。
+The original package contained both:
 
-## 2. 包名称与类名变化
-| 原合并包 | 独立 Authoring 包 |
-|----------|------------------|
-| `azure.ai.language.questionanswering.authoring` 模块 | `azure.ai.language.questionanswering.authoring` (保持层级，安装包不同) |
-| `AuthoringClient` | `QuestionAnsweringAuthoringClient` |
-| Async: `AuthoringClient` (aio) | Async: `QuestionAnsweringAuthoringClient` (aio) |
+* Runtime querying (answering questions against a deployed project)
+* Authoring management (create / update / import / export / deploy projects, knowledge sources, QnAs, synonyms)
 
-> 注意：安装包名字变了（`-authoring` 后缀），导入路径保持语义一致，只是客户端类名更清晰明确。
+Most users need only one side. After the split:
 
-## 3. 安装
+* `azure-ai-language-questionanswering-authoring` focuses solely on project (authoring) management.
+* A dedicated runtime package (or continued combined distribution) may follow separately.
+
+## 2. Package and Client Renames
+
+| Previous (Combined) | New Authoring Package |
+|---------------------|-----------------------|
+| Install: `azure-ai-language-questionanswering` | Install: `azure-ai-language-questionanswering-authoring` |
+| Client: `AuthoringClient` | Client: `QuestionAnsweringAuthoringClient` |
+| Async Client: `AuthoringClient` (aio) | Async: `QuestionAnsweringAuthoringClient` (aio) |
+
+Import paths remain under `azure.ai.language.questionanswering.authoring`, but the distribution name and client class changed for clarity.
+
+## 3. Installation
+
 ```bash
-pip uninstall azure-ai-language-questionanswering -y  # 如果之前安装过
-pip install azure-ai-language-questionanswering-authoring --pre
+pip uninstall azure-ai-language-questionanswering -y  # if previously installed
+pip install --pre azure-ai-language-questionanswering-authoring
 ```
 
-或从源码（仓库根目录）：
+From source (repo root):
 ```bash
 pip install -e ./sdk/cognitivelanguage/azure-ai-language-questionanswering-authoring
 ```
 
-## 4. 代码改动速查
-典型旧代码：
+## 4. Quick Code Changes
+
+Old:
+
 ```python
 from azure.ai.language.questionanswering.authoring import AuthoringClient
 client = AuthoringClient(endpoint, AzureKeyCredential(key))
 ```
 
-迁移后：
+New:
+
 ```python
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
 ```
 
-异步：
+Async:
+
 ```python
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 ```
 
-## 5. API 差异
-大多数方法名保持一致（`create_project`, `begin_update_sources`, `begin_update_qnas`, `begin_export`, `begin_import_assets`, `begin_deploy_project`, `list_*` 系列）。
+ 
+## 5. Updated / Changed APIs
 
-目前没有移除 Authoring 功能；仅剔除了与运行时查询（`get_answers`/`query_text` 等）有关的内容。
+Key changes from earlier previews or combined forms:
 
-## 6. 轮询与 LRO
-长时间操作（导入、导出、部署、批量更新）仍通过 `begin_*` 前缀返回 poller：
+| Area | Before | Now |
+|------|--------|-----|
+| Import operation name | `begin_import_assets` | `begin_import_method` |
+| Export/Import format arg | `file_format` | `format` |
+| Synonyms listing | `list_synonyms()` | `get_synonyms()` (returns iterable groups) |
+| Deployment poller result | Dict with metadata (assumed) | `None` (completion only) |
+| Export poller result | URL payload (assumed) | `None` (no payload yet) |
+
+All other authoring method names (`create_project`, `begin_update_sources`, `begin_update_qnas`, `begin_deploy_project`, `list_projects`, `list_deployments`) remain.
+
+## 6. Long-Running Operations (LRO) Semantics
+
+Current preview LRO pollers return `None` from `.result()`. Treat `.result()` as a completion signal only. Affected operations:
+
+* `begin_update_sources`
+* `begin_update_qnas`
+* `begin_export`
+* `begin_import_method`
+* `begin_deploy_project`
+
+Future versions may introduce typed results; avoid relying on payload shape.
+
+### Example (Import)
+
 ```python
-poller = client.begin_export(project_name, file_format="json")
-result = poller.result()
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient, models as qa_models
+from azure.core.credentials import AzureKeyCredential
+
+client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
+assets = qa_models.ImportJobOptions(
+    assets=qa_models.Assets(
+        qnas=[
+            qa_models.ImportQnaRecord(
+                id=1,
+                answer="Example",
+                source="https://contoso/faq",
+                questions=["Example?"],
+            )
+        ]
+    )
+)
+poller = client.begin_import_method(project_name="MyProject", body=assets, format="json")
+poller.result()  # None (just completion)
 ```
-在 Async 版本中使用 `await poller.result()`。
 
-## 7. 依赖与 Python 版本
-* Python: `>=3.9`
-* 关键依赖：`azure-core`, `isodate`, `typing-extensions (Py<3.11)`
-如果你原环境锁定在 3.8，需要升级后再安装。
+ 
+## 7. Authentication Guidance
 
-## 8. 环境变量
-| 变量 | 作用 |
-|------|------|
-| `AZURE_QUESTIONANSWERING_ENDPOINT` | 资源 Endpoint |
-| `AZURE_QUESTIONANSWERING_KEY` | 访问密钥 |
-| `AZURE_QUESTIONANSWERING_PROJECT` | 可选：现有项目名（导出/导入样例） |
+Preferred: Azure Active Directory with `DefaultAzureCredential`.
 
-## 9. 样例与测试
-* 新包下的 `samples/authoring` 与 `async_samples` 保留纯 Authoring 示例。
-* 测试夹具（fixtures）已裁剪，仅保留 Authoring 所需环境变量。
+```python
+from azure.identity import DefaultAzureCredential
+from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
-## 10. 回滚策略
-如果需要运行时查询功能，在该独立包 GA 前仍可临时继续使用旧合并包（注意版本差异），或等待运行时独立包提供。
+endpoint = "https://<resource-name>.cognitiveservices.azure.com"
+credential = DefaultAzureCredential()
+client = QuestionAnsweringAuthoringClient(endpoint, credential)
+```
 
-## 11. 已知事项 / 后续计划
-* 运行时查询拆分包命名仍在规划。
-* 若你使用 AAD（TokenCredential）鉴权，代码方式保持不变，只需替换客户端类名。
-* 录制测试与 `assets.json` 暂未启用（仅在需要 live test 基础设施时引入）。
+Fallback (resource key):
 
-## 12. 遇到问题？
-请在仓库提交 Issue，并附上：
-* 旧/新包版本
-* 调用示例代码
-* 完整回溯（如有异常）
+```python
+from azure.core.credentials import AzureKeyCredential
+client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
+```
+
+Ensure you use the custom subdomain endpoint for AAD (not a regional alias) so the challenge flow succeeds.
+
+## 8. Python & Dependencies
+
+* Python >= 3.9
+* Core dependencies: `azure-core`, `isodate`, (conditionally) `typing-extensions` (<3.11)
+
+Upgrade from Python 3.8 before installing.
+
+## 9. Environment Variables (Optional Convenience)
+
+| Variable | Purpose |
+|----------|---------|
+| `AZURE_QUESTIONANSWERING_ENDPOINT` | Resource endpoint |
+| `AZURE_QUESTIONANSWERING_KEY` | Key credential (if not using AAD) |
+| `AZURE_QUESTIONANSWERING_PROJECT` | Optional: default project name for samples |
+
+ 
+## 10. Sample & Test Layout
+
+* `samples/` and `async_samples/` now contain **authoring-only** scenarios.
+* Runtime question querying samples were removed from this package.
+* Live test fixtures trimmed to authoring necessities only.
+
+ 
+## 11. Backward / Rollback Strategy
+
+If you still need runtime querying before a dedicated runtime package is published, you can temporarily continue using the combined package version you had. Plan to migrate fully once the runtime split is available.
+
+ 
+## 12. Synonyms, Sources, and QnAs Model-Based Updates
+
+Use model classes instead of raw dictionaries for clarity and forward compatibility:
+
+```python
+from azure.ai.language.questionanswering.authoring import models as qa_models
+client.begin_update_sources(
+    project_name="MyProject",
+    body=[
+        qa_models.UpdateSourceRecord(
+            op="add",
+            value=qa_models.UpdateQnaSourceRecord(
+                display_name="FAQSrc",
+                source="https://contoso.com/faq",
+                source_uri="https://contoso.com/faq",
+                source_kind="url",
+                content_structure_kind="unstructured",
+                refresh=False,
+            ),
+        )
+    ],
+).result()
+```
+
+ 
+## 13. Known Preview Limitations
+
+| Limitation | Detail |
+|-----------|--------|
+| LRO result payloads | All `begin_*` currently return `None` from `.result()` |
+| Export artifact access | No direct download URL surfaced yet |
+| Metadata evolution | Model names/fields may still change before GA |
+
+ 
+## 14. Troubleshooting Checklist
+
+| Symptom | Likely Cause | Fix |
+|---------|-------------|-----|
+| `AttributeError: begin_import_assets` | Old method name | Use `begin_import_method` |
+| `TypeError: unexpected keyword file_format` | Param rename | Replace with `format` |
+| `AttributeError: list_synonyms` | Method rename | Use `get_synonyms()` |
+| `TypeError: 'NoneType' object is not subscriptable` after deploy | Expecting payload | Treat `.result()` as completion only |
+
+ 
+## 15. Filing Issues
+
+Provide:
+
+* Old & new package versions
+* Code snippet (minimal repro)
+* Full stack trace (if exception)
 
 ---
-如需要再额外加入“运行时功能迁移”章节（当运行时包发布后），可追加补充。
+Additional runtime migration notes will be added once the runtime package is published.

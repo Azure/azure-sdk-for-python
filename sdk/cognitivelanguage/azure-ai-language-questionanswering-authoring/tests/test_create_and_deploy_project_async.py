@@ -1,4 +1,5 @@
 import pytest
+from typing import Any, Dict, cast
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
@@ -16,7 +17,7 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
         async with client:
             await client.create_project(
                 project_name=project_name,
-                options={
+                body={
                     "description": "Biography of Sir Isaac Newton",
                     "language": "en",
                     "multilingualResource": True,
@@ -37,13 +38,18 @@ class TestCreateAndDeployAsync(QuestionAnsweringAuthoringTestCase):
         project_name = "IsaacNewton"
         async with client:
             await AuthoringAsyncTestHelper.create_test_project(
-                client, project_name=project_name, is_deployable=True, **self.kwargs_for_polling
+                client,
+                project_name=project_name,
+                is_deployable=True,
+                polling_interval=0 if self.is_playback else None,
             )
             deployment_poller = await client.begin_deploy_project(
-                project_name=project_name, deployment_name="production", **self.kwargs_for_polling
+                project_name=project_name,
+                deployment_name="production",
+                polling_interval=0 if self.is_playback else None,
             )
-            result = await deployment_poller.result()
-            assert result["deploymentName"] == "production"
+            # Preview LRO returns None; just await completion
+            await deployment_poller.result()
             deployments = client.list_deployments(project_name=project_name)
             found = False
             async for d in deployments:
