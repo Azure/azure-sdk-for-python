@@ -22,7 +22,7 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
+from typing import List, Optional, TYPE_CHECKING, Union
 
 from typing_extensions import Literal, TypedDict
 
