@@ -377,9 +377,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if feature_flags:
                 # Reset feature flag usage
                 self._feature_filter_usage = {}
-                processed_feature_flags = (
-                    [self._process_feature_flag(ff) for ff in feature_flags]
-                )
+                processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
             else:
                 # Use existing feature flags if no refresh occurred
                 processed_feature_flags = self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
@@ -517,7 +515,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     def _process_configurations(
-        self, configuration_settings: List[ConfigurationSetting],
+        self,
+        configuration_settings: List[ConfigurationSetting],
     ) -> Dict[str, Any]:
         configuration_settings_processed = {}
         feature_flags_processed = []

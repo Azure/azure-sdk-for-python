@@ -589,7 +589,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         """
         Updates the etags of sentinel keys that are part of the configuration
 
-        :param List[FeatureFlagConfigurationSetting] configuration_settings: The list of configuration settings to update
+        :param List[FeatureFlagConfigurationSetting] configuration_settings: The list of configuration settings to
+        update
         :return: A dictionary mapping (key, label) tuples to their updated etags
         :rtype: Dict[Tuple[str, str], Optional[str]]
         """
