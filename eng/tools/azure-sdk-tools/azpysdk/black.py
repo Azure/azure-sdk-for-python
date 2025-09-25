@@ -46,11 +46,13 @@ class black(Check):
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for black check")
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             # install black
             try:
-                install_into_venv(executable, [f"black=={BLACK_VERSION}"])
+                install_into_venv(executable, [f"black=={BLACK_VERSION}"], package_dir)
             except CalledProcessError as e:
-                logger.error("Failed to install black:", e)
+                logger.error(f"Failed to install black: {e}")
                 return e.returncode
 
             logger.info(f"Running black against {package_name}")

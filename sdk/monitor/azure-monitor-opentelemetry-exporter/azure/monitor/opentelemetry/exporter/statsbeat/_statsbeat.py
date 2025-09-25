@@ -1,22 +1,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import logging
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
+
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
     StatsbeatConfig,
     StatsbeatManager,
 )
-from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
+
+if TYPE_CHECKING:
+    from azure.monitor.opentelemetry.exporter.export._base import BaseExporter
+
 
 logger = logging.getLogger(__name__)
 
-def collect_statsbeat_metrics(exporter) -> None:  # pyright: ignore
+# pyright: ignore
+def collect_statsbeat_metrics(exporter: "BaseExporter") -> None:  # pyright: ignore
     config = StatsbeatConfig.from_exporter(exporter)
     if config:
         initialized = StatsbeatManager().initialize(config)
         if initialized:
             # Register the callback that will be invoked on configuration changes to statsbeat
-            _ConfigurationManager().register_callback(get_statsbeat_configuration_callback)
+            # Is a NoOp if _ConfigurationManager not initialized
+            config_manager = get_configuration_manager()
+            config_manager.register_callback(get_statsbeat_configuration_callback)
 
 def get_statsbeat_configuration_callback(settings: Dict[str, str]):
     current_config = StatsbeatManager().get_current_config()

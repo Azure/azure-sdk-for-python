@@ -46,7 +46,6 @@ def main():
                     "sid": "00000011-1111-2222-2222-123456789111",
                     "tenantId": "00000011-1111-2222-2222-123456789111",
                 },
-                "authenticationMetadata": "AzureAD",
                 "collation": "SQL_Latin1_General_CP1_CI_AS",
                 "databaseFormat": "AlwaysUpToDate",
                 "dnsZonePartner": "/subscriptions/20D7082A-0FC7-4468-82BD-542694D5042B/resourceGroups/testrg/providers/Microsoft.Sql/managedInstances/testinstance",
@@ -58,7 +57,6 @@ def main():
                 "proxyOverride": "Redirect",
                 "publicDataEndpointEnabled": False,
                 "requestedBackupStorageRedundancy": "Geo",
-                "requestedLogicalAvailabilityZone": "1",
                 "servicePrincipal": {"type": "SystemAssigned"},
                 "storageSizeInGB": 1024,
                 "subnetId": "/subscriptions/20D7082A-0FC7-4468-82BD-542694D5042B/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
@@ -72,6 +70,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/ManagedInstanceCreateMax.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ManagedInstanceCreateMax.json
 if __name__ == "__main__":
     main()

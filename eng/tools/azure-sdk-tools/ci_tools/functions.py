@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
+from packaging import tags
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from packaging.requirements import Requirement
@@ -41,6 +42,17 @@ REGRESSION_EXCLUDED_PACKAGES = [
 
 MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
+]
+
+# In very rare situations, we need to actively transition a package from one part of the code base to another
+# in a multi-stage process. For example, migrating "azure-ai-textanalytics" from "sdk/textanalytics" to "sdk/ai".
+# Both need to simultaneously exist for a short period of time, but we need to prevent discovery of the package
+# so that downstream checks aren't broken by this.
+# We need to actively prevent ourselves from discovering the package in its old location. To do that we:
+#  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
+#  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
+PATHS_EXCLUDED_FROM_DISCOVERY = [
+    "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
@@ -182,6 +194,15 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = [
         p for p in collected_top_level_directories if not any(part in ("test", "tests") for part in p.split(os.sep))
     ]
+
+    # remove any packages that might exist in the PATHS_EXCLUDED_FROM_DISCOVERY path list (relative from repo root)
+    excluded = set(PATHS_EXCLUDED_FROM_DISCOVERY)
+    filtered = []
+    for pkg_path in collected_top_level_directories:
+        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, '/')
+        if not any(rel == excl or rel.startswith(excl + '/') for excl in excluded):
+            filtered.append(pkg_path)
+    collected_top_level_directories = filtered
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
@@ -505,11 +526,12 @@ def get_venv_python(venv_path: str) -> str:
 
     # cross-platform python in a venv
     bin_dir = "Scripts" if os.name == "nt" else "bin"
-    return os.path.join(venv_path, bin_dir, "python")
+    python_exe =  "python.exe" if os.name == "nt" else "python"
+    return os.path.join(venv_path, bin_dir, python_exe)
 
 
 def install_into_venv(
-    venv_path_or_executable: str, requirements: List[str]
+    venv_path_or_executable: str, requirements: List[str], working_directory: str
 ) -> None:
     """
     Install the requirements into an existing venv (venv_path) without activating it.
@@ -526,9 +548,8 @@ def install_into_venv(
 
     if pip_cmd[0] == "uv":
         cmd += ["--python", py]
-
     # todo: clean this up so that we're using run_logged from #42862
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd=working_directory)
 
 
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
@@ -592,24 +613,7 @@ def get_interpreter_compatible_tags() -> List[str]:
     This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
     """
 
-    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
-
-    output = subprocess.run(
-        commands,
-        check=True,
-        capture_output=True,
-    ).stdout.decode(encoding="utf-8")
-
-    tag_strings = output.split(os.linesep)
-
-    index = 0
-    for index, value in enumerate(tag_strings):
-        if "Compatible tags" in value:
-            break
-
-    tags = tag_strings[index + 1 :]
-
-    return [tag.strip() for tag in tags if tag]
+    return [str(t) for t in tags.sys_tags()]
 
 
 def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
