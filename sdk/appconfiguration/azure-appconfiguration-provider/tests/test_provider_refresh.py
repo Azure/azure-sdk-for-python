@@ -72,14 +72,14 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         client.refresh()
         assert client["refresh_message"] == "original value"
         assert has_feature_flag(client, "Alpha", False)
-        assert mock_callback.call_count == 2
+        assert mock_callback.call_count == 3
 
         setting.value = "original value"
         appconfig_client.set_configuration_setting(setting)
 
         client.refresh()
         assert client["refresh_message"] == "original value"
-        assert mock_callback.call_count == 2
+        assert mock_callback.call_count == 4
 
     # method: refresh
     @recorded_by_proxy
