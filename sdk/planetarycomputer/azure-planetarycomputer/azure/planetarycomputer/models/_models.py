@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
@@ -57,13 +57,13 @@ class Asset(_Model):
 
     platform: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Platform that acquired the data."""
-    instruments: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    instruments: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Instruments that acquired the data."""
     constellation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Constellation of satellites that acquired the data."""
     mission: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Mission associated with the data."""
-    providers: Optional[List["_models.Provider"]] = rest_field(
+    providers: Optional[list["_models.Provider"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Organizations or individuals who provide the data."""
@@ -85,7 +85,7 @@ class Asset(_Model):
     """URL to the asset file. Required."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Media type of the asset."""
-    roles: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    roles: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Roles of the asset within the item."""
 
     @overload
@@ -94,17 +94,17 @@ class Asset(_Model):
         *,
         href: str,
         platform: Optional[str] = None,
-        instruments: Optional[List[str]] = None,
+        instruments: Optional[list[str]] = None,
         constellation: Optional[str] = None,
         mission: Optional[str] = None,
-        providers: Optional[List["_models.Provider"]] = None,
+        providers: Optional[list["_models.Provider"]] = None,
         gsd: Optional[float] = None,
         created: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
         type: Optional[str] = None,
-        roles: Optional[List[str]] = None,
+        roles: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -137,7 +137,7 @@ class AssetMetadata(_Model):
     """The key of the asset. Required."""
     type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the asset. Required."""
-    roles: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    roles: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The roles of the asset. Required."""
     title: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The title of the asset. Required."""
@@ -150,7 +150,7 @@ class AssetMetadata(_Model):
         *,
         key: str,
         type: str,
-        roles: List[str],
+        roles: list[str],
         title: str,
         description: str,
     ) -> None: ...
@@ -174,7 +174,7 @@ class AssetStatisticsResponse(_Model):
     :vartype data: dict[str, ~azure.planetarycomputer.models.BandStatistics]
     """
 
-    data: Dict[str, "_models.BandStatistics"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: dict[str, "_models.BandStatistics"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Response Asset Statistics Api Collections  Collection Id  Items  Item Id  Asset Statistics Get.
      Required."""
 
@@ -182,7 +182,7 @@ class AssetStatisticsResponse(_Model):
     def __init__(
         self,
         *,
-        data: Dict[str, "_models.BandStatistics"],
+        data: dict[str, "_models.BandStatistics"],
     ) -> None: ...
 
     @overload
@@ -255,7 +255,7 @@ class BandStatistics(_Model):
     """Least common value in the band. Required."""
     unique: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Count of unique values in the band. Required."""
-    histogram: List[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    histogram: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Histogram of pixel values in the band. Required."""
     valid_percent: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Percentage of valid (non-masked) pixels. Required."""
@@ -284,7 +284,7 @@ class BandStatistics(_Model):
         majority: float,
         minority: float,
         unique: float,
-        histogram: List[List[float]],
+        histogram: list[list[float]],
         valid_percent: float,
         masked_pixels: float,
         valid_pixels: float,
@@ -311,14 +311,14 @@ class BoundsResponse(_Model):
     :vartype bounds: list[float]
     """
 
-    bounds: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounds: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of coordinates defining the bounding box [west, south, east, north]. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        bounds: List[float],
+        bounds: list[float],
     ) -> None: ...
 
     @overload
@@ -332,10 +332,6 @@ class BoundsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassMapLegendResponse(_Model):
-    """ClassMap legend response model."""
-
-
 class ConformanceClasses(_Model):
     """`https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints
     <https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#ogc-api---features-endpoints>`_
@@ -346,14 +342,14 @@ class ConformanceClasses(_Model):
     :vartype conforms_to: list[str]
     """
 
-    conforms_to: List[str] = rest_field(name="conformsTo", visibility=["read", "create", "update", "delete", "query"])
+    conforms_to: list[str] = rest_field(name="conformsTo", visibility=["read", "create", "update", "delete", "query"])
     """List of OGC API conformance classes implemented by this API. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        conforms_to: List[str],
+        conforms_to: list[str],
     ) -> None: ...
 
     @overload
@@ -419,7 +415,7 @@ class DefaultLocation(_Model):
 
     zoom: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Default zoom level for the map. Required."""
-    coordinates: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Default center coordinates [latitude, longitude] for the map. Required."""
 
     @overload
@@ -427,7 +423,7 @@ class DefaultLocation(_Model):
         self,
         *,
         zoom: int,
-        coordinates: List[float],
+        coordinates: list[float],
     ) -> None: ...
 
     @overload
@@ -453,17 +449,17 @@ class FeatureCollections(_Model):
     :vartype collections: list[~azure.planetarycomputer.models.StacCollection]
     """
 
-    links: List["_models.Link"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: list["_models.Link"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints. Required."""
-    collections: List["_models.StacCollection"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    collections: list["_models.StacCollection"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of STAC collections available in the catalog. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        links: List["_models.Link"],
-        collections: List["_models.StacCollection"],
+        links: list["_models.Link"],
+        collections: list["_models.StacCollection"],
     ) -> None: ...
 
     @overload
@@ -546,11 +542,11 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """GeoJSON type identifier for ItemCollection. Required. \"FeatureCollection\""""
-    features: List["_models.GeoJsonStatisticsItemResponse"] = rest_field(
+    features: list["_models.GeoJsonStatisticsItemResponse"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of STAC items with statistics. Required."""
-    bounding_box: Optional[List[float]] = rest_field(
+    bounding_box: Optional[list[float]] = rest_field(
         name="bbox", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bounding box coordinates [west, south, east, north]."""
@@ -566,9 +562,9 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """MSFT Short Description."""
-    stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    stac_extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of STAC extension URLs used by this item collection."""
-    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: Optional[list["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Related links for the item collection."""
     context: Optional["_models.ContextExtension"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -583,14 +579,14 @@ class GeoJsonStatisticsItemCollectionResponse(_Model):
         self,
         *,
         type: Union[str, "_models.ItemCollectionType"],
-        features: List["_models.GeoJsonStatisticsItemResponse"],
-        bounding_box: Optional[List[float]] = None,
+        features: list["_models.GeoJsonStatisticsItemResponse"],
+        bounding_box: Optional[list[float]] = None,
         stac_version: Optional[str] = None,
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
-        links: Optional[List["_models.Link"]] = None,
+        stac_extensions: Optional[list[str]] = None,
+        links: Optional[list["_models.Link"]] = None,
         context: Optional["_models.ContextExtension"] = None,
     ) -> None: ...
 
@@ -638,7 +634,7 @@ class GeoJsonStatisticsItemResponse(_Model):
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    bounding_box: List[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
     """Bounding box coordinates for the feature. Required."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the feature. Required."""
@@ -666,7 +662,7 @@ class GeoJsonStatisticsItemResponse(_Model):
     """MSFT Timestamp."""
     e_tag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
     """MSFT ETag."""
-    stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    stac_extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of STAC extension URLs used by this item."""
 
     @overload
@@ -674,7 +670,7 @@ class GeoJsonStatisticsItemResponse(_Model):
         self,
         *,
         geometry: "_models.Geometry",
-        bounding_box: List[float],
+        bounding_box: list[float],
         id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.FeatureType"],
         properties: "_models.ItemProperties",
@@ -685,7 +681,7 @@ class GeoJsonStatisticsItemResponse(_Model):
         collection: Optional[str] = None,
         timestamp: Optional[str] = None,
         e_tag: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
+        stac_extensions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -723,11 +719,11 @@ class Geometry(_Model):
     :vartype bounding_box: list[float]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type")
     """Discriminator property for Geometry. Required. Known values are: \"Point\", \"LineString\",
      \"Polygon\", \"MultiPoint\", \"MultiLineString\", and \"MultiPolygon\"."""
-    bounding_box: Optional[List[float]] = rest_field(
+    bounding_box: Optional[list[float]] = rest_field(
         name="bbox", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional bounding box of the geometry."""
@@ -737,7 +733,7 @@ class Geometry(_Model):
         self,
         *,
         type: str,
-        bounding_box: Optional[List[float]] = None,
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -772,7 +768,7 @@ class ImageRequest(_Model):
     :vartype mask: bool
     """
 
-    cql: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cql: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cql. Required."""
     geometry: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry."""
@@ -797,7 +793,7 @@ class ImageRequest(_Model):
     def __init__(
         self,
         *,
-        cql: Dict[str, Any],
+        cql: dict[str, Any],
         render_params: str,
         cols: int,
         rows: int,
@@ -962,7 +958,7 @@ class IngestionRun(_Model):
     :vartype keep_original_assets: bool
     """
 
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read", "create", "update"])
     """Run id. Required."""
     parent_run_id: Optional[str] = rest_field(
         name="parentRunId", visibility=["read", "create", "update", "delete", "query"]
@@ -1048,7 +1044,7 @@ class IngestionRunOperation(_Model):
         name="creationTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation was created. Required."""
-    status_history: List["_models.OperationStatusHistoryItem"] = rest_field(
+    status_history: list["_models.OperationStatusHistoryItem"] = rest_field(
         name="statusHistory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The history of the operation status in time. Required."""
@@ -1082,7 +1078,7 @@ class IngestionRunOperation(_Model):
         id: str,  # pylint: disable=redefined-builtin
         status: Union[str, "_models.OperationStatus"],
         creation_time: datetime.datetime,
-        status_history: List["_models.OperationStatusHistoryItem"],
+        status_history: list["_models.OperationStatusHistoryItem"],
         total_items: int,
         total_pending_items: int,
         total_successful_items: int,
@@ -1117,7 +1113,7 @@ class IngestionSource(_Model):
     :vartype kind: str or ~azure.planetarycomputer.models.IngestionSourceType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Ingestion source id. Required."""
     created: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
@@ -1211,13 +1207,13 @@ class StacItemOrItemCollection(_Model):
     :vartype stac_extensions: list[str]
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type")
     """Discriminator property for StacItemOrItemCollection. Required. Known values are: \"Feature\"
      and \"FeatureCollection\"."""
     stac_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stac Version."""
-    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: Optional[list["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints."""
     created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
@@ -1231,7 +1227,7 @@ class StacItemOrItemCollection(_Model):
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
-    stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    stac_extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URLs to STAC extensions implemented by this STAC resource."""
 
     @overload
@@ -1240,11 +1236,11 @@ class StacItemOrItemCollection(_Model):
         *,
         type: str,
         stac_version: Optional[str] = None,
-        links: Optional[List["_models.Link"]] = None,
+        links: Optional[list["_models.Link"]] = None,
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
+        stac_extensions: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1288,9 +1284,9 @@ class ItemCollection(StacItemOrItemCollection, discriminator="FeatureCollection"
 
     type: Literal[StacModelType.FEATURE_COLLECTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """GeoJSON FeatureCollection type. Required. GeoJSON FeatureCollection type."""
-    features: List["_models.StacItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    features: list["_models.StacItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of STAC Items in the collection. Required."""
-    bounding_box: Optional[List[float]] = rest_field(
+    bounding_box: Optional[list[float]] = rest_field(
         name="bbox", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bounding box of all items in format [west, south, east, north]."""
@@ -1303,14 +1299,14 @@ class ItemCollection(StacItemOrItemCollection, discriminator="FeatureCollection"
     def __init__(
         self,
         *,
-        features: List["_models.StacItem"],
+        features: list["_models.StacItem"],
         stac_version: Optional[str] = None,
-        links: Optional[List["_models.Link"]] = None,
+        links: Optional[list["_models.Link"]] = None,
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
-        bounding_box: Optional[List[float]] = None,
+        stac_extensions: Optional[list[str]] = None,
+        bounding_box: Optional[list[float]] = None,
         context: Optional["_models.ContextExtension"] = None,
     ) -> None: ...
 
@@ -1322,7 +1318,8 @@ class ItemCollection(StacItemOrItemCollection, discriminator="FeatureCollection"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=StacModelType.FEATURE_COLLECTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = StacModelType.FEATURE_COLLECTION  # type: ignore
 
 
 class ItemProperties(_Model):
@@ -1361,13 +1358,13 @@ class ItemProperties(_Model):
 
     platform: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Platform that acquired the data."""
-    instruments: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    instruments: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Instruments that acquired the data."""
     constellation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Constellation of satellites that acquired the data."""
     mission: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Mission associated with the data."""
-    providers: Optional[List["_models.Provider"]] = rest_field(
+    providers: Optional[list["_models.Provider"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Organizations or individuals who provide the data."""
@@ -1402,10 +1399,10 @@ class ItemProperties(_Model):
         *,
         date_time: str,
         platform: Optional[str] = None,
-        instruments: Optional[List[str]] = None,
+        instruments: Optional[list[str]] = None,
         constellation: Optional[str] = None,
         mission: Optional[str] = None,
-        providers: Optional[List["_models.Provider"]] = None,
+        providers: Optional[list["_models.Provider"]] = None,
         gsd: Optional[float] = None,
         created: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
@@ -1468,7 +1465,7 @@ class LandingPage(_Model):
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
-    stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    stac_extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URLs to STAC extensions implemented by this STAC resource."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the STAC catalog. Required."""
@@ -1478,9 +1475,9 @@ class LandingPage(_Model):
     """Human-readable title for the STAC catalog."""
     stac_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stac Version."""
-    conforms_to: List[str] = rest_field(name="conformsTo", visibility=["read", "create", "update", "delete", "query"])
+    conforms_to: list[str] = rest_field(name="conformsTo", visibility=["read", "create", "update", "delete", "query"])
     """List of OGC API conformance classes implemented by this API. Required."""
-    links: List["_models.Link"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: list["_models.Link"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints. Required."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type."""
@@ -1491,12 +1488,12 @@ class LandingPage(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         description: str,
-        conforms_to: List[str],
-        links: List["_models.Link"],
+        conforms_to: list[str],
+        links: list["_models.Link"],
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
+        stac_extensions: Optional[list[str]] = None,
         title: Optional[str] = None,
         stac_version: Optional[str] = None,
         type: Optional[str] = None,
@@ -1526,15 +1523,15 @@ class LineString(Geometry, discriminator="LineString"):
 
     type: Literal[GeometryType.LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the linestring. Required. Represents a LineString geometry."""
-    coordinates: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the linestring. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: List[float],
-        bounding_box: Optional[List[float]] = None,
+        coordinates: list[float],
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -1545,7 +1542,8 @@ class LineString(Geometry, discriminator="LineString"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=GeometryType.LINE_STRING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = GeometryType.LINE_STRING  # type: ignore
 
 
 class Link(_Model):
@@ -1609,10 +1607,10 @@ class Link(_Model):
     )
     """Specifies the HTTP method that the resource expects.
      Default: GET. Is one of the following types: Literal[\"GET\"], Literal[\"POST\"], str"""
-    headers: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Object key-value pairs that map to headers.
      Example: { \"Accept\": \"application/json\" }."""
-    body: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    body: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """For POST requests, the resource can specify the HTTP body as a JSON object."""
     merge: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the client is expected to merge the body value into the current request body
@@ -1631,8 +1629,8 @@ class Link(_Model):
         hreflang: Optional[str] = None,
         length: Optional[int] = None,
         method: Optional[Union[Literal["GET"], Literal["POST"], str]] = None,
-        headers: Optional[Dict[str, str]] = None,
-        body: Optional[Dict[str, Any]] = None,
+        headers: Optional[dict[str, str]] = None,
+        body: Optional[dict[str, Any]] = None,
         merge: Optional[bool] = None,
     ) -> None: ...
 
@@ -1717,7 +1715,8 @@ class ManagedIdentityIngestionSource(IngestionSource, discriminator="BlobManaged
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=IngestionSourceType.BLOB_MANAGED_IDENTITY, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = IngestionSourceType.BLOB_MANAGED_IDENTITY  # type: ignore
 
 
 class ManagedIdentityMetadata(_Model):
@@ -1819,9 +1818,9 @@ class Metadata(_Model):
     """Maximum zoom level supported."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable name for the resource."""
-    assets: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    assets: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of asset identifiers included in the resource."""
-    defaults: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    defaults: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Defaults."""
 
     @overload
@@ -1833,8 +1832,8 @@ class Metadata(_Model):
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
         name: Optional[str] = None,
-        assets: Optional[List[str]] = None,
-        defaults: Optional[Dict[str, str]] = None,
+        assets: Optional[list[str]] = None,
+        defaults: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1868,7 +1867,7 @@ class Mosaic(_Model):
     """Short descriptive name for the mosaic. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Detailed description of the mosaic."""
-    cql: List[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cql: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of valid CQL2-JSON expressions used to filter the collection to moasic. Required."""
 
     @overload
@@ -1877,7 +1876,7 @@ class Mosaic(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         name: str,
-        cql: List[Dict[str, Any]],
+        cql: list[dict[str, Any]],
         description: Optional[str] = None,
     ) -> None: ...
 
@@ -1906,9 +1905,9 @@ class MosaicInfo(_Model):
     :vartype default_custom_query: dict[str, any]
     """
 
-    mosaics: List["_models.Mosaic"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    mosaics: list["_models.Mosaic"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Predefined data mosaics available for this collection. Required."""
-    render_options: List["_models.RenderOption"] = rest_field(
+    render_options: list["_models.RenderOption"] = rest_field(
         name="renderOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Available render options for visualizing the data. Required."""
@@ -1916,7 +1915,7 @@ class MosaicInfo(_Model):
         name="defaultLocation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Default map location when displaying this collection."""
-    default_custom_query: Optional[Dict[str, Any]] = rest_field(
+    default_custom_query: Optional[dict[str, Any]] = rest_field(
         name="defaultCustomQuery", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of CQL-JSON expressions to use as the default for  this collection."""
@@ -1925,10 +1924,10 @@ class MosaicInfo(_Model):
     def __init__(
         self,
         *,
-        mosaics: List["_models.Mosaic"],
-        render_options: List["_models.RenderOption"],
+        mosaics: list["_models.Mosaic"],
+        render_options: list["_models.RenderOption"],
         default_location: Optional["_models.DefaultLocation"] = None,
-        default_custom_query: Optional[Dict[str, Any]] = None,
+        default_custom_query: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -1955,15 +1954,15 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
 
     type: Literal[GeometryType.MULTI_LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multilinestring. Required. Represents a MultiLineString geometry."""
-    coordinates: List[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multilinestring. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: List[List[float]],
-        bounding_box: Optional[List[float]] = None,
+        coordinates: list[list[float]],
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -1974,7 +1973,8 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=GeometryType.MULTI_LINE_STRING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = GeometryType.MULTI_LINE_STRING  # type: ignore
 
 
 class MultiPoint(Geometry, discriminator="MultiPoint"):
@@ -1990,15 +1990,15 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
 
     type: Literal[GeometryType.MULTI_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multipoint. Required. Represents a MultiPoint geometry."""
-    coordinates: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multipoint. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: List[float],
-        bounding_box: Optional[List[float]] = None,
+        coordinates: list[float],
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2009,7 +2009,8 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=GeometryType.MULTI_POINT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = GeometryType.MULTI_POINT  # type: ignore
 
 
 class MultiPolygon(Geometry, discriminator="MultiPolygon"):
@@ -2023,7 +2024,7 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POLYGON
     """
 
-    coordinates: List[List[List[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[list[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multipolygon. Required."""
     type: Literal[GeometryType.MULTI_POLYGON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multipolygon. Required. Represents a MultiPolygon geometry."""
@@ -2032,8 +2033,8 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     def __init__(
         self,
         *,
-        coordinates: List[List[List[float]]],
-        bounding_box: Optional[List[float]] = None,
+        coordinates: list[list[list[float]]],
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2044,7 +2045,8 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=GeometryType.MULTI_POLYGON, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = GeometryType.MULTI_POLYGON  # type: ignore
 
 
 class Operation(_Model):
@@ -2091,7 +2093,7 @@ class Operation(_Model):
         name="collectionId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Collection ID."""
-    status_history: List["_models.OperationStatusHistoryItem"] = rest_field(
+    status_history: list["_models.OperationStatusHistoryItem"] = rest_field(
         name="statusHistory", visibility=["read", "create", "update", "delete", "query"]
     )
     """The history of the operation status in time. Required."""
@@ -2103,7 +2105,7 @@ class Operation(_Model):
         name="finishTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The UTC time at which the operation finished its execution."""
-    additional_information: Optional[Dict[str, str]] = rest_field(
+    additional_information: Optional[dict[str, str]] = rest_field(
         name="additionalInformation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Additional information elements about the particular operation type."""
@@ -2118,11 +2120,11 @@ class Operation(_Model):
         status: Union[str, "_models.OperationStatus"],
         type: str,
         creation_time: datetime.datetime,
-        status_history: List["_models.OperationStatusHistoryItem"],
+        status_history: list["_models.OperationStatusHistoryItem"],
         collection_id: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         finish_time: Optional[datetime.datetime] = None,
-        additional_information: Optional[Dict[str, str]] = None,
+        additional_information: Optional[dict[str, str]] = None,
         error: Optional[ODataV4Format] = None,
     ) -> None: ...
 
@@ -2197,7 +2199,7 @@ class PageIngestionDefinition(_Model):
     :vartype next_link: str
     """
 
-    value: List["_models.IngestionDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models.IngestionDefinition"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The items on the page. Required."""
     next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
     """Link to the next page of results."""
@@ -2206,7 +2208,7 @@ class PageIngestionDefinition(_Model):
     def __init__(
         self,
         *,
-        value: List["_models.IngestionDefinition"],
+        value: list["_models.IngestionDefinition"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2230,7 +2232,7 @@ class PageIngestionRun(_Model):
     :vartype next_link: str
     """
 
-    value: List["_models.IngestionRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models.IngestionRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The items on the page. Required."""
     next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
     """Link to the next page of results."""
@@ -2239,7 +2241,7 @@ class PageIngestionRun(_Model):
     def __init__(
         self,
         *,
-        value: List["_models.IngestionRun"],
+        value: list["_models.IngestionRun"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2263,7 +2265,7 @@ class PageIngestionSourceSummary(_Model):
     :vartype next_link: str
     """
 
-    value: List["_models.IngestionSourceSummary"] = rest_field(
+    value: list["_models.IngestionSourceSummary"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The items on the page. Required."""
@@ -2274,7 +2276,7 @@ class PageIngestionSourceSummary(_Model):
     def __init__(
         self,
         *,
-        value: List["_models.IngestionSourceSummary"],
+        value: list["_models.IngestionSourceSummary"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2298,7 +2300,7 @@ class PageManagedIdentityMetadata(_Model):
     :vartype next_link: str
     """
 
-    value: List["_models.ManagedIdentityMetadata"] = rest_field(
+    value: list["_models.ManagedIdentityMetadata"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The items on the page. Required."""
@@ -2309,7 +2311,7 @@ class PageManagedIdentityMetadata(_Model):
     def __init__(
         self,
         *,
-        value: List["_models.ManagedIdentityMetadata"],
+        value: list["_models.ManagedIdentityMetadata"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2333,7 +2335,7 @@ class PageOperation(_Model):
     :vartype next_link: str
     """
 
-    value: List["_models.Operation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    value: list["_models.Operation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The items on the page. Required."""
     next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
     """Link to the next page of results."""
@@ -2342,7 +2344,7 @@ class PageOperation(_Model):
     def __init__(
         self,
         *,
-        value: List["_models.Operation"],
+        value: list["_models.Operation"],
         next_link: Optional[str] = None,
     ) -> None: ...
 
@@ -2412,7 +2414,7 @@ class Point(Geometry, discriminator="Point"):
         self,
         *,
         coordinates: str,
-        bounding_box: Optional[List[float]] = None,
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2423,7 +2425,8 @@ class Point(Geometry, discriminator="Point"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=GeometryType.POINT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = GeometryType.POINT  # type: ignore
 
 
 class Polygon(Geometry, discriminator="Polygon"):
@@ -2437,7 +2440,7 @@ class Polygon(Geometry, discriminator="Polygon"):
     :vartype type: str or ~azure.planetarycomputer.models.POLYGON
     """
 
-    coordinates: List[List[List[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[list[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the polygon. Required."""
     type: Literal[GeometryType.POLYGON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the polygon. Required. Represents a Polygon geometry."""
@@ -2446,8 +2449,8 @@ class Polygon(Geometry, discriminator="Polygon"):
     def __init__(
         self,
         *,
-        coordinates: List[List[List[float]]],
-        bounding_box: Optional[List[float]] = None,
+        coordinates: list[list[list[float]]],
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -2458,7 +2461,8 @@ class Polygon(Geometry, discriminator="Polygon"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=GeometryType.POLYGON, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = GeometryType.POLYGON  # type: ignore
 
 
 class Provider(_Model):
@@ -2481,7 +2485,7 @@ class Provider(_Model):
     """Name of the provider organization or individual. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Description of the provider."""
-    roles: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    roles: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Roles played by the provider (e.g., producer, processor, host)."""
     url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL to the provider's website."""
@@ -2492,7 +2496,7 @@ class Provider(_Model):
         *,
         name: str,
         description: Optional[str] = None,
-        roles: Optional[List[str]] = None,
+        roles: Optional[list[str]] = None,
         url: Optional[str] = None,
     ) -> None: ...
 
@@ -2566,7 +2570,7 @@ class RenderOption(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Legend configuration for this render option."""
-    conditions: Optional[List["_models.RenderOptionCondition"]] = rest_field(
+    conditions: Optional[list["_models.RenderOptionCondition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of property/value conditions that must be in the active mosaic CQL for
@@ -2584,7 +2588,7 @@ class RenderOption(_Model):
         vector_options: Optional["_models.RenderOptionVectorOptions"] = None,
         min_zoom: Optional[int] = None,
         legend: Optional["_models.RenderOptionLegend"] = None,
-        conditions: Optional[List["_models.RenderOptionCondition"]] = None,
+        conditions: Optional[list["_models.RenderOptionCondition"]] = None,
     ) -> None: ...
 
     @overload
@@ -2665,7 +2669,7 @@ class RenderOptionLegend(_Model):
      ``interval`` or ``none``
      (note, ``none`` is a string literal). Known values are: \"continuous\", \"classmap\",
      \"interval\", and \"none\"."""
-    labels: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    labels: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Text labels to display on the legend."""
     trim_start: Optional[int] = rest_field(name="trimStart", visibility=["read", "create", "update", "delete", "query"])
     """The number of items to trim from the start of the legend definition. Used if
@@ -2685,7 +2689,7 @@ class RenderOptionLegend(_Model):
         self,
         *,
         type: Optional[Union[str, "_models.LegendConfigType"]] = None,
-        labels: Optional[List[str]] = None,
+        labels: Optional[list[str]] = None,
         trim_start: Optional[int] = None,
         trim_end: Optional[int] = None,
         scale_factor: Optional[float] = None,
@@ -2733,7 +2737,7 @@ class RenderOptionVectorOptions(_Model):
         name="strokeWidth", visibility=["read", "create", "update", "delete", "query"]
     )
     """Width of line strokes in pixels."""
-    filter: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filter: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """MapBox GL filter expression to filter features."""
 
     @overload
@@ -2745,7 +2749,7 @@ class RenderOptionVectorOptions(_Model):
         fill_color: Optional[str] = None,
         stroke_color: Optional[str] = None,
         stroke_width: Optional[int] = None,
-        filter: Optional[List[str]] = None,  # pylint: disable=redefined-builtin
+        filter: Optional[list[str]] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
     @overload
@@ -2809,11 +2813,11 @@ class SearchOptions(_Model):
     :vartype token: str
     """
 
-    collections: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    collections: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of collection IDs to search within."""
-    ids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """List of specific item IDs to return."""
-    bounding_box: Optional[List[float]] = rest_field(
+    bounding_box: Optional[list[float]] = rest_field(
         name="bbox", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bounding box for spatial filtering in format [west, south, east, north]."""
@@ -2823,7 +2827,7 @@ class SearchOptions(_Model):
     """Temporal filter in RFC 3339 format, can be a single time or range."""
     limit: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of results to return."""
-    conformance_class: Optional[Dict[str, Any]] = rest_field(
+    conformance_class: Optional[dict[str, Any]] = rest_field(
         name="conf", visibility=["read", "create", "update", "delete", "query"]
     )
     """Conf
@@ -2837,23 +2841,23 @@ class SearchOptions(_Model):
         name="duration", visibility=["read", "create", "update", "delete", "query"]
     )
     """URL signature duration in minutes."""
-    query: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    query: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """STAC Query
      
      See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_."""
-    sort_by: Optional[List["_models.SortExtension"]] = rest_field(
+    sort_by: Optional[list["_models.SortExtension"]] = rest_field(
         name="sortby", visibility=["read", "create", "update", "delete", "query"]
     )
     """Sort criteria for the search results.
      
      See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_."""
-    fields: Optional[List["_models.SearchOptionsFields"]] = rest_field(
+    fields: Optional[list["_models.SearchOptionsFields"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies which fields to include or exclude in the STAC search results.
      
      See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_."""
-    filter: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filter: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """CQL2 Filter
      
      See the `STAC Filter Extension <https://github.com/stac-api-extensions/filter>`_."""
@@ -2873,19 +2877,19 @@ class SearchOptions(_Model):
     def __init__(
         self,
         *,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
-        bounding_box: Optional[List[float]] = None,
+        collections: Optional[list[str]] = None,
+        ids: Optional[list[str]] = None,
+        bounding_box: Optional[list[float]] = None,
         intersects: Optional["_models.Geometry"] = None,
         date_time: Optional[str] = None,
         limit: Optional[int] = None,
-        conformance_class: Optional[Dict[str, Any]] = None,
+        conformance_class: Optional[dict[str, Any]] = None,
         sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = None,
         duration_in_minutes: Optional[int] = None,
-        query: Optional[Dict[str, Any]] = None,
-        sort_by: Optional[List["_models.SortExtension"]] = None,
-        fields: Optional[List["_models.SearchOptionsFields"]] = None,
-        filter: Optional[Dict[str, Any]] = None,  # pylint: disable=redefined-builtin
+        query: Optional[dict[str, Any]] = None,
+        sort_by: Optional[list["_models.SortExtension"]] = None,
+        fields: Optional[list["_models.SearchOptionsFields"]] = None,
+        filter: Optional[dict[str, Any]] = None,  # pylint: disable=redefined-builtin
         filter_coordinate_reference_system: Optional[str] = None,
         filter_lang: Optional[Union[str, "_models.FilterLanguage"]] = None,
         token: Optional[str] = None,
@@ -2917,17 +2921,17 @@ class SearchOptionsFields(_Model):
     :vartype exclude: list[str]
     """
 
-    include: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    include: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of field names to include in the response."""
-    exclude: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    exclude: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of field names to exclude from the response."""
 
     @overload
     def __init__(
         self,
         *,
-        include: Optional[List[str]] = None,
-        exclude: Optional[List[str]] = None,
+        include: Optional[list[str]] = None,
+        exclude: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -2946,15 +2950,15 @@ class SharedAccessSignatureTokenConnection(_Model):
 
     :ivar container_uri: Azure Blob Storage container URL. Required.
     :vartype container_uri: str
-    :ivar hared_access_signature_token: SAS token.
-    :vartype hared_access_signature_token: str
+    :ivar shared_access_signature_token: SAS token.
+    :vartype shared_access_signature_token: str
     :ivar expiration: Azure Blob Storage SAS token expiration in UTC format.
     :vartype expiration: ~datetime.datetime
     """
 
     container_uri: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
     """Azure Blob Storage container URL. Required."""
-    hared_access_signature_token: Optional[str] = rest_field(name="sasToken", visibility=["create", "update"])
+    shared_access_signature_token: Optional[str] = rest_field(name="sasToken", visibility=["create", "update"])
     """SAS token."""
     expiration: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
     """Azure Blob Storage SAS token expiration in UTC format."""
@@ -2964,7 +2968,7 @@ class SharedAccessSignatureTokenConnection(_Model):
         self,
         *,
         container_uri: str,
-        hared_access_signature_token: Optional[str] = None,
+        shared_access_signature_token: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3016,7 +3020,8 @@ class SharedAccessSignatureTokenIngestionSource(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=IngestionSourceType.SHARED_ACCESS_SIGNATURE_TOKEN, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = IngestionSourceType.SHARED_ACCESS_SIGNATURE_TOKEN  # type: ignore
 
 
 class SortExtension(_Model):
@@ -3113,7 +3118,7 @@ class StacCollection(_Model):
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
-    stac_extensions: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    stac_extensions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URLs to STAC extensions implemented by this STAC resource."""
     id: str = rest_field(visibility=["read", "create", "update"])
     """Unique identifier for the collection. Required."""
@@ -3121,13 +3126,13 @@ class StacCollection(_Model):
     """Detailed description of the collection. Required."""
     stac_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stac Version."""
-    links: List["_models.Link"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: list["_models.Link"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints. Required."""
     title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable title for the collection."""
     type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Type."""
-    assets: Optional[Dict[str, "_models.Asset"]] = rest_field(
+    assets: Optional[dict[str, "_models.Asset"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Assets."""
@@ -3135,13 +3140,13 @@ class StacCollection(_Model):
     """License identifier for the collection data. Required."""
     extent: "_models.StacExtensionExtent" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Spatial and temporal extent of the collection. Required."""
-    keywords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Keywords describing the collection."""
-    providers: Optional[List["_models.Provider"]] = rest_field(
+    providers: Optional[list["_models.Provider"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Organizations or individuals who provide the collection data."""
-    summaries: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    summaries: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Summaries
      
      See the `STAC Collection Spec
@@ -3153,20 +3158,20 @@ class StacCollection(_Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         description: str,
-        links: List["_models.Link"],
+        links: list["_models.Link"],
         license: str,
         extent: "_models.StacExtensionExtent",
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
+        stac_extensions: Optional[list[str]] = None,
         stac_version: Optional[str] = None,
         title: Optional[str] = None,
         type: Optional[str] = None,
-        assets: Optional[Dict[str, "_models.Asset"]] = None,
-        keywords: Optional[List[str]] = None,
-        providers: Optional[List["_models.Provider"]] = None,
-        summaries: Optional[Dict[str, Any]] = None,
+        assets: Optional[dict[str, "_models.Asset"]] = None,
+        keywords: Optional[list[str]] = None,
+        providers: Optional[list["_models.Provider"]] = None,
+        summaries: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -3190,14 +3195,14 @@ class StacCollectionTemporalExtent(_Model):
     :vartype interval: list[list[str]]
     """
 
-    interval: List[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interval: list[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of time intervals in format [[start_datetime, end_datetime]]. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        interval: List[List[str]],
+        interval: list[list[str]],
     ) -> None: ...
 
     @overload
@@ -3278,7 +3283,7 @@ class StacExtensionSpatialExtent(_Model):
     :vartype bounding_box: list[list[float]]
     """
 
-    bounding_box: Optional[List[List[float]]] = rest_field(
+    bounding_box: Optional[list[list[float]]] = rest_field(
         name="bbox", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of bounding boxes defining the spatial extent, in format [[west, south, east, north]]."""
@@ -3287,7 +3292,7 @@ class StacExtensionSpatialExtent(_Model):
     def __init__(
         self,
         *,
-        bounding_box: Optional[List[List[float]]] = None,
+        bounding_box: Optional[list[list[float]]] = None,
     ) -> None: ...
 
     @overload
@@ -3338,7 +3343,7 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    bounding_box: List[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
     """Bounding box coordinates for the feature. Required."""
     id: str = rest_field(visibility=["read", "create", "update"])
     """Unique identifier for the feature. Required."""
@@ -3348,7 +3353,7 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
     """ID of the STAC collection this item belongs to."""
     properties: "_models.ItemProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Attributes associated with the feature. Required."""
-    assets: Dict[str, "_models.Asset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    assets: dict[str, "_models.Asset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Assets. Required."""
     timestamp: Optional[str] = rest_field(name="_msft:ts", visibility=["read", "create", "update", "delete", "query"])
     """MSFT Timestamp."""
@@ -3360,16 +3365,16 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
         self,
         *,
         geometry: "_models.Geometry",
-        bounding_box: List[float],
+        bounding_box: list[float],
         id: str,  # pylint: disable=redefined-builtin
         properties: "_models.ItemProperties",
-        assets: Dict[str, "_models.Asset"],
+        assets: dict[str, "_models.Asset"],
         stac_version: Optional[str] = None,
-        links: Optional[List["_models.Link"]] = None,
+        links: Optional[list["_models.Link"]] = None,
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,
-        stac_extensions: Optional[List[str]] = None,
+        stac_extensions: Optional[list[str]] = None,
         collection: Optional[str] = None,
         timestamp: Optional[str] = None,
         e_tag: Optional[str] = None,
@@ -3383,7 +3388,8 @@ class StacItem(StacItemOrItemCollection, discriminator="Feature"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=StacModelType.FEATURE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = StacModelType.FEATURE  # type: ignore
 
 
 class StacQueryable(_Model):
@@ -3402,7 +3408,7 @@ class StacQueryable(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the queryable field. Required."""
-    definition: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    definition: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Metadata for the queryable field. Required."""
     create_index: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to create a database index for this field."""
@@ -3417,7 +3423,7 @@ class StacQueryable(_Model):
         self,
         *,
         name: str,
-        definition: Dict[str, Any],
+        definition: dict[str, Any],
         create_index: Optional[bool] = None,
         data_type: Optional[Union[str, "_models.StacQueryableDefinitionDataType"]] = None,
     ) -> None: ...
@@ -3494,26 +3500,26 @@ class TileJsonResponse(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Tile addressing scheme (xyz or tms). Known values are: \"xyz\" and \"tms\"."""
-    tiles: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tiles: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of tile URL templates. Required."""
-    grids: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    grids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of UTFGrid URL templates."""
-    data: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    data: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of data file URL templates."""
     min_zoom: Optional[int] = rest_field(name="minzoom", visibility=["read", "create", "update", "delete", "query"])
     """Minimum zoom level available in the tile set."""
     max_zoom: Optional[int] = rest_field(name="maxzoom", visibility=["read", "create", "update", "delete", "query"])
     """Maximum zoom level available in the tile set."""
-    bounds: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounds: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounds."""
-    center: Optional[List[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    center: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Default center point [longitude, latitude, zoom] for the tile set."""
 
     @overload
     def __init__(
         self,
         *,
-        tiles: List[str],
+        tiles: list[str],
         tilejson: Optional[str] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
@@ -3522,12 +3528,12 @@ class TileJsonResponse(_Model):
         template: Optional[str] = None,
         legend: Optional[str] = None,
         scheme: Optional[Union[str, "_models.TileAddressingScheme"]] = None,
-        grids: Optional[List[str]] = None,
-        data: Optional[List[str]] = None,
+        grids: Optional[list[str]] = None,
+        data: Optional[list[str]] = None,
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
-        bounds: Optional[List[float]] = None,
-        center: Optional[List[float]] = None,
+        bounds: Optional[list[float]] = None,
+        center: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -3598,7 +3604,7 @@ class TileMatrix(_Model):
     """Human-readable title of the tile matrix level."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Human-readable description of this tile matrix level."""
-    keywords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unordered list of one or more commonly used or formalized word(s) or phrase(s)
      used to describe this dataset."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3615,7 +3621,7 @@ class TileMatrix(_Model):
     """The corner of the tile matrix (*topLeft* or *bottomLeft*) used as the origin
      for numbering tile rows and columns. This corner is also a corner of the (0, 0)
      tile. Known values are: \"topLeft\" and \"bottomLeft\"."""
-    point_of_origin: List[float] = rest_field(
+    point_of_origin: list[float] = rest_field(
         name="pointOfOrigin", visibility=["read", "create", "update", "delete", "query"]
     )
     """Precise position in CRS coordinates of the corner of origin (e.g. the top-left
@@ -3630,7 +3636,7 @@ class TileMatrix(_Model):
     """Number of tiles horizontally at this matrix level. Required."""
     matrix_height: int = rest_field(name="matrixHeight", visibility=["read", "create", "update", "delete", "query"])
     """Number of tiles vertically at this matrix level. Required."""
-    variable_matrix_widths: Optional[List["_models.VariableMatrixWidth"]] = rest_field(
+    variable_matrix_widths: Optional[list["_models.VariableMatrixWidth"]] = rest_field(
         name="variableMatrixWidths", visibility=["read", "create", "update", "delete", "query"]
     )
     """Describes the rows that has variable matrix width
@@ -3646,16 +3652,16 @@ class TileMatrix(_Model):
         id: str,  # pylint: disable=redefined-builtin
         scale_denominator: float,
         cell_size: float,
-        point_of_origin: List[float],
+        point_of_origin: list[float],
         tile_width: int,
         tile_height: int,
         matrix_width: int,
         matrix_height: int,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        keywords: Optional[List[str]] = None,
+        keywords: Optional[list[str]] = None,
         corner_of_origin: Optional[Union[str, "_models.TileMatrixCornerOfOrigin"]] = None,
-        variable_matrix_widths: Optional[List["_models.VariableMatrixWidth"]] = None,
+        variable_matrix_widths: Optional[list["_models.VariableMatrixWidth"]] = None,
     ) -> None: ...
 
     @overload
@@ -3708,14 +3714,14 @@ class TileMatrixSet(_Model):
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Brief narrative description of this tile matrix set, normally available for
      display to a human."""
-    keywords: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    keywords: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unordered list of one or more commonly used or formalized word(s) or phrase(s)
      used to describe this tile matrix set."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the tile matrix set."""
     uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URI reference to the official definition."""
-    ordered_axes: Optional[List[str]] = rest_field(
+    ordered_axes: Optional[list[str]] = rest_field(
         name="orderedAxes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Names of the coordinate axes in order."""
@@ -3729,7 +3735,7 @@ class TileMatrixSet(_Model):
         name="boundingBox", visibility=["read", "create", "update", "delete", "query"]
     )
     """Geographic extent of the tile matrix set."""
-    tile_matrices: List["_models.TileMatrix"] = rest_field(
+    tile_matrices: list["_models.TileMatrix"] = rest_field(
         name="tileMatrices", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of tile matrices at different zoom levels. Required."""
@@ -3739,13 +3745,13 @@ class TileMatrixSet(_Model):
         self,
         *,
         crs: str,
-        tile_matrices: List["_models.TileMatrix"],
+        tile_matrices: list["_models.TileMatrix"],
         title: Optional[str] = None,
         description: Optional[str] = None,
-        keywords: Optional[List[str]] = None,
+        keywords: Optional[list[str]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         uri: Optional[str] = None,
-        ordered_axes: Optional[List[str]] = None,
+        ordered_axes: Optional[list[str]] = None,
         well_known_scale_set: Optional[str] = None,
         bounding_box: Optional["_models.TileMatrixSetBoundingBox"] = None,
     ) -> None: ...
@@ -3775,13 +3781,13 @@ class TileMatrixSetBoundingBox(_Model):
     :vartype ordered_axes: list[str]
     """
 
-    lower_left: List[str] = rest_field(name="lowerLeft", visibility=["read", "create", "update", "delete", "query"])
+    lower_left: list[str] = rest_field(name="lowerLeft", visibility=["read", "create", "update", "delete", "query"])
     """Lower-left corner coordinates [x, y] of bounding box. Required."""
-    upper_right: List[str] = rest_field(name="upperRight", visibility=["read", "create", "update", "delete", "query"])
+    upper_right: list[str] = rest_field(name="upperRight", visibility=["read", "create", "update", "delete", "query"])
     """Upper-right corner coordinates [x, y] of bounding box. Required."""
     crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Coordinate reference system identifier."""
-    ordered_axes: Optional[List[str]] = rest_field(
+    ordered_axes: Optional[list[str]] = rest_field(
         name="orderedAxes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Explicit axis order for the CRS coordinates (e.g., ['x', 'y'])."""
@@ -3790,10 +3796,10 @@ class TileMatrixSetBoundingBox(_Model):
     def __init__(
         self,
         *,
-        lower_left: List[str],
-        upper_right: List[str],
+        lower_left: list[str],
+        upper_right: list[str],
         crs: Optional[str] = None,
-        ordered_axes: Optional[List[str]] = None,
+        ordered_axes: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -3821,20 +3827,20 @@ class TilerCoreModelsResponsesPoint(_Model):
     :vartype band_names: list[str]
     """
 
-    coordinates: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geographic coordinates [longitude, latitude] of the queried point. Required."""
-    values_property: List[float] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
+    values_property: list[float] = rest_field(name="values", visibility=["read", "create", "update", "delete", "query"])
     """Array of pixel values at the queried point for each band. Required."""
-    band_names: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    band_names: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Names of each band in the raster data. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: List[float],
-        values_property: List[float],
-        band_names: List[str],
+        coordinates: list[float],
+        values_property: list[float],
+        band_names: list[str],
     ) -> None: ...
 
     @overload
@@ -3886,13 +3892,13 @@ class TilerInfo(_Model):
     :vartype max_zoom: int
     """
 
-    bounds: List[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    bounds: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Bounds. Required."""
-    band_metadata: Optional[List[List["_types.BandMetadataElement"]]] = rest_field(
+    band_metadata: Optional[list[list["_types.BandMetadataElement"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Band Metadata."""
-    band_descriptions: Optional[List[List[str]]] = rest_field(
+    band_descriptions: Optional[list[list[str]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Band Descriptions."""
@@ -3902,7 +3908,7 @@ class TilerInfo(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Nodata Type. Known values are: \"Alpha\", \"Mask\", \"Internal\", \"Nodata\", and \"None\"."""
-    colorinterp: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    colorinterp: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Colorinterp."""
     driver: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Driver."""
@@ -3912,13 +3918,13 @@ class TilerInfo(_Model):
     """Width."""
     height: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Height."""
-    overviews: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    overviews: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Overviews."""
-    scales: Optional[List[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    scales: Optional[list[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Scales."""
-    offsets: Optional[List[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    offsets: Optional[list[int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Offsets."""
-    colormap: Optional[Dict[str, List[str]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    colormap: Optional[dict[str, list[str]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Colormap."""
     min_zoom: Optional[int] = rest_field(name="minzoom", visibility=["read", "create", "update", "delete", "query"])
     """Minzoom."""
@@ -3929,20 +3935,20 @@ class TilerInfo(_Model):
     def __init__(
         self,
         *,
-        bounds: List[float],
+        bounds: list[float],
         dtype: str,
-        band_metadata: Optional[List[List["_types.BandMetadataElement"]]] = None,
-        band_descriptions: Optional[List[List[str]]] = None,
+        band_metadata: Optional[list[list["_types.BandMetadataElement"]]] = None,
+        band_descriptions: Optional[list[list[str]]] = None,
         nodata_type: Optional[Union[str, "_models.NoDataType"]] = None,
-        colorinterp: Optional[List[str]] = None,
+        colorinterp: Optional[list[str]] = None,
         driver: Optional[str] = None,
         count: Optional[int] = None,
         width: Optional[int] = None,
         height: Optional[int] = None,
-        overviews: Optional[List[str]] = None,
-        scales: Optional[List[int]] = None,
-        offsets: Optional[List[int]] = None,
-        colormap: Optional[Dict[str, List[str]]] = None,
+        overviews: Optional[list[str]] = None,
+        scales: Optional[list[int]] = None,
+        offsets: Optional[list[int]] = None,
+        colormap: Optional[dict[str, list[str]]] = None,
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
     ) -> None: ...
@@ -3977,7 +3983,7 @@ class TilerInfoGeoJsonFeature(_Model):
     """GeoJSON type identifier. Required. \"Feature\""""
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    properties: Dict[str, "_models.TilerInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    properties: dict[str, "_models.TilerInfo"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Properties. Required."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the feature."""
@@ -3990,7 +3996,7 @@ class TilerInfoGeoJsonFeature(_Model):
         *,
         type: Union[str, "_models.FeatureType"],
         geometry: "_models.Geometry",
-        properties: Dict[str, "_models.TilerInfo"],
+        properties: dict[str, "_models.TilerInfo"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         bounding_box: Optional[float] = None,
     ) -> None: ...
@@ -4017,7 +4023,7 @@ class TilerMosaicSearchRegistrationResponse(_Model):
 
     search_id: str = rest_field(name="searchid", visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the registered search. Required."""
-    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: Optional[list["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Related links for the registered mosaic."""
 
     @overload
@@ -4025,7 +4031,7 @@ class TilerMosaicSearchRegistrationResponse(_Model):
         self,
         *,
         search_id: str,
-        links: Optional[List["_models.Link"]] = None,
+        links: Optional[list["_models.Link"]] = None,
     ) -> None: ...
 
     @overload
@@ -4065,7 +4071,7 @@ class TilerStacSearchDefinition(_Model):
 
     hash: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique hash identifier for the search query. Required."""
-    search: Dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    search: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Search. Required."""
     where: str = rest_field(name="_where", visibility=["read", "create", "update", "delete", "query"])
     """SQL WHERE clause representing the search filters. Required."""
@@ -4085,7 +4091,7 @@ class TilerStacSearchDefinition(_Model):
         self,
         *,
         hash: str,
-        search: Dict[str, Any],
+        search: dict[str, Any],
         where: str,
         order_by: str,
         last_used: datetime.datetime,
@@ -4123,7 +4129,7 @@ class TilerStacSearchRegistration(_Model):
      See the `PgSTAC Search table definition
      <https://github.com/stac-utils/pgstac/blob/3499daa2bfa700ae7bb07503795c169bf2ebafc7/sql/004_search.sql#L907-L915>`_.
      Required."""
-    links: Optional[List["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    links: Optional[list["_models.Link"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Related links for the search query."""
 
     @overload
@@ -4131,7 +4137,7 @@ class TilerStacSearchRegistration(_Model):
         self,
         *,
         search: "_models.TilerStacSearchDefinition",
-        links: Optional[List["_models.Link"]] = None,
+        links: Optional[list["_models.Link"]] = None,
     ) -> None: ...
 
     @overload

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterator, List, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
     from .. import _types
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 _Unset: Any = object()
 
 _SERIALIZER = Serializer()
@@ -53,7 +53,7 @@ def build_ingestion_delete_ingestion_operation_request(  # pylint: disable=name-
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     # Construct URL
-    _url = "/{operationId}"
+    _url = "/inma/operations/{operationId}"
     path_format_arguments = {
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
@@ -73,7 +73,7 @@ def build_ingestion_delete_all_ingestion_operations_request(  # pylint: disable=
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     # Construct URL
-    _url = "/"
+    _url = "/inma/operations"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -91,7 +91,7 @@ def build_ingestion_get_ingestion_operation_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{operationId}"
+    _url = "/inma/operations/{operationId}"
     path_format_arguments = {
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
@@ -122,7 +122,7 @@ def build_ingestion_get_ingestion_operations_request(  # pylint: disable=name-to
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/"
+    _url = "/inma/operations"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -151,7 +151,7 @@ def build_ingestion_create_ingestion_run_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{ingestionId}"
+    _url = "/inma/collections/{collectionId}/ingestions/{ingestionId}/runs"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "ingestionId": _SERIALIZER.url("ingestion_id", ingestion_id, "str"),
@@ -178,7 +178,7 @@ def build_ingestion_get_ingestion_run_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{ingestionId}/{runId}"
+    _url = "/inma/collections/{collectionId}/ingestions/{ingestionId}/runs/{runId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "ingestionId": _SERIALIZER.url("ingestion_id", ingestion_id, "str"),
@@ -206,7 +206,7 @@ def build_ingestion_get_ingestion_runs_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{ingestionId}"
+    _url = "/inma/collections/{collectionId}/ingestions/{ingestionId}/runs"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "ingestionId": _SERIALIZER.url("ingestion_id", ingestion_id, "str"),
@@ -236,7 +236,7 @@ def build_ingestion_create_ingestion_request(collection_id: str, **kwargs: Any) 
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}"
+    _url = "/inma/collections/{collectionId}/ingestions"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -262,7 +262,7 @@ def build_ingestion_delete_ingestion_request(collection_id: str, ingestion_id: s
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{ingestionId}"
+    _url = "/inma/collections/{collectionId}/ingestions/{ingestionId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "ingestionId": _SERIALIZER.url("ingestion_id", ingestion_id, "str"),
@@ -287,7 +287,7 @@ def build_ingestion_get_ingestion_request(collection_id: str, ingestion_id: str,
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{ingestionId}"
+    _url = "/inma/collections/{collectionId}/ingestions/{ingestionId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "ingestionId": _SERIALIZER.url("ingestion_id", ingestion_id, "str"),
@@ -314,7 +314,7 @@ def build_ingestion_get_ingestions_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}"
+    _url = "/inma/collections/{collectionId}/ingestions"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -343,7 +343,7 @@ def build_ingestion_update_ingestion_request(collection_id: str, ingestion_id: s
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{ingestionId}"
+    _url = "/inma/collections/{collectionId}/ingestions/{ingestionId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "ingestionId": _SERIALIZER.url("ingestion_id", ingestion_id, "str"),
@@ -371,7 +371,7 @@ def build_ingestion_create_ingestion_source_request(**kwargs: Any) -> HttpReques
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/"
+    _url = "/inma/ingestion-sources"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -395,7 +395,7 @@ def build_ingestion_create_or_replace_ingestion_source_request(  # pylint: disab
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{id}"
+    _url = "/inma/ingestion-sources/{id}"
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, "str"),
     }
@@ -420,7 +420,7 @@ def build_ingestion_delete_ingestion_source_request(  # pylint: disable=name-too
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     # Construct URL
-    _url = "/{id}"
+    _url = "/inma/ingestion-sources/{id}"
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, "str"),
     }
@@ -443,7 +443,7 @@ def build_ingestion_get_ingestion_source_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{id}"
+    _url = "/inma/ingestion-sources/{id}"
     path_format_arguments = {
         "id": _SERIALIZER.url("id", id, "str"),
     }
@@ -469,7 +469,7 @@ def build_ingestion_get_ingestion_sources_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/"
+    _url = "/inma/ingestion-sources"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -492,7 +492,7 @@ def build_ingestion_get_managed_identities_request(**kwargs: Any) -> HttpRequest
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/managed-identities"
+    _url = "/inma/ingestion-sources/managed-identities"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -735,7 +735,7 @@ def build_stac_create_collection_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/collections"
+    _url = "/stac/collections"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -759,7 +759,7 @@ def build_stac_create_or_replace_collection_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/collections/{collectionId}"
+    _url = "/stac/collections/{collectionId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -785,7 +785,7 @@ def build_stac_delete_collection_request(collection_id: str, **kwargs: Any) -> H
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/collections/{collectionId}"
+    _url = "/stac/collections/{collectionId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -815,7 +815,7 @@ def build_stac_get_collection_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/collections/{collectionId}"
+    _url = "/stac/collections/{collectionId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -848,7 +848,7 @@ def build_stac_list_collections_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/collections"
+    _url = "/stac/collections"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1147,7 +1147,7 @@ def build_stac_create_item_request(collection_id: str, **kwargs: Any) -> HttpReq
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}"
+    _url = "/stac/collections/{collectionId}/items"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -1176,7 +1176,7 @@ def build_stac_create_or_replace_item_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{itemId}"
+    _url = "/stac/collections/{collectionId}/items/{itemId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
@@ -1203,7 +1203,7 @@ def build_stac_delete_item_request(collection_id: str, item_id: str, **kwargs: A
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{itemId}"
+    _url = "/stac/collections/{collectionId}/items/{itemId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
@@ -1228,7 +1228,7 @@ def build_stac_get_item_request(collection_id: str, item_id: str, **kwargs: Any)
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{itemId}"
+    _url = "/stac/collections/{collectionId}/items/{itemId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
@@ -1249,7 +1249,7 @@ def build_stac_get_items_as_features_request(
     collection_id: str,
     *,
     limit: Optional[int] = None,
-    bounding_box: Optional[List[str]] = None,
+    bounding_box: Optional[list[str]] = None,
     datetime: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
@@ -1260,7 +1260,7 @@ def build_stac_get_items_as_features_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}"
+    _url = "/stac/collections/{collectionId}/items"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -1291,7 +1291,7 @@ def build_stac_update_item_request(collection_id: str, item_id: str, **kwargs: A
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/{collectionId}/{itemId}"
+    _url = "/stac/collections/{collectionId}/items/{itemId}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
@@ -1474,9 +1474,9 @@ def build_stac_create_search_operations_request(**kwargs: Any) -> HttpRequest:  
 
 def build_stac_get_search_operations_request(
     *,
-    collections: Optional[List[str]] = None,
-    ids: Optional[List[str]] = None,
-    bounding_box: Optional[List[float]] = None,
+    collections: Optional[list[str]] = None,
+    ids: Optional[list[str]] = None,
+    bounding_box: Optional[list[float]] = None,
     intersects: Optional[str] = None,
     datetime: Optional[str] = None,
     limit: Optional[int] = None,
@@ -1582,17 +1582,17 @@ def build_tiler_list_asset_statistics_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    categories_pixels: Optional[List[str]] = None,
-    percentiles: Optional[List[int]] = None,
+    categories_pixels: Optional[list[str]] = None,
+    percentiles: Optional[list[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
     **kwargs: Any,
@@ -1704,9 +1704,9 @@ def build_tiler_crop_geo_json_request(
     item_id: str,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1718,7 +1718,7 @@ def build_tiler_crop_geo_json_request(
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -1796,9 +1796,9 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     height: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1808,7 +1808,7 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     coord_crs: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -1881,9 +1881,9 @@ def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-lo
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -1891,8 +1891,8 @@ def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-lo
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    categories_pixels: Optional[List[str]] = None,
-    percentiles: Optional[List[int]] = None,
+    categories_pixels: Optional[list[str]] = None,
+    percentiles: Optional[list[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
     **kwargs: Any,
@@ -1953,7 +1953,7 @@ def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-lo
 
 
 def build_tiler_get_info_geo_json_request(
-    collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+    collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1982,7 +1982,7 @@ def build_tiler_get_info_geo_json_request(
 
 
 def build_tiler_get_info_request(
-    collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+    collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2019,9 +2019,9 @@ def build_tiler_get_part_request(
     maxy: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2034,7 +2034,7 @@ def build_tiler_get_part_request(
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -2119,9 +2119,9 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     height: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2132,7 +2132,7 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     coord_crs: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -2210,9 +2210,9 @@ def build_tiler_get_point_request(
     lon: float,
     lat: float,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2266,9 +2266,9 @@ def build_tiler_get_preview_request(
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2281,7 +2281,7 @@ def build_tiler_get_preview_request(
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -2355,9 +2355,9 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
     item_id: str,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2369,7 +2369,7 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
     max_size: Optional[int] = None,
     height: Optional[int] = None,
     width: Optional[int] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -2493,17 +2493,17 @@ def build_tiler_list_statistics_request(
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
-    categories_pixels: Optional[List[str]] = None,
-    percentiles: Optional[List[int]] = None,
+    categories_pixels: Optional[list[str]] = None,
+    percentiles: Optional[list[int]] = None,
     histogram_bins: Optional[str] = None,
     histogram_range: Optional[str] = None,
     **kwargs: Any,
@@ -2562,9 +2562,9 @@ def build_tiler_get_tile_json_request(
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2578,7 +2578,7 @@ def build_tiler_get_tile_json_request(
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -2653,9 +2653,9 @@ def build_tiler_get_tile_json_with_matrix_set_request(  # pylint: disable=name-t
     item_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2668,7 +2668,7 @@ def build_tiler_get_tile_json_with_matrix_set_request(  # pylint: disable=name-t
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -2747,9 +2747,9 @@ def build_tiler_get_tile_with_matrix_set_request(  # pylint: disable=name-too-lo
     scale: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2758,12 +2758,12 @@ def build_tiler_get_tile_with_matrix_set_request(  # pylint: disable=name-too-lo
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     subdataset_name: Optional[str] = None,
-    subdataset_bands: Optional[List[str]] = None,
+    subdataset_bands: Optional[list[str]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2840,9 +2840,9 @@ def build_tiler_get_tile_request(
     scale: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2852,12 +2852,12 @@ def build_tiler_get_tile_request(
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
     subdataset_name: Optional[str] = None,
-    subdataset_bands: Optional[List[str]] = None,
+    subdataset_bands: Optional[list[str]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2930,9 +2930,9 @@ def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -2946,7 +2946,7 @@ def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3021,9 +3021,9 @@ def build_tiler_get_wmts_capabilities_with_matrix_set_request(  # pylint: disabl
     item_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3036,7 +3036,7 @@ def build_tiler_get_wmts_capabilities_with_matrix_set_request(  # pylint: disabl
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3409,9 +3409,9 @@ def build_tiler_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  
 def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
     search_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3432,7 +3432,7 @@ def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
     algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
     algorithm_params: Optional[str] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3524,9 +3524,9 @@ def build_tiler_get_mosaics_tile_with_matrix_set_request(  # pylint: disable=nam
     scale: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3542,7 +3542,7 @@ def build_tiler_get_mosaics_tile_with_matrix_set_request(  # pylint: disable=nam
     collection: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3626,9 +3626,9 @@ def build_tiler_get_mosaics_tile_json_with_matrix_set_request(  # pylint: disabl
     search_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3648,7 +3648,7 @@ def build_tiler_get_mosaics_tile_json_with_matrix_set_request(  # pylint: disabl
     collection: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3738,9 +3738,9 @@ def build_tiler_get_mosaics_tile_request(
     scale: float,
     format: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3757,7 +3757,7 @@ def build_tiler_get_mosaics_tile_request(
     collection: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3841,9 +3841,9 @@ def build_tiler_get_mosaics_tile_request(
 def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long
     search_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3857,7 +3857,7 @@ def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-t
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -3930,9 +3930,9 @@ def build_tiler_get_mosaics_wmts_capabilities_with_matrix_set_request(  # pylint
     search_id: str,
     tile_matrix_set_id: str,
     *,
-    assets: Optional[List[str]] = None,
+    assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
-    asset_band_indices: Optional[List[str]] = None,
+    asset_band_indices: Optional[list[str]] = None,
     asset_as_band: Optional[bool] = None,
     nodata: Optional[float] = None,
     unscale: Optional[bool] = None,
@@ -3945,7 +3945,7 @@ def build_tiler_get_mosaics_wmts_capabilities_with_matrix_set_request(  # pylint
     buffer: Optional[str] = None,
     color_formula: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[List[str]] = None,
+    rescale: Optional[list[str]] = None,
     colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
     colormap: Optional[str] = None,
     return_mask: Optional[bool] = None,
@@ -5685,8 +5685,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: List[str] = ["file"]
-        _data_fields: List[str] = ["data"]
+        _file_fields: list[str] = ["file"]
+        _data_fields: list[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_stac_create_collection_asset_request(
@@ -5831,8 +5831,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.StacCollection] = kwargs.pop("cls", None)
 
         _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: List[str] = ["file"]
-        _data_fields: List[str] = ["data"]
+        _file_fields: list[str] = ["file"]
+        _data_fields: list[str] = ["data"]
         _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_stac_create_or_replace_collection_asset_request(
@@ -6416,7 +6416,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_mosaics(self, collection_id: str, **kwargs: Any) -> List[_models.Mosaic]:
+    def list_mosaics(self, collection_id: str, **kwargs: Any) -> list[_models.Mosaic]:
         """Get Collection Mosaics.
 
         Get the mosaic definitions for a given collection.
@@ -6438,7 +6438,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Mosaic]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Mosaic]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_mosaics_request(
             collection_id=collection_id,
@@ -6470,7 +6470,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.Mosaic], response.json())
+            deserialized = _deserialize(list[_models.Mosaic], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6949,7 +6949,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Get a collection in the GeoCatalog instance.
 
-        :param collection_id: Unique identifier for the collection. Required.
+        :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
          "false". Default value is None.
@@ -7705,7 +7705,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_render_option(self, collection_id: str, render_option_id: str, **kwargs: Any) -> List[_models.RenderOption]:
+    def get_render_option(self, collection_id: str, render_option_id: str, **kwargs: Any) -> list[_models.RenderOption]:
         """Get Collection Render Option.
 
         Get a render option for a given collection.
@@ -7729,7 +7729,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.RenderOption]] = kwargs.pop("cls", None)
 
         _request = build_stac_get_render_option_request(
             collection_id=collection_id,
@@ -7762,7 +7762,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.RenderOption], response.json())
+            deserialized = _deserialize(list[_models.RenderOption], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7770,7 +7770,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_render_options(self, collection_id: str, **kwargs: Any) -> List[_models.RenderOption]:
+    def list_render_options(self, collection_id: str, **kwargs: Any) -> list[_models.RenderOption]:
         """Get Collection Render Options.
 
         Get all render options for a given collection.
@@ -7792,7 +7792,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.RenderOption]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.RenderOption]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_render_options_request(
             collection_id=collection_id,
@@ -7824,7 +7824,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.RenderOption], response.json())
+            deserialized = _deserialize(list[_models.RenderOption], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8770,7 +8770,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         *,
         limit: Optional[int] = None,
-        bounding_box: Optional[List[str]] = None,
+        bounding_box: Optional[list[str]] = None,
         datetime: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.ItemCollection:
@@ -9167,11 +9167,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     def create_queryables(
         self,
         collection_id: str,
-        body: List[_models.StacQueryable],
+        body: list[_models.StacQueryable],
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> List[_models.StacQueryable]:
+    ) -> list[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -9191,7 +9191,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     @overload
     def create_queryables(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> List[_models.StacQueryable]:
+    ) -> list[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -9210,8 +9210,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def create_queryables(
-        self, collection_id: str, body: Union[List[_models.StacQueryable], IO[bytes]], **kwargs: Any
-    ) -> List[_models.StacQueryable]:
+        self, collection_id: str, body: Union[list[_models.StacQueryable], IO[bytes]], **kwargs: Any
+    ) -> list[_models.StacQueryable]:
         """Set Collection Queryables.
 
         Set queryables for a collection given a list of queryable definitions.
@@ -9237,7 +9237,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.StacQueryable]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.StacQueryable]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9278,7 +9278,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.StacQueryable], response.json())
+            deserialized = _deserialize(list[_models.StacQueryable], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9513,7 +9513,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_queryables(self, **kwargs: Any) -> Dict[str, Any]:
+    def list_queryables(self, **kwargs: Any) -> dict[str, Any]:
         """Queryables.
 
         Endpoint.
@@ -9533,7 +9533,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_queryables_request(
             api_version=self._config.api_version,
@@ -9564,7 +9564,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(Dict[str, Any], response.json())
+            deserialized = _deserialize(dict[str, Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9572,7 +9572,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_queryables_by_collection(self, collection_id: str, **kwargs: Any) -> Dict[str, Any]:
+    def list_queryables_by_collection(self, collection_id: str, **kwargs: Any) -> dict[str, Any]:
         """Collection Queryables.
 
         Endpoint.
@@ -9594,7 +9594,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_queryables_by_collection_request(
             collection_id=collection_id,
@@ -9626,7 +9626,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(Dict[str, Any], response.json())
+            deserialized = _deserialize(dict[str, Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9765,9 +9765,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     def get_search_operations(
         self,
         *,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
-        bounding_box: Optional[List[float]] = None,
+        collections: Optional[list[str]] = None,
+        ids: Optional[list[str]] = None,
+        bounding_box: Optional[list[float]] = None,
         intersects: Optional[str] = None,
         datetime: Optional[str] = None,
         limit: Optional[int] = None,
@@ -9963,7 +9963,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_tile_matrix_list(self, **kwargs: Any) -> List[str]:
+    def get_tile_matrix_list(self, **kwargs: Any) -> list[str]:
         """Matrix List.
 
         Return Matrix List.
@@ -9983,7 +9983,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+        cls: ClsType[list[str]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_tile_matrix_list_request(
             api_version=self._config.api_version,
@@ -10014,7 +10014,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[str], response.json())
+            deserialized = _deserialize(list[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10027,17 +10027,17 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
+        categories_pixels: Optional[list[str]] = None,
+        percentiles: Optional[list[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
@@ -10169,7 +10169,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_available_assets(self, collection_id: str, item_id: str, **kwargs: Any) -> List[str]:
+    def list_available_assets(self, collection_id: str, item_id: str, **kwargs: Any) -> list[str]:
         """Available Assets.
 
         Return a list of supported assets.
@@ -10193,7 +10193,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[str]] = kwargs.pop("cls", None)
+        cls: ClsType[list[str]] = kwargs.pop("cls", None)
 
         _request = build_tiler_list_available_assets_request(
             collection_id=collection_id,
@@ -10226,7 +10226,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[str], response.json())
+            deserialized = _deserialize(list[str], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10306,9 +10306,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: _models.Geometry,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10320,7 +10320,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -10429,9 +10429,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: JSON,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10443,7 +10443,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -10552,9 +10552,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: IO[bytes],
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10566,7 +10566,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -10675,9 +10675,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: Union[_models.Geometry, JSON, IO[bytes]],
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10689,7 +10689,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -10882,9 +10882,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: _models.StacItem,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -10894,7 +10894,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -11004,9 +11004,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: JSON,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11016,7 +11016,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -11126,9 +11126,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: IO[bytes],
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11138,7 +11138,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -11248,9 +11248,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: Union[_models.StacItem, JSON, IO[bytes]],
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11260,7 +11260,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -11449,9 +11449,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: _models.ItemCollection,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11459,8 +11459,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
+        categories_pixels: Optional[list[str]] = None,
+        percentiles: Optional[list[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
@@ -11545,9 +11545,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: JSON,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11555,8 +11555,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
+        categories_pixels: Optional[list[str]] = None,
+        percentiles: Optional[list[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
@@ -11641,9 +11641,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: IO[bytes],
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11651,8 +11651,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
+        categories_pixels: Optional[list[str]] = None,
+        percentiles: Optional[list[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
@@ -11737,9 +11737,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: Union[_models.ItemCollection, JSON, IO[bytes]],
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -11747,8 +11747,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
+        categories_pixels: Optional[list[str]] = None,
+        percentiles: Optional[list[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
@@ -11899,7 +11899,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_info_geo_json(
-        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+        self, collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
     ) -> _models.TilerInfoGeoJsonFeature:
         """Info Geojson.
 
@@ -11969,7 +11969,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_info(
-        self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
+        self, collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
     ) -> _models.InfoOperationResponse:
         """Info.
 
@@ -12048,9 +12048,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         maxy: float,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12063,7 +12063,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -12260,9 +12260,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: float,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12273,7 +12273,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -12465,9 +12465,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         lon: float,
         lat: float,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12578,9 +12578,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12593,7 +12593,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -12769,9 +12769,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -12783,7 +12783,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         max_size: Optional[int] = None,
         height: Optional[int] = None,
         width: Optional[int] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -13159,17 +13159,17 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
-        categories_pixels: Optional[List[str]] = None,
-        percentiles: Optional[List[int]] = None,
+        categories_pixels: Optional[list[str]] = None,
+        percentiles: Optional[list[int]] = None,
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
@@ -13306,9 +13306,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13322,7 +13322,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -13505,9 +13505,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13520,7 +13520,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -13703,9 +13703,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         scale: float,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13714,12 +13714,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[List[str]] = None,
+        subdataset_bands: Optional[list[str]] = None,
         **kwargs: Any,
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid As Path.
@@ -13915,9 +13915,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         scale: float,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -13927,12 +13927,12 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
         subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[List[str]] = None,
+        subdataset_bands: Optional[list[str]] = None,
         **kwargs: Any,
     ) -> Iterator[bytes]:
         """Tile.
@@ -14128,9 +14128,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14144,7 +14144,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -14328,9 +14328,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -14343,7 +14343,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -14515,7 +14515,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_class_map_legend(
         self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> _models.ClassMapLegendResponse:
+    ) -> dict[str, Any]:
         """Get ClassMap Legend.
 
         Generate values and color swatches mapping for a given classmap.
@@ -14531,8 +14531,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype trim_start: int
         :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
         :paramtype trim_end: int
-        :return: ClassMapLegendResponse. The ClassMapLegendResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ClassMapLegendResponse
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14546,7 +14546,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ClassMapLegendResponse] = kwargs.pop("cls", None)
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_class_map_legend_request(
             classmap_name=classmap_name,
@@ -14580,7 +14580,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ClassMapLegendResponse, response.json())
+            deserialized = _deserialize(dict[str, Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14590,7 +14590,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_interval_legend(
         self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> List[List["_types.IntervalLegendsElement"]]:
+    ) -> list[list["_types.IntervalLegendsElement"]]:
         """Get Interval Legend.
 
         Generate values and color swatches mapping for a given interval classmap.
@@ -14621,7 +14621,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[List["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
+        cls: ClsType[list[list["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_interval_legend_request(
             classmap_name=classmap_name,
@@ -14658,7 +14658,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
+            deserialized = _deserialize(list[list["_types.IntervalLegendsElement"]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -14778,7 +14778,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         skip_covered: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         **kwargs: Any,
-    ) -> List[_models.Asset]:
+    ) -> list[_models.Asset]:
         """Assets For Point.
 
         Return a list of assets for a given point.
@@ -14823,7 +14823,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Asset]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.Asset]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_assets_for_point_request(
             search_id=search_id,
@@ -14863,7 +14863,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[_models.Asset], response.json())
+            deserialized = _deserialize(list[_models.Asset], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14885,7 +14885,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
         **kwargs: Any,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """Assets For Tile Tilematrixsetid As Path.
 
         Return a list of assets which overlap a given tile.
@@ -14934,7 +14934,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[Any]] = kwargs.pop("cls", None)
+        cls: ClsType[list[Any]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_mosaics_assets_for_tile_with_matrix_set_request(
             search_id=search_id,
@@ -14975,7 +14975,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[Any], response.json())
+            deserialized = _deserialize(list[Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14997,7 +14997,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         skip_covered: Optional[bool] = None,
         tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
         **kwargs: Any,
-    ) -> List[Any]:
+    ) -> list[Any]:
         """Assets For Tile.
 
         Return a list of assets which overlap a given tile.
@@ -15051,7 +15051,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[Any]] = kwargs.pop("cls", None)
+        cls: ClsType[list[Any]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_mosaics_assets_for_tile_request(
             search_id=search_id,
@@ -15092,7 +15092,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[Any], response.json())
+            deserialized = _deserialize(list[Any], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -15167,14 +15167,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         *,
         content_type: str = "application/json",
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
+        collections: Optional[list[str]] = None,
+        ids: Optional[list[str]] = None,
         bounding_box: Optional[float] = None,
         intersects: Optional[_models.Geometry] = None,
-        query: Optional[Dict[str, Any]] = None,
-        filter: Optional[Dict[str, Any]] = None,
+        query: Optional[dict[str, Any]] = None,
+        filter: Optional[dict[str, Any]] = None,
         datetime: Optional[str] = None,
-        sort_by: Optional[List[_models.SortExtension]] = None,
+        sort_by: Optional[list[_models.SortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.Metadata] = None,
         **kwargs: Any,
@@ -15259,14 +15259,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        collections: Optional[List[str]] = None,
-        ids: Optional[List[str]] = None,
+        collections: Optional[list[str]] = None,
+        ids: Optional[list[str]] = None,
         bounding_box: Optional[float] = None,
         intersects: Optional[_models.Geometry] = None,
-        query: Optional[Dict[str, Any]] = None,
-        filter: Optional[Dict[str, Any]] = None,
+        query: Optional[dict[str, Any]] = None,
+        filter: Optional[dict[str, Any]] = None,
         datetime: Optional[str] = None,
-        sort_by: Optional[List[_models.SortExtension]] = None,
+        sort_by: Optional[list[_models.SortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.Metadata] = None,
         **kwargs: Any,
@@ -15384,9 +15384,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         search_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -15407,7 +15407,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -15618,9 +15618,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         scale: float,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -15636,7 +15636,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -15848,9 +15848,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         search_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -15870,7 +15870,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -16076,9 +16076,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         scale: float,
         format: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -16095,7 +16095,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -16311,9 +16311,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         search_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -16327,7 +16327,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,
@@ -16504,9 +16504,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         search_id: str,
         tile_matrix_set_id: str,
         *,
-        assets: Optional[List[str]] = None,
+        assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
-        asset_band_indices: Optional[List[str]] = None,
+        asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
         nodata: Optional[float] = None,
         unscale: Optional[bool] = None,
@@ -16519,7 +16519,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         buffer: Optional[str] = None,
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[List[str]] = None,
+        rescale: Optional[list[str]] = None,
         colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
         colormap: Optional[str] = None,
         return_mask: Optional[bool] = None,

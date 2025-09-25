@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Union
+from typing import Union
 
-BandMetadataElement = Union[str, Dict[str, str]]
-IntervalLegendsElement = Union[List[int], Dict[str, str]]
+BandMetadataElement = Union[str, dict[str, str]]
+IntervalLegendsElement = Union[list[int], dict[str, str]]
