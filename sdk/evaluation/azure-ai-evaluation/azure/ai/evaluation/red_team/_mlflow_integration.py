@@ -489,11 +489,11 @@ class MLflowIntegration:
                         continue
                     status = details.get("status", "").lower()
                     if status in ("incomplete", "failed", "timeout"):
-                        return "Failed"
+                        return "failed"
                     elif status in ("running", "pending"):
-                        return "InProgress"
-        
-        return "Completed"
+                        return "in_progress"
+
+        return "completed"
 
     def _build_results_payload(
         self,
