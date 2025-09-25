@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.get_managed_identities()
+    response = client.ingestion.list_managed_identities()
     print(response)
 
 

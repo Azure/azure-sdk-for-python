@@ -46,9 +46,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion_operations(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_ingestion_operations(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion_operations()
+        response = await client.ingestion.list_ingestion_operations()
 
         # please add some check logic here by yourself
         # ...
@@ -80,9 +80,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion_runs(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_ingestion_runs(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion_runs(
+        response = await client.ingestion.list_ingestion_runs(
             collection_id="str",
             ingestion_id="str",
         )
@@ -139,9 +139,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestions(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_ingestions(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestions(
+        response = await client.ingestion.list_ingestions(
             collection_id="str",
         )
 
@@ -227,18 +227,18 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion_sources(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_ingestion_sources(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion_sources()
+        response = await client.ingestion.list_ingestion_sources()
 
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_managed_identities(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_managed_identities(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_managed_identities()
+        response = await client.ingestion.list_managed_identities()
 
         # please add some check logic here by yourself
         # ...

@@ -107,7 +107,7 @@ def build_ingestion_get_ingestion_operation_request(  # pylint: disable=name-too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_ingestion_operations_request(  # pylint: disable=name-too-long
+def build_ingestion_list_ingestion_operations_request(  # pylint: disable=name-too-long
     *,
     top: Optional[int] = None,
     skip: Optional[int] = None,
@@ -196,7 +196,7 @@ def build_ingestion_get_ingestion_run_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_ingestion_runs_request(  # pylint: disable=name-too-long
+def build_ingestion_list_ingestion_runs_request(  # pylint: disable=name-too-long
     collection_id: str, ingestion_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -304,7 +304,7 @@ def build_ingestion_get_ingestion_request(collection_id: str, ingestion_id: str,
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_ingestions_request(
+def build_ingestion_list_ingestions_request(
     collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -459,7 +459,7 @@ def build_ingestion_get_ingestion_source_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_ingestion_sources_request(  # pylint: disable=name-too-long
+def build_ingestion_list_ingestion_sources_request(  # pylint: disable=name-too-long
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -484,7 +484,7 @@ def build_ingestion_get_ingestion_sources_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_managed_identities_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_ingestion_list_managed_identities_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -4255,7 +4255,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_ingestion_operations(
+    def list_ingestion_operations(
         self,
         *,
         top: Optional[int] = None,
@@ -4292,7 +4292,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.PageOperation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_operations_request(
+        _request = build_ingestion_list_ingestion_operations_request(
             top=top,
             skip=skip,
             collection_id=collection_id,
@@ -4467,7 +4467,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_ingestion_runs(
+    def list_ingestion_runs(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -4503,7 +4503,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.PageIngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_runs_request(
+        _request = build_ingestion_list_ingestion_runs_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             top=top,
@@ -4853,7 +4853,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_ingestions(
+    def list_ingestions(
         self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> _models.PageIngestionDefinition:
         """Get ingestions of a catalog.
@@ -4881,7 +4881,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.PageIngestionDefinition] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestions_request(
+        _request = build_ingestion_list_ingestions_request(
             collection_id=collection_id,
             top=top,
             skip=skip,
@@ -5449,7 +5449,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_ingestion_sources(
+    def list_ingestion_sources(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> _models.PageIngestionSourceSummary:
         """Get ingestion sources in a geo-catalog.
@@ -5476,7 +5476,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.PageIngestionSourceSummary] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_sources_request(
+        _request = build_ingestion_list_ingestion_sources_request(
             top=top,
             skip=skip,
             api_version=self._config.api_version,
@@ -5515,7 +5515,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_managed_identities(self, **kwargs: Any) -> _models.PageManagedIdentityMetadata:
+    def list_managed_identities(self, **kwargs: Any) -> _models.PageManagedIdentityMetadata:
         """Get all managed identities with access to storage accounts configured for a geo-catalog.
 
         :return: PageManagedIdentityMetadata. The PageManagedIdentityMetadata is compatible with
@@ -5536,7 +5536,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.PageManagedIdentityMetadata] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_managed_identities_request(
+        _request = build_ingestion_list_managed_identities_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

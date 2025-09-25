@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.get_ingestion_sources()
+    response = client.ingestion.list_ingestion_sources()
     print(response)
 
 
