@@ -5,13 +5,15 @@
 # -------------------------------------------------------------------------
 
 import hashlib
-import urllib
 import base64
 import hmac
-from urllib.parse import ParseResult, urlparse
+from urllib.parse import urlparse, unquote
 from typing import Union
+
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline import PipelineRequest
+
 from .utils import get_current_utc_time
 
 
@@ -41,9 +43,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         self._access_key = access_key
         self._decode_url = decode_url
 
-    def _compute_hmac(
-        self, value  # type: str
-    ):
+    def _compute_hmac(self, value: str) -> str:
         if isinstance(self._access_key, AzureKeyCredential):
             decoded_secret = base64.b64decode(self._access_key.key)
         else:
@@ -53,11 +53,11 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         return base64.b64encode(digest).decode("utf-8")
 
-    def _sign_request(self, request):
+    def _sign_request(self, request: PipelineRequest) -> None:
         verb = request.http_request.method.upper()
 
         # Get the path and query from url, which looks like https://host/path/query
-        parsed_url: ParseResult = urlparse(request.http_request.url)
+        parsed_url = urlparse(request.http_request.url)
         query_url = parsed_url.path
 
         if parsed_url.query:
@@ -91,7 +91,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
             pass
 
         if self._decode_url:
-            query_url = urllib.parse.unquote(query_url)
+            query_url = unquote(query_url)
 
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
@@ -114,7 +114,5 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
 
         request.http_request.headers.update(signature_header)
 
-        return request
-
-    def on_request(self, request):
+    def on_request(self, request: PipelineRequest) -> None:
         self._sign_request(request)
