@@ -31,6 +31,7 @@ from azure.cosmos.partition_key import PartitionKey
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
+from ._constants import _InternalOptions, _Kwargs
 from .container import ContainerProxy
 from .offer import Offer, ThroughputProperties
 from .http_constants import StatusCodes as _StatusCodes
@@ -43,7 +44,8 @@ __all__ = ("DatabaseProxy",)
 
 
 # pylint: disable=protected-access
-# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+# pylint: disable=missing-client-constructor-parameter-credential
+# pylint: disable=missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 def _get_database_link(database_or_id: Union[str, 'DatabaseProxy', Mapping[str, Any]]) -> str:
@@ -99,14 +101,18 @@ class DatabaseProxy(object):
     def __repr__(self) -> str:
         return "<DatabaseProxy [{}]>".format(self.database_link)[:1024]
 
-    def _get_container_id(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_id(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         if isinstance(container_or_id, str):
             return container_or_id
         if isinstance(container_or_id, ContainerProxy):
             return container_or_id.id
         return container_or_id["id"]
 
-    def _get_container_link(self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]) -> str:
+    def _get_container_link(
+        self, container_or_id: Union[str, ContainerProxy, Mapping[str, Any]]
+    ) -> str:
         return "{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id: Union[UserProxy, str, Mapping[str, Any]]) -> str:
@@ -137,7 +143,7 @@ class DatabaseProxy(object):
         :rtype: Dict[Str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -151,7 +157,7 @@ class DatabaseProxy(object):
 
         database_link = _get_database_link(self)
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
@@ -377,9 +383,9 @@ class DatabaseProxy(object):
         computed_properties = kwargs.pop('computed_properties', None)
         change_feed_policy = kwargs.pop('change_feed_policy', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
-        return_properties = kwargs.pop('return_properties', False)
+        return_properties = kwargs.pop(_Kwargs.RETURN_PROPERTIES, False)
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -430,10 +436,14 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
+
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options, **kwargs
+            database_link=self.database_link,
+            collection=definition,
+            options=request_options,
+            **kwargs
         )
 
         if not return_properties:
@@ -619,21 +629,21 @@ class DatabaseProxy(object):
         computed_properties = kwargs.pop('computed_properties', None)
         change_feed_policy = kwargs.pop('change_feed_policy', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
-        return_properties = kwargs.pop('return_properties', False)
+        return_properties = kwargs.pop(_Kwargs.RETURN_PROPERTIES, False)
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        etag = kwargs.get('etag')
+        etag = kwargs.get(_Kwargs.ETAG)
         if etag is not None:
             warnings.warn(
                 "The 'etag' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        match_condition = kwargs.get('match_condition')
+        match_condition = kwargs.get(_Kwargs.MATCH_CONDITION)
         if match_condition is not None:
             warnings.warn(
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
@@ -694,7 +704,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -719,7 +729,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
         collection_link = self._get_container_link(container)
         self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
@@ -779,7 +789,7 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: List all containers in the database:
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -792,10 +802,10 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         result = self.client_connection.ReadContainers(
             database_link=self.database_link, options=feed_options, **kwargs
         )
@@ -827,7 +837,7 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -840,10 +850,10 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
         result = self.client_connection.QueryContainers(
             database_link=self.database_link,
             query=query if parameters is None else {"query": query, "parameters": parameters},
@@ -1035,10 +1045,10 @@ class DatabaseProxy(object):
         analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
         computed_properties = kwargs.pop('computed_properties', None)
         full_text_policy = kwargs.pop('full_text_policy', None)
-        return_properties = kwargs.pop('return_properties', False)
+        return_properties = kwargs.pop(_Kwargs.RETURN_PROPERTIES, False)
         vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
 
-        session_token = kwargs.get('session_token')
+        session_token = kwargs.get(_Kwargs.SESSION_TOKEN)
         if session_token is not None:
             warnings.warn(
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
@@ -1063,7 +1073,7 @@ class DatabaseProxy(object):
             )
 
         if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
+            kwargs[_Kwargs.INITIAL_HEADERS] = initial_headers
         request_options = build_options(kwargs)
 
         container_id = self._get_container_id(container)
@@ -1115,7 +1125,7 @@ class DatabaseProxy(object):
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.ReadUsers(
             database_link=self.database_link, options=feed_options, **kwargs
@@ -1147,7 +1157,7 @@ class DatabaseProxy(object):
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
-            feed_options["maxItemCount"] = max_item_count
+            feed_options[_InternalOptions.MAX_ITEM_COUNT] = max_item_count
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,

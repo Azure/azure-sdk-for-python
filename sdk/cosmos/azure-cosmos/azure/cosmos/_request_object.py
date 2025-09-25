@@ -24,7 +24,7 @@
 from typing import Optional, Mapping, Any, Dict, List
 from .documents import _OperationType
 from .http_constants import ResourceType
-from ._constants import _Constants as Constants
+from ._constants import _Kwargs
 
 class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def __init__(
@@ -88,9 +88,9 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
 
     def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: bool) -> None:
         if self.resource_type == ResourceType.Document:
-            if request_options and request_options.get(Constants.Kwargs.RETRY_WRITE):
+            if request_options and request_options.get(_Kwargs.RETRY_WRITE):
                 # If request retry write is True, set the option
-                self.retry_write = request_options[Constants.Kwargs.RETRY_WRITE]
+                self.retry_write = request_options[_Kwargs.RETRY_WRITE]
             elif client_retry_write and self.operation_type != _OperationType.Patch:
                 # If it is not a patch operation and the client config is set, set the retry write to True
                 self.retry_write = client_retry_write
