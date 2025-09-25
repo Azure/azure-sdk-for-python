@@ -12,7 +12,7 @@ import os
 import tempfile
 import uuid
 from datetime import datetime
-from typing import Dict, Optional, cast
+from typing import Any, Dict, List, Optional, Set, cast
 from pathlib import Path
 
 # Azure AI Evaluation imports
@@ -50,6 +50,32 @@ class MLflowIntegration:
         self.scan_output_dir = scan_output_dir
         self.ai_studio_url = None
         self.trace_destination = None
+        self._run_id_override: Optional[str] = None
+        self._eval_id_override: Optional[str] = None
+        self._created_at_override: Optional[int] = None
+
+    def set_run_identity_overrides(
+        self,
+        *,
+        run_id: Optional[str] = None,
+        eval_id: Optional[str] = None,
+        created_at: Optional[Any] = None,
+    ) -> None:
+        """Allow callers to supply pre-existing identifiers for the run payload."""
+
+        self._run_id_override = str(run_id).strip() if run_id else None
+        self._eval_id_override = str(eval_id).strip() if eval_id else None
+
+        if created_at is None or created_at == "":
+            self._created_at_override = None
+        else:
+            if isinstance(created_at, datetime):
+                self._created_at_override = int(created_at.timestamp())
+            else:
+                try:
+                    self._created_at_override = int(created_at)
+                except (TypeError, ValueError):
+                    self._created_at_override = None
 
     def start_redteam_mlflow_run(
         self,
@@ -155,35 +181,20 @@ class MLflowIntegration:
         eval_info_name = "redteam_info.json"
         properties = {}
 
+        import pdb; pdb.set_trace()
+
         with tempfile.TemporaryDirectory() as tmpdir:
             if self.scan_output_dir:
                 artifact_path = os.path.join(self.scan_output_dir, artifact_name)
                 self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
                 with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if _skip_evals:
-                        # In _skip_evals mode, we write the conversations in conversation/messages format
-                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        # Create a copy to avoid modifying the original scan result
-                        result_with_conversations = (
-                            redteam_result.scan_result.copy() if isinstance(redteam_result.scan_result, dict) else {}
-                        )
-
-                        # Preserve all original fields needed for scorecard generation
-                        result_with_conversations["scorecard"] = result_with_conversations.get("scorecard", {})
-                        result_with_conversations["parameters"] = result_with_conversations.get("parameters", {})
-
-                        # Add conversations field with all conversation data including user messages
-                        result_with_conversations["conversations"] = redteam_result.attack_details or []
-
-                        # Keep original attack_details field to preserve compatibility with existing code
-                        if (
-                            "attack_details" not in result_with_conversations
-                            and redteam_result.attack_details is not None
-                        ):
-                            result_with_conversations["attack_details"] = redteam_result.attack_details
-
-                        json.dump(result_with_conversations, f)
+                    payload = self._build_instance_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        scan_name=getattr(eval_run, 'display_name', None),
+                    )
+                    json.dump(payload, f)
 
                 eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
                 self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
@@ -216,10 +227,13 @@ class MLflowIntegration:
                     "w",
                     encoding=DefaultOpenEncoding.WRITE,
                 ) as f:
-                    if _skip_evals:
-                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        json.dump(redteam_result.scan_result, f)
+                    payload = self._build_instance_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        scan_name=getattr(eval_run, 'display_name', None),
+                    )
+                    json.dump(payload, f)
 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -248,10 +262,13 @@ class MLflowIntegration:
                 # Use temporary directory as before if no scan output directory exists
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    if _skip_evals:
-                        f.write(json.dumps({"conversations": redteam_result.attack_details or []}))
-                    elif redteam_result.scan_result:
-                        json.dump(redteam_result.scan_result, f)
+                    payload = self._build_instance_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        scan_name=getattr(eval_run, 'display_name', None),
+                    )
+                    json.dump(payload, f)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
             properties.update(
@@ -320,3 +337,175 @@ class MLflowIntegration:
 
         self.logger.info("Successfully logged results to AI Foundry")
         return None
+
+
+    @staticmethod
+    def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
+        """Aggregate run-level pass/fail counts from individual output items."""
+
+        total = len(output_items)
+        passed = failed = errored = 0
+
+        for item in output_items:
+            item_status: Optional[bool] = None
+            for result in item.get("results", []):
+                result_properties = result.get("properties", {}) if isinstance(result, dict) else {}
+                attack_success = result_properties.get("attack_success")
+                if attack_success is True:
+                    item_status = False
+                    break
+                if attack_success is False:
+                    item_status = True
+                elif item_status is None and result.get("passed") is not None:
+                    item_status = bool(result.get("passed"))
+
+            if item_status is True:
+                passed += 1
+            elif item_status is False:
+                failed += 1
+            else:
+                errored += 1
+
+        return {
+            "total": total,
+            "passed": passed,
+            "failed": failed,
+            "errored": errored,
+        }
+
+    @staticmethod
+    def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Build aggregated pass/fail counts per testing criteria (risk category)."""
+
+        criteria: Dict[str, Dict[str, int]] = {}
+
+        for item in output_items:
+            for result in item.get("results", []):
+                if not isinstance(result, dict):
+                    continue
+                name = result.get("name")
+                if not name:
+                    continue
+                passed_value = result.get("passed")
+                if passed_value is None:
+                    continue
+
+                bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
+                if passed_value:
+                    bucket["passed"] += 1
+                else:
+                    bucket["failed"] += 1
+
+        return [
+            {
+                "testing_criteria": criteria_name,
+                "passed": counts["passed"],
+                "failed": counts["failed"],
+            }
+            for criteria_name, counts in sorted(criteria.items())
+        ]
+
+    @staticmethod
+    def _build_data_source_section(parameters: Dict[str, Any], red_team_info: Optional[Dict]) -> Dict[str, Any]:
+        """Build the data_source portion of the run payload for red-team scans."""
+
+        attack_strategies: List[str] = []
+        if isinstance(red_team_info, dict):
+            attack_strategies = sorted(str(strategy) for strategy in red_team_info.keys())
+
+        item_generation_params: Dict[str, Any] = {
+            "type": "red_team"
+        }
+        if attack_strategies:
+            item_generation_params["attack_strategies"] = attack_strategies
+
+        # Attempt to infer turns from parameters if available
+        num_turns = parameters.get("max_turns") if isinstance(parameters, dict) else None
+        if isinstance(num_turns, int) and num_turns > 0:
+            item_generation_params["num_turns"] = num_turns
+
+        data_source: Dict[str, Any] = {"type": "azure_ai_red_team", "target": {}}
+        if item_generation_params:
+            data_source["item_generation_params"] = item_generation_params
+
+        return data_source
+
+    def _determine_run_status(
+        self,
+        scan_result: Dict[str, Any],
+        red_team_info: Optional[Dict],
+        output_items: List[Dict[str, Any]],
+    ) -> str:
+        """Determine the run-level status based on red team info status values."""
+        
+        # Check if any tasks are still incomplete/failed
+        if isinstance(red_team_info, dict):
+            for risk_data in red_team_info.values():
+                if not isinstance(risk_data, dict):
+                    continue
+                for details in risk_data.values():
+                    if not isinstance(details, dict):
+                        continue
+                    status = details.get("status", "").lower()
+                    if status in ("incomplete", "failed", "timeout"):
+                        return "Failed"
+                    elif status in ("running", "pending"):
+                        return "InProgress"
+        
+        return "Completed"
+
+    def _build_instance_results_payload(
+        self,
+        redteam_result: RedTeamResult,
+        eval_run: Optional[Any] = None,
+        red_team_info: Optional[Dict] = None,
+        scan_name: Optional[str] = None,
+    ) -> Dict:
+        """Assemble the structure persisted to instance_results.json."""
+
+        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
+        output_items = cast(List[Dict[str, Any]], scan_result.get("output_items") or [])
+        scorecard = cast(Dict[str, Any], scan_result.get("scorecard") or {})
+        parameters = cast(Dict[str, Any], scan_result.get("parameters") or {})
+
+        run_id = self._run_id_override
+        eval_id = self._eval_id_override
+        run_name: Optional[str] = None
+        created_at = self._created_at_override
+        # Generate fallback values if not provided via overrides
+        if run_id is None:
+            run_id = str(uuid.uuid4())
+        if eval_id is None:
+            eval_id = str(uuid.uuid4())
+        if created_at is None:
+            created_at = int(datetime.now().timestamp())
+        if run_name is None:
+            run_name = scan_name or f"redteam-run-{run_id[:8]}"
+
+        result_count = self._compute_result_count(output_items)
+        per_testing_results = self._compute_per_testing_criteria(output_items)
+        data_source = self._build_data_source_section(parameters, red_team_info)
+        status = self._determine_run_status(scan_result, red_team_info, output_items)
+
+        list_wrapper: Dict[str, Any] = {
+            "object": "list",
+            "data": output_items,
+        }
+
+        run_payload: Dict[str, Any] = {
+            "object": "eval.run",
+            "id": run_id,
+            "eval_id": eval_id,
+            "created_at": created_at,
+            "status": status,
+            "name": run_name,
+            "report_url": scan_result.get("studio_url") or self.ai_studio_url,
+            "data_source": data_source,
+            "metadata": {},
+            "result_count": result_count,
+            "per_model_usage": [],
+            "per_testing_criteria_results": per_testing_results,
+            "output_items": list_wrapper,
+        }
+
+        return run_payload

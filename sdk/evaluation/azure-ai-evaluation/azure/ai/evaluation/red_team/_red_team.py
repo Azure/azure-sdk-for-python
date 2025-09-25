@@ -783,6 +783,9 @@ class RedTeam:
         :rtype: RedTeamResult
         """
         user_agent: Optional[str] = kwargs.get("user_agent", "(type=redteam; subtype=RedTeam)")
+        run_id_override = kwargs.get("run_id") or kwargs.get("runId")
+        eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
+        created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
@@ -801,6 +804,12 @@ class RedTeam:
             self.evaluation_processor.logger = self.logger
             self.mlflow_integration.logger = self.logger
             self.result_processor.logger = self.logger
+
+            self.mlflow_integration.set_run_identity_overrides(
+                run_id=run_id_override,
+                eval_id=eval_id_override,
+                created_at=created_at_override,
+            )
 
             # Validate attack objective generator
             if not self.attack_objective_generator:

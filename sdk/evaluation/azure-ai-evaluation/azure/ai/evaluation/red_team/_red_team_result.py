@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, Optional, TypedDict
 import json
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -245,6 +245,89 @@ class AttackDetails(TypedDict):
 
 
 @experimental
+class RedTeamOutputResultProperties(TypedDict, total=False):
+    """Additional metadata captured for each evaluation result."""
+
+    attack_success: Optional[bool]
+    attack_success_threshold: Optional[int]
+    attack_technique: str
+    attack_complexity: str
+    risk_category: str
+    risk_assessment: Optional[Dict[str, Any]]
+    reason: Optional[str]
+    severity_label: Optional[str]
+    metadata: Optional[Dict[str, Any]]
+
+
+@experimental
+class EvaluationRunOutputItemMessage(TypedDict, total=False):
+    """Representation of a single message within an evaluation sample."""
+
+    role: str
+    content: Any
+    name: Optional[str]
+    tool_calls: Optional[List[Dict[str, Any]]]
+
+
+@experimental
+class RedTeamRunOutputItemResult(TypedDict, total=False):
+    """Flattened evaluation result for a single risk category."""
+    # Should extend EvaluationRunOutputItemResult
+
+    object: str
+    type: str
+    name: str
+    passed: Optional[bool]
+    score: Optional[float]
+    metric: Optional[str]
+    threshold: Optional[float]
+    reason: Optional[str]
+    sample: "RedTeamRunOutputItemSample"
+    properties: RedTeamOutputResultProperties
+
+
+@experimental
+class RedTeamDatasourceItem(TypedDict, total=False):
+    """Metadata about the datasource item that produced this conversation."""
+
+    id: Optional[str]
+    input_data: Dict[str, Any]
+
+
+@experimental
+class RedTeamRunOutputItemSample(TypedDict, total=False):
+    """Sample payload containing the red team conversation."""
+    # Should extend EvaluationRunOutputItemSample
+
+    object: str
+    input: List[EvaluationRunOutputItemMessage]
+    output: List[EvaluationRunOutputItemMessage]
+    finish_reason: Optional[str]
+    model: Optional[str]
+    error: Optional[Dict[str, Any]]
+    usage: Optional[Dict[str, Any]]
+    seed: Optional[int]
+    temperature: Optional[float]
+    top_p: Optional[float]
+    max_completion_tokens: Optional[float]
+    metadata: Optional[Dict[str, Any]]
+
+
+@experimental
+class RedTeamOutputItem(TypedDict, total=False):
+    """Structured representation of a conversation and its evaluation artifacts."""
+
+    object: str
+    id: str
+    created_time: int
+    status: str
+    datasource_item_id: Optional[str]
+    datasource_item: Optional[RedTeamDatasourceItem]
+    sample: RedTeamRunOutputItemSample
+    results: List[RedTeamRunOutputItemResult]
+
+
+@experimental
 class ScanResult(TypedDict):
     """TypedDict representation of a Red Team Agent evaluation result with the updated structure.
 
@@ -261,6 +344,7 @@ class ScanResult(TypedDict):
     scorecard: RedTeamingScorecard
     parameters: RedTeamingParameters
     attack_details: List[AttackDetails]
+    output_items: List[RedTeamOutputItem]
     studio_url: Optional[str]
 
 
