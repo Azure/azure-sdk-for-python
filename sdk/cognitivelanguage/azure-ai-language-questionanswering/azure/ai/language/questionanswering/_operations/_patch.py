@@ -91,7 +91,7 @@ def _handle_metadata_filter_conversion(options_input):
         in_class = False
     if not metadata_input:
         return options
-    
+
     # Handle both MetadataRecord objects and tuples
     metadata_modified = []
     for m in metadata_input:
@@ -105,7 +105,9 @@ def _handle_metadata_filter_conversion(options_input):
                     raise ValueError("'metadata' must be a sequence of key-value tuples.")
                 metadata_modified.append({"key": m[0], "value": m[1]})
             except (TypeError, AttributeError) as exc:
-                raise ValueError("'metadata' must be a sequence of key-value tuples or MetadataRecord objects.") from exc
+                raise ValueError(
+                    "'metadata' must be a sequence of key-value tuples or MetadataRecord objects."
+                ) from exc
     if in_class:
         filters.metadata_filter.metadata = metadata_modified
     else:
