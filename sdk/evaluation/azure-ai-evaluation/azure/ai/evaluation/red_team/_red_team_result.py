@@ -272,6 +272,7 @@ class EvaluationRunOutputItemMessage(TypedDict, total=False):
 @experimental
 class RedTeamRunOutputItemResult(TypedDict, total=False):
     """Flattened evaluation result for a single risk category."""
+
     # Should extend EvaluationRunOutputItemResult
 
     object: str
@@ -297,6 +298,7 @@ class RedTeamDatasourceItem(TypedDict, total=False):
 @experimental
 class RedTeamRunOutputItemSample(TypedDict, total=False):
     """Sample payload containing the red team conversation."""
+
     # Should extend EvaluationRunOutputItemSample
 
     object: str

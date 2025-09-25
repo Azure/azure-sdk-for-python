@@ -193,7 +193,7 @@ class MLflowIntegration:
                         eval_run=eval_run,
                         red_team_info=red_team_info,
                         include_conversations=True,
-                        scan_name=getattr(eval_run, 'display_name', None),
+                        scan_name=getattr(eval_run, "display_name", None),
                     )
                     json.dump(payload, f)
 
@@ -205,7 +205,7 @@ class MLflowIntegration:
                         redteam_result=redteam_result,
                         eval_run=eval_run,
                         red_team_info=red_team_info,
-                        scan_name=getattr(eval_run, 'display_name', None),
+                        scan_name=getattr(eval_run, "display_name", None),
                     )
                     json.dump(legacy_payload, f)
 
@@ -245,7 +245,7 @@ class MLflowIntegration:
                         eval_run=eval_run,
                         red_team_info=red_team_info,
                         include_conversations=False,
-                        scan_name=getattr(eval_run, 'display_name', None),
+                        scan_name=getattr(eval_run, "display_name", None),
                     )
                     json.dump(payload, f)
 
@@ -259,7 +259,7 @@ class MLflowIntegration:
                         redteam_result=redteam_result,
                         eval_run=eval_run,
                         red_team_info=red_team_info,
-                        scan_name=getattr(eval_run, 'display_name', None),
+                        scan_name=getattr(eval_run, "display_name", None),
                     )
                     json.dump(legacy_payload, f)
 
@@ -295,7 +295,7 @@ class MLflowIntegration:
                         eval_run=eval_run,
                         red_team_info=red_team_info,
                         include_conversations=_skip_evals,
-                        scan_name=getattr(eval_run, 'display_name', None),
+                        scan_name=getattr(eval_run, "display_name", None),
                     )
                     json.dump(payload, f)
                 self.logger.debug(f"Logged artifact: {results_name}")
@@ -307,7 +307,7 @@ class MLflowIntegration:
                         redteam_result=redteam_result,
                         eval_run=eval_run,
                         red_team_info=red_team_info,
-                        scan_name=getattr(eval_run, 'display_name', None),
+                        scan_name=getattr(eval_run, "display_name", None),
                     )
                     json.dump(legacy_payload, f)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
@@ -378,7 +378,6 @@ class MLflowIntegration:
 
         self.logger.info("Successfully logged results to AI Foundry")
         return None
-
 
     @staticmethod
     def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
@@ -454,9 +453,7 @@ class MLflowIntegration:
         if isinstance(red_team_info, dict):
             attack_strategies = sorted(str(strategy) for strategy in red_team_info.keys())
 
-        item_generation_params: Dict[str, Any] = {
-            "type": "red_team"
-        }
+        item_generation_params: Dict[str, Any] = {"type": "red_team"}
         if attack_strategies:
             item_generation_params["attack_strategies"] = attack_strategies
 
@@ -478,7 +475,7 @@ class MLflowIntegration:
         output_items: List[Dict[str, Any]],
     ) -> str:
         """Determine the run-level status based on red team info status values."""
-        
+
         # Check if any tasks are still incomplete/failed
         if isinstance(red_team_info, dict):
             for risk_data in red_team_info.values():
@@ -719,11 +716,11 @@ class MLflowIntegration:
         """Assemble the legacy structure for instance_results.json (scan_result format)."""
 
         scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
-        
+
         # Return the scan_result directly for legacy compatibility
         # This maintains the old format that was expected previously
         legacy_payload = scan_result.copy() if scan_result else {}
-        
+
         # Ensure we have the basic required fields
         if "scorecard" not in legacy_payload:
             legacy_payload["scorecard"] = {}
@@ -733,5 +730,5 @@ class MLflowIntegration:
             legacy_payload["output_items"] = []
         if "attack_details" not in legacy_payload:
             legacy_payload["attack_details"] = redteam_result.attack_details or []
-            
+
         return legacy_payload

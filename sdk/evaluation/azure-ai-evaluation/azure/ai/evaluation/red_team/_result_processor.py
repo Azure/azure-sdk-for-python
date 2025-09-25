@@ -357,7 +357,9 @@ class ResultProcessor:
             eval_row,
             sample_payload=sample_payload,
         )
-        output_item_id = self._resolve_output_item_id(eval_row, datasource_item_id, conversation_key, conversation_index)
+        output_item_id = self._resolve_output_item_id(
+            eval_row, datasource_item_id, conversation_key, conversation_index
+        )
 
         status = "unknown"
         if results:
@@ -515,11 +517,7 @@ class ResultProcessor:
             ):
                 continue
 
-            if (
-                threshold is None
-                and attack_threshold is not None
-                and risk_value == conversation.get("risk_category")
-            ):
+            if threshold is None and attack_threshold is not None and risk_value == conversation.get("risk_category"):
                 threshold = attack_threshold
 
             result_entry: Dict[str, Any] = {
