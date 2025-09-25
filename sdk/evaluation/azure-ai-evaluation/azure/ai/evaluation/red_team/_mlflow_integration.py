@@ -178,21 +178,36 @@ class MLflowIntegration:
         """
         self.logger.debug(f"Logging results to MLFlow, _skip_evals={_skip_evals}")
         artifact_name = "instance_results.json"
+        results_name = "results.json"
         eval_info_name = "redteam_info.json"
         properties = {}
 
         with tempfile.TemporaryDirectory() as tmpdir:
             if self.scan_output_dir:
+                # Save new format as results.json
+                results_path = os.path.join(self.scan_output_dir, results_name)
+                self.logger.debug(f"Saving results to scan output directory: {results_path}")
+                with open(results_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    payload = self._build_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        include_conversations=True,
+                        scan_name=getattr(eval_run, 'display_name', None),
+                    )
+                    json.dump(payload, f)
+
+                # Save legacy format as instance_results.json
                 artifact_path = os.path.join(self.scan_output_dir, artifact_name)
                 self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
                 with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    payload = self._build_instance_results_payload(
+                    legacy_payload = self._build_instance_results_payload(
                         redteam_result=redteam_result,
                         eval_run=eval_run,
                         red_team_info=red_team_info,
                         scan_name=getattr(eval_run, 'display_name', None),
                     )
-                    json.dump(payload, f)
+                    json.dump(legacy_payload, f)
 
                 eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
                 self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
@@ -219,19 +234,34 @@ class MLflowIntegration:
                     self.logger.debug(f"Saved scorecard to: {scorecard_path}")
 
                 # Create a dedicated artifacts directory with proper structure for MLFlow
-                # First, create the main artifact file that MLFlow expects
+                # First, create the main artifact file that MLFlow expects (new format)
+                with open(
+                    os.path.join(tmpdir, results_name),
+                    "w",
+                    encoding=DefaultOpenEncoding.WRITE,
+                ) as f:
+                    payload = self._build_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        include_conversations=False,
+                        scan_name=getattr(eval_run, 'display_name', None),
+                    )
+                    json.dump(payload, f)
+
+                # Also create legacy instance_results.json for compatibility
                 with open(
                     os.path.join(tmpdir, artifact_name),
                     "w",
                     encoding=DefaultOpenEncoding.WRITE,
                 ) as f:
-                    payload = self._build_instance_results_payload(
+                    legacy_payload = self._build_instance_results_payload(
                         redteam_result=redteam_result,
                         eval_run=eval_run,
                         red_team_info=red_team_info,
                         scan_name=getattr(eval_run, 'display_name', None),
                     )
-                    json.dump(payload, f)
+                    json.dump(legacy_payload, f)
 
                 # Copy all relevant files to the temp directory
                 import shutil
@@ -258,15 +288,28 @@ class MLflowIntegration:
                 properties.update({"scan_output_dir": str(self.scan_output_dir)})
             else:
                 # Use temporary directory as before if no scan output directory exists
+                results_file = Path(tmpdir) / results_name
+                with open(results_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    payload = self._build_results_payload(
+                        redteam_result=redteam_result,
+                        eval_run=eval_run,
+                        red_team_info=red_team_info,
+                        include_conversations=_skip_evals,
+                        scan_name=getattr(eval_run, 'display_name', None),
+                    )
+                    json.dump(payload, f)
+                self.logger.debug(f"Logged artifact: {results_name}")
+
+                # Also create legacy instance_results.json
                 artifact_file = Path(tmpdir) / artifact_name
                 with open(artifact_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    payload = self._build_instance_results_payload(
+                    legacy_payload = self._build_instance_results_payload(
                         redteam_result=redteam_result,
                         eval_run=eval_run,
                         red_team_info=red_team_info,
                         scan_name=getattr(eval_run, 'display_name', None),
                     )
-                    json.dump(payload, f)
+                    json.dump(legacy_payload, f)
                 self.logger.debug(f"Logged artifact: {artifact_name}")
 
             properties.update(
@@ -452,14 +495,15 @@ class MLflowIntegration:
         
         return "Completed"
 
-    def _build_instance_results_payload(
+    def _build_results_payload(
         self,
         redteam_result: RedTeamResult,
         eval_run: Optional[Any] = None,
         red_team_info: Optional[Dict] = None,
+        include_conversations: bool = False,
         scan_name: Optional[str] = None,
     ) -> Dict:
-        """Assemble the structure persisted to instance_results.json."""
+        """Assemble the new structure for results.json with eval.run format."""
 
         scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
         output_items = cast(List[Dict[str, Any]], scan_result.get("output_items") or [])
@@ -470,7 +514,54 @@ class MLflowIntegration:
         eval_id = self._eval_id_override
         run_name: Optional[str] = None
         created_at = self._created_at_override
-        # Generate fallback values if not provided via overrides
+
+        if eval_run is not None:
+            run_info = getattr(eval_run, "info", None)
+
+            if run_id is None:
+                candidate_run_id = (
+                    getattr(run_info, "run_id", None)
+                    or getattr(eval_run, "run_id", None)
+                    or getattr(eval_run, "id", None)
+                )
+                if candidate_run_id is not None:
+                    run_id = str(candidate_run_id)
+
+            if eval_id is None:
+                candidate_eval_id = (
+                    getattr(run_info, "experiment_id", None)
+                    or getattr(eval_run, "experiment_id", None)
+                    or getattr(eval_run, "eval_id", None)
+                )
+                if candidate_eval_id is not None:
+                    eval_id = str(candidate_eval_id)
+
+            if run_name is None:
+                candidate_run_name = (
+                    getattr(run_info, "run_name", None)
+                    or getattr(eval_run, "run_name", None)
+                    or getattr(eval_run, "display_name", None)
+                    or getattr(eval_run, "name", None)
+                )
+                if candidate_run_name is not None:
+                    run_name = str(candidate_run_name)
+
+            if created_at is None:
+                raw_created = (
+                    getattr(run_info, "created_time", None)
+                    or getattr(eval_run, "created_at", None)
+                    or getattr(eval_run, "created_time", None)
+                )
+                if isinstance(raw_created, datetime):
+                    created_at = int(raw_created.timestamp())
+                elif isinstance(raw_created, (int, float)):
+                    created_at = int(raw_created)
+                elif isinstance(raw_created, str):
+                    try:
+                        created_at = int(float(raw_created))
+                    except ValueError:
+                        created_at = None
+
         if run_id is None:
             run_id = str(uuid.uuid4())
         if eval_id is None:
@@ -506,4 +597,141 @@ class MLflowIntegration:
             "output_items": list_wrapper,
         }
 
+        if include_conversations:
+            run_payload["conversations"] = redteam_result.attack_details or scan_result.get("attack_details") or []
+
         return run_payload
+
+    def _build_results_payload(
+        self,
+        redteam_result: RedTeamResult,
+        eval_run: Optional[Any] = None,
+        red_team_info: Optional[Dict] = None,
+        include_conversations: bool = False,
+        scan_name: Optional[str] = None,
+    ) -> Dict:
+        """Assemble the new structure for results.json with eval.run format."""
+
+        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
+        output_items = cast(List[Dict[str, Any]], scan_result.get("output_items") or [])
+        scorecard = cast(Dict[str, Any], scan_result.get("scorecard") or {})
+        parameters = cast(Dict[str, Any], scan_result.get("parameters") or {})
+
+        run_id = self._run_id_override
+        eval_id = self._eval_id_override
+        run_name: Optional[str] = None
+        created_at = self._created_at_override
+
+        if eval_run is not None:
+            run_info = getattr(eval_run, "info", None)
+
+            if run_id is None:
+                candidate_run_id = (
+                    getattr(run_info, "run_id", None)
+                    or getattr(eval_run, "run_id", None)
+                    or getattr(eval_run, "id", None)
+                )
+                if candidate_run_id is not None:
+                    run_id = str(candidate_run_id)
+
+            if eval_id is None:
+                candidate_eval_id = (
+                    getattr(run_info, "experiment_id", None)
+                    or getattr(eval_run, "experiment_id", None)
+                    or getattr(eval_run, "eval_id", None)
+                )
+                if candidate_eval_id is not None:
+                    eval_id = str(candidate_eval_id)
+
+            if run_name is None:
+                candidate_run_name = (
+                    getattr(run_info, "run_name", None)
+                    or getattr(eval_run, "run_name", None)
+                    or getattr(eval_run, "display_name", None)
+                    or getattr(eval_run, "name", None)
+                )
+                if candidate_run_name is not None:
+                    run_name = str(candidate_run_name)
+
+            if created_at is None:
+                raw_created = (
+                    getattr(run_info, "created_time", None)
+                    or getattr(eval_run, "created_at", None)
+                    or getattr(eval_run, "created_time", None)
+                )
+                if isinstance(raw_created, datetime):
+                    created_at = int(raw_created.timestamp())
+                elif isinstance(raw_created, (int, float)):
+                    created_at = int(raw_created)
+                elif isinstance(raw_created, str):
+                    try:
+                        created_at = int(float(raw_created))
+                    except ValueError:
+                        created_at = None
+
+        if run_id is None:
+            run_id = str(uuid.uuid4())
+        if eval_id is None:
+            eval_id = str(uuid.uuid4())
+        if created_at is None:
+            created_at = int(datetime.now().timestamp())
+        if run_name is None:
+            run_name = scan_name or f"redteam-run-{run_id[:8]}"
+
+        result_count = self._compute_result_count(output_items)
+        per_testing_results = self._compute_per_testing_criteria(output_items)
+        data_source = self._build_data_source_section(parameters, red_team_info)
+        status = self._determine_run_status(scan_result, red_team_info, output_items)
+
+        list_wrapper: Dict[str, Any] = {
+            "object": "list",
+            "data": output_items,
+        }
+
+        run_payload: Dict[str, Any] = {
+            "object": "eval.run",
+            "id": run_id,
+            "eval_id": eval_id,
+            "created_at": created_at,
+            "status": status,
+            "name": run_name,
+            "report_url": scan_result.get("studio_url") or self.ai_studio_url,
+            "data_source": data_source,
+            "metadata": {},
+            "result_count": result_count,
+            "per_model_usage": [],
+            "per_testing_criteria_results": per_testing_results,
+            "output_items": list_wrapper,
+        }
+
+        if include_conversations:
+            run_payload["conversations"] = redteam_result.attack_details or scan_result.get("attack_details") or []
+
+        return run_payload
+
+    def _build_instance_results_payload(
+        self,
+        redteam_result: RedTeamResult,
+        eval_run: Optional[Any] = None,
+        red_team_info: Optional[Dict] = None,
+        scan_name: Optional[str] = None,
+    ) -> Dict:
+        """Assemble the legacy structure for instance_results.json (scan_result format)."""
+
+        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
+        
+        # Return the scan_result directly for legacy compatibility
+        # This maintains the old format that was expected previously
+        legacy_payload = scan_result.copy() if scan_result else {}
+        
+        # Ensure we have the basic required fields
+        if "scorecard" not in legacy_payload:
+            legacy_payload["scorecard"] = {}
+        if "parameters" not in legacy_payload:
+            legacy_payload["parameters"] = {}
+        if "output_items" not in legacy_payload:
+            legacy_payload["output_items"] = []
+        if "attack_details" not in legacy_payload:
+            legacy_payload["attack_details"] = redteam_result.attack_details or []
+            
+        return legacy_payload
