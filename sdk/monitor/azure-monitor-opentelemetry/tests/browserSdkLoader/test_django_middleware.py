@@ -285,6 +285,50 @@ class TestDjangoMiddleware(unittest.TestCase):
         # Should return response unchanged
         self.assertEqual(result, mock_response)
 
+    @patch('azure.monitor.opentelemetry._browser_sdk_loader.django_middleware.DJANGO_AVAILABLE', True)
+    def test_configure_method_with_browser_sdk_config_object(self):
+        """Test configure method handles BrowserSDKConfig objects correctly."""
+        from azure.monitor.opentelemetry._browser_sdk_loader.django_middleware import ApplicationInsightsWebSnippetMiddleware
+        
+        middleware = ApplicationInsightsWebSnippetMiddleware(self.get_response_mock)
+        config = BrowserSDKConfig(enabled=True, connection_string=self.connection_string)
+        
+        # This tests my fix where the method needs to handle BrowserSDKConfig objects
+        middleware.configure(config)
+        
+        # Should configure with the BrowserSDKConfig object directly
+        self.assertIsNotNone(middleware._injector)
+        assert middleware._injector is not None
+        self.assertEqual(middleware._injector.config, config)
+        self.assertTrue(middleware._injector.config.enabled)
+        self.assertEqual(middleware._injector.config.connection_string, self.connection_string)
+
+    @patch('azure.monitor.opentelemetry._browser_sdk_loader.django_middleware.DJANGO_AVAILABLE', True)
+    def test_configure_method_with_mixed_config_types(self):
+        """Test that configure method can handle both dict and BrowserSDKConfig objects."""
+        from azure.monitor.opentelemetry._browser_sdk_loader.django_middleware import ApplicationInsightsWebSnippetMiddleware
+        
+        middleware1 = ApplicationInsightsWebSnippetMiddleware(self.get_response_mock)
+        middleware2 = ApplicationInsightsWebSnippetMiddleware(self.get_response_mock)
+        
+        # Test with dict config
+        dict_config = {"enabled": True, "connection_string": self.connection_string}
+        middleware1.configure(dict_config)
+        
+        # Test with BrowserSDKConfig object
+        obj_config = BrowserSDKConfig(enabled=True, connection_string=self.connection_string)
+        middleware2.configure(obj_config)
+        
+        # Both should work
+        self.assertIsNotNone(middleware1._injector)
+        self.assertIsNotNone(middleware2._injector)
+        assert middleware1._injector is not None
+        assert middleware2._injector is not None
+        
+        # Both should have the same connection string
+        self.assertEqual(middleware1._injector.config.connection_string, self.connection_string)
+        self.assertEqual(middleware2._injector.config.connection_string, self.connection_string)
+
 
 if __name__ == "__main__":
     unittest.main()
