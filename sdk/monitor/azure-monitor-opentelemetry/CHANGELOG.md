@@ -11,6 +11,7 @@
 - Fix detector version
   ([#43044](https://github.com/Azure/azure-sdk-for-python/pull/43044))
 - Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
+  ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 
 ### Other Changes
 
