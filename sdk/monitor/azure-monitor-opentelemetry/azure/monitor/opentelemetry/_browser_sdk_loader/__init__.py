@@ -67,7 +67,7 @@ def _register_django_middleware(config: BrowserSDKConfig) -> None:
         from django.conf import settings
 
         # Check if our middleware is already in the middleware list
-        middleware_path = f"{__name__.replace('__init__', 'django_middleware')}.ApplicationInsightsWebSnippetMiddleware"
+        middleware_path = f"{__name__}.django_middleware.ApplicationInsightsWebSnippetMiddleware"
         if hasattr(settings, 'MIDDLEWARE'):
             middleware_list = list(settings.MIDDLEWARE)
             if middleware_path not in middleware_list:

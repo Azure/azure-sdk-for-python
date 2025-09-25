@@ -296,6 +296,67 @@ class TestWebSnippetInjector(unittest.TestCase):
             self.assertEqual(result_content, html_content)
             self.assertIsNone(result_encoding)
 
+    def test_should_inject_html_comments_detection(self):
+        """Test detection of HTML comments indicating Application Insights is already present."""
+        # Test cases that should be detected (should_inject returns False)
+        positive_cases = [
+            b"<html><!-- AppInsights snippet already here --></html>",
+            b"<html><!-- APPINSIGHTS SNIPPET PRESENT --></html>",
+            b"<html><!-- appinsights snippet here already --></html>",
+            b"<html><!-- Application Insights snippet already present --></html>",
+        ]
+        
+        for content in positive_cases:
+            with self.subTest(content=content):
+                result = self.injector.should_inject("GET", "text/html", content)
+                self.assertFalse(result, f"Should detect existing snippet in: {content}")
+
+    def test_should_inject_html_comments_false_positives(self):
+        """Test that descriptive text doesn't trigger false positive detection."""
+        # Test cases that should NOT be detected (should_inject returns True)
+        negative_cases = [
+            b"<html><!-- This page needs Application Insights tracking --></html>",
+            b"<html><!-- TODO: Add appinsights configuration --></html>",
+            b"<html><!-- Remember to configure the application insights library --></html>",
+            b"<html><!-- appinsights documentation available online --></html>",
+            b"<html><p>This application uses appinsights for monitoring</p></html>",
+        ]
+        
+        for content in negative_cases:
+            with self.subTest(content=content):
+                result = self.injector.should_inject("GET", "text/html", content)
+                self.assertTrue(result, f"Should NOT detect existing snippet in: {content}")
+
+    def test_should_inject_javascript_detection_patterns(self):
+        """Test detection of actual JavaScript Application Insights code."""
+        # Test cases with actual JavaScript patterns
+        javascript_cases = [
+            b"<html><script>var appInsights = new ApplicationInsights();</script></html>",
+            b"<html><script>appInsights = {};</script></html>",
+            b"<html><script>window.appInsights.trackPageView();</script></html>",
+            b"<html><script>ApplicationInsights.init({});</script></html>",
+            b"<html><script>Microsoft.ApplicationInsights.Telemetry.track();</script></html>",
+        ]
+        
+        for content in javascript_cases:
+            with self.subTest(content=content):
+                result = self.injector.should_inject("GET", "text/html", content)
+                self.assertFalse(result, f"Should detect existing JavaScript in: {content}")
+
+    def test_should_inject_script_url_detection(self):
+        """Test detection of Application Insights script URLs."""
+        # Test cases with script URLs
+        url_cases = [
+            b"<html><script src='https://js.monitor.azure.com/scripts/b/ai.2.min.js'></script></html>",
+            b"<html><script src='/static/ai.2.min.js'></script></html>",
+            b"<html><script src='//cdn.example.com/js.monitor.azure.com/ai.js'></script></html>",
+        ]
+        
+        for content in url_cases:
+            with self.subTest(content=content):
+                result = self.injector.should_inject("GET", "text/html", content)
+                self.assertFalse(result, f"Should detect existing script URL in: {content}")
+
 
 if __name__ == "__main__":
     unittest.main()

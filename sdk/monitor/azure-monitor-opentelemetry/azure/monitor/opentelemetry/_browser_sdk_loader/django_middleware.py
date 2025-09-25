@@ -101,7 +101,7 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
             _logger.warning("Failed to inject Application Insights snippet: %s", ex, exc_info=True)
         return response
 
-    def configure(self, config: Union[BrowserSDKConfig, dict, str], legacy_config: Optional[dict] = None) -> None:
+    def configure(self, config: Union[BrowserSDKConfig, dict, str], legacy_config: Optional[dict] = None) -> None:  # pylint: disable=unused-argument
         """Configure the middleware with Application Insights settings.
 
         :param config: Configuration object, dict, or connection string.
@@ -129,7 +129,7 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
             else:
                 _logger.error("Invalid config type provided to configure(): %s", type(config))
                 return
-            
+
             self._injector = WebSnippetInjector(snippet_config)
         except Exception as ex:
             _logger.error("Failed to configure middleware: %s", ex, exc_info=True)
@@ -144,11 +144,11 @@ class ApplicationInsightsWebSnippetMiddleware(MiddlewareMixin):
 
             # Look for configuration in Django settings
             if hasattr(settings, 'AZURE_MONITOR_WEB_SNIPPET_CONFIG'):
-                config_dict = settings.AZURE_MONITOR_WEB_SNIPPET_CONFIG
-                
-                if isinstance(config_dict, dict):
-                    # Pass the entire configuration dict to configure method
-                    self.configure(config_dict)
+                config = settings.AZURE_MONITOR_WEB_SNIPPET_CONFIG
+
+                if isinstance(config, (dict, BrowserSDKConfig)):
+                    # Pass the configuration to configure method (handles both dict and BrowserSDKConfig)
+                    self.configure(config)
                     _logger.debug("Auto-configured Application Insights middleware from Django settings")
                 else:
                     _logger.debug("Invalid AZURE_MONITOR_WEB_SNIPPET_CONFIG format in Django settings")

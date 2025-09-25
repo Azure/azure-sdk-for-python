@@ -53,12 +53,21 @@ class WebSnippetInjector:
         self._web_sdk_snippet_cache: Optional[str] = None
         self._decompressed_content_cache: Optional[bytes] = None
         self._cache_key: Optional[tuple] = None
-        # Regex patterns for detecting existing Web SDK
+        # Regex patterns for detecting existing Web SDK - more specific to avoid false positives
         self._existing_sdk_patterns = [
-            re.compile(r'appInsights', re.IGNORECASE),
-            re.compile(r'ApplicationInsights', re.IGNORECASE),
+            # Look for actual JavaScript variables/objects, not just text content
+            re.compile(r'\bappInsights\s*[=\.]', re.IGNORECASE),  # appInsights= or appInsights.
+            re.compile(r'\bApplicationInsights\s*[=\.]', re.IGNORECASE),  # ApplicationInsights= or ApplicationInsights.
+            re.compile(r'window\[.*appInsights.*\]', re.IGNORECASE),  # window["appInsights"] patterns
+            re.compile(r'Microsoft\.ApplicationInsights', re.IGNORECASE),  # Microsoft.ApplicationInsights namespace
+            # Look for actual script URLs
             re.compile(r'ai\.2\.min\.js', re.IGNORECASE),
             re.compile(r'js\.monitor\.azure\.com', re.IGNORECASE),
+            # Look for HTML comments indicating snippet is already present
+            re.compile(
+                r'<!--.*(appinsights|application\s+insights).*snippet.*(already|here|present).*-->',
+                re.IGNORECASE
+            ),
         ]
 
     def should_inject(
@@ -171,8 +180,7 @@ class WebSnippetInjector:
             if detected_encoding:
                 compressed_content = self._compress_content(modified_content, detected_encoding)
                 return compressed_content, detected_encoding
-            else:
-                return modified_content, None
+            return modified_content, None
         except Exception as ex:
             _logger.warning("Failed to inject snippet with compression handling: %s", ex, exc_info=True)
             return content, content_encoding
@@ -339,18 +347,17 @@ class WebSnippetInjector:
         try:
             if encoding.lower() == "gzip":
                 return gzip.decompress(content)
-            elif encoding.lower() == "br":
+            if encoding.lower() == "br":
                 if not HAS_BROTLI or brotli is None:
                     _logger.warning("brotli library not available for decompression")
                     return content
                 return brotli.decompress(content)
-            elif encoding.lower() == "deflate":
+            if encoding.lower() == "deflate":
                 if not HAS_ZLIB or zlib is None:
                     _logger.warning("zlib library not available for decompression")
                     return content
                 return zlib.decompress(content)
-            else:
-                return content
+            return content
         except Exception as ex:
             _logger.warning("Failed to decompress content with encoding %s: %s", encoding, ex)
             return content
@@ -368,18 +375,17 @@ class WebSnippetInjector:
         try:
             if encoding.lower() == "gzip":
                 return gzip.compress(content)
-            elif encoding.lower() == "br":
+            if encoding.lower() == "br":
                 if not HAS_BROTLI or brotli is None:
                     _logger.warning("brotli library not available for compression")
                     return content
                 return brotli.compress(content)
-            elif encoding.lower() == "deflate":
+            if encoding.lower() == "deflate":
                 if not HAS_ZLIB or zlib is None:
                     _logger.warning("zlib library not available for compression")
                     return content
                 return zlib.compress(content)
-            else:
-                return content
+            return content
         except Exception as ex:
             _logger.warning("Failed to compress content with encoding %s: %s", encoding, ex)
             return content
@@ -388,19 +394,19 @@ class WebSnippetInjector:
         """Format a configuration value for JavaScript.
 
         :param value: The value to format.
+        :type value: Any
         :return: Formatted string for JavaScript.
         :rtype: str
         """
         if isinstance(value, str):
             return f'"{value}"'
-        elif isinstance(value, bool):
+        if isinstance(value, bool):
             return "true" if value else "false"
-        elif isinstance(value, (int, float)):
+        if isinstance(value, (int, float)):
             return str(value)
-        elif isinstance(value, dict):
+        if isinstance(value, dict):
             return self._dict_to_js_object(value)
-        else:
-            return f'"{str(value)}"'
+        return f'"{str(value)}"'
 
     def _dict_to_js_object(self, obj: Dict[str, Any]) -> str:
         """Convert Python dict to JavaScript object literal.
