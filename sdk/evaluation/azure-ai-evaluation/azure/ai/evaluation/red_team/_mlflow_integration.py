@@ -181,8 +181,6 @@ class MLflowIntegration:
         eval_info_name = "redteam_info.json"
         properties = {}
 
-        import pdb; pdb.set_trace()
-
         with tempfile.TemporaryDirectory() as tmpdir:
             if self.scan_output_dir:
                 artifact_path = os.path.join(self.scan_output_dir, artifact_name)
