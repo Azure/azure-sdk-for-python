@@ -214,8 +214,10 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
                 :dedent: 4
                 :caption: Answers the specified question using the provided text.
         """
+        # Use only explicit user-provided language (if any); no hidden default attribute
+        _explicit_language = kwargs.pop("language", None)
         options, kwargs = _get_answers_from_text_prepare_options(
-            *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
+            *args, language=_explicit_language, **kwargs  # type: ignore
         )
         return await super().get_answers_from_text(options, **kwargs)  # type: ignore
 
