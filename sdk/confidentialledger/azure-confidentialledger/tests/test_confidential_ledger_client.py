@@ -584,14 +584,14 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         role_name = "modify"
 
-        client.create_user_defined_role([{"role_name": role_name, "role_actions": ["/content/read"]}])
+        client.create_user_defined_role([{"roleName": role_name, "roleActions": ["/content/read"]}])
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
         assert roles[0]["role_name"] == role_name
         assert roles[0]["role_actions"] == ["/content/read"]
 
-        client.update_user_defined_role([{"role_name": role_name, "role_actions": ["/content/write", "/content/read"]}])
+        client.update_user_defined_role([{"roleName": role_name, "roleActions": ["/content/write", "/content/read"]}])
         time.sleep(3)
 
         roles = client.get_user_defined_role(role_name=role_name)
