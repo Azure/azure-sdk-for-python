@@ -5,7 +5,6 @@ from typing import Dict, TYPE_CHECKING
 
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import (
     StatsbeatConfig,
-    StatsbeatManager,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat._state import get_statsbeat_manager
 from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
