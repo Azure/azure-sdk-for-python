@@ -243,7 +243,7 @@ def demonstrate_score_model_grader():
         # 4. Run evaluation with the score model grader
         print("\n🚀 Running evaluation with score model grader...")
         result = evaluate(
-            data=data_file,
+            data="eval_data.jsonl",
             evaluators={"conversation_quality": conversation_quality_grader},
             azure_ai_project=azure_ai_project,
             tags={
