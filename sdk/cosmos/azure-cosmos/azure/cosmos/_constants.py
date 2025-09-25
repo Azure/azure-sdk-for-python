@@ -512,3 +512,6 @@ class _Kwargs:
 
     QUERY: Final[str] = "query"
     """Query string kwarg."""
+
+    RETURN_PROPERTIES: Final[str] = "return_properties"
+    """Whether to return properties kwarg."""
