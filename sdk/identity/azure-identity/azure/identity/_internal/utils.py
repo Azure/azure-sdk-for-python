@@ -244,13 +244,14 @@ def log_cache_modify(func):
                 # Log the key that will be generated for the token being cached
                 key = args[0].key_makers[msal.TokenCache.CredentialType.ACCESS_TOKEN](**args[2])
                 _CACHE_LOGGER.info(
-                    "MSAL adding to Cache ID: %s, Access Token Cache Key: %s\nCache entry: %s",
+                    "[PID %s] MSAL adding to Cache ID: %s, Access Token Cache Key: %s, Cache entry: %s",
+                    os.getpid(),
                     id(args[0]),
                     key,
                     sanitize_dict(args[2], sensitive_fields=["secret"]),
                 )
         except Exception as ex:  # pylint: disable=broad-except
-            _CACHE_LOGGER.warning("Error logging MSAL cache modify: %s", ex)
+            _CACHE_LOGGER.warning("[PID %s] Error logging MSAL cache modify: %s", os.getpid(), ex)
 
         # Call the original function and return its result
         return func(*args, **kwargs)

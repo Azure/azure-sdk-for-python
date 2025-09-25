@@ -6,6 +6,7 @@ import abc
 import base64
 import json
 import logging
+import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
@@ -100,18 +101,19 @@ class AadClientBase(abc.ABC):
         )
         total_results = list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
 
-        _CACHE_LOGGER.debug("All %s access tokens in MSAL cache %s", len(total_results), id(self._cache))
         for token in total_results:
-            _CACHE_LOGGER.debug(
-                "  Cache ID: %s, access token: %s", id(self._cache), sanitize_dict(token, sensitive_fields=["secret"])
+            _CACHE_LOGGER.info(
+                "[PID %s] %s: Cache Entry for %s: access token: %s",
+                os.getpid(),
+                id(self),
+                id(self._cache),
+                sanitize_dict(token, sensitive_fields=["secret"]),
             )
-
         _CACHE_LOGGER.info(
-            "Cache %s for credential/client %s contains %s access tokens for resource '%s', "
-            "tenant '%s', "
-            "client_id '%s'",
-            id(self._cache),
+            "[PID %s] %s: Cache %s contains %s access tokens for resource '%s', tenant '%s', client_id '%s'",
+            os.getpid(),
             id(self),
+            id(self._cache),
             len(results),
             scope_list,
             tenant,
@@ -122,7 +124,8 @@ class AadClientBase(abc.ABC):
             if expires_on > int(time.time()):
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
                 _CACHE_LOGGER.info(
-                    "%s: Cache hit for resource '%s', tenant: '%s', client_id: '%s'",
+                    "[PID %s] %s: Cache hit for resource '%s', tenant: '%s', client_id: '%s'",
+                    os.getpid(),
                     id(self),
                     scope_list,
                     tenant,
@@ -132,7 +135,8 @@ class AadClientBase(abc.ABC):
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
         _CACHE_LOGGER.info(
-            "%s: Cache miss for resource '%s', tenant: '%s', client_id: '%s'",
+            "[PID %s] %s: Cache miss for resource '%s', tenant: '%s', client_id: '%s'",
+            os.getpid(),
             id(self),
             scope_list,
             tenant,
@@ -204,7 +208,11 @@ class AadClientBase(abc.ABC):
                     cache.update_rt(cache_entries[0], content["refresh_token"])
                     del content["refresh_token"]  # prevent caching a redundant entry
 
-        _raise_for_error(response, content)
+        try:
+            _raise_for_error(response, content)
+        except Exception as ex:
+            _CACHE_LOGGER.info("[PID %s] %s: Error in Entra response: %s", os.getpid(), id(self), ex)
+            raise
 
         if "expires_on" in content:
             expires_on = int(content["expires_on"])
@@ -220,14 +228,17 @@ class AadClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
-        _CACHE_LOGGER.info("%s: Token Response received from Entra. Expires on: %s. ", id(self), expires_on)
+        _CACHE_LOGGER.info(
+            "[PID %s] %s: Token Response received from Entra. Expires on: %s. ", os.getpid(), id(self), expires_on
+        )
         token = AccessTokenInfo(
             content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
         )
 
         # caching is the final step because 'add' mutates 'content'
         _CACHE_LOGGER.info(
-            "%s: Adding token to cache with ID %s, client_id: %s, scope: %s, token_endpoint: %s, response: %s",
+            "[PID %s] %s: Adding token to cache with ID %s, client_id: %s, scope: %s, token_endpoint: %s, response: %s",
+            os.getpid(),
             id(self),
             id(self._cache),
             self._client_id,

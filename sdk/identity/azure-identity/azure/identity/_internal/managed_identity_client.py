@@ -3,8 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-import time
 import logging
+import os
+import time
 from typing import Any, Callable, Dict, Optional
 
 from msal import TokenCache
@@ -81,7 +82,8 @@ class ManagedIdentityClientBase(abc.ABC):
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
         _CACHE_LOGGER.info(
-            "%s: Token Response received from Entra. Expires on: %s. ",
+            "[PID %s] %s: Token Response received from Entra. Expires on: %s. ",
+            os.getpid(),
             id(self),
             expires_on,
         )
@@ -98,7 +100,8 @@ class ManagedIdentityClientBase(abc.ABC):
 
         # caching is the final step because TokenCache.add mutates its "event"
         _CACHE_LOGGER.info(
-            "%s: Adding token to cache with ID %s, scope: %s, response: %s",
+            "[PID %s] %s: Adding token to cache with ID %s, scope: %s, response: %s",
+            os.getpid(),
             id(self),
             id(self._cache),
             content["resource"],
@@ -117,16 +120,20 @@ class ManagedIdentityClientBase(abc.ABC):
         results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]))
         total_results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
 
-        _CACHE_LOGGER.debug("All %s access tokens in MSAL cache %s", len(total_results), id(self._cache))
         for token in total_results:
-            _CACHE_LOGGER.debug(
-                "  Cache ID: %s, access token: %s", id(self._cache), sanitize_dict(token, sensitive_fields=["secret"])
+            _CACHE_LOGGER.info(
+                "[PID %s] %s: Cache Entry for %s: access token: %s",
+                os.getpid(),
+                id(self),
+                id(self._cache),
+                sanitize_dict(token, sensitive_fields=["secret"]),
             )
 
         _CACHE_LOGGER.info(
-            "Cache %s for credential/client %s contains %s access tokens for resource '%s'.",
-            id(self._cache),
+            "[PID %s] %s: Cache %s contains %s access tokens for resource '%s'.",
+            os.getpid(),
             id(self),
+            id(self._cache),
             len(results),
             resource,
         )
@@ -134,11 +141,11 @@ class ManagedIdentityClientBase(abc.ABC):
             expires_on = int(token["expires_on"])
             refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
             if expires_on > now and (not refresh_on or refresh_on > now):
-                _CACHE_LOGGER.info("%s: Cache hit for resource '%s'", id(self), resource)
+                _CACHE_LOGGER.info("[PID %s] %s: Cache hit for resource '%s'", os.getpid(), id(self), resource)
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
-        _CACHE_LOGGER.info("%s: Cache miss for resource '%s'", id(self), resource)
+        _CACHE_LOGGER.info("[PID %s] %s: Cache miss for resource '%s'", os.getpid(), id(self), resource)
         return None
 
     @abc.abstractmethod

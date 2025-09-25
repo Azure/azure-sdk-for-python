@@ -4,6 +4,7 @@
 # ------------------------------------
 import abc
 import logging
+import os
 import time
 from typing import Any, Optional
 
@@ -130,8 +131,9 @@ class GetTokenMixin(abc.ABC):
         enable_cae = options.get("enable_cae", False)
 
         _CACHE_LOGGER.info(
-            "%s: %s.%s called with scopes: %s and options: %s",
-            id(self),
+            "[PID %s] %s: %s.%s called with scopes: %s and options: %s",
+            os.getpid(),
+            id(getattr(self, "_client", self)),
             self.__class__.__name__,
             base_method_name,
             list(scopes),
@@ -143,12 +145,21 @@ class GetTokenMixin(abc.ABC):
             )
             if not token:
                 self._last_request_time = int(time.time())
+                _CACHE_LOGGER.info(
+                    "[PID %s] %s: No token found in cache, requesting a new token",
+                    os.getpid(),
+                    id(getattr(self, "_client", self)),
+                )
                 token = await self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
+
+                    _CACHE_LOGGER.info(
+                        "[PID %s] %s: Refreshing cached token", os.getpid(), id(getattr(self, "_client", self))
+                    )
                     token = await self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
