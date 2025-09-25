@@ -75,23 +75,23 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self.ReservedDocumentStorageInMB: int = 0
         self.ProvisionedDocumentStorageInMB: int = 0
         self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
-        self._WritableLocations: List[Dict[Any, Any]] = []
-        self._ReadableLocations: List[Dict[Any, Any]] = []
+        self._WritableLocations: list[dict[str, str]] = []
+        self._ReadableLocations: list[dict[str, str]] = []
         self._EnableMultipleWritableLocations = False
 
     @property
-    def WritableLocations(self) -> List[Dict[Any, Any]]:
+    def WritableLocations(self) -> list[dict[str, str]]:
         """The list of writable locations for a geo-replicated database account.
         :returns: List of writable locations for the database account.
-        :rtype: List[Dict[Any, Any]]
+        :rtype: list[dict[str, str]]
         """
         return self._WritableLocations
 
     @property
-    def ReadableLocations(self) -> List[Dict[Any, Any]]:
+    def ReadableLocations(self) -> list[dict[str, str]]:
         """The list of readable locations for a geo-replicated database account.
         :returns: List of readable locations for the database account.
-        :rtype: List[Dict[Any, Any]]
+        :rtype: list[dict[str, str]]
         """
         return self._ReadableLocations
 
