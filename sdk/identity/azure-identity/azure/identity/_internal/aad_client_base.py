@@ -126,6 +126,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
                 if cache_context:
                     cache_context.add_detail("cache_query_status", "HIT")
                     cache_context.add_detail("rolling_cache_hit_count", self._cache_hit_counts[scope_key])
+                    cache_context.add_detail("rolling_cache_miss_count", self._cache_miss_counts.get(scope_key, 0))
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
@@ -134,6 +135,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         if cache_context:
             cache_context.add_detail("cache_query_status", "MISS")
             cache_context.add_detail("rolling_cache_miss_count", self._cache_miss_counts[scope_key])
+            cache_context.add_detail("rolling_cache_hit_count", self._cache_hit_counts.get(scope_key, 0))
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
