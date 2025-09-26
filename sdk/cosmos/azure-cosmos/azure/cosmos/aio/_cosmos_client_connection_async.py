@@ -24,8 +24,10 @@
 """Document client class for the Azure Cosmos database service.
 """
 import os
+import time
 from urllib.parse import urlparse
 import uuid
+import logging
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Union, cast
@@ -84,7 +86,7 @@ from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
-
+_logger = logging.getLogger("azure.cosmos.auth.client")
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -308,6 +310,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self) -> None:
+        # Calling get_token to warmup the cache
+        if self.aad_credentials:
+            start_ns = time.time_ns()
+            account_scope = base.create_scope_from_url(self.url_connection)
+            _logger.info("async get_token call start: %s | account_name: %s", str(start_ns), str(account_scope))
+            await self.aad_credentials.get_token(Constants.AAD_DEFAULT_SCOPE)
+            end_ns = time.time_ns()
+            _logger.info("async get_token call end: %s | account_name: %s | duration: %s", str(end_ns),
+                         str(account_scope), str(end_ns - start_ns))
         if 'database_account' not in self._setup_kwargs:
             database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs

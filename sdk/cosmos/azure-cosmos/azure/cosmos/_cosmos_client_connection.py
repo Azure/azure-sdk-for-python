@@ -23,7 +23,9 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import logging
 import os
+import time
 import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -80,6 +82,8 @@ from .partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
+
+_logger = logging.getLogger("azure.cosmos.auth.client")
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -205,6 +209,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
+            # Calling get_token to warmup the cache
+            start_ns = time.time_ns()
+            account_scope = base.create_scope_from_url(self.url_connection)
+            _logger.info("sync get_token call start: %s | account_name: %s", str(start_ns), str(account_scope))
+            self.aad_credentials.get_token(Constants.AAD_DEFAULT_SCOPE)
+            end_ns = time.time_ns()
+            _logger.info("sync get_token call end: %s | account_name: %s | duration: %s", str(end_ns),
+                         str(account_scope), str(end_ns - start_ns))
+
             credentials_policy = CosmosBearerTokenCredentialPolicy(
                 self.aad_credentials,
                 account_scope=account_scope,
