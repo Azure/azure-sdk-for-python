@@ -219,8 +219,6 @@ class TestHealthCheckAsync:
         write_endpoints = {
             _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
         }
-        if use_write_global_endpoint:
-            write_endpoints.add(self.host)
 
         for endpoint, info in unavailable_endpoint_info.items():
             assert _location_cache.EndpointOperationType.ReadType in info["operationType"]
