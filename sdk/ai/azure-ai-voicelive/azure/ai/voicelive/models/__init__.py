@@ -7,24 +7,31 @@
 # --------------------------------------------------------------------------
 # pylint: disable=wrong-import-position
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ._patch import *  # pylint: disable=unused-wildcard-import
+
+
 from ._models import (  # type: ignore
     AgentConfig,
     Animation,
     AssistantMessageItem,
     AudioEchoCancellation,
-    AudioInputTranscriptionSettings,
+    AudioInputTranscriptionOptions,
     AudioNoiseReduction,
     AvatarConfig,
     AzureCustomVoice,
-    AzureMultilingualSemanticVad,
     AzurePersonalVoice,
     AzureSemanticDetection,
     AzureSemanticDetectionEn,
     AzureSemanticDetectionMultilingual,
     AzureSemanticVad,
     AzureSemanticVadEn,
+    AzureSemanticVadMultilingual,
     AzureStandardVoice,
     AzureVoice,
+    Background,
     CachedTokenDetails,
     ClientEvent,
     ClientEventConversationItemCreate,
@@ -56,6 +63,7 @@ from ._models import (  # type: ignore
     InputTextContentPart,
     InputTokenDetails,
     LogProbProperties,
+    MessageContentPart,
     MessageItem,
     OpenAIVoice,
     OutputTextContentPart,
@@ -121,7 +129,6 @@ from ._models import (  # type: ignore
     ToolChoiceFunctionObject,
     ToolChoiceObject,
     TurnDetection,
-    UserContentPart,
     UserMessageItem,
     VideoCrop,
     VideoParams,
@@ -132,8 +139,10 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     AnimationOutputType,
     AudioTimestampType,
+    AzureVoiceType,
     ClientEventType,
     ContentPartType,
+    EouThresholdLevel,
     InputAudioFormat,
     ItemParamStatus,
     ItemType,
@@ -147,26 +156,31 @@ from ._enums import (  # type: ignore
     ServerEventType,
     ToolChoiceLiteral,
     ToolType,
+    TurnDetectionType,
 )
+from ._patch import __all__ as _patch_all
+from ._patch import *
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AgentConfig",
     "Animation",
     "AssistantMessageItem",
     "AudioEchoCancellation",
-    "AudioInputTranscriptionSettings",
+    "AudioInputTranscriptionOptions",
     "AudioNoiseReduction",
     "AvatarConfig",
     "AzureCustomVoice",
-    "AzureMultilingualSemanticVad",
     "AzurePersonalVoice",
     "AzureSemanticDetection",
     "AzureSemanticDetectionEn",
     "AzureSemanticDetectionMultilingual",
     "AzureSemanticVad",
     "AzureSemanticVadEn",
+    "AzureSemanticVadMultilingual",
     "AzureStandardVoice",
     "AzureVoice",
+    "Background",
     "CachedTokenDetails",
     "ClientEvent",
     "ClientEventConversationItemCreate",
@@ -198,6 +212,7 @@ __all__ = [
     "InputTextContentPart",
     "InputTokenDetails",
     "LogProbProperties",
+    "MessageContentPart",
     "MessageItem",
     "OpenAIVoice",
     "OutputTextContentPart",
@@ -263,7 +278,6 @@ __all__ = [
     "ToolChoiceFunctionObject",
     "ToolChoiceObject",
     "TurnDetection",
-    "UserContentPart",
     "UserMessageItem",
     "VideoCrop",
     "VideoParams",
@@ -271,8 +285,10 @@ __all__ = [
     "VoiceLiveErrorDetails",
     "AnimationOutputType",
     "AudioTimestampType",
+    "AzureVoiceType",
     "ClientEventType",
     "ContentPartType",
+    "EouThresholdLevel",
     "InputAudioFormat",
     "ItemParamStatus",
     "ItemType",
@@ -286,4 +302,7 @@ __all__ = [
     "ServerEventType",
     "ToolChoiceLiteral",
     "ToolType",
+    "TurnDetectionType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
+_patch_sdk()
