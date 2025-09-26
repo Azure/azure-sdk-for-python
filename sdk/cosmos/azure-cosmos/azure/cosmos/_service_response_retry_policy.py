@@ -65,8 +65,6 @@ class ServiceResponseRetryPolicy(object):
         self.failover_retry_count += 1
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
-        # clear the last routed endpoint within same region since we are going to a new region now
-        self.request.last_routed_location_endpoint_within_region = None
         # set location-based routing directive based on retry count
         # ensuring usePreferredLocations is set to True for retry
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, True)

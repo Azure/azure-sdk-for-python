@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
 
 ### 4.14.0b4 (2025-09-11)
 

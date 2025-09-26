@@ -27,7 +27,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
     REGION1 = "West US"
     REGION2 = "East US"
     REGION3 = "West US 2"
-    REGIONAL_ENDPOINT = RegionalRoutingContext(host, host)
+    REGIONAL_ENDPOINT = RegionalRoutingContext(host)
 
     @classmethod
     def setUpClass(cls):
@@ -426,8 +426,8 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 pytest.fail("Exception was not raised.")
             except ServiceRequestError:
                 assert connection_retry_policy.counter == 3
-                # 4 total requests for each in-region (hub -> write locational endpoint)
-                assert len(connection_retry_policy.request_endpoints) == 8
+                # 4 total in region retries
+                assert len(connection_retry_policy.request_endpoints) == 4
             except CosmosHttpResponseError as e:
                 print(e)
             finally:
