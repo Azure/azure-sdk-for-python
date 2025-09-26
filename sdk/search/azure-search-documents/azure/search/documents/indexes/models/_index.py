@@ -621,6 +621,8 @@ class SearchIndex(_serialization.Model):
 
     :ivar name: Required. The name of the index.
     :vartype name: str
+    :ivar description: The description of the index.
+    :vartype description: str
     :ivar fields: Required. The fields of the index.
     :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
     :ivar scoring_profiles: The scoring profiles for the index.
@@ -674,6 +676,7 @@ class SearchIndex(_serialization.Model):
         *,
         name: str,
         fields: List[SearchField],
+        description: Optional[str] = None,
         scoring_profiles: Optional[List[ScoringProfile]] = None,
         default_scoring_profile: Optional[str] = None,
         cors_options: Optional[CorsOptions] = None,
@@ -694,6 +697,7 @@ class SearchIndex(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.fields = fields
+        self.description = description
         self.scoring_profiles = scoring_profiles
         self.default_scoring_profile = default_scoring_profile
         self.cors_options = cors_options
@@ -728,6 +732,7 @@ class SearchIndex(_serialization.Model):
             fields = []
         return _SearchIndex(
             name=self.name,
+            description=self.description,
             fields=fields,
             scoring_profiles=self.scoring_profiles,
             default_scoring_profile=self.default_scoring_profile,
@@ -777,6 +782,7 @@ class SearchIndex(_serialization.Model):
             normalizers = None
         return cls(
             name=search_index.name,
+            description=search_index.description,
             fields=fields,
             scoring_profiles=search_index.scoring_profiles,
             default_scoring_profile=search_index.default_scoring_profile,

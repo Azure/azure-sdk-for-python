@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import sys
 
 try:
     # py 311 adds this library natively
@@ -28,6 +29,10 @@ from .conf import CONF_NAME, OLD_CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
 
+logging.basicConfig(
+    stream=sys.stdout,
+    format="[%(levelname)s] %(message)s",
+)
 _LOGGER = logging.getLogger(__name__)
 _SDK_FOLDER_RE = re.compile(r"^(sdk/[\w-]+)/(azure[\w-]+)/", re.ASCII)
 
@@ -175,7 +180,7 @@ def generate_packaging_files(package_name, folder_name):
             if pyproject_content.get("project"):
                 for idx in range(len(pyproject_content["project"].get("dependencies", []))):
                     if pyproject_content["project"]["dependencies"][idx].startswith("azure-core"):
-                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.5.0"
+                        pyproject_content["project"]["dependencies"][idx] = "azure-mgmt-core>=1.6.0"
 
             with open(pyproject_toml, "wb") as f:
                 tomlw.dump(pyproject_content, f)
@@ -511,6 +516,7 @@ def gen_typespec(
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
+        tsp_client = "npx --no --prefix eng/common/tsp-client tsp-client"
         if spec_folder:
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
@@ -522,15 +528,15 @@ def gen_typespec(
                         content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
-            cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+            cmd = f"{tsp_client} init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         else:
             tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{typespec_relative_path}/tspconfig.yaml"
-            cmd = f"tsp-client init -c {tsp_config_url}"
+            cmd = f"{tsp_client} init -c {tsp_config_url}"
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
             if not os.path.exists(f"node_modules/{emitter_name}"):
                 _LOGGER.info("install dependencies only for the first run")
-                check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
+                check_output(f"{tsp_client} install-dependencies", stderr=STDOUT, shell=True)
             else:
                 _LOGGER.info(f"skip install since {emitter_name} is already installed")
             cmd += " --skip-install --debug"
@@ -539,21 +545,28 @@ def gen_typespec(
         _LOGGER.info(f"generation cmd: {cmd}")
         output = check_output(cmd, stderr=STDOUT, shell=True)
     except CalledProcessError as e:
-        _LOGGER.error("Error occurred when call tsp-client:")
-        for item in e.output.decode("utf-8").split("\n"):
-            if "Error: " in item:
-                _LOGGER.error(item)
-        _LOGGER.info(f"whole output when fail to call tsp-client: {e.output.decode('utf-8')}")
-        raise e
+        output = e.output.decode("utf-8")
+        output_lines = output.split("\n")
+        try:
+            start_idx = [i for i, line in enumerate(output_lines) if "error stack start" in line][0]
+            end_idx = [i for i, line in enumerate(output_lines) if "error stack end" in line][0]
+            error_position = "python codegen"
+        except:
+            start_idx = -1
+            end_idx = -1
+            error_position = "tsp compiler"
 
-    decode_output = output.decode("utf-8")
-    # before https://github.com/Azure/azure-sdk-tools/issues/8815, have to check output to judge whether sdk generation succeeds
-    if " - error " in decode_output:
-        _LOGGER.error(f"Failed to generate sdk from typespec:")
-        for item in decode_output.split("\n"):
-            if " - error " in item:
+        _LOGGER.error(f"====== Error occurred in {error_position} (error stack start) ======")
+        if start_idx != -1 and end_idx != -1:
+            for item in output_lines[start_idx + 1 : end_idx]:
                 _LOGGER.error(item)
-        raise Exception(f"Complete output when fail to generate sdk from typespec: {decode_output}")
+        else:
+            for item in output_lines:
+                if "- error " in item:
+                    _LOGGER.error(item)
+        _LOGGER.error(f"====== Error occurred in {error_position} (error stack end) ======")
+
+        raise e
 
     with open(Path("eng/emitter-package.json"), "r") as file_in:
         data = json.load(file_in)

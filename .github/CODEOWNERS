@@ -108,7 +108,7 @@
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @Arazan @whisper6284 @danielortega-msft @sofiar-msft
+/sdk/communication/azure-communication-phonenumbers/                 @gfeitosa-msft @phermanov-msft @ilyapaliakou-msft @besh2014 @ihuseynov-msft @kirill-linnik
 
 # ServiceLabel: %Communication - Rooms
 # PRLabel: %Communication - Rooms
@@ -259,8 +259,8 @@
 # ServiceLabel: %AI Projects %Service Attention
 /sdk/ai/azure-ai-projects/                                           @dargilco @jhakulin @trangevi @glharper @nick863 @howieleung
 
-# PRLabel: %AI Voice Live
-# ServiceLabel: %AI Voice Live %Service Attention
+# PRLabel: %Voice Live
+# ServiceLabel: %Voice Live %Service Attention
 /sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang
 
 

@@ -408,16 +408,12 @@ class TestAzureLogExporter(unittest.TestCase):
     def test_log_to_envelope_log_none(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_none)
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
-        self.assertEqual(envelope.data.base_type, "MessageData")
-        self.assertEqual(envelope.data.base_data.message, "")
+        self.assertEqual(envelope, None)
 
     def test_log_to_envelope_log_empty(self):
         exporter = self._exporter
         envelope = exporter._log_to_envelope(self._log_data_empty)
-        self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
-        self.assertEqual(envelope.data.base_type, "MessageData")
-        self.assertEqual(envelope.data.base_data.message, "")
+        self.assertEqual(envelope, None)
 
     def test_log_to_envelope_log_complex_body(self):
         exporter = self._exporter

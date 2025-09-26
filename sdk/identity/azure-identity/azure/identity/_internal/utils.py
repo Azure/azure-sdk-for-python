@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import os
 import platform
 import logging
@@ -128,6 +129,11 @@ def resolve_tenant(
             tenant_id,
         )
         return tenant_id
+    # Some dev credentials commonly default to the "organizations" special tenant which can authenticate users against
+    # multiple tenants that the user belongs to. If an allowed tenant list was not provided and the credential's
+    # tenant is set to 'organizations', allow the request with the specified tenant ID.
+    if not additionally_allowed_tenants and default_tenant == "organizations":
+        return tenant_id
     raise ClientAuthenticationError(
         message="The current credential is not configured to acquire tokens for tenant {}. "
         "To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants "
@@ -218,3 +224,8 @@ def is_wsl() -> bool:
     platform_name = getattr(uname, "system", uname[0]).lower()
     release = getattr(uname, "release", uname[2]).lower()
     return platform_name == "linux" and "microsoft" in release
+
+
+def encode_base64(s: str) -> str:
+    encoded = base64.b64encode(s.encode("utf-8"))
+    return encoded.decode("utf-8")

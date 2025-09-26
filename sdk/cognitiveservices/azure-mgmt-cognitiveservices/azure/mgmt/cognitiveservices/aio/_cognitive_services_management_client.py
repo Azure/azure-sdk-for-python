@@ -24,7 +24,6 @@ from .operations import (
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
     AccountsOperations,
-    CognitiveServicesManagementClientOperationsMixin,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     DefenderForAISettingsOperations,
@@ -47,6 +46,7 @@ from .operations import (
     RaiPoliciesOperations,
     ResourceSkusOperations,
     UsagesOperations,
+    _CognitiveServicesManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -54,7 +54,7 @@ if TYPE_CHECKING:
 
 
 class CognitiveServicesManagementClient(
-    CognitiveServicesManagementClientOperationsMixin
+    _CognitiveServicesManagementClientOperationsMixin
 ):  # pylint: disable=too-many-instance-attributes
     """Cognitive Services Management Client.
 

@@ -107,10 +107,12 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
-      - checkout: self
-        fetchTags: false
-        sparseCheckoutPatterns: |
-          **
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+            TokenToUseForAuth: $(azuresdk-github-pat)
+          Paths:
+            - '**'
 
       - ${{ parameters.PreSteps }}
 
