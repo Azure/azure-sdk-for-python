@@ -3,8 +3,8 @@
 ### 4.14.0b5 (Unreleased)
 
 #### Features Added
+* Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
 * Added support for Semantic Reranking. See [PR 42991](https://github.com/Azure/azure-sdk-for-python/pull/42991)
-
 #### Breaking Changes
 
 #### Bugs Fixed

@@ -10,6 +10,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
 )
+from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
@@ -40,26 +41,34 @@ class _ConfigurationManager(metaclass=Singleton):
 
     def __init__(self):
         """Initialize the ConfigurationManager instance."""
-
         self._configuration_worker = None
         self._state_lock = Lock()  # Single lock for all state
         self._current_state = _ConfigurationState()
         self._callbacks = []
-        self._initialize_worker()
+        self._initialized = False
 
-    def _initialize_worker(self):
+    def initialize(self, **kwargs):
         """Initialize the ConfigurationManager and start the configuration worker."""
-        # Lazy import to avoid circular import
-        from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
-
-        # Get initial refresh interval from state
         with self._state_lock:
+            if self._initialized:
+                return
+
+            # Fill the configuration profile with the initializer's parameters
+            _ConfigurationProfile.fill(**kwargs)
+
+            # Lazy import to avoid circular import
+            from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
+
+            # Get initial refresh interval from current state
             initial_refresh_interval = self._current_state.refresh_interval
 
-        self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            self._initialized = True
 
     def register_callback(self, callback):
         # Register a callback to be invoked when configuration changes.
+        if not self._initialized:
+            return
         self._callbacks.append(callback)
 
     def _notify_callbacks(self, settings: Dict[str, str]):
@@ -148,7 +157,7 @@ class _ConfigurationManager(metaclass=Singleton):
             new_state_updates['refresh_interval'] = response.refresh_interval  # type: ignore
 
         if response.status_code == 304:
-            # Not modified: Only update etag and refresh interval below
+            # Not modified: Settings unchanged, but update etag and refresh interval if provided
             pass
         # Handle version and settings updates
         elif response.settings and response.version is not None:
@@ -225,6 +234,8 @@ class _ConfigurationManager(metaclass=Singleton):
         if self._configuration_worker:
             self._configuration_worker.shutdown()
             self._configuration_worker = None
+        self._initialized = False
+        self._callbacks.clear()
         # Clear the singleton instance from the metaclass
-        if self.__class__ in Singleton._instances:  # pylint: disable=protected-access
-            del Singleton._instances[self.__class__]  # pylint: disable=protected-access
+        if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
+            del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access

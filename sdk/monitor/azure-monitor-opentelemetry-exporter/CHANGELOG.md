@@ -1,6 +1,28 @@
 # Release History
 
-## 1.0.0b42 (2025-09-15)
+## 1.0.0b43 (Unreleased)
+
+### Features Added
+- OneSettings control plane: Add live metrics feature control
+  ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
+- Adding customer sdkstats to feature statsbeat
+  ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixes issues #42897 - TypeError in _transmit_from_storage: LocalFileBlob.get() returns None
+  ([#42897](https://github.com/Azure/azure-sdk-for-python/pull/42951))
+- Fix logic for message field on Microsoft.ApplicationInsights.Message to sync with Breeze
+  ([#43060](https://github.com/Azure/azure-sdk-for-python/pull/43060))
+- Skip tests from test_storage.py causing transient build pipeline failures
+  ([#43122](https://github.com/Azure/azure-sdk-for-python/pull/43122))
+- Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
+  ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
+
+### Other Changes
+
+## 1.0.0b42 (2025-09-17)
 
 ### Features Added
 - Customer Facing Statsbeat: Added remaining drop codes to base
@@ -19,6 +41,9 @@
   ([#42655](https://github.com/Azure/azure-sdk-for-python/pull/42655))
 - Customer Facing SDKStats: Added telemetry_success field to dropped items as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/606
   ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
+### Breaking Changes
+
+### Bugs Fixed
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
   ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
 
