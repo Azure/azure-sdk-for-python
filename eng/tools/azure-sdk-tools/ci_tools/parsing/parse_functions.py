@@ -249,7 +249,7 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
 
 def _set_root_namespace(init_file_path: str, module_name: str) -> Optional[str]:
     """
-    Examine an __init__.py file to determine if it represents a substantial namespace 
+    Examine an __init__.py file to determine if it represents a substantial namespace
     or is just a namespace extension file.
 
     :param str init_file_path: Path to the __init__.py file
@@ -327,7 +327,7 @@ class ParsedSetup:
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
         """
-        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member), 
+        Creates a new ParsedSetup instance from a path to a setup.py, pyproject.toml (with [project] member),
         or a directory containing either of those files.
         """
         (
@@ -372,6 +372,18 @@ class ParsedSetup:
 
     def is_reporting_suppressed(self, setting: str) -> bool:
         return compare_string_to_glob_array(setting, self.get_config_setting("suppressed_skip_warnings", []))
+
+    def __str__(self):
+        lines = [f"ParsedSetup from {self.folder}"]
+        for attr in [
+            "name", "version", "python_requires", "requires", "is_new_sdk",
+            "setup_filename", "namespace", "package_data", "include_package_data",
+            "classifiers", "keywords", "ext_package", "ext_modules",
+            "is_metapackage", "is_pyproject"
+        ]:
+            value = getattr(self, attr)
+            lines.append(f"\t{attr}={value}")
+        return "\n".join(lines)
 
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -693,7 +705,7 @@ def get_version_py(setup_path: str) -> Optional[str]:
 
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
-        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info")]
+        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info") and not d.startswith(".")]
 
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)
