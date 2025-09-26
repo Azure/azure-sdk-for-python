@@ -34,11 +34,11 @@ from azure.ai.voicelive.models._models import (
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.exceptions import AzureError
 from azure.core.pipeline import policies
 
 # === Local ===
 from ..models import ClientEvent, ServerEvent, RequestSession
-from .._patch import ConnectionError, ConnectionClosed
 
 if sys.version_info >= (3, 11):
     from typing import NotRequired  # noqa: F401
@@ -53,6 +53,8 @@ __all__: list[str] = [
     "ResponseResource",
     "InputAudioBufferResource",
     "OutputAudioBufferResource",
+    "ConnectionError",
+    "ConnectionClosed",
     "ConversationResource",
     "ConversationItemResource",
     "TranscriptionSessionResource",
@@ -83,6 +85,19 @@ def _json_default(o: Any) -> Any:
         # Strip private attributes
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
+
+
+class ConnectionError(AzureError):
+    """Base exception for Voice Live WebSocket connection errors."""
+
+
+class ConnectionClosed(ConnectionError):
+    """Raised when a WebSocket connection is closed."""
+
+    def __init__(self, code: int, reason: str) -> None:
+        self.code = code
+        self.reason = reason
+        super().__init__(f"WebSocket connection closed with code {code}: {reason}")
 
 
 class SessionResource:
