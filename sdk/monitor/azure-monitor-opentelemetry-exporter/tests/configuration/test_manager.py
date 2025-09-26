@@ -11,9 +11,11 @@ from azure.monitor.opentelemetry.exporter._configuration import (
 from azure.monitor.opentelemetry.exporter._configuration._utils import OneSettingsResponse
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
+    _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
+    _RETRYABLE_STATUS_CODES,
 )
 
 
@@ -366,6 +368,199 @@ class TestConfigurationManager(unittest.TestCase):
         headers = call_args[0][2]
         self.assertEqual(headers["If-None-Match"], "test-etag")
 
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
+    def test_transient_error_timeout(self, mock_logger, mock_worker_class, mock_request):
+        """Test transient error handling for timeout."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        
+        # Set initial refresh interval
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(refresh_interval=1800)
+        
+        # Setup timeout response
+        timeout_response = OneSettingsResponse(
+            has_timeout=True,
+            has_exception=True,
+            status_code=200  # Default status when exception occurs
+        )
+        mock_request.return_value = timeout_response
+        
+        # Execute
+        result = manager.get_configuration_and_refresh_interval()
+        
+        # Verify refresh interval was doubled
+        self.assertEqual(result, 3600)  # 1800 * 2
+        
+        # Verify only CHANGE endpoint was called (no CONFIG fetch on error)
+        mock_request.assert_called_once()
+        call_args = mock_request.call_args
+        self.assertEqual(call_args[0][0], _ONE_SETTINGS_CHANGE_URL)
+        
+        # Verify warning was logged
+        mock_logger.warning.assert_called()
+        warning_message = mock_logger.warning.call_args[0][0]
+        self.assertIn("transient error", warning_message)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
+    def test_transient_error_network_exception(self, mock_logger, mock_worker_class, mock_request):
+        """Test transient error handling for network exception."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        
+        # Set initial refresh interval
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(refresh_interval=900)
+        
+        # Setup network exception response
+        exception_response = OneSettingsResponse(
+            has_exception=True,
+            has_timeout=False,
+            status_code=200
+        )
+        mock_request.return_value = exception_response
+        
+        # Execute
+        result = manager.get_configuration_and_refresh_interval()
+        
+        # Verify refresh interval was doubled
+        self.assertEqual(result, 1800)  # 900 * 2
+        
+        # Verify warning was logged with correct error type
+        mock_logger.warning.assert_called()
+        warning_message = mock_logger.warning.call_args[0][0]
+        self.assertIn("transient error", warning_message)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
+    def test_transient_error_http_status_codes(self, mock_logger, mock_worker_class, mock_request):
+        """Test transient error handling for various HTTP status codes."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        
+        # Test various retryable status codes
+        test_cases = [429, 500, 502, 503, 504, 408, 401, 403]
+        
+        for status_code in test_cases:
+            with self.subTest(status_code=status_code):
+                # Reset mock and set initial refresh interval
+                mock_request.reset_mock()
+                mock_logger.reset_mock()
+                
+                with manager._state_lock:
+                    manager._current_state = manager._current_state.with_updates(refresh_interval=1200)
+                
+                # Setup HTTP error response
+                http_error_response = OneSettingsResponse(
+                    status_code=status_code,
+                    has_exception=False,
+                    has_timeout=False
+                )
+                mock_request.return_value = http_error_response
+                
+                # Execute
+                result = manager.get_configuration_and_refresh_interval()
+                
+                # Verify refresh interval was doubled
+                self.assertEqual(result, 2400)  # 1200 * 2
+                
+                # Verify warning was logged with correct status code
+                mock_logger.warning.assert_called()
+                warning_message = mock_logger.warning.call_args[0][0]
+                self.assertIn("transient error", warning_message)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    @patch('azure.monitor.opentelemetry.exporter._configuration.logger')
+    def test_transient_error_refresh_interval_cap(self, mock_logger, mock_worker_class, mock_request):
+        """Test that refresh interval is capped at 24 hours for transient errors."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        
+        # Set initial refresh interval to a high value that would exceed cap when doubled
+        high_refresh_interval = _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS // 2 + 1000  # Will exceed cap when doubled
+        
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(refresh_interval=high_refresh_interval)
+        
+        # Setup timeout response
+        timeout_response = OneSettingsResponse(
+            has_timeout=True,
+            has_exception=True,
+            status_code=200
+        )
+        mock_request.return_value = timeout_response
+        
+        # Execute
+        result = manager.get_configuration_and_refresh_interval()
+        
+        # Verify refresh interval was capped at 24 hours
+        self.assertEqual(result, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
+        
+        # Verify warning was logged mentioning transient error
+        mock_logger.warning.assert_called()
+        warning_message = mock_logger.warning.call_args[0][0]
+        self.assertIn("transient", warning_message)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_non_transient_error_no_backoff(self, mock_worker_class, mock_request):
+        """Test that non-transient errors don't trigger backoff."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        
+        # Set initial refresh interval
+        with manager._state_lock:
+            manager._current_state = manager._current_state.with_updates(refresh_interval=1800)
+        
+        # Setup non-retryable HTTP error response (e.g., 400 Bad Request)
+        bad_request_response = OneSettingsResponse(
+            status_code=400,  # Not in _RETRYABLE_STATUS_CODES
+            has_exception=False,
+            has_timeout=False,
+            refresh_interval=1800  # Should remain unchanged
+        )
+        mock_request.return_value = bad_request_response
+        
+        # Execute
+        result = manager.get_configuration_and_refresh_interval()
+
+        # Verify refresh interval was updated to response value
+        self.assertEqual(result, 1800)
+        
+        # Verify only CHANGE endpoint was called
+        mock_request.assert_called_once()
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration.make_onesettings_request')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker')
+    def test_successful_request_after_transient_error(self, mock_worker_class, mock_request):
+        """Test that successful requests don't double refresh interval."""
+        manager = _ConfigurationManager()
+        manager.initialize()
+        
+        # Setup successful response
+        success_response = OneSettingsResponse(
+            etag="test-etag",
+            refresh_interval=1800,
+            settings={"key": "value"},
+            version=-1,  # Same as initial version
+            status_code=200,
+            has_exception=False,
+            has_timeout=False
+        )
+        mock_request.return_value = success_response
+        
+        # Execute
+        result = manager.get_configuration_and_refresh_interval()
+        
+        # Verify refresh interval is not doubled (uses response value)
+        self.assertEqual(result, 1800)
+
     @patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "true"})
     def test_configuration_manager_disabled(self):
         """Test that configuration manager is disabled when environment variable is set."""
@@ -397,3 +592,7 @@ class TestConfigurationManager(unittest.TestCase):
         manager = get_configuration_manager()
         self.assertIsNotNone(manager)
         self.assertIsInstance(manager, _ConfigurationManager)
+
+
+if __name__ == '__main__':
+    unittest.main()
