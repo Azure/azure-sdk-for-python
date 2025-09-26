@@ -65,6 +65,7 @@ from ._utils.formatting_utils import (
     get_flattened_attack_strategies,
     write_pyrit_outputs_to_file,
     format_scorecard,
+    format_xpia_objective,
 )
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
@@ -460,6 +461,9 @@ class RedTeam:
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+            # Handle indirect jailbreak strategy
+            elif strategy == "indirect_jailbreak":
+                objectives_response = await self._apply_xpia_prompts(objectives_response)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -504,6 +508,51 @@ class RedTeam:
 
         return objectives_list
 
+    async def _apply_xpia_prompts(self, objectives_list: List) -> List:
+        """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy."""
+        self.logger.debug("Applying XPIA prompts to objectives for indirect jailbreak")
+        try:
+            # Get XPIA prompts from RAI service
+            @self.retry_manager.create_retry_decorator(context="xpia_prompts")
+            async def get_xpia_prompts_with_retry():
+                return await self.generated_rai_client.get_attack_objectives(
+                    risk_type=None,
+                    risk_category="xpia",
+                    application_scenario="",
+                    strategy=None,
+                    language=self.language.value,
+                    scan_session_id=self.scan_session_id,
+                )
+
+            xpia_prompts = await get_xpia_prompts_with_retry()
+            
+            if not xpia_prompts or len(xpia_prompts) == 0:
+                self.logger.warning("No XPIA prompts available, returning objectives unchanged")
+                return objectives_list
+
+            # Apply XPIA formatting to each objective
+            for objective in objectives_list:
+                if "messages" in objective and len(objective["messages"]) > 0:
+                    message = objective["messages"][0]
+                    if isinstance(message, dict) and "content" in message:
+                        original_content = message["content"]
+                        # Randomly select an XPIA prompt
+                        xpia_prompt = random.choice(xpia_prompts)
+                        
+                        # Apply the XPIA formatting
+                        formatted_content = self._format_xpia_objective(original_content, xpia_prompt)
+                        message["content"] = formatted_content
+                        
+        except Exception as e:
+            self.logger.error(f"Error applying XPIA prompts: {str(e)}")
+            self.logger.warning("XPIA prompt application failed, returning original objectives")
+
+        return objectives_list
+
+    def _format_xpia_objective(self, objective_content: str, xpia_prompt: dict) -> str:
+        """Format an objective with XPIA prompt structure using the formatting utility."""
+        return format_xpia_objective(objective_content, xpia_prompt, self.logger)
+
     def _filter_and_select_objectives(
         self,
         objectives_response: List,
@@ -543,7 +592,7 @@ class RedTeam:
         return selected_cat_objectives
 
     def _extract_objective_content(self, selected_objectives: List) -> List[str]:
-        """Extract content from selected objectives."""
+        """Extract content from selected objectives and build prompt-to-context mapping."""
         selected_prompts = []
         for obj in selected_objectives:
             if "messages" in obj and len(obj["messages"]) > 0:
@@ -552,8 +601,9 @@ class RedTeam:
                     content = message["content"]
                     context = message.get("context", "")
                     selected_prompts.append(content)
-                    # Store mapping of content to context for later evaluation
-                    self.prompt_to_context[content] = context
+                    # Store mapping of content to context for the orchestrator
+                    if context:
+                        self.prompt_to_context[content] = context
         return selected_prompts
 
     def _cache_attack_objectives(
@@ -855,7 +905,7 @@ class RedTeam:
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario)
 
-            chat_target = get_chat_target(target, self.prompt_to_context)
+            chat_target = get_chat_target(target)
             self.chat_target = chat_target
 
             # Execute attacks
@@ -944,14 +994,13 @@ class RedTeam:
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
         if AttackStrategy.Tense in flattened_attack_strategies and (
-            RiskCategory.IndirectAttack in self.risk_categories
-            or RiskCategory.UngroundedAttributes in self.risk_categories
+            RiskCategory.UngroundedAttributes in self.risk_categories
         ):
             self.logger.warning(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories. Skipping Tense strategy."
+                "Tense strategy is not compatible with UngroundedAttributes risk categories. Skipping Tense strategy."
             )
             raise ValueError(
-                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
+                "Tense strategy is not compatible with UngroundedAttributes risk categories."
             )
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
