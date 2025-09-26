@@ -211,7 +211,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._user_agent = _utils.get_user_agent_async(suffix)
 
         credentials_policy = None
-        self.credential_id = ""
+        self.credential_id: str = ""  # Added explicit type annotation for mypy
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
@@ -2282,7 +2282,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
-
 
 
     async def read_items(
