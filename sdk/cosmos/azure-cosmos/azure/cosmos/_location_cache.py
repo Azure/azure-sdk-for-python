@@ -30,7 +30,7 @@ from urllib.parse import urlparse
 
 from . import documents, _base as base
 from .http_constants import ResourceType
-from .documents import _OperationType, ConnectionPolicy
+from .documents import ConnectionPolicy
 from ._request_object import RequestObject
 
 # pylint: disable=protected-access

@@ -7,6 +7,7 @@ import pytest
 
 import test_config
 from azure.cosmos import CosmosClient
+from azure.cosmos._location_cache import RegionalRoutingContext
 
 
 @pytest.mark.cosmosEmulator

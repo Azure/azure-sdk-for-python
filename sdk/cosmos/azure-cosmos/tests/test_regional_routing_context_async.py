@@ -6,6 +6,7 @@ import uuid
 import pytest
 
 import test_config
+from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos.aio import CosmosClient
 
 
