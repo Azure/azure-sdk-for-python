@@ -123,8 +123,6 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             if self._warm_up_status.get(scope_key):
                 if cache_context.cache_details.get("is_warm_up_call"):
                     self._warm_up_status[scope_key] = f"Started Again (Previously: {self._warm_up_status[scope_key]})"
-                else:
-                    self._warm_up_status[scope_key] = self._warm_up_status[scope_key]
             else:
                 if cache_context.cache_details.get("is_warm_up_call"):
                     self._warm_up_status[scope_key] = "Started"
@@ -142,6 +140,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
                     cache_context.add_detail("cache_query_status", "HIT")
                     cache_context.add_detail("rolling_cache_hit_count", self._cache_hit_counts[scope_key])
                     cache_context.add_detail("rolling_cache_miss_count", self._cache_miss_counts.get(scope_key, 0))
+                    if self._warm_up_status.get(scope_key) != "Completed" and cache_context.cache_details.get("is_warm_up_call"):  # pylint: disable=line-too-long
+                        self._warm_up_status[scope_key] = "Completed"
+                        cache_context.add_detail("cache_warm_up_status", self._warm_up_status[scope_key])
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
