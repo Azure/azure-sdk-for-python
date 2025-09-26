@@ -3,6 +3,7 @@
 ### 4.14.0b5 (Unreleased)
 
 #### Features Added
+* Added support for Semantic Reranking. See [PR 42991](https://github.com/Azure/azure-sdk-for-python/pull/42991)
 
 #### Breaking Changes
 
@@ -20,7 +21,6 @@
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
-* Added support for Semantic Reranking. See [PR 42991](https://github.com/Azure/azure-sdk-for-python/pull/42991)
 
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
