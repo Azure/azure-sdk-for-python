@@ -567,34 +567,32 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._update_feature_filter_telemetry(feature_flag)
         return feature_flag_value
 
-    def _update_sentinel_keys(
+    def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]
     ) -> Dict[Tuple[str, str], Optional[str]]:
         """
-        Updates the etags of sentinel keys that are part of the configuration
-
+        Updates the etags of watched settings that are part of the configuration
         :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to update
         :return: A dictionary mapping (key, label) tuples to their updated etags
         :rtype: Dict[Tuple[str, str], Optional[str]]
         """
-        sentinel_keys: Dict[Tuple[str, str], Optional[str]] = {}
+        watched_settings: Dict[Tuple[str, str], Optional[str]] = {}
         for config in configuration_settings:
             if (config.key, config.label) in self._watched_settings:
-                sentinel_keys[(config.key, config.label)] = config.etag
-        return sentinel_keys
+                watched_settings[(config.key, config.label)] = config.etag
+        return watched_settings
 
-    def _update_feature_flag_sentinel_keys(
+    def _update_watched_feature_flags(
         self, configuration_settings: List[FeatureFlagConfigurationSetting]
     ) -> Dict[Tuple[str, str], Optional[str]]:
         """
-        Updates the etags of sentinel keys that are part of the configuration
-
+        Updates the etags of watched feature flags that are part of the configuration
         :param List[FeatureFlagConfigurationSetting] configuration_settings: The list of configuration settings to
         update
         :return: A dictionary mapping (key, label) tuples to their updated etags
         :rtype: Dict[Tuple[str, str], Optional[str]]
         """
-        sentinel_keys: Dict[Tuple[str, str], Optional[str]] = {}
+        watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         for config in configuration_settings:
-            sentinel_keys[(config.key, config.label)] = config.etag
-        return sentinel_keys
+            watched_feature_flags[(config.key, config.label)] = config.etag
+        return watched_feature_flags

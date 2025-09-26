@@ -342,15 +342,15 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         reset_config_timer = False
         reset_feature_flag_timer = False
         refreshed = False
-        sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = {}
+        watched_keys: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._feature_filter_usage.copy()
         try:
             if self._watched_settings and self._refresh_timer.needs_refresh():
                 reset_config_timer = True
 
-                sentinel_keys = client.get_updated_watched_settings(self._watched_settings, headers=headers, **kwargs)
+                watched_keys = client.get_updated_watched_settings(self._watched_settings, headers=headers, **kwargs)
 
-                if len(sentinel_keys) > 0:
+                if len(watched_keys) > 0:
                     configuration_settings = client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
@@ -383,14 +383,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._feature_flag_enabled:
                 # Create the feature management schema and add feature flags
                 if feature_flags:
-                    self._watched_feature_flags = self._update_feature_flag_sentinel_keys(feature_flags)
+                    self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
                 processed_settings[FEATURE_MANAGEMENT_KEY] = {}
                 processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
             self._dict = processed_settings
             refreshed = True
             if refreshed_configs:
                 # Update the watch keys that have changed
-                self._watched_settings.update(sentinel_keys)
+                self._watched_settings.update(watched_keys)
             # Reset timers at the same time as they should load from the same store.
             if reset_config_timer:
                 self._refresh_timer.reset()
@@ -469,7 +469,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             try:
                 configuration_settings = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
                 processed_feature_flags = []
-                sentinel_keys = self._update_sentinel_keys(configuration_settings)
+                watched_settings = self._update_watched_settings(configuration_settings)
                 processed_settings = self._process_configurations(configuration_settings)
 
                 if self._feature_flag_enabled:
@@ -483,28 +483,28 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     )
                     processed_settings[FEATURE_MANAGEMENT_KEY] = {}
                     processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
-                    self._watched_feature_flags = self._update_feature_flag_sentinel_keys(feature_flags)
+                    self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
                 for (key, label), etag in self._watched_settings.items():
                     if not etag:
                         try:
-                            sentinel = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
-                            sentinel_keys[(key, label)] = sentinel.etag  # type:ignore
+                            watch_setting = client.get_configuration_setting(key, label, headers=headers)  # type:ignore
+                            watched_settings[(key, label)] = watch_setting.etag  # type:ignore
                         except HttpResponseError as e:
                             if e.status_code == 404:
-                                # If the sentinel is not found a refresh should be triggered when it is created.
+                                # If the watched setting is not found a refresh should be triggered when it is created.
                                 logger.debug(
                                     """
-                                    WatchKey key: %s label %s was configured but not found. Refresh will be triggered
+                                    Watched Setting: %s label %s was configured but not found. Refresh will be triggered
                                     if created.
                                     """,
                                     key,
                                     label,
                                 )
-                                sentinel_keys[(key, label)] = None  # type: ignore
+                                watched_settings[(key, label)] = None  # type: ignore
                             else:
                                 raise e
                 with self._update_lock:
-                    self._watched_settings = sentinel_keys
+                    self._watched_settings = watched_settings
                     self._dict = processed_settings
                 return
             except AzureError as e:
