@@ -285,34 +285,6 @@ class Constitution(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateUserDefinedRoleRequest(_Model):
-    """CreateUserDefinedRoleRequest.
-
-    :ivar roles: Roles. Required.
-    :vartype roles: list[~azure.confidentialledger.models.Role]
-    """
-
-    roles: list["_models.Role"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Roles. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        roles: list["_models.Role"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EnclaveQuote(_Model):
     """Contains the enclave quote.
 
@@ -1041,6 +1013,34 @@ class Role(_Model):
         *,
         role_name: Optional[str] = None,
         role_actions: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Roles(_Model):
+    """Roles.
+
+    :ivar roles: Roles. Required.
+    :vartype roles: list[~azure.confidentialledger.models.Role]
+    """
+
+    roles: list["_models.Role"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Roles. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        roles: list["_models.Role"],
     ) -> None: ...
 
     @overload
