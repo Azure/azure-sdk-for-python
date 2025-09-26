@@ -211,12 +211,16 @@ class TestAAD(unittest.TestCase):
 
         class FallbackCredential(CosmosEmulatorCredential):
             def __init__(self):
-                self.call_count = 0
+                self.seen_account_scope = False
+                self.fault_injected = False
 
             def get_token(self, *scopes, **kwargs):
-                self.call_count += 1
-                if self.call_count == 2:
-                    raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
+                scope = scopes[0] if scopes else None
+                if scope == "https://localhost/.default":
+                    if self.seen_account_scope and not self.fault_injected:
+                        self.fault_injected = True
+                        raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
+                    self.seen_account_scope = True
                 return super().get_token(*scopes, **kwargs)
 
         def action(scopes_captured):
