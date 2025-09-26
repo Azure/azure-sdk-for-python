@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import ExperimentMetricType
@@ -69,7 +69,7 @@ class ExperimentMetricDefinition(_Model):
     :vartype type: str or ~azure.onlineexperimentation.models.ExperimentMetricType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type")
     """Discriminator property for ExperimentMetricDefinition. Required. Known values are:
      \"EventCount\", \"UserCount\", \"EventRate\", \"UserRate\", \"Sum\", \"Average\", and
@@ -124,7 +124,8 @@ class AverageMetricDefinition(ExperimentMetricDefinition, discriminator="Average
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.AVERAGE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.AVERAGE  # type: ignore
 
 
 class DiagnosticDetail(_Model):
@@ -176,7 +177,8 @@ class EventCountMetricDefinition(ExperimentMetricDefinition, discriminator="Even
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.EVENT_COUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.EVENT_COUNT  # type: ignore
 
 
 class EventRateMetricDefinition(ExperimentMetricDefinition, discriminator="EventRate"):
@@ -217,7 +219,8 @@ class EventRateMetricDefinition(ExperimentMetricDefinition, discriminator="Event
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.EVENT_RATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.EVENT_RATE  # type: ignore
 
 
 class ExperimentMetric(_Model):
@@ -263,7 +266,7 @@ class ExperimentMetric(_Model):
      Required."""
     description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A detailed description of the experiment metric. Required."""
-    categories: List[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    categories: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Categories associated with the experiment metric. Used for organizing and filtering metrics.
      Required."""
     desired_direction: Union[str, "_models.DesiredDirection"] = rest_field(
@@ -287,7 +290,7 @@ class ExperimentMetric(_Model):
         lifecycle: Union[str, "_models.LifecycleStage"],
         display_name: str,
         description: str,
-        categories: List[str],
+        categories: list[str],
         desired_direction: Union[str, "_models.DesiredDirection"],
         definition: "_models.ExperimentMetricDefinition",
     ) -> None: ...
@@ -314,7 +317,7 @@ class ExperimentMetricValidationResult(_Model):
 
     is_valid: bool = rest_field(name="isValid", visibility=["read", "create", "update", "delete", "query"])
     """Indicates whether the experiment metric is valid. Required."""
-    diagnostics: List["_models.DiagnosticDetail"] = rest_field(visibility=["read"])
+    diagnostics: list["_models.DiagnosticDetail"] = rest_field(visibility=["read"])
     """Diagnostic details from the validation process. Required."""
 
     @overload
@@ -405,7 +408,8 @@ class PercentileMetricDefinition(ExperimentMetricDefinition, discriminator="Perc
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.PERCENTILE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.PERCENTILE  # type: ignore
 
 
 class SumMetricDefinition(ExperimentMetricDefinition, discriminator="Sum"):
@@ -440,7 +444,8 @@ class SumMetricDefinition(ExperimentMetricDefinition, discriminator="Sum"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.SUM, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.SUM  # type: ignore
 
 
 class UserCountMetricDefinition(ExperimentMetricDefinition, discriminator="UserCount"):
@@ -475,7 +480,8 @@ class UserCountMetricDefinition(ExperimentMetricDefinition, discriminator="UserC
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.USER_COUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.USER_COUNT  # type: ignore
 
 
 class UserRateMetricDefinition(ExperimentMetricDefinition, discriminator="UserRate"):
@@ -523,4 +529,5 @@ class UserRateMetricDefinition(ExperimentMetricDefinition, discriminator="UserRa
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=ExperimentMetricType.USER_RATE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = ExperimentMetricType.USER_RATE  # type: ignore

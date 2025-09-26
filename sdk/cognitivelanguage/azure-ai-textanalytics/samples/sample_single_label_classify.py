@@ -57,9 +57,7 @@ def sample_text_custom_single_label_classification():
         "Play music and add it to my playlist."
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
     action = CustomSingleLabelClassificationOperationAction(
         name="Custom Single-Label Classification",
@@ -110,10 +108,10 @@ def sample_text_custom_single_label_classification():
                 print(f"Kind: {op_result.kind}")
 
                 result = op_result.results
-                for doc in (result.documents or []):
+                for doc in result.documents or []:
                     print(f"\nDocument ID: {doc.id}")
                     # Single-label: typically one class, but iterate to be general
-                    for cls_item in (doc.class_property or []):
+                    for cls_item in doc.class_property or []:
                         print(f"  Predicted category: {cls_item.category}")
                         print(f"  Confidence score: {cls_item.confidence_score}")
             else:
@@ -125,6 +123,7 @@ def sample_text_custom_single_label_classification():
                     )
                 except Exception:
                     print("\n[Non-CSC action present]")
+
 
 # [END text_custom_single_label_classification]
 

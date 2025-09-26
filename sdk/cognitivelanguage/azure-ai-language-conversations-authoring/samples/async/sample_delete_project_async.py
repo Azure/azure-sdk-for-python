@@ -53,7 +53,9 @@ async def sample_delete_project_async():
             print(f"Operation failed: {e.message}")
             print(e.error)
 
+
 # [END conversation_authoring_delete_project_async]
+
 
 async def main():
     await sample_delete_project_async()
