@@ -143,7 +143,7 @@ class GetTokenMixin(abc.ABC):
         cache_context.method_start = start
 
         if is_warm_up:
-            cache_context.add_detail("is_warm_up", True)
+            cache_context.add_detail("is_warm_up_call", True)
 
         try:
             token = await self._acquire_token_silently(
