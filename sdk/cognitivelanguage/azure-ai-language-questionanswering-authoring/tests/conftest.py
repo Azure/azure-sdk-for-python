@@ -8,7 +8,7 @@ ENV_ENDPOINT = "AZURE_QUESTIONANSWERING_ENDPOINT"
 ENV_KEY = "AZURE_QUESTIONANSWERING_KEY"
 ENV_PROJECT = "AZURE_QUESTIONANSWERING_PROJECT"
 
-TEST_ENDPOINT = "https://test-resource.api.cognitive.microsoft.com/"
+TEST_ENDPOINT = "https://test-resource.cognitiveservices.azure.com/"
 TEST_KEY = "0000000000000000"
 TEST_PROJECT = "test-project"
 
