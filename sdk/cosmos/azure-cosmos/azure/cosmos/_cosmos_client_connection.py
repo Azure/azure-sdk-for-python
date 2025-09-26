@@ -209,14 +209,16 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
+            current_scope = scope_override or account_scope
             # Calling get_token to warmup the cache
             start_ns = time.time_ns()
-            account_scope = base.create_scope_from_url(self.url_connection)
-            _logger.info("sync get_token call start: %s | account_name: %s", str(start_ns), str(account_scope))
-            self.aad_credentials.get_token(Constants.AAD_DEFAULT_SCOPE)
+            _logger.info("cosmos client sync get_token call start: %s "
+                         "| account_name: %s | scope: %s", str(start_ns), str(account_scope), str(current_scope))
+            self.aad_credentials.get_token(current_scope)
             end_ns = time.time_ns()
-            _logger.info("sync get_token call end: %s | account_name: %s | duration: %s", str(end_ns),
-                         str(account_scope), str(end_ns - start_ns))
+            _logger.info("cosmos client sync get_token call end: %s "
+                         "| account_name: %s | scope: %s | duration_ns: %s", str(end_ns),
+                         str(account_scope), str(current_scope), str(end_ns - start_ns))
 
             credentials_policy = CosmosBearerTokenCredentialPolicy(
                 self.aad_credentials,
