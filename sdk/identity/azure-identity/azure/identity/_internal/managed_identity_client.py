@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import logging
+import os
 import time
 from typing import Any, Callable, Dict, Optional
 
@@ -15,7 +17,11 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpRequest
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
+from .._internal.utils import sanitize_dict
 from .._internal.pipeline import build_pipeline
+
+
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 
 class ManagedIdentityClientBase(abc.ABC):
@@ -24,7 +30,7 @@ class ManagedIdentityClientBase(abc.ABC):
         request_factory: Callable[[str, dict], HttpRequest],
         client_id: Optional[str] = None,
         identity_config: Optional[Dict] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._custom_cache = False
         self._cache = kwargs.pop("_cache", None)
@@ -75,6 +81,12 @@ class ManagedIdentityClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
+        _CACHE_LOGGER.info(
+            "[PID %s] %s: Token Response received from Entra. Expires on: %s. ",
+            os.getpid(),
+            id(self),
+            expires_on,
+        )
         token = AccessTokenInfo(
             content["access_token"],
             content["expires_on"],
@@ -82,7 +94,19 @@ class ManagedIdentityClientBase(abc.ABC):
             refresh_on=refresh_on,
         )
 
+        sanitized_content = sanitize_dict(
+            content, sensitive_fields={"access_token", "refresh_token", "id_token", "username"}
+        )
+
         # caching is the final step because TokenCache.add mutates its "event"
+        _CACHE_LOGGER.info(
+            "[PID %s] %s: Adding token to cache with ID %s, scope: %s, response: %s",
+            os.getpid(),
+            id(self),
+            id(self._cache),
+            content["resource"],
+            sanitized_content,
+        )
         self._cache.add(
             event={"response": content, "scope": [content["resource"]]},
             now=request_time,
@@ -93,14 +117,35 @@ class ManagedIdentityClientBase(abc.ABC):
     def get_cached_token(self, *scopes: str) -> Optional[AccessTokenInfo]:
         resource = _scopes_to_resource(*scopes)
         now = time.time()
-        for token in self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]):
+        results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]))
+        total_results = list(self._cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
+
+        for token in total_results:
+            _CACHE_LOGGER.info(
+                "[PID %s] %s: Cache Entry for %s: access token: %s",
+                os.getpid(),
+                id(self),
+                id(self._cache),
+                sanitize_dict(token, sensitive_fields=["secret"]),
+            )
+
+        _CACHE_LOGGER.info(
+            "[PID %s] %s: Cache %s contains %s access tokens for resource '%s'.",
+            os.getpid(),
+            id(self),
+            id(self._cache),
+            len(results),
+            resource,
+        )
+        for token in results:
             expires_on = int(token["expires_on"])
             refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
             if expires_on > now and (not refresh_on or refresh_on > now):
+                _CACHE_LOGGER.info("[PID %s] %s: Cache hit for resource '%s'", os.getpid(), id(self), resource)
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
-
+        _CACHE_LOGGER.info("[PID %s] %s: Cache miss for resource '%s'", os.getpid(), id(self), resource)
         return None
 
     @abc.abstractmethod

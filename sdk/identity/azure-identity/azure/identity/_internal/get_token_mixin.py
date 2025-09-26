@@ -4,6 +4,7 @@
 # ------------------------------------
 import abc
 import logging
+import os
 import time
 from typing import Any, Optional
 
@@ -12,6 +13,7 @@ from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
 _LOGGER = logging.getLogger(__name__)
+_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 
 class GetTokenMixin(abc.ABC):
@@ -128,18 +130,37 @@ class GetTokenMixin(abc.ABC):
         tenant_id = options.get("tenant_id")
         enable_cae = options.get("enable_cae", False)
 
+        _CACHE_LOGGER.info(
+            "[PID %s] %s: %s.%s called with scopes: %s and options: %s",
+            os.getpid(),
+            id(getattr(self, "_client", self)),
+            self.__class__.__name__,
+            base_method_name,
+            list(scopes),
+            options,
+        )
+
         try:
             token = self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
             if not token:
                 self._last_request_time = int(time.time())
+                _CACHE_LOGGER.info(
+                    "[PID %s] %s: No token found in cache, requesting a new token",
+                    os.getpid(),
+                    id(getattr(self, "_client", self)),
+                )
                 token = self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
             elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
+
+                    _CACHE_LOGGER.info(
+                        "[PID %s] %s: Refreshing cached token", os.getpid(), id(getattr(self, "_client", self))
+                    )
                     token = self._request_token(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
