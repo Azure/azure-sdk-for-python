@@ -586,16 +586,15 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         return watched_settings
 
     def _update_watched_feature_flags(
-        self, configuration_settings: List[FeatureFlagConfigurationSetting]
+        self, feature_flags: List[FeatureFlagConfigurationSetting]
     ) -> Dict[Tuple[str, str], Optional[str]]:
         """
         Updates the etags of watched feature flags that are part of the configuration
-        :param List[FeatureFlagConfigurationSetting] configuration_settings: The list of configuration settings to
-        update
+        :param List[FeatureFlagConfigurationSetting] feature_flags: The list of feature flags to update
         :return: A dictionary mapping (key, label) tuples to their updated etags
         :rtype: Dict[Tuple[str, str], Optional[str]]
         """
         watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
-        for config in configuration_settings:
-            watched_feature_flags[(config.key, config.label)] = config.etag
+        for feature_flag in feature_flags:
+            watched_feature_flags[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return watched_feature_flags
