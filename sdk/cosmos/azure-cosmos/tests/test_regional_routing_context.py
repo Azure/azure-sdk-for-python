@@ -7,17 +7,12 @@ import pytest
 
 import test_config
 from azure.cosmos import CosmosClient
-from azure.cosmos._location_cache import RegionalRoutingContext
 
 
 @pytest.mark.cosmosEmulator
 class TestRegionalRoutingContext(unittest.TestCase):
     host = test_config.TestConfig.host
     masterKey = test_config.TestConfig.masterKey
-    REGION1 = "West US"
-    REGION2 = "East US"
-    REGION3 = "West US 2"
-    REGIONAL_ROUTING_CONTEXT = RegionalRoutingContext(host)
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
