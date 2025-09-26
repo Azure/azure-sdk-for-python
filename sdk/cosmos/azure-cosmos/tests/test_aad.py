@@ -215,7 +215,7 @@ class TestAAD(unittest.TestCase):
 
             def get_token(self, *scopes, **kwargs):
                 self.call_count += 1
-                if self.call_count == 1:
+                if self.call_count == 2:
                     raise HttpResponseError(message="AADSTS500011: Simulated error for fallback")
                 return super().get_token(*scopes, **kwargs)
 
