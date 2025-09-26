@@ -10,13 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessScope enums."""
-
-    JOB = "job"
-    """Grants access to perform all operations on the Job containing the Task."""
-
-
 class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AllocationState enums."""
 
@@ -39,6 +32,22 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     POOL = "pool"
     """Specifies that the Task runs as the common auto user Account which is created on every Compute
     Node in a Pool."""
+
+
+class BatchAccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchAccessScope enums."""
+
+    JOB = "job"
+    """Grants access to perform all operations on the Job containing the Task."""
+
+
+class BatchAllTasksCompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
+
+    NO_ACTION = "noaction"
+    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
+    TERMINATE_JOB = "terminatejob"
+    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -90,7 +99,16 @@ class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Compute Node."""
 
 
-class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class BatchErrorSourceCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchErrorSourceCategory enums."""
+
+    USER_ERROR = "usererror"
+    """The error is due to a user issue, such as misconfiguration."""
+    SERVER_ERROR = "servererror"
+    """The error is due to an internal server issue."""
+
+
+class BatchJobActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchJobAction enums."""
 
     NONE = "none"
@@ -256,8 +274,8 @@ class BatchNodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     balancing."""
 
 
-class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeRebootOption enums."""
+class BatchNodeRebootKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeRebootKind enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
@@ -421,6 +439,15 @@ class BatchTaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     process was launched, while the Task process was executing, or after the Task process exited."""
 
 
+class BatchTaskFailureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TaskFailure enums."""
+
+    NO_ACTION = "noaction"
+    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
+    PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
+    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
+
+
 class BatchTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchTaskState enums."""
 
@@ -558,15 +585,6 @@ class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The user is a user with elevated access and operates with full Administrator permissions."""
 
 
-class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ErrorCategory enums."""
-
-    USER_ERROR = "usererror"
-    """The error is due to a user issue, such as misconfiguration."""
-    SERVER_ERROR = "servererror"
-    """The error is due to an internal server issue."""
-
-
 class ImageVerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ImageVerificationType enums."""
 
@@ -620,24 +638,6 @@ class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Allow access."""
     DENY = "deny"
     """Deny access."""
-
-
-class OnAllBatchTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
-
-    NO_ACTION = "noaction"
-    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
-    TERMINATE_JOB = "terminatejob"
-    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
-
-
-class OnBatchTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OnTaskFailure enums."""
-
-    NO_ACTION = "noaction"
-    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
-    PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
-    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
