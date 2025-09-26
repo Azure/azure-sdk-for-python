@@ -60,7 +60,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         is not guaranteed to be real time.
     :ivar ConsistencyPolicy:
         UserConsistencyPolicy settings.
-    :vartype ConsistencyPolicy: Dict[str, Union[str, int]]
+    :vartype ConsistencyPolicy: dict[str, str]
     :ivar boolean EnableMultipleWritableLocations:
         Flag on the azure Cosmos account that indicates if writes can take
         place in multiple locations.
@@ -74,7 +74,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self.ConsumedDocumentStorageInMB: int = 0
         self.ReservedDocumentStorageInMB: int = 0
         self.ProvisionedDocumentStorageInMB: int = 0
-        self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
+        self.ConsistencyPolicy: Optional[dict[str, str]] = None
         self._WritableLocations: list[dict[str, str]] = []
         self._ReadableLocations: list[dict[str, str]] = []
         self._EnableMultipleWritableLocations = False
