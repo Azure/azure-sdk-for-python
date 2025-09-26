@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Clean up public surface area of the SDK. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
 
 ### 4.14.0b4 (2025-09-11)
 
