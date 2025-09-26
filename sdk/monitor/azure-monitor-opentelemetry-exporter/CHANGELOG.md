@@ -17,6 +17,8 @@
   ([#43060](https://github.com/Azure/azure-sdk-for-python/pull/43060))
 - Skip tests from test_storage.py causing transient build pipeline failures
   ([#43122](https://github.com/Azure/azure-sdk-for-python/pull/43122))
+- Fix spelling for OTEL_PYTHON_EXCLUDED_URLS in samples
+  ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 
 ### Other Changes
 
