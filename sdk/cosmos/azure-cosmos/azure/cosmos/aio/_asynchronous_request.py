@@ -99,7 +99,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
 
     start_ns = time.time_ns()
     if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
-        _logger.info("async database account call start at: %s | account_name: %s", str(start_ns), str(request.url))
+        _logger.info("cosmos async client async database account call start at: %s | account_name: %s", str(start_ns), str(request.url))
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -128,7 +128,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         )
     end_ns = time.time_ns()
     if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
-        _logger.info("async database account call end at: %s | account_name: %s | duration_ns: %s",
+        _logger.info("cosmos async client async database account call end at: %s | account_name: %s | duration_ns: %s",
                      str(end_ns), str(request.url), str(end_ns - start_ns))
     response = response.http_response
     headers = copy.copy(response.headers)
