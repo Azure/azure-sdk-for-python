@@ -178,7 +178,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         Checks if any of the watch keys have changed, and updates them if they have.
 
-        :param Mapping[Tuple[str, str], Optional[str]] updated_watched_settings: The configuration settings to check for changes
+        :param Mapping[Tuple[str, str], Optional[str]] watched_settings: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
         :return: Updated value of the configuration sentinel keys.
