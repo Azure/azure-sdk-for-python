@@ -1,7 +1,8 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -9,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, List, overload, Optional, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._operations import QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
+from ._operations import _QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
 from ...models import (
     AnswersOptions,
     AnswersFromTextOptions,
@@ -26,13 +27,14 @@ from ..._operations._patch import _get_answers_from_text_prepare_options, _get_a
 class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
     async def get_answers(
-        self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
+        self, knowledge_base_query_options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
-        :param options: Positional only. POST body of the request. Provide either `options`, OR
-         individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
+        :param knowledge_base_query_options: Positional only. POST body of the request. 
+         Provide either `knowledge_base_query_options`, OR individual keyword arguments. 
+         If both are provided, only the options object will be used.
+        :type knowledge_base_query_options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -147,12 +149,14 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         return await super().get_answers(options, **kwargs)  # type: ignore
 
     @overload  # type: ignore
-    async def get_answers_from_text(self, options: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
+    async def get_answers_from_text(
+        self, text_query_options: AnswersFromTextOptions, **kwargs: Any
+    ) -> AnswersFromTextResult:
         """Answers the specified question using the provided text in the body.
 
-        :param options: Positional only. POST body of the request. Provide either `options`, OR
+        :param text_query_options: Positional only. POST body of the request. Provide either `text_query_options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions
+        :type text_query_options: ~azure.ai.language.questionanswering.models.AnswersFromTextOptions
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -210,8 +214,10 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
                 :dedent: 4
                 :caption: Answers the specified question using the provided text.
         """
+        # Use only explicit user-provided language (if any); no hidden default attribute
+        _explicit_language = kwargs.pop("language", None)
         options, kwargs = _get_answers_from_text_prepare_options(
-            *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
+            *args, language=_explicit_language, **kwargs  # type: ignore
         )
         return await super().get_answers_from_text(options, **kwargs)  # type: ignore
 

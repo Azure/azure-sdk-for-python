@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.0b1 (Unreleased)
+
+### Breaking Changes
+* Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, and related authoring operations have been eliminated from the runtime client distribution.
+* Dropped support for Python versions earlier than 3.9 (aligns with Azure SDK Python support policy going forward).
+
+### Features Added
+* Documentation improvements: expanded README with authentication guidance, AAD usage, async examples, and troubleshooting section.
+
+### Other Changes
+* Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
+* Changed samples and README examples to use explicit `AnswersOptions` / `AnswersFromTextOptions` objects as the first argument when calling `get_answers` and `get_answers_from_text`.
+
 ## 1.1.1 (Unreleased)
 
 ### Features Added
