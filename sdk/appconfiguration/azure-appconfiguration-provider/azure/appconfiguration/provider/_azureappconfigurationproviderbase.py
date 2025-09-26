@@ -292,7 +292,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._trim_prefixes: List[str] = sorted(trim_prefixes, key=len, reverse=True)
 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
-        self._refresh_on: Dict[Tuple[str, str], Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
+        self._watched_settings: Dict[Tuple[str, str], Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
@@ -304,7 +304,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         )
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
-        self._refresh_on_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
+        self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         self._feature_filter_usage: Dict[str, bool] = {}
@@ -579,7 +579,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         """
         sentinel_keys: Dict[Tuple[str, str], Optional[str]] = {}
         for config in configuration_settings:
-            if (config.key, config.label) in self._refresh_on:
+            if (config.key, config.label) in self._watched_settings:
                 sentinel_keys[(config.key, config.label)] = config.etag
         return sentinel_keys
 

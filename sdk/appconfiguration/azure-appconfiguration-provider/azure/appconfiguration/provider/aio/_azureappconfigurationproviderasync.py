@@ -359,12 +359,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         reset_feature_flag_timer = False
         refreshed = False
         sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = {}
-        backup_feature_flag_usage = self._feature_filter_usage.copy()
+        existing_feature_flag_usage = self._feature_filter_usage.copy()
         try:
-            if self._refresh_on and self._refresh_timer.needs_refresh():
+            if self._watched_settings and self._refresh_timer.needs_refresh():
                 reset_config_timer = True
 
-                sentinel_keys = await client.get_updated_watched_settings(self._refresh_on, headers=headers, **kwargs)
+                sentinel_keys = await client.get_updated_watched_settings(
+                    self._watched_settings, headers=headers, **kwargs
+                )
 
                 if len(sentinel_keys) > 0:
                     configuration_settings = await client.load_configuration_settings(
@@ -376,7 +378,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 reset_feature_flag_timer = True
 
                 feature_flags_need_refresh = await client.try_check_feature_flags(
-                    self._refresh_on_feature_flags, headers=headers, **kwargs
+                    self._watched_feature_flags, headers=headers, **kwargs
                 )
 
                 if feature_flags_need_refresh:
@@ -400,14 +402,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._feature_flag_enabled:
                 # Create the feature management schema and add feature flags
                 if feature_flags:
-                    self._refresh_on_feature_flags = self._update_feature_flag_sentinel_keys(feature_flags)
+                    self._watched_feature_flags = self._update_feature_flag_sentinel_keys(feature_flags)
                 processed_settings[FEATURE_MANAGEMENT_KEY] = {}
                 processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
             self._dict = processed_settings
             refreshed = True
             if refreshed_configs:
                 # Update the watch keys that have changed
-                self._refresh_on.update(sentinel_keys)
+                self._watched_settings.update(sentinel_keys)
             # Reset timers at the same time as they should load from the same store.
             if reset_config_timer:
                 self._refresh_timer.reset()
@@ -418,11 +420,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
             self._replica_client_manager.backoff(client)
             # Restore feature flag usage on failure
-            self._feature_filter_usage = backup_feature_flag_usage
+            self._feature_filter_usage = existing_feature_flag_usage
             raise e
 
     async def refresh(self, **kwargs) -> None:
-        if not self._refresh_on and not self._feature_flag_refresh_enabled:
+        if not self._watched_settings and not self._feature_flag_refresh_enabled:
             logger.debug("Refresh called but no refresh enabled.")
             return
         if not self._refresh_lock.acquire(blocking=False):  # pylint: disable= consider-using-with
@@ -502,8 +504,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     )
                     processed_settings[FEATURE_MANAGEMENT_KEY] = {}
                     processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
-                    self._refresh_on_feature_flags = self._update_feature_flag_sentinel_keys(feature_flags)
-                for (key, label), etag in self._refresh_on.items():
+                    self._watched_feature_flags = self._update_feature_flag_sentinel_keys(feature_flags)
+                for (key, label), etag in self._watched_settings.items():
                     if not etag:
                         try:
                             sentinel = await client.get_configuration_setting(
@@ -525,7 +527,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                             else:
                                 raise e
                 with self._update_lock:
-                    self._refresh_on = sentinel_keys
+                    self._watched_settings = sentinel_keys
                     self._dict = processed_settings
                 return
             except AzureError as e:
@@ -545,7 +547,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
-                    self._refresh_on_feature_flags[(settings.key, settings.label)] = settings.etag
+                    self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
             else:
                 key = self._process_key_name(settings)
                 value = await self._process_key_value(settings)
