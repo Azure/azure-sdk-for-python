@@ -268,6 +268,7 @@ class DeploymentTemplatesOperations(object):
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'DeploymentTemplate')
+        _json["type"] = "deploymenttemplates"
 
         request = build_create_request(
             registry_name=registry_name,

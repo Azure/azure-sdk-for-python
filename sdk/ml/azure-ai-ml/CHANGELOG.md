@@ -5,6 +5,10 @@
 ### Features Added
 
 - Removed the dependencies - msrest and six
+- Added support for `Deployment Templates` along with the following operations:
+  - `ml_client.deployment_templates.create_or_update()` - Only create supported for now
+  - `ml_client.deployment_templates.list()`
+  - `ml_client.deployment_templates.get()`
 
 ### Bugs Fixed
 
