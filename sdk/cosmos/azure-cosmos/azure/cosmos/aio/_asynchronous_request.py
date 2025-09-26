@@ -24,7 +24,7 @@
 import copy
 import json
 import time
-
+import logging
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
@@ -32,7 +32,7 @@ from .. import exceptions
 from .. import http_constants
 from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
-
+_logger = logging.getLogger("azure.cosmos.auth.request")
 
 async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
@@ -97,6 +97,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
         and not connection_policy.DisableSSLVerification
     )
 
+    start_ns = time.time_ns()
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -124,6 +125,13 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             **kwargs
         )
 
+    if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
+        _logger.info("database account call:" + str(time.time()))
+
+    end_ns = time.time_ns()
+    _logger.info(
+        f"Auth database_account_call_request | duration_ns={end_ns - start_ns}"
+    )
     response = response.http_response
     headers = copy.copy(response.headers)
 
@@ -149,6 +157,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
                 message="Failed to decode JSON data: {}".format(e),
                 response=response,
                 error=e) from e
+
+    if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
+        _logger.info("database account call end:" + str(time.time()))
 
     return result, headers
 

@@ -5,6 +5,8 @@
 # -------------------------------------------------------------------------
 
 from typing import Any, MutableMapping, TypeVar, cast, Optional
+import logging
+import time
 
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest
@@ -17,7 +19,6 @@ from ..http_constants import HttpHeaders
 from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
-
 # NOTE: This class accesses protected members (_scopes, _token) of the parent class
 # to implement fallback and scope-switching logic not exposed by the public API.
 # Composition was considered, but still required accessing protected members, so inheritance is retained
@@ -25,9 +26,10 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
-    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None):
+    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None, logger: Optional[logging.Logger] = None):
         self._account_scope = account_scope
         self._override_scope = override_scope
+        self._logger = logger or logging.getLogger("azure.cosmos.auth")
         self._current_scope = override_scope or account_scope
         super().__init__(credential, self._current_scope)
 
@@ -47,14 +49,25 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises: :class:`~azure.core.exceptions.ServiceRequestError`
         """
+        start_ns = time.time_ns()
         tried_fallback = False
         while True:
             try:
                 await super().on_request(request)
                 # The None-check for self._token is done in the parent on_request
                 self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+                end_ns = time.time_ns()
+                self._logger.info(
+                    f"Auth on_request success | account_name={self._account_scope} | scope={self._current_scope} | "
+                    f"duration_ns={end_ns - start_ns} | activity_id={request.http_request.headers.get(HttpHeaders.ActivityId, '')}"
+                )
                 break
             except HttpResponseError as ex:
+                self._logger.warning(
+                    f"Auth on_request HttpResponseError | account_name={self._account_scope} | scope={self._current_scope} | "
+                    f"activity_id={request.http_request.headers.get(HttpHeaders.ActivityId, '')} | "
+                    f"status_code={getattr(ex, 'status_code', None)} | sub_status={getattr(ex, 'sub_status', None)}"
+                )
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
                 if (
                         not self._override_scope and
@@ -68,7 +81,8 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                     continue
                 raise
 
-    async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
+    async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str,
+                                                **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
         Keyword arguments are passed to the credential's get_token method. The token will be cached and used to
@@ -77,7 +91,13 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request
         :param str scopes: required scopes of authentication
         """
-
+        start_ns = time.time_ns()
         await super().authorize_request(request, *scopes, **kwargs)
         # The None-check for self._token is done in the parent authorize_request
         self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+
+        end_ns = time.time_ns()
+        self._logger.info(
+            f"Auth authorize_request | account_name={self._account_scope} | scope={self._current_scope} | "
+            f"duration_ns={end_ns - start_ns} | activity_id={request.http_request.headers.get(HttpHeaders.ActivityId, '')}"
+        )
