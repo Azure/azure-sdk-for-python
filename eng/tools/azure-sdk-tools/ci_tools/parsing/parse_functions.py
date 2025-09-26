@@ -47,7 +47,6 @@ EXCLUDE = {
     "scripts",
     "images",
     ".tox"
-    ".venv*"
 }
 
 
