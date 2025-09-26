@@ -191,9 +191,9 @@ class _ConfigurationManager(metaclass=Singleton):
                 error_description = "network error"
             else:
                 error_description = f"HTTP {response.status_code}"
-            
+
             logger.warning("OneSettings CHANGE request failed with transient error (%s). Retrying. ", error_description)
-            return current_refresh_interval
+            return current_refresh_interval  # type: ignore
 
         # Prepare new state updates
         new_state_updates = {}
@@ -263,7 +263,7 @@ class _ConfigurationManager(metaclass=Singleton):
         if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
             self._notify_callbacks(state_for_callbacks.settings_cache)
 
-        return current_refresh_interval
+        return current_refresh_interval  # type: ignore
 
     def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
         """Get current settings cache."""

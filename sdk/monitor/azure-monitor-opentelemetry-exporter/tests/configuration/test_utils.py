@@ -92,7 +92,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
         self.assertFalse(response.has_exception)
-        self.assertFalse(response.has_timeout)
 
     def test_custom_initialization(self):
         """Test OneSettingsResponse with custom values."""
@@ -111,7 +110,6 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertEqual(response.version, 5)
         self.assertEqual(response.status_code, 304)
         self.assertFalse(response.has_exception)
-        self.assertFalse(response.has_timeout)
 
     def test_exception_initialization(self):
         """Test OneSettingsResponse with exception indicator."""
@@ -126,12 +124,10 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 500)
         self.assertTrue(response.has_exception)
-        self.assertFalse(response.has_timeout)
 
     def test_timeout_initialization(self):
         """Test OneSettingsResponse with timeout indicator."""
         response = OneSettingsResponse(
-            has_timeout=True,
             has_exception=True
         )
         
@@ -141,19 +137,16 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(response.has_exception)
-        self.assertTrue(response.has_timeout)
 
     def test_all_error_indicators(self):
         """Test OneSettingsResponse with all error indicators set."""
         response = OneSettingsResponse(
             status_code=408,
             has_exception=True,
-            has_timeout=True
         )
         
         self.assertEqual(response.status_code, 408)
         self.assertTrue(response.has_exception)
-        self.assertTrue(response.has_timeout)
 
 
 class TestMakeOneSettingsRequest(unittest.TestCase):
@@ -192,7 +185,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.version, 5)
         self.assertEqual(result.status_code, 200)
         self.assertFalse(result.has_exception)
-        self.assertFalse(result.has_timeout)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
     def test_request_timeout_exception(self, mock_get):
@@ -208,7 +200,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
-        self.assertTrue(result.has_timeout)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
     def test_request_connection_exception(self, mock_get):
@@ -224,7 +215,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
-        self.assertFalse(result.has_timeout)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
     def test_request_http_exception(self, mock_get):
@@ -240,7 +230,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
-        self.assertFalse(result.has_timeout)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
     def test_request_generic_exception(self, mock_get):
@@ -256,7 +245,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
-        self.assertFalse(result.has_timeout)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils._parse_onesettings_response')
@@ -282,7 +270,7 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
-        self.assertFalse(result.has_timeout)
+
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
     def test_http_error_status_codes(self, mock_get):
@@ -301,7 +289,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
                 
                 # Should return response with exception indicator
                 self.assertTrue(result.has_exception)
-                self.assertFalse(result.has_timeout)
                 self.assertEqual(result.status_code, 200)  # Default status when exception occurs
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
@@ -318,7 +305,6 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.has_exception)
-        self.assertFalse(result.has_timeout)
 
 
 class TestParseOneSettingsResponse(unittest.TestCase):
@@ -653,12 +639,10 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
         """Test response that indicates timeout but not general exception."""
         # This scenario shouldn't normally happen but test for completeness
         response = OneSettingsResponse(
-            has_timeout=True,
             has_exception=False,
             status_code=408
         )
         
-        self.assertTrue(response.has_timeout)
         self.assertFalse(response.has_exception)
         self.assertEqual(response.status_code, 408)
 
@@ -675,12 +659,9 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
         for has_timeout, has_exception, status_code, description in test_cases:
             with self.subTest(description=description):
                 response = OneSettingsResponse(
-                    has_timeout=has_timeout,
                     has_exception=has_exception,
                     status_code=status_code
                 )
-                
-                self.assertEqual(response.has_timeout, has_timeout)
                 self.assertEqual(response.has_exception, has_exception)
                 self.assertEqual(response.status_code, status_code)
 
