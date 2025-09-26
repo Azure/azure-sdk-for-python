@@ -22,22 +22,24 @@
 import json
 import urllib
 from typing import Any, cast, Dict, List, Optional
-from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
-from azure.core.pipeline.policies import (ContentDecodePolicy, DistributedTracingPolicy, HeadersPolicy, HTTPPolicy,
-                                          NetworkTraceLoggingPolicy, UserAgentPolicy)
+from azure.core.pipeline.policies import (ContentDecodePolicy, CustomHookPolicy, DistributedTracingPolicy,
+                                          HeadersPolicy, HTTPPolicy, NetworkTraceLoggingPolicy, ProxyPolicy,
+                                          RetryPolicy,
+                                          UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.utils import CaseInsensitiveDict
+from urllib3.util.retry import Retry
 
 from . import exceptions
+from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict
-from ._inference_auth_policy import InferenceServiceBearerTokenPolicy
 from ._retry_utility import ConnectionRetryPolicy
+from ._inference_auth_policy import InferenceServiceBearerTokenPolicy
 from .http_constants import HttpHeaders
 
-_DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
 
 # cspell:ignore rerank reranker reranking
 # pylint: disable=protected-access
@@ -45,6 +47,12 @@ _DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
 
 class _InferenceService:
     """Internal client for inference service."""
+
+    DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
+    TOTAL_RETRIES = 3
+    RETRY_BACKOFF_MAX = 120  # seconds
+    RETRY_AFTER_STATUS_CODES = frozenset([429, 500])
+    RETRY_BACKOFF_FACTOR = 0.8
 
     def __init__(self, cosmos_client_connection):
         """Initialize semantic reranker with credentials and endpoint information.
@@ -54,7 +62,7 @@ class _InferenceService:
         """
         self._client_connection = cosmos_client_connection
         self._aad_credentials = self._client_connection.aad_credentials
-        self._token_scope = _DEFAULT_SCOPE
+        self._token_scope = self.DEFAULT_SCOPE
 
         parsed = urllib.parse.urlparse(self._client_connection.url_connection)
         self._account_name = parsed.hostname.split('.')[0] if parsed.hostname else ""
@@ -74,7 +82,15 @@ class _InferenceService:
         connection_policy = self._client_connection.connection_policy
         retry_policy = None
         if isinstance(connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
-            retry_policy = connection_policy.ConnectionRetryConfiguration
+            retry_policy = ConnectionRetryPolicy(
+                retry_total=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_total', self.TOTAL_RETRIES),
+                retry_connect=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_connect', None),
+                retry_read=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_read', None),
+                retry_status=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_status', None),
+                retry_backoff_max=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_max', self.RETRY_BACKOFF_MAX),
+                retry_on_status_codes=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_on_status_codes', self.RETRY_AFTER_STATUS_CODES),
+                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor', self.RETRY_BACKOFF_FACTOR)
+            )
         elif isinstance(connection_policy.ConnectionRetryConfiguration, int):
             retry_policy = ConnectionRetryPolicy(total=connection_policy.ConnectionRetryConfiguration)
         elif isinstance(connection_policy.ConnectionRetryConfiguration, Retry):
@@ -91,30 +107,34 @@ class _InferenceService:
         else:
             raise TypeError(
                 "Unsupported retry policy. Must be an azure.cosmos.ConnectionRetryPolicy, int, or urllib3.Retry")
+
+        proxies = {}
+        if connection_policy.ProxyConfiguration and connection_policy.ProxyConfiguration.Host:
+            host = connection_policy.ProxyConfiguration.Host
+            url = urllib.parse.urlparse(host)
+            proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
+            proxies.update({url.scheme: proxy})
+
+        self._user_agent: str = self._client_connection._user_agent
         policies = [
             HeadersPolicy(),
-            UserAgentPolicy(base_user_agent=self._get_user_agent()),
+            ProxyPolicy(proxies=proxies),
+            UserAgentPolicy(base_user_agent=self._user_agent),
             ContentDecodePolicy(),
-            auth_policy,
             retry_policy,
+            auth_policy,
+            CustomHookPolicy(),
             NetworkTraceLoggingPolicy(),
             DistributedTracingPolicy(),
+            CosmosHttpLoggingPolicy(
+                enable_diagnostics_logging=self._client_connection._enable_diagnostics_logging,
+            ),
         ]
 
         return PipelineClient(
             base_url=self._inference_endpoint,
             policies=policies
         )
-
-    def _get_user_agent(self) -> str:
-        """Return the user agent string for inference pipeline.
-
-        :returns: User agent string.
-        :rtype: str
-        """
-        if self._client_connection and hasattr(self._client_connection, '_user_agent'):
-            return self._client_connection._user_agent + "_inference"
-        return "azure-cosmos-python-sdk-inference"
 
     def rerank(
         self,
@@ -173,12 +193,6 @@ class _InferenceService:
             if data:
                 data = data.decode("utf-8")
 
-            if response.status_code == 404:
-                raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
-            if response.status_code == 409:
-                raise exceptions.CosmosResourceExistsError(message=data, response=response)
-            if response.status_code == 412:
-                raise exceptions.CosmosAccessConditionFailedError(message=data, response=response)
             if response.status_code >= 400:
                 raise exceptions.CosmosHttpResponseError(message=data, response=response)
 
