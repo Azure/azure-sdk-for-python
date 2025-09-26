@@ -91,6 +91,8 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertEqual(response.settings, {})
         self.assertIsNone(response.version)
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.has_exception)
+        self.assertFalse(response.has_timeout)
 
     def test_custom_initialization(self):
         """Test OneSettingsResponse with custom values."""
@@ -108,6 +110,50 @@ class TestOneSettingsResponse(unittest.TestCase):
         self.assertEqual(response.settings, settings)
         self.assertEqual(response.version, 5)
         self.assertEqual(response.status_code, 304)
+        self.assertFalse(response.has_exception)
+        self.assertFalse(response.has_timeout)
+
+    def test_exception_initialization(self):
+        """Test OneSettingsResponse with exception indicator."""
+        response = OneSettingsResponse(
+            has_exception=True,
+            status_code=500
+        )
+        
+        self.assertIsNone(response.etag)
+        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(response.settings, {})
+        self.assertIsNone(response.version)
+        self.assertEqual(response.status_code, 500)
+        self.assertTrue(response.has_exception)
+        self.assertFalse(response.has_timeout)
+
+    def test_timeout_initialization(self):
+        """Test OneSettingsResponse with timeout indicator."""
+        response = OneSettingsResponse(
+            has_timeout=True,
+            has_exception=True
+        )
+        
+        self.assertIsNone(response.etag)
+        self.assertEqual(response.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(response.settings, {})
+        self.assertIsNone(response.version)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.has_exception)
+        self.assertTrue(response.has_timeout)
+
+    def test_all_error_indicators(self):
+        """Test OneSettingsResponse with all error indicators set."""
+        response = OneSettingsResponse(
+            status_code=408,
+            has_exception=True,
+            has_timeout=True
+        )
+        
+        self.assertEqual(response.status_code, 408)
+        self.assertTrue(response.has_exception)
+        self.assertTrue(response.has_timeout)
 
 
 class TestMakeOneSettingsRequest(unittest.TestCase):
@@ -145,20 +191,134 @@ class TestMakeOneSettingsRequest(unittest.TestCase):
         self.assertEqual(result.settings, {"key": "value", _ONE_SETTINGS_CHANGE_VERSION_KEY: "5"})
         self.assertEqual(result.version, 5)
         self.assertEqual(result.status_code, 200)
+        self.assertFalse(result.has_exception)
+        self.assertFalse(result.has_timeout)
 
     @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
-    def test_request_exception(self, mock_get):
-        """Test OneSettings request with network exception."""
-        mock_get.side_effect = Exception("Network error")
+    def test_request_timeout_exception(self, mock_get):
+        """Test OneSettings request with timeout exception."""
+        mock_get.side_effect = requests.exceptions.Timeout("Request timed out")
         
         result = make_onesettings_request("http://test.com")
         
-        # Should return default response
+        # Should return response with timeout and exception indicators
         self.assertIsNone(result.etag)
         self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
         self.assertEqual(result.settings, {})
         self.assertIsNone(result.version)
         self.assertEqual(result.status_code, 200)
+        self.assertTrue(result.has_exception)
+        self.assertTrue(result.has_timeout)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    def test_request_connection_exception(self, mock_get):
+        """Test OneSettings request with connection exception."""
+        mock_get.side_effect = requests.exceptions.ConnectionError("Connection failed")
+        
+        result = make_onesettings_request("http://test.com")
+        
+        # Should return response with exception indicator but no timeout
+        self.assertIsNone(result.etag)
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.settings, {})
+        self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
+        self.assertTrue(result.has_exception)
+        self.assertFalse(result.has_timeout)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    def test_request_http_exception(self, mock_get):
+        """Test OneSettings request with HTTP exception."""
+        mock_get.side_effect = requests.exceptions.HTTPError("HTTP 500 Error")
+        
+        result = make_onesettings_request("http://test.com")
+        
+        # Should return response with exception indicator
+        self.assertIsNone(result.etag)
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.settings, {})
+        self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
+        self.assertTrue(result.has_exception)
+        self.assertFalse(result.has_timeout)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    def test_request_generic_exception(self, mock_get):
+        """Test OneSettings request with generic exception."""
+        mock_get.side_effect = Exception("Unexpected error")
+        
+        result = make_onesettings_request("http://test.com")
+        
+        # Should return response with exception indicator
+        self.assertIsNone(result.etag)
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.settings, {})
+        self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
+        self.assertTrue(result.has_exception)
+        self.assertFalse(result.has_timeout)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils._parse_onesettings_response')
+    def test_json_decode_exception(self, mock_parse, mock_get):
+        """Test OneSettings request with JSON decode exception."""
+        # Setup mock response
+        mock_response = Mock()
+        mock_response.status_code = 200
+        mock_response.headers = {"ETag": "test-etag"}
+        mock_response.content = b"invalid json content"
+        mock_get.return_value = mock_response
+        
+        # Mock _parse_onesettings_response to raise JSONDecodeError
+        from json import JSONDecodeError
+        mock_parse.side_effect = JSONDecodeError("Expecting value", "invalid json content", 0)
+        
+        result = make_onesettings_request("http://test.com")
+        
+        # Should return response with exception indicator
+        self.assertIsNone(result.etag)
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.settings, {})
+        self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
+        self.assertTrue(result.has_exception)
+        self.assertFalse(result.has_timeout)
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    def test_http_error_status_codes(self, mock_get):
+        """Test OneSettings request with various HTTP error status codes."""
+        # Test different HTTP error codes
+        error_codes = [400, 401, 403, 404, 429, 500, 502, 503, 504]
+        
+        for status_code in error_codes:
+            with self.subTest(status_code=status_code):
+                mock_response = Mock()
+                mock_response.status_code = status_code
+                mock_response.raise_for_status.side_effect = requests.exceptions.HTTPError(f"HTTP {status_code}")
+                mock_get.return_value = mock_response
+                
+                result = make_onesettings_request("http://test.com")
+                
+                # Should return response with exception indicator
+                self.assertTrue(result.has_exception)
+                self.assertFalse(result.has_timeout)
+                self.assertEqual(result.status_code, 200)  # Default status when exception occurs
+
+    @patch('azure.monitor.opentelemetry.exporter._configuration._utils.requests.get')
+    def test_request_exception_legacy(self, mock_get):
+        """Test OneSettings request with network exception (legacy behavior test)."""
+        mock_get.side_effect = requests.exceptions.RequestException("Network error")
+        
+        result = make_onesettings_request("http://test.com")
+        
+        # Should return response with exception indicator
+        self.assertIsNone(result.etag)
+        self.assertEqual(result.refresh_interval, _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS)
+        self.assertEqual(result.settings, {})
+        self.assertIsNone(result.version)
+        self.assertEqual(result.status_code, 200)
+        self.assertTrue(result.has_exception)
+        self.assertFalse(result.has_timeout)
 
 
 class TestParseOneSettingsResponse(unittest.TestCase):
@@ -484,6 +644,45 @@ class TestParseVersionWithBeta(unittest.TestCase):
         """Test parsing beta version without number."""
         result = _parse_version_with_beta("1.2.3b")
         self.assertEqual(result, (1, 2, 3, 0))
+
+
+class TestOneSettingsResponseErrorHandling(unittest.TestCase):
+    """Test cases specifically for OneSettingsResponse error handling scenarios."""
+
+    def test_response_with_timeout_only(self):
+        """Test response that indicates timeout but not general exception."""
+        # This scenario shouldn't normally happen but test for completeness
+        response = OneSettingsResponse(
+            has_timeout=True,
+            has_exception=False,
+            status_code=408
+        )
+        
+        self.assertTrue(response.has_timeout)
+        self.assertFalse(response.has_exception)
+        self.assertEqual(response.status_code, 408)
+
+    def test_response_error_combinations(self):
+        """Test various combinations of error indicators."""
+        test_cases = [
+            # (has_timeout, has_exception, status_code, description)
+            (True, True, 200, "timeout with exception"),
+            (False, True, 500, "exception without timeout"),
+            (True, False, 408, "timeout without exception flag"),
+            (False, False, 429, "no error flags but error status"),
+        ]
+        
+        for has_timeout, has_exception, status_code, description in test_cases:
+            with self.subTest(description=description):
+                response = OneSettingsResponse(
+                    has_timeout=has_timeout,
+                    has_exception=has_exception,
+                    status_code=status_code
+                )
+                
+                self.assertEqual(response.has_timeout, has_timeout)
+                self.assertEqual(response.has_exception, has_exception)
+                self.assertEqual(response.status_code, status_code)
 
 
 class TestFeatureEvaluationIntegration(unittest.TestCase):

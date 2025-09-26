@@ -9,6 +9,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
+    _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
+    _RETRYABLE_STATUS_CODES,
 )
 from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
@@ -79,6 +81,19 @@ class _ConfigurationManager(metaclass=Singleton):
             except Exception as ex:  # pylint: disable=broad-except
                 logger.warning("Callback failed: %s", ex)
 
+    def _is_transient_error(self, response) -> bool:
+        """Check if the response indicates a transient error.
+        
+        :param response: OneSettingsResponse object from OneSettings request
+        :return: True if the error is transient and refresh interval should be increased
+        """
+        # Check for timeout or exception indicators
+        if response.has_timeout or response.has_exception:
+            return True
+        
+        # Check for retryable HTTP status codes
+        return response.status_code in _RETRYABLE_STATUS_CODES
+
     # pylint: disable=too-many-statements
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
@@ -87,12 +102,18 @@ class _ConfigurationManager(metaclass=Singleton):
         current ETag for efficient caching. It atomically updates the local configuration
         state with any new settings and manages version tracking for change detection.
         
+        When transient errors are encountered (timeouts, network exceptions, or HTTP status
+        codes 429, 500-504) from the CHANGE endpoint, the method doubles the current refresh 
+        interval to reduce load on the failing service and returns immediately. The refresh 
+        interval is capped at 24 hours (86,400 seconds) to prevent excessively long delays.
+        
         The method implements a check-and-set pattern for thread safety:
         1. Reads current state atomically to prepare request headers
         2. Makes HTTP request to OneSettings CHANGE endpoint outside locks
-        3. Re-reads current state to make version comparison decisions
-        4. Conditionally fetches from CONFIG endpoint if version increased
-        5. Updates all state fields atomically in a single operation
+        3. If transient error (including timeouts/exceptions), doubles refresh interval (capped at 24 hours) and returns immediately
+        4. Re-reads current state to make version comparison decisions
+        5. Conditionally fetches from CONFIG endpoint if version increased
+        6. Updates all state fields atomically in a single operation
         
         Version comparison logic:
         - Version increase: New configuration available, fetches and caches new settings
@@ -100,8 +121,9 @@ class _ConfigurationManager(metaclass=Singleton):
         - Version decrease: Unexpected rollback state, logged as warning, no updates applied
         
         Error handling:
+        - Transient errors (timeouts, exceptions, retryable HTTP codes) from CHANGE endpoint: Refresh interval doubled (capped), immediate return
         - CONFIG endpoint failure: ETag not updated to preserve retry capability on next call
-        - Network failures: Handled by make_onesettings_request, returns default values
+        - Network failures: Handled by make_onesettings_request with error indicators
         - Missing settings/version: Logged as warning, only ETag and refresh interval updated
 
         :param query_dict: Optional query parameters to include in the OneSettings request.
@@ -110,8 +132,9 @@ class _ConfigurationManager(metaclass=Singleton):
         :type query_dict: Optional[Dict[str, str]]
 
         :return: Updated refresh interval in seconds for the next configuration check.
-            This value comes from the OneSettings response and determines how frequently
-            the background worker should call this method.
+            This value comes from the OneSettings response or is doubled (capped at 24 hours)
+            if transient errors are encountered from the CHANGE endpoint, determining how 
+            frequently the background worker should call this method.
         :rtype: int
         
         Thread Safety:
@@ -134,6 +157,12 @@ class _ConfigurationManager(metaclass=Singleton):
             All configuration state (ETag, refresh interval, version, settings) is updated
             atomically using immutable state objects. This prevents race conditions where
             different threads might observe inconsistent combinations of these values.
+            
+        Transient Error Handling:
+            When transient errors are detected from the CHANGE endpoint (including timeouts,
+            network exceptions, or retryable HTTP status codes), the refresh interval is
+            doubled and the method returns immediately, preserving current state for retry.
+            The refresh interval is capped at 24 hours to ensure eventual recovery attempts.
         """
         query_dict = query_dict or {}
         headers = {}
@@ -148,6 +177,24 @@ class _ConfigurationManager(metaclass=Singleton):
 
         # Make the OneSettings request
         response = make_onesettings_request(_ONE_SETTINGS_CHANGE_URL, query_dict, headers)
+
+        # Check for transient errors from CHANGE endpoint - return immediately if found
+        if self._is_transient_error(response):
+            with self._state_lock:
+                # Double the refresh interval and cap it at 24 hours
+                doubled_interval = self._current_state.refresh_interval * 2
+                current_refresh_interval = min(doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
+            
+            # Create appropriate log message based on error type
+            if response.has_timeout:
+                error_description = "timeout"
+            elif response.has_exception:
+                error_description = "network exception"
+            else:
+                error_description = f"HTTP {response.status_code}"
+            
+            logger.warning("OneSettings CHANGE request failed with transient error (%s). Retrying. ", error_description)
+            return current_refresh_interval
 
         # Prepare new state updates
         new_state_updates = {}

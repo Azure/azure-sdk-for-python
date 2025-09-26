@@ -7,10 +7,7 @@
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
 - Adding customer sdkstats to feature statsbeat
   ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
-
-- OneSettings control plane: Add live metrics feature control
-  ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
-- OneSettings control plane: Add killswitch + exponential  backoff
+- OneSettings control plane: Add killswitch + exponential  backoff + sdkstats feature control
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
 
 ### Breaking Changes
