@@ -26,7 +26,8 @@ HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
-    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None, logger: Optional[logging.Logger] = None):
+    def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None,
+                 logger: Optional[logging.Logger] = None):
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._logger = logger or logging.getLogger("azure.cosmos.auth")
@@ -56,18 +57,23 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                 await super().on_request(request)
                 # The None-check for self._token is done in the parent on_request
                 self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
+                activity_id = ""
+                if request and request.http_request and request.http_request.headers:
+                    activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 end_ns = time.time_ns()
-                self._logger.info(
-                    f"Auth on_request success | account_name={self._account_scope} | scope={self._current_scope} | "
-                    f"duration_ns={end_ns - start_ns} | activity_id={request.http_request.headers.get(HttpHeaders.ActivityId, '')}"
-                )
+                self._logger.info("Async Auth on_request success | account_name={} | scope={} | duration_ns={} "
+                                  "| activity_id={}".format(self._account_scope, self._current_scope,
+                                                            (end_ns - start_ns),
+                                                            activity_id))
                 break
             except HttpResponseError as ex:
-                self._logger.warning(
-                    f"Auth on_request HttpResponseError | account_name={self._account_scope} | scope={self._current_scope} | "
-                    f"activity_id={request.http_request.headers.get(HttpHeaders.ActivityId, '')} | "
-                    f"status_code={getattr(ex, 'status_code', None)} | sub_status={getattr(ex, 'sub_status', None)}"
-                )
+                activity_id = ""
+                if request and request.http_request and request.http_request.headers:
+                    activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
+                self._logger.warning("Async Auth on_request HttpResponseError | account_name={} | scope={} | "
+                    "activity_id={} | status_code={} | sub_status={}".format(
+                    self._account_scope, self._current_scope, activity_id, getattr(ex, 'status_code', None),
+                    getattr(ex, 'sub_status', None)))
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
                 if (
                         not self._override_scope and
@@ -97,7 +103,8 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
 
         end_ns = time.time_ns()
-        self._logger.info(
-            f"Auth authorize_request | account_name={self._account_scope} | scope={self._current_scope} | "
-            f"duration_ns={end_ns - start_ns} | activity_id={request.http_request.headers.get(HttpHeaders.ActivityId, '')}"
-        )
+        activity_id = ""
+        if request and request.http_request and request.http_request.headers:
+            activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
+        self._logger.info("Async Auth authorize_request | account_name={} | scope={} | duration_ns={} | activity_id={}"
+                          .format(self._account_scope, self._current_scope, (end_ns - start_ns), activity_id))
