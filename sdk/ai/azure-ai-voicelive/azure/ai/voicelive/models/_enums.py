@@ -67,6 +67,19 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
+class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Threshold level settings for Azure semantic end-of-utterance detection."""
+
+    LOW = "low"
+    """Low sensitivity threshold level."""
+    MEDIUM = "medium"
+    """Medium sensitivity threshold level."""
+    HIGH = "high"
+    """High sensitivity threshold level."""
+    DEFAULT = "default"
+    """Default sensitivity threshold level."""
+
+
 class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Input audio format types supported."""
 

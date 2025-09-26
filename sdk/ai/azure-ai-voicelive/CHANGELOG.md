@@ -4,6 +4,24 @@
 
 ### Features Added
 
+- **Enhanced Semantic Detection Type Safety**: Added new `EouThresholdLevel` enum for better type safety in end-of-utterance detection:
+  - `LOW` for low sensitivity threshold level
+  - `MEDIUM` for medium sensitivity threshold level  
+  - `HIGH` for high sensitivity threshold level
+  - `DEFAULT` for default sensitivity threshold level
+- **Improved Semantic Detection Configuration**: Enhanced semantic detection classes with better type annotations:
+  - `threshold_level` parameter now supports both string values and `EouThresholdLevel` enum
+  - Cleaner type definitions for `AzureSemanticDetection`, `AzureSemanticDetectionEn`, and `AzureSemanticDetectionMultilingual`
+  - Improved documentation for threshold level parameters
+- **Comprehensive Unit Test Suite**: Added extensive unit test coverage with 200+ test cases covering:
+  - All enum types and their functionality
+  - Model creation, validation, and serialization
+  - Async connection functionality with proper mocking
+  - Client event handling and workflows
+  - Voice configuration across all supported types
+  - Message handling with content part hierarchy
+  - Integration scenarios and real-world usage patterns
+  - Recent changes validation and backwards compatibility
 - **API Version Update**: Updated to API version `2025-10-01` (from `2025-05-01-preview`)
 - **Enhanced Type Safety**: Added new `AzureVoiceType` enum with values for better Azure voice type categorization:
   - `AZURE_CUSTOM` for custom voice configurations
@@ -62,7 +80,14 @@
 
 ### Other Changes
 
-- **API Documentation**: Updated API view properties to reflect model structure changes and cross-language package identity
+- **Testing Infrastructure**: Added comprehensive unit test suite with extensive coverage:
+  - 8 main test files with 200+ individual test methods
+  - Tests for all enums, models, async operations, client events, voice configurations, and message handling
+  - Integration tests covering real-world scenarios and recent changes
+  - Proper mocking for async WebSocket connections
+  - Backwards compatibility validation
+  - Test coverage for all recent changes and enhancements
+- **API Documentation**: Updated API view properties to reflect model structure changes, new enums, and cross-language package identity
 - **Documentation Updates**: Comprehensive updates to all markdown documentation:
   - Updated README.md to reflect async-only nature with updated examples and installation instructions
   - Updated samples README.md to remove sync sample references

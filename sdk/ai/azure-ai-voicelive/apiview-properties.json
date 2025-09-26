@@ -134,6 +134,7 @@
         "azure.ai.voicelive.models.AnimationOutputType": "VoiceLive.AnimationOutputType",
         "azure.ai.voicelive.models.InputAudioFormat": "VoiceLive.InputAudioFormat",
         "azure.ai.voicelive.models.TurnDetectionType": "VoiceLive.TurnDetectionType",
+        "azure.ai.voicelive.models.EouThresholdLevel": "VoiceLive.EouThresholdLevel",
         "azure.ai.voicelive.models.AudioTimestampType": "VoiceLive.AudioTimestampType",
         "azure.ai.voicelive.models.ToolChoiceLiteral": "VoiceLive.ToolChoiceLiteral",
         "azure.ai.voicelive.models.ResponseStatus": "VoiceLive.ResponseStatus",
