@@ -114,20 +114,20 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
         """
         try:
-            updated_sentinel = await self._client.get_configuration_setting(  # type: ignore
+            updated_watched_setting = await self._client.get_configuration_setting(  # type: ignore
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
-            if updated_sentinel is not None:
+            if updated_watched_setting is not None:
                 self.LOGGER.debug(
                     "Refresh all triggered by key: %s label %s.",
                     key,
                     label,
                 )
-                return True, updated_sentinel
+                return True, updated_watched_setting
         except HttpResponseError as e:
             if e.status_code == 404:
                 if etag is not None:
-                    # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                    # If the watched setting is not found, it means the key/label was deleted, so we should refresh
                     self.LOGGER.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
@@ -181,16 +181,16 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :param Mapping[Tuple[str, str], Optional[str]] watched_settings: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
-        :return: Updated value of the configuration sentinel keys.
+        :return: Updated value of the configuration watched settings.
         :rtype: Union[Dict[Tuple[str, str], str], None]
         """
         updated_watched_settings = dict(watched_settings)
         for (key, label), etag in watched_settings.items():
-            changed, updated_sentinel = await self._check_configuration_setting(
+            changed, updated_watched_setting = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
-            if changed and updated_sentinel is not None:
-                updated_watched_settings[(key, label)] = updated_sentinel.etag
+            if changed and updated_watched_setting is not None:
+                updated_watched_settings[(key, label)] = updated_watched_setting.etag
             elif changed:
                 # The key was deleted
                 updated_watched_settings[(key, label)] = None

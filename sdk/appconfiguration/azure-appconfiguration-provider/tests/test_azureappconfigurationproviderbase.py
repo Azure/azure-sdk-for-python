@@ -18,7 +18,7 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     update_correlation_context_header,
     _uses_feature_flags,
     is_json_content_type,
-    _build_sentinel,
+    _build_watched_setting,
     sdk_allowed_kwargs,
     _RefreshTimer,
     AzureAppConfigurationProviderBase,
@@ -265,28 +265,28 @@ class TestIsJsonContentType(unittest.TestCase):
                 self.assertFalse(is_json_content_type(content_type))
 
 
-class TestBuildSentinel(unittest.TestCase):
-    """Test the _build_sentinel function."""
+class TestBuildWatchedSetting(unittest.TestCase):
+    """Test the _build_watched_setting function."""
 
     def test_string_input(self):
         """Test with string input."""
-        result = _build_sentinel("test_key")
+        result = _build_watched_setting("test_key")
         self.assertEqual(result, ("test_key", NULL_CHAR))
 
     def test_tuple_input(self):
         """Test with tuple input."""
-        result = _build_sentinel(("test_key", "test_label"))
+        result = _build_watched_setting(("test_key", "test_label"))
         self.assertEqual(result, ("test_key", "test_label"))
 
     def test_wildcard_key_raises_error(self):
         """Test that wildcard in key raises ValueError."""
         with self.assertRaises(ValueError):
-            _build_sentinel("test*key")
+            _build_watched_setting("test*key")
 
     def test_wildcard_label_raises_error(self):
         """Test that wildcard in label raises ValueError."""
         with self.assertRaises(ValueError):
-            _build_sentinel(("test_key", "test*label"))
+            _build_watched_setting(("test_key", "test*label"))
 
 
 class TestSdkAllowedKwargs(unittest.TestCase):
