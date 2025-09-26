@@ -123,6 +123,8 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             if self._warm_up_status.get(scope_key):
                 if cache_context.cache_details.get("is_warm_up_call"):
                     self._warm_up_status[scope_key] = f"Started Again (Previously: {self._warm_up_status[scope_key]})"
+                else:
+                    self._warm_up_status[scope_key] = self._warm_up_status[scope_key]
             else:
                 if cache_context.cache_details.get("is_warm_up_call"):
                     self._warm_up_status[scope_key] = "Started"
