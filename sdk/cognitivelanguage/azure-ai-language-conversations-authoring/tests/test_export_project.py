@@ -22,6 +22,7 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint, key):
         return ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
 
+
 class TestConversationsExportCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy

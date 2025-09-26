@@ -176,7 +176,8 @@ class AbstractiveSummarizationOperationAction(AnalyzeTextOperationAction, discri
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.ABSTRACTIVE_SUMMARIZATION  # type: ignore
 
 
 class AnalyzeTextLROResult(_Model):
@@ -291,9 +292,8 @@ class AbstractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminato
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.ABSTRACTIVE_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
 class AbstractiveSummarizationResult(_Model):
@@ -522,7 +522,8 @@ class AgeMetadata(BaseMetadata, discriminator="AgeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.AGE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.AGE_METADATA  # type: ignore
 
 
 class EntityOverlapPolicy(_Model):
@@ -586,7 +587,8 @@ class AllowOverlapEntityPolicyType(EntityOverlapPolicy, discriminator="allowOver
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=PolicyKind.ALLOW_OVERLAP, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = PolicyKind.ALLOW_OVERLAP  # type: ignore
 
 
 class AnalyzeTextResult(_Model):
@@ -657,7 +659,8 @@ class AnalyzeTextEntitiesResult(AnalyzeTextResult, discriminator="EntityRecognit
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.ENTITY_RECOGNITION_RESULTS  # type: ignore
 
 
 class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLinkingResults"):
@@ -689,7 +692,8 @@ class AnalyzeTextEntityLinkingResult(AnalyzeTextResult, discriminator="EntityLin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.ENTITY_LINKING_RESULTS  # type: ignore
 
 
 class AnalyzeTextError(_Model):
@@ -824,7 +828,8 @@ class AnalyzeTextKeyPhraseResult(AnalyzeTextResult, discriminator="KeyPhraseExtr
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.KEY_PHRASE_EXTRACTION_RESULTS  # type: ignore
 
 
 class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="LanguageDetectionResults"):
@@ -856,7 +861,8 @@ class AnalyzeTextLanguageDetectionResult(AnalyzeTextResult, discriminator="Langu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.LANGUAGE_DETECTION_RESULTS  # type: ignore
 
 
 class AnalyzeTextOperationState(_Model):
@@ -980,7 +986,8 @@ class AnalyzeTextPiiResult(AnalyzeTextResult, discriminator="PiiEntityRecognitio
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.PII_ENTITY_RECOGNITION_RESULTS  # type: ignore
 
 
 class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnalysisResults"):
@@ -1012,7 +1019,8 @@ class AnalyzeTextSentimentResult(AnalyzeTextResult, discriminator="SentimentAnal
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextResultsKind.SENTIMENT_ANALYSIS_RESULTS  # type: ignore
 
 
 class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
@@ -1055,7 +1063,8 @@ class AreaMetadata(BaseMetadata, discriminator="AreaMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.AREA_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.AREA_METADATA  # type: ignore
 
 
 class BaseRedactionPolicy(_Model):
@@ -1131,7 +1140,8 @@ class CharacterMaskPolicyType(BaseRedactionPolicy, discriminator="characterMask"
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.CHARACTER_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.CHARACTER_MASK  # type: ignore
 
 
 class ClassificationActionResult(_Model):
@@ -1273,7 +1283,8 @@ class CurrencyMetadata(BaseMetadata, discriminator="CurrencyMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.CURRENCY_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.CURRENCY_METADATA  # type: ignore
 
 
 class CustomEntitiesActionContent(_Model):
@@ -1361,7 +1372,8 @@ class CustomEntitiesLROTask(AnalyzeTextOperationAction, discriminator="CustomEnt
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.CUSTOM_ENTITY_RECOGNITION  # type: ignore
 
 
 class CustomEntitiesResult(_Model):
@@ -1516,9 +1528,8 @@ class CustomEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.CUSTOM_ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
 class CustomLabelClassificationResult(_Model):
@@ -1652,7 +1663,8 @@ class CustomMultiLabelClassificationOperationAction(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.CUSTOM_MULTI_LABEL_CLASSIFICATION  # type: ignore
 
 
 class CustomMultiLabelClassificationOperationResult(
@@ -1700,9 +1712,8 @@ class CustomMultiLabelClassificationOperationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.CUSTOM_MULTI_LABEL_CLASSIFICATION_OPERATION_RESULTS  # type: ignore
 
 
 class CustomSingleLabelClassificationActionContent(_Model):  # pylint: disable=name-too-long
@@ -1782,7 +1793,8 @@ class CustomSingleLabelClassificationOperationAction(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION  # type: ignore
 
 
 class CustomSingleLabelClassificationOperationResult(
@@ -1830,9 +1842,8 @@ class CustomSingleLabelClassificationOperationResult(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.CUSTOM_SINGLE_LABEL_CLASSIFICATION_OPERATION_RESULTS  # type: ignore
 
 
 class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
@@ -1866,7 +1877,8 @@ class DateMetadata(BaseMetadata, discriminator="DateMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.DATE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.DATE_METADATA  # type: ignore
 
 
 class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
@@ -1900,7 +1912,8 @@ class DateTimeMetadata(BaseMetadata, discriminator="DateTimeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.DATE_TIME_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.DATE_TIME_METADATA  # type: ignore
 
 
 class DateValue(_Model):
@@ -2262,7 +2275,8 @@ class EntitiesLROTask(AnalyzeTextOperationAction, discriminator="EntityRecogniti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.ENTITY_RECOGNITION  # type: ignore
 
 
 class EntitiesResult(_Model):
@@ -2644,7 +2658,8 @@ class EntityLinkingLROTask(AnalyzeTextOperationAction, discriminator="EntityLink
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.ENTITY_LINKING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.ENTITY_LINKING  # type: ignore
 
 
 class EntityLinkingMatch(_Model):
@@ -2734,7 +2749,8 @@ class EntityLinkingOperationResult(AnalyzeTextLROResult, discriminator="EntityLi
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.ENTITY_LINKING_OPERATION_RESULTS  # type: ignore
 
 
 class EntityLinkingResult(_Model):
@@ -2810,7 +2826,8 @@ class EntityMaskPolicyType(BaseRedactionPolicy, discriminator="entityMask"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.ENTITY_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.ENTITY_MASK  # type: ignore
 
 
 class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="EntityRecognitionLROResults"):
@@ -2853,7 +2870,8 @@ class EntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="Enti
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
 class EntitySynonym(_Model):
@@ -3215,7 +3233,8 @@ class ExtractiveSummarizationOperationAction(AnalyzeTextOperationAction, discrim
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.EXTRACTIVE_SUMMARIZATION  # type: ignore
 
 
 class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator="ExtractiveSummarizationLROResults"):
@@ -3260,9 +3279,8 @@ class ExtractiveSummarizationOperationResult(AnalyzeTextLROResult, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(
-            *args, kind=AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS, **kwargs
-        )
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.EXTRACTIVE_SUMMARIZATION_OPERATION_RESULTS  # type: ignore
 
 
 class ExtractiveSummarizationResult(_Model):
@@ -3625,7 +3643,8 @@ class HealthcareLROResult(AnalyzeTextLROResult, discriminator="HealthcareLROResu
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.HEALTHCARE_OPERATION_RESULTS  # type: ignore
 
 
 class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
@@ -3662,7 +3681,8 @@ class HealthcareLROTask(AnalyzeTextOperationAction, discriminator="Healthcare"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.HEALTHCARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.HEALTHCARE  # type: ignore
 
 
 class HealthcareRelation(_Model):
@@ -3928,7 +3948,8 @@ class InformationMetadata(BaseMetadata, discriminator="InformationMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.INFORMATION_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.INFORMATION_METADATA  # type: ignore
 
 
 class InnerErrorModel(_Model):
@@ -4071,7 +4092,8 @@ class KeyPhraseExtractionOperationResult(AnalyzeTextLROResult, discriminator="Ke
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.KEY_PHRASE_EXTRACTION_OPERATION_RESULTS  # type: ignore
 
 
 class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtraction"):
@@ -4108,7 +4130,8 @@ class KeyPhraseLROTask(AnalyzeTextOperationAction, discriminator="KeyPhraseExtra
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.KEY_PHRASE_EXTRACTION  # type: ignore
 
 
 class KeyPhraseResult(_Model):
@@ -4463,7 +4486,8 @@ class LengthMetadata(BaseMetadata, discriminator="LengthMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.LENGTH_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.LENGTH_METADATA  # type: ignore
 
 
 class LinkedEntity(_Model):
@@ -4553,7 +4577,8 @@ class MatchLongestEntityPolicyType(EntityOverlapPolicy, discriminator="matchLong
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=PolicyKind.MATCH_LONGEST, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = PolicyKind.MATCH_LONGEST  # type: ignore
 
 
 class MultiLanguageInput(_Model):
@@ -4792,7 +4817,8 @@ class NoMaskPolicyType(BaseRedactionPolicy, discriminator="noMask"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, policy_kind=RedactionPolicyKind.NO_MASK, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.policy_kind = RedactionPolicyKind.NO_MASK  # type: ignore
 
 
 class NumberMetadata(BaseMetadata, discriminator="NumberMetadata"):
@@ -4833,7 +4859,8 @@ class NumberMetadata(BaseMetadata, discriminator="NumberMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.NUMBER_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.NUMBER_METADATA  # type: ignore
 
 
 class NumericRangeMetadata(BaseMetadata, discriminator="NumericRangeMetadata"):
@@ -4890,7 +4917,8 @@ class NumericRangeMetadata(BaseMetadata, discriminator="NumericRangeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.NUMERIC_RANGE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.NUMERIC_RANGE_METADATA  # type: ignore
 
 
 class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
@@ -4938,7 +4966,8 @@ class OrdinalMetadata(BaseMetadata, discriminator="OrdinalMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.ORDINAL_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.ORDINAL_METADATA  # type: ignore
 
 
 class PiiActionContent(_Model):
@@ -5174,7 +5203,8 @@ class PiiEntityRecognitionOperationResult(AnalyzeTextLROResult, discriminator="P
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.PII_ENTITY_RECOGNITION_OPERATION_RESULTS  # type: ignore
 
 
 class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition"):
@@ -5211,7 +5241,8 @@ class PiiLROTask(AnalyzeTextOperationAction, discriminator="PiiEntityRecognition
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.PII_ENTITY_RECOGNITION  # type: ignore
 
 
 class PiiResult(_Model):
@@ -5733,7 +5764,8 @@ class SentimentAnalysisOperationAction(AnalyzeTextOperationAction, discriminator
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationActionKind.SENTIMENT_ANALYSIS  # type: ignore
 
 
 class SentimentConfidenceScores(_Model):
@@ -5815,7 +5847,8 @@ class SentimentLROResult(AnalyzeTextLROResult, discriminator="SentimentAnalysisL
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextOperationResultsKind.SENTIMENT_ANALYSIS_OPERATION_RESULTS  # type: ignore
 
 
 class SentimentResult(_Model):
@@ -5907,7 +5940,8 @@ class SpeedMetadata(BaseMetadata, discriminator="SpeedMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.SPEED_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.SPEED_METADATA  # type: ignore
 
 
 class SummaryContext(_Model):
@@ -6052,7 +6086,8 @@ class TemperatureMetadata(BaseMetadata, discriminator="TemperatureMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TEMPERATURE_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TEMPERATURE_METADATA  # type: ignore
 
 
 class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
@@ -6086,7 +6121,8 @@ class TemporalSetMetadata(BaseMetadata, discriminator="TemporalSetMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TEMPORAL_SET_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TEMPORAL_SET_METADATA  # type: ignore
 
 
 class TemporalSpanMetadata(BaseMetadata, discriminator="TemporalSpanMetadata"):
@@ -6120,7 +6156,8 @@ class TemporalSpanMetadata(BaseMetadata, discriminator="TemporalSpanMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TEMPORAL_SPAN_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TEMPORAL_SPAN_METADATA  # type: ignore
 
 
 class TemporalSpanValues(_Model):
@@ -6273,7 +6310,8 @@ class TextEntityLinkingInput(AnalyzeTextInput, discriminator="EntityLinking"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.ENTITY_LINKING, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.ENTITY_LINKING  # type: ignore
 
 
 class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognition"):
@@ -6314,7 +6352,8 @@ class TextEntityRecognitionInput(AnalyzeTextInput, discriminator="EntityRecognit
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.ENTITY_RECOGNITION  # type: ignore
 
 
 class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExtraction"):
@@ -6355,7 +6394,8 @@ class TextKeyPhraseExtractionInput(AnalyzeTextInput, discriminator="KeyPhraseExt
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.KEY_PHRASE_EXTRACTION  # type: ignore
 
 
 class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetection"):
@@ -6396,7 +6436,8 @@ class TextLanguageDetectionInput(AnalyzeTextInput, discriminator="LanguageDetect
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.LANGUAGE_DETECTION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.LANGUAGE_DETECTION  # type: ignore
 
 
 class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntityRecognition"):
@@ -6437,7 +6478,8 @@ class TextPiiEntitiesRecognitionInput(AnalyzeTextInput, discriminator="PiiEntity
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.PII_ENTITY_RECOGNITION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.PII_ENTITY_RECOGNITION  # type: ignore
 
 
 class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnalysis"):
@@ -6478,7 +6520,8 @@ class TextSentimentAnalysisInput(AnalyzeTextInput, discriminator="SentimentAnaly
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, kind=AnalyzeTextInputKind.SENTIMENT_ANALYSIS, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.kind = AnalyzeTextInputKind.SENTIMENT_ANALYSIS  # type: ignore
 
 
 class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
@@ -6512,7 +6555,8 @@ class TimeMetadata(BaseMetadata, discriminator="TimeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.TIME_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.TIME_METADATA  # type: ignore
 
 
 class ValueExclusionPolicy(_Model):
@@ -6596,7 +6640,8 @@ class VolumeMetadata(BaseMetadata, discriminator="VolumeMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.VOLUME_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.VOLUME_METADATA  # type: ignore
 
 
 class WeightMetadata(BaseMetadata, discriminator="WeightMetadata"):
@@ -6638,4 +6683,5 @@ class WeightMetadata(BaseMetadata, discriminator="WeightMetadata"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, metadata_kind=MetadataKind.WEIGHT_METADATA, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.metadata_kind = MetadataKind.WEIGHT_METADATA  # type: ignore

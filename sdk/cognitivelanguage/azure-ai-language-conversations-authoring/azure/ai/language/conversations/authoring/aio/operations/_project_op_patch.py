@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import MutableMapping # pylint:disable=import-error
+from collections.abc import MutableMapping  # pylint:disable=import-error
 from typing import IO, Any, Callable, Dict, Optional, TypeVar, Union, cast, overload
 
 from azure.core.async_paging import AsyncItemPaged
@@ -48,9 +48,7 @@ from ._operations import ProjectOperations as ProjectOperationsGenerated
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 _Unset: Any = object()
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 
 class ProjectOperations(ProjectOperationsGenerated):
@@ -224,7 +222,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_assign_deployment_resources(
-        self, body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json",**kwargs: Any
+        self,
+        body: Union[AssignDeploymentResourcesDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Assign new Azure resources to a project to allow deploying new deployments to them.
         This API is available only via AAD authentication and not supported via subscription key authentication.
@@ -292,7 +294,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_swap_deployments(
-        self, body: Union[SwapDeploymentsDetails, JSON, IO[bytes]], *, content_type: str = "application/json",**kwargs: Any
+        self,
+        body: Union[SwapDeploymentsDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two existing deployments with each other.
 
@@ -360,7 +366,11 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_unassign_deployment_resources(
-        self, body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: Union[UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
@@ -378,9 +388,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
     @distributed_trace_async
     async def begin_cancel_training_job(  # type: ignore[override]
-        self,
-        job_id: str,
-        **kwargs: Any
+        self, job_id: str, **kwargs: Any
     ) -> AsyncLROPoller[TrainingJobResult]:
         """
         Cancel a training job.
@@ -448,7 +456,7 @@ class ProjectOperations(ProjectOperationsGenerated):
 
         return AsyncLROPoller[TrainingJobResult](
             self._client,
-            initial, # type: ignore
+            initial,  # type: ignore
             get_long_running_output,
             polling_method,  # type: ignore[arg-type]
         )
@@ -514,7 +522,7 @@ class ProjectOperations(ProjectOperationsGenerated):
         :return: An instance of LROPoller that returns None.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-        
+
         """
         return await super()._begin_copy_project(
             project_name=self._project_name, body=body, content_type=content_type, **kwargs

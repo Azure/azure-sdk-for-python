@@ -2111,7 +2111,7 @@ class ExportedCompositeEntity(_Model):
     )
     """The behavior to follow when the entity's components overlap with each other. Known values are:
      \"separateComponents\" and \"combineComponents\"."""
-    entity_list: Optional["_models.ExportedEntityList"] = rest_field(
+    list: Optional["_models.ExportedEntityList"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list component of the entity."""
