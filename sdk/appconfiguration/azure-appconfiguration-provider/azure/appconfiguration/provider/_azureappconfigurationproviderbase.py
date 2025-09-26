@@ -533,9 +533,10 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
     def __ne__(self, other: Any) -> bool:
         return not self == other
 
-    def _process_key_value_base(self, config: ConfigurationSetting):
+    def _process_key_value_base(self, config: ConfigurationSetting) -> Union[str, Dict[str, Any]]:
         """
-        Process configuration values that are not KeyVault references.
+        Process configuration values that are not KeyVault references. If the content type is None, the value is
+        returned as-is.
 
         :param config: The configuration setting to process.
         :type config: ConfigurationSetting

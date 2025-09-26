@@ -446,7 +446,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 except AzureError as e:
                     exception = e
                     is_failover_request = True
-            if not exception:
+            if exception is None:
                 exception = RuntimeError(error_message)
             self._refresh_timer.backoff()
             if self._feature_flag_refresh_enabled:
