@@ -79,14 +79,14 @@ try:
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
                 assert has_feature_flag(client, "Alpha", False)
-                assert mock_callback.call_count == 3
+                assert mock_callback.call_count == 2
 
                 setting.value = "original value"
                 await appconfig_client.set_configuration_setting(setting)
 
                 await client.refresh()
                 assert client["refresh_message"] == "original value"
-                assert mock_callback.call_count == 4
+                assert mock_callback.call_count == 2
 
         # method: refresh
         @app_config_decorator_async

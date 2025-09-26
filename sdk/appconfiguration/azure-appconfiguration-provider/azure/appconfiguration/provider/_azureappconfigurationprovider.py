@@ -319,10 +319,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
 
-    def _attempt_refresh(
-        self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
-    ) -> bool:
-        refreshed_configs = False
+    def _attempt_refresh(self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs):
+        refreshed_settings = False
         headers = update_correlation_context_header(
             kwargs.pop("headers", {}),
             "Watch",
@@ -339,14 +337,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
 
         # Timer needs to be reset even if no refresh happened if time had passed
-        reset_config_timer = False
-        reset_feature_flag_timer = False
-        refreshed = False
+        configuration_refresh_attempted = False
+        feature_flag_refresh_attempted = False
         watched_keys: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._feature_filter_usage.copy()
         try:
             if self._watched_settings and self._refresh_timer.needs_refresh():
-                reset_config_timer = True
+                configuration_refresh_attempted = True
 
                 watched_keys = client.get_updated_watched_settings(self._watched_settings, headers=headers, **kwargs)
 
@@ -354,10 +351,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     configuration_settings = client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
-                    refreshed_configs = True
+                    refreshed_settings = True
 
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
-                reset_feature_flag_timer = True
+                feature_flag_refresh_attempted = True
 
                 feature_flags_need_refresh = client.try_check_feature_flags(
                     self._watched_feature_flags, headers=headers, **kwargs
@@ -371,7 +368,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             processed_feature_flags = self._dict.get(FEATURE_MANAGEMENT_KEY, {}).get(FEATURE_FLAG_KEY, [])
 
-            if refreshed_configs:
+            if refreshed_settings:
                 # Configuration Settings have been refreshed
                 processed_settings = self._process_configurations(configuration_settings)
 
@@ -387,16 +384,17 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 processed_settings[FEATURE_MANAGEMENT_KEY] = {}
                 processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
             self._dict = processed_settings
-            refreshed = True
-            if refreshed_configs:
+            if refreshed_settings:
                 # Update the watch keys that have changed
                 self._watched_settings.update(watched_keys)
             # Reset timers at the same time as they should load from the same store.
-            if reset_config_timer:
+            if configuration_refresh_attempted:
                 self._refresh_timer.reset()
-            if self._feature_flag_refresh_enabled and reset_feature_flag_timer:
+            if self._feature_flag_refresh_enabled and feature_flag_refresh_attempted:
                 self._feature_flag_refresh_timer.reset()
-            return refreshed
+            if (refreshed_settings or feature_flags) and self._on_refresh_success:
+                self._on_refresh_success()
+            return
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
             self._replica_client_manager.backoff(client)
@@ -423,9 +421,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             while client := self._replica_client_manager.get_next_active_client():
                 try:
-                    refreshed = self._attempt_refresh(client, replica_count, is_failover_request, **kwargs)
-                    if refreshed and self._on_refresh_success:
-                        self._on_refresh_success()
+                    self._attempt_refresh(client, replica_count, is_failover_request, **kwargs)
                     return
                 except AzureError as e:
                     exception = e
