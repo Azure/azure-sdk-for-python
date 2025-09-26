@@ -8,7 +8,12 @@ from typing import Dict, List, Union, Optional
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_score
 from azure.ai.evaluation._model_configurations import Conversation, Message
@@ -37,6 +42,9 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
+    :type is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -74,7 +82,12 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     @override
     def __init__(
-        self, model_config, *, threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD, credential=None, **kwargs
+        self,
+        model_config,
+        *,
+        threshold: Optional[float] = _DEFAULT_COMPLETENESS_THRESHOLD,
+        credential=None,
+        **kwargs,
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)

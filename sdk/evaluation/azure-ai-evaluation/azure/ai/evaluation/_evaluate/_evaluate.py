@@ -1028,12 +1028,15 @@ def _preprocess_data(
     batch_run_data: Union[str, os.PathLike, pd.DataFrame] = data
 
     def get_client_type(evaluate_kwargs: Dict[str, Any]) -> Literal["run_submitter", "pf_client", "code_client"]:
-        """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client)"""
+        """Determines the BatchClient to use from provided kwargs (_use_run_submitter_client and _use_pf_client).
+
+        Defaults to run_submitter. Explicit flags select alternate clients and certain tri-state combinations are
+        preserved for backward compatibility.
+        """
         _use_run_submitter_client = cast(Optional[bool], kwargs.pop("_use_run_submitter_client", None))
         _use_pf_client = cast(Optional[bool], kwargs.pop("_use_pf_client", None))
 
         if _use_run_submitter_client is None and _use_pf_client is None:
-            # If both are unset, return default
             return "run_submitter"
 
         if _use_run_submitter_client and _use_pf_client:
@@ -1044,7 +1047,7 @@ def _preprocess_data(
                 blame=ErrorBlame.USER_ERROR,
             )
 
-        if _use_run_submitter_client == False and _use_pf_client == False:
+        if _use_run_submitter_client is False and _use_pf_client is False:
             return "code_client"
 
         if _use_run_submitter_client:
@@ -1052,12 +1055,13 @@ def _preprocess_data(
         if _use_pf_client:
             return "pf_client"
 
-        if _use_run_submitter_client is None and _use_pf_client == False:
+        if _use_run_submitter_client is None and _use_pf_client is False:
             return "run_submitter"
-        if _use_run_submitter_client == False and _use_pf_client is None:
+        if _use_run_submitter_client is False and _use_pf_client is None:
             return "pf_client"
 
-        assert False, "This should be impossible"
+        # Should be unreachable
+        return "run_submitter"
 
     client_type: Literal["run_submitter", "pf_client", "code_client"] = get_client_type(kwargs)
 

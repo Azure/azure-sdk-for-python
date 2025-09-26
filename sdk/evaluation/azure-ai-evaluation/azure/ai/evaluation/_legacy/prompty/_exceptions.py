@@ -133,6 +133,26 @@ class WrappedOpenAIError(PromptyException):
             )
             return f"OpenAI API hits {ex_type}: {msg}"
         else:
+            # Provide guidance for common reasoning model parameter mismatches
+            lowered = error_message.lower()
+            if ("max_tokens" in lowered) and ("not supported" in lowered or "unrecognized request argument" in lowered):
+                msg = (
+                    "The 'max_tokens' parameter is not supported by reasoning models. "
+                    "Use 'max_completion_tokens' instead. If you are using a reasoning model, please set "
+                    "is_reasoning_model=True in the evaluator's initialization so parameters are adjusted automatically."
+                )
+                return f"OpenAI API hits {ex_type}: {msg}"
+            if (
+                ("temperature" in lowered or "top_p" in lowered or "presence_penalty" in lowered or "frequency_penalty" in lowered)
+                and "not supported" in lowered
+            ):
+                msg = (
+                    "One or more sampling parameters (temperature/top_p/presence_penalty/frequency_penalty) are "
+                    "not supported by reasoning models. If you are using a reasoning model, please set "
+                    "is_reasoning_model=True in the evaluator's initialization so unsupported parameters are removed."
+                )
+                return f"OpenAI API hits {ex_type}: {msg}"
+
             return (
                 f"OpenAI API hits {ex_type}: {error_message} [Error reference: "
                 "https://platform.openai.com/docs/guides/error-codes/api-errors]"

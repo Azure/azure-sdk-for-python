@@ -8,7 +8,12 @@ from typing import Dict, Union, List
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ..._common.utils import reformat_conversation_history, reformat_agent_response
 
 from azure.ai.evaluation._model_configurations import Conversation
@@ -35,6 +40,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the relevance evaluator. Default is 3.
     :type threshold: int
+    :keyword is_reasoning_model: (Preview) config for chat completions is
+        updated to use reasoning models
+    :type is_reasoning_model: bool
 
     .. admonition:: Example:
 
@@ -79,7 +87,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, credential=None, threshold=3):
+    def __init__(self, model_config, *, threshold=3, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self._threshold = threshold
@@ -91,6 +99,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             threshold=threshold,
             credential=credential,
             _higher_is_better=self._higher_is_better,
+            **kwargs,
         )
 
     @overload

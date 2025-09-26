@@ -93,7 +93,8 @@ def _is_aoi_model_config(val: object) -> TypeGuard[AzureOpenAIModelConfiguration
 
 
 def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
-    return isinstance(val, dict) and all(isinstance(val.get(k), str) for k in ("model"))
+    # Minimal OpenAI configuration requires a model name; other fields may be provided
+    return isinstance(val, dict) and isinstance(val.get("model"), str)
 
 
 def parse_model_config_type(
@@ -181,6 +182,11 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
 
 
 def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
+    # Accept minimal OpenAI config (e.g., {"model": "gpt-4o-mini"}) to support
+    # evaluator initialization and prompty plumbing in tests and dry runs.
+    if _is_openai_model_config(config):
+        return cast(OpenAIModelConfiguration, config)
+
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:
