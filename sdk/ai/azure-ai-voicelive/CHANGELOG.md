@@ -4,6 +4,16 @@
 
 ### Features Added
 
+- **API Version Update**: Updated to API version `2025-10-01` (from `2025-05-01-preview`)
+- **Enhanced Type Safety**: Added new `AzureVoiceType` enum with values for better Azure voice type categorization:
+  - `AZURE_CUSTOM` for custom voice configurations
+  - `AZURE_STANDARD` for standard voice configurations  
+  - `AZURE_PERSONAL` for personal voice configurations
+- **Improved Message Handling**: Added `MessageRole` enum for better role type safety in message items
+- **Enhanced Model Documentation**: Comprehensive documentation improvements across all models:
+  - Added detailed docstrings for model classes and their parameters
+  - Enhanced enum value documentation with descriptions
+  - Improved type annotations and parameter descriptions
 - **Enhanced Semantic Detection**: Added improved configuration options for all semantic detection classes:
   - Added `threshold_level` parameter with options: `"low"`, `"medium"`, `"high"`, `"default"` (recommended over deprecated `threshold`)
   - Added `timeout_ms` parameter for timeout configuration in milliseconds (recommended over deprecated `timeout`)
@@ -20,6 +30,14 @@
 
 ### Breaking Changes
 
+- **Cross-Language Package Identity Update**: Updated package ID from `VoiceLive` to `VoiceLive.WebSocket` for better cross-language consistency
+- **Model Refactoring**: 
+  - Renamed `UserContentPart` to `MessageContentPart` for clearer content part hierarchy
+  - All message items now require a `content` field with list of `MessageContentPart` objects
+  - `OutputTextContentPart` now inherits from `MessageContentPart` instead of being standalone
+- **Enhanced Type Safety**: 
+  - Azure voice classes now use `AzureVoiceType` enum discriminators instead of string literals
+  - Message role discriminators now use `MessageRole` enum values for better type safety
 - **Removed Deprecated Parameters**: Completely removed deprecated parameters from semantic detection classes:
   - Removed `threshold` parameter from all semantic detection classes (`AzureSemanticDetection`, `AzureSemanticDetectionEn`, `AzureSemanticDetectionMultilingual`)
   - Removed `timeout` parameter from all semantic detection classes
@@ -38,14 +56,18 @@
   - Renamed `AzureMultilingualSemanticVad` to `AzureSemanticVadMultilingual` for naming consistency with other multilingual variants
 - **Enhanced Type Safety**: Turn detection discriminator types now use enum values instead of string literals for better type safety
 
+### Bug Fixes
+
+- **Serialization Improvements**: Fixed type casting issue in serialization utilities for better enum handling and type safety
+
 ### Other Changes
 
+- **API Documentation**: Updated API view properties to reflect model structure changes and cross-language package identity
 - **Documentation Updates**: Comprehensive updates to all markdown documentation:
   - Updated README.md to reflect async-only nature with updated examples and installation instructions
   - Updated samples README.md to remove sync sample references
   - Enhanced BASIC_VOICE_ASSISTANT.md with comprehensive async implementation guide
   - Added MIGRATION_GUIDE.md for users upgrading from previous versions
-- **API Documentation**: Updated API view properties to reflect model structure changes
 
 ## 1.0.0b4 (2025-09-19)
 

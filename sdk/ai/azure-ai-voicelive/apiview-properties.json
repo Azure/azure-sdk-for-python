@@ -1,5 +1,5 @@
 {
-    "CrossLanguagePackageId": "VoiceLive",
+    "CrossLanguagePackageId": "VoiceLive.WebSocket",
     "CrossLanguageDefinitionId": {
         "azure.ai.voicelive.models.AgentConfig": "VoiceLive.AgentConfig",
         "azure.ai.voicelive.models.Animation": "VoiceLive.Animation",
@@ -49,7 +49,7 @@
         "azure.ai.voicelive.models.Tool": "VoiceLive.Tool",
         "azure.ai.voicelive.models.FunctionTool": "VoiceLive.FunctionTool",
         "azure.ai.voicelive.models.IceServer": "VoiceLive.IceServer",
-        "azure.ai.voicelive.models.UserContentPart": "VoiceLive.UserContentPart",
+        "azure.ai.voicelive.models.MessageContentPart": "VoiceLive.MessageContentPart",
         "azure.ai.voicelive.models.InputAudioContentPart": "VoiceLive.InputAudioContentPart",
         "azure.ai.voicelive.models.InputTextContentPart": "VoiceLive.InputTextContentPart",
         "azure.ai.voicelive.models.InputTokenDetails": "VoiceLive.InputTokenDetails",
@@ -124,8 +124,10 @@
         "azure.ai.voicelive.models.ClientEventType": "VoiceLive.ClientEventType",
         "azure.ai.voicelive.models.ItemType": "VoiceLive.ItemType",
         "azure.ai.voicelive.models.ItemParamStatus": "VoiceLive.ItemParamStatus",
+        "azure.ai.voicelive.models.MessageRole": "VoiceLive.MessageRole",
         "azure.ai.voicelive.models.Modality": "VoiceLive.Modality",
         "azure.ai.voicelive.models.OAIVoice": "VoiceLive.OAIVoice",
+        "azure.ai.voicelive.models.AzureVoiceType": "VoiceLive.AzureVoiceType",
         "azure.ai.voicelive.models.PersonalVoiceModels": "VoiceLive.PersonalVoiceModels",
         "azure.ai.voicelive.models.OutputAudioFormat": "VoiceLive.OutputAudioFormat",
         "azure.ai.voicelive.models.ToolType": "VoiceLive.ToolType",
@@ -134,10 +136,9 @@
         "azure.ai.voicelive.models.TurnDetectionType": "VoiceLive.TurnDetectionType",
         "azure.ai.voicelive.models.AudioTimestampType": "VoiceLive.AudioTimestampType",
         "azure.ai.voicelive.models.ToolChoiceLiteral": "VoiceLive.ToolChoiceLiteral",
-        "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType",
+        "azure.ai.voicelive.models.ResponseStatus": "VoiceLive.ResponseStatus",
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
-        "azure.ai.voicelive.models.MessageRole": "VoiceLive.MessageRole",
         "azure.ai.voicelive.models.ContentPartType": "VoiceLive.ContentPartType",
-        "azure.ai.voicelive.models.ResponseStatus": "VoiceLive.ResponseStatus"
+        "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     }
 }
