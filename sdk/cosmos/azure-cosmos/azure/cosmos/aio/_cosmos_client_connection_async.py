@@ -214,10 +214,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
+            self.credential_id = str(id(self.aad_credentials))
             credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
                 self.aad_credentials,
                 account_scope,
-                scope_override
+                scope_override,
+                self.credential_id,
+                self.client_id
             )
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
@@ -316,13 +319,23 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
             current_scope = scope_override or account_scope
-            _logger.info("cosmos async client async get_token call start: %s "
-                         "| account_name: %s | scope: %s", str(start_ns), str(account_scope), str(current_scope))
+            _logger.info("cosmos client async get_token call start: %s "
+                         "| account_name: %s | scope: %s"
+                         "| client_id: %s"
+                         "| credential_id: %s"
+                         , str(start_ns), str(account_scope), str(current_scope)
+                         , str(self.client_id)
+                         , str(self.credential_id))
             await self.aad_credentials.get_token(current_scope)
             end_ns = time.time_ns()
-            _logger.info("cosmos async client async get_token call end: %s "
-                         "| account_name: %s | scope: %s | duration_ns: %s", str(end_ns),
-                         str(account_scope), str(current_scope), str(end_ns - start_ns))
+            _logger.info("cosmos client async get_token call end: %s "
+                         "| account_name: %s | scope: %s | duration_ns: %s"
+                         "| client_id: %s"
+                         "| credential_id: %s"
+                         , str(end_ns),
+                         str(account_scope), str(current_scope), str(end_ns - start_ns)
+                        , str(self.client_id)
+                        , str(self.credential_id))
         if 'database_account' not in self._setup_kwargs:
             database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs

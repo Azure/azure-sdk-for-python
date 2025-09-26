@@ -210,20 +210,33 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
             current_scope = scope_override or account_scope
+            self.credential_id = str(uuid.uuid4())
             # Calling get_token to warmup the cache
             start_ns = time.time_ns()
             _logger.info("cosmos client sync get_token call start: %s "
-                         "| account_name: %s | scope: %s", str(start_ns), str(account_scope), str(current_scope))
+                         "| account_name: %s | scope: %s"
+                         "| client_id: %s"
+                         "| credential_id: %s"
+                         , str(start_ns), str(account_scope), str(current_scope)
+                         , str(self.client_id)
+                         , str(self.credential_id))
             self.aad_credentials.get_token(current_scope)
             end_ns = time.time_ns()
             _logger.info("cosmos client sync get_token call end: %s "
-                         "| account_name: %s | scope: %s | duration_ns: %s", str(end_ns),
-                         str(account_scope), str(current_scope), str(end_ns - start_ns))
+                         "| account_name: %s | scope: %s | duration_ns: %s"
+                         "| client_id: %s"
+                         "| credential_id: %s"
+                         , str(end_ns),
+                         str(account_scope), str(current_scope), str(end_ns - start_ns)
+                         , str(self.client_id)
+                         , str(self.credential_id))
 
             credentials_policy = CosmosBearerTokenCredentialPolicy(
                 self.aad_credentials,
                 account_scope=account_scope,
-                override_scope=scope_override if scope_override else None
+                override_scope=scope_override if scope_override else None,
+                credential_id=self.credential_id,
+                client_id=self.client_id
             )
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [

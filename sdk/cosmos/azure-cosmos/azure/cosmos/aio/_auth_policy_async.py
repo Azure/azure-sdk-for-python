@@ -27,11 +27,15 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     AadDefaultScope = Constants.AAD_DEFAULT_SCOPE
 
     def __init__(self, credential, account_scope: str, override_scope: Optional[str] = None,
+                 client_id: Optional[str] = None,
+                 credential_id: Optional[str] = None,
                  logger: Optional[logging.Logger] = None):
         self._account_scope = account_scope
         self._override_scope = override_scope
         self._logger = logger or logging.getLogger("azure.cosmos.auth")
         self._current_scope = override_scope or account_scope
+        self._client_id = client_id
+        self._credential_id = credential_id
         super().__init__(credential, self._current_scope)
 
     @staticmethod
@@ -61,20 +65,31 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                 if request and request.http_request and request.http_request.headers:
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 end_ns = time.time_ns()
-                self._logger.info("cosmos async client async auth on_request success | account_name: %s "
+                self._logger.info("cosmos client async auth on_request success | account_name: %s "
                                   "| scope: %s | duration_ns: %s "
-                                  "| activity_id: %s", str(self._account_scope), str(self._current_scope),
-                                                            str(end_ns - start_ns), str(activity_id))
+                                  "| activity_id: %s"
+                                  "| client_id: %s"
+                                  "| credential_id: %s",
+                                  str(self._account_scope), str(self._current_scope),
+                                                            str(end_ns - start_ns), str(activity_id),
+                                  str(self._client_id),
+                                  str(self._credential_id))
                 break
             except HttpResponseError as ex:
                 if request and request.http_request and request.http_request.headers:
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 status_code = getattr(ex, 'status_code', None)
                 sub_status_code = getattr(ex, 'sub_status_code', None)
-                self._logger.warning("cosmos async client async auth on_request HttpResponseError | "
+                self._logger.warning("cosmos client async auth on_request HttpResponseError | "
                                      "account_name: %s | scope: %s | "
-                    "activity_id: %s | status_code: %s | sub_status: %s", str(self._account_scope),
-                                     str(self._current_scope), str(activity_id), str(status_code), str(sub_status_code))
+                    "activity_id: %s | status_code: %s | sub_status: %s",
+                                     "| client_id: %s"
+                                     "| credential_id: %s",
+                                     str(self._account_scope),
+                                     str(self._current_scope), str(activity_id),
+                                     str(status_code), str(sub_status_code),
+                                     str(self._client_id),
+                                     str(self._credential_id))
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
                 if (
                         not self._override_scope and
@@ -107,7 +122,12 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         activity_id: Optional[str] = None
         if request and request.http_request and request.http_request.headers:
             activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
-        self._logger.info("cosmos async client async auth authorize_request | account_name: %s "
-                          "| scope: %s | duration_ns: %s "
-                          "| activity_id: %s", str(self._account_scope), str(self._current_scope),
-                          str(end_ns - start_ns), str(activity_id))
+        self._logger.info("cosmos client async auth authorize_request success | account_name: %s "
+                              "| scope: %s | duration_ns: %s "
+                              "| activity_id: %s"
+                              "| client_id: %s"
+                              "| credential_id: %s",
+                              str(self._account_scope), str(self._current_scope),
+                              str(end_ns - start_ns), str(activity_id),
+                              str(self._client_id),
+                              str(self._credential_id))
