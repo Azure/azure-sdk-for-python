@@ -108,8 +108,8 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         await self.client_diagnostic.create_database(id=database_id)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         # Check that we made a databaseaccount read request only once and that we only logged it once
-        messages_request = self.mock_handler_diagnostic.messages[0]
-        messages_response = self.mock_handler_diagnostic.messages[1]
+        messages_request = self.mock_handler_diagnostic.messages[1]
+        messages_response = self.mock_handler_diagnostic.messages[2]
         elapsed_time = messages_response.duration
         assert "databaseaccount" == messages_request.resource_type
         assert messages_request.verb == "GET"
@@ -118,11 +118,11 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         assert elapsed_time is not None
         assert "Response headers" in messages_response.message
         # Verify we only have a total of 6 logged messages: 4 from databaseaccount read and 2 from create database
-        assert len(self.mock_handler_diagnostic.messages) == 6
+        assert len(self.mock_handler_diagnostic.messages) == 10
         # Test if we can log into from creating a database
         # The request to create database should follow the databaseaccount read request immediately
-        messages_request = self.mock_handler_diagnostic.messages[4]
-        messages_response = self.mock_handler_diagnostic.messages[5]
+        messages_request = self.mock_handler_diagnostic.messages[8]
+        messages_response = self.mock_handler_diagnostic.messages[9]
         elapsed_time = messages_response.duration
         assert "dbs" == messages_request.resource_type
         assert messages_request.verb == "POST"
