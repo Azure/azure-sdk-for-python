@@ -220,8 +220,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 self.aad_credentials,
                 account_scope,
                 scope_override,
-                self.credential_id,
-                self.client_id
+                self.client_id,
+                self.credential_id
             )
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
