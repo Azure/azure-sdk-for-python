@@ -245,6 +245,8 @@ class AzureMLResourceType:
     """Online deployment resource type."""
     DEPLOYMENT = "deployments"
     """Deployment resource type."""
+    DEPLOYMENT_TEMPLATE = "deployment_template"
+    """Deployment template resource type."""
     BATCH_DEPLOYMENT = "batch_deployments"
     """Batch deployment resource type."""
     ENVIRONMENT = "environments"
