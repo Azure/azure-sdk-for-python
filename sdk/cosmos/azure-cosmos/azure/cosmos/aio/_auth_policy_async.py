@@ -57,7 +57,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                 await super().on_request(request)
                 # The None-check for self._token is done in the parent on_request
                 self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
-                activity_id = ""
+                activity_id: Optional[str] = None
                 if request and request.http_request and request.http_request.headers:
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 end_ns = time.time_ns()
@@ -67,13 +67,14 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                                                             activity_id))
                 break
             except HttpResponseError as ex:
-                activity_id = ""
+                activity_id: Optional[str] = None
                 if request and request.http_request and request.http_request.headers:
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
+                status_code = getattr(ex, 'status_code', None)
+                sub_status_code = getattr(ex, 'sub_status_code', None)
                 self._logger.warning("Async Auth on_request HttpResponseError | account_name={} | scope={} | "
                     "activity_id={} | status_code={} | sub_status={}".format(
-                    self._account_scope, self._current_scope, activity_id, getattr(ex, 'status_code', None),
-                    getattr(ex, 'sub_status', None)))
+                    self._account_scope, self._current_scope, activity_id, status_code, sub_status_code))
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
                 if (
                         not self._override_scope and
@@ -103,7 +104,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         self._update_headers(request.http_request.headers, cast(AccessToken, self._token).token)
 
         end_ns = time.time_ns()
-        activity_id = ""
+        activity_id: Optional[str] = None
         if request and request.http_request and request.http_request.headers:
             activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
         self._logger.info("Async Auth authorize_request | account_name={} | scope={} | duration_ns={} | activity_id={}"

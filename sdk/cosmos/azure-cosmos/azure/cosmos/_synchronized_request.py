@@ -131,7 +131,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     start_ns = time.time_ns()
     if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
-        _logger.info("sync database account call start at {} for account {}".format(start_ns, request.url))
+        _logger.info("sync database account call start at: {} for account: %s".format(start_ns, request.url))
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -161,7 +161,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
 
     end_ns = time.time_ns()
     if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
-        _logger.info("sync database account call end at {} for account {} | duration_ns = {}"
+        _logger.info("sync database account call end at: {} for account: %s | duration_ns = {}"
                      .format(end_ns, request.url, (end_ns - start_ns)))
 
     response = response.http_response
