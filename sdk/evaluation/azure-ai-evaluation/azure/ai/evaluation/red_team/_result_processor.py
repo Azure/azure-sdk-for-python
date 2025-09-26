@@ -11,6 +11,9 @@ import hashlib
 import json
 import math
 import os
+import uuid
+from collections import defaultdict
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 import pandas as pd
@@ -25,7 +28,14 @@ from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_att
 class ResultProcessor:
     """Handles processing and formatting of red team evaluation results."""
 
-    def __init__(self, logger, attack_success_thresholds, application_scenario, risk_categories, ai_studio_url=None):
+    def __init__(
+        self,
+        logger,
+        attack_success_thresholds,
+        application_scenario,
+        risk_categories,
+        ai_studio_url=None,
+    ):
         """Initialize the result processor.
 
         :param logger: Logger instance for logging
@@ -53,6 +63,7 @@ class ResultProcessor:
         risk_categories = []
         attack_successes = []
         conversations = []
+        output_item_lookup = defaultdict(list)
 
         self.logger.info(f"Building RedTeamResult from red_team_info with {len(red_team_info)} strategies")
 
@@ -155,18 +166,19 @@ class ResultProcessor:
                                     conv_data = json.loads(line)
                                     if "conversation" in conv_data and "messages" in conv_data["conversation"]:
                                         messages = conv_data["conversation"]["messages"]
+                                        conversation_key = hashlib.sha256(
+                                            json.dumps(messages, sort_keys=True).encode("utf-8")
+                                        ).hexdigest()
 
                                         # Determine attack success based on evaluation results if available
                                         attack_success = None
                                         risk_assessment = {}
 
-                                        # If we have evaluation results, try to extract attack success and risk assessment
                                         eval_row = None
+
+                                        # If we have evaluation results, try to extract attack success and risk assessment
                                         if eval_result:
-                                            key = hashlib.sha256(
-                                                json.dumps(messages, sort_keys=True).encode("utf-8")
-                                            ).hexdigest()
-                                            eval_row = eval_row_lookup.get(key)
+                                            eval_row = eval_row_lookup.get(conversation_key)
                                             if eval_row:
                                                 if f"outputs.{risk_category}.{risk_category}_result" in eval_row:
                                                     attack_success = get_attack_success(
@@ -245,7 +257,18 @@ class ResultProcessor:
                                             "risk_assessment": (risk_assessment if risk_assessment else None),
                                             "attack_success_threshold": attack_threshold,
                                         }
+                                        conversation_index = len(conversations)
                                         conversations.append(conversation)
+
+                                        output_item_lookup[conversation_key].append(
+                                            self._build_output_item(
+                                                conversation=conversation,
+                                                eval_row=eval_row,
+                                                raw_conversation=conv_data,
+                                                conversation_key=conversation_key,
+                                                conversation_index=conversation_index,
+                                            )
+                                        )
                                 except json.JSONDecodeError as e:
                                     self.logger.error(f"Error parsing JSON in data file {data_file}: {e}")
                     except Exception as e:
@@ -258,6 +281,22 @@ class ResultProcessor:
         # Sort conversations by attack technique for better readability
         conversations.sort(key=lambda x: x["attack_technique"])
         self.logger.info(f"Processed {len(conversations)} conversations from all data files")
+
+        ordered_output_items: List[Dict[str, Any]] = []
+        for conversation in conversations:
+            conv_key = hashlib.sha256(
+                json.dumps(conversation["conversation"], sort_keys=True).encode("utf-8")
+            ).hexdigest()
+            items_for_key = output_item_lookup.get(conv_key, [])
+            if items_for_key:
+                ordered_output_items.append(items_for_key.pop(0))
+
+        # Append any remaining items that were not matched (should be uncommon)
+        for remaining_items in output_item_lookup.values():
+            if remaining_items:
+                ordered_output_items.extend(remaining_items)
+
+        self.logger.info(f"Processed {len(ordered_output_items)} output items from all data files")
 
         # Create a DataFrame for analysis
         results_dict = {
@@ -293,10 +332,362 @@ class ResultProcessor:
             scorecard=cast(RedTeamingScorecard, scorecard),
             parameters=cast(RedTeamingParameters, redteaming_parameters),
             attack_details=conversations,
+            output_items=ordered_output_items,
             studio_url=self.ai_studio_url or None,
         )
 
         return red_team_result
+
+    def _build_output_item(
+        self,
+        conversation: Dict[str, Any],
+        eval_row: Optional[Dict[str, Any]],
+        raw_conversation: Dict[str, Any],
+        conversation_key: str,
+        conversation_index: int,
+    ) -> Dict[str, Any]:
+        """Construct an output item entry for a single conversation."""
+
+        created_time = self._resolve_created_time(eval_row)
+        datasource_item_id = self._resolve_datasource_item_id(eval_row, raw_conversation, conversation_index)
+        datasource_item = self._build_datasource_item(eval_row, raw_conversation, datasource_item_id)
+        sample_payload = self._build_sample_payload(conversation, raw_conversation)
+        results = self._build_output_result(
+            conversation,
+            eval_row,
+            sample_payload=sample_payload,
+        )
+        output_item_id = self._resolve_output_item_id(
+            eval_row, datasource_item_id, conversation_key, conversation_index
+        )
+
+        status = "unknown"
+        if results:
+            if any(isinstance(result, dict) and result.get("passed") is False for result in results):
+                status = "fail"
+            elif any(isinstance(result, dict) and result.get("passed") is True for result in results):
+                status = "pass"
+
+        output_item: Dict[str, Any] = {
+            "object": "eval.run.output_item",
+            "id": output_item_id,
+            "created_time": created_time,
+            "status": status,
+            "results": results,
+        }
+
+        if datasource_item_id is not None:
+            output_item["datasource_item_id"] = datasource_item_id
+        if datasource_item:
+            output_item["datasource_item"] = datasource_item
+
+        return output_item
+
+    def _build_sample_payload(
+        self,
+        conversation: Dict[str, Any],
+        raw_conversation: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Create the sample payload for an output item."""
+
+        conversation_payload = raw_conversation.get("conversation")
+        if isinstance(conversation_payload, dict) and "messages" in conversation_payload:
+            messages = conversation_payload.get("messages", [])
+        else:
+            messages = conversation.get("conversation", [])
+
+        normalized_messages: List[Dict[str, Any]] = []
+        for message in messages:
+            if not isinstance(message, dict):
+                continue
+            normalized = self._normalize_sample_message(message)
+            if not normalized:
+                continue
+            normalized_messages.append(normalized)
+
+        final_assistant_index: Optional[int] = None
+        for index in range(len(normalized_messages) - 1, -1, -1):
+            if normalized_messages[index].get("role") == "assistant":
+                final_assistant_index = index
+                break
+
+        output_messages: List[Dict[str, Any]] = []
+        input_messages: List[Dict[str, Any]]
+
+        if final_assistant_index is not None:
+            output_messages = [normalized_messages[final_assistant_index]]
+            input_messages = normalized_messages[:final_assistant_index]
+        else:
+            input_messages = normalized_messages
+
+        sample_payload: Dict[str, Any] = {
+            "object": "eval.run.output_item.sample",
+            "input": input_messages,
+            "output": output_messages,
+        }
+
+        metadata = {
+            key: value
+            for key, value in raw_conversation.items()
+            if key not in {"conversation"} and not self._is_missing(value)
+        }
+        if metadata:
+            sample_payload["metadata"] = metadata
+
+        return sample_payload
+
+    @staticmethod
+    def _normalize_sample_message(message: Dict[str, Any]) -> Dict[str, Any]:
+        """Return a shallow copy of a message limited to supported fields."""
+
+        allowed_keys = {"role", "content", "name", "tool_calls"}
+        normalized: Dict[str, Any] = {}
+
+        for key, value in message.items():
+            if key not in allowed_keys or value is None:
+                continue
+            if key == "tool_calls" and isinstance(value, list):
+                normalized["tool_calls"] = [call for call in value if isinstance(call, dict)]
+            else:
+                normalized[key] = value
+
+        return normalized
+
+    def _build_datasource_item(
+        self,
+        eval_row: Optional[Dict[str, Any]],
+        raw_conversation: Dict[str, Any],
+        datasource_item_id: Optional[str],
+    ) -> Optional[Dict[str, Any]]:
+        """Create datasource item metadata if available."""
+        return None
+
+    def _build_output_result(
+        self,
+        conversation: Dict[str, Any],
+        eval_row: Optional[Dict[str, Any]],
+        sample_payload: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Assemble result entries for each risk category."""
+
+        results: List[Dict[str, Any]] = []
+        risk_assessment = conversation.get("risk_assessment") or {}
+        attack_threshold = conversation.get("attack_success_threshold")
+
+        for risk in self.risk_categories:
+            risk_value = risk.value
+            passed: Optional[bool] = None
+            score: Optional[Union[int, float]] = None
+            threshold: Optional[Union[int, float]] = None
+            reason: Optional[str] = None
+            severity_label: Optional[str] = None
+
+            if isinstance(eval_row, dict):
+                result_value = eval_row.get(f"outputs.{risk_value}.{risk_value}_result")
+                if result_value is not None:
+                    passed = str(result_value).lower() == "pass"
+                score = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_score"))
+                threshold = self._normalize_numeric(eval_row.get(f"outputs.{risk_value}.{risk_value}_threshold"))
+                reason = eval_row.get(f"outputs.{risk_value}.{risk_value}_reason")
+
+            assessment = risk_assessment.get(risk_value) if risk_assessment else None
+            if isinstance(assessment, dict):
+                severity_label = assessment.get("severity_label")
+                if not reason:
+                    reason = assessment.get("reason")
+
+            properties: Dict[str, Any] = {}
+            attack_technique = conversation.get("attack_technique")
+            attack_complexity = conversation.get("attack_complexity")
+            attack_success = conversation.get("attack_success")
+
+            if attack_technique is not None:
+                properties["attack_technique"] = attack_technique
+            if attack_complexity is not None:
+                properties["attack_complexity"] = attack_complexity
+            if attack_success is not None:
+                properties["attack_success"] = attack_success
+
+            if (
+                passed is None
+                and score is None
+                and threshold is None
+                and not reason
+                and risk_value != conversation.get("risk_category")
+            ):
+                continue
+
+            if threshold is None and attack_threshold is not None and risk_value == conversation.get("risk_category"):
+                threshold = attack_threshold
+
+            result_entry: Dict[str, Any] = {
+                "object": "eval.run.output_item.result",
+                "type": "azure_ai_evaluator" if isinstance(eval_row, dict) else "azure_ai_red_team",
+                "name": risk_value,
+                "metric": risk_value,
+                "passed": passed,
+                "score": score,
+                "threshold": threshold,
+                "reason": reason,
+            }
+
+            if properties:
+                result_entry["properties"] = properties
+
+            if sample_payload:
+                result_entry["sample"] = sample_payload
+
+            results.append(result_entry)
+
+        if not results:
+            risk_value = conversation.get("risk_category")
+
+            properties: Dict[str, Any] = {}
+            attack_technique = conversation.get("attack_technique")
+            attack_complexity = conversation.get("attack_complexity")
+            attack_success = conversation.get("attack_success")
+
+            if attack_technique is not None:
+                properties["attack_technique"] = attack_technique
+            if attack_complexity is not None:
+                properties["attack_complexity"] = attack_complexity
+            if attack_success is not None:
+                properties["attack_success"] = attack_success
+
+            assessment = risk_assessment.get(risk_value) if risk_assessment else None
+            fallback_reason: Optional[str] = None
+
+            if isinstance(assessment, dict):
+                fallback_reason = assessment.get("reason")
+
+            fallback_result: Dict[str, Any] = {
+                "object": "eval.run.output_item.result",
+                "type": "azure_ai_red_team",
+                "name": risk_value,
+                "metric": risk_value,
+                "passed": None,
+                "score": None,
+                "threshold": attack_threshold,
+                "reason": fallback_reason,
+            }
+
+            if properties:
+                fallback_result["properties"] = properties
+
+            if sample_payload:
+                fallback_result["sample"] = sample_payload
+
+            results.append(fallback_result)
+
+        return results
+
+    def _extract_input_data(
+        self,
+        eval_row: Optional[Dict[str, Any]],
+        raw_conversation: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Extract input data from evaluation rows or conversation payload."""
+
+        input_data: Dict[str, Any] = {}
+
+        if isinstance(eval_row, dict):
+            for key, value in eval_row.items():
+                if key.startswith("inputs."):
+                    path = key.split(".")[1:]
+                    self._assign_nested_value(input_data, path, value)
+
+        if not input_data:
+            for key, value in raw_conversation.items():
+                if key == "conversation" or value is None:
+                    continue
+                input_data[key] = value
+
+        return input_data
+
+    @staticmethod
+    def _assign_nested_value(container: Dict[str, Any], path: List[str], value: Any) -> None:
+        current = container
+        for part in path[:-1]:
+            current = current.setdefault(part, {})
+        current[path[-1]] = value
+
+    def _resolve_output_item_id(
+        self,
+        eval_row: Optional[Dict[str, Any]],
+        datasource_item_id: Optional[str],
+        conversation_key: str,
+        conversation_index: int,
+    ) -> str:
+        if isinstance(eval_row, dict):
+            for candidate_key in ["id", "output_item_id", "datasource_item_id"]:
+                candidate_value = eval_row.get(candidate_key)
+                if candidate_value:
+                    return str(candidate_value)
+
+        if datasource_item_id:
+            return datasource_item_id
+
+        return str(uuid.uuid4())
+
+    def _resolve_datasource_item_id(
+        self,
+        eval_row: Optional[Dict[str, Any]],
+        raw_conversation: Dict[str, Any],
+        conversation_index: int,
+    ) -> Optional[str]:
+        return None
+
+    def _resolve_created_time(self, eval_row: Optional[Dict[str, Any]]) -> int:
+        if isinstance(eval_row, dict):
+            for key in ["created_time", "created_at", "timestamp"]:
+                value = eval_row.get(key)
+                if value is None:
+                    continue
+                if isinstance(value, (int, float)):
+                    return int(value)
+                if isinstance(value, str):
+                    try:
+                        return int(datetime.fromisoformat(value).timestamp())
+                    except ValueError:
+                        continue
+
+        return int(datetime.utcnow().timestamp())
+
+    def _normalize_numeric(self, value: Any) -> Optional[Union[int, float]]:
+        if value is None:
+            return None
+
+        if isinstance(value, (int, float)):
+            if isinstance(value, float) and math.isnan(value):
+                return None
+            return value
+
+        try:
+            if pd.isna(value):
+                return None
+        except Exception:
+            pass
+
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return None
+            try:
+                if "." in stripped:
+                    return float(stripped)
+                return int(stripped)
+            except ValueError:
+                return None
+
+        return None
+
+    def _is_missing(self, value: Any) -> bool:
+        if value is None:
+            return True
+        try:
+            return pd.isna(value)
+        except Exception:
+            return False
 
     def _create_default_scorecard(self, conversations: List, complexity_levels: List, converters: List) -> tuple:
         """Create a default scorecard when no evaluation results are available."""
@@ -305,14 +696,14 @@ class ResultProcessor:
                 {
                     "overall_asr": 0.0,
                     "overall_total": len(conversations),
-                    "overall_attack_successes": 0,
+                    "overall_successful_attacks": 0,
                 }
             ],
             "attack_technique_summary": [
                 {
                     "overall_asr": 0.0,
                     "overall_total": len(conversations),
-                    "overall_attack_successes": 0,
+                    "overall_successful_attacks": 0,
                 }
             ],
             "joint_risk_attack_summary": [],
@@ -320,13 +711,14 @@ class ResultProcessor:
         }
 
         # Create basic parameters
+        attack_objective_generated_from: Dict[str, Any] = {
+            "application_scenario": self.application_scenario,
+            "risk_categories": [risk.value for risk in self.risk_categories],
+            "policy_document": "",
+        }
+
         redteaming_parameters = {
-            "attack_objective_generated_from": {
-                "application_scenario": self.application_scenario,
-                "risk_categories": [risk.value for risk in self.risk_categories],
-                "custom_attack_seed_prompts": "",
-                "policy_document": "",
-            },
+            "attack_objective_generated_from": attack_objective_generated_from,
             "attack_complexity": (list(set(complexity_levels)) if complexity_levels else ["baseline", "easy"]),
             "techniques_used": {},
             "attack_success_thresholds": self._format_thresholds_for_output(),
@@ -375,7 +767,7 @@ class ResultProcessor:
             {
                 "overall_asr": overall_asr,
                 "overall_total": overall_total,
-                "overall_attack_successes": int(overall_successful_attacks),
+                "overall_successful_attacks": int(overall_successful_attacks),
             }
         )
 
@@ -445,7 +837,7 @@ class ResultProcessor:
                     {
                         f"{complexity}_asr": asr,
                         f"{complexity}_total": len(complexity_df),
-                        f"{complexity}_attack_successes": (
+                        f"{complexity}_successful_attacks": (
                             sum([s for s in complexity_df["attack_success"].tolist() if not is_none_or_nan(s)])
                             if "attack_success" in complexity_df.columns
                             else 0
@@ -458,7 +850,7 @@ class ResultProcessor:
             {
                 "overall_asr": overall_asr,
                 "overall_total": overall_total,
-                "overall_attack_successes": int(overall_successful_attacks),
+                "overall_successful_attacks": int(overall_successful_attacks),
             }
         )
 
@@ -478,13 +870,14 @@ class ResultProcessor:
         # Create redteaming parameters
         unique_complexities = sorted([c for c in results_df["complexity_level"].unique() if c != "baseline"])
 
+        attack_objective_generated_from = {
+            "application_scenario": self.application_scenario,
+            "risk_categories": [risk.value for risk in self.risk_categories],
+            "policy_document": "",
+        }
+
         redteaming_parameters = {
-            "attack_objective_generated_from": {
-                "application_scenario": self.application_scenario,
-                "risk_categories": [risk.value for risk in self.risk_categories],
-                "custom_attack_seed_prompts": "",
-                "policy_document": "",
-            },
+            "attack_objective_generated_from": attack_objective_generated_from,
             "attack_complexity": [c.capitalize() for c in unique_complexities],
             "techniques_used": {},
             "attack_success_thresholds": self._format_thresholds_for_output(),
