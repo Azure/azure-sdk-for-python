@@ -80,7 +80,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 status_code = getattr(ex, 'status_code', None)
                 sub_status_code = getattr(ex, 'sub_status_code', None)
-                self._logger.warning("cosmos client async auth on_request HttpResponseError | "
+                self._logger.warning("cosmos client async auth on_request HttpResponseError | "  # pylint: disable=logging-too-many-args
                                      "account_name: %s | scope: %s | "
                     "activity_id: %s | status_code: %s | sub_status: %s",
                                      "| client_id: %s"

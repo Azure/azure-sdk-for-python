@@ -211,6 +211,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._user_agent = _utils.get_user_agent_async(suffix)
 
         credentials_policy = None
+        self.credential_id = ""
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
