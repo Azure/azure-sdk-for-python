@@ -64,7 +64,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         self._is_adfs = self._tenant_id.lower() == "adfs"
         self._cache_hit_counts: Dict[str, int] = {}
         self._cache_miss_counts: Dict[str, int] = {}
-        self._is_warmed_up: Dict[str, bool] = {}
+        self._warm_up_status: Dict[str, str] = {}
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -120,7 +120,15 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         scope_key = " ".join(scope_list)
 
         if cache_context:
-            cache_context.add_detail("is_cache_warmed_up", self._is_warmed_up.get(scope_key, False))
+            if self._warm_up_status.get(scope_key):
+                if cache_context.cache_details.get("is_warm_up_call"):
+                    self._warm_up_status[scope_key] = f"Started Again (Previously: {self._warm_up_status[scope_key]})"
+            else:
+                if cache_context.cache_details.get("is_warm_up_call"):
+                    self._warm_up_status[scope_key] = "Started"
+                else:
+                    self._warm_up_status[scope_key] = "Not Started"
+            cache_context.add_detail("cache_warm_up_status", self._warm_up_status[scope_key])
 
         for token in results:
             expires_on = int(token["expires_on"])
@@ -266,7 +274,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
 
         if cache_context:
             if cache_context.cache_details.get("is_warm_up_call", False):
-                self._is_warmed_up[" ".join(response.http_request.body["scope"].split())] = True
+                self._warm_up_status[" ".join(response.http_request.body["scope"].split())] = "Completed"
             cache_context.add_detail("cache_added_ms", round(time.time() * 1000))
 
         return token
