@@ -93,7 +93,7 @@ class AadClient(AadClientBase):
         kwargs.pop("claims", None)
         kwargs.pop("client_secret", None)
         enable_cae = kwargs.pop("enable_cae", False)
-        cache_context: Optional[CacheLogContext] = kwargs.pop("_cache_context")
+        cache_context: Optional[CacheLogContext] = kwargs.pop("_cache_context", None)
         if cache_context:
             cache_context.add_detail("token_request_started_ms", round(time.time() * 1000))
         now = int(time.time())

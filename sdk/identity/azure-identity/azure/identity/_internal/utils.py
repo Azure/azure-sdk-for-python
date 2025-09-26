@@ -54,11 +54,11 @@ class CacheLogContext:  # pylint: disable=too-many-instance-attributes
         errors_str = f" | Errors: {' | '.join(self.errors)}" if self.errors else ""
 
         _CACHE_LOGGER.info(
-            "[PID %s] %s: %s.%s | METHOD_START_MS: %s | METHOD_END_MS: %s | SUMMARY - Scopes: %s | Options: %s | Action: %s | Source: %s | %s%s",  # pylint: disable=line-too-long
+            "[PID %s] %s.%s | INSTANCE_ID: %s | METHOD_START_MS: %s | METHOD_END_MS: %s | SUMMARY - Scopes: %s | Options: %s | Action: %s | Source: %s | %s%s",  # pylint: disable=line-too-long
             os.getpid(),
-            self.credential_id,
             self.class_name,
             self.method_name,
+            self.credential_id,
             self.method_start,
             self.method_end,
             self.scopes,

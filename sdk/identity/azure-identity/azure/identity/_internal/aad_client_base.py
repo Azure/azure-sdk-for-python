@@ -64,6 +64,7 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
         self._is_adfs = self._tenant_id.lower() == "adfs"
         self._cache_hit_counts: Dict[str, int] = {}
         self._cache_miss_counts: Dict[str, int] = {}
+        self._is_warmed_up: Dict[str, bool] = {}
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -117,6 +118,10 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             )
 
         scope_key = " ".join(scope_list)
+
+        if cache_context:
+            cache_context.add_detail("is_cache_warmed_up", self._is_warmed_up.get(scope_key, False))
+
         for token in results:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
@@ -258,6 +263,10 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             },
             now=request_time,
         )
+
+        self._is_warmed_up[" ".join(response.http_request.body["scope"].split())] = True
+        if cache_context:
+            cache_context.add_detail("cache_added_ms", round(time.time() * 1000))
 
         return token
 
