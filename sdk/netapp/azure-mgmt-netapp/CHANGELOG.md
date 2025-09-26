@@ -1,6 +1,6 @@
 # Release History
 
-## 14.0.0b2 (2025-10-20)
+## 14.0.0b2 (2025-09-26)
 
 ### Features Added
 
@@ -20,7 +20,7 @@
   - Deleted or renamed enum value `RelationshipStatus.UNKNOWN`
   - Deleted or renamed model `NetappProvisioningState`
   - Deleted or renamed model `ProvisioningState`
-  - Method `BucketsOperations.begin_update` removed default value `None` from its parameter `body`
+  - Parameter `body` of method `BucketsOperations.begin_update` is now required
 
 ## 13.7.0 (2025-08-18)
 
