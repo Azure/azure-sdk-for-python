@@ -264,8 +264,9 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             now=request_time,
         )
 
-        self._is_warmed_up[" ".join(response.http_request.body["scope"].split())] = True
         if cache_context:
+            if cache_context.cache_details.get("is_warm_up_call", False):
+                self._is_warmed_up[" ".join(response.http_request.body["scope"].split())] = True
             cache_context.add_detail("cache_added_ms", round(time.time() * 1000))
 
         return token
