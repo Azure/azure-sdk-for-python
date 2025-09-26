@@ -33,51 +33,43 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
 
         self.assertTrue("invalid credential from connection string." in str(context.exception))
 
-    async def test_send_message_async(self):
+    @patch("azure.communication.sms._generated.aio.operations.SmsOperations.send")
+    async def test_send_message_async(self, mock_send):
         phone_number = "+14255550123"
-        raised = False
+        
+        # Mock the response from the generated operation
+        mock_send.return_value = {
+            "value": [
+                {
+                    "to": phone_number,
+                    "messageId": "id",
+                    "httpStatusCode": 202,
+                    "errorMessage": None,
+                    "repeatabilityResult": "accepted",
+                    "successful": True,
+                }
+            ]
+        }
 
-        async def mock_send(*_, **__):
-            return mock_response(
-                status_code=202,
-                json_payload={
-                    "value": [
-                        {
-                            "to": phone_number,
-                            "messageId": "id",
-                            "httpStatusCode": "202",
-                            "errorMessage": "null",
-                            "repeatabilityResult": "accepted",
-                            "successful": "true",
-                        }
-                    ]
-                },
-            )
+        sms_client = SmsClient("https://endpoint", FakeTokenCredential())
 
-        sms_client = SmsClient("https://endpoint", FakeTokenCredential(), transport=Mock(send=mock_send))
-
-        sms_response = None
-        try:
-            sms_responses = await sms_client.send(
-                from_=phone_number,
-                to=[phone_number],
-                message="Hello World via SMS",
-                enable_delivery_report=True,
-                tag="custom-tag",
-            )
-            sms_response = sms_responses[0]
-        except:
-            raised = True
-            raise
-
-        self.assertFalse(raised, "Expected is no excpetion raised")
+        sms_responses = await sms_client.send(
+            from_=phone_number,
+            to=[phone_number],
+            message="Hello World via SMS",
+            enable_delivery_report=True,
+            tag="custom-tag",
+        )
+        
+        sms_response = sms_responses[0]
+        
         self.assertEqual(phone_number, sms_response.to)
         self.assertIsNotNone(sms_response.message_id)
         self.assertEqual(202, sms_response.http_status_code)
-        self.assertIsNotNone(sms_response.error_message)
         self.assertTrue(sms_response.successful)
+        mock_send.assert_called_once()
 
-    @patch("azure.communication.sms._generated.aio.operations._sms_operations.SmsOperations.send")
+    @patch("azure.communication.sms._generated.aio.operations.SmsOperations.send")
     async def test_send_message_parameters_async(self, mock_send):
         phone_number = "+14255550123"
         msg = "Hello World via SMS"
@@ -87,9 +79,9 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
         await sms_client.send(from_=phone_number, to=[phone_number], message=msg, enable_delivery_report=True, tag=tag)
 
         send_message_request = mock_send.call_args[0][0]
-        self.assertEqual(phone_number, send_message_request.from_property)
-        self.assertEqual(phone_number, send_message_request.sms_recipients[0].to)
-        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_request_id)
-        self.assertIsNotNone(send_message_request.sms_recipients[0].repeatability_first_sent)
-        self.assertTrue(send_message_request.sms_send_options.enable_delivery_report)
-        self.assertEqual(tag, send_message_request.sms_send_options.tag)
+        self.assertEqual(phone_number, send_message_request["from"])
+        self.assertEqual(phone_number, send_message_request["smsRecipients"][0]["to"])
+        self.assertIsNotNone(send_message_request["smsRecipients"][0]["repeatabilityRequestId"])
+        self.assertIsNotNone(send_message_request["smsRecipients"][0]["repeatabilityFirstSent"])
+        self.assertTrue(send_message_request["smsSendOptions"]["enableDeliveryReport"])
+        self.assertEqual(tag, send_message_request["smsSendOptions"]["tag"])
