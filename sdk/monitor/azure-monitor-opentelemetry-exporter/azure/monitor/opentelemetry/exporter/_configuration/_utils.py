@@ -54,8 +54,7 @@ class OneSettingsResponse:
         settings (Dict[str, str]): Dictionary of configuration key-value pairs
         version (Optional[int]): Configuration version number for change tracking
         status_code (int): HTTP status code from the response
-        has_exception (bool): True if the request resulted in an exception (network error, etc.)
-        has_timeout (bool): True if the request timed out
+        has_exception (bool): True if the request resulted in a transient error (network error, timeout, etc.)
     """
 
     def __init__(
@@ -65,8 +64,7 @@ class OneSettingsResponse:
         settings: Optional[Dict[str, str]] = None,
         version: Optional[int] = None,
         status_code: int = 200,
-        has_exception: bool = False,
-        has_timeout: bool = False
+        has_exception: bool = False
     ):
         """Initialize OneSettingsResponse with configuration data.
 
@@ -78,8 +76,7 @@ class OneSettingsResponse:
                 Defaults to empty dict if None.
             version (Optional[int], optional): Configuration version number. Defaults to None.
             status_code (int, optional): HTTP status code. Defaults to 200.
-            has_exception (bool, optional): Indicates if request failed with exception. Defaults to False.
-            has_timeout (bool, optional): Indicates if request timed out. Defaults to False.
+            has_exception (bool, optional): Indicates if request failed with a transient error. Defaults to False.
         """
         self.etag = etag
         self.refresh_interval = refresh_interval
@@ -87,7 +84,6 @@ class OneSettingsResponse:
         self.version = version
         self.status_code = status_code
         self.has_exception = has_exception
-        self.has_timeout = has_timeout
 
 
 def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = None,
@@ -126,7 +122,7 @@ def make_onesettings_request(url: str, query_dict: Optional[Dict[str, str]] = No
         return _parse_onesettings_response(result)
     except requests.exceptions.Timeout as ex:
         logger.warning("OneSettings request timed out: %s", str(ex))
-        return OneSettingsResponse(has_timeout=True, has_exception=True)
+        return OneSettingsResponse(has_exception=True)
     except requests.exceptions.RequestException as ex:
         logger.warning("Failed to fetch configuration from OneSettings: %s", str(ex))
         return OneSettingsResponse(has_exception=True)

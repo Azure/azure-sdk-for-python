@@ -12,9 +12,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS,
     _RETRYABLE_STATUS_CODES,
 )
-from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
+from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile, OneSettingsResponse
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
 from azure.monitor.opentelemetry.exporter._utils import Singleton
+
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -81,20 +82,18 @@ class _ConfigurationManager(metaclass=Singleton):
             except Exception as ex:  # pylint: disable=broad-except
                 logger.warning("Callback failed: %s", ex)
 
-    def _is_transient_error(self, response) -> bool:
+    def _is_transient_error(self, response: OneSettingsResponse) -> bool:
         """Check if the response indicates a transient error.
-        
-        :param response: OneSettingsResponse object from OneSettings request
-        :return: True if the error is transient and refresh interval should be increased
-        """
-        # Check for timeout or exception indicators
-        if response.has_timeout or response.has_exception:
-            return True
-        
-        # Check for retryable HTTP status codes
-        return response.status_code in _RETRYABLE_STATUS_CODES
 
-    # pylint: disable=too-many-statements
+        :param response: OneSettingsResponse object from OneSettings request
+        :type response: OneSettingsResponse
+        :return: True if the error is transient and refresh interval should be increased
+        :rtype: bool
+        """
+        # Check for exception indicator or retryable HTTP status codes
+        return response.has_exception or response.status_code in _RETRYABLE_STATUS_CODES
+
+    # pylint: disable=too-many-statements, too-many-branches
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
         
@@ -110,7 +109,8 @@ class _ConfigurationManager(metaclass=Singleton):
         The method implements a check-and-set pattern for thread safety:
         1. Reads current state atomically to prepare request headers
         2. Makes HTTP request to OneSettings CHANGE endpoint outside locks
-        3. If transient error (including timeouts/exceptions), doubles refresh interval (capped at 24 hours) and returns immediately
+        3. If transient error (including timeouts/exceptions), doubles refresh interval
+        (capped at 24 hours) and returns immediately
         4. Re-reads current state to make version comparison decisions
         5. Conditionally fetches from CONFIG endpoint if version increased
         6. Updates all state fields atomically in a single operation
@@ -121,7 +121,8 @@ class _ConfigurationManager(metaclass=Singleton):
         - Version decrease: Unexpected rollback state, logged as warning, no updates applied
         
         Error handling:
-        - Transient errors (timeouts, exceptions, retryable HTTP codes) from CHANGE endpoint: Refresh interval doubled (capped), immediate return
+        - Transient errors (timeouts, exceptions, retryable HTTP codes) from CHANGE endpoint:
+        Refresh interval doubled (capped), immediate return
         - CONFIG endpoint failure: ETag not updated to preserve retry capability on next call
         - Network failures: Handled by make_onesettings_request with error indicators
         - Missing settings/version: Logged as warning, only ETag and refresh interval updated
@@ -184,12 +185,10 @@ class _ConfigurationManager(metaclass=Singleton):
                 # Double the refresh interval and cap it at 24 hours
                 doubled_interval = self._current_state.refresh_interval * 2
                 current_refresh_interval = min(doubled_interval, _ONE_SETTINGS_MAX_REFRESH_INTERVAL_SECONDS)
-            
+
             # Create appropriate log message based on error type
-            if response.has_timeout:
-                error_description = "timeout"
-            elif response.has_exception:
-                error_description = "network exception"
+            if response.has_exception:
+                error_description = "network error"
             else:
                 error_description = f"HTTP {response.status_code}"
             
@@ -200,7 +199,7 @@ class _ConfigurationManager(metaclass=Singleton):
         new_state_updates = {}
         if response.etag is not None:
             new_state_updates['etag'] = response.etag
-        if response.refresh_interval and response.refresh_interval > 0:
+        if response.refresh_interval and response.refresh_interval > 0:  # type: ignore
             new_state_updates['refresh_interval'] = response.refresh_interval  # type: ignore
 
         if response.status_code == 304:
@@ -271,7 +270,7 @@ class _ConfigurationManager(metaclass=Singleton):
         with self._state_lock:
             return self._current_state.settings_cache.copy()  # type: ignore
 
-    def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
+    def get_current_version(self) -> int:    # type: ignore # pylint: disable=C4741,C4742
         """Get current version."""
         with self._state_lock:
             return self._current_state.version_cache  # type: ignore

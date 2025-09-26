@@ -8,6 +8,7 @@ from azure.monitor.opentelemetry.exporter._configuration import (
     _ConfigurationManager,
     _ConfigurationState,
 )
+from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
 from azure.monitor.opentelemetry.exporter._configuration._utils import OneSettingsResponse
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
@@ -382,7 +383,6 @@ class TestConfigurationManager(unittest.TestCase):
         
         # Setup timeout response
         timeout_response = OneSettingsResponse(
-            has_timeout=True,
             has_exception=True,
             status_code=200  # Default status when exception occurs
         )
@@ -419,7 +419,6 @@ class TestConfigurationManager(unittest.TestCase):
         # Setup network exception response
         exception_response = OneSettingsResponse(
             has_exception=True,
-            has_timeout=False,
             status_code=200
         )
         mock_request.return_value = exception_response
@@ -459,7 +458,6 @@ class TestConfigurationManager(unittest.TestCase):
                 http_error_response = OneSettingsResponse(
                     status_code=status_code,
                     has_exception=False,
-                    has_timeout=False
                 )
                 mock_request.return_value = http_error_response
                 
@@ -490,7 +488,6 @@ class TestConfigurationManager(unittest.TestCase):
         
         # Setup timeout response
         timeout_response = OneSettingsResponse(
-            has_timeout=True,
             has_exception=True,
             status_code=200
         )
@@ -522,7 +519,6 @@ class TestConfigurationManager(unittest.TestCase):
         bad_request_response = OneSettingsResponse(
             status_code=400,  # Not in _RETRYABLE_STATUS_CODES
             has_exception=False,
-            has_timeout=False,
             refresh_interval=1800  # Should remain unchanged
         )
         mock_request.return_value = bad_request_response
@@ -551,7 +547,6 @@ class TestConfigurationManager(unittest.TestCase):
             version=-1,  # Same as initial version
             status_code=200,
             has_exception=False,
-            has_timeout=False
         )
         mock_request.return_value = success_response
         
@@ -564,7 +559,6 @@ class TestConfigurationManager(unittest.TestCase):
     @patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "true"})
     def test_configuration_manager_disabled(self):
         """Test that configuration manager is disabled when environment variable is set."""
-        from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
         
         # When controlplane is disabled, get_configuration_manager should return None
         manager = get_configuration_manager()
@@ -573,7 +567,6 @@ class TestConfigurationManager(unittest.TestCase):
     @patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "false"})
     def test_configuration_manager_enabled(self):
         """Test that configuration manager is enabled when environment variable is false."""
-        from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
         
         # When controlplane is not disabled, get_configuration_manager should return instance
         manager = get_configuration_manager()
@@ -582,7 +575,6 @@ class TestConfigurationManager(unittest.TestCase):
 
     def test_configuration_manager_enabled_by_default(self):
         """Test that configuration manager is enabled by default when no environment variable is set."""
-        from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
         
         # Ensure env var is not set
         if "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED" in os.environ:
