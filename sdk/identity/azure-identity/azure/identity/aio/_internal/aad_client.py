@@ -12,6 +12,7 @@ from azure.core.pipeline.transport import HttpRequest
 from ..._internal import AadClientCertificate
 from ..._internal import AadClientBase
 from ..._internal.pipeline import build_async_pipeline
+from ..._internal.utils import CacheLogContext
 
 Policy = Union[AsyncHTTPPolicy, SansIOHTTPPolicy]
 
@@ -92,6 +93,9 @@ class AadClient(AadClientBase):
         kwargs.pop("claims", None)
         kwargs.pop("client_secret", None)
         enable_cae = kwargs.pop("enable_cae", False)
+        cache_context: Optional[CacheLogContext] = kwargs.pop("_cache_context")
+        if cache_context:
+            cache_context.add_detail("token_request_started_ms", round(time.time() * 1000))
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now, enable_cae=enable_cae, **kwargs)
+        return self._process_response(response, now, enable_cae=enable_cae, _cache_context=cache_context, **kwargs)

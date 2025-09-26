@@ -5,8 +5,6 @@
 import abc
 import base64
 import json
-import logging
-import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
@@ -18,7 +16,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
-from .utils import get_default_authority, normalize_authority, resolve_tenant, sanitize_dict
+from .utils import get_default_authority, normalize_authority, resolve_tenant, sanitize_dict, CacheLogContext
 from .aadclient_certificate import AadClientCertificate
 from .._persistent_cache import _load_persistent_cache
 
@@ -33,10 +31,9 @@ if TYPE_CHECKING:
     TransportType = Union[AsyncHttpTransport, HttpTransport]
 
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
-_CACHE_LOGGER = logging.getLogger("azure.identity.cache-debug")
 
 
-class AadClientBase(abc.ABC):
+class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
     _POST = ["POST"]
 
     def __init__(
@@ -65,6 +62,8 @@ class AadClientBase(abc.ABC):
         else:
             self._custom_cache = False
         self._is_adfs = self._tenant_id.lower() == "adfs"
+        self._cache_hit_counts: Dict[str, int] = {}
+        self._cache_miss_counts: Dict[str, int] = {}
 
     def _get_cache(self, **kwargs: Any) -> TokenCache:
         cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
@@ -92,6 +91,9 @@ class AadClientBase(abc.ABC):
 
         cache = self._get_cache(**kwargs)
         scope_list = list(scopes)
+
+        cache_context: Optional[CacheLogContext] = kwargs.get("_cache_context")
+
         results = list(
             cache.search(
                 TokenCache.CredentialType.ACCESS_TOKEN,
@@ -99,49 +101,39 @@ class AadClientBase(abc.ABC):
                 query={"client_id": self._client_id, "realm": tenant},
             )
         )
-        total_results = list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
 
-        for token in total_results:
-            _CACHE_LOGGER.info(
-                "[PID %s] %s: Cache Entry for %s: access token: %s",
-                os.getpid(),
-                id(self),
-                id(self._cache),
-                sanitize_dict(token, sensitive_fields=["secret"]),
+        if cache_context:
+            cache_context.add_detail("cache_id", id(cache))
+            cache_context.add_detail("cache_queried_on", round(time.time() * 1000))
+
+            total_results = list(cache.search(TokenCache.CredentialType.ACCESS_TOKEN))
+            cache_entries = []
+            for token in total_results:
+                cache_entries.append(sanitize_dict(token, sensitive_fields=["secret"]))
+            cache_context.add_detail("cache_entries", cache_entries)
+            cache_context.add_detail("cache_size", len(total_results))
+            cache_context.add_detail(
+                "cache_query", {"scopes": scope_list, "tenant": tenant, "client_id": self._client_id}
             )
-        _CACHE_LOGGER.info(
-            "[PID %s] %s: Cache %s contains %s access tokens for resource '%s', tenant '%s', client_id '%s'",
-            os.getpid(),
-            id(self),
-            id(self._cache),
-            len(results),
-            scope_list,
-            tenant,
-            self._client_id,
-        )
+
+        scope_key = " ".join(scope_list)
         for token in results:
             expires_on = int(token["expires_on"])
             if expires_on > int(time.time()):
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
-                _CACHE_LOGGER.info(
-                    "[PID %s] %s: Cache hit for resource '%s', tenant: '%s', client_id: '%s'",
-                    os.getpid(),
-                    id(self),
-                    scope_list,
-                    tenant,
-                    self._client_id,
-                )
+
+                self._cache_hit_counts[scope_key] = self._cache_hit_counts.get(scope_key, 0) + 1
+                if cache_context:
+                    cache_context.add_detail("cache_query_status", "HIT")
+                    cache_context.add_detail("rolling_cache_hit_count", self._cache_hit_counts[scope_key])
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
-        _CACHE_LOGGER.info(
-            "[PID %s] %s: Cache miss for resource '%s', tenant: '%s', client_id: '%s'",
-            os.getpid(),
-            id(self),
-            scope_list,
-            tenant,
-            self._client_id,
-        )
+
+        self._cache_miss_counts[scope_key] = self._cache_miss_counts.get(scope_key, 0) + 1
+        if cache_context:
+            cache_context.add_detail("cache_query_status", "MISS")
+            cache_context.add_detail("rolling_cache_miss_count", self._cache_miss_counts[scope_key])
         return None
 
     def get_cached_refresh_tokens(self, scopes: Iterable[str], **kwargs) -> List[Dict]:
@@ -183,6 +175,10 @@ class AadClientBase(abc.ABC):
         ) or ContentDecodePolicy.deserialize_from_http_generics(response.http_response)
 
         cache = self._get_cache(**kwargs)
+        cache_context: Optional[CacheLogContext] = kwargs.get("_cache_context")
+        if cache_context:
+            cache_context.add_detail("token_request_finished_ms", round(time.time() * 1000))
+
         if response.http_request.body.get("grant_type") == "refresh_token":
             if content.get("error") == "invalid_grant":
                 # the request's refresh token is invalid -> evict it from the cache
@@ -211,7 +207,9 @@ class AadClientBase(abc.ABC):
         try:
             _raise_for_error(response, content)
         except Exception as ex:
-            _CACHE_LOGGER.info("[PID %s] %s: Error in Entra response: %s", os.getpid(), id(self), ex)
+            if cache_context:
+                cache_context.add_detail("token_request_status", "FAILURE")
+                cache_context.add_detail("token_request_error", str(ex))
             raise
 
         if "expires_on" in content:
@@ -228,24 +226,27 @@ class AadClientBase(abc.ABC):
             content["refresh_in"] = expires_in // 2
 
         refresh_on = request_time + int(content["refresh_in"]) if "refresh_in" in content else None
-        _CACHE_LOGGER.info(
-            "[PID %s] %s: Token Response received from Entra. Expires on: %s. ", os.getpid(), id(self), expires_on
-        )
+
         token = AccessTokenInfo(
             content["access_token"], expires_on, token_type=content.get("token_type", "Bearer"), refresh_on=refresh_on
         )
 
         # caching is the final step because 'add' mutates 'content'
-        _CACHE_LOGGER.info(
-            "[PID %s] %s: Adding token to cache with ID %s, client_id: %s, scope: %s, token_endpoint: %s, response: %s",
-            os.getpid(),
-            id(self),
-            id(self._cache),
-            self._client_id,
-            response.http_request.body["scope"].split(),
-            response.http_request.url,
-            sanitize_dict(content, sensitive_fields={"access_token", "refresh_token", "id_token", "username"}),
-        )
+        if cache_context:
+            cache_context.add_detail("token_request_status", "SUCCESS")
+            cache_context.add_detail("cache_add_ms", round(time.time() * 1000))
+            cache_context.add_detail(
+                "cache_add_details",
+                {
+                    "cache_id": id(cache),
+                    "client_id": self._client_id,
+                    "scope": response.http_request.body["scope"].split(),
+                    "token_endpoint": response.http_request.url,
+                    "response": sanitize_dict(
+                        content, sensitive_fields={"access_token", "refresh_token", "id_token", "username"}
+                    ),
+                },
+            )
         cache.add(
             event={
                 "client_id": self._client_id,
