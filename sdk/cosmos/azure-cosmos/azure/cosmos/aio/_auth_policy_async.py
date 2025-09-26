@@ -61,7 +61,8 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                 if request and request.http_request and request.http_request.headers:
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 end_ns = time.time_ns()
-                self._logger.info("cosmos async client async auth on_request success | account_name: %s | scope: %s | duration_ns: %s "
+                self._logger.info("cosmos async client async auth on_request success | account_name: %s "
+                                  "| scope: %s | duration_ns: %s "
                                   "| activity_id: %s", str(self._account_scope), str(self._current_scope),
                                                             str(end_ns - start_ns), str(activity_id))
                 break
@@ -70,7 +71,8 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                     activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
                 status_code = getattr(ex, 'status_code', None)
                 sub_status_code = getattr(ex, 'sub_status_code', None)
-                self._logger.warning("cosmos async client async auth on_request HttpResponseError | account_name: %s | scope: %s | "
+                self._logger.warning("cosmos async client async auth on_request HttpResponseError | "
+                                     "account_name: %s | scope: %s | "
                     "activity_id: %s | status_code: %s | sub_status: %s", str(self._account_scope),
                                      str(self._current_scope), str(activity_id), str(status_code), str(sub_status_code))
                 # Only fallback if not using override, not already tried, and error is AADSTS500011
@@ -105,6 +107,7 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         activity_id: Optional[str] = None
         if request and request.http_request and request.http_request.headers:
             activity_id = request.http_request.headers.get(HttpHeaders.ActivityId)
-        self._logger.info("cosmos async client async auth authorize_request | account_name: %s | scope: %s | duration_ns: %s "
+        self._logger.info("cosmos async client async auth authorize_request | account_name: %s "
+                          "| scope: %s | duration_ns: %s "
                           "| activity_id: %s", str(self._account_scope), str(self._current_scope),
                           str(end_ns - start_ns), str(activity_id))

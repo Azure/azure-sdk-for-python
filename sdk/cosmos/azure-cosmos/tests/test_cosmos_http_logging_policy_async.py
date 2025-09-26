@@ -83,8 +83,8 @@ class TestCosmosHttpLoggerAsync(unittest.IsolatedAsyncioTestCase):
         await self.client_default.create_database(id=database_id)
 
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
-        messages_request = self.mock_handler_default.messages[0].message.split("\n")
-        messages_response = self.mock_handler_default.messages[1].message.split("\n")
+        messages_request = self.mock_handler_default.messages[1].message.split("\n")
+        messages_response = self.mock_handler_default.messages[2].message.split("\n")
         assert messages_request[1] == "Request method: 'GET'"
         assert 'Request headers:' in messages_request[2]
         assert messages_request[-1] == 'No body was attached to the request'
