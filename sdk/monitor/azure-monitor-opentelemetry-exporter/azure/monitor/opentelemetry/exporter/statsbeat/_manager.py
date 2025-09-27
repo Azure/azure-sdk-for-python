@@ -186,7 +186,6 @@ class StatsbeatManager(metaclass=Singleton):
             if self._initialized:
                 # If already initialized with the same config, return True
                 if self._config and self._config == config:
-                    logger.warning("Statsbeat re-initialized with the same configuration.")
                     return True
                 # If config is different, reconfigure
                 return self._reconfigure(config)
@@ -281,6 +280,9 @@ class StatsbeatManager(metaclass=Singleton):
 
             if shutdown_success:
                 set_statsbeat_shutdown(True)  # Use the proper setter function
+                # Clear the singleton instance from the metaclass
+                if self.__class__ in StatsbeatManager._instances:  # pylint: disable=protected-access
+                    del StatsbeatManager._instances[self.__class__]  # pylint: disable=protected-access
 
             return shutdown_success
 
