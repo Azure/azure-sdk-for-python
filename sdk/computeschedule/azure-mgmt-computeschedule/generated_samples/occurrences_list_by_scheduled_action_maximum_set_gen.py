@@ -33,6 +33,7 @@ def main():
     response = client.occurrences.list_by_scheduled_action(
         resource_group_name="rgcomputeschedule",
         scheduled_action_name="myScheduledAction",
+        api_version="2025-04-15-preview",
     )
     for item in response:
         print(item)

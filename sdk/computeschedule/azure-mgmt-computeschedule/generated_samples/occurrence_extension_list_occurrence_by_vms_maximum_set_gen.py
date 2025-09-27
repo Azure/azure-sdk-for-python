@@ -32,6 +32,7 @@ def main():
 
     response = client.occurrence_extension.list_occurrence_by_vms(
         resource_uri="sazvpabfud",
+        api_version="2025-04-15-preview",
     )
     for item in response:
         print(item)

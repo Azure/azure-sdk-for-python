@@ -33,6 +33,7 @@ def main():
     client.scheduled_actions.begin_delete(
         resource_group_name="rgcomputeschedule",
         scheduled_action_name="myScheduledAction",
+        api_version="2025-04-15-preview",
     ).result()
 
 
