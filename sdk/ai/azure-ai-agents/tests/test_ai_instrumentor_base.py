@@ -94,7 +94,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_agent"),
             ("server.address", ""),
             ("gen_ai.request.model", model),
@@ -109,7 +109,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             {
                 "name": "gen_ai.system.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.event.content": content,
                 },
             }
@@ -121,7 +121,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_thread"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -133,7 +133,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "create_message"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -147,7 +147,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.event.content": content,
                 },
@@ -161,7 +161,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             assert len(spans) == 1
             span = spans[0]
             expected_attributes = [
-                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.provider.name", "az.ai.agents"),
                 ("gen_ai.operation.name", "submit_tool_outputs"),
                 ("server.address", ""),
                 ("gen_ai.thread.id", ""),
@@ -180,7 +180,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             assert len(spans) == 1
             span = spans[0]
             expected_attributes = [
-                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.provider.name", "az.ai.agents"),
                 ("gen_ai.operation.name", "process_thread_run"),
                 ("server.address", ""),
                 ("gen_ai.thread.id", ""),
@@ -204,7 +204,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.assistant.message",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -219,7 +219,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.assistant.message",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -238,7 +238,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         assert len(spans) >= 2
         span = spans[0]
         expected_attributes = [
-            ("gen_ai.system", "az.ai.agents"),
+            ("gen_ai.provider.name", "az.ai.agents"),
             ("gen_ai.operation.name", "list_messages"),
             ("server.address", ""),
             ("gen_ai.thread.id", ""),
@@ -258,7 +258,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 "name": "gen_ai.assistant.message",
                 "timestamp": "*",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.agent.id": "*",
                     "gen_ai.thread.run.id": "*",
@@ -283,7 +283,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
             {
                 "name": "gen_ai.user.message",
                 "attributes": {
-                    "gen_ai.system": "az.ai.agents",
+                    "gen_ai.provider.name": "az.ai.agents",
                     "gen_ai.thread.id": "*",
                     "gen_ai.message.id": "*",
                     "gen_ai.event.content": content,
@@ -296,7 +296,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
         spans = self.exporter.get_spans_by_name("list_run_steps")
         if run_step_events:
             expected_attributes = [
-                ("gen_ai.system", "az.ai.agents"),
+                ("gen_ai.provider.name", "az.ai.agents"),
                 ("gen_ai.operation.name", "list_run_steps"),
                 ("server.address", ""),
                 ("gen_ai.thread.id", ""),
@@ -324,7 +324,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.message_creation",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -348,7 +348,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.tool_calls",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -370,7 +370,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.message_creation",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -389,7 +389,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.tool_calls",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -427,7 +427,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.message_creation",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -446,7 +446,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.tool_calls",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -481,7 +481,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.message_creation",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
@@ -500,7 +500,7 @@ class TestAiAgentsInstrumentorBase(TestAgentClientBase):
                 {
                     "name": "gen_ai.run_step.tool_calls",
                     "attributes": {
-                        "gen_ai.system": "az.ai.agents",
+                        "gen_ai.provider.name": "az.ai.agents",
                         "gen_ai.thread.id": "*",
                         "gen_ai.agent.id": "*",
                         "gen_ai.thread.run.id": "*",
