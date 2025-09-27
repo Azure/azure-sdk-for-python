@@ -5,14 +5,14 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Union, IO
+from typing import Any, Union, IO, Optional
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
-from .._generated.aio._client import AzureCommunicationEmailService
+from ._client import AzureCommunicationEmailService
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 
@@ -33,7 +33,7 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
     :param Union[AsyncTokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2024-07-01-preview".
+        Default value is "2025-09-01".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -53,7 +53,7 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
         authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         self._generated_client = AzureCommunicationEmailService(
-            endpoint, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            endpoint, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
         )
 
     @classmethod
@@ -70,7 +70,7 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace_async
-    async def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]:
+    async def begin_send(self, message: Union[JSON, IO], **kwargs: Any) -> AsyncLROPoller[JSON]: # pylint: disable=docstring-keyword-should-match-keyword-only
         # cSpell:disable
         """Queues an email message to be sent to one or more recipients.
 
@@ -161,6 +161,8 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
                         "target": "str"  # Optional. The error target.
                     }
                 }
+
+        For additional request configuration options, please see https://aka.ms/azsdk/python/options.
         """
         # cSpell:enable
 
