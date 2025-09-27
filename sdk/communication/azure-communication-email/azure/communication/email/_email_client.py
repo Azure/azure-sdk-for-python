@@ -57,7 +57,7 @@ class EmailClient(object):
         )
 
     @classmethod
-    def from_connection_string(cls, conn_str: Optional[str], **kwargs) -> "EmailClient":
+    def from_connection_string(cls, conn_str: str, **kwargs) -> "EmailClient":
         """Create EmailClient from a Connection String.
 
         :param str conn_str:
