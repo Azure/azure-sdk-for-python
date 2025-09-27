@@ -31,8 +31,9 @@ def locate_assets(current_test_file: str) -> str:
     test_file_path = Path(current_test_file)
     current_dir = test_file_path.parent
 
-    # Search upward for assets.json
+    # Search upward for assets.json and repo root
     assets_json_path = None
+    repo_root = None
     search_dir = current_dir
     while search_dir != search_dir.parent:  # Stop at filesystem root
         # early stop at repo root
@@ -43,21 +44,10 @@ def locate_assets(current_test_file: str) -> str:
         candidate = search_dir / "assets.json"
         if candidate.exists():
             assets_json_path = candidate
-            break
         search_dir = search_dir.parent
 
     if not assets_json_path:
         raise FileNotFoundError(f"Could not find assets.json starting from {current_dir}")
-
-    # Find repository root by looking for common repo indicators
-    repo_root = None
-    search_dir = assets_json_path.parent
-    while search_dir != search_dir.parent:
-        # early stop at repo root
-        if any((search_dir / indicator).exists() for indicator in [".git", "eng"]):
-            repo_root = search_dir
-            break
-        search_dir = search_dir.parent
 
     if not repo_root:
         raise FileNotFoundError(f"Could not find repository root starting from {assets_json_path.parent}")
