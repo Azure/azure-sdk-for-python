@@ -17,13 +17,15 @@ REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "3.2.7"
 PYGITHUB_VERSION = "1.59.0"
 
+
 class pylint(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
-        """Register the pylint check. The pylint check installs pylint and runs pylint against the target package.
-        """
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
+        """Register the pylint check. The pylint check installs pylint and runs pylint against the target package."""
         parents = parent_parsers or []
         p = subparsers.add_parser("pylint", parents=parents, help="Run the pylint check")
         p.set_defaults(func=self.run)
@@ -54,7 +56,14 @@ class pylint(Check):
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
             try:
-                install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
+                install_into_venv(
+                    executable,
+                    [
+                        "azure-pylint-guidelines-checker==0.5.6",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                    ],
+                    package_dir,
+                )
             except CalledProcessError as e:
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
@@ -85,12 +94,7 @@ class pylint(Check):
             # debug a pip freeze result
             cmd = pip_cmd + ["freeze"]
             freeze_result = subprocess.run(
-                cmd,
-                cwd=package_dir,
-                check=False,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT
+                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
             logger.debug(f"Running pip freeze with {cmd}")
             logger.debug(freeze_result.stdout)
@@ -99,24 +103,15 @@ class pylint(Check):
 
             if in_ci():
                 if not is_check_enabled(package_dir, "pylint"):
-                    logger.info(
-                        f"Package {package_name} opts-out of pylint check."
-                    )
+                    logger.info(f"Package {package_name} opts-out of pylint check.")
                     continue
 
-            rcFileLocation = os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
+            rcFileLocation = (
+                os.path.join(REPO_ROOT, "eng/pylintrc") if args.next else os.path.join(REPO_ROOT, "pylintrc")
+            )
 
             try:
-                logger.info([
-                        executable,
-                        "-m",
-                        "pylint",
-                        "--rcfile={}".format(rcFileLocation),
-                        "--output-format=parseable",
-                        os.path.join(package_dir, top_level_module),
-                    ])
-
-                results.append(check_call(
+                logger.info(
                     [
                         executable,
                         "-m",
@@ -125,19 +120,36 @@ class pylint(Check):
                         "--output-format=parseable",
                         os.path.join(package_dir, top_level_module),
                     ]
-                ))
+                )
+
+                results.append(
+                    check_call(
+                        [
+                            executable,
+                            "-m",
+                            "pylint",
+                            "--rcfile={}".format(rcFileLocation),
+                            "--output-format=parseable",
+                            os.path.join(package_dir, top_level_module),
+                        ]
+                    )
+                )
             except CalledProcessError as e:
                 logger.error(
-                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(package_name, e.returncode)
+                    "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                        package_name, e.returncode
+                    )
                 )
                 if args.next and in_ci():
                     from gh_tools.vnext_issue_creator import create_vnext_issue
+
                     create_vnext_issue(package_dir, "pylint")
 
                 results.append(e.returncode)
 
             if args.next and in_ci():
                 from gh_tools.vnext_issue_creator import close_vnext_issue
+
                 close_vnext_issue(package_name, "pylint")
 
         return max(results) if results else 0

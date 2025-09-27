@@ -33,6 +33,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 from typing import List
 
+
 def path_excluded(path, additional_excludes):
     return (
         any([excl in path for excl in additional_excludes])

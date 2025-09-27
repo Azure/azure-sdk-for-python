@@ -1,6 +1,7 @@
 import os
 from typing import Optional, Dict
 
+
 def str_to_bool(input_string: str) -> bool:
     """
     Takes a boolean string representation and returns a bool type value.
@@ -103,10 +104,11 @@ DEFAULT_ENVIRONMENT_VARIABLES = {
     "VIRTUALENV_PIP": "24.0",
     "VIRTUALENV_SETUPTOOLS": "75.3.2",
     "PIP_EXTRA_INDEX_URL": "https://pypi.python.org/simple",
-     # I haven't spent much time looking to see if a variable exists when invoking uv run. there might be one already that we can depend
-     # on for get_pip_command adjustment.
-    "IN_UV": "1"
+    # I haven't spent much time looking to see if a variable exists when invoking uv run. there might be one already that we can depend
+    # on for get_pip_command adjustment.
+    "IN_UV": "1",
 }
+
 
 def set_environment_from_dictionary(settings: Dict[str, str]) -> None:
     """

@@ -1,5 +1,6 @@
 """SwaggerToSdk core tools.
 """
+
 from enum import Enum, unique
 import json
 import logging
@@ -179,11 +180,9 @@ def read_config_from_github(sdk_id, branch="main", gh_token=None):
     response = http_client.request(method="GET", url=raw_link, headers=headers)
     if response.status != 200:
         raise ValueError(
-            "Unable to download conf file for SDK {} branch {}: status code {}".format(
-                sdk_id, branch, response.status
-            )
+            "Unable to download conf file for SDK {} branch {}: status code {}".format(sdk_id, branch, response.status)
         )
-    return json.loads(response.data.decode('utf-8'))
+    return json.loads(response.data.decode("utf-8"))
 
 
 def extract_conf_from_readmes(swagger_files_in_pr, restapi_git_folder, sdk_git_id, config, force_generation=False):
