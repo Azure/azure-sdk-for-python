@@ -22,7 +22,6 @@ from azure.ai.voicelive.models import (
     AzureSemanticVadMultilingual,
     AzureStandardVoice,
     ContentPart,
-    EOUDetection,
     FunctionCallOutputItem,
     FunctionTool,
     InputAudioFormat,
