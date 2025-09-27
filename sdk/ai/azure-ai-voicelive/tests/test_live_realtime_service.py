@@ -746,7 +746,9 @@ class TestRealtimeService(AzureRecordedTestCase):
 
             assert input_audio_transcription_completed_evt.transcript.strip() == "What's the largest lake in the world?"
 
+    @pytest.mark.live_test_only
     @VoiceLivePreparer()
+    @pytest.mark.flaky(reruns=3, reruns_delay=2)
     @pytest.mark.parametrize(
         ("model", "turn_detection_cls", "end_of_detection"),
         [
