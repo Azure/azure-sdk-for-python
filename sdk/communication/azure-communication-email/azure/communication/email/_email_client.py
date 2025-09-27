@@ -53,7 +53,7 @@ class EmailClient(object):
         authentication_policy = get_authentication_policy(endpoint, credential)
 
         self._generated_client = AzureCommunicationEmailService(
-            endpoint, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, **kwargs
+            endpoint, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
         )
 
     @classmethod
