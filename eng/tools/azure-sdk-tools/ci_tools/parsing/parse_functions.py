@@ -368,10 +368,21 @@ class ParsedSetup:
     def __str__(self):
         lines = [f"ParsedSetup from {self.folder}"]
         for attr in [
-            "name", "version", "python_requires", "requires", "is_new_sdk",
-            "setup_filename", "namespace", "package_data", "include_package_data",
-            "classifiers", "keywords", "ext_package", "ext_modules",
-            "is_metapackage", "is_pyproject"
+            "name",
+            "version",
+            "python_requires",
+            "requires",
+            "is_new_sdk",
+            "setup_filename",
+            "namespace",
+            "package_data",
+            "include_package_data",
+            "classifiers",
+            "keywords",
+            "ext_package",
+            "ext_modules",
+            "is_metapackage",
+            "is_pyproject",
         ]:
             value = getattr(self, attr)
             lines.append(f"\t{attr}={value}")
