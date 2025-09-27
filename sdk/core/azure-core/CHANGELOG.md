@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #43092
+
 ### Other Changes
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
