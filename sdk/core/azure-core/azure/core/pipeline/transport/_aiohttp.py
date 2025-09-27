@@ -24,9 +24,11 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
+from functools import cache
 import sys
 from typing import (
     Any,
+    Callable,
     Optional,
     AsyncIterator as AsyncIteratorType,
     TYPE_CHECKING,
@@ -88,20 +90,26 @@ except ImportError:
 
     class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
 
-
-try:
-    from cchardet import detect
-except ImportError:  # pragma: no cover
+@cache
+def _get_detect() -> Callable[[bytes], dict]:
     try:
-        from chardet import detect  # type: ignore[no-redef]
+        from cchardet import detect
+        return detect
     except ImportError:  # pragma: no cover
         try:
-            from charset_normalizer import detect  # type: ignore[no-redef]
-        except ImportError as e:  # pragma: no cover
-            charset_import_err = e
+            from chardet import detect  # type: ignore[no-redef]
+            return detect
+        except ImportError:  # pragma: no cover
+            try:
+                from charset_normalizer import detect  # type: ignore[no-redef]
+                return detect
+            except ImportError as e:  # pragma: no cover
+                charset_import_err = e
 
-            def detect(_: bytes) -> NoReturn:
-                raise charset_import_err
+                def detect(_: bytes) -> NoReturn:
+                    raise charset_import_err
+                return detect
+
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -543,7 +551,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
             else:
                 # While "detect" can return a dict of float, in this context this won't happen
                 # The cast is for pyright to be happy
-                encoding = cast(Optional[str], detect(body)["encoding"])
+                encoding = cast(Optional[str], _get_detect()(body)["encoding"])
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 
