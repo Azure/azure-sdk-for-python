@@ -7,7 +7,7 @@ from subprocess import run
 
 from .Check import Check
 
-from ci_tools.functions import is_error_code_5_allowed, pip_install
+from ci_tools.functions import is_error_code_5_allowed, install_into_venv
 from ci_tools.variables import set_envvar_defaults
 from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
@@ -43,14 +43,9 @@ class whl(Check):
             pkg = parsed.folder
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
-            print(f"Invoking check with {executable}")
-            dev_requirements = os.path.join(pkg, "dev_requirements.txt")
+            logger.info(f"Invoking check with {executable}")
 
-            if os.path.exists(dev_requirements):
-                print(f"Installing dev_requirements at {dev_requirements}")
-                pip_install([f"-r", f"{dev_requirements}"], True, executable, pkg)
-            else:
-                print("Skipping installing dev_requirements")
+            self.install_dev_reqs(executable, args, pkg)
 
             create_package_and_install(
                 distribution_directory=staging_directory,

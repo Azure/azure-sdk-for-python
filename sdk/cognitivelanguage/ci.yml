@@ -37,3 +37,7 @@ extends:
       safeName: azureailanguageconversations
     - name: azure-ai-language-conversations-authoring
       safeName: azureailanguageconversationsauthoring
+    - name: azure-ai-textanalytics-authoring
+      safeName: azureaitextanalyticsauthoring
+    - name: azure-ai-textanalytics
+      safeName: azureaitextanalytics

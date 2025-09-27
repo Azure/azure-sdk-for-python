@@ -59,6 +59,8 @@ class import_all(Check):
             pkg = parsed.folder
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, pkg)
 
+            self.install_dev_reqs(executable, args, pkg)
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=pkg,

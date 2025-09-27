@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import json
 import logging
-from typing import Optional, Sequence, Any
+from typing import Optional, Sequence, Any, Union
 
 from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.semconv.attributes.exception_attributes import (
@@ -63,7 +63,7 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         :return: The result of the export.
         :rtype: ~opentelemetry.sdk._logs.export.LogData
         """
-        envelopes = [self._log_to_envelope(log) for log in batch]
+        envelopes = [envelope for log in batch if (envelope := self._log_to_envelope(log)) is not None]
         try:
             result = self._transmit(envelopes)
             self._handle_transmit_from_storage(envelopes, result)
@@ -80,8 +80,10 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
         if self.storage:
             self.storage.close()
 
-    def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
+    def _log_to_envelope(self, log_data: LogData) -> Union[TelemetryItem, None]:
         envelope = _convert_log_to_envelope(log_data)
+        if envelope is None:
+            return None
         envelope.instrumentation_key = self._instrumentation_key
         return envelope
 
@@ -115,7 +117,7 @@ def _log_data_is_event(log_data: LogData) -> bool:
 
 
 # pylint: disable=protected-access
-def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
+def _convert_log_to_envelope(log_data: LogData) -> Union[TelemetryItem, None]:
     log_record = log_data.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
@@ -189,6 +191,9 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
             severity_level=severity_level,  # type: ignore
             properties=properties,
         )
+        if len(data.message) == 0:
+            _logger.warning("Log record body cannot be empty. Skipping export for this log record.")
+            return None
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
     return envelope
