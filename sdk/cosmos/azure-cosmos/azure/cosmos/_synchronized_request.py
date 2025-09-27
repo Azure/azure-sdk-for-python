@@ -24,7 +24,7 @@
 import copy
 import json
 import time
-
+import logging
 from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
@@ -32,6 +32,7 @@ from . import exceptions
 from . import http_constants
 from . import _retry_utility
 
+_logger = logging.getLogger("azure.cosmos.auth.request")
 
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
@@ -128,6 +129,12 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         and not connection_policy.DisableSSLVerification
     )
 
+    start_ns = time.time_ns()
+    if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
+        _logger.info("cosmos client sync database account call start at: %s | account_name: %s"
+                     " | client_id: %s ",
+                     str(start_ns), str(request.url),
+                     str(request_params.headers[http_constants.HttpHeaders.ClientId]))
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
@@ -154,6 +161,14 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
+
+    end_ns = time.time_ns()
+    if request_params.resource_type == http_constants.ResourceType.DatabaseAccount:
+        _logger.info("cosmos client sync database account call end at: %s | account_name: %s "
+                     "| duration_ns: %s,"
+                     " | client_id: %s",
+                     str(end_ns), str(request.url), str(end_ns - start_ns),
+                     str(request_params.headers[http_constants.HttpHeaders.ClientId]))
 
     response = response.http_response
     headers = copy.copy(response.headers)

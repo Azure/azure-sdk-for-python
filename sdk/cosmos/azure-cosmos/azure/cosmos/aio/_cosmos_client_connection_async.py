@@ -24,8 +24,10 @@
 """Document client class for the Azure Cosmos database service.
 """
 import os
+import time
 from urllib.parse import urlparse
 import uuid
+import logging
 from typing import (
     Callable, Dict, Any, Iterable, Mapping, Optional, List,
     Sequence, Tuple, Union, cast
@@ -84,7 +86,7 @@ from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
-
+_logger = logging.getLogger("azure.cosmos.auth.client")
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -209,13 +211,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._user_agent = _utils.get_user_agent_async(suffix)
 
         credentials_policy = None
+        self.credential_id: str = ""  # Added explicit type annotation for mypy
         if self.aad_credentials:
             scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
             account_scope = base.create_scope_from_url(self.url_connection)
+            self.credential_id = str(id(self.aad_credentials))
             credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
                 self.aad_credentials,
                 account_scope,
-                scope_override
+                scope_override,
+                self.client_id,
+                self.credential_id
             )
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
@@ -308,6 +314,29 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return self._global_endpoint_manager.get_read_endpoint()
 
     async def _setup(self) -> None:
+        # Calling get_token to warmup the cache
+        if self.aad_credentials:
+            start_ns = time.time_ns()
+            scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
+            account_scope = base.create_scope_from_url(self.url_connection)
+            current_scope = scope_override or account_scope
+            _logger.info("cosmos client async get_token call start: %s "
+                         "| account_name: %s | scope: %s"
+                         "| client_id: %s"
+                         "| credential_id: %s"
+                         , str(start_ns), str(account_scope), str(current_scope)
+                         , str(self.client_id)
+                         , str(self.credential_id))
+            await self.aad_credentials.get_token(current_scope)
+            end_ns = time.time_ns()
+            _logger.info("cosmos client async get_token call end: %s "
+                         "| account_name: %s | scope: %s | duration_ns: %s"
+                         "| client_id: %s"
+                         "| credential_id: %s"
+                         , str(end_ns),
+                         str(account_scope), str(current_scope), str(end_ns - start_ns)
+                        , str(self.client_id)
+                        , str(self.credential_id))
         if 'database_account' not in self._setup_kwargs:
             database_account, _ = await self._global_endpoint_manager._GetDatabaseAccount(
                 **self._setup_kwargs
@@ -2253,7 +2282,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
-
 
 
     async def read_items(
