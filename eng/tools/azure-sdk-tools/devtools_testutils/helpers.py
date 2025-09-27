@@ -8,7 +8,6 @@ import os
 import random
 import string
 import sys
-import json
 from pathlib import Path
 
 from urllib3 import PoolManager, Retry
