@@ -22,6 +22,7 @@ from .managed_virtual_env import ManagedVirtualEnv
 
 from ci_tools.logging import logger
 
+
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
     Empties the venv_directory directory and creates a virtual environment within. Returns the path to the new python executable.

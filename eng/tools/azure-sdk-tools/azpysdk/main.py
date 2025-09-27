@@ -81,7 +81,7 @@ def build_parser() -> argparse.ArgumentParser:
     next_pyright().register(subparsers, [common])
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
-    
+
     return parser
 
 

@@ -56,7 +56,14 @@ class pylint(Check):
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
             try:
-                install_into_venv(executable, ["azure-pylint-guidelines-checker==0.5.6", "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"], package_dir)
+                install_into_venv(
+                    executable,
+                    [
+                        "azure-pylint-guidelines-checker==0.5.6",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                    ],
+                    package_dir,
+                )
             except CalledProcessError as e:
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
@@ -87,12 +94,7 @@ class pylint(Check):
             # debug a pip freeze result
             cmd = pip_cmd + ["freeze"]
             freeze_result = subprocess.run(
-                cmd,
-                cwd=package_dir,
-                check=False,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT
+                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
             logger.debug(f"Running pip freeze with {cmd}")
             logger.debug(freeze_result.stdout)
@@ -109,16 +111,7 @@ class pylint(Check):
             )
 
             try:
-                logger.info([
-                        executable,
-                        "-m",
-                        "pylint",
-                        "--rcfile={}".format(rcFileLocation),
-                        "--output-format=parseable",
-                        os.path.join(package_dir, top_level_module),
-                    ])
-
-                results.append(check_call(
+                logger.info(
                     [
                         executable,
                         "-m",
@@ -127,7 +120,20 @@ class pylint(Check):
                         "--output-format=parseable",
                         os.path.join(package_dir, top_level_module),
                     ]
-                ))
+                )
+
+                results.append(
+                    check_call(
+                        [
+                            executable,
+                            "-m",
+                            "pylint",
+                            "--rcfile={}".format(rcFileLocation),
+                            "--output-format=parseable",
+                            os.path.join(package_dir, top_level_module),
+                        ]
+                    )
+                )
             except CalledProcessError as e:
                 logger.error(
                     "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(

@@ -53,6 +53,7 @@ EXCLUDE = {
 def extract_package_metadata(package_path: str) -> Dict[str, Any]:
     """Extract package metadata from a built package or source directory with comprehensive PEP 566/621 normalization."""
     from pkginfo import get_metadata
+
     try:
         # Note: metadata may be different between source directory and built packages since
         # some metadata may be normalized/transformed during build process
@@ -66,33 +67,33 @@ def extract_package_metadata(package_path: str) -> Dict[str, Any]:
 
         # Core metadata fields (always normalized to same key names)
         if pkg_info.name:
-            metadata['name'] = pkg_info.name
+            metadata["name"] = pkg_info.name
         if pkg_info.version:
-            metadata['version'] = pkg_info.version
+            metadata["version"] = pkg_info.version
         if pkg_info.keywords:
-            metadata['keywords'] = pkg_info.keywords
+            metadata["keywords"] = pkg_info.keywords
 
         # Summary/Description normalization
         if pkg_info.summary:
-            metadata['summary'] = pkg_info.summary
+            metadata["summary"] = pkg_info.summary
         if pkg_info.description:
-            metadata['description'] = pkg_info.description
+            metadata["description"] = pkg_info.description
 
         # Classifiers (consistent across PEPs)
         if pkg_info.classifiers:
-            metadata['classifiers'] = pkg_info.classifiers
+            metadata["classifiers"] = pkg_info.classifiers
 
         # Python version requirements
         if pkg_info.requires_python:
-            metadata['requires_python'] = pkg_info.requires_python
+            metadata["requires_python"] = pkg_info.requires_python
 
         # Dependencies normalization
         if pkg_info.requires_dist:
-            metadata['requires_dist'] = pkg_info.requires_dist
+            metadata["requires_dist"] = pkg_info.requires_dist
 
         # Author/Maintainer normalization - handle both simple and complex formats
-        _normalize_person_fields(pkg_info, metadata, 'author')
-        _normalize_person_fields(pkg_info, metadata, 'maintainer')
+        _normalize_person_fields(pkg_info, metadata, "author")
+        _normalize_person_fields(pkg_info, metadata, "maintainer")
 
         # License normalization - handle both PEP 566 and PEP 621 formats
         _normalize_license_field(pkg_info, metadata)
@@ -112,63 +113,63 @@ def extract_package_metadata(package_path: str) -> Dict[str, Any]:
 def _normalize_person_fields(pkg_info, metadata: Dict[str, Any], role: str) -> None:
     """Normalize author/maintainer fields from both PEP 566 and PEP 621 formats."""
     name_attr = getattr(pkg_info, role, None)
-    email_attr = getattr(pkg_info, f'{role}_email', None)
+    email_attr = getattr(pkg_info, f"{role}_email", None)
 
     # Handle PEP 566 style (separate fields)
     if name_attr and email_attr:
         metadata[role] = name_attr
-        metadata[f'{role}_email'] = email_attr
+        metadata[f"{role}_email"] = email_attr
     # Handle PEP 621 style where name might be embedded in email field
     elif email_attr:
         # Check if email contains name in format "Name <email>"
-        if '<' in email_attr and '>' in email_attr:
+        if "<" in email_attr and ">" in email_attr:
             # Extract name and email from "Name <email>" format
-            match = re.match(r'^(.+?)\s*<(.+?)>$', email_attr.strip())
+            match = re.match(r"^(.+?)\s*<(.+?)>$", email_attr.strip())
             if match:
                 name_part = match.group(1).strip()
                 email_part = match.group(2).strip()
                 metadata[role] = name_part
-                metadata[f'{role}_email'] = email_part
+                metadata[f"{role}_email"] = email_part
             else:
-                metadata[f'{role}_email'] = email_attr
+                metadata[f"{role}_email"] = email_attr
         else:
-            metadata[f'{role}_email'] = email_attr
+            metadata[f"{role}_email"] = email_attr
     # Handle case where only name is provided
     elif name_attr:
-        metadata[f'{role}'] = name_attr
+        metadata[f"{role}"] = name_attr
 
 
 def _normalize_license_field(pkg_info, metadata: Dict[str, Any]) -> None:
     """Normalize license field from both PEP 566 and PEP 621 formats."""
     if pkg_info.license:
-        metadata['license'] = pkg_info.license
+        metadata["license"] = pkg_info.license
     # Handle license expression (PEP 639) if available
-    if hasattr(pkg_info, 'license_expression') and getattr(pkg_info, 'license_expression', None):
-        metadata['license'] = pkg_info.license_expression
+    if hasattr(pkg_info, "license_expression") and getattr(pkg_info, "license_expression", None):
+        metadata["license"] = pkg_info.license_expression
     # Handle license file references if available
-    if hasattr(pkg_info, 'license_file') and getattr(pkg_info, 'license_file', None):
-        metadata['license'] = pkg_info.license_file
+    if hasattr(pkg_info, "license_file") and getattr(pkg_info, "license_file", None):
+        metadata["license"] = pkg_info.license_file
 
 
 def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
     """Normalize URL fields from both PEP 566 and PEP 621 formats."""
     # Homepage from PEP 566 style
     if pkg_info.home_page:
-        metadata['homepage'] = pkg_info.home_page
+        metadata["homepage"] = pkg_info.home_page
 
     # Handle project URLs (can be in various formats)
     if pkg_info.project_urls:
-        metadata['project_urls'] = pkg_info.project_urls
+        metadata["project_urls"] = pkg_info.project_urls
 
         # Try to extract homepage from project_urls if not already set
-        if 'homepage' not in metadata:
+        if "homepage" not in metadata:
             homepage = _extract_homepage_from_project_urls(pkg_info.project_urls)
             if homepage:
-                metadata['homepage'] = homepage
+                metadata["homepage"] = homepage
 
     # Download URL
-    if hasattr(pkg_info, 'download_url') and getattr(pkg_info, 'download_url', None):
-        metadata['download_url'] = pkg_info.download_url
+    if hasattr(pkg_info, "download_url") and getattr(pkg_info, "download_url", None):
+        metadata["download_url"] = pkg_info.download_url
 
 
 def _extract_homepage_from_project_urls(project_urls) -> Optional[str]:
@@ -179,17 +180,17 @@ def _extract_homepage_from_project_urls(project_urls) -> Optional[str]:
     # Handle different project_urls formats
     if isinstance(project_urls, (list, tuple)):
         for url_entry in project_urls:
-            if isinstance(url_entry, str) and ',' in url_entry:
+            if isinstance(url_entry, str) and "," in url_entry:
                 # Format: "Homepage, https://example.com"
-                url_type, url_value = url_entry.split(',', 1)
+                url_type, url_value = url_entry.split(",", 1)
                 url_type = url_type.strip().lower()
                 url_value = url_value.strip()
-                if url_type in ['homepage', 'home-page', 'home', 'website']:
+                if url_type in ["homepage", "home-page", "home", "website"]:
                     return url_value
     elif isinstance(project_urls, dict):
         # Handle dictionary format
         for key, value in project_urls.items():
-            if key.lower() in ['homepage', 'home-page', 'home', 'website']:
+            if key.lower() in ["homepage", "home-page", "home", "website"]:
                 return value
 
     return None
@@ -197,10 +198,7 @@ def _extract_homepage_from_project_urls(project_urls) -> Optional[str]:
 
 def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
     """Add optional metadata fields that may be present."""
-    optional_fields = [
-        'obsoletes_dist', 'provides_dist', 'requires_external',
-        'platform', 'supported_platform'
-    ]
+    optional_fields = ["obsoletes_dist", "provides_dist", "requires_external", "platform", "supported_platform"]
 
     for field in optional_fields:
         if hasattr(pkg_info, field):
@@ -234,15 +232,11 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
             subdirs.remove(d)
 
         if INIT_PY_FILE in files:
-            module_name = os.path.relpath(root, package_root_path).replace(
-                os.path.sep, "."
-            )
+            module_name = os.path.relpath(root, package_root_path).replace(os.path.sep, ".")
 
             # If namespace has not been set yet, try to find the first __init__.py that's not purely for extension.
             if not namespace:
-                namespace = _set_root_namespace(
-                    os.path.join(root, INIT_PY_FILE), module_name
-                )
+                namespace = _set_root_namespace(os.path.join(root, INIT_PY_FILE), module_name)
 
     return namespace
 
