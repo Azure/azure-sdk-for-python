@@ -217,9 +217,9 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
             # Verify meter provider shutdown was called
             mock_meter_provider_instance.shutdown.assert_called_once()
             
-            # Verify singleton is cleared by creating a new instance
+            # Verify singleton is not cleared on shutdown
             manager2 = CustomerSdkStatsManager()
-            self.assertIsNot(self.manager, manager2)
+            self.assertIs(self.manager, manager2)
 
     def test_shutdown_with_exception(self):
         """Test shutdown when meter provider shutdown throws exception."""

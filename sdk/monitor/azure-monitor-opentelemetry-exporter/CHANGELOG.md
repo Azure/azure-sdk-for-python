@@ -7,6 +7,8 @@
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
 - Adding customer sdkstats to feature statsbeat
   ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
+- OneSettings control plane: Add killswitch + exponential  backoff + sdkstats feature control
+  ([#43147](https://github.com/Azure/azure-sdk-for-python/pull/43147))
 
 ### Breaking Changes
 
@@ -46,6 +48,10 @@
 ### Bugs Fixed
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
   ([#42969](https://github.com/Azure/azure-sdk-for-python/pull/42969))
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
 

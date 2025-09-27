@@ -274,9 +274,6 @@ class _QuickpulseManager(metaclass=Singleton):
 
             if shutdown_success:
                 _set_global_quickpulse_state(_QuickpulseState.OFFLINE)
-                # Clear the singleton instance from the metaclass
-                if self.__class__ in _QuickpulseManager._instances:  # pylint: disable=protected-access
-                    del _QuickpulseManager._instances[self.__class__]  # pylint: disable=protected-access
 
             return shutdown_success
 
