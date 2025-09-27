@@ -35,6 +35,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-03-01/oracleSubscriptions_addAzureSubscriptions.json
+# x-ms-original-file: 2025-09-01/oracleSubscriptions_addAzureSubscriptions.json
 if __name__ == "__main__":
     main()

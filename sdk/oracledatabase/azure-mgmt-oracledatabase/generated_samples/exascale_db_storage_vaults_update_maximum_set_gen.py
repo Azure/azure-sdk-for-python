@@ -32,12 +32,12 @@ def main():
 
     response = client.exascale_db_storage_vaults.begin_update(
         resource_group_name="rgopenapi",
-        exascale_db_storage_vault_name="vmClusterName",
-        properties={"tags": {"key6179": "ouj"}},
+        exascale_db_storage_vault_name="storagevault1",
+        properties={"tags": {"key6486": "fxbuboilsiapodppdtfls"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/ExascaleDbStorageVaults_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-09-01/ExascaleDbStorageVaults_Update_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
