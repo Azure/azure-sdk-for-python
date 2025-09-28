@@ -233,7 +233,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if "context" in kwargs or "conversation" in kwargs:
             return super()._convert_kwargs_to_eval_input(**kwargs)
 
-        query = kwargs.get("query")
+        query = kwargs.get("query", None)
         response = kwargs.get("response")
         tool_definitions = kwargs.get("tool_definitions")
 
