@@ -520,16 +520,16 @@ def _get_conversation_history(query, include_system_messages=False, include_tool
         if include_system_messages and msg["role"] == "system" and "content" in msg:
             system_message = msg.get("content", "")
 
-        elif msg["role"] == "user" and "content" in msg:
+        if msg["role"] == "user" and "content" in msg:
             # Start new user turn, close previous agent response if exists
             if cur_agent_response != []:
                 all_agent_responses.append(cur_agent_response)
                 cur_agent_response = []
             text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
-                cur_user_query.extend(text_in_msg)
+                cur_user_query.append(text_in_msg)
 
-        elif msg["role"] == "assistant" and "content" in msg:
+        if msg["role"] == "assistant" and "content" in msg:
             # Start new agent response, close previous user query if exists
             if cur_user_query != []:
                 all_user_queries.append(cur_user_query)
@@ -538,7 +538,7 @@ def _get_conversation_history(query, include_system_messages=False, include_tool
             # Add text content
             text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
-                cur_agent_response.extend(text_in_msg)
+                cur_agent_response.append(text_in_msg)
 
             # Handle tool calls in assistant messages
             if include_tool_calls:
