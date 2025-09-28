@@ -660,71 +660,71 @@ def reformat_tool_definitions(tool_definitions, logger=None):
 
 
 def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=None):
-        """
-        Simplify a list of conversation messages by keeping only role and content.
-        Optionally filter out system messages and/or tool calls.
+    """
+    Simplify a list of conversation messages by keeping only role and content.
+    Optionally filter out system messages and/or tool calls.
 
-        :param messages: List of message dicts (e.g., from query or response)
-        :param drop_system: If True, remove system role messages
-        :param drop_tool_calls: If True, remove tool_call items from assistant content
-        :return: New simplified list of messages
-        """
-        if isinstance(messages, str):
+    :param messages: List of message dicts (e.g., from query or response)
+    :param drop_system: If True, remove system role messages
+    :param drop_tool_calls: If True, remove tool_call items from assistant content
+    :return: New simplified list of messages
+    """
+    if isinstance(messages, str):
+        return messages
+    try:
+        # Validate input is a list
+        if not isinstance(messages, list):
             return messages
-        try:
-            # Validate input is a list
-            if not isinstance(messages, list):
-                return messages
-                
-            simplified_msgs = []
-            for msg in messages:
-                # Ensure msg is a dict
-                if not isinstance(msg, dict):
-                    simplified_msgs.append(msg)
-                    continue
-                    
-                role = msg.get("role")
-                content = msg.get("content", [])
 
-                # Drop system message (if should)
-                if drop_system and role == "system":
-                    continue
+        simplified_msgs = []
+        for msg in messages:
+            # Ensure msg is a dict
+            if not isinstance(msg, dict):
+                simplified_msgs.append(msg)
+                continue
 
-                # Simplify user messages
-                if role == "user":
-                    simplified_msg = {
-                        "role": role,
-                        "content": _extract_text_from_content(content),
-                    }
+            role = msg.get("role")
+            content = msg.get("content", [])
+
+            # Drop system message (if should)
+            if drop_system and role == "system":
+                continue
+
+            # Simplify user messages
+            if role == "user":
+                simplified_msg = {
+                    "role": role,
+                    "content": _extract_text_from_content(content),
+                }
+                simplified_msgs.append(simplified_msg)
+                continue
+
+            # Drop tool results (if should)
+            if drop_tool_calls and role == "tool":
+                continue
+
+            # Simplify assistant messages
+            if role == "assistant":
+                simplified_content = _extract_text_from_content(content)
+                # Check if message has content
+                if simplified_content:
+                    simplified_msg = {"role": role, "content": simplified_content}
                     simplified_msgs.append(simplified_msg)
                     continue
 
-                # Drop tool results (if should)
-                if drop_tool_calls and role == "tool":
+                # Drop tool calls (if should)
+                if drop_tool_calls and any(c.get("type") == "tool_call" for c in content if isinstance(c, dict)):
                     continue
 
-                # Simplify assistant messages
-                if role == "assistant":
-                    simplified_content = _extract_text_from_content(content)
-                    # Check if message has content
-                    if simplified_content:
-                        simplified_msg = {"role": role, "content": simplified_content}
-                        simplified_msgs.append(simplified_msg)
-                        continue
+            # If we reach here, it means we want to keep the message
+            simplified_msgs.append(msg)
 
-                    # Drop tool calls (if should)
-                    if drop_tool_calls and any(c.get("type") == "tool_call" for c in content if isinstance(c, dict)):
-                        continue
+        return simplified_msgs
 
-                # If we reach here, it means we want to keep the message
-                simplified_msgs.append(msg)
-
-            return simplified_msgs
-            
-        except Exception as ex:
-            if logger:
-                logger.debug(f"Error simplifying messages: {str(ex)}. Returning original messages.")
-            return messages
+    except Exception as ex:
+        if logger:
+            logger.debug(f"Error simplifying messages: {str(ex)}. Returning original messages.")
+        return messages
 
 
 def upload(path: str, container_client: ContainerClient, logger=None):
