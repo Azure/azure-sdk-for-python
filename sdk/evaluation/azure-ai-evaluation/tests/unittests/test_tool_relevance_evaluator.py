@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
-from azure.ai.evaluation import ToolRelevanceEvaluator
+from azure.ai.evaluation._evaluators._tool_relevance import ToolRelevanceEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
 
