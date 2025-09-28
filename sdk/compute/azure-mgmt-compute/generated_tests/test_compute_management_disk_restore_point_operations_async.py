@@ -21,28 +21,28 @@ class TestComputeManagementDiskRestorePointOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_disk_restore_point_list_by_restore_point(self, resource_group):
+        response = self.client.disk_restore_point.list_by_restore_point(
+            resource_group_name=resource_group.name,
+            restore_point_collection_name="str",
+            vm_restore_point_name="str",
+            api_version="2025-01-02",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_disk_restore_point_get(self, resource_group):
         response = await self.client.disk_restore_point.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             vm_restore_point_name="str",
             disk_restore_point_name="str",
-            api_version="2023-10-02",
+            api_version="2025-01-02",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_disk_restore_point_list_by_restore_point(self, resource_group):
-        response = self.client.disk_restore_point.list_by_restore_point(
-            resource_group_name=resource_group.name,
-            restore_point_collection_name="str",
-            vm_restore_point_name="str",
-            api_version="2023-10-02",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -61,7 +61,7 @@ class TestComputeManagementDiskRestorePointOperationsAsync(AzureMgmtRecordedTest
                     "fileFormat": "str",
                     "getSecureVMGuestStateSAS": bool,
                 },
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,7 +77,7 @@ class TestComputeManagementDiskRestorePointOperationsAsync(AzureMgmtRecordedTest
                 restore_point_collection_name="str",
                 vm_restore_point_name="str",
                 disk_restore_point_name="str",
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
