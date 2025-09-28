@@ -1,5 +1,165 @@
 # Release History
 
+## 10.1.0 (2025-09-22)
+
+### Features Added
+
+  - Client `DataMigrationManagementClient` added operation group `database_migrations_mongo_to_cosmos_db_ru_mongo`
+  - Client `DataMigrationManagementClient` added operation group `database_migrations_mongo_to_cosmos_dbv_core_mongo`
+  - Client `DataMigrationManagementClient` added operation group `database_migrations_sql_db`
+  - Client `DataMigrationManagementClient` added operation group `database_migrations_sql_mi`
+  - Client `DataMigrationManagementClient` added operation group `database_migrations_sql_vm`
+  - Client `DataMigrationManagementClient` added operation group `migration_services`
+  - Client `DataMigrationManagementClient` added operation group `sql_migration_services`
+  - Model `AzureActiveDirectoryApp` added property `ignore_azure_permissions`
+  - Model `ConnectToSourceSqlServerTaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `ConnectToSourceSqlServerTaskProperties` added property `task_id`
+  - Model `ConnectToTargetSqlDbTaskInput` added property `query_object_counts`
+  - Model `ConnectToTargetSqlDbTaskProperties` added property `created_on`
+  - Model `DataMigrationService` added property `auto_stop_delay`
+  - Model `DataMigrationService` added property `delete_resources_on_stop`
+  - Model `DataMigrationServiceStatusResponse` added property `agent_configuration`
+  - Model `GetUserTablesSqlTaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `GetUserTablesSqlTaskProperties` added property `task_id`
+  - Model `MigrateMySqlAzureDbForMySqlOfflineTaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `MigrateMySqlAzureDbForMySqlOfflineTaskProperties` added property `is_cloneable`
+  - Model `MigrateMySqlAzureDbForMySqlOfflineTaskProperties` added property `task_id`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncDatabaseInput` added property `id`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskInput` added property `started_on`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputError` added property `events`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskOutputMigrationLevel` added property `database_count`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties` added property `task_id`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties` added property `created_on`
+  - Model `MigratePostgreSqlAzureDbForPostgreSqlSyncTaskProperties` added property `is_cloneable`
+  - Model `MigrateSchemaSqlServerSqlDbDatabaseInput` added property `id`
+  - Model `MigrateSchemaSqlServerSqlDbTaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `MigrateSchemaSqlServerSqlDbTaskInput` added property `started_on`
+  - Model `MigrateSchemaSqlServerSqlDbTaskProperties` added property `created_on`
+  - Model `MigrateSchemaSqlServerSqlDbTaskProperties` added property `task_id`
+  - Model `MigrateSchemaSqlServerSqlDbTaskProperties` added property `is_cloneable`
+  - Model `MigrateSqlServerSqlDbDatabaseInput` added property `schema_setting`
+  - Model `MigrateSqlServerSqlDbDatabaseInput` added property `id`
+  - Model `MigrateSqlServerSqlDbTaskInput` added property `started_on`
+  - Model `MigrateSqlServerSqlDbTaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `MigrateSqlServerSqlDbTaskProperties` added property `task_id`
+  - Model `MigrateSqlServerSqlDbTaskProperties` added property `is_cloneable`
+  - Model `MigrateSqlServerSqlDbTaskProperties` added property `created_on`
+  - Model `MigrateSqlServerSqlMIDatabaseInput` added property `id`
+  - Model `MigrateSqlServerSqlMISyncTaskInput` added property `number_of_parallel_database_migrations`
+  - Model `MigrateSqlServerSqlMISyncTaskProperties` added property `created_on`
+  - Model `MigrateSqlServerSqlMITaskInput` added property `started_on`
+  - Model `MigrateSqlServerSqlMITaskInput` added property `encrypted_key_for_secure_fields`
+  - Model `MigrateSqlServerSqlMITaskProperties` added property `task_id`
+  - Model `MigrateSqlServerSqlMITaskProperties` added property `created_on`
+  - Model `MigrateSqlServerSqlMITaskProperties` added property `parent_task_id`
+  - Model `MigrateSqlServerSqlMITaskProperties` added property `is_cloneable`
+  - Model `MigrateSyncCompleteCommandProperties` added property `command_id`
+  - Model `MongoDbConnectionInfo` added property `data_source`
+  - Model `MongoDbConnectionInfo` added property `encrypt_connection`
+  - Model `MongoDbConnectionInfo` added property `server_brand_version`
+  - Model `MongoDbConnectionInfo` added property `server_version`
+  - Model `MongoDbConnectionInfo` added property `server_name`
+  - Model `MongoDbConnectionInfo` added property `trust_server_certificate`
+  - Model `MongoDbConnectionInfo` added property `enforce_ssl`
+  - Model `MongoDbConnectionInfo` added property `port`
+  - Model `MongoDbConnectionInfo` added property `additional_settings`
+  - Model `MongoDbConnectionInfo` added property `authentication`
+  - Model `MySqlConnectionInfo` added property `data_source`
+  - Model `MySqlConnectionInfo` added property `authentication`
+  - Model `MySqlConnectionInfo` added property `additional_settings`
+  - Model `OracleConnectionInfo` added property `server_name`
+  - Model `OracleConnectionInfo` added property `server_version`
+  - Model `OracleConnectionInfo` added property `port`
+  - Model `OracleConnectionInfo` added property `authentication`
+  - Model `PostgreSqlConnectionInfo` added property `data_source`
+  - Model `PostgreSqlConnectionInfo` added property `server_version`
+  - Model `PostgreSqlConnectionInfo` added property `additional_settings`
+  - Model `PostgreSqlConnectionInfo` added property `server_brand_version`
+  - Model `PostgreSqlConnectionInfo` added property `authentication`
+  - Model `Project` added property `etag`
+  - Model `Project` added property `azure_authentication_info`
+  - Model `Resource` added property `system_data`
+  - Model `SchemaMigrationSetting` added property `file_name`
+  - Enum `ServerLevelPermissionsGroup` added member `MIGRATION_FROM_SQL_SERVER_TO_AZURE_VM`
+  - Model `SqlConnectionInfo` added property `server_name`
+  - Model `SqlConnectionInfo` added property `port`
+  - Model `SqlConnectionInfo` added property `server_version`
+  - Model `SqlConnectionInfo` added property `server_brand_version`
+  - Model `SqlConnectionInfo` added property `resource_id`
+  - Added enum `AuthType`
+  - Added model `AuthenticationKeys`
+  - Added model `AzureBlob`
+  - Added model `BackupConfiguration`
+  - Added enum `CommandType`
+  - Added model `CopyProgressDetails`
+  - Added model `DatabaseMigration`
+  - Added model `DatabaseMigrationBase`
+  - Added model `DatabaseMigrationBaseListResult`
+  - Added model `DatabaseMigrationBaseProperties`
+  - Added model `DatabaseMigrationCosmosDbMongo`
+  - Added model `DatabaseMigrationCosmosDbMongoListResult`
+  - Added model `DatabaseMigrationListResult`
+  - Added model `DatabaseMigrationProperties`
+  - Added model `DatabaseMigrationPropertiesCosmosDbMongo`
+  - Added model `DatabaseMigrationPropertiesSqlDb`
+  - Added model `DatabaseMigrationPropertiesSqlMi`
+  - Added model `DatabaseMigrationPropertiesSqlVm`
+  - Added model `DatabaseMigrationSqlDb`
+  - Added model `DatabaseMigrationSqlMi`
+  - Added model `DatabaseMigrationSqlVm`
+  - Added model `DeleteNode`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorInfo`
+  - Added model `ErrorResponse`
+  - Added model `IntegrationRuntimeMonitoringData`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `MigrationOperationInput`
+  - Added model `MigrationService`
+  - Added model `MigrationServiceListResult`
+  - Added model `MigrationServiceUpdate`
+  - Added model `MigrationStatusDetails`
+  - Added model `MongoConnectionInformation`
+  - Added model `MongoMigrationCollection`
+  - Added model `MongoMigrationProgressDetails`
+  - Added enum `MongoMigrationStatus`
+  - Added model `NodeMonitoringData`
+  - Added model `OfflineConfiguration`
+  - Added model `OperationListResult`
+  - Added enum `OperationOrigin`
+  - Added model `OperationsDefinition`
+  - Added model `OperationsDisplayDefinition`
+  - Added enum `ProvisioningState`
+  - Added model `ProxyResource`
+  - Added model `ProxyResourceAutoGenerated`
+  - Added model `RegenAuthKeys`
+  - Added model `ResourceAutoGenerated`
+  - Added enum `ResourceType`
+  - Added model `SourceLocation`
+  - Added model `SqlBackupFileInfo`
+  - Added model `SqlBackupSetInfo`
+  - Added model `SqlConnectionInformation`
+  - Added model `SqlDbMigrationStatusDetails`
+  - Added model `SqlDbOfflineConfiguration`
+  - Added model `SqlFileShare`
+  - Added model `SqlMigrationListResult`
+  - Added model `SqlMigrationService`
+  - Added model `SqlMigrationServiceUpdate`
+  - Added model `SystemDataAutoGenerated`
+  - Added model `TargetLocation`
+  - Added enum `TaskType`
+  - Added model `TrackedResourceAutoGenerated`
+  - Added model `UserAssignedIdentity`
+  - Added operation group `DatabaseMigrationsMongoToCosmosDbRUMongoOperations`
+  - Added operation group `DatabaseMigrationsMongoToCosmosDbvCoreMongoOperations`
+  - Added operation group `DatabaseMigrationsSqlDbOperations`
+  - Added operation group `DatabaseMigrationsSqlMiOperations`
+  - Added operation group `DatabaseMigrationsSqlVmOperations`
+  - Added operation group `MigrationServicesOperations`
+  - Added operation group `SqlMigrationServicesOperations`
+
 ## 10.1.0b2 (2025-06-17)
 
 ### Features Added
