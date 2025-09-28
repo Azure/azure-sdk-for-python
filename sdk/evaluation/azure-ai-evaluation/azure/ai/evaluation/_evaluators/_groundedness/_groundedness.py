@@ -274,7 +274,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         tool_definitions = kwargs.get("tool_definitions")
 
         if (not query) or (not response):  # or not tool_definitions:
-            msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query', 'response' and 'tool_definitions' are required."
+            msg = f"{type(self).__name__}: Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
             raise EvaluationException(
                 message=msg,
                 blame=ErrorBlame.USER_ERROR,
