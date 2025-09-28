@@ -16,7 +16,7 @@ PROMPT_BASED_REASON_EVALUATORS = [
     "response_completeness",
     "task_adherence",
     "task_success",
-    "tool_relevance"
+    "tool_relevance",
 ]
 
 
