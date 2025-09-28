@@ -306,7 +306,7 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_1",
                         "name": "search",
-                        "arguments": {"query": "weather", "location": "NYC"}
+                        "arguments": {"query": "weather", "location": "NYC"},
                     }
                 ],
             },
@@ -317,19 +317,16 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_2",
                         "name": "format_result",
-                        "arguments": {"format": "json", "style": "brief"}
+                        "arguments": {"format": "json", "style": "brief"},
                     }
                 ],
             },
         ]
-        
+
         # Ground truth with tuple format: (tool_names, parameters_dict)
         ground_truth = (
             ["search", "format_result"],
-            {
-                "search": {"query": "weather", "location": "NYC"},
-                "format_result": {"format": "json", "style": "brief"}
-            }
+            {"search": {"query": "weather", "location": "NYC"}, "format_result": {"format": "json", "style": "brief"}},
         )
 
         result = evaluator(response=response, ground_truth=ground_truth)
@@ -354,7 +351,7 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_1",
                         "name": "search",
-                        "arguments": {"query": "weather", "location": "LA"}  # Different location
+                        "arguments": {"query": "weather", "location": "LA"},  # Different location
                     }
                 ],
             },
@@ -365,19 +362,16 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_2",
                         "name": "format_result",
-                        "arguments": {"format": "xml", "style": "detailed"}  # Different parameters
+                        "arguments": {"format": "xml", "style": "detailed"},  # Different parameters
                     }
                 ],
             },
         ]
-        
+
         # Ground truth with tuple format
         ground_truth = (
             ["search", "format_result"],
-            {
-                "search": {"query": "weather", "location": "NYC"},
-                "format_result": {"format": "json", "style": "brief"}
-            }
+            {"search": {"query": "weather", "location": "NYC"}, "format_result": {"format": "json", "style": "brief"}},
         )
 
         result = evaluator(response=response, ground_truth=ground_truth)
@@ -402,7 +396,7 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_1",
                         "name": "search",
-                        "arguments": {"query": "weather", "location": "NYC"}  # Matches exactly
+                        "arguments": {"query": "weather", "location": "NYC"},  # Matches exactly
                     }
                 ],
             },
@@ -413,7 +407,7 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_2",
                         "name": "format_result",
-                        "arguments": {"format": "xml", "style": "detailed"}  # Different parameters
+                        "arguments": {"format": "xml", "style": "detailed"},  # Different parameters
                     }
                 ],
             },
@@ -424,26 +418,23 @@ class TestPathEfficiencyEvaluator:
                         "type": "tool_call",
                         "tool_call_id": "call_3",
                         "name": "extra_tool",
-                        "arguments": {"param": "value"}  # Extra tool not in ground truth
+                        "arguments": {"param": "value"},  # Extra tool not in ground truth
                     }
                 ],
             },
         ]
-        
+
         # Ground truth with tuple format
         ground_truth = (
             ["search", "format_result"],
-            {
-                "search": {"query": "weather", "location": "NYC"},
-                "format_result": {"format": "json", "style": "brief"}
-            }
+            {"search": {"query": "weather", "location": "NYC"}, "format_result": {"format": "json", "style": "brief"}},
         )
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
         # Only "search" matches (1 out of 3 agent tools, 1 out of 2 ground truth tools)
         expected_precision = 1.0 / 3.0  # 1 match out of 3 agent tools
-        expected_recall = 1.0 / 2.0     # 1 match out of 2 ground truth tools
+        expected_recall = 1.0 / 2.0  # 1 match out of 2 ground truth tools
         expected_f1 = 2 * expected_precision * expected_recall / (expected_precision + expected_recall)
 
         assert result["path_efficiency_precision_score"] == pytest.approx(expected_precision, rel=1e-3)
@@ -461,35 +452,19 @@ class TestPathEfficiencyEvaluator:
             {
                 "role": "assistant",
                 "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_1",
-                        "name": "ping",
-                        "arguments": {}  # No parameters
-                    }
+                    {"type": "tool_call", "tool_call_id": "call_1", "name": "ping", "arguments": {}}  # No parameters
                 ],
             },
             {
                 "role": "assistant",
                 "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_2",
-                        "name": "log",
-                        "arguments": {"message": "success"}
-                    }
+                    {"type": "tool_call", "tool_call_id": "call_2", "name": "log", "arguments": {"message": "success"}}
                 ],
             },
         ]
-        
+
         # Ground truth with tuple format including empty parameters
-        ground_truth = (
-            ["ping", "log"],
-            {
-                "ping": {},  # Empty parameters dict
-                "log": {"message": "success"}
-            }
-        )
+        ground_truth = (["ping", "log"], {"ping": {}, "log": {"message": "success"}})  # Empty parameters dict
 
         result = evaluator(response=response, ground_truth=ground_truth)
 
@@ -504,7 +479,7 @@ class TestPathEfficiencyEvaluator:
     def test_tuple_format_invalid_inputs(self):
         """Test tuple format with invalid input validation."""
         evaluator = PathEfficiencyEvaluator()
-        
+
         response = []  # Empty response for testing validation
 
         # Test invalid tuple length
@@ -519,6 +494,6 @@ class TestPathEfficiencyEvaluator:
         with pytest.raises(TypeError):
             evaluator(response=response, ground_truth=(["tool"], "not_a_dict"))  # type: ignore
 
-        # Test invalid parameter values (not strings)
+        # Test invalid parameter values (not json serializable)
         with pytest.raises(TypeError):
-            evaluator(response=response, ground_truth=(["tool"], {"tool": {"key": 123}}))  # type: ignore
+            evaluator(response=response, ground_truth=(["tool"], {"tool": {"key": object}}))  # type: ignore

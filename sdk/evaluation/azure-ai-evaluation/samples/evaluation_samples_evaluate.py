@@ -604,7 +604,9 @@ class EvaluationEvaluateSamples(object):
         response_with_params = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}],
+                "content": [
+                    {"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}
+                ],
             },
         ]
         ground_truth_with_params = (["search"], {"search": {"query": "test"}})

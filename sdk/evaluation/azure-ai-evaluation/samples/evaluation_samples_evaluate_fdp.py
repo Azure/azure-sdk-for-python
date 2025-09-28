@@ -605,12 +605,14 @@ class EvaluationEvaluateSamples(object):
         ground_truth = ["search", "analyze", "report"]
 
         path_efficiency_evaluator(response=response, ground_truth=ground_truth)
-        
+
         # Also supports tuple format with parameters for exact parameter matching
         response_with_params = [
             {
                 "role": "assistant",
-                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}],
+                "content": [
+                    {"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}
+                ],
             },
         ]
         ground_truth_with_params = (["search"], {"search": {"query": "test"}})
