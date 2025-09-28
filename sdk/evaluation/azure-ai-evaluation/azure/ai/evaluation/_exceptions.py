@@ -96,7 +96,6 @@ class ErrorTarget(Enum):
     CONVERSATION = "Conversation"
     TOOL_CALL_ACCURACY_EVALUATOR = "ToolCallAccuracyEvaluator"
     TOOL_RELEVANCE_EVALUATOR = "ToolRelevanceEvaluator"
-    PARAMETER_CORRECTNESS_EVALUATOR = "ParameterCorrectnessEvaluator"
     RED_TEAM = "RedTeam"
     AOAI_GRADER = "AoaiGrader"
     CONVERSATION_HISTORY_PARSING = "_get_conversation_history"
