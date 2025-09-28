@@ -1,12 +1,12 @@
 from unittest.mock import MagicMock
 
 import pytest
-from azure.ai.evaluation import ToolSelectionEvaluator
+from azure.ai.evaluation import ToolRelevanceEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
 
 
-# Mock function for Tool Selection evaluator flow side effect
-async def tool_selection_flow_side_effect(timeout, **kwargs):
+# Mock function for Tool Relevance evaluator flow side effect
+async def tool_relevance_flow_side_effect(timeout, **kwargs):
     tool_calls = kwargs.get("tool_calls", [])
     tool_definitions = kwargs.get("tool_definitions", [])
     query = kwargs.get("query", "")
@@ -15,7 +15,7 @@ async def tool_selection_flow_side_effect(timeout, **kwargs):
     score = 0  # Default fail score
     reason = "Tools selected are not relevant to the query"
 
-    # Note: For ToolSelectionEvaluator, tool_calls is a list of strings (tool names)
+    # Note: For ToolRelevanceEvaluator, tool_calls is a list of strings (tool names)
     # Convert tool_calls to strings for consistent handling
     tool_names = [str(tc).lower() for tc in tool_calls]
 
@@ -59,10 +59,10 @@ async def tool_selection_flow_side_effect(timeout, **kwargs):
 
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
-class TestToolSelectionEvaluator:
-    def test_evaluate_tool_selection_pass_relevant_tools(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+class TestToolRelevanceEvaluator:
+    def test_evaluate_tool_relevance_pass_relevant_tools(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "What's the weather like today?"
         tool_calls = [
@@ -84,16 +84,16 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
-    def test_evaluate_tool_selection_fail_irrelevant_tools(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_fail_irrelevant_tools(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "I want to buy a jacket"
         tool_calls = [
@@ -121,16 +121,16 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert key in result
         assert result[key] == 0
         assert result[f"{key}_result"] == "fail"
         assert f"{key}_reason" in result
 
-    def test_evaluate_tool_selection_pass_search_query(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_pass_search_query(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "Search for information about Python programming"
         tool_calls = [
@@ -152,14 +152,14 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
 
-    def test_evaluate_tool_selection_pass_data_query(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_pass_data_query(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "Analyze the data trends"
         tool_calls = [
@@ -181,14 +181,14 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
 
-    def test_evaluate_tool_selection_pass_financial_query(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_pass_financial_query(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "Check my financial portfolio"
         tool_calls = [
@@ -210,14 +210,14 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
 
-    def test_evaluate_tool_selection_fail_no_tools_selected(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_fail_no_tools_selected(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "What's the weather like today?"
         tool_calls = []
@@ -232,15 +232,15 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
-    def test_evaluate_tool_selection_not_applicable_no_tool_definitions(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_not_applicable_no_tool_definitions(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "What's the weather like today?"
         tool_calls = []
@@ -248,15 +248,15 @@ class TestToolSelectionEvaluator:
 
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolSelectionEvaluator._RESULT_KEY
+        key = ToolRelevanceEvaluator._RESULT_KEY
         assert result is not None
         assert result[key] == "not applicable"
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
-    def test_evaluate_tool_selection_exception_invalid_score(self, mock_model_config):
-        evaluator = ToolSelectionEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
+    def test_evaluate_tool_relevance_exception_invalid_score(self, mock_model_config):
+        evaluator = ToolRelevanceEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=tool_relevance_flow_side_effect)
 
         query = "Test invalid scenario"
         tool_calls = [

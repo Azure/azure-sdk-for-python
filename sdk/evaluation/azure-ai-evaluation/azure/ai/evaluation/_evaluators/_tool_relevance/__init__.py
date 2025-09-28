@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._tool_selection import ToolSelectionEvaluator
+from ._tool_selection import ToolRelevanceEvaluator
 
 __all__ = [
-    "ToolSelectionEvaluator",
+    "ToolRelevanceEvaluator",
 ]
