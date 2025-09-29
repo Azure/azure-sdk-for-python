@@ -163,6 +163,71 @@ def _uses_feature_flags(uses_feature_flags):
     return ""
 
 
+def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
+    """
+    Process and validate all load function parameters in one place.
+    This consolidates the most obviously duplicated logic from both sync and async load functions.
+
+    :param args: Positional arguments, either endpoint and credential, or connection string.
+    :type args: Any
+    :return: Dictionary containing processed parameters
+    :rtype: Dict[str, Any]
+    """
+    endpoint: Optional[str] = kwargs.pop("endpoint", None)
+    credential = kwargs.pop("credential", None)
+    connection_string: Optional[str] = kwargs.pop("connection_string", None)
+    start_time = datetime.datetime.now()
+
+    # Handle positional arguments
+    if len(args) > 2:
+        raise TypeError(
+            "Unexpected positional parameters. Please pass either endpoint and credential, or a connection string."
+        )
+    if len(args) == 1:
+        if endpoint is not None:
+            raise TypeError("Received multiple values for parameter 'endpoint'.")
+        endpoint = args[0]
+    elif len(args) == 2:
+        if credential is not None:
+            raise TypeError("Received multiple values for parameter 'credential'.")
+        endpoint, credential = args
+
+    # Validate endpoint/credential vs connection_string
+    if (endpoint or credential) and connection_string:
+        raise ValueError("Please pass either endpoint and credential, or a connection string.")
+
+    # Process Key Vault options in one place
+    key_vault_options = kwargs.pop("key_vault_options", None)
+    if key_vault_options:
+        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
+            raise ValueError(
+                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."
+            )
+        kwargs["keyvault_credential"] = key_vault_options.credential
+        kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        kwargs["keyvault_client_configs"] = key_vault_options.client_configs
+
+    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
+        raise ValueError("A keyvault credential and secret resolver can't both be configured.")
+
+    # Determine Key Vault usage
+    uses_key_vault = (
+        "keyvault_credential" in kwargs
+        or "keyvault_client_configs" in kwargs
+        or "secret_resolver" in kwargs
+        or kwargs.get("uses_key_vault", False)
+    )
+
+    return {
+        "endpoint": endpoint,
+        "credential": credential,
+        "connection_string": connection_string,
+        "uses_key_vault": uses_key_vault,
+        "start_time": start_time,
+        "kwargs": kwargs,
+    }
+
+
 def is_json_content_type(content_type: str) -> bool:
     if not content_type:
         return False
