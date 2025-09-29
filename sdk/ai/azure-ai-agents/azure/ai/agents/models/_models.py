@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1102,22 +1101,21 @@ class BingGroundingSearchConfiguration(_Model):
      listed in Market codes, Bing uses a best fit market code based on an internal mapping that is
      subject to change.
     :vartype market: str
-    :ivar set_lang:   The language to use for user interface strings. You may specify the language
+    :ivar set_lang: The language to use for user interface strings. You may specify the language
      using either a 2-letter or 4-letter code. Using 4-letter codes is preferred.
-       For a list of supported language codes, see `Bing supported languages
+     For a list of supported language codes, see `Bing supported languages
      <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
-       Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
+     Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
      code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
      for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
-       If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
+     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
      example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
-       To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
-       To specify the 4-letter code, use the form ``<language>-<country/region>`` where
-     ``<language>`` is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an
-     ISO 3166 country/region (specific culture) code. For example, use ``en-US`` for United States
-     English.
-       Although optional, you should always specify the language. Typically, you set this parameter
-     to the same language specified by the market value unless the user wants the user interface
+     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
+     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
+     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
+     country/region (specific culture) code. For example, use ``en-US`` for United States English.
+     Although optional, you should always specify the language. Typically, you set this parameter to
+     the same language specified by the market value unless the user wants the user interface
      strings displayed in a different language.
     :vartype set_lang: str
     :ivar count: The number of search results to return in the response. The default is 5 and the
@@ -1154,22 +1152,21 @@ class BingGroundingSearchConfiguration(_Model):
      listed in Market codes, Bing uses a best fit market code based on an internal mapping that is
      subject to change."""
     set_lang: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """  The language to use for user interface strings. You may specify the language using either a
+    """The language to use for user interface strings. You may specify the language using either a
      2-letter or 4-letter code. Using 4-letter codes is preferred.
-       For a list of supported language codes, see `Bing supported languages
+     For a list of supported language codes, see `Bing supported languages
      <https://learn.microsoft.com/bing/search-apis/bing-web-search/reference/market-codes#bing-supported-language-codes>`_.
-       Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
+     Bing loads the localized strings if this parameter contains a valid 2-letter neutral culture
      code (for example ``fr``) or a valid 4-letter specific culture code (``fr-ca``). For example,
      for ``fr-ca``, Bing loads the ``fr`` neutral culture code strings.
-       If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
+     If the parameter is not valid (for example, ``zh``) or Bing doesn’t support the language (for
      example, ``af``, ``af-na``), Bing defaults to ``en`` (English).
-       To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
-       To specify the 4-letter code, use the form ``<language>-<country/region>`` where
-     ``<language>`` is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an
-     ISO 3166 country/region (specific culture) code. For example, use ``en-US`` for United States
-     English.
-       Although optional, you should always specify the language. Typically, you set this parameter
-     to the same language specified by the market value unless the user wants the user interface
+     To specify the 2-letter code, set this parameter to an ISO 639-1 language code.
+     To specify the 4-letter code, use the form ``<language>-<country/region>`` where ``<language>``
+     is an ISO 639-1 language code (neutral culture) and ``<country/region>`` is an ISO 3166
+     country/region (specific culture) code. For example, use ``en-US`` for United States English.
+     Although optional, you should always specify the language. Typically, you set this parameter to
+     the same language specified by the market value unless the user wants the user interface
      strings displayed in a different language."""
     count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The number of search results to return in the response. The default is 5 and the maximum value
