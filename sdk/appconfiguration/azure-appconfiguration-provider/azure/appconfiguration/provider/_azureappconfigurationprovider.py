@@ -14,13 +14,13 @@ from typing import (
     overload,
     List,
     Tuple,
-    TYPE_CHECKING,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
@@ -36,9 +36,6 @@ from ._azureappconfigurationproviderbase import (
 )
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper as ConfigurationClient
 from ._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)
@@ -225,7 +222,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
 
 def _buildprovider(
-    connection_string: Optional[str], endpoint: Optional[str], credential: Optional["TokenCredential"], **kwargs
+    connection_string: Optional[str], endpoint: Optional[str], credential: Optional[TokenCredential], **kwargs
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     if connection_string:
@@ -288,7 +285,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
+        super(AzureAppConfigurationProvider, self).__init__(**kwargs)
 
         if "user_agent" in kwargs:
             user_agent = kwargs.pop("user_agent") + " " + USER_AGENT
@@ -374,17 +371,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # Configuration Settings have been refreshed
                 processed_settings = self._process_configurations(configuration_settings)
 
-            if feature_flags:
-                # Reset feature flag usage
-                self._feature_filter_usage = {}
-                processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
-
-            if self._feature_flag_enabled:
-                # Create the feature management schema and add feature flags
-                if feature_flags:
-                    self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
-                processed_settings[FEATURE_MANAGEMENT_KEY] = {}
-                processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
+            processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
             if settings_refreshed:
                 # Update the watch keys that have changed
@@ -396,7 +383,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._feature_flag_refresh_timer.reset()
             if (settings_refreshed or feature_flags) and self._on_refresh_success:
                 self._on_refresh_success()
-            return
         except AzureError as e:
             logger.warning("Failed to refresh configurations from endpoint %s", client.endpoint)
             self._replica_client_manager.backoff(client)
@@ -440,7 +426,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         finally:
             self._refresh_lock.release()
 
-    def _load_all(self, **kwargs):
+    def _load_all(self, **kwargs: Any) -> None:
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
@@ -466,7 +452,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             )
             try:
                 configuration_settings = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
-                processed_feature_flags = []
                 watched_settings = self._update_watched_settings(configuration_settings)
                 processed_settings = self._process_configurations(configuration_settings)
 
@@ -476,12 +461,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                         headers=headers,
                         **kwargs,
                     )
-                    processed_feature_flags = (
-                        [self._process_feature_flag(ff) for ff in feature_flags] if feature_flags else []
-                    )
-                    processed_settings[FEATURE_MANAGEMENT_KEY] = {}
-                    processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
-                    self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
+                    processed_settings = self._process_feature_flags(processed_settings, [], feature_flags)
                 for (key, label), etag in self._watched_settings.items():
                     if not etag:
                         try:

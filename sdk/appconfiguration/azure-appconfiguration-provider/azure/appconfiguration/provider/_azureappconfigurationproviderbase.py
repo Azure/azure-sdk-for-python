@@ -7,7 +7,6 @@ import base64
 import hashlib
 import json
 import os
-import random
 import time
 import datetime
 from importlib.metadata import version, PackageNotFoundError
@@ -55,7 +54,10 @@ from ._constants import (
     ALLOCATION_ID_KEY,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
+    FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_KEY,
 )
+from ._refresh_timer import _RefreshTimer
 
 JSON = Mapping[str, Any]
 _T = TypeVar("_T")
@@ -225,53 +227,6 @@ def sdk_allowed_kwargs(kwargs):
         "connection_data_block_size",
     ]
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
-
-
-class _RefreshTimer:
-    """
-    A timer that tracks the next refresh time and the number of attempts.
-    """
-
-    def __init__(self, **kwargs):
-        self._interval: int = kwargs.pop("refresh_interval", 30)
-        if self._interval < 1:
-            raise ValueError("Refresh interval must be greater than or equal to 1 second.")
-        self._next_refresh_time: float = time.time() + self._interval
-        self._attempts: int = 1
-        self._min_backoff: int = (
-            kwargs.get("min_backoff", 30) if kwargs.get("min_backoff", 30) <= self._interval else self._interval
-        )
-        self._max_backoff: int = 600 if 600 <= self._interval else self._interval
-
-    def reset(self) -> None:
-        self._next_refresh_time = time.time() + self._interval
-        self._attempts = 1
-
-    def backoff(self) -> None:
-        self._next_refresh_time = time.time() + self._calculate_backoff() / 1000
-        self._attempts += 1
-
-    def needs_refresh(self) -> bool:
-        return time.time() >= self._next_refresh_time
-
-    def _calculate_backoff(self) -> float:
-        max_attempts = 63
-        millisecond = 1000  # 1 Second in milliseconds
-
-        min_backoff_milliseconds = self._min_backoff * millisecond
-        max_backoff_milliseconds = self._max_backoff * millisecond
-
-        if self._max_backoff <= self._min_backoff:
-            return min_backoff_milliseconds
-
-        calculated_milliseconds = max(1, min_backoff_milliseconds) * (1 << min(self._attempts, max_attempts))
-
-        if calculated_milliseconds > max_backoff_milliseconds or calculated_milliseconds <= 0:
-            calculated_milliseconds = max_backoff_milliseconds
-
-        return min_backoff_milliseconds + (
-            random.uniform(0.0, 1.0) * (calculated_milliseconds - min_backoff_milliseconds)  # nosec
-        )
 
 
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
@@ -563,6 +518,23 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                     # If the value is not a valid JSON, treat it like regular string value
                     return config.value
         return config.value
+
+    def _process_feature_flags(
+        self,
+        processed_settings: Dict[str, Any],
+        processed_feature_flags: List[Dict[str, Any]],
+        feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
+    ) -> Dict[str, Any]:
+        if feature_flags:
+            # Reset feature flag usage
+            self._feature_filter_usage = {}
+            processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]
+            self._watched_feature_flags = self._update_watched_feature_flags(feature_flags)
+
+        if self._feature_flag_enabled:
+            processed_settings[FEATURE_MANAGEMENT_KEY] = {}
+            processed_settings[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY] = processed_feature_flags
+        return processed_settings
 
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
         feature_flag_value = json.loads(feature_flag.value)

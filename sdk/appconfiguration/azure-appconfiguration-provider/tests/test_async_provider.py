@@ -121,7 +121,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @recorded_by_proxy_async
     async def test_process_key_value_content_type(self, appconfiguration_connection_string):
         with patch(
-            "azure.appconfiguration.provider.aio._azureappconfigurationproviderasync.AsyncConfigurationClientManager"
+            "azure.appconfiguration.provider.aio._azureappconfigurationproviderasync.ConfigurationClientManager"
         ) as MockClientManager:
             # Mock the client manager and its methods
             mock_client_manager = MockClientManager.return_value
