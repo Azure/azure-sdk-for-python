@@ -61,5 +61,3 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 pyright = false
-mindependency = false
-latestdependency = false
