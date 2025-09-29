@@ -30,7 +30,7 @@ class DataLakeLeaseClient:
     async def __aexit__(
         self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
     ) -> None: ...
-    async def close(self) -> None: ...  # type: ignore
+    async def close(self) -> None: ...
     @distributed_trace_async
     async def acquire(
         self,
