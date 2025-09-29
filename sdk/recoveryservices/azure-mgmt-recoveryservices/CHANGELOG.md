@@ -21,7 +21,7 @@
   - Added model `DeletedVaultUndeleteInputProperties`
   - Added model `ProxyResource`
   - Added model `VaultExtendedInfo`
-  - Added model `DeletedVaultsOperations`
+  - Added operation group `DeletedVaultsOperations`
 
 ### Breaking Changes
 
@@ -38,7 +38,7 @@
   - Deleted or renamed model `VaultUsageList`
   - Method `VaultsOperations.begin_create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
   - Method `VaultsOperations.begin_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
-  - Deleted or renamed model `RecoveryServicesClientOperationsMixin`
+  - Deleted or renamed operation group `RecoveryServicesClientOperationsMixin`
 
 ## 3.1.0 (2025-06-03)
 
