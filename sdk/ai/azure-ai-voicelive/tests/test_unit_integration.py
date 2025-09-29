@@ -15,7 +15,6 @@ import importlib
 pytest.importorskip(
     "aiohttp",
     reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
-    allow_module_level=True,
 )
 
 # Import the modules we want to test
