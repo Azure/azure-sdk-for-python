@@ -46,7 +46,7 @@ class OneSettingsResponse:
     """Response object containing OneSettings API response data.
 
     This class encapsulates the parsed response from a OneSettings API call,
-    including configuration settings, version information, error indicators, and metadata.
+    including configuration settings, version information, error indicators and metadata.
 
     Attributes:
         etag (Optional[str]): ETag header value for caching and conditional requests
