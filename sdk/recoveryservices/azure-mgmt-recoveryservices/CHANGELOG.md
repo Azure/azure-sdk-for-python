@@ -25,6 +25,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `Resource` deleted or renamed its instance variable `etag`
   - Model `TrackedResource` deleted or renamed its instance variable `etag`
   - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `integrity_key`
