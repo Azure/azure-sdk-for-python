@@ -5,7 +5,13 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
+
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+    allow_module_level=True,
+)
 
 from azure.ai.voicelive.aio import (
     VoiceLiveConnection,
