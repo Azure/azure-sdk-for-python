@@ -12,6 +12,11 @@ This file contains tests that verify the test suite itself and run integration s
 import pytest
 import importlib
 
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
+
 # Import the modules we want to test
 import azure.ai.voicelive.models as models
 import azure.ai.voicelive.aio as aio_module
