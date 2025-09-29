@@ -79,6 +79,15 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
+
+    _blob_client: BlobClient
+    _query_str: str
+    _raw_credential: Optional[
+        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+    ]
+    file_system_name: str
+    path_name: str
+
     def __init__(
         self, account_url: str,
         file_system_name: str,
