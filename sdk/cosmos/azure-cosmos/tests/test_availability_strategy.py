@@ -6,6 +6,7 @@ import os
 import re
 import unittest
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from typing import Optional, List, Any
 
 import pytest
@@ -773,6 +774,44 @@ class TestAvailabilityStrategy:
             del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
             del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"]
             del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"]
+
+    def test_custom_thread_pool_executor(self):
+        """Test a customized thread pool executor can be configured on client"""
+
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
+
+        # fault injection in first preferred region
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, OperationType.Read) and
+                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            500,
+            CosmosHttpResponseError(status_code=400, message="Injected Error")
+        )
+
+        custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)
+
+        strategy = CrossRegionHedgingStrategyConfig(type="CrossRegionHedging", threshold_ms=100, threshold_steps_ms=50)
+        setup_with_transport = self.setup_method_with_custom_transport(
+            custom_transport,
+            availability_strategy_executor=ThreadPoolExecutor(max_workers=1))
+
+        doc = create_doc()
+        setup_with_transport['col'].create_item(doc)
+
+        # Test should fail with error from the first region
+        with pytest.raises(CosmosHttpResponseError) as exc_info:
+            perform_read_operation(
+                READ,
+                setup_with_transport['col'],
+                doc,
+                [uri_down],
+                [failed_over_uri],
+                availability_strategy_config=strategy)
+
+        # Verify error code matches first region's error
+        assert exc_info.value.status_code == 400
 
 if __name__ == '__main__':
     unittest.main()

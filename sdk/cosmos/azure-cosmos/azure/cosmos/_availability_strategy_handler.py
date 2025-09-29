@@ -134,6 +134,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         # Determine locations based on operation type
         available_locations = self._get_applicable_endpoints(request_params, global_endpoint_manager)
         effective_executor = request_params.availability_strategy_executor or self._shared_executor
+        request_params.availability_strategy_executor = None # reset the executor here else will get cannot pickle '_queue.SimpleQueue' object
 
         futures: List[Future] = []
         first_request_future: Optional[Future] = None

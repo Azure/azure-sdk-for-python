@@ -13,7 +13,7 @@ import os
 # All interaction with Cosmos DB starts with an instance of the CosmosClient
 # [START create_client]
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
-from cosmos import CrossRegionHedgingStrategy
+from cosmos import CrossRegionHedgingStrategyConfig
 
 url = os.environ["ACCOUNT_URI"]
 key = os.environ["ACCOUNT_KEY"]
@@ -303,23 +303,24 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0],
     print(json.dumps(queried_item, indent=True))
 # [END query_items_change_feed_from_beginning]
 
-# configure availability strategy on request level
-# [START read_item_with_availability_strategy]
-strategy = CrossRegionHedgingStrategy(
+# configure availability strategy config on request level
+# [START read_item_with_availability_strategy_config]
+strategy = CrossRegionHedgingStrategyConfig(
+    type="CrossRegionHedging",
     threshold_ms=500,  # Try alternate region after 500ms
     threshold_steps_ms=100)  # Wait 100ms between region attempt
 
 container.read_item(
     item="id1",
     partition_key="pk1",
-    availability_strategy=strategy)
-# [END read_item_with_availability_strategy]
+    availability_strategy_config=strategy)
+# [END read_item_with_availability_strategy_config]
 
-# disable availability strategy on request level
-# [START read_item_with_disabled_availability_strategy]
+# disable availability strategy config on request level
+# [START read_item_with_disabled_availability_strategy_config]
 container.read_item(
     item="id1",
     partition_key="pk1",
-    availability_strategy=None
+    availability_strategy_config=None
 )
-# [END read_item_with_disabled_availability_strategy]
+# [END read_item_with_disabled_availability_strategy_config]
