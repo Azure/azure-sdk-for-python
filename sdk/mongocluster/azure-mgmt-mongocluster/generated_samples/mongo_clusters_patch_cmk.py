@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.mongocluster import MongoClusterMgmtClient
     pip install azure-identity
     pip install azure-mgmt-mongocluster
 # USAGE
-    python mongo_clusters_private_endpoint_connection_get.py
+    python mongo_clusters_patch_cmk.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,32 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_endpoint_connections.get(
-        resource_group_name="TestGroup",
+    response = client.mongo_clusters.begin_update(
+        resource_group_name="TestResourceGroup",
         mongo_cluster_name="myMongoCluster",
-        private_endpoint_connection_name="pecTest.5d393f64-ef64-46d0-9959-308321c44ac0",
-    )
+        properties={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity2": {}
+                },
+            },
+            "properties": {
+                "encryption": {
+                    "customerManagedKeyEncryption": {
+                        "keyEncryptionKeyIdentity": {
+                            "identityType": "UserAssignedIdentity",
+                            "userAssignedIdentityResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myidentity2",
+                        },
+                        "keyEncryptionKeyUrl": "https://myVault.vault.azure.net/keys/myKey2",
+                    }
+                }
+            },
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/MongoClusters_PrivateEndpointConnectionGet.json
+# x-ms-original-file: 2025-08-01-preview/MongoClusters_PatchCMK.json
 if __name__ == "__main__":
     main()
