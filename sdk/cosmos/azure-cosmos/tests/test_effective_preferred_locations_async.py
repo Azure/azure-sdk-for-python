@@ -91,7 +91,7 @@ class TestPreferredLocationsAsync:
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
-        expected_dual_endpoints = []
+        expected_endpoints = []
 
         # if preferred location set should use that
         if preferred_location:
@@ -105,13 +105,10 @@ class TestPreferredLocationsAsync:
 
         for location in expected_locations:
             locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, location)
-            if default_endpoint == self.host or preferred_location:
-                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
-            else:
-                expected_dual_endpoints.append(RegionalRoutingContext(locational_endpoint, default_endpoint))
+            expected_endpoints.append(RegionalRoutingContext(locational_endpoint))
 
-        read_dual_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
-        assert read_dual_endpoints == expected_dual_endpoints
+        read_endpoints = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
+        assert read_endpoints == expected_endpoints
 
     @pytest.mark.cosmosMultiRegion
     @pytest.mark.parametrize("error", error())
