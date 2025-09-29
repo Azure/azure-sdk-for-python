@@ -717,8 +717,8 @@ def test_imds_probe_enabled_in_chain(get_token_method):
             ),
         ],
     )
-    within_credential_chain.set(True)
     credential = ManagedIdentityCredential(transport=transport)
+    within_credential_chain.set(True)
     token = getattr(credential, get_token_method)(scope)
     assert token.token == expected_token
     within_credential_chain.set(False)

@@ -345,7 +345,7 @@ class TestImdsAsync(RecordedTestCase):
                 ),
             ],
         )
-        credential = ImdsCredential(transport=transport, _enable_imds_probe=False)
+        credential = ImdsCredential(transport=transport, _enable_imds_probe=True)
         token = await getattr(credential, get_token_method)(scope)
         assert token.token == expected_token
 

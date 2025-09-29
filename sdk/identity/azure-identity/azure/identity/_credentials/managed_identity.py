@@ -9,7 +9,6 @@ from typing import Optional, Any, Mapping, cast, Tuple
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, TokenCredential, SupportsTokenInfo
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
-from .._internal import within_credential_chain
 from .._internal.decorators import log_get_token
 
 
@@ -138,11 +137,10 @@ class ManagedIdentityCredential:
             managed_identity_type = "IMDS"
             from .imds import ImdsCredential
 
-            probe = self._enable_imds_probe if self._enable_imds_probe is not None else within_credential_chain.get()
             self._credential = ImdsCredential(
                 client_id=client_id,
                 identity_config=identity_config,
-                _enable_imds_probe=probe,
+                _enable_imds_probe=self._enable_imds_probe,
                 **kwargs,
             )
 

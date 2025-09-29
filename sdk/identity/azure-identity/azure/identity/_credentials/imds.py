@@ -14,6 +14,7 @@ from azure.core.pipeline.policies import RetryPolicy
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
+from .._internal import within_credential_chain
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.msal_managed_identity_client import MsalManagedIdentityClient
 
@@ -101,7 +102,9 @@ class ImdsCredential(MsalManagedIdentityClient):
         self.__exit__()
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
-        if self._enable_imds_probe and not self._endpoint_available:
+
+        do_probe = self._enable_imds_probe if self._enable_imds_probe is not None else within_credential_chain.get()
+        if do_probe and not self._endpoint_available:
             # Probe to see if the IMDS endpoint is available to avoid hanging for a long time if it's not.
             try:
                 client = ManagedIdentityClient(_get_request, **dict(PIPELINE_SETTINGS, **self._config))

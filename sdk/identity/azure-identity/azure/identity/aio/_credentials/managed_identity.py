@@ -11,7 +11,6 @@ from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsToke
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
-from ..._internal import within_credential_chain
 from ..._constants import EnvironmentVariables
 from ..._credentials.managed_identity import validate_identity_config
 
@@ -110,11 +109,10 @@ class ManagedIdentityCredential(AsyncContextManager):
             managed_identity_type = "IMDS"
             from .imds import ImdsCredential
 
-            probe = self._enable_imds_probe if self._enable_imds_probe is not None else within_credential_chain.get()
             self._credential = ImdsCredential(
                 client_id=client_id,
                 identity_config=identity_config,
-                _enable_imds_probe=probe,
+                _enable_imds_probe=self._enable_imds_probe,
                 **kwargs,
             )
 

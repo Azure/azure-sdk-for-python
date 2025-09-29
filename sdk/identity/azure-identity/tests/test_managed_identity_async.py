@@ -781,11 +781,9 @@ async def test_enable_imds_probe(get_token_method):
             ),
         ],
     )
-    within_credential_chain.set(True)
     credential = ManagedIdentityCredential(transport=transport, _enable_imds_probe=True)
     token = await getattr(credential, get_token_method)(scope)
     assert token.token == expected_token
-    within_credential_chain.set(False)
 
 
 @pytest.mark.asyncio

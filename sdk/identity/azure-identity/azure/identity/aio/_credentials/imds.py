@@ -15,6 +15,7 @@ from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import AsyncManagedIdentityClient
+from ..._internal import within_credential_chain
 from ..._credentials.imds import _get_request, _check_forbidden_response, PIPELINE_SETTINGS
 
 
@@ -65,7 +66,8 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
 
-        if self._enable_imds_probe and not self._endpoint_available:
+        do_probe = self._enable_imds_probe if self._enable_imds_probe is not None else within_credential_chain.get()
+        if do_probe and not self._endpoint_available:
             # Probe to see if the IMDS endpoint is available to avoid hanging for a long time if it's not.
             try:
                 await self._client.request_token(*scopes, connection_timeout=1, retry_total=0)
