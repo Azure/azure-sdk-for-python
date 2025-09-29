@@ -368,5 +368,5 @@ class _PerfStressRunner:
     def _write_results_file(self, path: str, latencies: List[float], size):
         data = [{"Time": l, "Size": size} for l in latencies]
         output = json.dumps(data, indent=2)
-        with open(path, 'w', encoding='utf-8') as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(output)
