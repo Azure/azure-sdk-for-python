@@ -18,7 +18,7 @@ autorest SWAGGER.md
 package-version: 1.1.0
 tag: package-2025-09-01
 require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/83327afe471d7a2eb923de58b163658d45e0e5a7/specification/communication/data-plane/Email/readme.md
-output-folder: ../azure/communication/email/_generated
+output-folder: ../azure/communication/email
 namespace: azure.communication.email
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
@@ -44,5 +44,17 @@ directive:
       $["type"] = "string";
       if ($["format"]) {
         delete $["format"];
+      }
+```
+
+### Flatten operations by removing operation group prefixes
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.paths.*.*
+    transform: >
+      if ($["operationId"] && $["operationId"].startsWith("Email_")) {
+        $["operationId"] = $["operationId"].replace("Email_", "");
       }
 ```

@@ -1,0 +1,10 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.communication.email.models.EmailSendStatus": null,
+        "azure.communication.email.AzureCommunicationEmailService.get_send_result": null,
+        "azure.communication.email.aio.AzureCommunicationEmailService.get_send_result": null,
+        "azure.communication.email.AzureCommunicationEmailService.begin_send": null,
+        "azure.communication.email.aio.AzureCommunicationEmailService.begin_send": null
+    }
+}
