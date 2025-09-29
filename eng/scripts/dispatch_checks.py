@@ -4,6 +4,7 @@ import os
 import sys
 import time
 import signal
+import shutil
 from dataclasses import dataclass
 from typing import List
 
@@ -76,6 +77,16 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
             print(header.replace('OUTPUT', 'STDERR'))
             print(stderr.rstrip())
             print(trailer)
+
+        # if we have any output collections to complete, do so now here
+
+        # finally, we need to clean up any temp dirs created by --isolate
+        if in_ci():
+            isolate_dir = os.path.join(package, f".venv_{check}")
+            try:
+                shutil.rmtree(isolate_dir)
+            except:
+                logger.warning(f"Failed to remove isolate dir {isolate_dir} for {package} / {check}")
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -287,6 +298,10 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         target_dir = root_dir
 
     logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
+
+    # ensure that recursive virtual envs aren't messed with by this call
+    os.environ.pop("VIRTUAL_ENV", None)
+    os.environ.pop("PYTHON_HOME", None)
 
     if args.filter_type == "None":
         args.filter_type = "Build"

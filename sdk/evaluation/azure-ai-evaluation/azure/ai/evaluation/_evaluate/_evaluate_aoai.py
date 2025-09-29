@@ -272,8 +272,33 @@ def _get_single_run_results(
     for row_result in all_results:
         listed_results["index"].append(row_result.datasource_item_id)
         for single_grader_row_result in row_result.results:
-            grader_name = run_info["grader_name_map"][single_grader_row_result["name"]]
-            for name, value in single_grader_row_result.items():
+            if isinstance(single_grader_row_result, dict):
+                result_dict = single_grader_row_result
+            elif hasattr(single_grader_row_result, "model_dump"):
+                result_dict = single_grader_row_result.model_dump()
+            elif hasattr(single_grader_row_result, "dict"):
+                result_dict = single_grader_row_result.dict()
+            elif hasattr(single_grader_row_result, "__dict__"):
+                result_dict = vars(single_grader_row_result)
+            else:
+                raise EvaluationException(
+                    message=("Unsupported AOAI evaluation result type: " f"{type(single_grader_row_result)!r}."),
+                    blame=ErrorBlame.UNKNOWN,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.AOAI_GRADER,
+                )
+
+            grader_result_name = result_dict.get("name", None)
+            if grader_result_name is None:
+                raise EvaluationException(
+                    message="AOAI evaluation response missing grader result name; unable to map to original grader.",
+                    blame=ErrorBlame.UNKNOWN,
+                    category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.AOAI_GRADER,
+                )
+
+            grader_name = run_info["grader_name_map"][grader_result_name]
+            for name, value in result_dict.items():
                 if name in ["name"]:
                     continue
                 if name.lower() == "passed":

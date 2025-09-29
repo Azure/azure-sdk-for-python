@@ -21,6 +21,39 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_snapshots_list(self, resource_group):
+        response = self.client.snapshots.list(
+            api_version="2025-01-02",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_list_by_resource_group(self, resource_group):
+        response = self.client.snapshots.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2025-01-02",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_get(self, resource_group):
+        response = await self.client.snapshots.get(
+            resource_group_name=resource_group.name,
+            snapshot_name="str",
+            api_version="2025-01-02",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_snapshots_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.snapshots.begin_create_or_update(
@@ -45,10 +78,12 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                             "lun": 0,
                             "sharedGalleryImageId": "str",
                         },
+                        "instantAccessDurationMinutes": 0,
                         "logicalSectorSize": 0,
                         "performancePlus": bool,
                         "provisionedBandwidthCopySpeed": "str",
                         "securityDataUri": "str",
+                        "securityMetadataUri": "str",
                         "sourceResourceId": "str",
                         "sourceUniqueId": "str",
                         "sourceUri": "str",
@@ -85,18 +120,28 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     "purchasePlan": {"name": "str", "product": "str", "publisher": "str", "promotionCode": "str"},
                     "securityProfile": {"secureVMDiskEncryptionSetId": "str", "securityType": "str"},
                     "sku": {"name": "str", "tier": "str"},
+                    "snapshotAccessState": "str",
                     "supportedCapabilities": {
                         "acceleratedNetwork": bool,
                         "architecture": "str",
                         "diskControllerTypes": "str",
+                        "supportedSecurityOption": "str",
                     },
                     "supportsHibernation": bool,
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
                     "uniqueId": "str",
                 },
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -129,29 +174,19 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     "osType": "str",
                     "publicNetworkAccess": "str",
                     "sku": {"name": "str", "tier": "str"},
+                    "snapshotAccessState": "str",
                     "supportedCapabilities": {
                         "acceleratedNetwork": bool,
                         "architecture": "str",
                         "diskControllerTypes": "str",
+                        "supportedSecurityOption": "str",
                     },
                     "supportsHibernation": bool,
                     "tags": {"str": "str"},
                 },
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_snapshots_get(self, resource_group):
-        response = await self.client.snapshots.get(
-            resource_group_name=resource_group.name,
-            snapshot_name="str",
-            api_version="2023-10-02",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -163,31 +198,10 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_delete(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_snapshots_list_by_resource_group(self, resource_group):
-        response = self.client.snapshots.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2023-10-02",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_snapshots_list(self, resource_group):
-        response = self.client.snapshots.list(
-            api_version="2023-10-02",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -204,7 +218,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
                     "fileFormat": "str",
                     "getSecureVMGuestStateSAS": bool,
                 },
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -218,7 +232,7 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_revoke_access(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                api_version="2023-10-02",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 

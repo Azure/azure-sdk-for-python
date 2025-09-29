@@ -15,8 +15,16 @@ from typing import Sequence, Optional
 from .whl import whl
 from .import_all import import_all
 from .mypy import mypy
+from .next_mypy import next_mypy
 from .pylint import pylint
+from .next_pylint import next_pylint
 from .sphinx import sphinx
+from .next_sphinx import next_sphinx
+from .black import black
+from .pyright import pyright
+from .next_pyright import next_pyright
+from .ruff import ruff
+from .verifytypes import verifytypes
 
 from ci_tools.logging import configure_logging, logger
 
@@ -74,9 +82,17 @@ def build_parser() -> argparse.ArgumentParser:
     whl().register(subparsers, [common])
     import_all().register(subparsers, [common])
     mypy().register(subparsers, [common])
+    next_mypy().register(subparsers, [common])
     pylint().register(subparsers, [common])
+    next_pylint().register(subparsers, [common])
     sphinx().register(subparsers, [common])
-
+    next_sphinx().register(subparsers, [common])
+    black().register(subparsers, [common])
+    pyright().register(subparsers, [common])
+    next_pyright().register(subparsers, [common])
+    ruff().register(subparsers, [common])
+    verifytypes().register(subparsers, [common])
+    
     return parser
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
