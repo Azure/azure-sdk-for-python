@@ -36,8 +36,8 @@ from azure.core.tracing.decorator_async import distributed_trace_async  # type: 
 from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
-from .. import _utils as utils
-from .._availability_strategy import CrossRegionHedgingStrategy
+from .. import _utils as utils, CrossRegionHedgingStrategyConfig
+from .._availability_strategy_config import _validate_hedging_config
 from .._base import (
     build_options as _build_options,
     validate_cache_staleness_value,
@@ -230,9 +230,9 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
-    ) -> CosmosDict:
+) -> CosmosDict:
         """Create an item in the container.
 
         To update or replace an existing item, use the
@@ -263,13 +263,14 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
-        :rtype: ~azure.cosmos.CosmosDict[str, Any]
-        """
+        :keyword availability_strategy_config: The availability strategy to use for this request. If not provided,
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy_config: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
+            :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
+            :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
+            :rtype: ~azure.cosmos.CosmosDict[str, Any]
+            """
         etag = kwargs.get('etag')
         if etag is not None:
             warnings.warn(
@@ -299,8 +300,10 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
@@ -325,7 +328,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
@@ -353,9 +356,11 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. If not provided,
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved item.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -381,10 +386,12 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
-        request_options = _build_options(kwargs)
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
 
+        request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         if max_integrated_cache_staleness_in_ms is not None:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
@@ -404,7 +411,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """List all the items in the container.
@@ -425,9 +432,10 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. If not provided,
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -439,8 +447,11 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
+
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
@@ -471,7 +482,7 @@ class ContainerProxy:
             excluded_locations: Optional[List[str]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
@@ -491,9 +502,10 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. If not provided,
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
@@ -512,9 +524,10 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
-
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         kwargs['max_concurrency'] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options
         query_options = _build_options(kwargs)
@@ -546,7 +559,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             **kwargs: Any
     ):
         """Return all results matching the given `query`.
@@ -593,7 +606,7 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
          the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -633,7 +646,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             **kwargs: Any
     ):
         """Return all results matching the given `query`.
@@ -675,8 +688,9 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
@@ -789,8 +803,8 @@ class ContainerProxy:
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
-        if utils.valid_key_value_exist(kwargs, "availability_strategy"):
-            feed_options["availability_strategy"] = kwargs.pop("availability_strategy")
+        if utils.valid_key_value_exist(kwargs, "availability_strategy_config"):
+            feed_options["availability_strategy_config"] = kwargs.pop("availability_strategy_config")
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
 
@@ -837,7 +851,7 @@ class ContainerProxy:
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -870,8 +884,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -889,7 +904,7 @@ class ContainerProxy:
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -917,7 +932,7 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -932,7 +947,7 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -951,7 +966,7 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -968,7 +983,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
             response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -997,7 +1012,7 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -1039,8 +1054,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -1100,7 +1116,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -1134,11 +1150,11 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :returns: A CosmosDict representing the upserted item. The dict will be empty if
-            `no_response` is specified.
+        :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
@@ -1161,8 +1177,10 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
@@ -1192,7 +1210,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -1227,8 +1245,9 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
@@ -1256,8 +1275,10 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
@@ -1285,7 +1306,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -1327,8 +1348,10 @@ class ContainerProxy:
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty if
@@ -1353,8 +1376,10 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -1383,7 +1408,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1417,8 +1442,9 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -1444,8 +1470,10 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
@@ -1740,7 +1768,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[bool] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy: Optional[CrossRegionHedgingStrategy] = _Unset,
+        availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = _Unset,
         **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
@@ -1770,8 +1798,10 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A CosmosList representing the items after the batch operations went through.
         :keyword availability_strategy: The availability strategy to use for this request. If not provided,
-            the client's default strategy will be used.
-        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+            the client's default strategy will be used. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int. Configuration with fields: "type": "CrossRegionHedging",
+            "threshold_ms": int, and "threshold_steps_ms": int.
+        :paramtype availability_strategy: ~azure.cosmos.aio.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: ~azure.cosmos.CosmosList[Dict[str, Any]]
@@ -1801,8 +1831,10 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if availability_strategy is not _Unset:
-            kwargs["availability_strategy"] = availability_strategy
+        if availability_strategy_config is not _Unset:
+            if availability_strategy_config is not None:
+                _validate_hedging_config(availability_strategy_config)
+            kwargs["availability_strategy_config"] = availability_strategy_config
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True

@@ -22,28 +22,27 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
 import warnings
+from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
-
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.cosmos import CrossRegionHedgingStrategy
 from azure.cosmos.offer import ThroughputProperties
-
-from ..cosmos_client import _parse_connection_str
-from .._constants import _Constants as Constants
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
-from .._base import build_options as _build_options, _set_throughput_options
-from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy, _get_database_link
+from ._retry_utility_async import _ConnectionRetryPolicy
+from .. import CrossRegionHedgingStrategyConfig
+from .._base import build_options as _build_options, _set_throughput_options
+from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDict
+from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
-from .._cosmos_responses import CosmosDict
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
@@ -205,7 +204,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, Dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None,
+            availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
@@ -216,7 +216,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
-            availability_strategy=availability_strategy,
+            availability_strategy_config=availability_strategy_config,
+            availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )
 

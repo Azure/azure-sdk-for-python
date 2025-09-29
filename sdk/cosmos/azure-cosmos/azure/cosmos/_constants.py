@@ -96,5 +96,5 @@ class _Constants:
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
         """Whether to retry write operations if they fail. Used either at client level or request level."""
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
-        AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
-        """Availability strategy. Used either at client level or request level"""
+        AVAILABILITY_STRATEGY_CONFIG: Literal["availabilityStrategyConfig"] = "availabilityStrategyConfig"
+        """Availability strategy config. Used either at client level or request level"""

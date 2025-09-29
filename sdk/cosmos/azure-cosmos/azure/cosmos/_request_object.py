@@ -22,9 +22,10 @@
 """Represents a request object."""
 import asyncio # pylint: disable=do-not-import-asyncio
 import threading
+from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Optional, Mapping, Any, Dict, List, Union
 
-from ._availability_strategy import CrossRegionHedgingStrategy
+from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
 from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
@@ -44,7 +45,9 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
-        self.availability_strategy: Optional[CrossRegionHedgingStrategy] = None
+        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None
+        self.availability_strategy_executor: Optional[ThreadPoolExecutor] = None
+        self.availability_strategy_max_concurrency: Optional[int] = None
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
@@ -105,26 +108,26 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
 
-    def set_availability_strategy(
+    def set_availability_strategy_config(
             self,
             options: Mapping[str, Any],
-            client_strategy: Optional[CrossRegionHedgingStrategy] = None) -> None:
+            client_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None) -> None:
         """Sets the availability strategy config for this request from options.
         If not in options, uses the client's default strategy.
 
         :param options: The request options that may contain availabilityStrategy
         :type options: Mapping[str, Any]
-        :param client_strategy: The client's default availability strategy
-        :type client_strategy: ~azure.cosmos.CrossRegionHedgingStrategy
+        :param client_strategy_config: The client's default availability strategy config
+        :type client_strategy_config: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :return: None
         """
         # setup availabilityStrategy
         # First try to get from options
-        if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
-            self.availability_strategy = options[Constants.Kwargs.AVAILABILITY_STRATEGY]
+        if Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG in options:
+            self.availability_strategy_config = options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG]
         # If not in options, use client default
-        elif client_strategy is not None:
-            self.availability_strategy = client_strategy
+        elif client_strategy_config is not None:
+            self.availability_strategy_config = client_strategy_config
 
     def should_cancel_request(self) -> bool:
         """Check if this request should be cancelled due to parallel request completion.

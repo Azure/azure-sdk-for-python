@@ -24,13 +24,12 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
 from asyncio import Task, CancelledError, Event  # pylint: disable=do-not-import-asyncio
 from types import SimpleNamespace
-from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable, cast
+from typing import Any, Dict, List, Optional, Tuple, Callable, Awaitable
 
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
 
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-from .._availability_strategy import CrossRegionHedgingStrategy
 from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from .._request_object import RequestObject
 
@@ -87,13 +86,13 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             delay = 0  # No delay for initial request
         elif location_index == 1:
             # First hedged request after threshold
-            delay = cast(CrossRegionHedgingStrategy, request_params.availability_strategy).threshold_ms
+            delay = request_params.availability_strategy_config["threshold_ms"]
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-            delay = (cross_region_hedging_strategy.threshold_ms +
-                     (steps * cross_region_hedging_strategy.threshold_steps_ms))
+            strategy = request_params.availability_strategy_config
+            delay = (strategy["threshold_ms"] +
+                    (steps * strategy["threshold_steps_ms"]))
 
         if delay > 0:
             await asyncio.sleep(delay / 1000)
@@ -151,12 +150,18 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         available_locations = self._get_applicable_endpoints(request_params, global_endpoint_manager)
         completion_status = Event()
 
-        tasks = []
+        active_tasks = []
+        pending_indices = list(range(len(available_locations)))
         first_task: Optional[Task] = None
         first_request_params_holder: SimpleNamespace = SimpleNamespace(request_params=None)
+        max_concurrency = request_params.availability_strategy_max_concurrency or len(available_locations)
+
         try:
-            # Create tasks for each location
-            for i in range(len(available_locations)):
+            # Create initial batch of tasks up to max_concurrency
+            initial_batch = pending_indices[:max_concurrency]
+            pending_indices = pending_indices[max_concurrency:]
+
+            for i in initial_batch:
                 task = asyncio.create_task(
                     self.execute_single_request_with_delay(
                         request_params,
@@ -167,32 +172,54 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                         completion_status,
                         first_request_params_holder
                     ))
-                tasks.append(task)
+                active_tasks.append(task)
                 if i == 0:
                     first_task = task
 
-            # Wait for tasks to complete
-            for completed_task in asyncio.as_completed(tasks):
-                try:
-                    result = await completed_task
-                    completion_status.set()
+            # Process tasks as they complete and create new ones if needed
+            while active_tasks and not completion_status.is_set():
+                done, pending = await asyncio.wait(active_tasks, return_when=asyncio.FIRST_COMPLETED)
+                active_tasks = list(pending)
 
-                    if completed_task is first_task:
+                # Process completed tasks first to check for success
+                for completed_task in done:
+                    try:
+                        result = await completed_task
+                        completion_status.set()
+
+                        if completed_task is first_task:
+                            return result
+
+                        # successful response does not come from the initial request, record failure for it
+                        await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
                         return result
-
-                    # successful response does not come from the initial request, record failure for it
-                    await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
-                    return result
-                except Exception as e: #pylint: disable=broad-exception-caught
-                    if completed_task is first_task:
-                        completion_status.set()
-                        raise e
-                    if self._is_non_transient_error(e):
-                        completion_status.set()
-                        await self._record_cancel_for_first_request(
-                            first_request_params_holder,
-                            global_endpoint_manager)
-                        raise e
+                    except Exception as e:  # pylint: disable=broad-exception-caught
+                        if completed_task is first_task:
+                            completion_status.set()
+                            raise e
+                        if self._is_non_transient_error(e):
+                            completion_status.set()
+                            await self._record_cancel_for_first_request(
+                                first_request_params_holder,
+                                global_endpoint_manager)
+                            raise e
+                
+                # If no success yet, create new tasks to replace completed ones
+                if not completion_status.is_set():
+                    num_completed = len(done)
+                    for _ in range(min(num_completed, len(pending_indices))):
+                        next_index = pending_indices.pop(0)
+                        task = asyncio.create_task(
+                            self.execute_single_request_with_delay(
+                                request_params,
+                                request,
+                                execute_request_fn,
+                                next_index,
+                                available_locations,
+                                completion_status,
+                                first_request_params_holder
+                            ))
+                        active_tasks.append(task)
 
             # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
             # in this case, raise the exception from the first task
@@ -201,10 +228,10 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                 raise RuntimeError("first task can not be none and it should have failed")
             raise first_task.exception()
         finally:
-            for task in tasks:
+            for task in active_tasks:
                 if not task.done():
                     task.cancel()
-            await asyncio.gather(*tasks, return_exceptions=True)
+            await asyncio.gather(*active_tasks, return_exceptions=True)
 
     async def _record_cancel_for_first_request(
             self,
@@ -247,8 +274,8 @@ async def execute_with_availability_strategy(
     :raises: ValueError if availability strategy is not supported
     """
 
-    availability_strategy = request_params.availability_strategy
-    if isinstance(availability_strategy, CrossRegionHedgingStrategy):
+    availability_strategy = request_params.availability_strategy_config
+    if isinstance(availability_strategy, dict) and "threshold_ms" in availability_strategy and "threshold_steps_ms" in availability_strategy:
         return await _cross_region_hedging_handler.execute_request(
             request_params,
             global_endpoint_manager,
@@ -256,4 +283,4 @@ async def execute_with_availability_strategy(
             execute_request_fn
         )
 
-    raise ValueError(f"Unsupported availability strategy type: {type(CrossRegionHedgingStrategy)}")
+    raise ValueError("Missing required fields in availability strategy config")

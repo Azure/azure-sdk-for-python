@@ -170,7 +170,7 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy is not None and
+    return (request_params.availability_strategy_config is not None and
             not request_params.is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
