@@ -7,6 +7,8 @@
   ([#43032](https://github.com/Azure/azure-sdk-for-python/pull/43032))
 - Adding customer sdkstats to feature statsbeat
   ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
+- OneSettings control plane: Add killswitch + exponential  backoff + sdkstats feature control
+  ([#43147](https://github.com/Azure/azure-sdk-for-python/pull/43147))
 
 ### Breaking Changes
 
@@ -41,7 +43,6 @@
   ([#42655](https://github.com/Azure/azure-sdk-for-python/pull/42655))
 - Customer Facing SDKStats: Added telemetry_success field to dropped items as per [Spec] - https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/606
   ([#42846](https://github.com/Azure/azure-sdk-for-python/pull/42846))
-### Breaking Changes
 
 ### Bugs Fixed
 - Customer Facing SDKStats: Refactor to use `Manager` and `Singleton` pattern
