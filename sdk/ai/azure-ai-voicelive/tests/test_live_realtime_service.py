@@ -4,6 +4,13 @@
 import base64
 import asyncio
 import json
+import pytest
+
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
+
 from pathlib import Path
 from typing import Callable, Iterator, Literal, Mapping, Union, Any, Type
 import pytest
