@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Union, IO, Optional
+from typing import Any, Union, IO
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.polling import AsyncLROPoller
@@ -53,7 +53,11 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
         authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         self._generated_client = AzureCommunicationEmailService(
-            endpoint, authentication_policy=authentication_policy, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
+            endpoint,
+            authentication_policy=authentication_policy,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            **kwargs
         )
 
     @classmethod
@@ -166,7 +170,7 @@ class EmailClient(object):  # pylint: disable=client-accepts-api-version-keyword
         """
         # cSpell:enable
 
-        return await self._generated_client.email.begin_send(message=message, **kwargs)
+        return await self._generated_client.begin_send(message=message, **kwargs)
 
     async def __aenter__(self) -> "EmailClient":
         await self._generated_client.__aenter__()

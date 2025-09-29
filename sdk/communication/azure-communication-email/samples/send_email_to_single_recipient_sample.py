@@ -35,7 +35,7 @@ class EmailSingleRecipientSample(object):
 
     def send_email_to_single_recipient(self):
         # creating the email client
-        email_client = EmailClient.from_connection_string(self.connection_string)
+        email_client = EmailClient.from_connection_string(self.connection_string or "")
 
         # creating the email message
         message = {

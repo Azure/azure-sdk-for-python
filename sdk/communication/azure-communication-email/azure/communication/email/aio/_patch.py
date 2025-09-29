@@ -18,11 +18,11 @@ from .._api_versions import DEFAULT_VERSION
 
 class EmailClient(AzureCommunicationEmailService):
     """A client to interact with the AzureCommunicationService Email gateway.
+    
     This client provides operations to send an email and monitor its status.
-    :param str endpoint:
-        The endpoint url for Azure Communication Service resource.
-    :param Union[TokenCredential, AzureKeyCredential] credential:
-        The credential we use to authenticate against the service.
+    
+    :param str endpoint: The endpoint url for Azure Communication Service resource.
+    :param Union[TokenCredential, AzureKeyCredential] credential: The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
         Default value is "2025-09-01".
         Note that overriding this default value may result in unsupported behavior.
@@ -51,8 +51,8 @@ class EmailClient(AzureCommunicationEmailService):
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs) -> "EmailClient":
         """Create EmailClient from a Connection String.
-        :param str conn_str:
-            A connection string to an Azure Communication Service resource.
+        
+        :param str conn_str: A connection string to an Azure Communication Service resource.
         :returns: Instance of EmailClient.
         :rtype: ~azure.communication.email.EmailClient
         """

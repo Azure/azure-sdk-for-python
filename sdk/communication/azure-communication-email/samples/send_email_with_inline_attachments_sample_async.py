@@ -37,7 +37,7 @@ class EmailWithAttachmentSampleAsync(object):
 
     async def send_email_with_attachment_async(self):
         # creating the email client
-        email_client = EmailClient.from_connection_string(self.connection_string)
+        email_client = EmailClient.from_connection_string(self.connection_string or "")
 
         # creating the email message
         attachment_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "inline_image.gif")
