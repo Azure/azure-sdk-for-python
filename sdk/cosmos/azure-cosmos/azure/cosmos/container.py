@@ -259,14 +259,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy configuration that controls when
-             requests are routed to alternate regions. Structure:
-             {
-                 "type": "CrossRegionHedging",
-                 "threshold_ms": int,  # Time in ms before routing to alternate region (default: 500)
-                 "threshold_steps_ms": int  # Time interval between routing attempts (default: 100)
-             }
-        :paramtype availability_strategy: Dict[str, Any]
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy_config: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
@@ -290,9 +285,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -347,10 +340,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword availability_strategy: The availability strategy to use for this request. Configures when
-             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-             overridden by the client's default strategy.
-        :paramtype availability_strategy: Dict[str, Any]
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
         :rtype: ~azure.cosmos.CosmosList
@@ -369,9 +361,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
 
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
@@ -422,13 +412,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy configuration dict with structure:
-              {
-                  "type": "CrossRegionHedging",
-                  "threshold_ms": int,  # Time in ms before routing to alternate region (default: 500)
-                  "threshold_steps_ms": int  # Time interval between routing attempts (default: 100)
-              }
-        :paramtype availability_strategy: Dict[str, Any]
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[Dict[str, Any]]
         """
@@ -441,9 +427,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         feed_options = build_options(kwargs)
@@ -510,9 +494,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy to use for this request. Configures when
-             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-             overridden by the client's default strategy.
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -558,13 +541,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy configuration dict with structure:
-              {
-                  "type": "CrossRegionHedging",
-                  "threshold_ms": int,  # Time in ms before routing to alternate region (default: 500)
-                  "threshold_steps_ms": int  # Time interval between routing attempts (default: 100)
-              }
-        :paramtype availability_strategy: Dict[str, Any]
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -596,13 +575,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy configuration dict with structure:
-              {
-                  "type": "CrossRegionHedging",
-                  "threshold_ms": int,  # Time in ms before routing to alternate region (default: 500)
-                  "threshold_steps_ms": int  # Time interval between routing attempts (default: 100)
-              }
-        :paramtype availability_strategy: Dict[str, Any]
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :returns: An Iterable of items (dicts).
@@ -645,9 +620,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: The availability strategy to use for this request. Configures when
-             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-             overridden by the client's default strategy.
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -806,9 +780,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword availability_strategy: The availability strategy to use for this request. Configures when
-             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-             overridden by the client's default strategy.
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
@@ -894,9 +867,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword availability_strategy: The availability strategy to use for this request. Configures when
-             to route to alternate regions (defaults: 500ms initial threshold, 100ms between attempts) if not
-             overridden by the client's default strategy.
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
@@ -968,6 +940,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword str query: The Azure Cosmos DB SQL query to execute.
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
@@ -1017,6 +992,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
+        if utils.valid_key_value_exist(kwargs, "availability_strategy_config", _Unset):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] =\
+                _validate_hedging_config(kwargs.pop("availability_strategy_config"))
+
         feed_options["correlatedActivityId"] = GenerateGuidId()
         feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
@@ -1109,7 +1088,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: Configuration for cross-region request hedging strategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
@@ -1139,9 +1119,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1212,7 +1190,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: Configuration for cross-region request hedging strategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
@@ -1237,9 +1216,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         if retry_write is not None:
@@ -1314,7 +1291,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: Configuration for cross-region request hedging strategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
@@ -1350,9 +1328,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1430,8 +1406,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy_config: Configuration for cross-region request hedging strategy
-        :paramtype availability_strategy_config: ~azure.cosmos.CrossRegionHedgingStrategyConfig
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
+        :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty
@@ -1457,9 +1434,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1513,7 +1488,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword availability_strategy: Configuration for cross-region request hedging strategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1552,9 +1528,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)
@@ -1615,7 +1589,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword availability_strategy: Configuration for cross-region request hedging strategy
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+             to route to alternate regions.
         :paramtype availability_strategy: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
@@ -1638,9 +1613,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
-            if availability_strategy_config is not None:
-                _validate_hedging_config(availability_strategy_config)
-            kwargs["availability_strategy_config"] = availability_strategy_config
+            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
         if response_hook is not None:
             kwargs['response_hook'] = response_hook
         request_options = build_options(kwargs)

@@ -1,6 +1,6 @@
 """Configuration types for Azure Cosmos DB availability strategies."""
 
-from typing import Dict
+from typing import Dict, Optional
 
 from typing_extensions import Literal, TypedDict
 
@@ -19,7 +19,8 @@ class CrossRegionHedgingStrategyConfig(TypedDict, total=False):
     threshold_ms: int
     threshold_steps_ms: int
 
-def _validate_hedging_config(config: CrossRegionHedgingStrategyConfig) -> CrossRegionHedgingStrategyConfig:
+def _validate_hedging_config(config: Optional[CrossRegionHedgingStrategyConfig])\
+        -> Optional[CrossRegionHedgingStrategyConfig]:
     """Validate and create a CrossRegionHedgingStrategyConfig.
     
     :param config: Dictionary containing configuration values
@@ -28,7 +29,10 @@ def _validate_hedging_config(config: CrossRegionHedgingStrategyConfig) -> CrossR
     :rtype: CrossRegionHedgingStrategyConfig
     :raises ValueError: If configuration is invalid
     """
-        
+
+    if config is None:
+        return config
+
     threshold_ms = config.get("threshold_ms", 500)
     threshold_steps_ms = config.get("threshold_steps_ms", 100)
     
