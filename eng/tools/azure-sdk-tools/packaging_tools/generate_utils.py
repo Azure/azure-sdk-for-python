@@ -54,9 +54,9 @@ def del_outdated_generated_files(tsp: str):
     service_dir = typespec_python_config.get("service-dir") or content.get("parameters", {}).get("service-dir", {}).get(
         "default", ""
     )
-    package_dir = typespec_python_config.get("package-dir", "")
+    package_dir = typespec_python_config.get("emitter-output-dir", "").split("/")[-1]
     if not service_dir or not package_dir:
-        _LOGGER.info(f"do not find service-dir or package-dir in tspconfig.yaml: {tspconfig}")
+        _LOGGER.info(f"do not find service-dir or emitter-output-dir in tspconfig.yaml: {tspconfig}")
         return
     generated_files_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
     # remove outdated generated files
