@@ -15,7 +15,8 @@ from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._file_system_client_async import FileSystemClient
-from ._path_client_async import PathClient
+from ._data_lake_directory_client_async import DataLakeDirectoryClient
+from ._data_lake_file_client_async import DataLakeFileClient
 
 
 class DataLakeLeaseClient:
@@ -23,7 +24,7 @@ class DataLakeLeaseClient:
     etag: Optional[str]
     last_modified: Optional[datetime]
     def __init__(
-        self, client: Union[FileSystemClient, PathClient],
+        self, client: Union[FileSystemClient, DataLakeDirectoryClient, DataLakeFileClient],
         lease_id: Optional[str] = None
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
