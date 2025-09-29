@@ -411,7 +411,9 @@ class BasicVoiceAssistant:
             voice_config = self.voice
 
         # Create strongly typed turn detection configuration
-        turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500, interrupt_response=True)
+        turn_detection_config = ServerVad(
+            threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500, interrupt_response=True
+        )
 
         # Create strongly typed session configuration
         session_config = RequestSession(
