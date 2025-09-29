@@ -9,6 +9,7 @@ from typing import Optional, Any, Mapping, cast, Tuple
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, TokenCredential, SupportsTokenInfo
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
+from .._internal import within_credential_chain
 from .._internal.decorators import log_get_token
 
 
@@ -76,7 +77,7 @@ class ManagedIdentityCredential:
         user_identity_info = validate_identity_config(client_id, identity_config)
         self._credential: Optional[SupportsTokenInfo] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
-        self._skip_probe_in_chain = kwargs.pop("_skip_probe_in_chain", False)
+        self._enable_imds_probe = kwargs.pop("_enable_imds_probe", None)
         managed_identity_type = None
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
@@ -137,10 +138,11 @@ class ManagedIdentityCredential:
             managed_identity_type = "IMDS"
             from .imds import ImdsCredential
 
+            probe = self._enable_imds_probe if self._enable_imds_probe is not None else within_credential_chain.get()
             self._credential = ImdsCredential(
                 client_id=client_id,
                 identity_config=identity_config,
-                _skip_probe_in_chain=self._skip_probe_in_chain,
+                _enable_imds_probe=probe,
                 **kwargs,
             )
 

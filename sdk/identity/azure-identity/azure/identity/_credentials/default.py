@@ -275,7 +275,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
-                    _skip_probe_in_chain=managed_identity_only,
+                    _enable_imds_probe=not managed_identity_only,
                     **kwargs,
                 )
             )

@@ -265,7 +265,7 @@ def test_managed_identity_client_id():
     expected_args = {
         "client_id": "the-client",
         "_exclude_workload_identity_credential": False,
-        "_skip_probe_in_chain": False,
+        "_enable_imds_probe": True,
     }
 
     with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
