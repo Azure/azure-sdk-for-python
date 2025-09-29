@@ -4,9 +4,16 @@
 import base64
 import asyncio
 import json
+
 from pathlib import Path
 from typing import Callable, Iterator, Literal, Mapping, Union, Any, Type
 import pytest
+
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
+
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.voicelive.aio import connect
 from azure.ai.voicelive.models import (
