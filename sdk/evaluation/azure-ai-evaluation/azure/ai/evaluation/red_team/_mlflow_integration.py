@@ -27,7 +27,14 @@ from azure.ai.evaluation._common import RedTeamUpload, ResultType
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
 # Local imports
-from ._red_team_result import RedTeamResult
+from ._red_team_result import (
+    RedTeamResult,
+    RedTeamRun,
+    ResultCount,
+    PerTestingCriteriaResult,
+    DataSource,
+    OutputItemsList,
+)
 from ._utils.logging_utils import log_error
 
 
@@ -499,7 +506,7 @@ class MLflowIntegration:
         red_team_info: Optional[Dict] = None,
         include_conversations: bool = False,
         scan_name: Optional[str] = None,
-    ) -> Dict:
+    ) -> RedTeamRun:
         """Assemble the new structure for results.json with eval.run format."""
 
         scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
@@ -573,12 +580,12 @@ class MLflowIntegration:
         data_source = self._build_data_source_section(parameters, red_team_info)
         status = self._determine_run_status(scan_result, red_team_info, output_items)
 
-        list_wrapper: Dict[str, Any] = {
+        list_wrapper: OutputItemsList = {
             "object": "list",
             "data": output_items,
         }
 
-        run_payload: Dict[str, Any] = {
+        run_payload: RedTeamRun = {
             "object": "eval.run",
             "id": run_id,
             "eval_id": eval_id,
@@ -606,7 +613,7 @@ class MLflowIntegration:
         red_team_info: Optional[Dict] = None,
         include_conversations: bool = False,
         scan_name: Optional[str] = None,
-    ) -> Dict:
+    ) -> RedTeamRun:
         """Assemble the new structure for results.json with eval.run format."""
 
         scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
@@ -680,12 +687,12 @@ class MLflowIntegration:
         data_source = self._build_data_source_section(parameters, red_team_info)
         status = self._determine_run_status(scan_result, red_team_info, output_items)
 
-        list_wrapper: Dict[str, Any] = {
+        list_wrapper: OutputItemsList = {
             "object": "list",
             "data": output_items,
         }
 
-        run_payload: Dict[str, Any] = {
+        run_payload: RedTeamRun = {
             "object": "eval.run",
             "id": run_id,
             "eval_id": eval_id,
