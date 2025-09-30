@@ -30,7 +30,6 @@ from ._constants import (
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
-    _RefreshTimer,
     update_correlation_context_header,
     delay_failure,
     sdk_allowed_kwargs,
@@ -288,7 +287,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             replica_count,
             self._feature_flag_enabled,
             self._feature_filter_usage,
-            self._uses_key_vault,
+            self._secret_provider.uses_key_vault,
             self._uses_load_balancing,
             is_failover_request,
             self._uses_ai_configuration,
@@ -492,7 +491,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     def _process_key_value(self, config: ConfigurationSetting) -> Any:
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return _resolve_keyvault_reference(config, self)
+            return self._secret_provider.resolve_keyvault_reference(config)
         # Use the base class helper method for non-KeyVault processing
         return self._process_key_value_base(config)
 

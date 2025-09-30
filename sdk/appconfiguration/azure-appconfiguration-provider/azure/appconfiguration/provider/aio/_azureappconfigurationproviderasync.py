@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 import datetime
 import logging
-import inspect
 from typing import (
     Any,
     Awaitable,
@@ -25,8 +24,6 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     SecretReferenceConfigurationSetting,
 )
 from azure.core.exceptions import AzureError, HttpResponseError
-from azure.keyvault.secrets.aio import SecretClient
-from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._key_vault._async_secret_provider import SecretProvider
 from .._constants import (
@@ -299,7 +296,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             replica_count,
             self._feature_flag_enabled,
             self._feature_filter_usage,
-            self._uses_key_vault,
+            self._secret_provider.uses_key_vault,
             self._uses_load_balancing,
             is_failover_request,
             self._uses_ai_configuration,
@@ -377,6 +374,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             raise e
 
     async def refresh(self, **kwargs) -> None:
+        if self._secret_provider.secret_refresh_timer and self._secret_provider.secret_refresh_timer.needs_refresh():
+            self._secret_provider.bust_cache()
         if not self._watched_settings and not self._feature_flag_refresh_enabled:
             logger.debug("Refresh called but no refresh enabled.")
             return
@@ -507,7 +506,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     async def _process_key_value(self, config: ConfigurationSetting) -> Any:
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return await _resolve_keyvault_reference(config, self)
+            return await self._secret_provider.resolve_keyvault_reference(config)
         # Use the base class helper method for non-KeyVault processing
         return self._process_key_value_base(config)
 
