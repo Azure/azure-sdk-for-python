@@ -8,7 +8,6 @@ import json
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
-from ..._common.utils import reformat_agent_response
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -153,8 +152,6 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if not isinstance(tool_definitions, list):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
-        tool_calls = reformat_agent_response(tool_calls, include_tool_calls=True)
-
         try:
             needed_tool_definitions = self._extract_needed_tool_definitions(
                 tool_calls, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
@@ -169,8 +166,8 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if len(needed_tool_definitions) == 0:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Prettify tool calls for LLM evaluation
-        prettified_tool_calls = self._prettify_raw_tool_calls(tool_calls)
+        # Prettify tool calls for LLM evaluation (including tool results if available)
+        prettified_tool_calls = self._prettify_raw_tool_calls(tool_calls, response)
 
         return {
             "query": query,
@@ -190,7 +187,7 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Format conversation history for cleaner evaluation
         if "query" in eval_input:
             eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True, include_tool_calls=True
+                eval_input["query"], logger, include_system_messages=True
             )
 
         # Call the LLM to evaluate
@@ -249,12 +246,59 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Return the result
         return result
 
-    def _prettify_raw_tool_calls(self, tool_calls):
-        """Prettify raw tool call objects into readable format for LLM evaluation.
+    def _calculate_parameter_extraction_accuracy(self, details):
+        """Calculate parameter extraction accuracy from the evaluation details.
+
+        :param details: The details dictionary from the LLM evaluation output
+        :type details: Dict
+        :return: Parameter extraction accuracy as a percentage
+        :rtype: float
+        """
+        total_parameters = details.get("total_parameters_passed", 0)
+        correct_parameters = details.get("correct_parameters_passed", 0)
+
+        if total_parameters == 0:
+            return 100.0  # If no parameters were passed, accuracy is 100%
+
+        accuracy = (correct_parameters / total_parameters) * 100
+        return round(accuracy, 2)
+
+    @override
+    def __call__(  # pylint: disable=docstring-missing-param
+        self,
+        *args,
+        **kwargs,
+    ):
+        """
+        Evaluate parameter correctness of tool calls.
+
+        :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
+        :paramtype query: Union[str, List[dict]]
+        :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
+        :paramtype tool_definitions: Union[dict, List[dict]]
+        :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
+            tool call(s) in it.
+        :paramtype tool_calls: Optional[Union[dict, List[dict]]]
+        :keyword response: Optional response to be evaluated alongside the tool calls.
+            If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
+            If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
+                If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
+            Recommended to provide it when there are tool calls that depend on output of a previous tool call.
+        :paramtype response: Optional[Union[str, List[dict]]]
+        :return: The tool input accuracy evaluation results.
+        :rtype: Dict[str, Union[str, float]]
+        """
+        return super().__call__(*args, **kwargs)
+
+    def _prettify_raw_tool_calls(self, tool_calls, response=None):
+        """Prettify raw tool call objects into readable format for LLM evaluation,
+        including tool results if available.
         
-        :param tool_calls: List of raw tool call objects
+        :param tool_calls: List of raw tool call objects (from _parse_tools_from_response)
         :type tool_calls: List[Dict]
-        :return: List of prettified tool call strings
+        :param response: Optional response parameter (not used, for compatibility)
+        :type response: Optional[Union[str, List[Dict]]]
+        :return: List of prettified tool call strings with results
         :rtype: List[str]
         """
         if not tool_calls:
@@ -281,50 +325,15 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 else:
                     args_str = ""
                 
+                # Add tool call
                 prettified.append(f"[TOOL_CALL] {func_name}({args_str})")
+                
+                # Add tool result if available (from _parse_tools_from_response)
+                if "tool_result" in call:
+                    result = call["tool_result"]
+                    # Truncate long results for readability
+                    if len(str(result)) > 200:
+                        result = str(result)[:197] + "..."
+                    prettified.append(f"[TOOL_RESULT] {result}")
         
         return prettified
-
-    def _calculate_parameter_extraction_accuracy(self, details):
-        """Calculate parameter extraction accuracy from the evaluation details.
-
-        :param details: The details dictionary from the LLM evaluation output
-        :type details: Dict
-        :return: Parameter extraction accuracy as a percentage
-        :rtype: float
-        """
-        total_parameters = details.get("total_parameters_passed", 0)
-        correct_parameters = details.get("correct_parameters_passed", 0)
-
-        if total_parameters == 0:
-            return 100.0  # If no parameters were passed, accuracy is 100%
-
-        accuracy = (correct_parameters / total_parameters) * 100
-        return round(accuracy, 2)
-
-    @override
-    def __call__(  # pylint: disable=docstring-missing-param
-        self,
-        *args,
-        **kwargs,
-    ):
-        """
-        Evaluate tool input accuracy of tool calls.
-
-        :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
-        :paramtype query: Union[str, List[dict]]
-        :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
-        :paramtype tool_definitions: Union[dict, List[dict]]
-        :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
-            tool call(s) in it.
-        :paramtype tool_calls: Optional[Union[dict, List[dict]]]
-        :keyword response: Optional response to be evaluated alongside the tool calls.
-            If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
-            If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
-                If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
-            Recommended to provide it when there are tool calls that depend on output of a previous tool call.
-        :paramtype response: Optional[Union[str, List[dict]]]
-        :return: The tool input accuracy evaluation results.
-        :rtype: Dict[str, Union[str, float]]
-        """
-        return super().__call__(*args, **kwargs)
