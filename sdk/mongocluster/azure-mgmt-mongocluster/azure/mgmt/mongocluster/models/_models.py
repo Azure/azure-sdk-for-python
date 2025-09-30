@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import IdentityProviderType
@@ -58,7 +58,7 @@ class AuthConfigProperties(_Model):
     :vartype allowed_modes: list[str or ~azure.mgmt.mongocluster.models.AuthenticationMode]
     """
 
-    allowed_modes: Optional[List[Union[str, "_models.AuthenticationMode"]]] = rest_field(
+    allowed_modes: Optional[list[Union[str, "_models.AuthenticationMode"]]] = rest_field(
         name="allowedModes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Allowed authentication modes for data access on the cluster."""
@@ -67,7 +67,7 @@ class AuthConfigProperties(_Model):
     def __init__(
         self,
         *,
-        allowed_modes: Optional[List[Union[str, "_models.AuthenticationMode"]]] = None,
+        allowed_modes: Optional[list[Union[str, "_models.AuthenticationMode"]]] = None,
     ) -> None: ...
 
     @overload
@@ -224,27 +224,26 @@ class CustomerManagedKeyEncryptionProperties(_Model):
     """Customer managed key encryption settings.
 
     :ivar key_encryption_key_identity: The identity used to access the key encryption key.
-     Required.
     :vartype key_encryption_key_identity: ~azure.mgmt.mongocluster.models.KeyEncryptionKeyIdentity
-    :ivar key_encryption_key_url: The URI of the key vault key used for encryption. Required.
+    :ivar key_encryption_key_url: The URI of the key vault key used for encryption.
     :vartype key_encryption_key_url: str
     """
 
-    key_encryption_key_identity: "_models.KeyEncryptionKeyIdentity" = rest_field(
+    key_encryption_key_identity: Optional["_models.KeyEncryptionKeyIdentity"] = rest_field(
         name="keyEncryptionKeyIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The identity used to access the key encryption key. Required."""
-    key_encryption_key_url: str = rest_field(
+    """The identity used to access the key encryption key."""
+    key_encryption_key_url: Optional[str] = rest_field(
         name="keyEncryptionKeyUrl", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The URI of the key vault key used for encryption. Required."""
+    """The URI of the key vault key used for encryption."""
 
     @overload
     def __init__(
         self,
         *,
-        key_encryption_key_identity: "_models.KeyEncryptionKeyIdentity",
-        key_encryption_key_url: str,
+        key_encryption_key_identity: Optional["_models.KeyEncryptionKeyIdentity"] = None,
+        key_encryption_key_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -365,7 +364,7 @@ class IdentityProvider(_Model):
     :vartype type: str or ~azure.mgmt.mongocluster.models.IdentityProviderType
     """
 
-    __mapping__: Dict[str, _Model] = {}
+    __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of identity provider that the user belongs to. Required. \"MicrosoftEntraID\""""
 
@@ -419,7 +418,8 @@ class EntraIdentityProvider(IdentityProvider, discriminator="MicrosoftEntraID"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=IdentityProviderType.MICROSOFT_ENTRA_ID, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = IdentityProviderType.MICROSOFT_ENTRA_ID  # type: ignore
 
 
 class EntraIdentityProviderProperties(_Model):
@@ -489,9 +489,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -691,29 +691,28 @@ class HighAvailabilityProperties(_Model):
 class KeyEncryptionKeyIdentity(_Model):
     """The identity used for key encryption key.
 
-    :ivar identity_type: The type of identity. Only 'UserAssignedIdentity' is supported. Required.
+    :ivar identity_type: The type of identity. Only 'UserAssignedIdentity' is supported.
      "UserAssignedIdentity"
     :vartype identity_type: str or ~azure.mgmt.mongocluster.models.KeyEncryptionKeyIdentityType
-    :ivar user_assigned_identity_resource_id: The user assigned identity resource id. Required.
+    :ivar user_assigned_identity_resource_id: The user assigned identity resource id.
     :vartype user_assigned_identity_resource_id: str
     """
 
-    identity_type: Union[str, "_models.KeyEncryptionKeyIdentityType"] = rest_field(
+    identity_type: Optional[Union[str, "_models.KeyEncryptionKeyIdentityType"]] = rest_field(
         name="identityType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of identity. Only 'UserAssignedIdentity' is supported. Required.
-     \"UserAssignedIdentity\""""
-    user_assigned_identity_resource_id: str = rest_field(
+    """The type of identity. Only 'UserAssignedIdentity' is supported. \"UserAssignedIdentity\""""
+    user_assigned_identity_resource_id: Optional[str] = rest_field(
         name="userAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The user assigned identity resource id. Required."""
+    """The user assigned identity resource id."""
 
     @overload
     def __init__(
         self,
         *,
-        identity_type: Union[str, "_models.KeyEncryptionKeyIdentityType"],
-        user_assigned_identity_resource_id: str,
+        identity_type: Optional[Union[str, "_models.KeyEncryptionKeyIdentityType"]] = None,
+        user_assigned_identity_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -734,7 +733,7 @@ class ListConnectionStringsResult(_Model):
     :vartype connection_strings: list[~azure.mgmt.mongocluster.models.ConnectionString]
     """
 
-    connection_strings: Optional[List["_models.ConnectionString"]] = rest_field(
+    connection_strings: Optional[list["_models.ConnectionString"]] = rest_field(
         name="connectionStrings", visibility=["read"]
     )
     """An array that contains the connection strings for a mongo cluster."""
@@ -768,7 +767,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -778,7 +777,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -812,7 +811,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -822,7 +821,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -874,7 +873,7 @@ class MongoCluster(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.MongoClusterProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
@@ -1006,11 +1005,11 @@ class MongoClusterProperties(_Model):
         name="dataApi", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Data API properties of the mongo cluster."""
-    private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = rest_field(
+    private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
     """List of private endpoint connections."""
-    preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = rest_field(
+    preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = rest_field(
         name="previewFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of private endpoint connections."""
@@ -1022,7 +1021,9 @@ class MongoClusterProperties(_Model):
         name="authConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """The authentication configuration for the cluster."""
-    encryption: Optional["_models.EncryptionProperties"] = rest_field(visibility=["read", "create"])
+    encryption: Optional["_models.EncryptionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The encryption configuration for the cluster. Depends on identity being configured."""
 
     @overload
@@ -1041,7 +1042,7 @@ class MongoClusterProperties(_Model):
         compute: Optional["_models.ComputeProperties"] = None,
         backup: Optional["_models.BackupProperties"] = None,
         data_api: Optional["_models.DataApiProperties"] = None,
-        preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = None,
+        preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = None,
         auth_config: Optional["_models.AuthConfigProperties"] = None,
         encryption: Optional["_models.EncryptionProperties"] = None,
     ) -> None: ...
@@ -1144,7 +1145,7 @@ class MongoClusterUpdate(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed service identities assigned to this resource."""
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.MongoClusterUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1156,7 +1157,7 @@ class MongoClusterUpdate(_Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.MongoClusterUpdateProperties"] = None,
     ) -> None: ...
 
@@ -1198,6 +1199,9 @@ class MongoClusterUpdateProperties(_Model):
     :vartype preview_features: list[str or ~azure.mgmt.mongocluster.models.PreviewFeature]
     :ivar auth_config: The authentication configuration for the cluster.
     :vartype auth_config: ~azure.mgmt.mongocluster.models.AuthConfigProperties
+    :ivar encryption: The encryption configuration for the cluster. Depends on identity being
+     configured.
+    :vartype encryption: ~azure.mgmt.mongocluster.models.EncryptionProperties
     """
 
     administrator: Optional["_models.AdministratorProperties"] = rest_field(
@@ -1237,7 +1241,7 @@ class MongoClusterUpdateProperties(_Model):
         name="dataApi", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Data API properties of the mongo cluster."""
-    preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = rest_field(
+    preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = rest_field(
         name="previewFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of private endpoint connections."""
@@ -1245,6 +1249,10 @@ class MongoClusterUpdateProperties(_Model):
         name="authConfig", visibility=["read", "create", "update", "delete", "query"]
     )
     """The authentication configuration for the cluster."""
+    encryption: Optional["_models.EncryptionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The encryption configuration for the cluster. Depends on identity being configured."""
 
     @overload
     def __init__(
@@ -1259,8 +1267,9 @@ class MongoClusterUpdateProperties(_Model):
         compute: Optional["_models.ComputeProperties"] = None,
         backup: Optional["_models.BackupProperties"] = None,
         data_api: Optional["_models.DataApiProperties"] = None,
-        preview_features: Optional[List[Union[str, "_models.PreviewFeature"]]] = None,
+        preview_features: Optional[list[Union[str, "_models.PreviewFeature"]]] = None,
         auth_config: Optional["_models.AuthConfigProperties"] = None,
+        encryption: Optional["_models.EncryptionProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -1431,7 +1440,7 @@ class PrivateEndpointConnectionProperties(_Model):
      ~azure.mgmt.mongocluster.models.PrivateEndpointConnectionProvisioningState
     """
 
-    group_ids: Optional[List[str]] = rest_field(name="groupIds", visibility=["read"])
+    group_ids: Optional[list[str]] = rest_field(name="groupIds", visibility=["read"])
     """The group ids for the private endpoint resource."""
     private_endpoint: Optional["_models.PrivateEndpoint"] = rest_field(
         name="privateEndpoint", visibility=["read", "create", "update", "delete", "query"]
@@ -1564,9 +1573,9 @@ class PrivateLinkResourceProperties(_Model):
 
     group_id: Optional[str] = rest_field(name="groupId", visibility=["read"])
     """The private link resource group id."""
-    required_members: Optional[List[str]] = rest_field(name="requiredMembers", visibility=["read"])
+    required_members: Optional[list[str]] = rest_field(name="requiredMembers", visibility=["read"])
     """The private link resource required member names."""
-    required_zone_names: Optional[List[str]] = rest_field(
+    required_zone_names: Optional[list[str]] = rest_field(
         name="requiredZoneNames", visibility=["read", "create", "update", "delete", "query"]
     )
     """The private link resource private link DNS zone name."""
@@ -1575,7 +1584,7 @@ class PrivateLinkResourceProperties(_Model):
     def __init__(
         self,
         *,
-        required_zone_names: Optional[List[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1780,12 +1789,6 @@ class StorageProperties(_Model):
     :ivar type: The type of storage to provision the cluster servers with. Known values are:
      "PremiumSSD" and "PremiumSSDv2".
     :vartype type: str or ~azure.mgmt.mongocluster.models.StorageType
-    :ivar iops: The IOPs of the storage assigned to each server. Only applicable if the type is
-     'PremiumSSDv2'.
-    :vartype iops: int
-    :ivar throughput: The throughput of the storage assigned to each server. Only applicable if the
-     type is 'PremiumSSDv2'.
-    :vartype throughput: int
     """
 
     size_gb: Optional[int] = rest_field(name="sizeGb", visibility=["read", "create", "update", "delete", "query"])
@@ -1795,11 +1798,6 @@ class StorageProperties(_Model):
     )
     """The type of storage to provision the cluster servers with. Known values are: \"PremiumSSD\" and
      \"PremiumSSDv2\"."""
-    iops: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The IOPs of the storage assigned to each server. Only applicable if the type is 'PremiumSSDv2'."""
-    throughput: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The throughput of the storage assigned to each server. Only applicable if the type is
-     'PremiumSSDv2'."""
 
     @overload
     def __init__(
@@ -1807,8 +1805,6 @@ class StorageProperties(_Model):
         *,
         size_gb: Optional[int] = None,
         type: Optional[Union[str, "_models.StorageType"]] = None,
-        iops: Optional[int] = None,
-        throughput: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -1966,7 +1962,7 @@ class UserProperties(_Model):
         name="identityProvider", visibility=["read", "create", "update", "delete", "query"]
     )
     """The user's identity provider definition."""
-    roles: Optional[List["_models.DatabaseRole"]] = rest_field(
+    roles: Optional[list["_models.DatabaseRole"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Database roles that are assigned to the user."""
@@ -1976,7 +1972,7 @@ class UserProperties(_Model):
         self,
         *,
         identity_provider: Optional["_models.IdentityProvider"] = None,
-        roles: Optional[List["_models.DatabaseRole"]] = None,
+        roles: Optional[list["_models.DatabaseRole"]] = None,
     ) -> None: ...
 
     @overload
