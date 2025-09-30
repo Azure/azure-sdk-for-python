@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
+import re
 
 from openai import AzureOpenAI, OpenAI
 import pandas as pd
@@ -479,36 +480,147 @@ def _get_graders_and_column_mappings(
     ]
 
 
-def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
-    """Produce a data source config that maps all columns from the supplied data source into
-    the OAI API. The mapping is naive unless a column mapping is provided, in which case
-    the column mapping's values overrule the relevant naive mappings
-
-      :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
-    helper function.
-    :type input_data_df: pd.DataFrame
-    :param column_mapping: The column mapping to use for the evaluation. If None, the default mapping will be used.
-    :type column_mapping: Optional[Dict[str, str]]
-    :return: A dictionary that can act as data source config for OAI evaluation group creation.
-    :rtype: Dict[str, Any]
+def _build_schema_tree_from_paths(
+    paths: List[str],
+    force_leaf_type: str = "string",
+) -> Dict[str, Any]:
     """
+    Build a nested JSON schema (object) from a list of dot-delimited paths.
+    Each path represents a leaf. Intermediate segments become nested object properties.
 
-    data_source_config = {
-        "type": "custom",
-        "item_schema": {
-            "type": "object",
-            "properties": {},
-            "required": [],
-        },
-    }
-    properties = data_source_config["item_schema"]["properties"]
-    required = data_source_config["item_schema"]["required"]
-    for key in column_mapping.keys():
-        properties[key] = {
-            "type": "string",
+    Example input paths:
+        ["item.query",
+         "item.context.company.policy.security.passwords.rotation_days",
+         "item.context.company.policy.security.network.vpn.required"]
+
+    Returns schema fragment:
+    {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "object",
+          "properties": {
+            "query": {"type": "string"},
+            "context": {
+              "type": "object",
+              "properties": {
+                "company": { ... }
+              },
+              "required": ["company"]
+            }
+          },
+          "required": ["query", "context"]
         }
-        required.append(key)
-    return data_source_config
+      },
+      "required": ["item"]
+    }
+    """
+    # Build tree where each node: {"__children__": { segment: node, ... }, "__leaf__": bool }
+    root: Dict[str, Any] = {"__children__": {}, "__leaf__": False}
+
+    def insert(path: str):
+        parts = [p for p in path.split(".") if p]
+        node = root
+        for i, part in enumerate(parts):
+            children = node["__children__"]
+            if part not in children:
+                children[part] = {"__children__": {}, "__leaf__": False}
+            node = children[part]
+            if i == len(parts) - 1:
+                node["__leaf__"] = True
+
+    for p in paths:
+        insert(p)
+
+    def to_schema(node: Dict[str, Any]) -> Dict[str, Any]:
+        children = node["__children__"]
+        if not children:
+            # Leaf node
+            return {"type": force_leaf_type}
+        props = {}
+        required = []
+        for name, child in children.items():
+            props[name] = to_schema(child)
+            required.append(name)
+        return {
+            "type": "object",
+            "properties": props,
+            "required": required,
+        }
+
+    return to_schema(root)
+
+def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
+    """
+    Produce a data source config (JSON schema) that reflects nested object structure
+    when column mappings reference dotted paths (e.g., item.context.company...).
+
+    Backward compatibility:
+      - If all referenced source paths are single tokens (flat), fall back to legacy flat schema.
+      - Otherwise build a nested object schema covering only referenced leaves.
+    """
+    # Extract referenced data paths from mapping values of the form ${data.<path>} (ignore ${run.outputs.*})
+    data_path_pattern = re.compile(r"^\$\{data\.([a-zA-Z0-9_\.]+)\}$")
+    referenced_paths: List[str] = []
+    for v in column_mapping.values():
+        m = data_path_pattern.match(v)
+        if m:
+            referenced_paths.append(m.group(1))
+
+    # Decide if we have nested structures
+    has_nested = any("." in p for p in referenced_paths)
+
+    if not referenced_paths or not has_nested:
+        # Legacy flat behavior (existing logic): treat each mapping key as independent string field
+        data_source_config = {
+            "type": "custom",
+            "item_schema": {
+                "type": "object",
+                "properties": {},
+                "required": [],
+            },
+        }
+        props = data_source_config["item_schema"]["properties"]
+        req = data_source_config["item_schema"]["required"]
+        for key in column_mapping.keys():
+            props[key] = {"type": "string"}
+            req.append(key)
+        return data_source_config
+
+    # NEW: If all nested paths share the same first segment (e.g. 'item'),
+    # treat that segment as the wrapper already provided by the JSONL line ("item": {...})
+    # so we exclude it from the schema (schema describes the *inside* of "item").
+    first_segments = {p.split(".")[0] for p in referenced_paths}
+    strip_wrapper = False
+    wrapper_name = None
+    if len(first_segments) == 1:
+        only_seg = next(iter(first_segments))
+        # We only strip if that segment looks like the canonical wrapper (currently 'item').
+        # (You could broaden this later if desired.)
+        if only_seg == "item":
+            strip_wrapper = True
+            wrapper_name = only_seg
+
+    effective_paths = referenced_paths
+    if strip_wrapper:
+        stripped = []
+        for p in referenced_paths:
+            parts = p.split(".", 1)
+            if len(parts) == 2:
+                stripped.append(parts[1])  # drop leading 'item.'
+            else:
+                # Path was just 'item' (no leaf) – ignore; it doesn't define a leaf value.
+                continue
+        # If stripping produced at least one usable path, adopt; else fall back to original.
+        if stripped:
+            effective_paths = stripped
+
+    nested_schema = _build_schema_tree_from_paths(effective_paths, force_leaf_type="string")
+
+    return {
+        "type": "custom",
+        "item_schema": nested_schema,
+    }
 
 
 def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[str, Any]:
@@ -543,36 +655,90 @@ def _generate_default_data_source_config(input_data_df: pd.DataFrame) -> Dict[st
 
 def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
     """
-    Given a dataframe of data to be evaluated, and an optional column mapping,
-    produce a dictionary can be used as the data source input for an OAI evaluation run.
-
-    :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
-        helper function.
-    :type input_data_df: pd.DataFrame
-    :param column_mapping: The column mapping to use for the evaluation. If None, a naive 1:1 mapping is used.
-    :type column_mapping: Optional[Dict[str, str]]
-    :return: A dictionary that can be used as the data source input for an OAI evaluation run.
-    :rtype: Dict[str, Any]
+    Given a dataframe of data to be evaluated, and a column mapping,
+    produce a dictionary that can be used as the data source input for an OAI evaluation run.
+    Builds a nested 'item' object mirroring the hierarchical paths in the mapping values.
     """
-    content = []
-    column_to_source_map = {}
-    # Convert from column mapping's format to figure out actual column names in
-    # input dataframe, and map those to the appropriate OAI input names.
-    for name, formatted_entry in column_mapping.items():
-        # From "${" from start and "}" from end before splitting.
-        entry_pieces = formatted_entry[2:-1].split(".")
-        if len(entry_pieces) == 2 and entry_pieces[0] == "data":
-            column_to_source_map[name] = entry_pieces[1]
-        elif len(entry_pieces) == 3 and entry_pieces[0] == "run" and entry_pieces[1] == "outputs":
-            column_to_source_map[name] = f"__outputs.{entry_pieces[2]}"
+    WRAPPER_KEY = "item"
 
-    # Using the above mapping, transform the input dataframe into a content
-    # dictionary that'll work in an OAI data source.
-    for row in input_data_df.iterrows():
-        row_dict = {}
-        for oai_key, dataframe_key in column_to_source_map.items():
-            row_dict[oai_key] = str(row[1][dataframe_key])
-        content.append({"item": row_dict})
+    # Gather path specs: list of tuples (original_mapping_value, relative_parts, dataframe_column_name)
+    # relative_parts excludes the wrapper (so schema + content align).
+    path_specs: List[Tuple[str, List[str], str]] = []
+
+    for name, formatted_entry in column_mapping.items():
+        if not (isinstance(formatted_entry, str) and formatted_entry.startswith("${") and formatted_entry.endswith("}")):
+            continue
+        body = formatted_entry[2:-1]  # remove ${ }
+        pieces = body.split(".")
+
+        if not pieces:
+            continue
+
+        if pieces[0] == "data":
+            # Data path: data.<maybe wrapper>.<...>
+            if len(pieces) == 1:
+                continue
+            source_path = ".".join(pieces[1:])  # e.g. item.context.company...
+            # Skip mapping of wrapper itself
+            if source_path == WRAPPER_KEY:
+                continue
+
+            # Determine dataframe column name (it is the full dotted path as flattened earlier)
+            dataframe_col = source_path
+
+            # Relative parts for nested insertion (drop leading wrapper if present)
+            if source_path.startswith(WRAPPER_KEY + "."):
+                relative_path = source_path[len(WRAPPER_KEY) + 1 :]
+            else:
+                # Path not under wrapper; treat its segments as is (will live directly under wrapper)
+                relative_path = source_path
+
+            relative_parts = [p for p in relative_path.split(".") if p]
+
+            # Defensive: if mapping alias differs from leaf, prefer actual path leaf to stay consistent.
+            # (If you want alias override, replace relative_parts[-1] with name when name != path_leaf.)
+            if not relative_parts:
+                continue
+
+            path_specs.append((formatted_entry, relative_parts, dataframe_col))
+
+        elif pieces[0] == "run" and len(pieces) >= 3 and pieces[1] == "outputs":
+            # Target / run outputs become __outputs.<rest> columns
+            run_col = "__outputs." + ".".join(pieces[2:])
+            leaf_name = pieces[-1]
+            path_specs.append((formatted_entry, [leaf_name], run_col))
+
+    content: List[Dict[str, Any]] = []
+
+    for _, row in input_data_df.iterrows():
+        item_root: Dict[str, Any] = {}
+
+        for _, rel_parts, df_col in path_specs:
+            # Safely fetch value
+            val = row.get(df_col, None)
+
+            # Convert value to string to match schema's "type": "string" leaves.
+            # (If you later infer types, you can remove the stringify.)
+            if val is None:
+                str_val = ""
+            elif isinstance(val, (str, int, float, bool)):
+                str_val = str(val)
+            else:
+                # Lists / dicts / other -> string for now
+                str_val = str(val)
+
+            # Insert into nested dict
+            cursor = item_root
+            for seg in rel_parts[:-1]:
+                nxt = cursor.get(seg)
+                if not isinstance(nxt, dict):
+                    nxt = {}
+                    cursor[seg] = nxt
+                cursor = nxt
+            leaf_key = rel_parts[-1]
+            cursor[leaf_key] = str_val
+
+        content.append({WRAPPER_KEY: item_root})
 
     return {
         "type": "jsonl",

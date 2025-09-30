@@ -9,7 +9,7 @@ import os
 import re
 import tempfile
 import json
-from typing import Any, Callable, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
+from typing import Any, Callable, Dict, Iterable, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
@@ -1131,11 +1131,32 @@ def _preprocess_data(
     # via target mapping.
     # If both the data and the output dictionary of the target function
     # have the same column, then the target function value is used.
+    _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
+
+    # NEW: flatten nested object columns (e.g., 'item') so we can map leaf values automatically.
     if input_data_df is not None:
+        input_data_df = _flatten_object_columns_for_default_mapping(input_data_df)
+
+    # Build default mapping for leaves:
+    if input_data_df is not None:
+        # First, map flattened nested columns (those containing a dot) to leaf names.
         for col in input_data_df.columns:
-            # Ignore columns added by target mapping. These are formatted as "__outputs.<column_name>"
-            # Also ignore columns that are already in config, since they've been covered by target mapping.
-            if not col.startswith(Prefixes.TSG_OUTPUTS) and col not in column_mapping["default"].keys():
+            # Skip target output columns
+            if col.startswith(Prefixes.TSG_OUTPUTS):
+                continue
+            # Skip root container columns (no dot) here; they'll be handled below if truly primitive.
+            if "." in col:
+                leaf_name = col.split(".")[-1]
+                if leaf_name not in column_mapping["default"]:
+                    column_mapping["default"][leaf_name] = f"${{data.{col}}}"
+
+        # Then, handle remaining top-level primitive columns (original logic).
+        for col in input_data_df.columns:
+            if (
+                not col.startswith(Prefixes.TSG_OUTPUTS)
+                and col not in column_mapping["default"].keys()
+                and "." not in col  # only pure top-level primitives
+            ):
                 column_mapping["default"][col] = f"${{data.{col}}}"
 
     return __ValidatedData(
@@ -1148,6 +1169,65 @@ def _preprocess_data(
         batch_run_data=batch_run_data,
     )
 
+def _flatten_object_columns_for_default_mapping(df: pd.DataFrame, root_prefixes: Optional[Iterable[str]] = None) -> pd.DataFrame:
+    """
+    For any column whose cells are (some) dictionaries, flatten nested dict structure into new
+    DataFrame columns using dotted paths "<original_col>.<nested.path.leaf>" for each leaf.
+    A "leaf" is any value that is not a dict. Lists are treated as leaves (stringified later).
+    Idempotent: existing flattened columns are not overwritten.
+
+    :param df: Input dataframe (modified in place).
+    :param root_prefixes: Optional whitelist of root columns to flatten (defaults to all dict-like columns).
+    :return: The same dataframe (for chaining).
+    """
+    candidate_cols = []
+    if root_prefixes is not None:
+        candidate_cols = [c for c in root_prefixes if c in df.columns]
+    else:
+        # pick columns where at least one non-null value is a dict
+        for c in df.columns:
+            series = df[c]
+            if series.map(lambda v: isinstance(v, dict)).any():
+                candidate_cols.append(c)
+
+    def _extract_leaves(obj, prefix):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                new_prefix = f"{prefix}.{k}" if prefix else k
+                if isinstance(v, dict):
+                    yield from _extract_leaves(v, new_prefix)
+                else:
+                    # treat list / primitive / None as leaf
+                    yield new_prefix, v
+
+    for root_col in candidate_cols:
+        # Build a union of leaf paths across rows to ensure consistent columns
+        leaf_paths: Set[str] = set()
+        for val in df[root_col]:
+            if isinstance(val, dict):
+                for path, _ in _extract_leaves(val, root_col):
+                    leaf_paths.add(path)
+
+        if not leaf_paths:
+            continue
+
+        # Create each flattened column if absent
+        for path in leaf_paths:
+            if path in df.columns:
+                continue  # already present
+            relative_keys = path[len(root_col) + 1 :].split(".") if len(path) > len(root_col) else []
+
+            def getter(root_val):
+                cur = root_val
+                for rk in relative_keys:
+                    if not isinstance(cur, dict):
+                        return None
+                    cur = cur.get(rk, None)
+                return cur
+
+            df[path] = df[root_col].map(lambda rv: getter(rv) if isinstance(rv, dict) else None)
+
+    return df
 
 def _run_callable_evaluators(
     validated_data: __ValidatedData,
