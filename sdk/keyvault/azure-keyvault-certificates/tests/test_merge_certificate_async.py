@@ -11,7 +11,8 @@ from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 from OpenSSL import crypto
 
-from _async_test_case import AsyncCertificatesClientPreparer, get_decorator
+from _async_test_case import AsyncCertificatesClientPreparer
+from _test_case import get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
 all_api_versions = get_decorator(is_async=True)

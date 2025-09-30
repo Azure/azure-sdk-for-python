@@ -27,7 +27,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,7 +42,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
             pool_name="str",
             volume_name="str",
             bucket_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -63,6 +63,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                     "id": "str",
                     "name": "str",
                     "path": "/",
+                    "permissions": "ReadOnly",
                     "provisioningState": "str",
                     "server": {
                         "certificateCommonName": "str",
@@ -82,7 +83,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -99,7 +100,25 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 bucket_name="str",
-                api_version="2025-01-01-preview",
+                body={
+                    "fileSystemUser": {"cifsUser": {"username": "str"}, "nfsUser": {"groupId": 0, "userId": 0}},
+                    "id": "str",
+                    "name": "str",
+                    "path": "str",
+                    "permissions": "str",
+                    "provisioningState": "str",
+                    "server": {"certificateObject": "str", "fqdn": "str"},
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
+                },
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -116,7 +135,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 bucket_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -133,7 +152,7 @@ class TestNetAppManagementBucketsOperationsAsync(AzureMgmtRecordedTestCase):
             volume_name="str",
             bucket_name="str",
             body={"keyPairExpiryDays": 0},
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself

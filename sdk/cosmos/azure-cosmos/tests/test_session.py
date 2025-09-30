@@ -46,6 +46,73 @@ class TestSession(unittest.TestCase):
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.get_container_client(cls.TEST_COLLECTION_ID)
 
+    def test_manual_session_token_takes_precedence(self):
+        # Establish an initial session state for the primary client. After this call, self.client has an internal session token.
+        self.created_collection.create_item(
+            body={'id': 'precedence_doc_1' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        # Capture the session token from the primary client (Token A)
+        token_A = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(token_A)
+
+        # Use a separate client to create a second item. This gives us a new, distinct session token from the response.
+        with cosmos_client.CosmosClient(self.host, self.masterKey) as other_client:
+            other_collection = other_client.get_database_client(self.TEST_DATABASE_ID) \
+                .get_container_client(self.TEST_COLLECTION_ID)
+            item2 = other_collection.create_item(
+                body={'id': 'precedence_doc_2' + str(uuid.uuid4()), 'pk': 'mypk'}
+            )
+            # Capture the session token from the second client (Token B)
+            manual_session_token = other_client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+            self.assertIsNotNone(manual_session_token)
+
+        # Assert that the two tokens are different to ensure we are testing a real override scenario.
+        self.assertNotEqual(token_A, manual_session_token)
+
+        # At this point, self.client's session is at first token, but we are holding second token. We will now manually use second token in a request on self.client.
+        def manual_token_hook(request):
+            # Assert that the header contains the manually provided second token not the client's automatic first token.
+            self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+            self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], manual_session_token)
+
+        #Read an item using the primary client, but manually providing second token. The hook will verify that second token overrides the client's internal first token.
+        self.created_collection.read_item(
+            item=item2['id'],  # Reading the item associated with second token
+            partition_key='mypk',
+            session_token=manual_session_token,  # Manually provide second token
+            raw_request_hook=manual_token_hook
+        )
+
+    def test_manual_session_token_override(self):
+        # Create an item to get a valid session token from the response
+        created_document = self.created_collection.create_item(
+            body={'id': 'doc_for_manual_session' + str(uuid.uuid4()), 'pk': 'mypk'}
+        )
+        session_token = self.client.client_connection.last_response_headers.get(HttpHeaders.SessionToken)
+        self.assertIsNotNone(session_token)
+
+        # temporarily disable client-side session management to test manual override
+        original_session = self.client.client_connection.session
+        self.client.client_connection.session = None
+
+        try:
+            # Define a hook to inspect the request headers
+            def manual_token_hook(request):
+                self.assertIn(HttpHeaders.SessionToken, request.http_request.headers)
+                self.assertEqual(request.http_request.headers[HttpHeaders.SessionToken], session_token)
+
+            # Read the item, passing the session token manually.
+            # The hook will verify it's correctly added to the request headers.
+            self.created_collection.read_item(
+                item=created_document['id'],
+                partition_key='mypk',
+                session_token=session_token,  # Manually provide the session token
+                raw_request_hook=manual_token_hook
+            )
+        finally:
+            # Restore the original session object to avoid affecting other tests
+            self.client.client_connection.session = original_session
+
     def test_session_token_sm_for_ops(self):
 
         # Session token should not be sent for control plane operations

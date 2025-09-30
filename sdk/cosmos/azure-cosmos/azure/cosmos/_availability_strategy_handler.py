@@ -21,6 +21,7 @@
 
 """Module for handling request availability strategies in Azure Cosmos DB."""
 import copy
+import os
 import time
 from concurrent.futures import ThreadPoolExecutor, Future, as_completed, CancelledError
 from threading import Event
@@ -29,7 +30,6 @@ from typing import List, Dict, Any, Tuple, Callable, Optional, cast
 
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
 
-from ._availability_strategy import CrossRegionHedgingStrategy
 from ._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from ._global_partition_endpoint_manager_per_partition_automatic_failover import \
     _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover
@@ -41,7 +41,7 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
     """Handler for CrossRegionHedgingStrategy that implements cross-region request hedging."""
 
     def __init__(self) -> None:
-        self._shared_executor = ThreadPoolExecutor()
+        self._shared_executor = ThreadPoolExecutor(max_workers=os.cpu_count())
 
     def execute_single_request_with_delay(
         self,
@@ -79,14 +79,13 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             delay = 0
         elif location_index == 1:
             # First hedged request after threshold
-            delay = (cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-                     .threshold_ms)
+            delay = request_params.availability_strategy_config["threshold_ms"]
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            cross_region_hedging_strategy = cast(CrossRegionHedgingStrategy, request_params.availability_strategy)
-            delay = (cross_region_hedging_strategy.threshold_ms +
-                     (steps * cross_region_hedging_strategy.threshold_steps_ms))
+            strategy = request_params.availability_strategy_config
+            delay = (strategy["threshold_ms"] +
+                    (steps * strategy["threshold_steps_ms"]))
 
         if delay > 0:
             time.sleep(delay / 1000)
@@ -135,7 +134,8 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         """
         # Determine locations based on operation type
         available_locations = self._get_applicable_endpoints(request_params, global_endpoint_manager)
-        effective_executor = self._shared_executor
+        effective_executor = request_params.availability_strategy_executor or self._shared_executor
+        request_params.availability_strategy_executor = None # reset the executor here else will get cannot pickle '_queue.SimpleQueue' object
 
         futures: List[Future] = []
         first_request_future: Optional[Future] = None
@@ -223,12 +223,12 @@ def execute_with_hedging(
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     :raises: Any exceptions raised by the hedging handler's execute_request method
     """
-    availability_strategy = request_params.availability_strategy
-    if isinstance(availability_strategy, CrossRegionHedgingStrategy):
+    strategy = request_params.availability_strategy_config
+    if isinstance(strategy, dict) and "threshold_ms" in strategy and "threshold_steps_ms" in strategy:
         return _cross_region_hedging_handler.execute_request(
             request_params,
             global_endpoint_manager,
             request,
             execute_request_fn
         )
-    raise ValueError(f"Unsupported availability strategy type: {type(CrossRegionHedgingStrategy)}")
+    raise ValueError("Missing required fields in availability strategy config")

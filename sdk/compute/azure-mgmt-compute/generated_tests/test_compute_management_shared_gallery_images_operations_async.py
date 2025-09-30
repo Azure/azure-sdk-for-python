@@ -25,7 +25,7 @@ class TestComputeManagementSharedGalleryImagesOperationsAsync(AzureMgmtRecordedT
         response = self.client.shared_gallery_images.list(
             location="str",
             gallery_unique_name="str",
-            api_version="2023-07-03",
+            api_version="2024-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementSharedGalleryImagesOperationsAsync(AzureMgmtRecordedT
             location="str",
             gallery_unique_name="str",
             gallery_image_name="str",
-            api_version="2023-07-03",
+            api_version="2024-03-03",
         )
 
         # please add some check logic here by yourself

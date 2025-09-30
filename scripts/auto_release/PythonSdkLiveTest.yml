@@ -69,7 +69,6 @@ jobs:
           # install autorest
           sudo npm init -f
           sudo npm install -g autorest --save
-          sudo npm install -g @azure-tools/typespec-client-generator-cli
 
           mkdir temp_folder
 
@@ -100,6 +99,10 @@ jobs:
         export TEST_FOLDER=$(TEST_FOLDER)
         export ISSUE_OWNER=$(ISSUE_OWNER)
 
+        # install tsp-client
+        cd azure-sdk-for-python/eng/common/tsp-client
+        npm ci
+        cd ../../..
+        
         # run
-        cd azure-sdk-for-python
         python $script_path/main.py

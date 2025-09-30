@@ -1,11 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union, Optional
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import PythonGrader
+
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
 
@@ -39,6 +41,8 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
     :param source: Python source code containing the grade function.
         Must define: def grade(sample: dict, item: dict) -> float
     :type source: str
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 
@@ -63,6 +67,7 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
         image_tag: str,
         pass_threshold: float,
         source: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any,
     ):
         # Validate pass_threshold
@@ -81,4 +86,4 @@ class AzureOpenAIPythonGrader(AzureOpenAIGrader):
             type="python",
         )
 
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

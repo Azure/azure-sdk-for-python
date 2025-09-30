@@ -15,6 +15,8 @@ import sys
 import logging
 from tox_harness import prep_and_run_tox
 from ci_tools.functions import discover_targeted_packages
+from ci_tools.logging import configure_logging
+
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -113,6 +115,8 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     args = parser.parse_args()
+
+    configure_logging(args)
 
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.

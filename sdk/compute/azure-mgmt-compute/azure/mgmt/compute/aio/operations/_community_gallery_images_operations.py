@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -31,7 +31,8 @@ from ...operations._community_gallery_images_operations import build_get_request
 from .._configuration import ComputeManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class CommunityGalleryImagesOperations:
@@ -53,72 +54,13 @@ class CommunityGalleryImagesOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace_async
-    async def get(
-        self, location: str, public_gallery_name: str, gallery_image_name: str, **kwargs: Any
-    ) -> _models.CommunityGalleryImage:
-        """Get a community gallery image.
-
-        :param location: Resource location. Required.
-        :type location: str
-        :param public_gallery_name: The public name of the community gallery. Required.
-        :type public_gallery_name: str
-        :param gallery_image_name: The name of the community gallery image definition. Required.
-        :type gallery_image_name: str
-        :return: CommunityGalleryImage or the result of cls(response)
-        :rtype: ~azure.mgmt.compute.models.CommunityGalleryImage
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
-        cls: ClsType[_models.CommunityGalleryImage] = kwargs.pop("cls", None)
-
-        _request = build_get_request(
-            location=location,
-            public_gallery_name=public_gallery_name,
-            gallery_image_name=gallery_image_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("CommunityGalleryImage", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @distributed_trace
     def list(
         self, location: str, public_gallery_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.CommunityGalleryImage"]:
         """List community gallery images inside a gallery.
 
-        :param location: Resource location. Required.
+        :param location: The name of Azure region. Required.
         :type location: str
         :param public_gallery_name: The public name of the community gallery. Required.
         :type public_gallery_name: str
@@ -131,7 +73,7 @@ class CommunityGalleryImagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
         cls: ClsType[_models.CommunityGalleryImageList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -184,3 +126,62 @@ class CommunityGalleryImagesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(
+        self, location: str, public_gallery_name: str, gallery_image_name: str, **kwargs: Any
+    ) -> _models.CommunityGalleryImage:
+        """Get a community gallery image.
+
+        :param location: The name of Azure region. Required.
+        :type location: str
+        :param public_gallery_name: The public name of the community gallery. Required.
+        :type public_gallery_name: str
+        :param gallery_image_name: The name of the community gallery image definition. Required.
+        :type gallery_image_name: str
+        :return: CommunityGalleryImage or the result of cls(response)
+        :rtype: ~azure.mgmt.compute.models.CommunityGalleryImage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        cls: ClsType[_models.CommunityGalleryImage] = kwargs.pop("cls", None)
+
+        _request = build_get_request(
+            location=location,
+            public_gallery_name=public_gallery_name,
+            gallery_image_name=gallery_image_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("CommunityGalleryImage", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

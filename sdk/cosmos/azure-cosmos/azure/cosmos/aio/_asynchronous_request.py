@@ -29,7 +29,7 @@ from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import _retry_utility_async
-from .. import exceptions, CrossRegionHedgingStrategy
+from .. import exceptions, CrossRegionHedgingStrategyConfig
 from .. import http_constants
 from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
@@ -171,7 +171,7 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy is not None and
+    return (request_params.availability_strategy_config is not None and
             not request_params.is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
@@ -206,10 +206,14 @@ async def AsynchronousRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
-    if request_params.availability_strategy is None:
+    if request_params.availability_strategy_config is None:
         # if ppaf is enabled, then hedging is enabled by default
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
-            request_params.availability_strategy = CrossRegionHedgingStrategy()
+            request_params.availability_strategy_config =(
+                CrossRegionHedgingStrategyConfig(
+                    type="CrossRegionHedging",
+                    threshold_ms=500,
+                    threshold_steps_ms=100))
 
     # Handle hedging if strategy is configured
     if _is_availability_strategy_applicable(request_params):

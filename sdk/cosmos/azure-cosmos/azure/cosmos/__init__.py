@@ -19,7 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from ._availability_strategy import CrossRegionHedgingStrategy
 from ._version import VERSION
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._retry_utility import ConnectionRetryPolicy
@@ -44,6 +43,7 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
+from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
 
 __all__ = (
     "CosmosClient",
@@ -68,6 +68,6 @@ __all__ = (
     "ThroughputProperties",
     "CosmosDict",
     "CosmosList",
-    "CrossRegionHedgingStrategy"
+    "CrossRegionHedgingStrategyConfig"
 )
 __version__ = VERSION

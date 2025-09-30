@@ -25,17 +25,20 @@ import copy
 import json
 import time
 from concurrent.futures import CancelledError
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 from azure.core.exceptions import DecodeError  # type: ignore
 
-from . import _retry_utility, _availability_strategy_handler, CrossRegionHedgingStrategy
+from . import _retry_utility, _availability_strategy_handler
 from . import exceptions
 from . import http_constants
 from ._request_object import RequestObject
 from .documents import _OperationType
 from .http_constants import ResourceType
 
+if TYPE_CHECKING:
+    from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
 
 def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
@@ -203,7 +206,7 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy is not None and
+    return (request_params.availability_strategy_config is not None and
             not request_params.is_hedging_request and
             request_params.resource_type == ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
@@ -255,10 +258,14 @@ def SynchronizedRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
-    if request_params.availability_strategy is None:
+    if request_params.availability_strategy_config is None:
         # if ppaf is enabled, then hedging is enabled by default
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
-            request_params.availability_strategy = CrossRegionHedgingStrategy()
+            request_params.availability_strategy_config =\
+                CrossRegionHedgingStrategyConfig(
+                    type="CrossRegionHedging",
+                    threshold_ms=500,
+                    threshold_steps_ms=100)
 
     # Handle hedging if availability strategy is applicable
     if _is_availability_strategy_applicable(request_params):

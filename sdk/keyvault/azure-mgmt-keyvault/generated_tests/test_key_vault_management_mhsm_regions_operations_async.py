@@ -25,7 +25,7 @@ class TestKeyVaultManagementMHSMRegionsOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.mhsm_regions.list_by_resource(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- AOAI Graders now accept a "credential" parameter that can be used for authentication with an AzureOpenAIModelConfiguration
+
 ### Breaking Changes
 
 ### Bugs Fixed

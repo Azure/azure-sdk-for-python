@@ -21,6 +21,7 @@ from datetime import date
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup, get_version_py, VERSION_REGEX
 from ci_tools.variables import discover_repo_root
+from ci_tools.logging import logger
 
 from subprocess import run
 
@@ -80,7 +81,7 @@ def set_version_py(setup_path, new_version):
     version_py_location = get_version_py(setup_path)
 
     if not version_py_location:
-        logging.error("No version.py file found in {}".format(setup_path))
+        logger.error("No version.py file found in {}".format(setup_path))
         sys.exit(1)
 
     version_contents = ""

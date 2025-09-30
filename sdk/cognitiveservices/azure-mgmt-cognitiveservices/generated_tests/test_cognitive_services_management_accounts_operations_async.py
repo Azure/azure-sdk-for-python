@@ -108,11 +108,9 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                                 {"id": "str", "ignoreMissingVnetServiceEndpoint": bool, "state": "str"}
                             ],
                         },
-                        "networkInjections": {
-                            "scenario": "str",
-                            "subnetArmId": "str",
-                            "useMicrosoftManagedNetwork": bool,
-                        },
+                        "networkInjections": [
+                            {"scenario": "str", "subnetArmId": "str", "useMicrosoftManagedNetwork": bool}
+                        ],
                         "privateEndpointConnections": [
                             {
                                 "etag": "str",
@@ -275,11 +273,9 @@ class TestCognitiveServicesManagementAccountsOperationsAsync(AzureMgmtRecordedTe
                                 {"id": "str", "ignoreMissingVnetServiceEndpoint": bool, "state": "str"}
                             ],
                         },
-                        "networkInjections": {
-                            "scenario": "str",
-                            "subnetArmId": "str",
-                            "useMicrosoftManagedNetwork": bool,
-                        },
+                        "networkInjections": [
+                            {"scenario": "str", "subnetArmId": "str", "useMicrosoftManagedNetwork": bool}
+                        ],
                         "privateEndpointConnections": [
                             {
                                 "etag": "str",

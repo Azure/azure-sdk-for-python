@@ -1,5 +1,27 @@
 # Release History
 
+## 14.0.0b2 (2025-09-26)
+
+### Features Added
+
+  - Model `NetAppManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `Bucket` added property `permissions`
+  - Model `BucketPatch` added property `permissions`
+  - Model `ReplicationObject` added property `mirror_state`
+  - Model `ReplicationObject` added property `relationship_status`
+  - Added enum `BucketPatchPermissions`
+  - Added enum `BucketPermissions`
+  - Added enum `NetAppProvisioningState`
+
+### Breaking Changes
+
+  - Model `ListQuotaReportResponse` deleted or renamed its instance variable `next_link`
+  - Deleted or renamed enum value `RelationshipStatus.FAILED`
+  - Deleted or renamed enum value `RelationshipStatus.UNKNOWN`
+  - Deleted or renamed model `NetappProvisioningState`
+  - Deleted or renamed model `ProvisioningState`
+  - Parameter `body` of method `BucketsOperations.begin_update` is now required
+
 ## 13.7.0 (2025-08-18)
 
 ### Features Added

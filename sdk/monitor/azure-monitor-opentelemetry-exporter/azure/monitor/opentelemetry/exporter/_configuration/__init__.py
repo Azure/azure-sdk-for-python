@@ -7,11 +7,12 @@ from threading import Lock
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS,
-    _ONE_SETTINGS_PYTHON_KEY,
     _ONE_SETTINGS_CHANGE_URL,
     _ONE_SETTINGS_CONFIG_URL,
 )
+from azure.monitor.opentelemetry.exporter._configuration._utils import _ConfigurationProfile
 from azure.monitor.opentelemetry.exporter._configuration._utils import make_onesettings_request
+from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -35,34 +36,50 @@ class _ConfigurationState:
         )
 
 
-class _ConfigurationManager:
+class _ConfigurationManager(metaclass=Singleton):
     """Singleton class to manage configuration settings."""
 
-    _instance = None
-    _configuration_worker = None
-    _instance_lock = Lock()
-    _state_lock = Lock()  # Single lock for all state
-    _current_state = _ConfigurationState()
+    def __init__(self):
+        """Initialize the ConfigurationManager instance."""
+        self._configuration_worker = None
+        self._state_lock = Lock()  # Single lock for all state
+        self._current_state = _ConfigurationState()
+        self._callbacks = []
+        self._initialized = False
 
-    def __new__(cls):
-        with cls._instance_lock:
-            if cls._instance is None:
-                cls._instance = super(_ConfigurationManager, cls).__new__(cls)
-                # Initialize the instance here to avoid re-initialization
-                cls._instance._initialize_worker()
-            return cls._instance
-
-    def _initialize_worker(self):
+    def initialize(self, **kwargs):
         """Initialize the ConfigurationManager and start the configuration worker."""
-        # Lazy import to avoid circular import
-        from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
+        with self._state_lock:
+            if self._initialized:
+                return
 
-        # Get initial refresh interval from state
-        with _ConfigurationManager._state_lock:
-            initial_refresh_interval = _ConfigurationManager._current_state.refresh_interval
+            # Fill the configuration profile with the initializer's parameters
+            _ConfigurationProfile.fill(**kwargs)
 
-        self._configuration_worker = _ConfigurationWorker(initial_refresh_interval)
+            # Lazy import to avoid circular import
+            from azure.monitor.opentelemetry.exporter._configuration._worker import _ConfigurationWorker
 
+            # Get initial refresh interval from current state
+            initial_refresh_interval = self._current_state.refresh_interval
+
+            self._configuration_worker = _ConfigurationWorker(self, initial_refresh_interval)
+            self._initialized = True
+
+    def register_callback(self, callback):
+        # Register a callback to be invoked when configuration changes.
+        if not self._initialized:
+            return
+        self._callbacks.append(callback)
+
+    def _notify_callbacks(self, settings: Dict[str, str]):
+        # Notify all registered callbacks of configuration changes.
+        for cb in self._callbacks:
+            try:
+                cb(settings)
+            except Exception as ex:  # pylint: disable=broad-except
+                logger.warning("Callback failed: %s", ex)
+
+    # pylint: disable=too-many-statements
     def get_configuration_and_refresh_interval(self, query_dict: Optional[Dict[str, str]] = None) -> int:
         """Fetch configuration from OneSettings and update local cache atomically.
         
@@ -122,8 +139,8 @@ class _ConfigurationManager:
         headers = {}
 
         # Read current state atomically
-        with _ConfigurationManager._state_lock:
-            current_state = _ConfigurationManager._current_state
+        with self._state_lock:
+            current_state = self._current_state
             if current_state.etag:
                 headers["If-None-Match"] = current_state.etag
             if current_state.refresh_interval:
@@ -140,13 +157,13 @@ class _ConfigurationManager:
             new_state_updates['refresh_interval'] = response.refresh_interval  # type: ignore
 
         if response.status_code == 304:
-            # Not modified: Only update etag and refresh interval below
+            # Not modified: Settings unchanged, but update etag and refresh interval if provided
             pass
         # Handle version and settings updates
         elif response.settings and response.version is not None:
             needs_config_fetch = False
-            with _ConfigurationManager._state_lock:
-                current_state = _ConfigurationManager._current_state
+            with self._state_lock:
+                current_state = self._current_state
 
                 if response.version > current_state.version_cache:
                     # Version increase: new config available
@@ -182,34 +199,43 @@ class _ConfigurationManager:
             # No settings or version provided
             logger.warning("No settings or version provided in config response. Config not updated.")
 
+
+        notify_callbacks = False
+        current_refresh_interval = _ONE_SETTINGS_DEFAULT_REFRESH_INTERVAL_SECONDS
+        state_for_callbacks = None
+
         # Atomic state update
-        with _ConfigurationManager._state_lock:
-            latest_state = _ConfigurationManager._current_state  # Always use latest state
-            _ConfigurationManager._current_state = latest_state.with_updates(**new_state_updates)
-            return _ConfigurationManager._current_state.refresh_interval
+        with self._state_lock:
+            latest_state = self._current_state  # Always use latest state
+            self._current_state = latest_state.with_updates(**new_state_updates)
+            current_refresh_interval = self._current_state.refresh_interval
+            if 'settings_cache' in new_state_updates:
+                notify_callbacks = True
+                state_for_callbacks = self._current_state
+
+        # Handle configuration updates throughout the SDK
+        if notify_callbacks and state_for_callbacks is not None and state_for_callbacks.settings_cache:
+            self._notify_callbacks(state_for_callbacks.settings_cache)
+
+        return current_refresh_interval
 
     def get_settings(self) -> Dict[str, str]:  # pylint: disable=C4741,C4742
         """Get current settings cache."""
-        with _ConfigurationManager._state_lock:
-            return _ConfigurationManager._current_state.settings_cache.copy()
+        with self._state_lock:
+            return self._current_state.settings_cache.copy()  # type: ignore
 
     def get_current_version(self) -> int:  # pylint: disable=C4741,C4742
         """Get current version."""
-        with _ConfigurationManager._state_lock:
-            return _ConfigurationManager._current_state.version_cache
+        with self._state_lock:
+            return self._current_state.version_cache  # type: ignore
 
     def shutdown(self) -> None:
         """Shutdown the configuration worker."""
-        with _ConfigurationManager._instance_lock:
-            if self._configuration_worker:
-                self._configuration_worker.shutdown()
-                self._configuration_worker = None
-            if _ConfigurationManager._instance:
-                _ConfigurationManager._instance = None
-
-
-def _update_configuration_and_get_refresh_interval() -> int:
-    targeting = {
-        "namespaces": _ONE_SETTINGS_PYTHON_KEY,
-    }
-    return _ConfigurationManager().get_configuration_and_refresh_interval(targeting)
+        if self._configuration_worker:
+            self._configuration_worker.shutdown()
+            self._configuration_worker = None
+        self._initialized = False
+        self._callbacks.clear()
+        # Clear the singleton instance from the metaclass
+        if self.__class__ in _ConfigurationManager._instances:  # pylint: disable=protected-access
+            del _ConfigurationManager._instances[self.__class__]  # pylint: disable=protected-access

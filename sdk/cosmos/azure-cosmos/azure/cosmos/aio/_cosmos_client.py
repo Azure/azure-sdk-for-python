@@ -22,25 +22,25 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable
 import warnings
+from typing import Any, Dict, List, Optional, Union, cast, Mapping, Iterable, Callable, overload, Literal
+
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
-
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 
-from azure.cosmos import CrossRegionHedgingStrategy
 from azure.cosmos.offer import ThroughputProperties
-
-from ..cosmos_client import _parse_connection_str
-from .._constants import _Constants as Constants
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
-from .._base import build_options as _build_options, _set_throughput_options
-from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy, _get_database_link
+from ._retry_utility_async import _ConnectionRetryPolicy
+from .. import CrossRegionHedgingStrategyConfig
+from .._base import build_options as _build_options, _set_throughput_options
+from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDict
+from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
@@ -204,7 +204,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, Dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
-            availability_strategy: Optional[CrossRegionHedgingStrategy] = None,
+            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None,
+            availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:
         """Instantiate a new CosmosClient."""
@@ -215,7 +216,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
-            availability_strategy=availability_strategy,
+            availability_strategy_config=availability_strategy_config,
+            availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )
 
@@ -265,7 +267,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             **kwargs
         )
 
-    @distributed_trace_async
+    @overload
     async def create_database(
         self,
         id: str,
@@ -273,6 +275,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -285,8 +288,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
-        :returns: A DatabaseProxy instance representing the new database.
+        :returns: A `DatabaseProxy` instance representing the database.
         :rtype: ~azure.cosmos.aio.DatabaseProxy
 
         .. admonition:: Example:
@@ -299,6 +304,84 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 :caption: Create a database in the Cosmos DB account:
                 :name: create_database
         """
+        ...
+
+    @overload
+    async def create_database(
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
+    ) -> tuple[DatabaseProxy, CosmosDict]:
+        """
+        Create a new database with the given ID (name).
+
+        :param str id: ID (name) of the database to create.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
+            or a Tuple containing a DatabaseProxy and the associated database properties.
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+        :returns: A tuple of `DatabaseProxy` and CosmosDict with the database properties.
+        :rtype: tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+                :name: create_database
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_database( # pylint:disable=docstring-should-be-keyword
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
+        """
+        Create a new database with the given ID (name).
+
+        :param Any args: args
+        :param str id: ID (name) of the database to read or create.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
+            or a Tuple containing a DatabaseProxy and the associated database properties.
+        :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
+        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy
+            and CosmosDict with the database properties.
+        :rtype: ~azure.cosmos.aio.DatabaseProxy or tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START create_database]
+                :end-before: [END create_database]
+                :language: python
+                :dedent: 0
+                :caption: Create a database in the Cosmos DB account:
+                :name: create_database
+        """
+        id = args[0] if args else kwargs.pop("id")
+        if len(args) > 1:
+            raise TypeError(f"Unexpected positional parameters: {args[1:]}")
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -317,17 +400,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
+
+        offer_throughput = kwargs.pop("offer_throughput", None)
+        return_properties = kwargs.pop("return_properties", False)
+
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
-        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        if not return_properties:
+            return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        return  DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
 
-    @distributed_trace_async
+    @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
         self,
         id: str,
@@ -335,6 +420,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         throughput_bucket: Optional[int] = None,
+        return_properties: Literal[False] = False,
         **kwargs: Any
     ) -> DatabaseProxy:
         """
@@ -353,10 +439,84 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
+            or a Tuple containing a DatabaseProxy and the associated database properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
         :returns: A DatabaseProxy instance representing the database.
-        :rtype: ~azure.cosmos.DatabaseProxy
+        :rtype: ~azure.cosmos.aio.DatabaseProxy
         """
+        ...
+
+    @overload
+    async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
+        self,
+        id: str,
+        *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        initial_headers: Optional[Dict[str, str]] = None,
+        throughput_bucket: Optional[int] = None,
+        return_properties: Literal[True],
+        **kwargs: Any
+    ) -> tuple[DatabaseProxy, CosmosDict]:
+        """
+        Create the database if it does not exist already.
+
+        If the database already exists, the existing settings are returned.
+
+        ..note::
+            This function does not check or update existing database settings or
+            offer throughput if they differ from what is passed in.
+
+        :param str id: ID (name) of the database to read or create.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
+            or a Tuple containing a DatabaseProxy and the associated database properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
+        :returns: A tuple of DatabaseProxy and CosmosDict with the database properties.
+        :rtype: tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
+        """
+        ...
+
+    @distributed_trace_async
+    async def create_database_if_not_exists( # pylint:disable=docstring-should-be-keyword
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]:
+        """
+        Create the database if it does not exist already.
+
+        If the database already exists, the existing settings are returned.
+
+        ..note::
+            This function does not check or update existing database settings or
+            offer throughput if they differ from what is passed in.
+
+        :param Any args: args
+        :param str id: ID (name) of the database to read or create.
+        :keyword offer_throughput: The provisioned throughput for this offer.
+        :paramtype offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
+            or a Tuple containing a DatabaseProxy and the associated database properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
+        :returns: A DatabaseProxy instance representing the database or a tuple of DatabaseProxy
+            and CosmosDict with the database properties.
+        :rtype: ~azure.cosmos.aio.DatabaseProxy or tuple [~azure.cosmos.aio.DatabaseProxy, ~azure.cosmos.CosmosDict]
+        """
+
+        id = args[0] if args else kwargs.pop("id")
+        if len(args) > 1:
+            raise TypeError(f"Unexpected positional parameters: {args[1:]}")
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -375,18 +535,21 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
-        if throughput_bucket is not None:
-            kwargs["throughput_bucket"] = throughput_bucket
-        if initial_headers is not None:
-            kwargs["initial_headers"] = initial_headers
+
+        offer_throughput = kwargs.pop("offer_throughput", None)
+        return_properties = kwargs.pop("return_properties", False)
+
         try:
             database_proxy = self.get_database_client(id)
-            await database_proxy.read(**kwargs)
-            return database_proxy
+            result = await database_proxy.read(**kwargs)
+            if not return_properties:
+                return database_proxy
+            return database_proxy, result
         except CosmosResourceNotFoundError:
             return await self.create_database(
                 id,
                 offer_throughput=offer_throughput,
+                return_properties=return_properties,
                 **kwargs
             )
 

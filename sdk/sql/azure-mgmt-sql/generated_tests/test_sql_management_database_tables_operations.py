@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseTablesOperations(AzureMgmtRecordedTestCase):
             server_name="str",
             database_name="str",
             schema_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestSqlManagementDatabaseTablesOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             schema_name="str",
             table_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

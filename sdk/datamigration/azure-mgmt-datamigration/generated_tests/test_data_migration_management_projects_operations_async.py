@@ -25,7 +25,7 @@ class TestDataMigrationManagementProjectsOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.projects.list(
             group_name="str",
             service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestDataMigrationManagementProjectsOperationsAsync(AzureMgmtRecordedTestCa
                 "targetPlatform": "str",
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestDataMigrationManagementProjectsOperationsAsync(AzureMgmtRecordedTestCa
             group_name="str",
             service_name="str",
             project_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +93,7 @@ class TestDataMigrationManagementProjectsOperationsAsync(AzureMgmtRecordedTestCa
             group_name="str",
             service_name="str",
             project_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestDataMigrationManagementProjectsOperationsAsync(AzureMgmtRecordedTestCa
                 "targetPlatform": "str",
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself

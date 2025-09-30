@@ -918,6 +918,36 @@ def test_within_dac_error(get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_within_dac_refresh_token_error(get_token_method):
+    """When within DAC context and refresh token fails, should raise CredentialUnavailableError"""
+
+    upn = "test@example.com"
+    refresh_token = "invalid-refresh-token"
+    scope = "scope"
+    account = get_account_event(uid="uid_a", utid="utid", username=upn, refresh_token=refresh_token)
+    cache = populated_cache(account)
+
+    def send(request, **kwargs):
+        # Mock a token request that fails with invalid_grant (401/400 error)
+        if "refresh_token" in (request.data or {}):
+            return mock_response(
+                status_code=400, json_payload={"error": "invalid_grant", "error_description": "Refresh token expired"}
+            )
+        # Allow discovery requests to succeed
+        return get_discovery_response("https://localhost/tenant")
+
+    transport = Mock(send=send)
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username=upn)
+
+    within_dac.set(True)
+    try:
+        with pytest.raises(CredentialUnavailableError):
+            getattr(credential, get_token_method)(scope)
+    finally:
+        within_dac.set(False)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_claims_challenge(get_token_method):
     """get_token should pass any claims challenge to MSAL token acquisition APIs"""
 
