@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Adding more diagnostic log message IDs
+  ([#43183](https://github.com/Azure/azure-sdk-for-python/pull/43183))
+
 ### Breaking Changes
 
 ### Bugs Fixed
