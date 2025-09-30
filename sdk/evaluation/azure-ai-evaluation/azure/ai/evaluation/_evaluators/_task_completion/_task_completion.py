@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
-    """The Task Success evaluator determines whether an AI agent successfully completed the requested task based on:
+class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
+    """The Task Completion evaluator determines whether an AI agent successfully completed the requested task based on:
 
         - Final outcome and deliverable of the task
         - Completeness of task requirements
@@ -39,29 +39,29 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
 
     .. admonition:: Example:
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START task_success_evaluator]
-            :end-before: [END task_success_evaluator]
+            :start-after: [START task_completion_evaluator]
+            :end-before: [END task_completion_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a TaskSuccessEvaluator with a query and response.
+            :caption: Initialize and call a TaskCompletionEvaluator with a query and response.
 
     .. admonition:: Example using Azure AI Project URL:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
-            :start-after: [START task_success_evaluator]
-            :end-before: [END task_success_evaluator]
+            :start-after: [START task_completion_evaluator]
+            :end-before: [END task_completion_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call TaskSuccessEvaluator using Azure AI Project URL in the following format
+            :caption: Initialize and call TaskCompletionEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     """
 
-    _PROMPTY_FILE = "task_success.prompty"
-    _RESULT_KEY = "task_success"
+    _PROMPTY_FILE = "task_completion.prompty"
+    _RESULT_KEY = "task_completion"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
-    id = "azureai://built-in/evaluators/task_success"
+    id = "azureai://built-in/evaluators/task_completion"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
@@ -89,14 +89,14 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
 
 
         Example with string inputs and no tools:
-            evaluator = TaskSuccessEvaluator(model_config)
+            evaluator = TaskCompletionEvaluator(model_config)
             query = "Plan a 3-day itinerary for Paris with cultural landmarks and local cuisine."
             response = "**Day 1:** Morning: Louvre Museum, Lunch: Le Comptoir du Relais..."
 
             result = evaluator(query=query, response=response)
 
         Example with list of messages:
-            evaluator = TaskSuccessEvaluator(model_config)
+            evaluator = TaskCompletionEvaluator(model_config)
             query = [{'role': 'system', 'content': 'You are a helpful travel planning assistant.'}, {'createdAt': 1700000060, 'role': 'user', 'content': [{'type': 'text', 'text': 'Plan a 3-day Paris itinerary with cultural landmarks and cuisine'}]}]
             response = [{'createdAt': 1700000070, 'run_id': '0', 'role': 'assistant', 'content': [{'type': 'text', 'text': '**Day 1:** Morning: Visit Louvre Museum (9 AM - 12 PM)...'}]}]
             tool_definitions = [{'name': 'get_attractions', 'description': 'Get tourist attractions for a city.', 'parameters': {'type': 'object', 'properties': {'city': {'type': 'string', 'description': 'The city name.'}}}}]
@@ -142,7 +142,7 @@ class TaskSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
                 internal_message=f"Both query and response must be provided as input to the Task Success evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
-                target=ErrorTarget.TASK_SUCCESS_EVALUATOR,
+                target=ErrorTarget.TASK_COMPLETION_EVALUATOR,
             )
         eval_input["query"] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)

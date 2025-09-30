@@ -1,5 +1,5 @@
 ---
-name: Task Success
+name: Task Completion
 description: Evaluates whether a task was successfully completed
 model:
   api: chat
