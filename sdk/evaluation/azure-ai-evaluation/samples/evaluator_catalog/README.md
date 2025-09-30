@@ -100,7 +100,7 @@ path: ./evaluator
 When PR is merged. Evaluation Team will be able to kick off the CI Pipeline to publish evaluator in the Evaluator Catalog. 
 This is done is 2 steps. 
 
-In Step 1, new evaluator is published in azureml-dev registry so that I can be tested in INT environment. Once all looks good, Step 2 is performed.
+In Step 1, new evaluator is published in azureml-dev registry so that it can be tested in INT environment. Once all looks good, Step 2 is performed.
 In Step 2, new evaluator is published in azure-ml registry (for Production).
 
 
