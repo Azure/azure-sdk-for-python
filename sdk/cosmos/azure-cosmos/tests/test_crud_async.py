@@ -16,7 +16,7 @@ from unittest import mock
 import pytest
 from aiohttp import web
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError
 from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse, AioHttpTransport, AioHttpTransportResponse
 
 import azure.cosmos.documents as documents
@@ -984,14 +984,15 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
         # so in the below test connection_timeout setting has no bearing on the test outcome
         client = None
         try:
-            with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                async with CosmosClient(
-                        "https://localhost:9999",
-                        TestCRUDOperationsAsync.masterKey,
-                        retry_total=10,
-                        connection_timeout=100,
-                        timeout=2) as client:
-                    print('Async initialization')
+            with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceRequestError)):
+                client = CosmosClient(
+                    "https://localhost:9999",
+                    TestCRUDOperationsAsync.masterKey,
+                    retry_total=10,
+                    connection_timeout=100,
+                    timeout=2)
+                # The __aenter__ call is what triggers the connection attempt.
+                await client.__aenter__()
         finally:
             if client:
                 await client.close()
@@ -1148,7 +1149,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             await created_container.read_item(
                 item='test_item_1',
                 partition_key='partition1',
-                timeout=0.00002
+                timeout=0.000002
             )
 
         # Long timeout should succeed

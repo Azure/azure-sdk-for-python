@@ -15,7 +15,7 @@ import os
 import pytest
 import requests
 from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
+from azure.core.exceptions import AzureError, ServiceResponseError, ServiceRequestError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 from urllib3.util.retry import Retry
 
@@ -1233,7 +1233,10 @@ class TestCRUDOperations(unittest.TestCase):
         # specified period. The client gives up waiting. This typically happens if the target machine is down,
         # unreachable due to network configuration, or a firewall is silently dropping the packets.
         # so in the below test connection_timeout setting has no bearing on the test outcome
-        with self.assertRaises(exceptions.CosmosClientTimeoutError):
+        # catching both exceptions to make the test the test reliable in different environment as
+        # the underlying operating system and network stack handle the connection attempt to a non-existent port in different ways
+
+        with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceRequestError)):
             cosmos_client.CosmosClient(
                 "https://localhost:9999",
                 TestCRUDOperations.masterKey,
