@@ -125,26 +125,52 @@ def verify_prior_version_metadata(package_name: str, prior_version: str, current
                 f"{package_name}=={prior_version}", "--dest", tmp_dir
             ], check=True, capture_output=True)
             zip_files = glob.glob(os.path.join(tmp_dir, package_type))
-            if not zip_files:
+            # If no match and we're not constrained to wheel-only, attempt legacy sdist (zip) once.
+            if not zip_files and package_type != "*.whl":
+                zip_files = glob.glob(os.path.join(tmp_dir, "*.zip"))
+            if not zip_files:  # Still nothing -> treat as no prior artifact to compare.
                 return True
 
             prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
             is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
-            if not is_compatible:
-                missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
-                logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
             return is_compatible
         except Exception:
             return True
 
 
 def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
-    """Verify that all keys from prior version metadata are present in current version."""
+    """Verify that all keys from prior version metadata are present in current version.
+
+    project_urls normalization now occurs during metadata extraction; no nested label checks required.
+    """
     if not prior_metadata:
         return True
     if not current_metadata:
         return False
-    return set(prior_metadata.keys()).issubset(set(current_metadata.keys()))
+
+    # Shallow key set inclusion
+    if not set(prior_metadata.keys()).issubset(set(current_metadata.keys())):
+        missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
+        logging.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
+        return False
+
+    # Enforce prior project_urls label subset (labels already lower-cased during extraction)
+    if 'project_urls' in prior_metadata:
+            prior_urls = prior_metadata.get('project_urls') or {}
+            current_urls = current_metadata.get('project_urls') or {}
+            prior_label_map = prior_metadata.get('project_urls_label_map', {}) or {}
+            if isinstance(prior_urls, dict) and isinstance(current_urls, dict):
+                missing_labels = set(prior_urls.keys()) - set(current_urls.keys())
+                if missing_labels:
+                    # Show original casing and (normalized) URL value for context
+                    display = set(prior_label_map.get(lbl, lbl) for lbl in sorted(missing_labels))
+                    logging.error(
+                        "Metadata compatibility failed. Missing project_urls labels: %s",
+                        display,
+                    )
+                    return False
+
+    return True
 
 def get_path_to_zip(dist_dir: str, version: str, package_type: str = "*.whl") -> str:
     return glob.glob(os.path.join(dist_dir, "**", "*{}{}".format(version, package_type)), recursive=True)[0]

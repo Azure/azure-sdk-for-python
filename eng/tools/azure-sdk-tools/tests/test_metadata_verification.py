@@ -34,6 +34,8 @@ pyproject_metadata_scenario = os.path.join(scenarios_folder, "pyproject_metadata
 pyproject_invalid_metadata_scenario = os.path.join(scenarios_folder, "pyproject_invalid_metadata")
 pyproject_beta_metadata_scenario = os.path.join(scenarios_folder, "pyproject_beta_metadata")
 pyproject_beta_invalid_metadata_scenario = os.path.join(scenarios_folder, "pyproject_beta_invalid_metadata")
+pyproject_valid_project_urls_scenario = os.path.join(scenarios_folder, "pyproject_valid_project_urls")
+pyproject_invalid_project_urls_scenario = os.path.join(scenarios_folder, "pyproject_invalid_project_urls")
 
 
 def build_package_in_scenario(scenario_path: str, package_type: str = "wheel") -> str:
@@ -70,15 +72,14 @@ def build_package_in_scenario(scenario_path: str, package_type: str = "wheel") -
     return packages[0]  # Return the first (and should be only) package
 
 
-@pytest.mark.parametrize(
-    "package_type,scenario_name,scenario_path",
-    [
-        ("wheel", "stable", "pyproject_metadata_scenario"),
-        ("sdist", "stable", "pyproject_metadata_scenario"),
-        ("wheel", "beta", "pyproject_beta_metadata_scenario"),
-        ("sdist", "beta", "pyproject_beta_metadata_scenario"),
-    ],
-)
+@pytest.mark.parametrize("package_type,scenario_name,scenario_path", [
+    ("wheel", "stable", "pyproject_metadata_scenario"),
+    ("sdist", "stable", "pyproject_metadata_scenario"),
+    ("wheel", "beta", "pyproject_beta_metadata_scenario"),
+    ("sdist", "beta", "pyproject_beta_metadata_scenario"),
+    ("wheel", "valid_pyproject_urls", "pyproject_valid_project_urls_scenario"),
+    ("sdist", "valid_pyproject_urls", "pyproject_valid_project_urls_scenario")
+])
 def test_verify_valid_metadata_passes(package_type, scenario_name, scenario_path):
     """Test that verify_whl/verify_sdist returns True for scenarios with complete metadata."""
     # Get the actual scenario path from globals
@@ -112,16 +113,15 @@ def test_verify_valid_metadata_passes(package_type, scenario_name, scenario_path
             shutil.rmtree(dist_dir)
 
 
-@pytest.mark.parametrize(
-    "package_type,scenario_name,scenario_path",
-    [
-        ("wheel", "stable", "pyproject_invalid_metadata_scenario"),
-        ("sdist", "stable", "pyproject_invalid_metadata_scenario"),
-        ("wheel", "beta", "pyproject_beta_invalid_metadata_scenario"),
-        ("sdist", "beta", "pyproject_beta_invalid_metadata_scenario"),
-    ],
-)
-def test_verify_invalid_metadata_fails_with_missing_keys(package_type, scenario_name, scenario_path, caplog):
+@pytest.mark.parametrize("package_type,scenario_name,scenario_path,missing_keys", [
+    ("wheel", "stable", "pyproject_invalid_metadata_scenario", ["author", "homepage"]),
+    ("sdist", "stable", "pyproject_invalid_metadata_scenario", ["author", "homepage"]),
+    ("wheel", "beta", "pyproject_beta_invalid_metadata_scenario", ["author_email", "summary"]),
+    ("sdist", "beta", "pyproject_beta_invalid_metadata_scenario", ["author_email", "summary"]),
+    ("wheel", "invalid_pyproject_urls", "pyproject_invalid_project_urls_scenario", ["Bug Reports", "Source"]),
+    ("sdist", "invalid_pyproject_urls", "pyproject_invalid_project_urls_scenario", ["Bug Reports", "Source"])
+])
+def test_verify_invalid_metadata_fails_with_missing_keys(package_type, scenario_name, scenario_path, missing_keys, caplog):
     """Test that verify_whl/verify_sdist fails for scenarios with invalid metadata and reports missing author_name and homepage."""
     # Get the actual scenario path from globals
     actual_scenario_path = globals()[scenario_path]
@@ -153,23 +153,17 @@ def test_verify_invalid_metadata_fails_with_missing_keys(package_type, scenario_
 
         # Check that the error log contains information about missing keys
         error_logs = [record.message for record in caplog.records if record.levelname == "ERROR"]
-
-        # Different scenarios have different missing keys
-        if scenario_name == "stable":
-            # Stable scenario is missing author name and homepage
-            expected_missing_keys = ["author", "homepage"]
-        else:  # beta scenario
-            # Beta scenario is missing author email and description
-            expected_missing_keys = ["author_email", "summary"]
-
-        # Check for either order of the missing keys
-        missing_keys_pattern1 = f"Missing keys: {{'{expected_missing_keys[0]}', '{expected_missing_keys[1]}'}}"
-        missing_keys_pattern2 = f"Missing keys: {{'{expected_missing_keys[1]}', '{expected_missing_keys[0]}'}}"
+        
+        # Check for either order of the missing keys/project URLs
+        if scenario_name == "invalid_pyproject_urls":
+            error_msg_label = "project_urls labels"
+        else:
+            error_msg_label = "keys"
+        missing_keys_pattern1 = f"Missing {error_msg_label}: {{'{missing_keys[0]}', '{missing_keys[1]}'}}"
+        missing_keys_pattern2 = f"Missing {error_msg_label}: {{'{missing_keys[1]}', '{missing_keys[0]}'}}"
         has_missing_keys_error = any(missing_keys_pattern1 in msg or missing_keys_pattern2 in msg for msg in error_logs)
 
-        assert (
-            has_missing_keys_error
-        ), f"Expected error log about missing keys '{expected_missing_keys[0]}' and '{expected_missing_keys[1]}' for {scenario_name} scenario, but got: {error_logs}"
+        assert has_missing_keys_error, f"Expected error log about {error_msg_lable} '{missing_keys[0]}' and '{missing_keys[1]}' for {scenario_name} scenario, but got: {error_logs}"
 
     finally:
         # Cleanup dist directory

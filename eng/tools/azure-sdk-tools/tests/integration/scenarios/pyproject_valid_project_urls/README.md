@@ -1,0 +1,1 @@
+This folder contains a basic `pyproject.toml` scenario with alternative "Homepage" project URL metadata. We use this to ensure that our metadata verification within ParsedSetup is working properly.
