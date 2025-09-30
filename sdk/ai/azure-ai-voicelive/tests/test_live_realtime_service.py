@@ -234,7 +234,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             # text-only session
             session = RequestSession(
                 input_audio_noise_reduction=AudioNoiseReduction(type="azure_deep_noise_suppression"),
-                input_audio_echo_cancellation=AudioEchoCancellation()
+                input_audio_echo_cancellation=AudioEchoCancellation(),
             )
             await conn.session.update(session=session)
 
@@ -252,9 +252,15 @@ class TestRealtimeService(AzureRecordedTestCase):
         ("model", "server_sd_conf"),
         [
             pytest.param(
-                "gpt-4o-realtime-preview", {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800}, id="gpt-4o-realtime"
+                "gpt-4o-realtime-preview",
+                {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800},
+                id="gpt-4o-realtime",
             ),
-            pytest.param("gpt-4o", {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800}, id="cascaded-realtime"),
+            pytest.param(
+                "gpt-4o",
+                {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800},
+                id="cascaded-realtime",
+            ),
         ],
     )
     async def test_realtime_service_with_turn_detection_long_tts_vad_duration(

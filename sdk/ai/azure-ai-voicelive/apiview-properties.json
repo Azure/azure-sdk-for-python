@@ -13,7 +13,7 @@
         "azure.ai.voicelive.models.AzureVoice": "VoiceLive.AzureVoice",
         "azure.ai.voicelive.models.AzureCustomVoice": "VoiceLive.AzureCustomVoice",
         "azure.ai.voicelive.models.AzurePersonalVoice": "VoiceLive.AzurePersonalVoice",
-        "azure.ai.voicelive.models.EOUDetection": "VoiceLive.EOUDetection",
+        "azure.ai.voicelive.models.EouDetection": "VoiceLive.EouDetection",
         "azure.ai.voicelive.models.AzureSemanticDetection": "VoiceLive.AzureSemanticDetection",
         "azure.ai.voicelive.models.AzureSemanticDetectionEn": "VoiceLive.AzureSemanticDetectionEn",
         "azure.ai.voicelive.models.AzureSemanticDetectionMultilingual": "VoiceLive.AzureSemanticDetectionMultilingual",
@@ -125,6 +125,7 @@
         "azure.ai.voicelive.models.ItemType": "VoiceLive.ItemType",
         "azure.ai.voicelive.models.ItemParamStatus": "VoiceLive.ItemParamStatus",
         "azure.ai.voicelive.models.MessageRole": "VoiceLive.MessageRole",
+        "azure.ai.voicelive.models.ContentPartType": "VoiceLive.ContentPartType",
         "azure.ai.voicelive.models.Modality": "VoiceLive.Modality",
         "azure.ai.voicelive.models.OAIVoice": "VoiceLive.OAIVoice",
         "azure.ai.voicelive.models.AzureVoiceType": "VoiceLive.AzureVoiceType",
@@ -139,7 +140,6 @@
         "azure.ai.voicelive.models.ToolChoiceLiteral": "VoiceLive.ToolChoiceLiteral",
         "azure.ai.voicelive.models.ResponseStatus": "VoiceLive.ResponseStatus",
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
-        "azure.ai.voicelive.models.ContentPartType": "VoiceLive.ContentPartType",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     }
 }

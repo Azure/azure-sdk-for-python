@@ -557,7 +557,7 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
         self.type = AzureVoiceType.AZURE_PERSONAL  # type: ignore
 
 
-class EOUDetection(_Model):
+class EouDetection(_Model):
     """Top-level union for end-of-utterance (EOU) semantic detection configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -591,7 +591,7 @@ class EOUDetection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"):
+class AzureSemanticDetection(EouDetection, discriminator="semantic_detection_v1"):
     """Azure semantic end-of-utterance detection (default).
 
     :ivar model: Required. Default value is "semantic_detection_v1".
@@ -634,7 +634,7 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
         self.model = "semantic_detection_v1"  # type: ignore
 
 
-class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v1_en"):
+class AzureSemanticDetectionEn(EouDetection, discriminator="semantic_detection_v1_en"):
     """Azure semantic end-of-utterance detection (English-optimized).
 
     :ivar model: Required. Default value is "semantic_detection_v1_en".
@@ -677,7 +677,7 @@ class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v
         self.model = "semantic_detection_v1_en"  # type: ignore
 
 
-class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_detection_v1_multilingual"):
+class AzureSemanticDetectionMultilingual(EouDetection, discriminator="semantic_detection_v1_multilingual"):
     """Azure semantic end-of-utterance detection (multilingual).
 
     :ivar model: Required. Default value is "semantic_detection_v1_multilingual".
@@ -766,7 +766,7 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar speech_duration_ms:
     :vartype speech_duration_ms: int
     :ivar remove_filler_words:
@@ -786,7 +786,7 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -803,7 +803,7 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         speech_duration_ms: Optional[int] = None,
         remove_filler_words: Optional[bool] = None,
         languages: Optional[list[str]] = None,
@@ -836,7 +836,7 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar speech_duration_ms:
     :vartype speech_duration_ms: int
     :ivar remove_filler_words:
@@ -854,7 +854,7 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -870,7 +870,7 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         speech_duration_ms: Optional[int] = None,
         remove_filler_words: Optional[bool] = None,
         auto_truncate: Optional[bool] = None,
@@ -902,7 +902,7 @@ class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar speech_duration_ms:
     :vartype speech_duration_ms: int
     :ivar remove_filler_words:
@@ -922,7 +922,7 @@ class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -939,7 +939,7 @@ class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         speech_duration_ms: Optional[int] = None,
         remove_filler_words: Optional[bool] = None,
         languages: Optional[list[str]] = None,
@@ -2106,13 +2106,15 @@ class MessageContentPart(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     InputAudioContentPart, InputTextContentPart, OutputTextContentPart
 
-    :ivar type: The type of the content part. Required. Default value is None.
-    :vartype type: str
+    :ivar type: The type of the content part. Required. Known values are: "input_text",
+     "input_audio", "text", and "audio".
+    :vartype type: str or ~azure.ai.voicelive.models.ContentPartType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the content part. Required. Default value is None."""
+    """The type of the content part. Required. Known values are: \"input_text\", \"input_audio\",
+     \"text\", and \"audio\"."""
 
     @overload
     def __init__(
@@ -2135,16 +2137,16 @@ class MessageContentPart(_Model):
 class InputAudioContentPart(MessageContentPart, discriminator="input_audio"):
     """Input audio content part.
 
-    :ivar type: Required. Default value is "input_audio".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO
     :ivar audio: Required.
     :vartype audio: str
     :ivar transcript:
     :vartype transcript: str
     """
 
-    type: Literal["input_audio"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"input_audio\"."""
+    type: Literal[ContentPartType.INPUT_AUDIO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2166,20 +2168,20 @@ class InputAudioContentPart(MessageContentPart, discriminator="input_audio"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "input_audio"  # type: ignore
+        self.type = ContentPartType.INPUT_AUDIO  # type: ignore
 
 
 class InputTextContentPart(MessageContentPart, discriminator="input_text"):
     """Input text content part.
 
-    :ivar type: Required. Default value is "input_text".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT
     :ivar text: Required.
     :vartype text: str
     """
 
-    type: Literal["input_text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"input_text\"."""
+    type: Literal[ContentPartType.INPUT_TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -2199,7 +2201,7 @@ class InputTextContentPart(MessageContentPart, discriminator="input_text"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "input_text"  # type: ignore
+        self.type = ContentPartType.INPUT_TEXT  # type: ignore
 
 
 class InputTokenDetails(_Model):
@@ -2326,14 +2328,14 @@ class OpenAIVoice(_Model):
 class OutputTextContentPart(MessageContentPart, discriminator="text"):
     """Output text content part.
 
-    :ivar type: The type of the content part. Required. Default value is "text".
-    :vartype type: str
+    :ivar type: The type of the content part. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.TEXT
     :ivar text: The text content. Required.
     :vartype text: str
     """
 
-    type: Literal["text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the content part. Required. Default value is \"text\"."""
+    type: Literal[ContentPartType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the content part. Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text content. Required."""
 
@@ -2353,7 +2355,7 @@ class OutputTextContentPart(MessageContentPart, discriminator="text"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "text"  # type: ignore
+        self.type = ContentPartType.TEXT  # type: ignore
 
 
 class OutputTokenDetails(_Model):
@@ -5284,7 +5286,7 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar auto_truncate:
     :vartype auto_truncate: bool
     :ivar create_response:
@@ -5298,7 +5300,7 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5312,7 +5314,7 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         auto_truncate: Optional[bool] = None,
         create_response: Optional[bool] = None,
         interrupt_response: Optional[bool] = None,

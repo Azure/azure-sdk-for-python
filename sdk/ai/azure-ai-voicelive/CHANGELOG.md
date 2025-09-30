@@ -1,5 +1,29 @@
 # Release History
 
+## 1.0.0 (Unreleased)
+
+### Features Added
+
+- **Enhanced Type Safety**: Improved type safety for content parts with proper enum usage:
+  - `InputAudioContentPart`, `InputTextContentPart`, and `OutputTextContentPart` now use `ContentPartType` enum values instead of string literals
+  - Better IntelliSense support and compile-time type checking for content part discriminators
+
+### Breaking Changes
+
+- **Model Naming Convention Update**: Renamed `EOUDetection` to `EouDetection` for better naming consistency:
+  - Class name changed from `EOUDetection` to `EouDetection` 
+  - All inheritance relationships updated: `AzureSemanticDetection`, `AzureSemanticDetectionEn`, and `AzureSemanticDetectionMultilingual` now inherit from `EouDetection`
+  - Type annotations updated in `AzureSemanticVad`, `AzureSemanticVadEn`, `AzureSemanticVadMultilingual`, and `ServerVad` classes
+  - Import statements and exports updated to reflect the new naming
+- **Enhanced Content Part Type Safety**: Content part discriminators now use enum values instead of string literals:
+  - `InputAudioContentPart.type` now uses `ContentPartType.INPUT_AUDIO` instead of `"input_audio"`
+  - `InputTextContentPart.type` now uses `ContentPartType.INPUT_TEXT` instead of `"input_text"`  
+  - `OutputTextContentPart.type` now uses `ContentPartType.TEXT` instead of `"text"`
+
+### Other Changes
+
+- Initial GA release
+
 ## 1.0.0b5 (2025-09-26)
 
 ### Features Added

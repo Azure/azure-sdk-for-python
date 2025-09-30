@@ -16,6 +16,7 @@ pytest.importorskip(
     reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
 )
 
+
 def test_basic_imports():
     """Test that key components can be imported."""
     try:
