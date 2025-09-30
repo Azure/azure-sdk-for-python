@@ -5,7 +5,7 @@
 ### Features Added
 
 - AOAI Graders now accept a "credential" parameter that can be used for authentication with an AzureOpenAIModelConfiguration
-- Added `is_reasoning_model` parameter support to `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, and `GroundednessEvaluator` to enable reasoning model configuration for o1/o3 models.
+- Added `is_reasoning_model` parameter support to `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, `GroundednessEvaluator`, `RetrievalEvaluator`, and `RelevanceEvaluator` to enable reasoning model configuration for o1/o3 models.
 
 ### Breaking Changes
 
