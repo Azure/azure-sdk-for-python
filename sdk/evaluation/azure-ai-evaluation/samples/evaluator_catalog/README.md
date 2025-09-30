@@ -19,12 +19,12 @@ There are 3 types of evaluators we support as Built-In Evaluators.
 3. Prompt Based - It contains only Prompty file.
 4. Service Based - It references the evaluator from Evaluation SDK or RAI Service.
 
-## Step 1:
+## Step 1: Run Evaluator with SDK.
 
 Create builtin evaluator and use azure-ai-evaluation SDK to run locally. 
 List of evaluators can be found at [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators)
 
-# Step 2: Create a PR 
+## Step 2: Create a PR 
 Add a new folder with name as the Evaluator name. 
 
 Please include following files. 
@@ -96,7 +96,7 @@ Example-
 path: ./evaluator
 ```
 
-# Step 3: 
+## Step 3: Publish
 When PR is merged. Evaluation Team will be able to kick off the CI Pipeline to publish evaluator in the Evaluator Catalog. 
 This is done is 2 steps. 
 
@@ -104,7 +104,7 @@ In Step 1, new evaluator is published in azureml-dev registry so that I can be t
 In Step 2, new evaluator is published in azure-ml registry (for Production).
 
 
-# Step 4: 
+## Step 4: Verify Evaluator
 Now, use Evaluators CRUD APIs to view evaluator in GET /evaluator list. 
 
 Use following links
