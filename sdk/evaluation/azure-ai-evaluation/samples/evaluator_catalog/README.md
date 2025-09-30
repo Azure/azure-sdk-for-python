@@ -7,7 +7,7 @@ This guide helps our partners to bring their evaluators into Microsoft provided 
 
 We are building an Evaluator Catalog, that will allow us to store Microsoft provided built-in evaluators, as well as Customer's provided custom evaluators. It will allow versioning support so that customer can maintain different version of custom evaluators.
 
-Using this catalog, customer can publish their custom evaluators under the project. Post Ignite, we'll allow them to prompt evaluators from projects to registries so that can share evaluators amount different projects.
+Using this catalog, customer can publish their custom evaluators under the project. Post Ignite, we'll allow them to prompt evaluators from projects to registries so that can share evaluators among different projects.
 
 This evaluator catalog is backed by Generic Asset Service (that provides scalable and multi-region support to store all your assets in CosmosDB).
 
