@@ -27,6 +27,7 @@ from ..._credentials.azure_cli import (
 )
 from ..._internal import (
     _scopes_to_resource,
+    encode_base64,
     resolve_tenant,
     within_dac,
     validate_tenant_id,
@@ -149,8 +150,8 @@ class AzureCliCredential(AsyncContextManager):
         self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
     ) -> AccessTokenInfo:
         # Check for claims challenge first
-        if options and options.get("claims"):
-            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=options.get("claims"))
+        if options and "claims" in options and options["claims"]:
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=encode_base64(options["claims"]))
 
             # Add tenant if provided in options
             if options.get("tenant_id"):

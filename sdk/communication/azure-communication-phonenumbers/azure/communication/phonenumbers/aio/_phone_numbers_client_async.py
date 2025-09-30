@@ -4,8 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-# pylint: disable=docstring-keyword-should-match-keyword-only
-from typing import List, Optional, Union, Any, cast, Dict
+from typing import List, Optional, Union, Any, cast, Dict, TYPE_CHECKING
 import uuid
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -44,6 +43,9 @@ from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
+
+if TYPE_CHECKING:
+    from azure.core.polling import PollingMethod
 
 _DEFAULT_POLLING_INTERVAL_IN_SECONDS = 2
 
@@ -106,12 +108,14 @@ class PhoneNumbersClient:
 
     @distributed_trace_async
     async def begin_purchase_phone_numbers(
-        self,
-        search_id: str,
-        *,
-        agree_to_not_resell: bool = False,
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+            self,
+            search_id: str,
+            *,
+            agree_to_not_resell: bool = False,
+            continuation_token: Optional[str] = None,
+            polling: Union[bool, "PollingMethod"] = True,
+            polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
+            **kwargs: Any) -> AsyncLROPoller[None]:
         """Purchases phone numbers.
 
         :param search_id: The search id.
@@ -119,52 +123,73 @@ class PhoneNumbersClient:
         :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
          not provided.
         :paramtype agree_to_not_resell: bool
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str or None
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
+        :keyword polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
+        :paramtype polling_interval: int
         :returns: A poller to wait on the purchase operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         purchase_request = PhoneNumberPurchaseRequest(
             search_id=search_id, agree_to_not_resell=agree_to_not_resell)
 
-        polling_interval = kwargs.pop(
-            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return await self._phone_number_client.phone_numbers.begin_purchase_phone_numbers(
-            body=purchase_request, polling_interval=polling_interval, **kwargs
+            body=purchase_request,
+            polling_interval=polling_interval,
+            continuation_token=continuation_token,
+            polling=polling,
+            **kwargs
         )
 
     @distributed_trace_async
-    async def begin_release_phone_number(self, phone_number: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_release_phone_number(
+        self,
+        phone_number: str,
+        *,
+        continuation_token: Optional[str] = None,
+        polling: Union[bool, "PollingMethod"] = True,
+        polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
+        **kwargs: Any) -> AsyncLROPoller[None]:
         """Releases an purchased phone number.
 
         :param phone_number: Phone number to be released, e.g. +11234567890.
         :type phone_number: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str or None
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
+        :keyword polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
+        :paramtype polling_interval: int
         :returns: A poller to wait on the release operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
-        polling_interval = kwargs.pop(
-            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         return await self._phone_number_client.phone_numbers.begin_release_phone_number(
-            phone_number, polling_interval=polling_interval, **kwargs
+            phone_number,
+            polling_interval=polling_interval,
+            continuation_token=continuation_token,
+            polling=polling,
+            **kwargs
         )
 
     @distributed_trace_async
     async def begin_search_available_phone_numbers(
         self,
         country_code: str,
-        phone_number_type: str,
-        assignment_type: str,
+        phone_number_type: Union[PhoneNumberType, str],
+        assignment_type: Union[PhoneNumberAssignmentType, str],
         capabilities: PhoneNumberCapabilities,
+        *,
+        area_code: Optional[str] = None,
+        quantity: Optional[int] = None,
+        continuation_token: Optional[str] = None,
+        polling: Union[bool, "PollingMethod"] = True,
+        polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> AsyncLROPoller[PhoneNumberSearchResult]:
         """Search for available phone numbers to purchase.
@@ -181,15 +206,19 @@ class PhoneNumbersClient:
             ~azure.communication.phonenumbers.PhoneNumberAssignmentType
         :param capabilities: Required. Capabilities of a phone number.
         :type capabilities: ~azure.communication.phonenumbers.PhoneNumberCapabilities
-        :keyword str area_code: The area code of the desired phone number, e.g. 425. If not set,
+        :keyword area_code: The area code of the desired phone number, e.g. 425. If not set,
             any area code could be used in the final search.
-        :keyword int quantity: The quantity of phone numbers in the search. Default is 1.
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype area_code: str or None
+        :keyword quantity: The quantity of phone numbers in the search. Default is 1.
+        :paramtype quantity: int or None
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str or None
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
          False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
+        :keyword polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
+        :paramtype polling_interval: int
         :returns: A poller to wait on the search results.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.PhoneNumberSearchResult]
         """
@@ -197,13 +226,18 @@ class PhoneNumbersClient:
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             capabilities=capabilities,
-            quantity=kwargs.pop("quantity", None),
-            area_code=kwargs.pop("area_code", None),
+            area_code=area_code,
         )
-        polling_interval = kwargs.pop(
-            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
+        if quantity is not None:
+            search_request.quantity = quantity
+
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
-            country_code, search_request, polling_interval=polling_interval, **kwargs
+            country_code,
+            search_request,
+            polling_interval=polling_interval,
+            continuation_token=continuation_token,
+            polling=polling,
+            **kwargs
         )
 
     @distributed_trace_async
@@ -212,6 +246,10 @@ class PhoneNumbersClient:
         phone_number: str,
         sms: Optional[Union[str, PhoneNumberCapabilityType]] = None,
         calling: Optional[Union[str, PhoneNumberCapabilityType]] = None,
+        *,
+        continuation_token: Optional[str] = None,
+        polling: Union[bool, "PollingMethod"] = True,
+        polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> AsyncLROPoller[PurchasedPhoneNumber]:
         """Updates the capabilities of a phone number.
@@ -223,24 +261,29 @@ class PhoneNumbersClient:
         :type sms: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
         :param calling: Capability value for calling.
         :type calling: str or ~azure.communication.phonenumbers.PhoneNumberCapabilityType
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str or None
         :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
             False for no polling, or your own initialized polling object for a personal polling strategy.
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time (seconds) between two polls
+        :keyword polling_interval: Default waiting time (seconds) between two polls
             for LRO operations if no Retry-After header is present.
+        :paramtype polling_interval: int
         :returns: A poller to wait on the update operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         """
         capabilities_request = PhoneNumberCapabilitiesRequest(
             calling=calling, sms=sms)
 
-        polling_interval = kwargs.pop(
-            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
         if not phone_number:
             raise ValueError("phone_number can't be empty")
         return await self._phone_number_client.phone_numbers.begin_update_capabilities(
-            phone_number, body=capabilities_request, polling_interval=polling_interval, **kwargs
+            phone_number,
+            body=capabilities_request,
+            polling_interval=polling_interval,
+            continuation_token=continuation_token,
+            polling=polling,
+            **kwargs
         )
 
     @distributed_trace_async
@@ -256,7 +299,13 @@ class PhoneNumbersClient:
         return await self._phone_number_client.phone_numbers.get_by_number(phone_number, **kwargs)
 
     @distributed_trace
-    def list_purchased_phone_numbers(self, *, skip: int = 0, **kwargs: Any) -> AsyncItemPaged[PurchasedPhoneNumber]:
+    def list_purchased_phone_numbers(
+        self,
+        *,
+        skip: int = 0,
+        top: int = 100,
+        **kwargs: Any
+    ) -> AsyncItemPaged[PurchasedPhoneNumber]:
         """Gets the list of all purchased phone numbers.
 
         Gets the list of all purchased phone numbers.
@@ -272,10 +321,15 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PurchasedPhoneNumber]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, **kwargs)
+        return self._phone_number_client.phone_numbers.list_phone_numbers(skip=skip, top=top, **kwargs)
 
     @distributed_trace
-    def list_available_countries(self, *, skip: int = 0, **kwargs: Any) -> AsyncItemPaged[PhoneNumberCountry]:
+    def list_available_countries(
+        self,
+        *,
+        skip: int = 0,
+        **kwargs: Any
+    ) -> AsyncItemPaged[PhoneNumberCountry]:
         """Gets the list of supported countries.
 
         Gets the list of supported countries.
@@ -361,14 +415,14 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumberOffering]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PhoneNumberOffering], self._phone_number_client.phone_numbers.list_offerings(
+        return self._phone_number_client.phone_numbers.list_offerings(
             country_code,
             phone_number_type=phone_number_type,
             assignment_type=assignment_type,
             accept_language=self._accepted_language,
             skip=skip,
             **kwargs
-        ))
+        )
 
     @distributed_trace
     def list_available_area_codes(
@@ -405,7 +459,7 @@ class PhoneNumbersClient:
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return cast(AsyncItemPaged[PhoneNumberAreaCode], self._phone_number_client.phone_numbers.list_area_codes(
+        return self._phone_number_client.phone_numbers.list_area_codes(
             country_code,
             phone_number_type=phone_number_type,
             accept_language=self._accepted_language,
@@ -414,11 +468,15 @@ class PhoneNumbersClient:
             administrative_division=administrative_division,
             skip=skip,
             **kwargs
-        ))
+        )
 
     @distributed_trace_async
     async def search_operator_information(
-        self, phone_numbers: Union[str, List[str]], *, options: Optional[OperatorInformationOptions] = None, **kwargs: Any  # pylint: disable=line-too-long
+        self,
+        phone_numbers: Union[str, List[str]],
+        *,
+        options: Optional[OperatorInformationOptions] = None,
+        **kwargs: Any
     ) -> OperatorInformationResult:
         """Searches for operator information for a given list of phone numbers.
 
@@ -471,7 +529,7 @@ class PhoneNumbersClient:
 
     @distributed_trace
     def list_reservations(
-        self, *, max_page_size=100, **kwargs: Any
+        self, *, max_page_size: int = 100, **kwargs: Any
     ) -> AsyncItemPaged[PhoneNumbersReservation]:
         """Lists all reservations.
 
@@ -486,9 +544,9 @@ class PhoneNumbersClient:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.PhoneNumbersReservation]
         """
 
-        return cast(AsyncItemPaged[PhoneNumbersReservation], self._phone_number_client.phone_numbers.list_reservations(
+        return self._phone_number_client.phone_numbers.list_reservations(
             max_page_size=max_page_size,
-            **kwargs))
+            **kwargs)
 
     @distributed_trace_async
     async def create_or_update_reservation(
@@ -500,14 +558,14 @@ class PhoneNumbersClient:
     ) -> PhoneNumbersReservation:
         """Creates or updates a reservation by its ID.
 
-        Updates the reservation with the given ID if it exists; or creates a new one otherwise. 
-        The response will be the updated state of the reservation. 
-        Updating a reservation will extend the expiration time of the reservation to 15 minutes 
-        after the last change, up to a maximum of 2 hours from creation time. 
+        Updates the reservation with the given ID if it exists; or creates a new one otherwise.
+        The response will be the updated state of the reservation.
+        Updating a reservation will extend the expiration time of the reservation to 15 minutes
+        after the last change, up to a maximum of 2 hours from creation time.
         Partial success is possible, in which case the result will contain phone numbers with error status.
 
-        
-        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation, 
+
+        :keyword reservation_id: The ID of the reservation. It must be a valid UUID. If a reservation,
          with that ID exists it will be updated; ortherwise a new reservation will be created.
         :keyword numbers_to_add: List of phone numbers to add to the reservation.
         :paramtype numbers_to_add: list[~azure.communication.phonenumbers.AvailablePhoneNumber]
@@ -564,6 +622,9 @@ class PhoneNumbersClient:
         reservation_id: str,
         *,
         agree_to_not_resell: bool = False,
+        continuation_token: Optional[str] = None,
+        polling: Union[bool, "PollingMethod"] = True,
+        polling_interval: int = _DEFAULT_POLLING_INTERVAL_IN_SECONDS,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Starts the purchase of all phone numbers in the reservation.
@@ -571,8 +632,8 @@ class PhoneNumbersClient:
         Starts a long running operation to purchase all of the phone numbers in the reservation.
         Purchase can only be started for active reservations that at least one phone number. If any of
         the phone numbers in the reservation is from a country where reselling is not permitted, do not
-        resell agreement is required. 
-        
+        resell agreement is required.
+
         The agreement to not resell is a legal requirement in some countries in order to purchase phone numbers.
         For more information on which countries require this agreement, please refer to this documentation:
         https://learn.microsoft.com/azure/communication-services/concepts/numbers/sub-eligibility-number-capability
@@ -582,18 +643,26 @@ class PhoneNumbersClient:
         :keyword agree_to_not_resell: The agreement to not resell the phone numbers. Defaults to False if
          not provided.
         :paramtype agree_to_not_resell: bool
+        :keyword continuation_token: A continuation token to restart a poller from a saved state.
+        :paramtype continuation_token: str or None
+        :keyword polling: Pass in True if you'd like the LROBasePolling polling method,
+            False for no polling, or your own initialized polling object for a personal polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword polling_interval: Default waiting time (seconds) between two polls
+            for LRO operations if no Retry-After header is present.
+        :paramtype polling_interval: int
         :return: A poller to wait on the purchase operation.
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         """
         reservation_purchase_request = PhoneNumbersReservationPurchaseRequest(
             agree_to_not_resell=agree_to_not_resell)
-        polling_interval = kwargs.pop(
-            "polling_interval", _DEFAULT_POLLING_INTERVAL_IN_SECONDS)
 
         return await self._phone_number_client.phone_numbers.begin_purchase_reservation(
             reservation_id,
             reservation_purchase_request,
             polling_interval=polling_interval,
+            continuation_token=continuation_token,
+            polling=polling,
             **kwargs
         )
 

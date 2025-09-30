@@ -144,6 +144,10 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
+    variables:
+      # default to true just in this job until #42714 can be completed
+      InstallPortAudio: true
+
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -201,6 +205,10 @@ jobs:
 
     dependsOn:
       - 'Build_Extended'
+
+    variables:
+      # default to true just in this job until #42714 can be completed
+      InstallPortAudio: true
 
     pool:
       name: $(LINUXPOOL)

@@ -21,7 +21,7 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
-import os, time
+import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 from azure.ai.agents.models import ListSortOrder, AgentsResponseFormat, RunStatus
@@ -45,11 +45,12 @@ with project_client:
     thread = agents_client.threads.create()
     print(f"Created thread, thread ID: {thread.id}")
 
-    # List all threads for the agent
     threads = agents_client.threads.list()
 
     message = agents_client.messages.create(
-        thread_id=thread.id, role="user", content="Hello, give me a list of planets in our solar system."
+        thread_id=thread.id,
+        role="user",
+        content="Hello, give me a list of planets in our solar system, and their mass in kilograms.",
     )
     print(f"Created message, message ID: {message.id}")
 

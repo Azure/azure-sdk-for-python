@@ -22,7 +22,7 @@
 """Interact with databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Union, Optional, Mapping, Callable
+from typing import Any, Dict, List, Union, Optional, Mapping, Callable, overload, Literal
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace
@@ -37,6 +37,7 @@ from .http_constants import StatusCodes as _StatusCodes
 from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
+from ._cosmos_responses import CosmosDict
 
 __all__ = ("DatabaseProxy",)
 
@@ -127,7 +128,7 @@ class DatabaseProxy(object):
         *,
         initial_headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Read the database properties.
 
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
@@ -157,25 +158,26 @@ class DatabaseProxy(object):
         )
         return self._properties
 
-    @distributed_trace
+    @overload
     def create_container(  # pylint:disable=docstring-missing-param
-        self,
-        id: str,
-        partition_key: PartitionKey,
-        indexing_policy: Optional[Dict[str, Any]] = None,
-        default_ttl: Optional[int] = None,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[Dict[str, Any]] = None,
-        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        analytical_storage_ttl: Optional[int] = None,
-        computed_properties: Optional[List[Dict[str, str]]] = None,
-        vector_embedding_policy: Optional[Dict[str, Any]] = None,
-        change_feed_policy: Optional[Dict[str, Any]] = None,
-        full_text_policy: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[False] = False,
+            **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
 
@@ -205,7 +207,9 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the new container.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A `ContainerProxy` instance representing the new container
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
 
@@ -225,6 +229,156 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with specific settings; in this case, a custom partition key:
         """
+        ...
+
+    @overload
+    def create_container(  # pylint:disable=docstring-missing-param
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        """Create a new container with the given ID (name).
+
+        If a container with the given ID already exists, a CosmosResourceExistsError is raised.
+
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A tuple of the `ContainerProxy`and CosmosDict with the container properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
+        :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_container]
+                :end-before: [END create_container]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with default settings:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_container_with_settings]
+                :end-before: [END create_container_with_settings]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with specific settings; in this case, a custom partition key:
+        """
+        ...
+
+    @distributed_trace
+    def create_container(  # pylint:disable=docstring-missing-param, too-many-statements, docstring-should-be-keyword
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
+        """Create a new container with the given ID (name).
+
+        If a container with the given ID already exists, a CosmosResourceExistsError is raised.
+
+        :param Any args: args
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container.
+            Each vector embedding possesses a predetermined number of dimensions, is associated with an underlying
+            data type, and is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the container properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_container]
+                :end-before: [END create_container]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with default settings:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START create_container_with_settings]
+                :end-before: [END create_container_with_settings]
+                :language: python
+                :dedent: 0
+                :caption: Create a container with specific settings; in this case, a custom partition key:
+        """
+        id = args[0] if len(args) > 0 else kwargs.pop('id')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
+        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
+        offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
+        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        if len(args) > 8:
+            raise TypeError(f"Unexpected positional parameters: {args[8:]}")
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        change_feed_policy = kwargs.pop('change_feed_policy', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -276,35 +430,36 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-        if initial_headers is not None:
-            kwargs['initial_headers'] = initial_headers
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateContainer(
             database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
-        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        if not return_properties:
+            return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result)
+        return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result), result
 
-    @distributed_trace
+    @overload
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
-        self,
-        id: str,
-        partition_key: PartitionKey,
-        indexing_policy: Optional[Dict[str, Any]] = None,
-        default_ttl: Optional[int] = None,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        unique_key_policy: Optional[Dict[str, Any]] = None,
-        conflict_resolution_policy: Optional[Dict[str, Any]] = None,
-        *,
-        initial_headers: Optional[Dict[str, str]] = None,
-        analytical_storage_ttl: Optional[int] = None,
-        computed_properties: Optional[List[Dict[str, str]]] = None,
-        vector_embedding_policy: Optional[Dict[str, Any]] = None,
-        change_feed_policy: Optional[Dict[str, Any]] = None,
-        full_text_policy: Optional[Dict[str, Any]] = None,
-        **kwargs: Any
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[False] = False,
+            **kwargs: Any
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
 
@@ -336,10 +491,136 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the container.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
+        ...
+
+    @overload
+    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
+            self,
+            id: str,
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            populate_query_metrics: Optional[bool] = None,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            unique_key_policy: Optional[Dict[str, Any]] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            change_feed_policy: Optional[Dict[str, Any]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        """Create a container if it does not exist already.
+
+        If the container already exists, the existing settings are returned.
+        Note: it does not check or update the existing container settings or offer throughput
+        if they differ from what was passed into the method.
+
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
+            embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
+            is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A  tuple of the `ContainerProxy`and CosmosDict with the container properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
+        :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
+        """
+        ...
+
+    @distributed_trace
+    def create_container_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
+        """Create a container if it does not exist already.
+
+        If the container already exists, the existing settings are returned.
+        Note: it does not check or update the existing container settings or offer throughput
+        if they differ from what was passed into the method.
+
+        :param Any args: args
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Dict[str, Any] vector_embedding_policy: The vector embedding policy for the container. Each vector
+            embedding possesses a predetermined number of dimensions, is associated with an underlying data type, and
+            is generated for a particular distance function.
+        :keyword Dict[str, Any] change_feed_policy: The change feed policy to apply 'retentionDuration' to
+            the container.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the container properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
+        """
+
+        id = args[0] if len(args) > 0 else kwargs.pop('id')
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
+        populate_query_metrics = args[4] if len(args) > 4 else kwargs.pop('populate_query_metrics', None)
+        offer_throughput = args[5] if len(args) > 5 else kwargs.pop('offer_throughput', None)
+        unique_key_policy = args[6] if len(args) > 6 else kwargs.pop('unique_key_policy', None)
+        conflict_resolution_policy = args[7] if len(args) > 7 else kwargs.pop('conflict_resolution_policy', None)
+        if len(args) > 8:
+            raise TypeError(f"Unexpected positional parameters: {args[8:]}")
+        initial_headers = kwargs.pop('initial_headers', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        change_feed_policy = kwargs.pop('change_feed_policy', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -361,12 +642,14 @@ class DatabaseProxy(object):
 
         try:
             container_proxy = self.get_container_client(id)
-            container_proxy.read(
+            properties = container_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 initial_headers=initial_headers,
                 **kwargs
             )
-            return container_proxy
+            if not return_properties:
+                return container_proxy
+            return container_proxy, properties
         except CosmosResourceNotFoundError:
             return self.create_container(
                 id=id,
@@ -383,6 +666,7 @@ class DatabaseProxy(object):
                 vector_embedding_policy=vector_embedding_policy,
                 change_feed_policy=change_feed_policy,
                 full_text_policy=full_text_policy,
+                return_properties=return_properties,
                 **kwargs
             )
 
@@ -570,7 +854,7 @@ class DatabaseProxy(object):
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    @distributed_trace
+    @overload
     def replace_container(  # pylint:disable=docstring-missing-param
         self,
         container: Union[str, ContainerProxy, Mapping[str, Any]],
@@ -584,6 +868,8 @@ class DatabaseProxy(object):
         analytical_storage_ttl: Optional[int] = None,
         computed_properties: Optional[List[Dict[str, str]]] = None,
         full_text_policy: Optional[Dict[str, Any]] = None,
+        return_properties: Literal[False] = False,
+        vector_embedding_policy: Optional[Dict[str, Any]] = None,
         **kwargs: Any
     ) -> ContainerProxy:
         """Reset the properties of the container.
@@ -610,7 +896,9 @@ class DatabaseProxy(object):
         :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
             Used to denote the default language to be used for all full text indexes, or to individually
             assign a language to each full text index path.
-        :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
         :rtype: ~azure.cosmos.ContainerProxy
@@ -624,6 +912,132 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Reset the TTL property on a container, and display the updated properties:
         """
+        ...
+
+    @overload
+    def replace_container(  # pylint:disable=docstring-missing-param
+            self,
+            container: Union[str, ContainerProxy, Mapping[str, Any]],
+            partition_key: PartitionKey,
+            indexing_policy: Optional[Dict[str, Any]] = None,
+            default_ttl: Optional[int] = None,
+            conflict_resolution_policy: Optional[Dict[str, Any]] = None,
+            populate_query_metrics: Optional[bool] = None,
+            *,
+            initial_headers: Optional[Dict[str, str]] = None,
+            analytical_storage_ttl: Optional[int] = None,
+            computed_properties: Optional[List[Dict[str, str]]] = None,
+            full_text_policy: Optional[Dict[str, Any]] = None,
+            return_properties: Literal[True],
+            vector_embedding_policy: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
+    ) -> tuple[ContainerProxy, CosmosDict]:
+        """Reset the properties of the container.
+
+        Property changes are persisted immediately. Any properties not specified
+        will be reset to their default values.
+
+        :param container: The ID (name), dict representing the properties or
+            :class:`~azure.cosmos.ContainerProxy` instance of the container to be replaced.
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container.
+            If unspecified, items do not expire.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A tuple of the `ContainerProxy`and CosmosDict with the container properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
+        :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START reset_container_properties]
+                :end-before: [END reset_container_properties]
+                :language: python
+                :dedent: 0
+                :caption: Reset the TTL property on a container, and display the updated properties:
+        """
+        ...
+
+    @distributed_trace
+    def replace_container(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
+        self,
+        *args: Any,
+        **kwargs: Any
+    ) -> Union[ContainerProxy, tuple[ContainerProxy, CosmosDict]]:
+        """Reset the properties of the container.
+
+        Property changes are persisted immediately. Any properties not specified
+        will be reset to their default values.
+
+        :param Any args: args
+        :param container: The ID (name), dict representing the properties or
+            :class:`~azure.cosmos.ContainerProxy` instance of the container to be replaced.
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Dict[str, Any]]
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container.
+            If unspecified, items do not expire.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
+            None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
+            note that analytical storage can only be enabled on Synapse Link enabled accounts.
+        :keyword List[Dict[str, str]] computed_properties: Sets The computed properties for this
+            container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
+            `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
+        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Dict[str, Any] full_text_policy: **provisional** The full text policy for the container.
+            Used to denote the default language to be used for all full text indexes, or to individually
+            assign a language to each full text index path.
+        :keyword bool return_properties: Specifies whether to return either a ContainerProxy
+            or a Tuple of a ContainerProxy and the container properties.
+        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
+            and CosmosDict with the container properties.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
+            This includes if the container with given id does not exist.
+        :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples.py
+                :start-after: [START reset_container_properties]
+                :end-before: [END reset_container_properties]
+                :language: python
+                :dedent: 0
+                :caption: Reset the TTL property on a container, and display the updated properties:
+        """
+
+        container = args[0] if len(args) > 0 else kwargs.pop('container', None)
+        partition_key = args[1] if len(args) > 1 else kwargs.pop('partition_key')
+        indexing_policy = args[2] if len(args) > 2 else kwargs.pop('indexing_policy', None)
+        default_ttl = args[3] if len(args) > 3 else kwargs.pop('default_ttl', None)
+        conflict_resolution_policy = args[4] if len(args) > 4 else kwargs.pop('conflict_resolution_policy', None)
+        populate_query_metrics = args[5] if len(args) > 5 else kwargs.pop('populate_query_metrics', None)
+        if len(args) > 6:
+            raise TypeError(f"Unexpected positional parameters: {args[6:]}")
+        initial_headers = kwargs.pop('initial_headers', None)
+        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
+        computed_properties = kwargs.pop('computed_properties', None)
+        full_text_policy = kwargs.pop('full_text_policy', None)
+        return_properties = kwargs.pop('return_properties', False)
+        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
+
         session_token = kwargs.get('session_token')
         if session_token is not None:
             warnings.warn(
@@ -665,6 +1079,7 @@ class DatabaseProxy(object):
                 "analyticalStorageTtl": analytical_storage_ttl,
                 "computedProperties": computed_properties,
                 "fullTextPolicy": full_text_policy,
+                "vectorEmbeddingPolicy": vector_embedding_policy
             }.items()
             if value is not None
         }
@@ -672,8 +1087,15 @@ class DatabaseProxy(object):
         container_properties = self.client_connection.ReplaceContainer(
             container_link, collection=parameters, options=request_options, **kwargs)
 
+        if not return_properties:
+            return ContainerProxy(
+                self.client_connection,
+                self.database_link, container_properties["id"],
+                properties=container_properties)
         return ContainerProxy(
-            self.client_connection, self.database_link, container_properties["id"], properties=container_properties)
+            self.client_connection,
+            self.database_link, container_properties["id"],
+            properties=container_properties), container_properties
 
     @distributed_trace
     def list_users(

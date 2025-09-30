@@ -5,8 +5,9 @@ from ci_tools.functions import discover_targeted_packages
 
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".."))
-core_service_root = os.path.join(repo_root, "sdk", "core")
-storage_service_root = os.path.join(repo_root, "sdk", "storage")
+sdk_root = os.path.join(repo_root, "sdk")
+core_service_root = os.path.join(sdk_root, "core")
+storage_service_root = os.path.join(sdk_root, "storage")
 
 
 def test_discovery():
@@ -17,6 +18,23 @@ def test_discovery():
 
     assert len(results) > 1
     assert len(non_empty_results) == 1
+
+
+def test_discovery_against_sdk():
+    package_directories = discover_targeted_packages("**", sdk_root)
+
+    # ensure we didn't accidentally pick up a couple known packages from within a tests directory
+
+    known_mgmt_test_setup = os.path.join(sdk_root, "netapp", "azure-mgmt-netapp", "tests", "setup.py")
+    known_test_core_setup = os.path.join(
+        repo_root, "sdk", "core", "azure-core", "tests", "testserver_tests", "coretestserver", "setup.py"
+    )
+
+    assert known_test_core_setup not in package_directories
+    assert known_mgmt_test_setup not in package_directories
+
+    # this is effectively checking to ensure we don't crash on any of the packages
+    assert len(package_directories) > 0
 
 
 def test_discovery_omit_mgmt():
