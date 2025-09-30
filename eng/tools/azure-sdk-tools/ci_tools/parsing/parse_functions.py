@@ -183,15 +183,15 @@ def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
                     normalized[norm] = url.strip()
         # Persist normalized dict if not empty
         if normalized:
-            metadata['project_urls'] = normalized
+            metadata["project_urls"] = normalized
             if label_map:
-                metadata['project_urls_label_map'] = label_map
+                metadata["project_urls_label_map"] = label_map
         else:
             # Fallback: preserve raw structure (unlikely path)
-            metadata['project_urls'] = raw_project_urls
+            metadata["project_urls"] = raw_project_urls
 
         # Derive homepage only after normalization (avoid double attempts)
-        if 'homepage' not in metadata:
+        if "homepage" not in metadata:
             homepage = _extract_homepage_from_project_urls(raw_project_urls)
             if homepage:
                 metadata["homepage"] = homepage
@@ -202,8 +202,7 @@ def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
 
 
 def _extract_homepage_from_project_urls(project_urls) -> Optional[str]:
-    """Extract a canonical homepage URL from project_urls.
-    """
+    """Extract a canonical homepage URL from project_urls."""
     if not project_urls:
         return None
 

@@ -19,6 +19,7 @@ from .config import TestConfig
 this = sys.modules[__name__]
 this.recording_ids = {}
 
+
 def locate_assets(current_test_file: str) -> str:
     """Locate the test assets directory for the targeted testfile.
 
@@ -74,6 +75,7 @@ def locate_assets(current_test_file: str) -> str:
                 continue  # Skip files that can't be read
 
     raise FileNotFoundError(f"No matching breadcrumb file found for asset path {relative_asset_path}")
+
 
 def get_http_client(**kwargs):
     """Returns a `urllib3` client that provides the test proxy's self-signed certificate if it's available.
