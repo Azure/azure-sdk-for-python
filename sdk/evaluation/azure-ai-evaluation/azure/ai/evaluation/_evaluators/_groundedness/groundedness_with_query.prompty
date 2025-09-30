@@ -40,11 +40,11 @@ Only evaluate the final RESPONSE in this run.
 
 INPUT
 =====
-QUERY: {{query}}
-CONTEXT: {{context}}
-RESPONSE: {{response}}
+QUERY: conversation between user and agent
+CONTEXT: authoritative source of truth for evaluation (can be empty, in which case rely on QUERY and tool calls in the RESPONSE)
+RESPONSE: agent's final answer to the user, which may include tool calls
 
-CONTEXT is the authoritative source of truth for evaluation. 
+CONTEXT is the authoritative source of truth for evaluation.
 If CONTEXT is empty, the agent may rely solely on information present in QUERY and tool calls, if any, in the Responses
 
 TASK
