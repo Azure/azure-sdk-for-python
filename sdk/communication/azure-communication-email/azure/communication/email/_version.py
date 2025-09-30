@@ -7,4 +7,3 @@
 # --------------------------------------------------------------------------
 
 VERSION = "1.1.0"
-SDK_MONIKER = "azure-communication-email/{}".format(VERSION)

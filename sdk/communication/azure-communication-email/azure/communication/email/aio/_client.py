@@ -15,11 +15,11 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import AzureCommunicationEmailServiceConfiguration
-from ._operations import _AzureCommunicationEmailServiceOperationsMixin
+from ._configuration import EmailClientConfiguration
+from ._operations import _EmailClientOperationsMixin
 
 
-class AzureCommunicationEmailService(_AzureCommunicationEmailServiceOperationsMixin):
+class EmailClient(_EmailClientOperationsMixin):
     """Azure Communication Email Service.
 
     :param endpoint: The communication resource, for example
@@ -36,7 +36,7 @@ class AzureCommunicationEmailService(_AzureCommunicationEmailServiceOperationsMi
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AzureCommunicationEmailServiceConfiguration(endpoint=endpoint, **kwargs)
+        self._config = EmailClientConfiguration(endpoint=endpoint, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

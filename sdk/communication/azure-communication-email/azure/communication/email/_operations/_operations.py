@@ -27,7 +27,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .._configuration import AzureCommunicationEmailServiceConfiguration
+from .._configuration import EmailClientConfiguration
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
@@ -39,9 +39,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_azure_communication_email_service_get_send_result_request(  # pylint: disable=name-too-long
-    operation_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_email_get_send_result_request(operation_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -65,9 +63,7 @@ def build_azure_communication_email_service_get_send_result_request(  # pylint: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_azure_communication_email_service_send_request(  # pylint: disable=name-too-long
-    *, operation_id: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_email_send_request(*, operation_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -91,9 +87,7 @@ def build_azure_communication_email_service_send_request(  # pylint: disable=nam
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class _AzureCommunicationEmailServiceOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AzureCommunicationEmailServiceConfiguration]
-):
+class _EmailClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], EmailClientConfiguration]):
 
     @distributed_trace
     def get_send_result(self, operation_id: str, **kwargs: Any) -> JSON:
@@ -144,7 +138,7 @@ class _AzureCommunicationEmailServiceOperationsMixin(
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_azure_communication_email_service_get_send_result_request(
+        _request = build_email_get_send_result_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -204,7 +198,7 @@ class _AzureCommunicationEmailServiceOperationsMixin(
         else:
             _json = message
 
-        _request = build_azure_communication_email_service_send_request(
+        _request = build_email_send_request(
             operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,

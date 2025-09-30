@@ -29,7 +29,7 @@ v3: true
 no-async: false
 add-credential: false
 security: Anonymous
-title: Azure Communication Email Service
+title: Email Client
 use-extension:
   "@autorest/python": "6.40.0"
 ```

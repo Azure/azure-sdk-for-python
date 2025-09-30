@@ -13,8 +13,8 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class AzureCommunicationEmailServiceConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
-    """Configuration for AzureCommunicationEmailService.
+class EmailClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for EmailClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -35,7 +35,7 @@ class AzureCommunicationEmailServiceConfiguration:  # pylint: disable=too-many-i
 
         self.endpoint = endpoint
         self.api_version = api_version
-        kwargs.setdefault("sdk_moniker", "azurecommunicationemailservice/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "emailclient/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 

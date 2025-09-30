@@ -28,20 +28,17 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import (
-    build_azure_communication_email_service_get_send_result_request,
-    build_azure_communication_email_service_send_request,
-)
+from ..._operations._operations import build_email_get_send_result_request, build_email_send_request
 from ..._utils.utils import ClientMixinABC
-from .._configuration import AzureCommunicationEmailServiceConfiguration
+from .._configuration import EmailClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _AzureCommunicationEmailServiceOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AzureCommunicationEmailServiceConfiguration]
+class _EmailClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], EmailClientConfiguration]
 ):
 
     @distributed_trace_async
@@ -93,7 +90,7 @@ class _AzureCommunicationEmailServiceOperationsMixin(
 
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        _request = build_azure_communication_email_service_get_send_result_request(
+        _request = build_email_get_send_result_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -153,7 +150,7 @@ class _AzureCommunicationEmailServiceOperationsMixin(
         else:
             _json = message
 
-        _request = build_azure_communication_email_service_send_request(
+        _request = build_email_send_request(
             operation_id=operation_id,
             content_type=content_type,
             api_version=self._config.api_version,

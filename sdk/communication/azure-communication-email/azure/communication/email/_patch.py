@@ -11,19 +11,19 @@ from azure.core.credentials import TokenCredential, AzureKeyCredential
 
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
-from ._client import AzureCommunicationEmailService
-from ._version import SDK_MONIKER
+from ._client import EmailClient as EmailClientGenerated
+from ._version import VERSION
 from ._api_versions import DEFAULT_VERSION
 
 
-class EmailClient(AzureCommunicationEmailService):
+class EmailClient(EmailClientGenerated):
     """A client to interact with the AzureCommunicationService Email gateway.
-    
+
     This client provides operations to send an email and monitor its status.
-    
+
     :param str endpoint: The endpoint url for Azure Communication Service resource.
-    :param Union[TokenCredential, AzureKeyCredential] credential: 
-        The credential we use to authenticate against the service.
+    :param credential: The credential we use to authenticate against the service.
+    :paramtype credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Email API version.
         Default value is "2025-09-01".
         Note that overriding this default value may result in unsupported behavior.
@@ -44,7 +44,7 @@ class EmailClient(AzureCommunicationEmailService):
         super().__init__(
             endpoint=endpoint,
             authentication_policy=authentication_policy,
-            sdk_moniker=SDK_MONIKER,
+            sdk_moniker=f"azure-communication-email/{VERSION}",
             api_version=self._api_version,
             **kwargs
         )
@@ -52,7 +52,7 @@ class EmailClient(AzureCommunicationEmailService):
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs) -> "EmailClient":
         """Create EmailClient from a Connection String.
-        
+
         :param str conn_str: A connection string to an Azure Communication Service resource.
         :returns: Instance of EmailClient.
         :rtype: ~azure.communication.email.EmailClient
