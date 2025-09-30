@@ -17,6 +17,14 @@
 
 ### Breaking Changes
 
+- **Session Model Architecture**: Separated `ResponseSession` and `RequestSession` models for better design clarity:
+  - `ResponseSession` no longer inherits from `RequestSession` and now inherits directly from `_Model`
+  - All session configuration fields are now explicitly defined in `ResponseSession` instead of being inherited
+  - This provides clearer separation of concerns between request and response session configurations
+  - May affect type checking and code that relied on the previous inheritance relationship
+- **Model Cleanup**: Removed unused `AgentConfig` model from the public API:
+  - `AgentConfig` class has been completely removed from imports and exports
+  - Updated cross-language package mappings to reflect the removal
 - **Model Naming Convention Update**: Renamed `EOUDetection` to `EouDetection` for better naming consistency:
   - Class name changed from `EOUDetection` to `EouDetection` 
   - All inheritance relationships updated: `AzureSemanticDetection`, `AzureSemanticDetectionEn`, and `AzureSemanticDetectionMultilingual` now inherit from `EouDetection`
@@ -29,6 +37,7 @@
 
 ### Other Changes
 
+- **Code Quality Improvements**: Enhanced code formatting consistency, including comment alignment in WebSocket connection handling
 - Initial GA release
 
 ## 1.0.0b5 (2025-09-26)

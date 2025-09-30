@@ -369,8 +369,6 @@ class TestRealtimeService(AzureRecordedTestCase):
         model = "gpt-4o-realtime-preview"
         file = test_data_dir / test_audio_file
         server_sd_conf = {
-            "distinct_ci_phones": 2,
-            "require_vowel": False,
             "remove_filler_words": True,
         }
 
