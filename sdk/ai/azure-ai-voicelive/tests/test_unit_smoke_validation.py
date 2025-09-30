@@ -9,6 +9,12 @@ Simple smoke tests to verify the unit test suite functionality.
 Run this file directly to test the basic imports and functionality.
 """
 
+import pytest
+
+pytest.importorskip(
+    "aiohttp",
+    reason="Skipping aio tests: aiohttp not installed (whl_no_aio).",
+)
 
 def test_basic_imports():
     """Test that key components can be imported."""
