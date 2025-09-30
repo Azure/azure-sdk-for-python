@@ -22,8 +22,8 @@ T_EvalValue = TypeVar("T_EvalValue")
 
 
 @experimental
-class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """The Tool Relevance evaluator assesses the appropriateness and efficiency of tool choices made by an AI agent by examining:
+class ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+    """The Tool Selection evaluator assesses the appropriateness and efficiency of tool choices made by an AI agent by examining:
         - Relevance of selected tools to the conversation.
         - Completeness of tool selection according to task requirements.
         - Efficiency in avoiding unnecessary or redundant tools.
@@ -42,20 +42,20 @@ class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START tool_relevance_evaluator]
-            :end-before: [END tool_relevance_evaluator]
+            :start-after: [START tool_selection_evaluator]
+            :end-before: [END tool_selection_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a ToolRelevanceEvaluator.
+            :caption: Initialize and call a ToolSelectionEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
-            :start-after: [START tool_relevance_evaluator]
-            :end-before: [END tool_relevance_evaluator]
+            :start-after: [START tool_selection_evaluator]
+            :end-before: [END tool_selection_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call ToolRelevanceEvaluator using Azure AI Project URL in the following format
+            :caption: Initialize and call ToolSelectionEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. note::
@@ -65,15 +65,15 @@ class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    _PROMPTY_FILE = "tool_relevance.prompty"
-    _RESULT_KEY = "tool_relevance"
+    _PROMPTY_FILE = "tool_selection.prompty"
+    _RESULT_KEY = "tool_selection"
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
-    _INVALID_SCORE_MESSAGE = "Tool relevance score must be 0 or 1."
+    _INVALID_SCORE_MESSAGE = "Tool selection score must be 0 or 1."
 
-    id = "azureai://built-in/evaluators/tool_relevance"
+    id = "azureai://built-in/evaluators/tool_selection"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
@@ -146,7 +146,7 @@ class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         try:
             needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions, ErrorTarget.TOOL_RELEVANCE_EVALUATOR
+                tool_calls, tool_definitions, ErrorTarget.TOOL_SELECTION_EVALUATOR
             )
         except EvaluationException as e:
             # Check if this is because no tool definitions were provided at all
@@ -203,8 +203,8 @@ class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Add tool selection accuracy post-processing
             details = llm_output.get("details", {})
             if details:
-                tool_relevance_accuracy = self._calculate_tool_relevance_accuracy(details)
-                details["tool_relevance_accuracy"] = tool_relevance_accuracy
+                tool_selection_accuracy = self._calculate_tool_selection_accuracy(details)
+                details["tool_selection_accuracy"] = tool_selection_accuracy
 
             response_dict = {
                 self._result_key: score,
@@ -219,7 +219,7 @@ class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 message="Tool selection evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_RELEVANCE_EVALUATOR,
+                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
             )
 
     async def _real_call(self, **kwargs):
@@ -239,8 +239,8 @@ class ToolRelevanceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         return result
 
-    def _calculate_tool_relevance_accuracy(self, details):
-        """Calculate tool relevance accuracy from the evaluation details.
+    def _calculate_tool_selection_accuracy(self, details):
+        """Calculate tool selection accuracy from the evaluation details.
 
         :param details: The details dictionary from the LLM evaluation output
         :type details: Dict
