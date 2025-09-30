@@ -20,7 +20,7 @@ from azure.confidentialledger.aio._client import (
 # Since we can't `await` in __init__, use the sync client for the Identity Service.
 
 
-# from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
+from azure.confidentialledger.certificate import ConfidentialLedgerCertificateClient
 from azure.confidentialledger._patch import ConfidentialLedgerCertificateCredential
 
 __all__: List[str] = [
@@ -81,21 +81,21 @@ class ConfidentialLedgerClient(GeneratedClient):
 
             if auth_policy is None:
                 auth_policy = policies.AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs)
-        # if os.path.isfile(ledger_certificate_path) is False:
-        #     # We'll need to fetch the TLS certificate.
+        if os.path.isfile(ledger_certificate_path) is False:
+            # We'll need to fetch the TLS certificate.
 
-        #     identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
+            identity_service_client = ConfidentialLedgerCertificateClient(**kwargs)
 
-        #     # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
+            # Ledger URIs are of the form https://<ledger id>.confidential-ledger.azure.com.
 
-        #     ledger_id = endpoint.replace("https://", "").split(".")[0]
+            ledger_id = endpoint.replace("https://", "").split(".")[0]
 
-        #     # We use the sync client here because async __init__ is not allowed.
+            # We use the sync client here because async __init__ is not allowed.
 
-        #     ledger_cert = identity_service_client.get_ledger_identity(ledger_id, **kwargs)
+            ledger_cert = identity_service_client.get_ledger_identity(ledger_id, **kwargs)
 
-        #     with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
-        #         outfile.write(ledger_cert["ledgerTlsCertificate"])
+            with open(ledger_certificate_path, "w", encoding="utf-8") as outfile:
+                outfile.write(ledger_cert["ledgerTlsCertificate"])
         # For ConfidentialLedgerCertificateCredential, pass the path to the certificate down to the
         # PipelineCLient.
 
