@@ -4,6 +4,13 @@
 
 ### Features Added
 
+- **Enhanced WebSocket Connection Options**: Significantly improved WebSocket connection configuration with transport-agnostic design:
+  - Added new timeout configuration options: `receive_timeout`, `close_timeout`, and `handshake_timeout` for fine-grained control
+  - Enhanced `compression` parameter to support both boolean and integer types for advanced zlib window configuration
+  - Added `vendor_options` parameter for implementation-specific options passthrough (escape hatch for advanced users)
+  - Improved documentation with clearer descriptions for all connection parameters
+  - Better support for common aliases from other WebSocket ecosystems (`max_size`, `ping_interval`, etc.)
+  - More robust option mapping with proper type conversion and safety checks
 - **Enhanced Type Safety**: Improved type safety for content parts with proper enum usage:
   - `InputAudioContentPart`, `InputTextContentPart`, and `OutputTextContentPart` now use `ContentPartType` enum values instead of string literals
   - Better IntelliSense support and compile-time type checking for content part discriminators
