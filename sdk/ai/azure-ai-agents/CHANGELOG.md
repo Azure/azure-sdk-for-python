@@ -1,15 +1,54 @@
 
+
 # Release History
 
-## 1.2.0b3 (Unreleased)
+## 1.2.0b5 (2025-09-29)
 
-### Breaking Changes
+### Features Added
+- Added `run_handler` parameter to `runs.create_and_process` allowing to make function tool calls manually or approve mcp tool calls.
+
+### Bugs Fixed
+- Fixed regression, reverted ToolOutput type signature and usage in tool_output submission.  
+- Added `RunStepDeltaComputerUseDetails` and `RunStepDeltaComputerUseToolCall` classes for streaming computer use scenarios.
+- Added `RunStepDeltaChunk` to `StreamEventData` model (GitHub issues [43022](https://github.com/Azure/azure-sdk-for-python/issues/43022))
+
+### Sample updates
+- Added `sample_agents_mcp_in_create_and_process.py` abd `sample_agents_mcp_in_create_and_process_async.py` demonstrating MCP tool call approvals in `runs.create_and_process`.
+- Added `sample_agents_functions_in_create_and_process.py` and `sample_agents_functions_in_create_and_process_async.py` demonstrating manual function tool calls in `runs.create_and_process`.
+
+## 1.2.0b4 (2025-09-12)
+
+### Features Added
+
+- Added Computer Use Preview tool for use with the computer-use-preview model
+- ToolSet now supports adding multiple McpTool instances and OpenApiTool instances.
+- Added static functions `get_tool_resources` and `get_tool_definitions` in `azure.ai.agents.models` to simplify extracting tool resources and definitions from collections of tools, making it easier to configure agents with multiple tool instances.
+
+### Bugs Fixed
+
+- Fix issue with tracing an Agent message, when the message has "in progress" status (related to [GitHub Issue 42645](https://github.com/Azure/azure-sdk-for-python/issues/42645)).
+- Fix issue with tracing `RunStepOpenAPIToolCall` (GitHub issues [42645](https://github.com/Azure/azure-sdk-for-python/issues/42645) and [42864](https://github.com/Azure/azure-sdk-for-python/issues/42864)).
+- Fix issue when `.threads.create(messages=[ThreadMessageOptions(...])` is called on the `AgentsClient`, when tracing is enabled ([GitHub issue 42805](https://github.com/Azure/azure-sdk-for-python/issues/42805))
+- Fix an issue in the code where, when tracing is enabled and the function AgentsClient.runs.create_and_process is used, the span "start_thread_run" appears twice in trace, once as a parent and once as a child span. The parent span name has been changed to "process_thread_run". Note that the semantic conventions used in the traces (including spans and attributes) are still subject to change.
+
+### Sample updates
+
+- Added sample demonstrating multiple McpTool instance usage.
+- Added `sample_agents_mcp_stream_eventhandler.py` demonstrating how to use MCP tools with streaming and event handlers for real-time processing.
+- Added `sample_agents_mcp_stream_iteration.py` showing MCP tool usage with streaming iteration for step-by-step response handling.
+- Added `sample_agents_multiple_mcp.py` illustrating how to configure and use multiple MCP tool.
+
+
+## 1.2.0b3 (2025-08-22)
 
 ### Features Added
 
 - Added delete operation for `ThreadMessages`.
 - Add `RunStepDetailsActivity`, describing MCP function parameters.
 - Add `RunStepDeltaCustomBingGroundingToolCall`, describing `BingCustomSearchTool` updates in streaming scenario.
+- Add `RunStepDeltaMicrosoftFabricToolCall`, describing `FabricTool` updates in streaming scenario.
+- Add `RunStepDeltaSharepointToolCall`, describing `SharepointTool` updates in streaming scenario.
+- Improve code interpreter tool to take the list of `VectorStoreDataSource` as an input for enterprise file search.
 
 ### Bugs Fixed
 
@@ -18,6 +57,7 @@
 ### Sample updates
 
 - The file search samples were updated to demonstrate retrieving text associated with citations.
+- The SharePoint tool sample was updated to demonstrate retrieving text associated with citations and render references correctly.
 - Added samples for file search citation with streaming.
 - Bing Grounding and Bing Custom Search samples were fixed to correctly present references.
 

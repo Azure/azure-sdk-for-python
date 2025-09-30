@@ -185,8 +185,8 @@ stages:
                           echo "Uploaded sdist to devops feed"
                         displayName: 'Publish package to feed: ${{parameters.DevFeedName}}'
 
-          - job: CreateApiView
-            displayName: "Create APIView"
+          - job: MarkPackageReleaseCompletion
+            displayName: "Mark package release completion"
             dependsOn: PublishPackage
 
             pool:
@@ -204,6 +204,11 @@ stages:
               - task: UsePythonVersion@0
                 inputs:
                   versionSpec: '3.9'
+
+              - template: /eng/common/pipelines/templates/steps/mark-release-completion.yml
+                parameters:
+                  ConfigFileDir: '$(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo'
+                  PackageArtifactName: ${{artifact.name}}
 
               - template: /eng/common/pipelines/templates/steps/create-apireview.yml
                 parameters:

@@ -24,7 +24,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
         response = self.client.migration_services.get(
             resource_group_name=resource_group.name,
             migration_service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
         response = self.client.migration_services.begin_delete(
             resource_group_name=resource_group.name,
             migration_service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             migration_service_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
     def test_migration_services_list_by_resource_group(self, resource_group):
         response = self.client.migration_services.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
     @recorded_by_proxy
     def test_migration_services_list_by_subscription(self, resource_group):
         response = self.client.migration_services.list_by_subscription(
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestDataMigrationManagementMigrationServicesOperations(AzureMgmtRecordedTe
         response = self.client.migration_services.list_migrations(
             resource_group_name=resource_group.name,
             migration_service_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -28,7 +28,9 @@ from .operations import (
     BackupsUnderAccountOperations,
     BackupsUnderBackupVaultOperations,
     BackupsUnderVolumeOperations,
+    BucketsOperations,
     NetAppResourceOperations,
+    NetAppResourceQuotaLimitsAccountOperations,
     NetAppResourceQuotaLimitsOperations,
     NetAppResourceRegionInfosOperations,
     NetAppResourceUsagesOperations,
@@ -43,6 +45,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -82,6 +85,10 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype subvolumes: azure.mgmt.netapp.aio.operations.SubvolumesOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.aio.operations.BackupsOperations
+    :ivar net_app_resource_quota_limits_account: NetAppResourceQuotaLimitsAccountOperations
+     operations
+    :vartype net_app_resource_quota_limits_account:
+     azure.mgmt.netapp.aio.operations.NetAppResourceQuotaLimitsAccountOperations
     :ivar backup_vaults: BackupVaultsOperations operations
     :vartype backup_vaults: azure.mgmt.netapp.aio.operations.BackupVaultsOperations
     :ivar backups_under_backup_vault: BackupsUnderBackupVaultOperations operations
@@ -91,29 +98,44 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype backups_under_volume: azure.mgmt.netapp.aio.operations.BackupsUnderVolumeOperations
     :ivar backups_under_account: BackupsUnderAccountOperations operations
     :vartype backups_under_account: azure.mgmt.netapp.aio.operations.BackupsUnderAccountOperations
+    :ivar buckets: BucketsOperations operations
+    :vartype buckets: azure.mgmt.netapp.aio.operations.BucketsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2025-06-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-07-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = NetAppManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -167,6 +189,9 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.net_app_resource_quota_limits_account = NetAppResourceQuotaLimitsAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups_under_backup_vault = BackupsUnderBackupVaultOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -177,6 +202,7 @@ class NetAppManagementClient:  # pylint: disable=too-many-instance-attributes
         self.backups_under_account = BackupsUnderAccountOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.buckets = BucketsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

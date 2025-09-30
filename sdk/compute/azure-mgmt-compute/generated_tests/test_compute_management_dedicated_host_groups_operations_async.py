@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
+from azure.mgmt.compute.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -23,7 +23,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_dedicated_host_groups_list_by_subscription(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_subscription(
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
     async def test_dedicated_host_groups_list_by_resource_group(self, resource_group):
         response = self.client.dedicated_host_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
         response = await self.client.dedicated_host_groups.get(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -134,7 +134,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "zones": ["str"],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestComputeManagementDedicatedHostGroupsOperationsAsync(AzureMgmtRecordedT
         response = await self.client.dedicated_host_groups.delete(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

@@ -67,7 +67,7 @@ def test_replace_dev_reqs_relative(tmp_directory_create):
     ).version
     identity_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "identity", "azure-identity")).version
     mgmt_core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-mgmt-core")).version
-    sdk_tools_version = ParsedSetup.from_path(os.path.join(repo_root, "tools", "azure-sdk-tools")).version
+    sdk_tools_version = ParsedSetup.from_path(os.path.join(repo_root, "eng", "tools", "azure-sdk-tools")).version
     core_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "core", "azure-core")).version
     keyvault_version = ParsedSetup.from_path(os.path.join(repo_root, "sdk", "keyvault", "azure-keyvault-keys")).version
 

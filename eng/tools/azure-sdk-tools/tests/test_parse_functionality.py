@@ -11,6 +11,7 @@ test_folder = os.path.join(
 )
 scenarios_folder = os.path.join(os.path.dirname(__file__), "integration", "scenarios")
 metapackage_scenario = os.path.join(scenarios_folder, "setup_py_metapackage")
+setup_project_scenario = os.path.join(scenarios_folder, "setup_py_project_def")
 pyproject_scenario = os.path.join(scenarios_folder, "pyproject_project_def")
 pyproject_extension_scenario = os.path.join(scenarios_folder, "pyproject_project_def_with_extension")
 
@@ -110,22 +111,21 @@ setup(
 )
     """
 
-    result = ParsedSetup.from_path(package_root)
+    result = ParsedSetup.from_path(setup_project_scenario)
 
     assert result.name == "azure-core"
     assert result.version == "1.21.0"
     assert result.python_requires == ">=3.7"
     assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
     assert result.is_new_sdk == True
-    assert result.setup_filename == os.path.join(package_root, "setup.py")
+    assert result.setup_filename == os.path.join(setup_project_scenario, "setup.py")
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
-    assert result.folder == package_root
+    assert result.folder == setup_project_scenario
     assert len(result.classifiers) > 0
     assert result.classifiers[0] == "Development Status :: 5 - Production/Stable"
     assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
     assert result.keywords[0] == "azure sdk"
-    assert result.is_metapackage == False
     assert len(result.keywords) == 2
 
 
@@ -191,24 +191,23 @@ setup(
 )
     """
 
-    result = ParsedSetup.from_path(package_root)
+    result = ParsedSetup.from_path(setup_project_scenario)
 
     assert result.name == "azure-storage-extensions"
     assert result.version == "1.21.0"
     assert result.python_requires == ">=3.7"
     assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
     # todo resolve this conflict assert result.is_new_sdk == True
-    assert result.setup_filename == os.path.join(package_root, "setup.py")
+    assert result.setup_filename == os.path.join(setup_project_scenario, "setup.py")
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
-    assert result.folder == package_root
+    assert result.folder == setup_project_scenario
     assert len(result.classifiers) > 0
     assert result.classifiers[0] == "Development Status :: 5 - Production/Stable"
     assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
     assert result.ext_package == "azure.storage.extensions"
     assert result.ext_modules is not None
     assert result.is_pyproject == False
-    assert result.is_metapackage == False
     assert len(result.ext_modules) == 1
     assert str(type(result.ext_modules[0])) == "<class 'setuptools.extension.Extension'>"
 

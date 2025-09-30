@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
+from packaging import tags
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from packaging.requirements import Requirement
@@ -13,6 +14,7 @@ import io
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER, str_to_bool
 from ci_tools.parsing import ParsedSetup, get_config_setting, get_pyproject
 from pypi_tools.pypi import PyPIClient
+from ci_tools.logging import logger
 
 import os, sys, platform, glob, re, logging
 from typing import List, Any, Optional, Tuple
@@ -40,6 +42,17 @@ REGRESSION_EXCLUDED_PACKAGES = [
 
 MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
     "azure-mgmt-core",
+]
+
+# In very rare situations, we need to actively transition a package from one part of the code base to another
+# in a multi-stage process. For example, migrating "azure-ai-textanalytics" from "sdk/textanalytics" to "sdk/ai".
+# Both need to simultaneously exist for a short period of time, but we need to prevent discovery of the package
+# so that downstream checks aren't broken by this.
+# We need to actively prevent ourselves from discovering the package in its old location. To do that we:
+#  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
+#  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
+PATHS_EXCLUDED_FROM_DISCOVERY = [
+    "sdk/textanalytics/azure-ai-textanalytics",
 ]
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-ai-evaluation": ">=3.9, !=3.13.*"}
@@ -163,19 +176,33 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py")) + glob.glob(
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml")) + glob.glob(
+        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True) + glob.glob(
             os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
         )
         for p in globbed:
             if get_pyproject(os.path.dirname(p)):
                 collected_top_level_directories.append(os.path.dirname(p))
+
+    # drop any packages that exist within a tests or test directory
+    collected_top_level_directories = [
+        p for p in collected_top_level_directories if not any(part in ("test", "tests") for part in p.split(os.sep))
+    ]
+
+    # remove any packages that might exist in the PATHS_EXCLUDED_FROM_DISCOVERY path list (relative from repo root)
+    excluded = set(PATHS_EXCLUDED_FROM_DISCOVERY)
+    filtered = []
+    for pkg_path in collected_top_level_directories:
+        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, "/")
+        if not any(rel == excl or rel.startswith(excl + "/") for excl in excluded):
+            filtered.append(pkg_path)
+    collected_top_level_directories = filtered
 
     # deduplicate, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     return list(set(collected_top_level_directories))
@@ -217,25 +244,25 @@ def discover_targeted_packages(
 
     # glob the starting package set
     collected_packages = glob_packages(glob_string, target_root_dir)
-    logging.info(
+    logger.debug(
         f'Results for glob_string "{glob_string}" and root directory "{target_root_dir}" are: {collected_packages}'
     )
 
     # apply the additional contains filter
     collected_packages = [pkg for pkg in collected_packages if additional_contains_filter in pkg]
-    logging.info(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
+    logger.debug(f'Results after additional contains filter: "{additional_contains_filter}" {collected_packages}')
 
     # filter for compatibility, this means excluding a package that doesn't support py36 when we are running a py36 executable
     if compatibility_filter:
         collected_packages = apply_compatibility_filter(collected_packages)
-        logging.info(f"Results after compatibility filter: {collected_packages}")
+        logger.debug(f"Results after compatibility filter: {collected_packages}")
 
     if not include_inactive:
         collected_packages = apply_inactive_filter(collected_packages)
 
     # Apply filter based on filter type. for e.g. Docs, Regression, Management
     collected_packages = apply_business_filter(collected_packages, filter_type)
-    logging.info(f"Results after business filter: {collected_packages}")
+    logger.debug(f"Results after business filter: {collected_packages}")
 
     return sorted(collected_packages)
 
@@ -405,7 +432,9 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     else:
         logging.info("Packages not available on PyPI:{}".format(requirement_to_update))
         update_requires(setup_py_path, requirement_to_update)
-        logging.info(f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}.")
+        logging.info(
+            f"Package requirement is updated in {'pyproject.toml' if pkg_details.is_pyproject else 'setup.py'}."
+        )
 
 
 def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
@@ -438,15 +467,18 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> Optional[str]:
 
 
 def pip_install(
-    requirements: List[str], include_dependencies: bool = True, python_executable: Optional[str] = None
+    requirements: List[str],
+    include_dependencies: bool = True,
+    python_executable: Optional[str] = None,
+    cwd: Optional[str] = None,
 ) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
 
-    exe = python_executable or sys.executable
+    exe = get_pip_command(python_executable)
 
-    command = [exe, "-m", "pip", "install"]
+    command = exe + ["install"]
 
     if requirements:
         command.extend([req.strip() for req in requirements])
@@ -454,7 +486,10 @@ def pip_install(
         return True
 
     try:
-        subprocess.check_call(command)
+        if cwd:
+            subprocess.check_call(command, cwd=cwd)
+        else:
+            subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
         return False
 
@@ -465,6 +500,7 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
+    # we do not use get_pip_command here because uv pip doesn't have an uninstall command
     exe = python_executable or sys.executable
     command = [exe, "-m", "pip", "uninstall", "-y"]
 
@@ -480,6 +516,40 @@ def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
         return False
 
 
+def get_venv_python(venv_path: str) -> str:
+    """
+    Given a python venv path, identify the crossplat reference to the python executable.
+    """
+    # if we already have a path to a python executable, return it
+    if os.path.isfile(venv_path) and os.access(venv_path, os.X_OK) and os.path.basename(venv_path).startswith("python"):
+        return venv_path
+
+    # cross-platform python in a venv
+    bin_dir = "Scripts" if os.name == "nt" else "bin"
+    python_exe = "python.exe" if os.name == "nt" else "python"
+    return os.path.join(venv_path, bin_dir, python_exe)
+
+
+def install_into_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
+    """
+    Install the requirements into an existing venv (venv_path) without activating it.
+
+    - Uses get_pip_command(get_venv_python) per request.
+    - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
+      so installation goes into the target venv reliably.
+    """
+    py = get_venv_python(venv_path_or_executable)
+    pip_cmd = get_pip_command(py)
+
+    install_targets = [r.strip() for r in requirements]
+    cmd = pip_cmd + ["install"] + install_targets
+
+    if pip_cmd[0] == "uv":
+        cmd += ["--python", py]
+    # todo: clean this up so that we're using run_logged from #42862
+    subprocess.check_call(cmd, cwd=working_directory)
+
+
 def pip_install_requirements_file(requirements_file: str, python_executable: Optional[str] = None) -> bool:
     return pip_install(["-r", requirements_file], True, python_executable)
 
@@ -488,8 +558,10 @@ def get_pip_list_output(python_executable: Optional[str] = None):
     """Uses the invoking python executable to get the output from pip list."""
     exe = python_executable or sys.executable
 
+    pip_cmd = get_pip_command(exe)
+
     out = subprocess.Popen(
-        [exe, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        pip_cmd + ["list", "--disable-pip-version-check", "--format", "freeze"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
@@ -539,24 +611,7 @@ def get_interpreter_compatible_tags() -> List[str]:
     This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
     """
 
-    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
-
-    output = subprocess.run(
-        commands,
-        check=True,
-        capture_output=True,
-    ).stdout.decode(encoding="utf-8")
-
-    tag_strings = output.split(os.linesep)
-
-    index = 0
-    for index, value in enumerate(tag_strings):
-        if "Compatible tags" in value:
-            break
-
-    tags = tag_strings[index + 1 :]
-
-    return [tag.strip() for tag in tags if tag]
+    return [str(t) for t in tags.sys_tags()]
 
 
 def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
@@ -895,7 +950,9 @@ def handle_incompatible_minimum_dev_reqs(
     return cleansed_reqs
 
 
-def verify_package_classifiers(package_name: str, package_version: str, package_classifiers: List[str]) -> Tuple[bool, Optional[str]]:
+def verify_package_classifiers(
+    package_name: str, package_version: str, package_classifiers: List[str]
+) -> Tuple[bool, Optional[str]]:
     """
     Verify that the package classifiers match the expected classifiers.
     :param str package_name: The name of the package being verified. Used for detail in the error response.
@@ -913,7 +970,10 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
     if dev_status.is_prerelease:
         for c in dev_classifiers:
             if "4 - Beta" not in c:
-                return False, f"{package_name} has version {package_version} and is a beta release, but has development status '{c}'. Expected 'Development Status :: 4 - Beta' ONLY."
+                return (
+                    False,
+                    f"{package_name} has version {package_version} and is a beta release, but has development status '{c}'. Expected 'Development Status :: 4 - Beta' ONLY.",
+                )
         return True, None
 
     # ga releases: all development statuses must be >= 5
@@ -924,10 +984,36 @@ def verify_package_classifiers(package_name: str, package_version: str, package_
             # or Development Status :: 7 - Inactive
             num = int(c.split("::")[1].split("-")[0].strip())
         except (IndexError, ValueError):
-            return False, f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production/Stable'."
+            return (
+                False,
+                f"{package_name} has version {package_version} and is a GA release, but failed to pull a status number from status '{c}'. Expecting format identical to 'Development Status :: 5 - Production/Stable'.",
+            )
         if num < 5:
-            return False, f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'."
+            return (
+                False,
+                f"{package_name} has version {package_version} and is a GA release, but had development status '{c}'. Expecting a development classifier that is equal or greater than 'Development Status :: 5 - Production/Stable'.",
+            )
     return True, None
+
+
+def get_venv_call(python_exe: Optional[str] = None) -> List[str]:
+    """
+    Determine whether to use 'uv venv' or regular 'python -m venv' based on environment.
+
+    :param str python_exe: The Python executable to use (if not using the default).
+    :return: List of command arguments for venv.
+    :rtype: List[str]
+
+    """
+    # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
+    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
+
+    # soon we will change this to default to uv
+    if pip_impl == "uv":
+        return ["uv", "venv"]
+    else:
+        return [python_exe if python_exe else sys.executable, "-m", "venv"]
+
 
 def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
     """
@@ -939,9 +1025,29 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
 
     """
     # Check TOX_PIP_IMPL environment variable (aligns with tox.ini configuration)
-    pip_impl = os.environ.get('TOX_PIP_IMPL', 'pip').lower()
+    pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
 
-    if pip_impl == 'uv':
+    # soon we will change this to default to uv
+    if pip_impl == "uv":
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
+
+
+def is_error_code_5_allowed(target_pkg: str, pkg_name: str):
+    """
+    Determine if error code 5 (no pytests run) is allowed for the given package.
+    """
+    if (
+        all(
+            map(
+                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
+                [target_pkg],
+            )
+        )
+        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
+        or pkg_name in NO_TESTS_ALLOWED
+    ):
+        return True
+    else:
+        return False
