@@ -26,4 +26,3 @@ def test_reasoning_hint_for_sampling_params():
     msg = WrappedOpenAIError.to_openai_error_message(fake)
     assert "is_reasoning_model=True" in msg
     assert "sampling parameters" in msg or "temperature/top_p" in msg
-

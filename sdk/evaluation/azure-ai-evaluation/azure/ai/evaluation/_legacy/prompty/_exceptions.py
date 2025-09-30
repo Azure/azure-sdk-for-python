@@ -143,9 +143,11 @@ class WrappedOpenAIError(PromptyException):
                 )
                 return f"OpenAI API hits {ex_type}: {msg}"
             if (
-                ("temperature" in lowered or "top_p" in lowered or "presence_penalty" in lowered or "frequency_penalty" in lowered)
-                and "not supported" in lowered
-            ):
+                "temperature" in lowered
+                or "top_p" in lowered
+                or "presence_penalty" in lowered
+                or "frequency_penalty" in lowered
+            ) and "not supported" in lowered:
                 msg = (
                     "One or more sampling parameters (temperature/top_p/presence_penalty/frequency_penalty) are "
                     "not supported by reasoning models. If you are using a reasoning model, please set "
