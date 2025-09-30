@@ -293,7 +293,7 @@ class TestVoiceConfigurationInSession:
 
         assert session.voice == voice
         assert session.id == "session-123"
-        assert isinstance(session, RequestSession)  # Inheritance
+        assert isinstance(session, ResponseSession)  # Inheritance
 
 
 class TestVoiceConfigurationValidation:
