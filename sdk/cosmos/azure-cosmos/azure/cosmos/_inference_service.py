@@ -43,7 +43,7 @@ from .http_constants import HttpHeaders
 
 
 # cspell:ignore rerank reranker reranking
-# pylint: disable=protected-access
+# pylint: disable=protected-access,line-too-long
 
 
 class _InferenceService:

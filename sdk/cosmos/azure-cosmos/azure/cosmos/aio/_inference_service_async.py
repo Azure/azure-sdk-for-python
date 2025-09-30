@@ -44,7 +44,7 @@ from ..http_constants import HttpHeaders
 
 
 # cspell:ignore rerank reranker reranking
-# pylint: disable=protected-access
+# pylint: disable=protected-access,line-too-long
 
 
 class _InferenceService:
@@ -94,7 +94,8 @@ class _InferenceService:
                                           self.RETRY_BACKOFF_MAX),
                 retry_on_status_codes=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_on_status_codes',
                                               self.RETRY_AFTER_STATUS_CODES),
-                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor', self.RETRY_BACKOFF_FACTOR)
+                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor',
+                                             self.RETRY_BACKOFF_FACTOR)
             )
         elif isinstance(connection_policy.ConnectionRetryConfiguration, int):
             retry_policy = _ConnectionRetryPolicy(total=connection_policy.ConnectionRetryConfiguration)
