@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+import asyncio
 import logging
 import os
 import re
@@ -883,6 +883,8 @@ class TestAsyncAvailabilityStrategy:
             await setup_without_fault['col'].create_item(body=doc)
             self.MOCK_HANDLER.reset()
 
+            print("Adding 1s delay")
+            await asyncio.sleep(1)
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
                 await perform_read_operation(
                     operation,
