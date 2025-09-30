@@ -84,7 +84,7 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         response: Union[str, List[dict]],
         tool_definitions: Optional[Union[dict, List[dict]]] = None,
     ) -> Dict[str, Union[str, bool]]:
-        """Evaluate task success for a given query, response, and optionally tool definitions.
+        """Evaluate task completion for a given query, response, and optionally tool definitions.
         The query and response can be either a string or a list of messages.
 
 
@@ -109,7 +109,7 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         :paramtype response: Union[str, List[dict]]
         :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
         :paramtype tool_definitions: Optional[Union[dict, List[dict]]]
-        :return: A dictionary with the task success evaluation results.
+        :return: A dictionary with the task completion evaluation results.
         :rtype: Dict[str, Union[str, bool]]
         """
 
@@ -128,7 +128,7 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
 
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[bool, str]]:  # type: ignore[override]
-        """Do Task Success evaluation.
+        """Do Task Completion evaluation.
         :param eval_input: The input to the evaluator. Expected to contain whatever inputs are needed for the _flow method
         :type eval_input: Dict
         :return: The evaluation result.
@@ -138,8 +138,8 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
         # which is a different schema than _base_prompty_eval.py
         if "query" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
-                message=f"Both query and response must be provided as input to the Task Success evaluator.",
-                internal_message=f"Both query and response must be provided as input to the Task Success evaluator.",
+                message=f"Both query and response must be provided as input to the Task Completion evaluator.",
+                internal_message=f"Both query and response must be provided as input to the Task Completion evaluator.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_COMPLETION_EVALUATOR,
@@ -155,7 +155,7 @@ class TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
             if isinstance(success, str):
                 success = success.upper() == "TRUE"
 
-            success_result = "pass" if success == True else "fail"
+            success_result = "pass" if success else "fail"
             reason = llm_output.get("explanation", "")
             return {
                 f"{self._result_key}": success,
