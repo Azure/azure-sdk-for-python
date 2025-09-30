@@ -353,7 +353,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-         :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
+        :keyword availability_strategy_config: The availability strategy to use for this request. Configures when
              to route to alternate regions.
         :paramtype availability_strategy_config: ~azure.cosmos.CrossRegionHedgingStrategyConfig
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
@@ -515,6 +515,7 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         if availability_strategy_config is not _Unset:
             kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+
         kwargs['max_concurrency'] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options
         query_options = _build_options(kwargs)
