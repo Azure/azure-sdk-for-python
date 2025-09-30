@@ -712,18 +712,6 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         # handshake_timeout is not a ws_connect kwarg; caller must apply it on session
         _ = src.pop("handshake_timeout", None)  # intentionally ignored here
 
-        # --- Common aliases from other ecosystems (optional) ---
-        # e.g., 'max_size', 'ping_interval', 'close_timeout' (already covered above)
-        alias_max_size = src.pop("max_size", None)
-        if alias_max_size is not None and "max_msg_size" not in mapped:
-            mapped["max_msg_size"] = int(alias_max_size)
-        alias_ping_interval = src.pop("ping_interval", None)
-        if alias_ping_interval is not None and "heartbeat" not in mapped:
-            mapped["heartbeat"] = float(alias_ping_interval)
-        alias_close_timeout = src.pop("close_timeout", None)
-        if alias_close_timeout is not None and "timeout" not in mapped:
-            mapped["timeout"] = aiohttp.ClientWSTimeout(ws_close=float(alias_close_timeout))
-
         # --- Vendor-specific passthrough (escape hatch) ---
         vendor = src.pop("vendor_options", None)
         if isinstance(vendor, Mapping):

@@ -3365,7 +3365,7 @@ class ResponseSession(_Model):
     )
     """Maximum number of tokens to generate in the response. Default is unlimited. Is either a int
      type or a Literal[\"inf\"] type."""
-    agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    agent: Optional["AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The agent configuration for the session, if applicable."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier for the session."""
@@ -3392,7 +3392,7 @@ class ResponseSession(_Model):
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-        agent: Optional["_models.AgentConfig"] = None,
+        agent: Optional["AgentConfig"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
