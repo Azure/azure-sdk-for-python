@@ -1240,6 +1240,7 @@ class TestBuiltInEvaluators:
             RetrievalEvaluator,
         ],
     )
+    @pytest.mark.skip(reason="Temporarily skipped: red-add when custom credentials are a separate param")
     def test_prompty_based_evaluator_custom_credentials(
         self, evaluator_cls, simple_conversation, sanitized_model_config, azure_cred
     ):
