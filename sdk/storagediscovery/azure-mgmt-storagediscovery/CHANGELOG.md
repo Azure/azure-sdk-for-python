@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Updated versioning for general availability.
+  - First GA
 
 ## 1.0.0b2 (2025-09-03)
 
