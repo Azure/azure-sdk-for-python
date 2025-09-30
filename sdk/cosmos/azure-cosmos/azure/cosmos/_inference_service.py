@@ -27,17 +27,17 @@ from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
 from azure.core.pipeline.policies import (ContentDecodePolicy, CustomHookPolicy, DistributedTracingPolicy,
                                           HeadersPolicy, HTTPPolicy, NetworkTraceLoggingPolicy, ProxyPolicy,
-                                          RetryPolicy,
                                           UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.utils import CaseInsensitiveDict
 from urllib3.util.retry import Retry
 
 from . import exceptions
+from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict
-from ._retry_utility import ConnectionRetryPolicy
 from ._inference_auth_policy import InferenceServiceBearerTokenPolicy
+from ._retry_utility import ConnectionRetryPolicy
 from .http_constants import HttpHeaders
 
 
@@ -53,6 +53,8 @@ class _InferenceService:
     RETRY_BACKOFF_MAX = 120  # seconds
     RETRY_AFTER_STATUS_CODES = frozenset([429, 500])
     RETRY_BACKOFF_FACTOR = 0.8
+    inference_service_default_scope = Constants.INFERENCE_SERVICE_DEFAULT_SCOPE
+    semantic_reranking_inference_endpoint = Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT
 
     def __init__(self, cosmos_client_connection):
         """Initialize semantic reranker with credentials and endpoint information.
@@ -62,12 +64,12 @@ class _InferenceService:
         """
         self._client_connection = cosmos_client_connection
         self._aad_credentials = self._client_connection.aad_credentials
-        self._token_scope = self.DEFAULT_SCOPE
+        self._token_scope = self.inference_service_default_scope
 
         parsed = urllib.parse.urlparse(self._client_connection.url_connection)
         self._account_name = parsed.hostname.split('.')[0] if parsed.hostname else ""
 
-        self._inference_endpoint = f"https://{self._account_name}.dbinference.azure.com/inference/semanticReranking"
+        self._inference_endpoint = f"{self.semantic_reranking_inference_endpoint}/inference/semanticReranking"
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> PipelineClient:
@@ -83,13 +85,17 @@ class _InferenceService:
         retry_policy = None
         if isinstance(connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
             retry_policy = ConnectionRetryPolicy(
-                retry_total=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_total', self.TOTAL_RETRIES),
+                retry_total=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_total',
+                                    self.TOTAL_RETRIES),
                 retry_connect=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_connect', None),
                 retry_read=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_read', None),
                 retry_status=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_status', None),
-                retry_backoff_max=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_max', self.RETRY_BACKOFF_MAX),
-                retry_on_status_codes=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_on_status_codes', self.RETRY_AFTER_STATUS_CODES),
-                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor', self.RETRY_BACKOFF_FACTOR)
+                retry_backoff_max=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_max',
+                                          self.RETRY_BACKOFF_MAX),
+                retry_on_status_codes=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_on_status_codes',
+                                              self.RETRY_AFTER_STATUS_CODES),
+                retry_backoff_factor=getattr(connection_policy.ConnectionRetryConfiguration, 'retry_backoff_factor',
+                                             self.RETRY_BACKOFF_FACTOR)
             )
         elif isinstance(connection_policy.ConnectionRetryConfiguration, int):
             retry_policy = ConnectionRetryPolicy(total=connection_policy.ConnectionRetryConfiguration)
