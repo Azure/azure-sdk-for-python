@@ -51,7 +51,8 @@ class PartitionLevelFailoverInfo:
         :rtype: bool
         """
         with self._lock:
-            if endpoint_region != self.current_region:
+            print("got lock to move to next location")
+            if endpoint_region != self.current_region and self.current_region is not None:
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
                 return True
@@ -67,6 +68,7 @@ class PartitionLevelFailoverInfo:
                 logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
+                print("routing to: " + regional_endpoint)
                 return True
 
             return False
@@ -173,12 +175,15 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                     endpoint_region = self.location_cache.get_location_from_endpoint(request.location_endpoint_to_route)
                     if endpoint_region in partition_failover_info.unavailable_regional_endpoints:
                         available_account_regional_endpoints = self.compute_available_preferred_regions(request)
-                        if endpoint_region != partition_failover_info.current_region:
+                        if (partition_failover_info.current_region is not None and
+                                endpoint_region != partition_failover_info.current_region):
+                            print("changed {} region to {} region (current)".format(endpoint_region, partition_failover_info.current_region))
                             # this request has not yet seen there's an available region being used for this partition
                             regional_endpoint = available_account_regional_endpoints[
                                 partition_failover_info.current_region]
                             request.route_to_location(regional_endpoint)
                         else:
+                            print("finding new region")
                             # If the current region is unavailable, we try to move to the next available region
                             if not partition_failover_info.try_move_to_next_location(
                                 self.compute_available_preferred_regions(request),
@@ -217,7 +222,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
             excluded_locations = request.excluded_locations + self.location_cache.connection_policy.ExcludedLocations
         else:
             excluded_locations = self.location_cache.connection_policy.ExcludedLocations
-        preferred_locations = self.PreferredLocations
+        preferred_locations = self.location_cache.effective_preferred_locations
         available_regions = [item for item in preferred_locations if item not in excluded_locations]
         available_regional_endpoints = {}
         for region, context in self.location_cache.account_read_regional_routing_contexts_by_location.items():

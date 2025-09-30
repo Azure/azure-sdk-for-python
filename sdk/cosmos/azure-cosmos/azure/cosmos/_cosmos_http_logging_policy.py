@@ -180,7 +180,7 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
             gem_client = global_endpoint_manager.client
             if gem_client and gem_client.connection_policy:
                 connection_policy: ConnectionPolicy = gem_client.connection_policy
-                client_preferred_regions = connection_policy.PreferredLocations
+                client_preferred_regions = global_endpoint_manager.location_cache.effective_preferred_locations
                 client_excluded_regions = connection_policy.ExcludedLocations
 
         if global_endpoint_manager.location_cache:
@@ -191,7 +191,8 @@ def _get_client_settings(global_endpoint_manager: Optional[_GlobalEndpointManage
     client_settings = {"Preferred Regions": client_preferred_regions,
                        "Excluded Regions": client_excluded_regions,
                        "Account Read Regions": client_account_read_regions,
-                       "Account Write Regions": client_account_write_regions}
+                       "Account Write Regions": client_account_write_regions,
+                       "Per-Partition Automatic Failover Enabled": global_endpoint_manager.is_per_partition_automatic_failover_enabled()}
     if client_settings and isinstance(client_settings, dict):
         logger_str += ''.join([f"\t{k}: {v}\n" for k, v in client_settings.items()])
     return logger_str
