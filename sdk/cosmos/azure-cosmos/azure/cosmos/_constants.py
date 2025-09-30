@@ -26,6 +26,8 @@
 from typing import Dict
 from typing_extensions import Literal
 
+# cspell:ignore reranker
+
 
 class _Constants:
     """Constants used in the azure-cosmos package"""

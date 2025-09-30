@@ -24,6 +24,7 @@ import os
 import urllib
 from typing import Any, cast, Dict, List, Optional
 from urllib.parse import urlparse
+from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import DecodeError
@@ -32,7 +33,6 @@ from azure.core.pipeline.policies import (AsyncHTTPPolicy, ContentDecodePolicy,
                                           NetworkTraceLoggingPolicy, ProxyPolicy, UserAgentPolicy)
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.utils import CaseInsensitiveDict
-from urllib3.util.retry import Retry
 
 from ._inference_auth_policy_async import AsyncInferenceServiceBearerTokenPolicy
 from ._retry_utility_async import _ConnectionRetryPolicy
@@ -66,9 +66,6 @@ class _InferenceService:
         self._client_connection = cosmos_client_connection
         self._aad_credentials = self._client_connection.aad_credentials
         self._token_scope = self.inference_service_default_scope
-
-        parsed = urllib.parse.urlparse(self._client_connection.url_connection)
-        self._account_name = parsed.hostname.split('.')[0] if parsed.hostname else ""
 
         self._inference_endpoint = f"{self.semantic_reranking_inference_endpoint}/inference/semanticReranking"
         self._inference_pipeline_client = self._create_inference_pipeline_client()
