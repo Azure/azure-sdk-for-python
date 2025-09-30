@@ -17,6 +17,7 @@ import logging
 import base64
 import re
 import typing
+import traceback
 import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
@@ -323,10 +324,7 @@ def get_deserializer(annotation: typing.Any, rf: typing.Optional["_RestField"] =
         return _deserialize_int_as_str
     if rf and rf._format:
         return _DESERIALIZE_MAPPING_WITHFORMAT.get(rf._format)
-    func = _DESERIALIZE_MAPPING.get(annotation)  # pyright: ignore
-    if func:
-        return func
-    return TYPE_HANDLER_REGISTRY.get_deserializer(annotation)
+    return _DESERIALIZE_MAPPING.get(annotation)  # pyright: ignore
 
 
 def _get_type_alias_type(module_name: str, alias_name: str):
@@ -902,6 +900,10 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
 
     if get_deserializer(annotation, rf):
         return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
+
+    deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(annotation)
+    if deserializer:
+        return deserializer
 
     return functools.partial(_deserialize_default, annotation)
 

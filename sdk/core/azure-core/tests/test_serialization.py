@@ -7,10 +7,12 @@ from datetime import date, datetime, time, timedelta, tzinfo
 from enum import Enum
 import json
 import sys
+import traceback
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
 from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model, attribute_list
+from azure.core.exceptions import DeserializationError
 import pytest
 from modeltypes._utils.model_base import (
     Model as HybridModel,
@@ -1015,6 +1017,21 @@ class TestTypeHandlerRegistry:
             return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
 
         model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
+
+        serializer = TYPE_HANDLER_REGISTRY.get_serializer(model)
+        assert serializer is foo_serializer
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == {"foo": "foo", "bar": 42, "baz": 3.14}
+
+    def test_serialize_external_model_manual_decorator(self):
+
+        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+
+        TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)(foo_serializer)
+
+        model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
         assert json.loads(json_str) == {"foo": "foo", "bar": 42, "baz": 3.14}
 
@@ -1023,6 +1040,26 @@ class TestTypeHandlerRegistry:
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
         def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
             return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(TestTypeHandlerRegistry.FooModel)
+
+        assert type(deserializer).__name__ == "partial"
+        assert getattr(deserializer, "func", None) is foo_deserializer
+        assert getattr(deserializer, "args", ()) == (TestTypeHandlerRegistry.FooModel,)
+
+        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
+        assert isinstance(deserialized, TestTypeHandlerRegistry.FooModel)
+        assert deserialized.foo == "foo"
+        assert deserialized.bar == 42
+        assert deserialized.baz == 3.14
+
+    def test_deserialize_external_model_manual_decorator(self):
+
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)(foo_deserializer)
 
         json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
@@ -1289,6 +1326,81 @@ class TestTypeHandlerRegistry:
         assert isinstance(deserialized.external, str)
         assert deserialized.external == "just a string"
 
+    def test_deserialize_union_with_generated_model(self):
+        class GeneratedModel(HybridModel):
+            name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            value: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+        class ContainerModel(HybridModel):
+            item: Union[TestTypeHandlerRegistry.FooModel, GeneratedModel] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
+        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            if "foo" not in data:
+                raise ValueError("Missing 'foo' key for FooModel deserialization")
+            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+        input_dict = {"item": {"foo": "foo", "bar": 42, "baz": 3.14}}
+        deserialized = _deserialize(ContainerModel, input_dict)
+        assert isinstance(deserialized, ContainerModel)
+        assert isinstance(deserialized.item, TestTypeHandlerRegistry.FooModel)
+        assert deserialized.item.foo == "foo"
+        assert deserialized.item.bar == 42
+        assert deserialized.item.baz == 3.14
+
+        input_dict = {"item": {"name": "generated", "value": 100}}
+        deserialized = _deserialize(ContainerModel, input_dict)
+        assert isinstance(deserialized, ContainerModel)
+        assert isinstance(deserialized.item, GeneratedModel)
+        assert deserialized.item.name == "generated"
+        assert deserialized.item.value == 100
+
+    def test_multiple_external_type_deserialization_scenario(self):
+        # Here we test a scenario where we have a generated model containing a union of multiple external types.
+        # We register a deserializer predicate that will match all of the external types, and the handler function
+        # will inspect the input data to determine which type to instantiate.
+
+        class ExternalModelA:
+            def __init__(self, foo: str, bar: Optional[int] = None):
+                self.foo = foo
+                self.bar = bar
+
+        class ExternalModelB:
+            def __init__(self, biz: int, baz: Optional[str] = None):
+                self.biz = biz
+                self.baz = baz
+
+        class ContainerModel(HybridModel):
+            item: Union[ExternalModelA, ExternalModelB] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
+            if "foo" in data:
+                return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
+            elif "biz" in data:
+                return ExternalModelB(biz=data["biz"], baz=data.get("baz"))
+            else:
+                raise ValueError("Invalid data for deserialization")
+
+        TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
+
+        input_dict = {"item": {"foo": "foo_value", "bar": 123}}
+        deserialized = _deserialize(ContainerModel, input_dict)
+        assert isinstance(deserialized, ContainerModel)
+        assert isinstance(deserialized.item, ExternalModelA)
+        assert deserialized.item.foo == "foo_value"
+        assert deserialized.item.bar == 123
+
+        input_dict = {"item": {"biz": 456, "baz": "baz_value"}}
+        deserialized = _deserialize(ContainerModel, input_dict)
+        assert isinstance(deserialized, ContainerModel)
+        assert isinstance(deserialized.item, ExternalModelB)
+        assert deserialized.item.biz == 456
+        assert deserialized.item.baz == "baz_value"
+
     def test_serialize_deserialize_deep_nested_external_model_in_generated_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
@@ -1381,3 +1493,110 @@ class TestTypeHandlerRegistry:
         assert deserialized.foo.bar == 42
         assert deserialized.bar.biz == "biz"
         assert deserialized.bar.baz == 3
+
+    def test_serialize_types_caching(self):
+
+        class ModelA:
+            pass
+
+        class ModelB:
+            pass
+
+        def serializer_a(obj: ModelA) -> Dict[str, Any]:
+            return {"type": "A"}
+
+        def serialize_a2(obj: ModelA) -> Dict[str, Any]:
+            return {"type": "A2"}
+
+        def serializer_b(obj: ModelB) -> Dict[str, Any]:
+            return {"type": "B"}
+
+        TYPE_HANDLER_REGISTRY.register_serializer(ModelA)(serializer_a)
+        TYPE_HANDLER_REGISTRY.register_serializer(ModelB)(serializer_b)
+
+        model_a = ModelA()
+        model_b = ModelB()
+
+        # First retrieval should populate the cache
+        serializer = TYPE_HANDLER_REGISTRY.get_serializer(model_a)
+        assert serializer is serializer_a
+        assert TYPE_HANDLER_REGISTRY._serializer_cache[ModelA] is serializer_a
+
+        # Second retrieval should hit the cache
+        serializer = TYPE_HANDLER_REGISTRY.get_serializer(model_a)
+        assert serializer is serializer_a
+
+        # Retrieval for a different type
+        serializer = TYPE_HANDLER_REGISTRY.get_serializer(model_b)
+        assert serializer is serializer_b
+        assert TYPE_HANDLER_REGISTRY._serializer_cache[ModelB] is serializer_b
+
+        # Again, should hit the cache
+        serializer = TYPE_HANDLER_REGISTRY.get_serializer(model_b)
+        assert serializer is serializer_b
+
+        # Now, re-register a different serializer for ModelA
+        TYPE_HANDLER_REGISTRY.register_serializer(ModelA)(serialize_a2)
+        serializer = TYPE_HANDLER_REGISTRY.get_serializer(model_a)
+        assert serializer is serialize_a2
+        assert TYPE_HANDLER_REGISTRY._serializer_cache[ModelA] is serialize_a2
+
+    def test_deserialize_types_caching(self):
+
+        class ModelA:
+            def __init__(self):
+                self.type = None
+
+        class ModelB:
+            def __init__(self):
+                self.type = None
+
+        def deserializer_a(cls, data: Dict[str, Any]) -> ModelA:
+            obj = ModelA()
+            obj.type = data["type"]
+            return obj
+
+        def deserialize_a2(cls, data: Dict[str, Any]) -> ModelA:
+            obj = ModelA()
+            obj.type = data["type"] + "2"
+            return obj
+
+        def deserializer_b(cls, data: Dict[str, Any]) -> ModelB:
+            obj = ModelB()
+            obj.type = data["type"]
+            return obj
+
+        TYPE_HANDLER_REGISTRY.register_deserializer(ModelA)(deserializer_a)
+        TYPE_HANDLER_REGISTRY.register_deserializer(ModelB)(deserializer_b)
+
+        json_dict_a = {"type": "A"}
+        json_dict_b = {"type": "B"}
+
+        # First retrieval should populate the cache
+        deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(ModelA)
+        assert getattr(deserializer, "func", None) is deserializer_a
+        assert TYPE_HANDLER_REGISTRY._deserializer_cache[ModelA] is deserializer
+
+        # Second retrieval should hit the cache
+        deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(ModelA)
+        assert getattr(deserializer, "func", None) is deserializer_a
+
+        # Retrieval for a different type
+        deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(ModelB)
+        assert getattr(deserializer, "func", None) is deserializer_b
+        assert TYPE_HANDLER_REGISTRY._deserializer_cache[ModelB] is deserializer
+
+        # Again, should hit the cache
+        deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(ModelB)
+        assert getattr(deserializer, "func", None) is deserializer_b
+
+        # Now, re-register a different deserializer for ModelA
+        TYPE_HANDLER_REGISTRY.register_deserializer(ModelA)(deserialize_a2)
+        deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(ModelA)
+        assert getattr(deserializer, "func", None) is deserialize_a2
+        assert TYPE_HANDLER_REGISTRY._deserializer_cache[ModelA] is deserializer
+
+        # Test that deserialization works as expected
+        deserialized_a = _deserialize(ModelA, json_dict_a)
+        assert isinstance(deserialized_a, ModelA)
+        assert deserialized_a.type == "A2"
