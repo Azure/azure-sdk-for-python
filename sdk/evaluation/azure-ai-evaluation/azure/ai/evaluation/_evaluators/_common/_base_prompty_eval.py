@@ -101,7 +101,10 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         )
 
         self._flow = AsyncPrompty.load(
-            source=self._prompty_file, model=prompty_model_config, is_reasoning_model=self._is_reasoning_model
+            source=self._prompty_file,
+            model=prompty_model_config,
+            token_credential=credential,
+            is_reasoning_model=self._is_reasoning_model,
         )
 
     # __call__ not overridden here because child classes have such varied signatures that there's no point
