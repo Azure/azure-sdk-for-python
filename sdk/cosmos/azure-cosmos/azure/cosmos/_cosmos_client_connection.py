@@ -66,6 +66,7 @@ from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
+from ._inference_service import _InferenceService
 from ._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
@@ -236,6 +237,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             policies=policies
         )
 
+        self._inference_service: Optional[_InferenceService] = None
+        if self.aad_credentials:
+            self._inference_service = _InferenceService(self)
+
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
@@ -301,6 +306,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.session = _session.Session(self.url_connection)
         else:
             self.session = None
+
+    def _get_inference_service(self) -> Optional[_InferenceService]:
+        """Get inference service instance"""
+        return self._inference_service
 
     @property
     def Session(self) -> Optional[_session.Session]:

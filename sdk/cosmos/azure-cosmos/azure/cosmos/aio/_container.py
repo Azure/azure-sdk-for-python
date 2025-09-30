@@ -49,6 +49,7 @@ from .._cosmos_responses import CosmosDict, CosmosList
 from .._constants import _Constants as Constants
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
+from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
 from ..partition_key import (
     NonePartitionKeyValue,
@@ -1110,6 +1111,60 @@ class ContainerProxy:
             options=request_options,
             **kwargs
         )
+        return result
+
+    @distributed_trace_async
+    async def semantic_rerank(
+            self,
+            reranking_context: str,
+            documents: List[str],
+            semantic_reranking_options: Optional[Dict[str, Any]] = None
+    ) -> CosmosDict:
+        """
+        Rerank a list of documents using semantic reranking.
+
+        This method uses a semantic reranker to score and reorder the provided documents
+        based on their relevance to the given reranking context.
+
+        :param str reranking_context: The context or query string to use for reranking the documents.
+        :param list[str] documents: A list of documents (as strings) to be reranked.
+        :param semantic_reranking_options: Optional dictionary of additional
+            options to customize the semantic reranking process. Supported options:
+            - **return_documents** (bool): Whether to return the document text in the response.
+              If False, only scores and indices are returned. Default is True.
+            - **top_k** (int): Maximum number of documents to return in the reranked results.
+              If not specified, all documents are returned.
+            - **batch_size** (int): Number of documents to process in each batch.
+              Used for optimizing performance with large document sets.
+            - **sort** (bool): Whether to sort the results by relevance score in descending order.
+              Default is True.
+            - **document_type** (str): Type of documents being reranked. Supported values are
+              "string" and "json".
+            - **target_paths** (list[str]): If document_type is "json", the list of JSON paths
+              to extract text from for reranking.
+
+        :type semantic_reranking_options: Optional[Dict[str, Any]]
+
+        :returns: A CosmosDict containing the reranking results. The structure typically includes:
+            - **results** (list): List of reranked documents with their relevance scores
+            - Each result contains: **index** (int), **relevance_score** (float), and optionally **document** (str)
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
+        """
+
+        inference_service = self.client_connection._get_inference_service()
+        if inference_service is None:
+            raise CosmosHttpResponseError(
+                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                response=None
+            )
+
+        result = await inference_service.rerank(
+            reranking_context=reranking_context,
+            documents=documents,
+            semantic_reranking_options=semantic_reranking_options
+        )
+
         return result
 
     @distributed_trace_async

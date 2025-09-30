@@ -68,6 +68,7 @@ from .. import _runtime_constants as runtime_constants
 from .. import _request_object
 from . import _asynchronous_request as asynchronous_request
 from .._routing.aio.routing_map_provider import SmartRoutingMapProvider
+from ._inference_service_async import _InferenceService
 from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
@@ -242,6 +243,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             transport=transport,
             policies=policies
         )
+
+        self._inference_service: Optional[_InferenceService] = None
+        if self.aad_credentials:
+            self._inference_service = _InferenceService(self)
+
         self._setup_kwargs: Dict[str, Any] = kwargs
         self.session: Optional[_session.Session] = None
 
@@ -252,6 +258,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Routing map provider
         self._routing_map_provider: SmartRoutingMapProvider = SmartRoutingMapProvider(self)
+
+    def _get_inference_service(self) -> Optional[_InferenceService]:
+        """Get async inference service instance"""
+        return self._inference_service
 
     @property
     def _container_properties_cache(self) -> Dict[str, Dict[str, Any]]:

@@ -57,6 +57,8 @@ class _Constants:
     CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT: str = "False"
     AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
     AAD_DEFAULT_SCOPE: str = "https://cosmos.azure.com/.default"
+    INFERENCE_SERVICE_DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
+    SEMANTIC_RERANKER_INFERENCE_ENDPOINT: str = "AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"
 
     # Database Account Retry Policy constants
     AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES: str = "AZURE_COSMOS_HEALTH_CHECK_MAX_RETRIES"
