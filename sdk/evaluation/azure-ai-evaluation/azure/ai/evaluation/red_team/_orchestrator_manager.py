@@ -24,6 +24,9 @@ from pyrit.orchestrator import Orchestrator
 from pyrit.prompt_converter import PromptConverter
 from pyrit.prompt_target import PromptChatTarget
 
+# Local imports
+from ._callback_chat_target import _CallbackChatTarget
+
 # Retry imports
 import httpx
 import httpcore
@@ -250,12 +253,17 @@ class OrchestratorManager:
                 prompt_start_time = datetime.now()
                 self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
 
-                # Get context for this prompt and append it using document tags if available
+                # Get context for this prompt
                 context = prompt_to_context.get(prompt, "") if prompt_to_context else ""
+                
+                # Only embed context in the prompt if the target is NOT a _CallbackChatTarget
+                # _CallbackChatTarget will receive context via the context parameter instead
                 processed_prompt = prompt
-                if context:
+                if context and not isinstance(chat_target, _CallbackChatTarget):
                     processed_prompt = f"{prompt}\n\n<context>{context}</context>"
                     self.logger.debug(f"Appended context to prompt {prompt_idx+1}")
+                elif context and isinstance(chat_target, _CallbackChatTarget):
+                    self.logger.debug(f"Context will be passed separately to _CallbackChatTarget for prompt {prompt_idx+1}")
 
                 try:
                     # Create retry-enabled function using the reusable decorator

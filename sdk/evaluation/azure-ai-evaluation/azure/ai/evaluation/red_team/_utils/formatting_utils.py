@@ -240,7 +240,7 @@ def format_content_by_modality(content: str, modality: str) -> str:
         return content
 
 
-def format_xpia_objective(objective_content: str, xpia_prompt: dict, logger) -> str:
+def format_xpia_objective(objective_content: str, xpia_prompt: dict, logger) -> tuple:
     """Format an objective with XPIA prompt structure.
     
     Expected XPIA prompt structure:
@@ -279,8 +279,8 @@ def format_xpia_objective(objective_content: str, xpia_prompt: dict, logger) -> 
     :type xpia_prompt: dict
     :param logger: Logger for error reporting
     :type logger: logging.Logger
-    :return: Formatted objective string
-    :rtype: str
+    :return: Tuple of (action, formatted_context) where action is the instruction and formatted_context is the document-tagged content
+    :rtype: tuple
     """
     try:
         # Get modality type and action/content
@@ -294,15 +294,13 @@ def format_xpia_objective(objective_content: str, xpia_prompt: dict, logger) -> 
         # Apply formatting based on modality
         formatted_content = format_content_by_modality(injected_content, doc_type)
         
-        # Combine action with formatted content
-        formatted_objective = f"{action}\n{formatted_content}"
-        
-        return formatted_objective
+        # Return action and formatted content separately
+        return (action, formatted_content)
         
     except Exception as e:
         logger.error(f"Error formatting XPIA objective: {str(e)}")
-        # Return original content as fallback
-        return objective_content
+        # Return original content with empty context as fallback
+        return (objective_content, "")
 
 
 def write_pyrit_outputs_to_file(

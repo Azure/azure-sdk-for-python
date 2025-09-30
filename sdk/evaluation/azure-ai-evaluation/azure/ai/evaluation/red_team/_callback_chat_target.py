@@ -48,14 +48,20 @@ class _CallbackChatTarget(PromptChatTarget):
 
         logger.info(f"Sending the following prompt to the prompt target: {request}")
 
-        # Simple context handling - context is now embedded in the prompt content itself
-        # by the orchestrator manager, so we just pass empty context to maintain compatibility
+        # Extract context from request labels if available
+        # The context is stored in memory labels when the prompt is sent by orchestrator
         context_dict = {}
+        if hasattr(request, 'labels') and request.labels and 'context' in request.labels:
+            context_text = request.labels['context']
+            if context_text:
+                context_dict = {"context": context_text}
+                logger.debug(f"Extracted context from request labels: {context_text}")
 
         # response_context contains "messages", "stream", "session_state, "context"
-        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
-
-        response_text = response_context["messages"][-1]["content"]
+        response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
+        if type(response) == tuple:
+            response, tool_output = response
+        response_text = response["messages"][-1]["content"]
         response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
 
         logger.info("Received the following response from the prompt target" + f"{response_text}")

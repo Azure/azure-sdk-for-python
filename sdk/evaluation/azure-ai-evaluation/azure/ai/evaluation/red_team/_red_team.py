@@ -313,6 +313,7 @@ class RedTeam:
         risk_category: Optional[RiskCategory] = None,
         application_scenario: Optional[str] = None,
         strategy: Optional[str] = None,
+        is_agent_target: Optional[bool] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI client for a specific risk category or from a custom dataset.
 
@@ -328,6 +329,8 @@ class RedTeam:
         :type application_scenario: Optional[str]
         :param strategy: Optional attack strategy to get specific objectives for
         :type strategy: Optional[str]
+        :param is_agent_target: Optional boolean indicating if target is an agent (True) or model (False)
+        :type is_agent_target: Optional[bool]
         :return: A list of attack objective prompts
         :rtype: List[str]
         """
@@ -360,6 +363,7 @@ class RedTeam:
                 baseline_key,
                 current_key,
                 num_objectives,
+                is_agent_target,
             )
 
     async def _get_custom_attack_objectives(
@@ -421,6 +425,7 @@ class RedTeam:
         baseline_key: tuple,
         current_key: tuple,
         num_objectives: int,
+        is_agent_target: Optional[bool] = None,
     ) -> List[str]:
         """Get attack objectives from the RAI service."""
         content_harm_risk = None
@@ -436,6 +441,8 @@ class RedTeam:
             )
 
             # Get objectives from RAI service
+            target_type_str = "agent" if is_agent_target else "model" if is_agent_target is not None else None
+            
             if "tense" in strategy:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
                     risk_type=content_harm_risk,
@@ -444,6 +451,7 @@ class RedTeam:
                     strategy="tense",
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
+                    target_type=target_type_str,
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -453,6 +461,7 @@ class RedTeam:
                     strategy=None,
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
+                    target_type=target_type_str,
                 )
 
             if isinstance(objectives_response, list):
@@ -463,7 +472,7 @@ class RedTeam:
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
             # Handle indirect jailbreak strategy
             elif strategy == "indirect_jailbreak":
-                objectives_response = await self._apply_xpia_prompts(objectives_response)
+                objectives_response = await self._apply_xpia_prompts(objectives_response, target_type_str)
 
         except Exception as e:
             self.logger.error(f"Error calling get_attack_objectives: {str(e)}")
@@ -508,7 +517,7 @@ class RedTeam:
 
         return objectives_list
 
-    async def _apply_xpia_prompts(self, objectives_list: List) -> List:
+    async def _apply_xpia_prompts(self, objectives_list: List, target_type_str: str) -> List:
         """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy."""
         self.logger.debug("Applying XPIA prompts to objectives for indirect jailbreak")
         try:
@@ -522,6 +531,7 @@ class RedTeam:
                     strategy=None,
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
+                    target_type=target_type_str
                 )
 
             xpia_prompts = await get_xpia_prompts_with_retry()
@@ -539,9 +549,11 @@ class RedTeam:
                         # Randomly select an XPIA prompt
                         xpia_prompt = random.choice(xpia_prompts)
                         
-                        # Apply the XPIA formatting
-                        formatted_content = self._format_xpia_objective(original_content, xpia_prompt)
-                        message["content"] = formatted_content
+                        # Apply the XPIA formatting - returns (action, formatted_context)
+                        action, formatted_context = self._format_xpia_objective(original_content, xpia_prompt)
+                        # Store action as content and document-tagged content as context
+                        message["content"] = action
+                        message["context"] = formatted_context
                         
         except Exception as e:
             self.logger.error(f"Error applying XPIA prompts: {str(e)}")
@@ -549,8 +561,16 @@ class RedTeam:
 
         return objectives_list
 
-    def _format_xpia_objective(self, objective_content: str, xpia_prompt: dict) -> str:
-        """Format an objective with XPIA prompt structure using the formatting utility."""
+    def _format_xpia_objective(self, objective_content: str, xpia_prompt: dict) -> tuple:
+        """Format an objective with XPIA prompt structure using the formatting utility.
+        
+        :param objective_content: The objective content to inject
+        :type objective_content: str
+        :param xpia_prompt: The XPIA prompt structure
+        :type xpia_prompt: dict
+        :return: Tuple of (action, formatted_context)
+        :rtype: tuple
+        """
         return format_xpia_objective(objective_content, xpia_prompt, self.logger)
 
     def _filter_and_select_objectives(
@@ -833,6 +853,7 @@ class RedTeam:
         :rtype: RedTeamResult
         """
         user_agent: Optional[str] = kwargs.get("user_agent", "(type=redteam; subtype=RedTeam)")
+        is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
@@ -903,7 +924,7 @@ class RedTeam:
             self._initialize_tracking_dict(flattened_attack_strategies)
 
             # Fetch attack objectives
-            all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario)
+            all_objectives = await self._fetch_all_objectives(flattened_attack_strategies, application_scenario, is_agent_target)
 
             chat_target = get_chat_target(target)
             self.chat_target = chat_target
@@ -1017,7 +1038,7 @@ class RedTeam:
                     "status": TASK_STATUS["PENDING"],
                 }
 
-    async def _fetch_all_objectives(self, flattened_attack_strategies: List, application_scenario: str) -> Dict:
+    async def _fetch_all_objectives(self, flattened_attack_strategies: List, application_scenario: str, is_agent_target: bool) -> Dict:
         """Fetch all attack objectives for all strategies and risk categories."""
         log_section_header(self.logger, "Fetching attack objectives")
         all_objectives = {}
@@ -1029,6 +1050,7 @@ class RedTeam:
                 risk_category=risk_category,
                 application_scenario=application_scenario,
                 strategy="baseline",
+                is_agent_target=is_agent_target,
             )
             if "baseline" not in all_objectives:
                 all_objectives["baseline"] = {}
@@ -1052,6 +1074,7 @@ class RedTeam:
                     risk_category=risk_category,
                     application_scenario=application_scenario,
                     strategy=strategy_name,
+                    is_agent_target=is_agent_target,
                 )
                 all_objectives[strategy_name][risk_category.value] = objectives
 
