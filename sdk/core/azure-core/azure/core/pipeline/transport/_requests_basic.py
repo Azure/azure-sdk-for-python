@@ -46,7 +46,9 @@ import requests
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
+    ServiceRequestTimeoutError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
     IncompleteReadError,
     HttpResponseError,
     DecodeError,
@@ -384,13 +386,12 @@ class RequestsTransport(HttpTransport):
                     "Please report this issue to https://github.com/Azure/azure-sdk-for-python/issues."
                 ) from err
             raise
-        except (
-            NewConnectionError,
-            ConnectTimeoutError,
-        ) as err:
+        except NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
+        except ConnectTimeoutError as err:
+            error = ServiceRequestTimeoutError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
-            error = ServiceResponseError(err, error=err)
+            error = ServiceResponseTimeoutError(err, error=err)
         except requests.exceptions.ConnectionError as err:
             if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)

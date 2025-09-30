@@ -16,7 +16,13 @@ from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpR
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ServiceRequestError,
+    ServiceResponseError,
+    ServiceRequestTimeoutError,
+    ServiceResponseTimeoutError,
+)
 import logging
 import pytest
 from utils import (
@@ -1322,3 +1328,38 @@ def test_close_too_soon_works_fine(caplog, port, http_request):
     result = transport.send(request)
 
     assert result  # No exception is good enough here
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_requests_timeout_response(caplog, port, http_request):
+    transport = RequestsTransport()
+
+    request = http_request("GET", f"http://localhost:{port}/basic/string")
+
+    with pytest.raises(ServiceResponseTimeoutError) as err:
+        transport.send(request, read_timeout=0.0001)
+
+    with pytest.raises(ServiceResponseError) as err:
+        transport.send(request, read_timeout=0.0001)
+
+    stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
+    with pytest.raises(ServiceResponseTimeoutError) as err:
+        transport.send(stream_request, stream=True, read_timeout=0.0001)
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.asyncio
+async def test_requests_timeout_request(caplog, port, http_request):
+    transport = RequestsTransport()
+
+    request = http_request("GET", f"http://localhost:{port}/basic/string")
+
+    with pytest.raises(ServiceRequestError) as err:
+        transport.send(request, connection_timeout=0.0001)
+
+    with pytest.raises(ServiceRequestTimeoutError) as err:
+        transport.send(request, connection_timeout=0.0001)
+
+    stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
+    with pytest.raises(ServiceRequestTimeoutError) as err:
+        transport.send(stream_request, stream=True, connection_timeout=0.0001)
