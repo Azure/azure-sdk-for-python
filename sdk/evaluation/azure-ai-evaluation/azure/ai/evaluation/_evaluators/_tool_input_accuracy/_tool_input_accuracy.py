@@ -4,9 +4,11 @@
 import os
 import logging
 import math
+import json
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from ..._common.utils import reformat_agent_response
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -151,6 +153,8 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if not isinstance(tool_definitions, list):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
+        tool_calls = reformat_agent_response(tool_calls, include_tool_calls=True)
+
         try:
             needed_tool_definitions = self._extract_needed_tool_definitions(
                 tool_calls, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
@@ -165,9 +169,12 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if len(needed_tool_definitions) == 0:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
+        # Prettify tool calls for LLM evaluation
+        prettified_tool_calls = self._prettify_raw_tool_calls(tool_calls)
+
         return {
             "query": query,
-            "tool_calls": tool_calls,  # Keep full tool calls with parameters
+            "tool_calls": prettified_tool_calls,  # Use prettified tool calls for LLM
             "tool_definitions": needed_tool_definitions,
         }
 
@@ -241,6 +248,42 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         result = await self._do_eval(eval_input)
         # Return the result
         return result
+
+    def _prettify_raw_tool_calls(self, tool_calls):
+        """Prettify raw tool call objects into readable format for LLM evaluation.
+        
+        :param tool_calls: List of raw tool call objects
+        :type tool_calls: List[Dict]
+        :return: List of prettified tool call strings
+        :rtype: List[str]
+        """
+        if not tool_calls:
+            return []
+        
+        if not isinstance(tool_calls, list):
+            tool_calls = [tool_calls]
+        
+        prettified = []
+        for call in tool_calls:
+            if isinstance(call, dict):
+                func_name = call.get("name", "unknown_function")
+                args = call.get("arguments", {})
+                
+                # Format arguments
+                if isinstance(args, dict):
+                    args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
+                elif isinstance(args, str):
+                    try:
+                        parsed_args = json.loads(args)
+                        args_str = ", ".join(f'{k}="{v}"' for k, v in parsed_args.items())
+                    except (json.JSONDecodeError, TypeError):
+                        args_str = f'args="{args}"'
+                else:
+                    args_str = ""
+                
+                prettified.append(f"[TOOL_CALL] {func_name}({args_str})")
+        
+        return prettified
 
     def _calculate_parameter_extraction_accuracy(self, details):
         """Calculate parameter extraction accuracy from the evaluation details.
