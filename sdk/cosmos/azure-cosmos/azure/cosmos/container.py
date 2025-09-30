@@ -62,9 +62,10 @@ from .scripts import ScriptsProxy
 
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=too-many-lines,disable=protected-access
+# pylint: disable=too-many-lines,disable=protected-access,line-too-long
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
 def _get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],

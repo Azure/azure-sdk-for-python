@@ -58,10 +58,11 @@ from ..partition_key import (
 )
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=protected-access, too-many-lines
+# pylint: disable=protected-access,too-many-lines,line-too-long
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
