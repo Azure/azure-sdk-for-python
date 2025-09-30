@@ -1,7 +1,7 @@
 
 # How to publish new evaluator in Evaluator Catalog.
 
-This guild helps our partners to bring their evaluators into Microsoft provided Evaluator Catalog in Next Gen UI. 
+This guide helps our partners to bring their evaluators into Microsoft provided Evaluator Catalog in Next Gen UI. 
 
 ## Context
 
