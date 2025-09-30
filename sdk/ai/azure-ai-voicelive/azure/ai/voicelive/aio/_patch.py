@@ -678,11 +678,11 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         # compression (neutral) -> compress (aiohttp expects int or None)
         comp = src.pop("compression", None)
         if comp is True:
-            mapped["compress"] = -1          # enable compression with default window bits
+            mapped["compress"] = -1  # enable compression with default window bits
         elif comp is False:
-            mapped["compress"] = None        # disable compression
+            mapped["compress"] = None  # disable compression
         elif isinstance(comp, int):
-            mapped["compress"] = comp        # power user provided zlib window value
+            mapped["compress"] = comp  # power user provided zlib window value
 
         # max message size
         if "max_msg_size" in src:
