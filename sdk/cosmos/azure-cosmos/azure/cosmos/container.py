@@ -793,7 +793,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -861,7 +860,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -883,7 +881,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword str query: The Azure Cosmos DB SQL query to execute.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
@@ -980,37 +977,26 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         documents: List[str],
         semantic_reranking_options: Optional[Dict[str, Any]] = None
     ) -> CosmosDict:
-        """
-        Rerank a list of documents using semantic reranking.
+        """Rerank a list of documents using semantic reranking.
 
         This method uses a semantic reranker to score and reorder the provided documents
         based on their relevance to the given reranking context.
 
-
         :param str reranking_context: The context or query string to use for reranking the documents.
         :param list[str] documents: A list of documents (as strings) to be reranked.
-        :param semantic_reranking_options: Optional dictionary of additional
-        options to customize the semantic reranking process.
+        :param semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
 
-            Supported options:
-            - **return_documents** (bool): Whether to return the document text in the response.
-              If False, only scores and indices are returned. Default is True.
-            - **top_k** (int): Maximum number of documents to return in the reranked results.
-              If not specified, all documents are returned.
-            - **batch_size** (int): Number of documents to process in each batch.
-              Used for optimizing performance with large document sets.
-            - **sort** (bool): Whether to sort the results by relevance score in descending order.
-              Default is True.
-            - **document_type** (str): Type of documents being reranked. Supported values are
-              "string" and "json".
-            - **target_paths** (list[str]): If document_type is "json", the list of JSON paths
-              to extract text from for reranking.
+         Supported options:
+
+         * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
+         * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
+         * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
+         * **sort** (bool): Whether to sort the results by relevance score in descending order. Default is True.
+         * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
+         * **target_paths** (list[str]): If document_type is "json", the list of JSON paths to extract text from for reranking.
 
         :type semantic_reranking_options: Optional[Dict[str, Any]]
-
-        :returns: A CosmosDict containing the reranking results. The structure typically includes:
-            - **results** (list): List of reranked documents with their relevance scores
-            - Each result contains: **index** (int), **relevance_score** (float), and optionally **document** (str)
+        :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
         """
