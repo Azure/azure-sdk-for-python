@@ -36,7 +36,6 @@ from .._azureappconfigurationproviderbase import (
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,
-    update_correlation_context_header,
 )
 from ._async_client_manager import (
     AsyncConfigurationClientManager as ConfigurationClientManager,
@@ -305,17 +304,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
     ):
         settings_refreshed = False
-        headers = update_correlation_context_header(
+        headers = self._update_correlation_context_header(
             kwargs.pop("headers", {}),
             "Watch",
             replica_count,
-            self._feature_flag_enabled,
-            self._feature_filter_usage,
-            self._uses_key_vault,
-            self._uses_load_balancing,
             is_failover_request,
-            self._uses_ai_configuration,
-            self._uses_aicc_configuration,
         )
         configuration_settings: List[ConfigurationSetting] = []
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]] = None
@@ -426,17 +419,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         exception: Exception = RuntimeError(error_message)
 
         while client := self._replica_client_manager.get_next_active_client():
-            headers = update_correlation_context_header(
+            headers = self._update_correlation_context_header(
                 kwargs.pop("headers", {}),
                 "Startup",
                 replica_count,
-                self._feature_flag_enabled,
-                self._feature_filter_usage,
-                self._uses_key_vault,
-                self._uses_load_balancing,
                 is_failover_request,
-                self._uses_ai_configuration,
-                self._uses_aicc_configuration,
             )
             try:
                 configuration_settings = await client.load_configuration_settings(
