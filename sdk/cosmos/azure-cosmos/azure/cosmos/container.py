@@ -987,8 +987,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param str reranking_context: The context or query string to use for reranking the documents.
         :param list[str] documents: A list of documents (as strings) to be reranked.
-        :param semantic_reranking_options: Optional dictionary of additional options to
-        customize the semantic reranking process.
+        :param semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
 
          Supported options:
 
