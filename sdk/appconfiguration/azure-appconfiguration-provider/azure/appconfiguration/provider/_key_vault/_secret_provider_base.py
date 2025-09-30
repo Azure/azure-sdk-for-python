@@ -47,6 +47,16 @@ class _SecretProviderBase(Mapping[str, Union[str, JSON]]):
         """
         self._secret_cache = {}
 
+    def _cache_value(self, keyvault_identifier: KeyVaultSecretIdentifier, secret_value: Any, vault_url: str) -> str:
+        if secret_value:
+            if keyvault_identifier.version:
+                self._secret_version_cache[keyvault_identifier.source_id] = secret_value
+            else:
+                self._secret_cache[keyvault_identifier.source_id] = secret_value
+            return secret_value
+
+        raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
+
     def resolve_keyvault_reference_base(
         self, config: SecretReferenceConfigurationSetting
     ) -> Tuple[KeyVaultSecretIdentifier, str]:

@@ -3,14 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import Mapping, Any, TypeVar, Dict
+from typing import Mapping, Any, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets import SecretClient
 from azure.core.exceptions import ServiceRequestError
 from ._secret_provider_base import _SecretProviderBase
 
 JSON = Mapping[str, Any]
-_T = TypeVar("_T")
 
 
 class SecretProvider(_SecretProviderBase):
@@ -51,14 +50,8 @@ class SecretProvider(_SecretProviderBase):
 
         if self._secret_resolver and secret_value is None:
             secret_value = self._secret_resolver(config.secret_id)
-        if secret_value:
-            if keyvault_identifier.version:
-                self._secret_version_cache[keyvault_identifier.source_id] = secret_value
-            else:
-                self._secret_cache[keyvault_identifier.source_id] = secret_value
-            return secret_value
 
-        raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
+        return self._cache_value(keyvault_identifier, secret_value, vault_url)
 
     def close(self) -> None:
         """

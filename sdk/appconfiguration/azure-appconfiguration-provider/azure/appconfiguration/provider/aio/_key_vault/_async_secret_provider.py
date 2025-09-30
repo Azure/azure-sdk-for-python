@@ -4,17 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import inspect
-import logging
-from typing import Mapping, Any, TypeVar, Dict
+from typing import Mapping, Any, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
 from azure.keyvault.secrets.aio import SecretClient
 from azure.core.exceptions import ServiceRequestError
 from ..._key_vault._secret_provider_base import _SecretProviderBase
 
 JSON = Mapping[str, Any]
-_T = TypeVar("_T")
-
-logger = logging.getLogger(__name__)
 
 
 class SecretProvider(_SecretProviderBase):
@@ -60,14 +56,7 @@ class SecretProvider(_SecretProviderBase):
                 # Need to ignore type, mypy doesn't like the callback could return `Never`
                 secret_value = await secret_value  # type: ignore
 
-        if secret_value:
-            if keyvault_identifier.version:
-                self._secret_version_cache[keyvault_identifier.source_id] = secret_value
-            else:
-                self._secret_cache[keyvault_identifier.source_id] = secret_value
-            return secret_value
-
-        raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
+        return self._cache_value(keyvault_identifier, secret_value, vault_url)
 
     async def close(self) -> None:
         """
