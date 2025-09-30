@@ -19,8 +19,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
-from cosmos import CrossRegionHedgingStrategyConfig
-from cosmos._availability_strategy_config import _validate_hedging_config
+from azure.cosmos._availability_strategy_config import CrossRegionHedgingStrategyConfig, _validate_hedging_config
 
 _Unset: Any = object()
 class MockHandler(logging.Handler):
