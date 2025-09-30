@@ -434,17 +434,17 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def read_items(
-        self,
-        items: Sequence[Tuple[str, PartitionKeyType]],
-        *,
-        max_concurrency: int = 10,
-        consistency_level: Optional[str] = None,
-        session_token: Optional[str] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        excluded_locations: Optional[List[str]] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            items: Sequence[Tuple[str, PartitionKeyType]],
+            *,
+            max_concurrency: int = 10,
+            consistency_level: Optional[str] = None,
+            session_token: Optional[str] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            excluded_locations: Optional[List[str]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
 
@@ -496,23 +496,23 @@ class ContainerProxy:
 
     @overload
     def query_items(
-        self,
-        query: str,
-        *,
-        continuation_token_limit: Optional[int] = None,
-        enable_scan_in_query: Optional[bool] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        max_item_count: Optional[int] = None,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        populate_index_metrics: Optional[bool] = None,
-        populate_query_metrics: Optional[bool] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
-        session_token: Optional[str] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            partition_key: Optional[PartitionKeyType] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ):
         """Return all results matching the given `query`.
 
@@ -579,23 +579,23 @@ class ContainerProxy:
 
     @overload
     def query_items(
-        self,
-        query: str,
-        *,
-        continuation_token_limit: Optional[int] = None,
-        enable_scan_in_query: Optional[bool] = None,
-        feed_range: Optional[Dict[str, Any]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
-        max_integrated_cache_staleness_in_ms: Optional[int] = None,
-        max_item_count: Optional[int] = None,
-        parameters: Optional[List[Dict[str, object]]] = None,
-        populate_index_metrics: Optional[bool] = None,
-        populate_query_metrics: Optional[bool] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
-        session_token: Optional[str] = None,
-        throughput_bucket: Optional[int] = None,
-        **kwargs: Any
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            feed_range: Optional[Dict[str, Any]] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
     ):
         """Return all results matching the given `query`.
 
@@ -782,15 +782,15 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-        partition_key: PartitionKeyType,
-        priority: Optional[Literal["High", "Low"]] = None,
-        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-        response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            partition_key: PartitionKeyType,
+            priority: Optional[Literal["High", "Low"]] = None,
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -829,15 +829,15 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-        self,
-        *,
-        feed_range: Dict[str, Any],
-        max_item_count: Optional[int] = None,
-        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
-        **kwargs: Any
+            self,
+            *,
+            feed_range: Dict[str, Any],
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -871,13 +871,13 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-        self,
-        *,
-        continuation: str,
-        max_item_count: Optional[int] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
-        **kwargs: Any
+            self,
+            *,
+            continuation: str,
+            max_item_count: Optional[int] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -902,14 +902,14 @@ class ContainerProxy:
 
     @overload
     def query_items_change_feed(
-        self,
-        *,
-        max_item_count: Optional[int] = None,
-        start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-        priority: Optional[Literal["High", "Low"]] = None,
-        mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
-        **kwargs: Any
+            self,
+            *,
+            max_item_count: Optional[int] = None,
+            start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
         """Get a sorted list of items that were changed in the entire container,
          in the order in which they were modified.
@@ -943,8 +943,8 @@ class ContainerProxy:
 
     @distributed_trace
     def query_items_change_feed(  # pylint: disable=unused-argument
-        self,
-        **kwargs: Any
+            self,
+            **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
 
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -1411,10 +1411,10 @@ class ContainerProxy:
 
     @distributed_trace_async
     async def get_throughput(
-        self,
-        *,
-        response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
-        **kwargs: Any
+            self,
+            *,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+            **kwargs: Any
     ) -> ThroughputProperties:
         """Get the ThroughputProperties object for this container.
 
@@ -1574,7 +1574,7 @@ class ContainerProxy:
         :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
             None, Sequence[Union[str, int, float, bool, None]]]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :returns: A dict representing the retrieved conflict.
         :rtype: Dict[str, Any]
@@ -1757,10 +1757,10 @@ class ContainerProxy:
 
     @distributed_trace
     def read_feed_ranges(
-        self,
-        *,
-        force_refresh: bool = False,
-        **kwargs: Any
+            self,
+            *,
+            force_refresh: bool = False,
+            **kwargs: Any
     ) -> AsyncIterable[Dict[str, Any]]:
         """ Obtains a list of feed ranges that can be used to parallelize feed operations.
 
@@ -1800,9 +1800,9 @@ class ContainerProxy:
         )
 
     async def get_latest_session_token(
-        self,
-        feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
-        target_feed_range: Dict[str, Any]
+            self,
+            feed_ranges_to_session_tokens: List[Tuple[Dict[str, Any], str]],
+            target_feed_range: Dict[str, Any]
     ) -> str:
         """ **provisional** This method is still in preview and may be subject to breaking changes.
 
