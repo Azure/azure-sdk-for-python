@@ -422,9 +422,9 @@ class EvaluationEvaluateSamples(object):
         task_adherence_evaluator(query=query, response=response, tool_definitions=tool_definitions)
         # [END task_adherence_evaluator]
 
-        # [START task_completion_evaluator]
+        # [START task_success_evaluator]
         import os
-        from azure.ai.evaluation._evaluators._task_completion import TaskCompletionEvaluator
+        from azure.ai.evaluation._evaluators._task_success import TaskSuccessEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),
@@ -432,7 +432,7 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        task_completion_evaluator = TaskCompletionEvaluator(model_config=model_config)
+        task_success_evaluator = TaskSuccessEvaluator(model_config=model_config)
 
         query = [
             {"role": "system", "content": "You are a travel booking assistant. Help users find and book flights."},
@@ -499,8 +499,8 @@ class EvaluationEvaluateSamples(object):
             }
         ]
 
-        task_completion_evaluator(query=query, response=response, tool_definitions=tool_definitions)
-        # [END task_completion_evaluator]
+        task_success_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # [END task_success_evaluator]
 
         # [START indirect_attack_evaluator]
         import os
@@ -574,6 +574,45 @@ class EvaluationEvaluateSamples(object):
             },
         )
         # [END tool_call_accuracy_evaluator]
+
+        # [START path_efficiency_evaluator]
+        from azure.ai.evaluation._evaluators._path_efficiency import PathEfficiencyEvaluator
+
+        path_efficiency_evaluator = PathEfficiencyEvaluator(
+            precision_threshold=0.7, recall_threshold=0.8, f1_score_threshold=0.75
+        )
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+            },
+        ]
+        ground_truth = ["search", "analyze", "report"]
+
+        path_efficiency_evaluator(response=response, ground_truth=ground_truth)
+
+        # Also supports tuple format with parameters for exact parameter matching
+        response_with_params = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}
+                ],
+            },
+        ]
+        ground_truth_with_params = (["search"], {"search": {"query": "test"}})
+
+        path_efficiency_evaluator(response=response_with_params, ground_truth=ground_truth_with_params)
+        # [END path_efficiency_evaluator]
 
         # [START document_retrieval_evaluator]
         from azure.ai.evaluation import DocumentRetrievalEvaluator

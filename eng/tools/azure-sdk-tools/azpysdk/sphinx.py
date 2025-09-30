@@ -283,7 +283,15 @@ class sphinx(Check):
             try:
                 if args.next:
                     install_into_venv(
-                        executable, ["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery", f"PyGithub=={PYGITHUB_VERSION}"], package_dir
+                        executable,
+                        [
+                            "sphinx",
+                            "sphinx_rtd_theme",
+                            "myst_parser",
+                            "sphinxcontrib-jquery",
+                            f"PyGithub=={PYGITHUB_VERSION}",
+                        ],
+                        package_dir,
                     )
                 else:
                     install_into_venv(
@@ -294,7 +302,7 @@ class sphinx(Check):
                             f"myst_parser=={MYST_PARSER_VERSION}",
                             f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}",
                         ],
-                        package_dir
+                        package_dir,
                     )
             except CalledProcessError as e:
                 logger.error(f"Failed to install sphinx: {e}")
