@@ -7,7 +7,6 @@ Tests for the HTTP challenge authentication implementation. These tests aren't p
 the challenge cache is global to the process.
 """
 import base64
-import copy
 import functools
 from itertools import product
 import os
