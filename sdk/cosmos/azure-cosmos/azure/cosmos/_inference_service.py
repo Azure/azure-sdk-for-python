@@ -20,6 +20,7 @@
 # SOFTWARE.
 
 import json
+import os
 import urllib
 from typing import Any, cast, Dict, List, Optional
 
@@ -54,7 +55,7 @@ class _InferenceService:
     RETRY_AFTER_STATUS_CODES = frozenset([429, 500])
     RETRY_BACKOFF_FACTOR = 0.8
     inference_service_default_scope = Constants.INFERENCE_SERVICE_DEFAULT_SCOPE
-    semantic_reranking_inference_endpoint = Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT
+    semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
 
     def __init__(self, cosmos_client_connection):
         """Initialize semantic reranker with credentials and endpoint information.
