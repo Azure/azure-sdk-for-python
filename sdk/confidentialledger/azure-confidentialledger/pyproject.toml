@@ -41,7 +41,9 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+Homepage = "https://github.com/Azure/azure-sdk-for-python"
+"Bug Reports" = "https://github.com/Azure/azure-sdk-for-python/issues"
+Source = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.confidentialledger._version.VERSION"}
