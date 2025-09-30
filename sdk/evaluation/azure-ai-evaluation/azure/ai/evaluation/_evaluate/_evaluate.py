@@ -32,7 +32,7 @@ from .._constants import (
     BINARY_AGGREGATE_SUFFIX,
     DEFAULT_OAI_EVAL_RUN_NAME,
 )
-from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, _AppInsightsConfig
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
@@ -982,6 +982,18 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         _write_output(output_path, result)
 
     return result
+
+
+def _convert_eval_results_df_to_aoai_result(results_df: pd.DataFrame) -> List[Dict]:
+    return [{}]
+
+
+def _create_eval_results_summary(results: List[Dict]) -> Dict:
+    return {}
+
+
+def _emit_eval_result_events_to_app_insights(app_insights_config: _AppInsightsConfig, results: List[Dict]) -> None:
+    pass
 
 
 def _preprocess_data(

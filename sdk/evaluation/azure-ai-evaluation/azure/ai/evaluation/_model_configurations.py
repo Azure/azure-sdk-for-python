@@ -121,3 +121,15 @@ class EvaluationResult(TypedDict):
     metrics: Dict
     studio_url: NotRequired[str]
     rows: List[Dict]
+    evaluation_results_list: List[Dict]
+    evaluation_summary: Dict
+
+
+class _AppInsightsConfig(TypedDict):
+    app_insights_connection_string: str
+    experiment_name: str
+    agent_id: NotRequired[str]
+    run_type: NotRequired[str] # continuous, batch, etc
+    is_scheduled_run: NotRequired[bool]
+    evaluation_run_id: NotRequired[str]
+    dataset_id: NotRequired[str]
