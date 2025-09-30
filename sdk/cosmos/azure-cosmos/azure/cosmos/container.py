@@ -1001,7 +1001,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param str reranking_context: The context or query string to use for reranking the documents.
         :param list[str] documents: A list of documents (as strings) to be reranked.
         :param semantic_reranking_options: Optional dictionary of additional
-            options to customize the semantic reranking process. Supported options:
+        options to customize the semantic reranking process.
+
+            Supported options:
             - **return_documents** (bool): Whether to return the document text in the response.
               If False, only scores and indices are returned. Default is True.
             - **top_k** (int): Maximum number of documents to return in the reranked results.
@@ -1014,6 +1016,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
               "string" and "json".
             - **target_paths** (list[str]): If document_type is "json", the list of JSON paths
               to extract text from for reranking.
+
         :type semantic_reranking_options: Optional[Dict[str, Any]]
 
         :returns: A CosmosDict containing the reranking results. The structure typically includes:
