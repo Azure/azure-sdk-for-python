@@ -131,7 +131,7 @@ class _QueryExecutionContextBase(object):
         return fetched_items
 
     async def _fetch_items_helper_with_retries(self, fetch_function):
-        async def callback():
+        async def callback(**kwargs):
             return await self._fetch_items_helper_no_retries(fetch_function)
 
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback, **self._options)

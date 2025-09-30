@@ -231,7 +231,7 @@ class TestChangeFeedPKVariationAsync(unittest.IsolatedAsyncioTestCase):
 
         # Simulate the version key not being in the definition
 
-        async def _get_properties_override():
+        async def _get_properties_override(**kwargs):
             properties = await original_get_properties()
             partition_key = properties["partitionKey"]
             partition_key.pop("version", None)  # Remove version key for validation

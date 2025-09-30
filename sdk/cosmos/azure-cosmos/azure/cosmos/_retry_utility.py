@@ -130,7 +130,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
                 global_endpoint_manager.record_success(args[0])
             else:
-                result = ExecuteFunction(function )
+                result = ExecuteFunction(function, *args, **kwargs)
             # Check timeout after successful execution
             if timeout:
                 elapsed = time.time() - operation_start_time

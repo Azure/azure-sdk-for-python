@@ -129,7 +129,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 result = await ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)
                 await global_endpoint_manager.record_success(args[0])
             else:
-                result = await ExecuteFunctionAsync(function)
+                result = await ExecuteFunctionAsync(function, *args, **kwargs)
                 # Check timeout after successful execution
                 if timeout:
                     elapsed = time.time() - operation_start_time
