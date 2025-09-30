@@ -77,7 +77,7 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
         self.request_type = "Test"
         self.replica_count = 2
         self.is_failover_request = False
-        
+
         # Create provider instance with test configuration
         self.provider = AzureAppConfigurationProviderBase(
             endpoint="https://test.azconfig.io",
@@ -161,7 +161,7 @@ class TestUpdateCorrelationContextHeader(unittest.TestCase):
         self.provider._uses_load_balancing = True
         self.provider._uses_ai_configuration = True
         self.provider._uses_aicc_configuration = True
-        
+
         result = self.provider._update_correlation_context_header(
             self.headers,
             self.request_type,
@@ -187,9 +187,7 @@ class TestUsesFeatureFlags(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment."""
-        self.provider = AzureAppConfigurationProviderBase(
-            endpoint="https://test.azconfig.io"
-        )
+        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
 
     def test_no_feature_flags_returns_empty(self):
         """Test that no feature flags returns empty string."""
