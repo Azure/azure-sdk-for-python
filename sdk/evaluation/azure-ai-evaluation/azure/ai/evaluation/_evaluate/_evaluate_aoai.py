@@ -7,7 +7,7 @@ import re
 
 from openai import AzureOpenAI, OpenAI
 import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List
+from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
@@ -21,6 +21,15 @@ from azure.ai.evaluation._common._experimental import experimental
 
 TClient = TypeVar("TClient", ProxyClient, CodeClient)
 LOGGER = logging.getLogger(__name__)
+
+# Precompiled regex for extracting data paths from mapping expressions of the form
+# ${data.some.dotted.path}. Compiled once at import time to avoid repeated
+# recompilation on each call to _generate_data_source_config.
+DATA_PATH_PATTERN = re.compile(r"^\$\{data\.([a-zA-Z0-9_\.]+)\}$")
+
+# Canonical top-level wrapper key expected in nested JSONL evaluation rows.
+# Centralizing here avoids magic strings sprinkled through schema/content generation code.
+WRAPPER_KEY = "item"
 
 
 class OAIEvalRunCreationInfo(TypedDict, total=True):
@@ -103,7 +112,7 @@ def _begin_aoai_evaluation(
 
 
 def _begin_single_aoai_evaluation(
-    graders: Dict[str, AzureOpenAIGrader], data: pd.DataFrame, column_mapping: Dict[str, str], run_name: str
+    graders: Dict[str, AzureOpenAIGrader], data: pd.DataFrame, column_mapping: Optional[Dict[str, str]], run_name: str
 ) -> OAIEvalRunCreationInfo:
     """
     Use the AOAI SDK to start an evaluation of the inputted dataset against the supplied graders.
@@ -112,8 +121,8 @@ def _begin_single_aoai_evaluation(
 
     :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
     :type graders: Dict[str, AoaiGrader]
-    :param data_source_config: The data source configuration to apply to the
-    :type data_source_config: pd.DataFrame
+    :param column_mapping: The column mapping to apply. If None, an empty mapping is used.
+    :type column_mapping: Optional[Dict[str, str]]
     :param run_name: The name of the evaluation run.
     :type run_name: str
     :return: A tuple containing the eval group ID and eval run ID of the resultant eval run, as well as a dictionary
@@ -131,7 +140,8 @@ def _begin_single_aoai_evaluation(
     for name, grader in graders.items():
         grader_name_list.append(name)
         grader_list.append(grader._grader_config)
-    data_source_config = _generate_data_source_config(data, column_mapping)
+    effective_column_mapping: Dict[str, str] = column_mapping or {}
+    data_source_config = _generate_data_source_config(data, effective_column_mapping)
 
     # Create eval group
     # import pdb; pdb.set_trace()
@@ -155,7 +165,7 @@ def _begin_single_aoai_evaluation(
         grader_name_map[criteria.id] = name
 
     # Create eval run
-    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, column_mapping)
+    eval_run_id = _begin_eval_run(client, eval_group_info.id, run_name, data, effective_column_mapping)
     LOGGER.info(
         f"AOAI: Eval run created with id {eval_run_id}."
         + " Results will be retrieved after normal evaluation is complete..."
@@ -514,6 +524,18 @@ def _build_schema_tree_from_paths(
       },
       "required": ["item"]
     }
+
+    :param paths: A list of dot-delimited strings, each representing a leaf path
+        in the logical object hierarchy (e.g. ``"item.context.company.policy.security.passwords.rotation_days"``).
+        Empty path segments are ignored.
+    :type paths: List[str]
+    :param force_leaf_type: The JSON Schema ``type`` value to assign to every leaf node
+        produced from the supplied paths. Defaults to ``"string"``.
+    :type force_leaf_type: str
+    :return: A JSON Schema fragment describing the hierarchical structure implied by
+        the input paths. The returned schema root always has ``type: object`` with
+        recursively nested ``properties`` / ``required`` keys.
+    :rtype: Dict[str, Any]
     """
     # Build tree where each node: {"__children__": { segment: node, ... }, "__leaf__": bool }
     root: Dict[str, Any] = {"__children__": {}, "__leaf__": False}
@@ -559,12 +581,18 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
     Backward compatibility:
       - If all referenced source paths are single tokens (flat), fall back to legacy flat schema.
       - Otherwise build a nested object schema covering only referenced leaves.
+
+    :type input_data_df: pd.DataFrame
+    :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
+    :param column_mapping: The column mapping to use for the evaluation. If None, the default mapping will be used.
+    :type column_mapping: Optional[Dict[str, str]]
+    :return: A dictionary that can act as data source config for OAI evaluation group creation.
+    :rtype: Dict[str, Any]
     """
     # Extract referenced data paths from mapping values of the form ${data.<path>} (ignore ${run.outputs.*})
-    data_path_pattern = re.compile(r"^\$\{data\.([a-zA-Z0-9_\.]+)\}$")
     referenced_paths: List[str] = []
     for v in column_mapping.values():
-        m = data_path_pattern.match(v)
+        m = DATA_PATH_PATTERN.match(v)
         if m:
             referenced_paths.append(m.group(1))
 
@@ -596,9 +624,8 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
     wrapper_name = None
     if len(first_segments) == 1:
         only_seg = next(iter(first_segments))
-        # We only strip if that segment looks like the canonical wrapper (currently 'item').
-        # (You could broaden this later if desired.)
-        if only_seg == "item":
+        # We only strip if that segment looks like the canonical wrapper.
+        if only_seg == WRAPPER_KEY:
             strip_wrapper = True
             wrapper_name = only_seg
 
@@ -659,9 +686,14 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     Given a dataframe of data to be evaluated, and a column mapping,
     produce a dictionary that can be used as the data source input for an OAI evaluation run.
     Builds a nested 'item' object mirroring the hierarchical paths in the mapping values.
+    :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
+        helper function.
+    :type input_data_df: pd.DataFrame
+    :param column_mapping: The column mapping to use for the evaluation. If None, a naive 1:1 mapping is used.
+    :type column_mapping: Optional[Dict[str, str]]
+    :return: A dictionary that can be used as the data source input for an OAI evaluation run.
+    :rtype: Dict[str, Any] 
     """
-    WRAPPER_KEY = "item"
-
     # Gather path specs: list of tuples (original_mapping_value, relative_parts, dataframe_column_name)
     # relative_parts excludes the wrapper (so schema + content align).
     path_specs: List[Tuple[str, List[str], str]] = []
@@ -780,7 +812,7 @@ def _begin_eval_run(
     data_source = _get_data_source(input_data_df, column_mapping)
     eval_run = client.evals.runs.create(
         eval_id=eval_group_id,
-        data_source=data_source,
+        data_source=cast(Any, data_source),  # Cast for type checker: dynamic schema dict accepted by SDK at runtime
         name=run_name,
         metadata={"sample_generation": "off", "file_format": "jsonl", "is_foundry_eval": "true"},
         # TODO decide if we want to add our own timeout value?

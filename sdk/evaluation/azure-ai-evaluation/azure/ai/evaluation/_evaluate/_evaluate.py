@@ -9,7 +9,7 @@ import os
 import re
 import tempfile
 import json
-from typing import Any, Callable, Dict, Iterable, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
 from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
@@ -1175,15 +1175,25 @@ def _preprocess_data(
 def _flatten_object_columns_for_default_mapping(
     df: pd.DataFrame, root_prefixes: Optional[Iterable[str]] = None
 ) -> pd.DataFrame:
-    """
-    For any column whose cells are (some) dictionaries, flatten nested dict structure into new
-    DataFrame columns using dotted paths "<original_col>.<nested.path.leaf>" for each leaf.
-    A "leaf" is any value that is not a dict. Lists are treated as leaves (stringified later).
-    Idempotent: existing flattened columns are not overwritten.
+    """Flatten nested dictionary-valued columns into dotted leaf columns.
 
-    :param df: Input dataframe (modified in place).
-    :param root_prefixes: Optional whitelist of root columns to flatten (defaults to all dict-like columns).
-    :return: The same dataframe (for chaining).
+    For any column whose cells (in at least one row) are ``dict`` objects, this utility discovers all
+    leaf paths (recursively descending only through ``dict`` nodes) and materializes new DataFrame
+    columns named ``"<original_col>.<nested.path.leaf>"`` for every unique leaf encountered across
+    all rows. A *leaf* is defined as any value that is **not** a ``dict`` (lists / primitives / ``None``
+    are all treated as leaves). Existing columns are never overwritten (idempotent behavior).
+
+    Example
+        If a column ``item`` contains objects like ``{"a": {"b": 1, "c": 2}}`` a pair of new
+        columns ``item.a.b`` and ``item.a.c`` will be added with the corresponding scalar values.
+
+    :param df: Input DataFrame to flatten in place.
+    :type df: ~pandas.DataFrame
+    :param root_prefixes: Optional iterable restricting which top-level columns are considered
+        for flattening. If ``None``, all columns containing at least one ``dict`` value are processed.
+    :type root_prefixes: Optional[Iterable[str]]
+    :return: The same DataFrame instance (returned for convenient chaining).
+    :rtype: ~pandas.DataFrame
     """
     candidate_cols = []
     if root_prefixes is not None:
@@ -1195,7 +1205,7 @@ def _flatten_object_columns_for_default_mapping(
             if series.map(lambda v: isinstance(v, dict)).any():
                 candidate_cols.append(c)
 
-    def _extract_leaves(obj, prefix):
+    def _extract_leaves(obj: Any, prefix: str) -> Iterator[Tuple[str, Any]]:
         if isinstance(obj, dict):
             for k, v in obj.items():
                 new_prefix = f"{prefix}.{k}" if prefix else k
@@ -1222,7 +1232,7 @@ def _flatten_object_columns_for_default_mapping(
                 continue  # already present
             relative_keys = path[len(root_col) + 1 :].split(".") if len(path) > len(root_col) else []
 
-            def getter(root_val):
+            def getter(root_val: Any) -> Any:
                 cur = root_val
                 for rk in relative_keys:
                     if not isinstance(cur, dict):
