@@ -75,9 +75,9 @@ initParameterSchema:
   properties:
     threshold:
       type: "number"
-      minimumValue: 0
-      maximumValue: 1
-      step: 0.1
+      minimum: 0
+      maximum: 1
+      multipleOf: 0.1
   required: ["threshold"]
 dataMappingSchema:
   type: "object"
