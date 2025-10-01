@@ -65,9 +65,9 @@ Sample PR: [pullrequest/1816050](https://msdata.visualstudio.com/Vienna/_git/azu
 | evaluatorType: | evaluator_type | "builtin"| For Built-in evaluators, value is "builtin". For custom evaluators, value is "custom". API only supports 'custom'| 
 | evaluatorSubType | definition.type | "code" | It represents what type of evaluator It is. For #1 & #2 type evaluators, please add "code". For #3 type evaluator, please provide "prompt". For #4 type evaluator, please provide "service" | 
 | categories | categories | ["Quality"] | The categories of the evaluator. It's an array. Allowed values are Quality, Safety, Agents. Multiple values are allowed | 
-| initParameterSchema |  |  |  The JSON schema (Draft 2020-12) for the evaluator's input parameters. This includes parameters like type, properties, required. | 
-| dataMappingSchema |  |  | The JSON schema (Draft 2020-12) for the evaluator's input data. This includes parameters like type, properties, required.  | 
-| outputSchema |  |  | List of output metrics produced by this evaluator | 
+| initParameterSchema | init_parameters |  |  The JSON schema (Draft 2020-12) for the evaluator's input parameters. This includes parameters like type, properties, required. | 
+| dataMappingSchema | data_schema |  | The JSON schema (Draft 2020-12) for the evaluator's input data. This includes parameters like type, properties, required.  | 
+| outputSchema | metrics |  | List of output metrics produced by this evaluator | 
 | path |  Not expose in API |  ./evaluator |  Fixed. | 
 
 Example:
