@@ -232,7 +232,7 @@ class ContainerProxy:
         throughput_bucket: Optional[int] = None,
         availability_strategy_config: Optional[Dict[str, Any]] = _Unset,
         **kwargs: Any
-) -> CosmosDict:
+    ) -> CosmosDict:
         """Create an item in the container.
 
         To update or replace an existing item, use the
