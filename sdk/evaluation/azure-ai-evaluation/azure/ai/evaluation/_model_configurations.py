@@ -125,11 +125,11 @@ class EvaluationResult(TypedDict):
     evaluation_summary: Dict
 
 
-class _AppInsightsConfig(TypedDict):
-    app_insights_connection_string: str
-    experiment_name: str
+class AppInsightsConfig(TypedDict):
+    connection_string: str
     agent_id: NotRequired[str]
     run_type: NotRequired[str] # continuous, batch, etc
+    response_id: NotRequired[str]
     is_scheduled_run: NotRequired[bool]
-    evaluation_run_id: NotRequired[str]
+    run_id: NotRequired[str]
     dataset_id: NotRequired[str]

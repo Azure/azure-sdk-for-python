@@ -31,8 +31,9 @@ from .._constants import (
     _InternalEvaluationMetrics,
     BINARY_AGGREGATE_SUFFIX,
     DEFAULT_OAI_EVAL_RUN_NAME,
+    EVALUATION_EVENT_NAME,
 )
-from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, _AppInsightsConfig
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig, AppInsightsConfig
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
@@ -992,8 +993,137 @@ def _create_eval_results_summary(results: List[Dict]) -> Dict:
     return {}
 
 
-def _emit_eval_result_events_to_app_insights(app_insights_config: _AppInsightsConfig, results: List[Dict]) -> None:
-    pass
+from opentelemetry import _logs
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
+from opentelemetry.sdk._logs import LogRecord
+import time
+
+def _log_events_to_app_insights(
+    connection_string: str,
+    events: List[Dict[str, Any]],
+    attributes: Optional[Dict[str, Any]] = None
+) -> None:
+    """
+    Log independent events directly to App Insights using OpenTelemetry logging.
+    No spans are created - events are sent as pure log records.
+    
+    :param connection_string: Azure Application Insights connection string
+    :type connection_string: str
+    :param events: List of event data dictionaries to log
+    :type events: List[Dict[str, Any]]
+    :param attributes: Additional attributes to add to each event
+    :type attributes: Optional[Dict[str, Any]]
+    """
+    if not connection_string or not events:
+        return
+    
+    try:
+        # Configure OpenTelemetry logging
+        logger_provider = LoggerProvider()
+        _logs.set_logger_provider(logger_provider)
+        
+        # Create Azure Monitor log exporter
+        azure_log_exporter = AzureMonitorLogExporter(connection_string=connection_string)
+        
+        # Add the exporter to the logger provider
+        logger_provider.add_log_record_processor(BatchLogRecordProcessor(azure_log_exporter))
+        
+        # Create a logger
+        otel_logger = _logs.get_logger(__name__)
+        
+        # Log each event as a separate log record
+        for i, event_data in enumerate(events):
+            try:
+                # Prepare log record attributes with specific mappings
+                log_attributes = {
+                    # These fields are always present and are already strings
+                    "gen_ai.evaluation.name": event_data["metric"],
+                    "gen_ai.evaluation.score.value": event_data["score"],
+                    "gen_ai.evaluation.score.label": event_data["label"]
+                }
+                
+                # Optional field that may not always be present
+                if "reason" in event_data:
+                    log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+                
+                # Add additional attributes from AppInsights config if provided
+                if attributes:
+                    if "run_type" in attributes:
+                        log_attributes["gen_ai.evaluation.azure_ai_type"] = str(attributes["run_type"])
+                    
+                    if "is_scheduled" in attributes:
+                        log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(attributes["is_scheduled"])
+                    
+                    if "run_id" in attributes:
+                        log_attributes["gen_ai.evaluation.run.id"] = str(attributes["run_id"])
+                    
+                    if "dataset_id" in attributes:
+                        log_attributes["gen_ai.evaluation.dataset.id"] = str(attributes["dataset_id"])
+                
+                # Create a LogRecord and emit it
+                log_record = LogRecord(
+                    timestamp=time.time_ns(),
+                    observed_timestamp=time.time_ns(),
+                    severity_text=None,
+                    severity_number=None,
+                    body=EVALUATION_EVENT_NAME,
+                    resource=None,
+                    attributes=log_attributes
+                )
+                
+                otel_logger.emit(log_record)
+                
+            except Exception as e:
+                LOGGER.warning(f"Failed to log event {i}: {e}")
+        
+        # Force flush to ensure events are sent
+        logger_provider.force_flush(timeout_millis=5000)
+        
+    except Exception as e:
+        LOGGER.error(f"Failed to log events to App Insights: {e}")
+
+
+def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConfig, results: List[Dict]) -> None:
+    """
+    Emit evaluation result events to App Insights using OpenTelemetry logging.
+    Each result is logged as an independent log record without any trace context.
+    
+    :param app_insights_config: App Insights configuration containing connection string
+    :type app_insights_config: _AppInsightsConfig
+    :param results: List of evaluation results to log
+    :type results: List[Dict]
+    """
+    if not app_insights_config or 'connection_string' not in app_insights_config:
+        LOGGER.warning("App Insights configuration is missing or incomplete")
+        return
+    
+    if not results:
+        LOGGER.debug("No results to log to App Insights")
+        return
+    
+    try:
+        # Extract only the AppInsights config attributes that exist
+        app_insights_attributes = {}
+        if 'run_type' in app_insights_config:
+            app_insights_attributes['run_type'] = app_insights_config['run_type']
+        if 'is_scheduled_run' in app_insights_config:
+            app_insights_attributes['is_scheduled'] = app_insights_config['is_scheduled_run']
+        if 'run_id' in app_insights_config:
+            app_insights_attributes['run_id'] = app_insights_config['run_id']
+        if 'dataset_id' in app_insights_config:
+            app_insights_attributes['dataset_id'] = app_insights_config['dataset_id']
+        
+        _log_events_to_app_insights(
+            connection_string=app_insights_config["connection_string"],
+            events=results,
+            attributes=app_insights_attributes
+        )
+        LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
+        
+    except Exception as e:
+        LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
 
 
 def _preprocess_data(
