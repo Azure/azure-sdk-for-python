@@ -17,6 +17,12 @@
 
 ### Breaking Changes
 
+- **Improved Naming Conventions**: Updated model and enum names for better clarity and consistency:
+  - `OAIVoice` enum renamed to `OpenAIVoiceName` for more descriptive naming
+  - `ToolChoiceObject` model renamed to `ToolChoiceSelection` for better semantic meaning
+  - `ToolChoiceFunctionObject` model renamed to `ToolChoiceFunctionSelection` for consistency
+  - Updated type unions and imports to reflect the new naming conventions
+  - Cross-language package mappings updated to maintain compatibility across SDKs
 - **Session Model Architecture**: Separated `ResponseSession` and `RequestSession` models for better design clarity:
   - `ResponseSession` no longer inherits from `RequestSession` and now inherits directly from `_Model`
   - All session configuration fields are now explicitly defined in `ResponseSession` instead of being inherited
@@ -37,7 +43,6 @@
 
 ### Other Changes
 
-- **Code Quality Improvements**: Enhanced code formatting consistency, including comment alignment in WebSocket connection handling
 - Initial GA release
 
 ## 1.0.0b5 (2025-09-26)

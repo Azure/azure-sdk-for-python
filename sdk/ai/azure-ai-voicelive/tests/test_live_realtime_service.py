@@ -46,7 +46,7 @@ from azure.ai.voicelive.models import (
     ServerEventResponseOutputItemDone,
     ServerEventType,
     ServerVad,
-    ToolChoiceFunctionObject,
+    ToolChoiceFunctionSelection,
     ToolChoiceLiteral,
     TurnDetection,
 )
@@ -480,7 +480,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                     },
                 ),
             ]
-            tool_choice = ToolChoiceFunctionObject(name="get_time")
+            tool_choice = ToolChoiceFunctionSelection(name="get_time")
             session = RequestSession(
                 instructions="You are a helpful assistant with tools.",
                 tools=tools,

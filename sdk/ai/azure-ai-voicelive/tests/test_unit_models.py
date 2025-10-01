@@ -23,7 +23,7 @@ from azure.ai.voicelive.models import (
     SystemMessageItem,
     UserMessageItem,
     ItemParamStatus,
-    OAIVoice,
+    OpenAIVoiceName,
 )
 
 
@@ -81,10 +81,10 @@ class TestOpenAIVoice:
 
     def test_openai_voice_creation(self):
         """Test creating OpenAI voice model."""
-        voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
 
         assert voice.type == "openai"
-        assert voice.name == OAIVoice.ALLOY
+        assert voice.name == OpenAIVoiceName.ALLOY
 
     def test_openai_voice_with_string(self):
         """Test creating OpenAI voice with string name."""
@@ -212,7 +212,7 @@ class TestRequestSession:
 
     def test_request_session_with_voice(self):
         """Test request session with voice configuration."""
-        voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
         session = RequestSession(model="gpt-4o-realtime-preview", voice=voice, instructions="Be helpful and concise")
 
         assert session.voice == voice

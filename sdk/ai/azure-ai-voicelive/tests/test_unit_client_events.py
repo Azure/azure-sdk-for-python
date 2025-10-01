@@ -28,7 +28,7 @@ from azure.ai.voicelive.models import (
     InputTextContentPart,
     MessageRole,
     Modality,
-    OAIVoice,
+    OpenAIVoiceName,
     OpenAIVoice,
 )
 
@@ -41,7 +41,7 @@ class TestClientEventSessionUpdate:
         session = RequestSession(
             model="gpt-4o-realtime-preview",
             modalities=[Modality.TEXT, Modality.AUDIO],
-            voice=OpenAIVoice(name=OAIVoice.ALLOY),
+            voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY),
             temperature=0.7,
         )
 
@@ -291,7 +291,7 @@ class TestClientEventIntegration:
         session = RequestSession(
             model="gpt-4o-realtime-preview",
             modalities=[Modality.TEXT, Modality.AUDIO],
-            voice=OpenAIVoice(name=OAIVoice.SHIMMER),
+            voice=OpenAIVoice(name=OpenAIVoiceName.SHIMMER),
         )
         session_event = ClientEventSessionUpdate(session=session, event_id="session-1")
 
