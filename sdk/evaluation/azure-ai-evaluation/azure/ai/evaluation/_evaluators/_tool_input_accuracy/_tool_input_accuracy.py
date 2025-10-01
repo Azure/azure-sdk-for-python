@@ -5,8 +5,8 @@ import os
 import logging
 import math
 import json
-from typing import Dict, List, Union, TypeVar, Optional
-from typing_extensions import overload, override
+from typing import Dict, List, Union, TypeVar, Optional, cast
+from typing_extensions import override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
@@ -14,7 +14,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
     EvaluationException,
 )
-from ..._common.utils import reformat_conversation_history
+from ..._common.utils import reformat_conversation_history, _get_agent_response
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,6 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         - Format compliance: All parameters must follow exact format and structure requirements
         - Completeness: All required parameters must be provided
         - No unexpected parameters: Only defined parameters are allowed
-        - Value appropriateness: All parameter values must be contextually appropriate
 
     The evaluator uses strict binary evaluation:
         - PASS: Only when ALL criteria are satisfied perfectly for ALL parameters
@@ -95,35 +94,6 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             **kwargs,
         )
 
-    @overload
-    def __call__(
-        self,
-        *,
-        query: Union[str, List[dict]],
-        tool_definitions: Union[dict, List[dict]],
-        tool_calls: Optional[Union[dict, List[dict]]] = None,
-        response: Optional[Union[str, List[dict]]] = None,
-    ) -> Dict[str, Union[str, float]]:
-        """
-        Evaluate tool input accuracy of tool calls.
-
-        :keyword query: Query or Chat history up to the message that has the tool call being evaluated.
-        :paramtype query: Union[str, List[dict]]
-        :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
-        :paramtype tool_definitions: Union[dict, List[dict]]
-        :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
-            tool call(s) in it.
-        :paramtype tool_calls: Optional[Union[dict, List[dict]]]
-        :keyword response: Optional response to be evaluated alongside the tool calls.
-            If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
-            If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
-                If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
-            Recommended to provide it when there are tool calls that depend on output of a previous tool call.
-        :paramtype response: Optional[Union[str, List[dict]]]
-        :return: The tool input accuracy evaluation results.
-        :rtype: Dict[str, Union[str, float]]
-        """
-
     def _convert_kwargs_to_eval_input(self, **kwargs):
         """Convert kwargs to evaluation input format.
 
@@ -133,17 +103,15 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict
         """
         # Collect inputs
-        tool_calls = kwargs.get("tool_calls")
         tool_definitions = kwargs.get("tool_definitions", [])  # Default to empty list
         query = kwargs.get("query")
         response = kwargs.get("response")
 
-        # Extract tool calls from response if not provided directly
-        if response:
-            parsed_tool_calls = self._parse_tools_from_response(response)
-            if parsed_tool_calls:
-                tool_calls = parsed_tool_calls
-
+        # Extract tool calls from response
+        if not response:
+            return {"error_message": "Response parameter is required to extract tool calls."}
+            
+        tool_calls = self._parse_tools_from_response(response)
         if not tool_calls:
             return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 
@@ -153,8 +121,10 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
         try:
+            # Type cast to satisfy static type checker
+            tool_calls_typed = cast(List[Dict], tool_calls)
             needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
+                tool_calls_typed, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
             )
         except EvaluationException as e:
             # Check if this is because no tool definitions were provided at all
@@ -166,12 +136,12 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if len(needed_tool_definitions) == 0:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Prettify tool calls for LLM evaluation (including tool results if available)
-        prettified_tool_calls = self._prettify_raw_tool_calls(tool_calls, response)
-
+        # Get agent response with tool calls and results using _get_agent_response
+        agent_response_with_tools = _get_agent_response(response, include_tool_messages=True)
+        
         return {
             "query": query,
-            "tool_calls": prettified_tool_calls,  # Use prettified tool calls for LLM
+            "tool_calls": agent_response_with_tools,
             "tool_definitions": needed_tool_definitions,
         }
 
@@ -240,7 +210,8 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), 1)
+            error_message = eval_input.get("error_message", "Unknown error")
+            return self._not_applicable_result(error_message, 1)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result
@@ -276,64 +247,11 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: Union[str, List[dict]]
         :keyword tool_definitions: List of tool definitions whose calls are being evaluated.
         :paramtype tool_definitions: Union[dict, List[dict]]
-        :keyword tool_calls: Optional List of tool calls to evaluate. If not provided response should be provided and should have
-            tool call(s) in it.
-        :paramtype tool_calls: Optional[Union[dict, List[dict]]]
-        :keyword response: Optional response to be evaluated alongside the tool calls.
-            If provided all tool calls in response will be evaluated when tool_calls parameter is not provided.
-            If provided and tool_calls parameter is provided, only the tool calls in tool_calls parameter will be evaluated.
-                If response has extra tool calls they will not be evaluated, response will be used to extract any tool calls that are needed for evaluating a certain tool call.
-            Recommended to provide it when there are tool calls that depend on output of a previous tool call.
-        :paramtype response: Optional[Union[str, List[dict]]]
+        :keyword response: Response containing tool calls to be evaluated.
+        :paramtype response: Union[str, List[dict]]
         :return: The tool input accuracy evaluation results.
         :rtype: Dict[str, Union[str, float]]
         """
         return super().__call__(*args, **kwargs)
 
-    def _prettify_raw_tool_calls(self, tool_calls, response=None):
-        """Prettify raw tool call objects into readable format for LLM evaluation,
-        including tool results if available.
-        
-        :param tool_calls: List of raw tool call objects (from _parse_tools_from_response)
-        :type tool_calls: List[Dict]
-        :param response: Optional response parameter (not used, for compatibility)
-        :type response: Optional[Union[str, List[Dict]]]
-        :return: List of prettified tool call strings with results
-        :rtype: List[str]
-        """
-        if not tool_calls:
-            return []
-        
-        if not isinstance(tool_calls, list):
-            tool_calls = [tool_calls]
-        
-        prettified = []
-        for call in tool_calls:
-            if isinstance(call, dict):
-                func_name = call.get("name", "unknown_function")
-                args = call.get("arguments", {})
-                
-                # Format arguments
-                if isinstance(args, dict):
-                    args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                elif isinstance(args, str):
-                    try:
-                        parsed_args = json.loads(args)
-                        args_str = ", ".join(f'{k}="{v}"' for k, v in parsed_args.items())
-                    except (json.JSONDecodeError, TypeError):
-                        args_str = f'args="{args}"'
-                else:
-                    args_str = ""
-                
-                # Add tool call
-                prettified.append(f"[TOOL_CALL] {func_name}({args_str})")
-                
-                # Add tool result if available (from _parse_tools_from_response)
-                if "tool_result" in call:
-                    result = call["tool_result"]
-                    # Truncate long results for readability
-                    if len(str(result)) > 200:
-                        result = str(result)[:197] + "..."
-                    prettified.append(f"[TOOL_RESULT] {result}")
-        
-        return prettified
+
