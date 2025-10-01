@@ -30,9 +30,6 @@ def get_authentication_policy(
     :param bool is_async: For async clients there is a need to decode the url
 
     :return: Either AsyncBearerTokenCredentialPolicy or BearerTokenCredentialPolicy or HMACCredentialsPolicy
-    :rtype: ~azure.core.pipeline.policies.AsyncBearerTokenCredentialPolicy or
-    ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
-    ~azure.communication.callautomation.shared.policy.HMACCredentialsPolicy
     """
 
     if credential is None:
