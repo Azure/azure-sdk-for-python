@@ -635,7 +635,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         *,
         credential: Union["AzureKeyCredential", "AsyncTokenCredential"],
         endpoint: str,
-        api_version: str = "2025-05-01-preview",
+        api_version: str = "2025-10-01",
         model: Optional[str] = None,
         extra_query: Mapping[str, Any],
         extra_headers: Mapping[str, Any],
@@ -821,7 +821,7 @@ def connect(
     *,
     credential: Union[AzureKeyCredential, AsyncTokenCredential],
     endpoint: str,
-    api_version: str = "2025-05-01-preview",
+    api_version: str = "2025-10-01",
     model: Optional[str] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
@@ -841,7 +841,7 @@ def connect(
     :paramtype type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.AsyncTokenCredential
     :keyword endpoint: Service endpoint, e.g., ``https://<region>.api.cognitive.microsoft.com``.
     :paramtype type endpoint: str
-    :keyword api_version: The API version to use. Defaults to ``"2025-05-01-preview"``.
+    :keyword api_version: The API version to use. Defaults to ``"2025-10-01"``.
     :paramtype type api_version: str
     :keyword model: Model identifier to use for the session.
      In most scenarios, this parameter is required.

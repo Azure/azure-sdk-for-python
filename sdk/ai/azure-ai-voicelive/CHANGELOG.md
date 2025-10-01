@@ -28,8 +28,9 @@
   - All session configuration fields are now explicitly defined in `ResponseSession` instead of being inherited
   - This provides clearer separation of concerns between request and response session configurations
   - May affect type checking and code that relied on the previous inheritance relationship
-- **Model Cleanup**: Removed unused `AgentConfig` model from the public API:
+- **Model Cleanup**: Removed unused `AgentConfig` model and related fields from the public API:
   - `AgentConfig` class has been completely removed from imports and exports
+  - `agent` field removed from `ResponseSession` model (including constructor parameter)
   - Updated cross-language package mappings to reflect the removal
 - **Model Naming Convention Update**: Renamed `EOUDetection` to `EouDetection` for better naming consistency:
   - Class name changed from `EOUDetection` to `EouDetection` 
