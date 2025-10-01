@@ -5,11 +5,13 @@ This guide helps our partners to bring their evaluators into Microsoft provided 
 
 ## Context
 
-We are building an Evaluator Catalog, that will allow us to store Microsoft provided built-in evaluators, as well as Customer's provided custom evaluators. It will allow versioning support so that customer can maintain different version of custom evaluators.
+We are building an Evaluator Catalog, that will allow us to store built-in evaluators (provided by Microsoft), as well as 1P/3P customer's provided evaluators. 
 
-Using this catalog, customer can publish their custom evaluators under the project. Post Ignite, we'll allow them to prompt evaluators from projects to registries so that can share evaluators among different projects.
+We are also building Evaluators CRUD API and SDK experience which can be used by our external customer to create custom evaluators. NextGen UI will leverage these new APIs to list evaluators in Evaluation Section. 
 
-This evaluator catalog is backed by Generic Asset Service (that provides scalable and multi-region support to store all your assets in CosmosDB).
+These custom evaluators are also stored in the Evaluator Catalog, but the scope these evaluator will be at project level at Ignite. Post Ignite, we'll allow customers to share their evaluators among different projects.
+
+This evaluator catalog is backed by Generic Asset Service (that provides versioning support as well as scalable and multi-region support to store all your assets in CosmosDB).
 
 Types of Built_in Evaluators
 There are 3 types of evaluators we support as Built-In Evaluators.
@@ -17,14 +19,14 @@ There are 3 types of evaluators we support as Built-In Evaluators.
 1. Code Based - It contains Python file
 2. Code + Prompt Based - It contains Python file & Prompty file
 3. Prompt Based - It contains only Prompty file.
-4. Service Based - It references the evaluator from Evaluation SDK or RAI Service.
+4. Service Based - It references the evaluator in RAI Service that calls fine tuned models provided by Data Science Team. 
 
 ## Step 1: Run Your evaluators with Evaluation SDK.
 
 Create builtin evaluator and use azure-ai-evaluation SDK to run locally. 
 List of evaluators can be found at [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators)
 
-## Step 2: Create a PR to provide
+## Step 2: Provide your evaluator
 
 We are storing all the builtin evaluators in Azureml-asset Repo. Please provide your evaluators files by creating a PR in this repo. Please follow the steps.
 
@@ -50,10 +52,9 @@ Sample PR: [pullrequest/1816050](https://msdata.visualstudio.com/Vienna/_git/azu
 
 3. Please copy asset.yaml from sample. No change is required. 
    
-4. Please follow directions given below to create spec.yaml. 
+4. Please follow steps given below to create spec.yaml. 
 
 ## Asset Content - spec.yaml
-
 
 | Asset Property | API Property  | Example | Description |
 | - | - | - | - |
