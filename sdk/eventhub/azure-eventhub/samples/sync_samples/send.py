@@ -94,6 +94,22 @@ def send_event_data_list(producer):
     except EventHubError as eh_err:
         print("Sending error: ", eh_err)
 
+def send_single_large_message(producer, size_mb=17):
+    """
+    Try to send one single oversized message to Event Hub.
+    Now with explicit large max_size_in_bytes to allow 20MB messages.
+    """
+    payload = "X" * (size_mb * 1024 * 1024)  # 20 MB string
+    try:
+        # Explicitly set max_size_in_bytes to allow large messages
+        batch = producer.create_batch(max_size_in_bytes=19 * 1024 * 1024)  # 20MB limit
+        batch.add(EventData(payload))
+        producer.send_batch(batch)
+        print(f"SUCCESS: sent {size_mb} MB message!")
+    except ValueError as e:
+        print(f"Failed to add {size_mb} MB message to batch -> {e}")
+    except Exception as e:
+        print(f"Failed to send {size_mb} MB message -> {e}")
 
 def send_concurrent_with_shared_client_and_lock():
     """
@@ -139,6 +155,7 @@ with producer:
     send_event_data_batch_with_partition_id(producer)
     send_event_data_batch_with_properties(producer)
     send_event_data_list(producer)
+    send_single_large_message(producer, size_mb=17)
 
 print("Send messages in {} seconds.".format(time.time() - start_time))
 
