@@ -1,18 +1,14 @@
 # Release History
 
 
-## 1.12.0 (Unreleased)
+## 1.12.0 (2025-10-02)
 
 ### Features Added
-
 - AOAI Graders now accept a "credential" parameter that can be used for authentication with an AzureOpenAIModelConfiguration
 - Added `is_reasoning_model` parameter support to `CoherenceEvaluator`, `FluencyEvaluator`, `SimilarityEvaluator`, `GroundednessEvaluator`, `RetrievalEvaluator`, and `RelevanceEvaluator` to enable reasoning model configuration for o1/o3 models.
 
-### Breaking Changes
-
 ### Bugs Fixed
-
-### Other Changes
+- Support for multi-level nesting in OpenAI grader (experimental)
 
 ## 1.11.1 (2025-09-19)
 
