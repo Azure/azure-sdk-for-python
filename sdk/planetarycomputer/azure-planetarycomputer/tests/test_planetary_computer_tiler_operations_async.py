@@ -366,10 +366,10 @@ class TestPlanetaryComputerTilerOperationsAsync(PlanetaryComputerClientTestBaseA
                 "cql": {"str": {}},
                 "render_params": "str",
                 "rows": 0,
-                "format": "str",
                 "geometry": "geometry",
-                "mask": bool,
+                "imageSize": "str",
                 "showBranding": bool,
+                "zoom": 0.0,
             },
         )
 
@@ -512,7 +512,7 @@ class TestPlanetaryComputerTilerOperationsAsync(PlanetaryComputerClientTestBaseA
     async def test_tiler_get_legend(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await client.tiler.get_legend(
-            cmap_name="str",
+            color_map_name="str",
         )
 
         # please add some check logic here by yourself

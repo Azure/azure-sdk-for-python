@@ -601,9 +601,9 @@ class TestPlanetaryComputerStacOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_stac_get_items_as_features(self, planetarycomputer_endpoint):
+    def test_stac_list_items(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.stac.get_items_as_features(
+        response = client.stac.list_items(
             collection_id="str",
         )
 

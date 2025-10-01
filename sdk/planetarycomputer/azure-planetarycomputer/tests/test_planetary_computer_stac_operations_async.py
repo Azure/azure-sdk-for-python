@@ -614,9 +614,9 @@ class TestPlanetaryComputerStacOperationsAsync(PlanetaryComputerClientTestBaseAs
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_stac_get_items_as_features(self, planetarycomputer_endpoint):
+    async def test_stac_list_items(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.stac.get_items_as_features(
+        response = await client.stac.list_items(
             collection_id="str",
         )
 

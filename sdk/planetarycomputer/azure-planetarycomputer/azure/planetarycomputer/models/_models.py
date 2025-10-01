@@ -752,55 +752,55 @@ class ImageRequest(_Model):
 
     :ivar cql: Cql. Required.
     :vartype cql: dict[str, any]
+    :ivar zoom: Zoom.
+    :vartype zoom: float
     :ivar geometry: Geometry.
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar render_params: JSON-encoded visualization parameters. Required.
-    :vartype render_params: str
-    :ivar cols: Width of the output image in pixels. Required.
-    :vartype cols: int
+    :ivar render_parameters: JSON-encoded visualization parameters. Required.
+    :vartype render_parameters: str
+    :ivar columns: Width of the output image in pixels. Required.
+    :vartype columns: int
     :ivar rows: Height of the output image in pixels. Required.
     :vartype rows: int
-    :ivar format: Output format for the generated image. Known values are: "png" and "cog".
-    :vartype format: str or ~azure.planetarycomputer.models.TilerImageExportFormat
     :ivar show_branding: Whether to include branding on the output image.
     :vartype show_branding: bool
-    :ivar mask: Whether to apply masking to invalid or no-data areas.
-    :vartype mask: bool
+    :ivar image_size: Image size.
+    :vartype image_size: str
     """
 
     cql: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Cql. Required."""
+    zoom: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Zoom."""
     geometry: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry."""
-    render_params: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    render_parameters: str = rest_field(
+        name="render_params", visibility=["read", "create", "update", "delete", "query"]
+    )
     """JSON-encoded visualization parameters. Required."""
-    cols: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    columns: int = rest_field(name="cols", visibility=["read", "create", "update", "delete", "query"])
     """Width of the output image in pixels. Required."""
     rows: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Height of the output image in pixels. Required."""
-    format: Optional[Union[str, "_models.TilerImageExportFormat"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Output format for the generated image. Known values are: \"png\" and \"cog\"."""
     show_branding: Optional[bool] = rest_field(
         name="showBranding", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to include branding on the output image."""
-    mask: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to apply masking to invalid or no-data areas."""
+    image_size: Optional[str] = rest_field(name="imageSize", visibility=["read", "create", "update", "delete", "query"])
+    """Image size."""
 
     @overload
     def __init__(
         self,
         *,
         cql: dict[str, Any],
-        render_params: str,
-        cols: int,
+        render_parameters: str,
+        columns: int,
         rows: int,
+        zoom: Optional[float] = None,
         geometry: Optional["_models.Geometry"] = None,
-        format: Optional[Union[str, "_models.TilerImageExportFormat"]] = None,
         show_branding: Optional[bool] = None,
-        mask: Optional[bool] = None,
+        image_size: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -3865,9 +3865,9 @@ class TilerInfo(_Model):
     :vartype band_descriptions: list[list[str]]
     :ivar dtype: Dtype. Required.
     :vartype dtype: str
-    :ivar nodata_type: Nodata Type. Known values are: "Alpha", "Mask", "Internal", "Nodata", and
+    :ivar no_data_type: Nodata Type. Known values are: "Alpha", "Mask", "Internal", "Nodata", and
      "None".
-    :vartype nodata_type: str or ~azure.planetarycomputer.models.NoDataType
+    :vartype no_data_type: str or ~azure.planetarycomputer.models.NoDataType
     :ivar colorinterp: Colorinterp.
     :vartype colorinterp: list[str]
     :ivar driver: Driver.
@@ -3904,8 +3904,8 @@ class TilerInfo(_Model):
     """Band Descriptions."""
     dtype: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Dtype. Required."""
-    nodata_type: Optional[Union[str, "_models.NoDataType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    no_data_type: Optional[Union[str, "_models.NoDataType"]] = rest_field(
+        name="nodata_type", visibility=["read", "create", "update", "delete", "query"]
     )
     """Nodata Type. Known values are: \"Alpha\", \"Mask\", \"Internal\", \"Nodata\", and \"None\"."""
     colorinterp: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3939,7 +3939,7 @@ class TilerInfo(_Model):
         dtype: str,
         band_metadata: Optional[list[list["_types.BandMetadataElement"]]] = None,
         band_descriptions: Optional[list[list[str]]] = None,
-        nodata_type: Optional[Union[str, "_models.NoDataType"]] = None,
+        no_data_type: Optional[Union[str, "_models.NoDataType"]] = None,
         colorinterp: Optional[list[str]] = None,
         driver: Optional[str] = None,
         count: Optional[int] = None,

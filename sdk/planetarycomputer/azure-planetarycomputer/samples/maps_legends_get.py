@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.tiler.get_legend(
-        cmap_name="rdylgn",
+        color_map_name="rdylgn",
     )
     print(response)
 

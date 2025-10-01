@@ -32,7 +32,7 @@ def main():
     response = client.tiler.create_static_image(
         collection_id="collectionId-23",
         body={
-            "cols": 1080,
+            "cols": 242,
             "cql": {
                 "filter": {"args": [{"args": [{"property": "collection"}, "naip"], "op": "="}], "op": "and"},
                 "filter-lang": "cql2-json",

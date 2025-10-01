@@ -365,10 +365,10 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
                 "cql": {"str": {}},
                 "render_params": "str",
                 "rows": 0,
-                "format": "str",
                 "geometry": "geometry",
-                "mask": bool,
+                "imageSize": "str",
                 "showBranding": bool,
+                "zoom": 0.0,
             },
         )
 
@@ -511,7 +511,7 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
     def test_tiler_get_legend(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.tiler.get_legend(
-            cmap_name="str",
+            color_map_name="str",
         )
 
         # please add some check logic here by yourself

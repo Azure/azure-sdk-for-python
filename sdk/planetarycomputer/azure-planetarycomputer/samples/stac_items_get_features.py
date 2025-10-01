@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.get_items_as_features(
+    response = client.stac.list_items(
         collection_id="example-collection",
     )
     print(response)

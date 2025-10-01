@@ -797,15 +797,6 @@ class TileMatrixSetId(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """World Mercator WGS84 Quad tile matrix set"""
 
 
-class TilerImageExportFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Format specification for image request outputs."""
-
-    PNG = "png"
-    """Portable Network Graphics format"""
-    COG = "cog"
-    """Cloud Optimized GeoTIFF format"""
-
-
 class TilerImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Image format specifier for tile and image requests."""
 

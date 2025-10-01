@@ -79,7 +79,6 @@ from ...operations._operations import (
     build_stac_get_collection_thumbnail_request,
     build_stac_get_conformance_class_request,
     build_stac_get_item_request,
-    build_stac_get_items_as_features_request,
     build_stac_get_mosaic_request,
     build_stac_get_partition_type_request,
     build_stac_get_render_option_request,
@@ -87,6 +86,7 @@ from ...operations._operations import (
     build_stac_get_stac_landing_page_request,
     build_stac_get_tile_settings_request,
     build_stac_list_collections_request,
+    build_stac_list_items_request,
     build_stac_list_mosaics_request,
     build_stac_list_queryables_by_collection_request,
     build_stac_list_queryables_request,
@@ -2580,7 +2580,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -4831,7 +4831,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_items_as_features(
+    async def list_items(
         self,
         collection_id: str,
         *,
@@ -4925,7 +4925,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
 
-        _request = build_stac_get_items_as_features_request(
+        _request = build_stac_list_items_request(
             collection_id=collection_id,
             limit=limit,
             bounding_box=bounding_box,
@@ -6096,7 +6096,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
@@ -6124,8 +6124,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
@@ -6189,7 +6189,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             resampling=resampling,
             max_size=max_size,
@@ -6375,7 +6375,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -6386,8 +6386,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6414,8 +6414,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -6442,7 +6442,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -6473,9 +6473,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6498,7 +6498,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -6509,8 +6509,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6537,8 +6537,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -6565,7 +6565,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -6596,9 +6596,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -6621,7 +6621,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -6632,8 +6632,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6660,8 +6660,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -6688,7 +6688,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -6719,9 +6719,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -6744,7 +6744,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -6755,8 +6755,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -6783,8 +6783,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -6811,7 +6811,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -6842,9 +6842,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -6880,7 +6880,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -6891,8 +6891,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             height=height,
             width=width,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6951,7 +6951,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -6960,8 +6960,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6991,8 +6991,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -7015,7 +7015,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -7046,9 +7046,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7073,7 +7073,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -7082,8 +7082,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7113,8 +7113,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -7137,7 +7137,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -7168,9 +7168,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7195,7 +7195,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -7204,8 +7204,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7235,8 +7235,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -7259,7 +7259,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -7290,9 +7290,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -7317,7 +7317,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -7326,8 +7326,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -7357,8 +7357,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -7381,7 +7381,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -7412,9 +7412,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -7452,7 +7452,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -7461,8 +7461,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             resampling=resampling,
             max_size=max_size,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -7518,7 +7518,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -7550,8 +7550,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
@@ -7614,7 +7614,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -7646,8 +7646,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
@@ -7710,7 +7710,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -7742,8 +7742,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
@@ -7806,7 +7806,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -7838,8 +7838,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
@@ -7915,7 +7915,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             coord_crs=coord_crs,
             resampling=resampling,
@@ -8117,7 +8117,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -8129,8 +8129,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8161,8 +8161,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -8191,7 +8191,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -8222,9 +8222,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -8256,7 +8256,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -8268,8 +8268,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             height=height,
             width=width,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8329,7 +8329,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -8339,8 +8339,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8375,8 +8375,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -8401,7 +8401,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -8432,9 +8432,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -8468,7 +8468,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -8478,8 +8478,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             resampling=resampling,
             max_size=max_size,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8534,7 +8534,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         coord_crs: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
@@ -8561,8 +8561,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
@@ -8598,7 +8598,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             coord_crs=coord_crs,
             resampling=resampling,
@@ -8647,7 +8647,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -8659,8 +8659,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8681,8 +8681,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -8711,7 +8711,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -8742,9 +8742,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -8771,7 +8771,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -8783,8 +8783,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             height=height,
             width=width,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8838,7 +8838,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -8849,8 +8849,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: Optional[int] = None,
         width: Optional[int] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8873,8 +8873,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -8900,7 +8900,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -8931,9 +8931,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -8961,7 +8961,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -8972,8 +8972,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             height=height,
             width=width,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9228,7 +9228,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
@@ -9256,8 +9256,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
@@ -9321,7 +9321,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             resampling=resampling,
             max_size=max_size,
@@ -9375,7 +9375,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -9388,8 +9388,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.TileJsonResponse:
@@ -9410,8 +9410,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -9452,7 +9452,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -9483,9 +9483,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
@@ -9512,7 +9512,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -9525,8 +9525,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9574,7 +9574,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -9586,8 +9586,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.TileJsonResponse:
@@ -9610,8 +9610,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -9645,7 +9645,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -9676,9 +9676,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
@@ -9706,7 +9706,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -9718,8 +9718,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -9772,7 +9772,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -9780,8 +9780,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[list[str]] = None,
@@ -9821,8 +9821,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -9844,7 +9844,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -9875,9 +9875,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
@@ -9915,7 +9915,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -9923,8 +9923,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -9984,7 +9984,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -9993,8 +9993,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         subdataset_name: Optional[str] = None,
         subdataset_bands: Optional[list[str]] = None,
@@ -10032,8 +10032,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -10062,7 +10062,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -10093,9 +10093,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
@@ -10132,7 +10132,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -10141,8 +10141,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             subdataset_name=subdataset_name,
             subdataset_bands=subdataset_bands,
@@ -10197,7 +10197,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -10210,8 +10210,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> str:
@@ -10232,8 +10232,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -10272,7 +10272,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -10303,9 +10303,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: str
@@ -10332,7 +10332,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -10345,8 +10345,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -10397,7 +10397,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -10409,8 +10409,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -10433,8 +10433,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -10466,7 +10466,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -10497,9 +10497,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -10527,7 +10527,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -10539,8 +10539,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -10733,7 +10733,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace_async
     async def get_legend(
         self,
-        cmap_name: str,
+        color_map_name: str,
         *,
         height: Optional[float] = None,
         width: Optional[float] = None,
@@ -10761,8 +10761,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         Returns:
         HTTP response with jpeg encoded image data.
 
-        :param cmap_name: The name of the registered colormap to generate a legend for. Required.
-        :type cmap_name: str
+        :param color_map_name: The name of the registered colormap to generate a legend for. Required.
+        :type color_map_name: str
         :keyword height: The output height of the legend image. Default value is None.
         :paramtype height: float
         :keyword width: The output width of the legend image. Default value is None.
@@ -10789,7 +10789,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_legend_request(
-            cmap_name=cmap_name,
+            color_map_name=color_map_name,
             height=height,
             width=width,
             trim_start=trim_start,
@@ -11453,7 +11453,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -11493,8 +11493,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
@@ -11614,7 +11614,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
@@ -11687,7 +11687,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -11702,8 +11702,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -11739,8 +11739,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
@@ -11783,7 +11783,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -11814,9 +11814,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -11848,7 +11848,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
@@ -11863,8 +11863,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             resampling=resampling,
             pixel_selection=pixel_selection,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11917,7 +11917,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -11936,8 +11936,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.TileJsonResponse:
@@ -11958,8 +11958,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
@@ -12014,7 +12014,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -12045,9 +12045,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
@@ -12074,7 +12074,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
@@ -12093,8 +12093,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             resampling=resampling,
             pixel_selection=pixel_selection,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -12145,7 +12145,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
@@ -12161,8 +12161,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         resampling: Optional[Union[str, _models.Resampling]] = None,
         pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -12196,8 +12196,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
@@ -12247,7 +12247,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -12278,9 +12278,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -12311,7 +12311,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             scan_limit=scan_limit,
             items_limit=items_limit,
@@ -12327,8 +12327,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             resampling=resampling,
             pixel_selection=pixel_selection,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -12380,7 +12380,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -12393,8 +12393,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -12413,8 +12413,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -12453,7 +12453,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -12484,9 +12484,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -12512,7 +12512,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -12525,8 +12525,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
@@ -12573,7 +12573,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         expression: Optional[str] = None,
         asset_band_indices: Optional[list[str]] = None,
         asset_as_band: Optional[bool] = None,
-        nodata: Optional[float] = None,
+        no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
@@ -12585,8 +12585,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_formula: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -12607,8 +12607,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype asset_band_indices: list[str]
         :keyword asset_as_band: Asset as Band. Default value is None.
         :paramtype asset_as_band: bool
-        :keyword nodata: Overwrite internal Nodata value. Default value is None.
-        :paramtype nodata: float
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
         :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
@@ -12640,7 +12640,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
         :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
          "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
          "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
          "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
@@ -12671,9 +12671,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
          "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
          is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
@@ -12700,7 +12700,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
-            nodata=nodata,
+            no_data=no_data,
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
@@ -12712,8 +12712,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             color_formula=color_formula,
             resampling=resampling,
             rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
+            color_map_name=color_map_name,
+            color_map=color_map,
             return_mask=return_mask,
             api_version=self._config.api_version,
             headers=_headers,
