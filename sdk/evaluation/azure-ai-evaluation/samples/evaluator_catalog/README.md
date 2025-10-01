@@ -1,13 +1,13 @@
 
 # How to publish new evaluator in Evaluator Catalog.
 
-This guild helps our partners to bring their evaluators into Microsoft provided Evaluator Catalog in Next Gen UI. 
+This guide helps our partners to bring their evaluators into Microsoft provided Evaluator Catalog in Next Gen UI. 
 
 ## Context
 
 We are building an Evaluator Catalog, that will allow us to store Microsoft provided built-in evaluators, as well as Customer's provided custom evaluators. It will allow versioning support so that customer can maintain different version of custom evaluators.
 
-Using this catalog, customer can publish their custom evaluators under the project. Post Ignite, we'll allow them to prompt evaluators from projects to registries so that can share evaluators amount different projects.
+Using this catalog, customer can publish their custom evaluators under the project. Post Ignite, we'll allow them to prompt evaluators from projects to registries so that can share evaluators among different projects.
 
 This evaluator catalog is backed by Generic Asset Service (that provides scalable and multi-region support to store all your assets in CosmosDB).
 
@@ -100,7 +100,7 @@ path: ./evaluator
 When PR is merged. Evaluation Team will be able to kick off the CI Pipeline to publish evaluator in the Evaluator Catalog. 
 This is done is 2 steps. 
 
-In Step 1, new evaluator is published in azureml-dev registry so that I can be tested in INT environment. Once all looks good, Step 2 is performed.
+In Step 1, new evaluator is published in azureml-dev registry so that it can be tested in INT environment. Once all looks good, Step 2 is performed.
 In Step 2, new evaluator is published in azure-ml registry (for Production).
 
 
