@@ -65,7 +65,7 @@ from ._utils.formatting_utils import (
     get_flattened_attack_strategies,
     write_pyrit_outputs_to_file,
     format_scorecard,
-    format_xpia_objective,
+    format_content_by_modality,
 )
 from ._utils.strategy_utils import get_chat_target, get_converter_for_strategy
 from ._utils.retry_utils import create_standard_retry_manager
@@ -483,8 +483,60 @@ class RedTeam:
         if not objectives_response or (
             isinstance(objectives_response, dict) and not objectives_response.get("objectives")
         ):
-            self.logger.warning("Empty or invalid response, returning empty list")
-            return []
+            # If we got no agent objectives, fallback to model objectives
+            if is_agent_target:
+                self.logger.warning(
+                    f"No agent-type attack objectives found for {risk_cat_value}. "
+                    "Falling back to model-type objectives."
+                )
+                try:
+                    # Retry with model target type
+                    if "tense" in strategy:
+                        objectives_response = await self.generated_rai_client.get_attack_objectives(
+                            risk_type=content_harm_risk,
+                            risk_category=other_risk,
+                            application_scenario=application_scenario or "",
+                            strategy="tense",
+                            language=self.language.value,
+                            scan_session_id=self.scan_session_id,
+                            target_type="model",
+                        )
+                    else:
+                        objectives_response = await self.generated_rai_client.get_attack_objectives(
+                            risk_type=content_harm_risk,
+                            risk_category=other_risk,
+                            application_scenario=application_scenario or "",
+                            strategy=None,
+                            language=self.language.value,
+                            scan_session_id=self.scan_session_id,
+                            target_type="model",
+                        )
+                    
+                    if isinstance(objectives_response, list):
+                        self.logger.debug(f"Fallback API returned {len(objectives_response)} model-type objectives")
+                    
+                    # Apply strategy-specific transformations to fallback objectives
+                    # Still try agent-type attack techniques (jailbreak/XPIA) even with model-type baseline objectives
+                    if strategy == "jailbreak":
+                        objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
+                    elif strategy == "indirect_jailbreak":
+                        # Try agent-type XPIA first, will fallback to model-type XPIA within the method
+                        objectives_response = await self._apply_xpia_prompts(objectives_response, "agent")
+                    
+                    # Check if fallback response is also empty
+                    if not objectives_response or (
+                        isinstance(objectives_response, dict) and not objectives_response.get("objectives")
+                    ):
+                        self.logger.warning("Fallback to model-type objectives also returned empty list")
+                        return []
+                
+                except Exception as fallback_error:
+                    self.logger.error(f"Error calling get_attack_objectives with model fallback: {str(fallback_error)}")
+                    self.logger.warning("Fallback API call failed, returning empty objectives list")
+                    return []
+            else:
+                self.logger.warning("Empty or invalid response, returning empty list")
+                return []
 
         # Filter and select objectives
         selected_cat_objectives = self._filter_and_select_objectives(
@@ -518,10 +570,20 @@ class RedTeam:
         return objectives_list
 
     async def _apply_xpia_prompts(self, objectives_list: List, target_type_str: str) -> List:
-        """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy."""
-        self.logger.debug("Applying XPIA prompts to objectives for indirect jailbreak")
+        """Apply XPIA prompt formatting to objectives for indirect jailbreak strategy.
+        
+        XPIA prompts are wrapper structures that contain:
+        - content: benign user query to trigger tool use
+        - context: attack vehicle with {attack_text} placeholder
+        - context_type: modality for formatting (email, document, html, code)
+        - tool_name: name for mock tool with _xmode suffix
+        
+        We inject the baseline attack objectives into these XPIA wrapper prompts.
+        """
+        self.logger.debug(f"Applying XPIA prompts to objectives for indirect jailbreak (target_type={target_type_str})")
+        
         try:
-            # Get XPIA prompts from RAI service
+            # Fetch XPIA wrapper prompts from RAI service
             @self.retry_manager.create_retry_decorator(context="xpia_prompts")
             async def get_xpia_prompts_with_retry():
                 return await self.generated_rai_client.get_attack_objectives(
@@ -536,42 +598,87 @@ class RedTeam:
 
             xpia_prompts = await get_xpia_prompts_with_retry()
             
+            # If no agent XPIA prompts and we're trying agent, fallback to model
+            if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":
+                self.logger.warning("No agent-type XPIA prompts available, falling back to model-type XPIA prompts")
+                try:
+                    xpia_prompts = await self.generated_rai_client.get_attack_objectives(
+                        risk_type=None,
+                        risk_category="xpia",
+                        application_scenario="",
+                        strategy=None,
+                        language=self.language.value,
+                        scan_session_id=self.scan_session_id,
+                        target_type="model"
+                    )
+                    if xpia_prompts and len(xpia_prompts) > 0:
+                        self.logger.debug(f"Fetched {len(xpia_prompts)} model-type XPIA wrapper prompts as fallback")
+                except Exception as fallback_error:
+                    self.logger.error(f"Error fetching model-type XPIA prompts as fallback: {str(fallback_error)}")
+            
             if not xpia_prompts or len(xpia_prompts) == 0:
-                self.logger.warning("No XPIA prompts available, returning objectives unchanged")
+                self.logger.warning("No XPIA prompts available (even after fallback), returning objectives unchanged")
                 return objectives_list
 
-            # Apply XPIA formatting to each objective
+            self.logger.debug(f"Fetched {len(xpia_prompts)} XPIA wrapper prompts")
+
+            # Apply XPIA wrapping to each baseline objective
             for objective in objectives_list:
                 if "messages" in objective and len(objective["messages"]) > 0:
                     message = objective["messages"][0]
                     if isinstance(message, dict) and "content" in message:
-                        original_content = message["content"]
-                        # Randomly select an XPIA prompt
-                        xpia_prompt = random.choice(xpia_prompts)
+                        # Get the baseline attack content to inject
+                        baseline_attack_content = message["content"]
+                        # Preserve the original baseline context if it exists
+                        baseline_context = message.get("context", "")
                         
-                        # Apply the XPIA formatting - returns (action, formatted_context)
-                        action, formatted_context = self._format_xpia_objective(original_content, xpia_prompt)
-                        # Store action as content and document-tagged content as context
-                        message["content"] = action
-                        message["context"] = formatted_context
+                        # Randomly select an XPIA wrapper prompt
+                        xpia_prompt = random.choice(xpia_prompts)
+                        xpia_message = xpia_prompt.get("messages", [{}])[0]
+                        
+                        # Extract XPIA wrapper structure
+                        user_query = xpia_message.get("content", "")
+                        attack_vehicle_context = xpia_message.get("context", "")
+                        context_type = xpia_message.get("context_type") or "text"
+                        tool_name = xpia_message.get("tool_name", "")
+                        
+                        # Inject baseline attack into the {attack_text} placeholder
+                        if "{attack_text}" in attack_vehicle_context:
+                            injected_context = attack_vehicle_context.replace("{attack_text}", baseline_attack_content)
+                        else:
+                            # No placeholder found, append to end
+                            injected_context = f"{attack_vehicle_context}\n\n{baseline_attack_content}"
+                        
+                        # Apply modality-based formatting
+                        formatted_context = format_content_by_modality(injected_context, context_type)
+                        
+                        # Update the message with benign user query
+                        message["content"] = user_query
+                        
+                        # Store contexts as a list of dicts with 'content' key
+                        # XPIA wrapper context includes context_type and tool_name
+                        contexts = [{
+                            "content": formatted_context,
+                            "context_type": context_type,
+                            "tool_name": tool_name
+                        }]
+                        
+                        # Add baseline context without context_type/tool_name (unless it has its own)
+                        if baseline_context:
+                            contexts.append({"content": baseline_context})
+                            self.logger.debug(f"Preserved {len(contexts)} context sources (XPIA wrapper + baseline)")
+                        
+                        message["context"] = contexts
+                        message["context_type"] = context_type  # Keep at message level for backward compat
+                        message["tool_name"] = tool_name
+                        
+                        self.logger.debug(f"Wrapped baseline attack in XPIA: tool_name={tool_name}, context_type={context_type}")
                         
         except Exception as e:
             self.logger.error(f"Error applying XPIA prompts: {str(e)}")
             self.logger.warning("XPIA prompt application failed, returning original objectives")
 
         return objectives_list
-
-    def _format_xpia_objective(self, objective_content: str, xpia_prompt: dict) -> tuple:
-        """Format an objective with XPIA prompt structure using the formatting utility.
-        
-        :param objective_content: The objective content to inject
-        :type objective_content: str
-        :param xpia_prompt: The XPIA prompt structure
-        :type xpia_prompt: dict
-        :return: Tuple of (action, formatted_context)
-        :rtype: tuple
-        """
-        return format_xpia_objective(objective_content, xpia_prompt, self.logger)
 
     def _filter_and_select_objectives(
         self,
@@ -619,11 +726,41 @@ class RedTeam:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
                     content = message["content"]
-                    context = message.get("context", "")
+                    context_raw = message.get("context", "")
                     selected_prompts.append(content)
-                    # Store mapping of content to context for the orchestrator
-                    if context:
-                        self.prompt_to_context[content] = context
+                    # Normalize context to always be a list of dicts with 'content' key
+                    if isinstance(context_raw, list):
+                        # Already a list - ensure each item is a dict with 'content' key
+                        contexts = []
+                        for ctx in context_raw:
+                            if isinstance(ctx, dict) and "content" in ctx:
+                                # Preserve all keys including context_type, tool_name if present
+                                contexts.append(ctx)
+                            elif isinstance(ctx, str):
+                                contexts.append({"content": ctx})
+                    elif context_raw:
+                        # Single string value - wrap in dict
+                        contexts = [{"content": context_raw}]
+                    else:
+                        contexts = []
+                    
+                    if contexts:
+                        # Always use dict format for context_data
+                        context_dict = {"contexts": contexts}
+                        
+                        # Log based on whether any context has agent-specific fields
+                        has_agent_fields = any(
+                            isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
+                            for ctx in contexts
+                        )
+                        if has_agent_fields:
+                            self.logger.debug(f"Stored context with agent fields: {len(contexts)} context source(s)")
+                        else:
+                            self.logger.debug(f"Stored model context: {len(contexts)} context source(s)")
+                        
+                        self.prompt_to_context[content] = context_dict
+                    else:
+                        self.logger.debug(f"No context available for objective")
         return selected_prompts
 
     def _cache_attack_objectives(

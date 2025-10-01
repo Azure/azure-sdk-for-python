@@ -254,16 +254,38 @@ class OrchestratorManager:
                 self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
 
                 # Get context for this prompt
-                context = prompt_to_context.get(prompt, "") if prompt_to_context else ""
+                context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
                 
-                # Only embed context in the prompt if the target is NOT a _CallbackChatTarget
-                # _CallbackChatTarget will receive context via the context parameter instead
+                # context_data is always a dict with a 'contexts' list
+                # Each item in contexts is a dict with 'content' key
+                # context_type and tool_name can be present per-context
+                contexts = context_data.get("contexts", [])
+                
+                # Check if any context has agent-specific fields (context_type, tool_name)
+                has_agent_fields = any(
+                    isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
+                    for ctx in contexts
+                )
+                
+                # Build context_dict to pass via memory labels
+                context_dict = {"contexts": contexts}
+                
                 processed_prompt = prompt
-                if context and not isinstance(chat_target, _CallbackChatTarget):
-                    processed_prompt = f"{prompt}\n\n<context>{context}</context>"
-                    self.logger.debug(f"Appended context to prompt {prompt_idx+1}")
-                elif context and isinstance(chat_target, _CallbackChatTarget):
-                    self.logger.debug(f"Context will be passed separately to _CallbackChatTarget for prompt {prompt_idx+1}")
+                
+                if has_agent_fields:
+                    # Agent target - don't embed context in prompt
+                    tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
+                    self.logger.debug(f"Agent target context on prompt {prompt_idx+1}: {len(contexts)} context source(s), tool_names={tool_names}")
+                else:
+                    # Model target - may need to embed context in prompt for non-CallbackChatTarget
+                    if contexts and not isinstance(chat_target, _CallbackChatTarget):
+                        # Embed all contexts in the prompt - extract 'content' from each dict
+                        context_texts = [ctx.get("content", "") for ctx in contexts if isinstance(ctx, dict)]
+                        context_text = "\n\n".join(context_texts)
+                        processed_prompt = f"{prompt}\n\n<context>{context_text}</context>"
+                        self.logger.debug(f"Appended {len(contexts)} context source(s) to prompt {prompt_idx+1}")
+                    elif contexts and isinstance(chat_target, _CallbackChatTarget):
+                        self.logger.debug(f"Context will be passed separately to _CallbackChatTarget for prompt {prompt_idx+1}: {len(contexts)} source(s)")
 
                 try:
                     # Create retry-enabled function using the reusable decorator
@@ -277,7 +299,7 @@ class OrchestratorManager:
                                 memory_labels={
                                     "risk_strategy_path": output_path,
                                     "batch": prompt_idx + 1,
-                                    "context": context,
+                                    "context": context_dict,
                                 },
                             ),
                             timeout=calculated_timeout,

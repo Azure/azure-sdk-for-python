@@ -102,6 +102,7 @@ class EvaluationProcessor:
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
         context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        tool_calls = [msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")]
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
@@ -113,6 +114,9 @@ class EvaluationProcessor:
             # Add context to query_response if found
             if context[0] is not None:
                 query_response["context"] = context[0]
+
+            if tool_calls and any(tool_calls):
+                query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
 
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")

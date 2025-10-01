@@ -52,16 +52,34 @@ class _CallbackChatTarget(PromptChatTarget):
         # The context is stored in memory labels when the prompt is sent by orchestrator
         context_dict = {}
         if hasattr(request, 'labels') and request.labels and 'context' in request.labels:
-            context_text = request.labels['context']
-            if context_text:
-                context_dict = {"context": context_text}
-                logger.debug(f"Extracted context from request labels: {context_text}")
+            context_data = request.labels['context']
+            if context_data and isinstance(context_data, dict):
+                # context_data is always a dict with 'contexts' list
+                # Each context can have its own context_type and tool_name
+                contexts = context_data.get("contexts", [])
+                
+                # Build context_dict to pass to callback
+                context_dict = {"contexts": contexts}
+                
+                # Check if any context has agent-specific fields for logging
+                has_agent_fields = any(
+                    isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
+                    for ctx in contexts
+                )
+                
+                if has_agent_fields:
+                    tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
+                    logger.debug(f"Extracted agent context: {len(contexts)} context source(s), tool_names={tool_names}")
+                else:
+                    logger.debug(f"Extracted model context: {len(contexts)} context source(s)")
 
         # response_context contains "messages", "stream", "session_state, "context"
         response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
         if type(response) == tuple:
             response, tool_output = response
+            request.labels["tool_calls"] = tool_output
         response_text = response["messages"][-1]["content"]
+        
         response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
 
         logger.info("Received the following response from the prompt target" + f"{response_text}")

@@ -15,17 +15,19 @@ from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 
 
-def message_to_dict(message: ChatMessage, context: str = None) -> Dict[str, str]:
+def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[Any] = None) -> Dict[str, str]:
     """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
     :type message: ChatMessage
     :param context: Additional context to include in the dictionary
     :type context: str
+    :param tool_calls: List of tool calls to include in the dictionary
+    :type tool_calls: List[Any]
     :return: Dictionary representation with role and content
     :rtype: Dict[str, str]
     """
-    return {"role": message.role, "content": message.content, "context": context}
+    return {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
 
 
 def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy]]) -> str:
@@ -240,69 +242,6 @@ def format_content_by_modality(content: str, modality: str) -> str:
         return content
 
 
-def format_xpia_objective(objective_content: str, xpia_prompt: dict, logger) -> tuple:
-    """Format an objective with XPIA prompt structure.
-    
-    Expected XPIA prompt structure:
-    {
-        'id': 'unique-uuid-string',
-        'metadata': {
-            'lang': 'language-code',
-            'target_harms': [
-                {
-                    'risk-type': 'xpia',
-                    'risk-subtype': 'specific-subtype'
-                }
-            ]
-        },
-        'modality': 'text',
-        'source': [],
-        'messages': [
-            {
-                'role': 'user',
-                'content': 'The attack instruction content',
-                'context': 'The contextual scenario or document content'
-            }
-        ]
-    }
-    
-    Result format varies by modality:
-    - html: Various HTML formatting options
-    - markdown: Various Markdown formatting options  
-    - footnote: Various footnote formatting options
-    - code: Various code formatting options
-    - text: Plain text (default)
-    
-    :param objective_content: The objective content to inject
-    :type objective_content: str
-    :param xpia_prompt: The XPIA prompt structure
-    :type xpia_prompt: dict
-    :param logger: Logger for error reporting
-    :type logger: logging.Logger
-    :return: Tuple of (action, formatted_context) where action is the instruction and formatted_context is the document-tagged content
-    :rtype: tuple
-    """
-    try:
-        # Get modality type and action/content
-        doc_type = xpia_prompt.get("modality", "text")
-        action = xpia_prompt.get("messages")[0].get("content")
-        xpia_content = xpia_prompt.get("messages")[0].get("context")
-        
-        # Inject the objective into the XPIA content
-        injected_content = f"{xpia_content}\n\n{objective_content}"
-        
-        # Apply formatting based on modality
-        formatted_content = format_content_by_modality(injected_content, doc_type)
-        
-        # Return action and formatted content separately
-        return (action, formatted_content)
-        
-    except Exception as e:
-        logger.error(f"Error formatting XPIA objective: {str(e)}")
-        # Return original content with empty context as fallback
-        return (objective_content, "")
-
-
 def write_pyrit_outputs_to_file(
     *,
     output_path: str,
@@ -333,7 +272,7 @@ def write_pyrit_outputs_to_file(
 
     conversations = [
         [
-            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""))
+            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""), item.labels.get("tool_calls", []))
             for item in group
         ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
@@ -360,7 +299,7 @@ def write_pyrit_outputs_to_file(
                         json.dumps(
                             {
                                 "conversation": {
-                                    "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                                    "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
                                 }
                             }
                         )
@@ -391,7 +330,7 @@ def write_pyrit_outputs_to_file(
                 json.dumps(
                     {
                         "conversation": {
-                            "messages": [message_to_dict(message[0], message[1]) for message in conversation]
+                            "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
                         }
                     }
                 )
