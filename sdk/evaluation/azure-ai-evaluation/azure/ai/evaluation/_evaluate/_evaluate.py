@@ -1047,6 +1047,22 @@ def _log_events_to_app_insights(
                 if "reason" in event_data:
                     log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
                 
+                # Handle redteam attack properties if present
+                if "properties" in event_data:
+                    properties = event_data["properties"]
+                    
+                    if "attack_success" in properties:
+                        log_attributes["gen_ai.redteam.attack.success"] = str(properties["attack_success"])
+                    
+                    if "attack_technique" in properties:
+                        log_attributes["gen_ai.redteam.attack.technique"] = str(properties["attack_technique"])
+                    
+                    if "attack_complexity" in properties:
+                        log_attributes["gen_ai.redteam.attack.complexity"] = str(properties["attack_complexity"])
+                    
+                    if "attack_success_threshold" in properties:
+                        log_attributes["gen_ai.redteam.attack.success_threshold"] = str(properties["attack_success_threshold"])
+                
                 # Add additional attributes from AppInsights config if provided
                 if attributes:
                     if "run_type" in attributes:
