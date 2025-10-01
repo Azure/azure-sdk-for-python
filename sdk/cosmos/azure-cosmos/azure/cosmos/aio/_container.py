@@ -263,7 +263,8 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
@@ -352,7 +353,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved item.
@@ -423,7 +425,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
@@ -489,7 +492,8 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
@@ -588,7 +592,8 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
@@ -670,7 +675,8 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
@@ -865,7 +871,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -910,7 +917,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -943,7 +951,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -988,7 +997,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -1030,7 +1040,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
@@ -1127,7 +1138,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
@@ -1218,7 +1230,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
@@ -1317,7 +1330,8 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
@@ -1406,7 +1420,8 @@ class ContainerProxy:
         :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
@@ -1758,7 +1773,8 @@ class ContainerProxy:
           tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A CosmosList representing the items after the batch operations went through.
-        :keyword Dict[str, Any] availability_strategy_config: The threshold-based availability strategy to use for this request.
+        :keyword Dict[str, Any] availability_strategy_config:
+            The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.

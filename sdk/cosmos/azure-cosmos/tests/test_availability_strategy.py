@@ -752,6 +752,7 @@ class TestAvailabilityStrategy:
             setup_without_fault['col'].create_item(body=doc)
             self.MOCK_HANDLER.reset()
 
+            time.sleep(2)
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
                 perform_read_operation(
                     operation,

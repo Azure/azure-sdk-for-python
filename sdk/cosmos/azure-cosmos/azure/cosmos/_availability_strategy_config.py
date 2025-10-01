@@ -64,5 +64,5 @@ def _validate_hedging_config(config: Optional[Dict[str, Any]]) -> Optional[Cross
         raise ValueError("Missing type field in availability strategy config")
     if config["type"] != "CrossRegionHedging":
         raise ValueError("Wrong availability strategy type is provided")
-        
+
     return CrossRegionHedgingStrategyConfig(config)

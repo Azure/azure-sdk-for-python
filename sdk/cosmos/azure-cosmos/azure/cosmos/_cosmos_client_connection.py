@@ -28,6 +28,8 @@ import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing_extensions import TypedDict
+from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.credentials import TokenCredential
@@ -45,8 +47,6 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import HttpRequest, \
     HttpResponse  # pylint: disable=no-legacy-azure-core-http-response-import
 from azure.core.utils import CaseInsensitiveDict
-from typing_extensions import TypedDict
-from urllib3.util.retry import Retry
 
 from . import _base as base
 from . import _query_iterable as query_iterable

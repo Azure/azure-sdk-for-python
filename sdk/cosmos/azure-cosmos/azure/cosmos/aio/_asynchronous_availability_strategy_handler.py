@@ -30,7 +30,6 @@ from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-lega
 
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
-from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
 from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from .._request_object import RequestObject
 
@@ -81,19 +80,22 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :raises: CancelledError if request is cancelled due to completion status
         """
 
+        availability_strategy_config = request_params.availability_strategy_config
+        if availability_strategy_config is None:
+            raise ValueError("availability_strategy_config should not be null")
+
         delay: int
         # Calculate delay based on location index
         if location_index == 0:
             delay = 0  # No delay for initial request
         elif location_index == 1:
             # First hedged request after threshold
-            delay = request_params.availability_strategy_config.threshold_ms
+            delay = availability_strategy_config.threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            strategy = request_params.availability_strategy_config
-            delay = (strategy.threshold_ms+
-                    (steps * strategy.threshold_steps_ms))
+            delay = (availability_strategy_config.threshold_ms+
+                    (steps * availability_strategy_config.threshold_steps_ms))
 
         if delay > 0:
             await asyncio.sleep(delay / 1000)
@@ -192,7 +194,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                             return result
 
                         # successful response does not come from the initial request, record failure for it
-                        await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
+                        await self._record_cancel_for_first_request(
+                            first_request_params_holder,
+                            global_endpoint_manager)
                         return result
                     except Exception as e:  # pylint: disable=broad-exception-caught
                         if completed_task is first_task:
@@ -204,7 +208,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                                 first_request_params_holder,
                                 global_endpoint_manager)
                             raise e
-                
+
                 # If no success yet, create new tasks to replace completed ones
                 if not completion_status.is_set():
                     num_completed = len(done)
@@ -280,4 +284,3 @@ async def execute_with_availability_strategy(
         request,
         execute_request_fn
     )
-
