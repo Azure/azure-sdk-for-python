@@ -52,7 +52,7 @@ class TypeHandlerRegistry:
     def register_serializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
         """Decorator to register a serializer.
 
-        - If the condition is a type, we add it to a fast-path map.
+        - If the condition is a type, we add it to a type map.
         - If the condition is a callable function, we add it to a predicate list.
 
         The handler function is expected to take a single argument, the object to serialize,
@@ -69,6 +69,12 @@ class TypeHandlerRegistry:
             @registry.register_serializer(lambda x: isinstance(x, BaseModel))
             def serialize_with_condition(value: BaseModel) -> dict:
                 return value.to_dict()
+
+            # Called manually for a specific type
+            def custom_serializer(value: CustomModel) -> Dict[str, Any]:
+                return {"custom": value.custom}
+
+            registry.register_serializer(CustomModel)(custom_serializer)
 
         :param condition: A type or a callable predicate function that takes an object and returns a bool.
         :type condition: Union[Type, Callable[[Any], bool]]
@@ -93,7 +99,7 @@ class TypeHandlerRegistry:
     def register_deserializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
         """Decorator to register a deserializer.
 
-        - If the condition is a type, we add it to a fast-path map.
+        - If the condition is a type, we add it to a type map.
         - If the condition is a callable function, we add it to a predicate list.
 
         The handler function is expected to take two arguments: the target type and the data dictionary,
@@ -110,6 +116,12 @@ class TypeHandlerRegistry:
             @registry.register_deserializer(lambda t: issubclass(t, BaseModel))
             def deserialize_with_condition(cls: Type[BaseModel], data: dict) -> BaseModel:
                 return cls(**data)
+
+            # Called manually for a specific type
+            def custom_deserializer(cls: Type[CustomModel], data: Dict[str, Any]) -> CustomModel:
+                return cls(custom=data["custom"])
+
+            registry.register_deserializer(CustomModel)(custom_deserializer)
 
         :param condition: A type or a callable predicate function that takes an object and returns a bool.
         :type condition: Union[Type, Callable[[Any], bool]]
@@ -134,8 +146,10 @@ class TypeHandlerRegistry:
     def get_serializer(self, obj: Any) -> Optional[Callable]:
         """Gets the appropriate serializer for an object.
 
-        It first checks the fast-path dictionary for a direct type match.
+        It first checks the type dictionary for a direct type match.
         If no match is found, it iterates through the predicate list to find a match.
+
+        Results of the lookup are cached for performance based on the object's type.
 
         :param obj: The object to serialize.
         :type obj: any
@@ -159,8 +173,10 @@ class TypeHandlerRegistry:
     def get_deserializer(self, cls: Type) -> Optional[Callable]:
         """Gets the appropriate deserializer for a class.
 
-        It first checks the fast-path dictionary for a direct type match.
+        It first checks the type dictionary for a direct type match.
         If no match is found, it iterates through the predicate list to find a match.
+
+        Results of the lookup are cached for performance based on the class.
 
         :param cls: The class to deserialize.
         :type cls: type

@@ -1401,6 +1401,50 @@ class TestTypeHandlerRegistry:
         assert deserialized.item.biz == 456
         assert deserialized.item.baz == "baz_value"
 
+    def test_multiple_external_type_deserialization_polymorphic_scenario(self):
+        # Similar to the previous test, but here we have one external type inheriting from another.
+        # The deserializer function will need to handle this inheritance relationship and instantiation priority.
+        class ExternalModelA:
+            def __init__(self, foo: str, bar: Optional[int] = None):
+                self.foo = foo
+                self.bar = bar
+
+        class ExternalModelB(ExternalModelA):
+            def __init__(self, foo: str, bar: Optional[int] = None, baz: Optional[float] = None):
+                super().__init__(foo, bar)
+                self.baz = baz
+
+        class ContainerModel(HybridModel):
+            item: Union[ExternalModelA, ExternalModelB] = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
+            if "baz" in data:
+                return ExternalModelB(foo=data["foo"], bar=data.get("bar"), baz=data.get("baz"))
+            elif "foo" in data:
+                return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
+            else:
+                raise ValueError("Invalid data for deserialization")
+
+        TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
+
+        input_dict = {"item": {"foo": "foo_value", "bar": 123}}
+        deserialized = _deserialize(ContainerModel, input_dict)
+        assert isinstance(deserialized, ContainerModel)
+        assert isinstance(deserialized.item, ExternalModelA)
+        assert not isinstance(deserialized.item, ExternalModelB)
+        assert deserialized.item.foo == "foo_value"
+        assert deserialized.item.bar == 123
+
+        input_dict = {"item": {"foo": "foo_value", "bar": 123, "baz": 3.14}}
+        deserialized = _deserialize(ContainerModel, input_dict)
+        assert isinstance(deserialized, ContainerModel)
+        assert isinstance(deserialized.item, ExternalModelB)
+        assert deserialized.item.foo == "foo_value"
+        assert deserialized.item.bar == 123
+        assert deserialized.item.baz == 3.14
+
     def test_serialize_deserialize_deep_nested_external_model_in_generated_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
