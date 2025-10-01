@@ -695,7 +695,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :param column_mapping: The column mapping to use for the evaluation. If None, a naive 1:1 mapping is used.
     :type column_mapping: Optional[Dict[str, str]]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
-    :rtype: Dict[str, Any] 
+    :rtype: Dict[str, Any]
     """
     # Gather path specs: list of tuples (original_mapping_value, relative_parts, dataframe_column_name)
     # relative_parts excludes the wrapper (so schema + content align).
