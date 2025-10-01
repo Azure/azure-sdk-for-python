@@ -19,6 +19,8 @@
 ### Bugs Fixed
 - Pinning duckdb version to 1.3.2 for redteam extra to fix error `TypeError: unhashable type: '_duckdb.typing.DuckDBPyType'`
 
+## 1.11.0 (2025-09-03)
+
 ### Features Added
 - Added support for user-supplied tags in the `evaluate` function. Tags are key-value pairs that can be used for experiment tracking, A/B testing, filtering, and organizing evaluation runs. The function accepts a `tags` parameter.
 - Added support for user-supplied TokenCredentials with LLM based evaluators.
