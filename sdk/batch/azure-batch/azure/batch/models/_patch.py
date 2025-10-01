@@ -76,7 +76,7 @@ class BatchFileProperties:
     :ivar is_directory: Whether the object represents a directory.
     :vartype is_directory: bool
     :ivar creation_time: The file creation time. The creation time is not returned for files on
-    Linux Compute Nodes.
+     Linux Compute Nodes.
     :vartype creation_time: ~datetime.datetime
     :ivar last_modified: The time at which the file was last modified. Required.
     :vartype last_modified: ~datetime.datetime

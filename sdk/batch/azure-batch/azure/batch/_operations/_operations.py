@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 import datetime
 import json
-from typing import Any, Callable, Dict, Iterator, List, Optional, TypeVar
+from typing import Any, Callable, Iterator, Optional, TypeVar
 import urllib.parse
 
 from azure.core import MatchConditions, PipelineClient
@@ -37,7 +37,7 @@ from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -174,8 +174,8 @@ def build_batch_list_pools_request(
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -305,8 +305,8 @@ def build_batch_get_pool_request(
     ocpdate: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
@@ -796,8 +796,8 @@ def build_batch_get_job_request(
     ocpdate: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
@@ -1109,8 +1109,8 @@ def build_batch_list_jobs_request(
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1150,8 +1150,8 @@ def build_batch_list_jobs_from_schedule_request(  # pylint: disable=name-too-lon
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1196,7 +1196,7 @@ def build_batch_list_job_preparation_and_release_task_status_request(  # pylint:
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1292,7 +1292,7 @@ def build_batch_list_certificates_request(
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1395,7 +1395,7 @@ def build_batch_get_certificate_request(
     *,
     timeout: Optional[int] = None,
     ocpdate: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1528,8 +1528,8 @@ def build_batch_get_job_schedule_request(
     ocpdate: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
@@ -1837,8 +1837,8 @@ def build_batch_list_job_schedules_request(
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1907,8 +1907,8 @@ def build_batch_list_tasks_request(
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2033,8 +2033,8 @@ def build_batch_get_task_request(
     ocpdate: Optional[datetime.datetime] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
-    expand: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
+    expand: Optional[list[str]] = None,
     etag: Optional[str] = None,
     match_condition: Optional[MatchConditions] = None,
     **kwargs: Any
@@ -2136,7 +2136,7 @@ def build_batch_list_sub_tasks_request(
     *,
     timeout: Optional[int] = None,
     ocpdate: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2547,7 +2547,7 @@ def build_batch_get_node_request(
     *,
     timeout: Optional[int] = None,
     ocpdate: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2867,7 +2867,7 @@ def build_batch_list_nodes_request(
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
     filter: Optional[str] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2910,7 +2910,7 @@ def build_batch_get_node_extension_request(
     *,
     timeout: Optional[int] = None,
     ocpdate: Optional[datetime.datetime] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2951,7 +2951,7 @@ def build_batch_list_node_extensions_request(
     timeout: Optional[int] = None,
     ocpdate: Optional[datetime.datetime] = None,
     max_results: Optional[int] = None,
-    select: Optional[List[str]] = None,
+    select: Optional[list[str]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3196,7 +3196,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchApplication]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchApplication]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3248,7 +3248,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchApplication], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchApplication], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3405,7 +3405,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
          last aggregation interval currently available. Default value is None.
         :paramtype endtime: ~datetime.datetime
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics
          <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics>`_.
          Default value is None.
         :paramtype filter: str
@@ -3416,7 +3416,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchPoolUsageMetrics]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchPoolUsageMetrics]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3471,7 +3471,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchPoolUsageMetrics], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchPoolUsageMetrics], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3585,8 +3585,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchPool"]:
         """Lists all of the Pools which be mounted.
@@ -3620,7 +3620,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchPool]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchPool]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3675,7 +3675,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchPool], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchPool], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3922,8 +3922,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -4910,7 +4910,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchSupportedImage]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchSupportedImage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4963,7 +4963,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchSupportedImage], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchSupportedImage], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -5023,7 +5023,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchPoolNodeCounts]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchPoolNodeCounts]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5076,7 +5076,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchPoolNodeCounts], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchPoolNodeCounts], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -5221,8 +5221,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -5872,9 +5872,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
+        content_type: Optional[str] = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
         )
+        content_type = content_type if options else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if options is not None:
@@ -6021,8 +6022,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
@@ -6056,7 +6057,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchJob]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchJob]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6111,7 +6112,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJob], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchJob], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6143,8 +6144,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
@@ -6166,7 +6167,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule
          <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule>`_.
          Default value is None.
         :paramtype filter: str
@@ -6181,7 +6182,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchJob]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchJob]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6237,7 +6238,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJob], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchJob], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6269,7 +6270,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchJobPreparationAndReleaseTaskStatus"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the
@@ -6296,7 +6297,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status
          <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status>`_.
          Default value is None.
         :paramtype filter: str
@@ -6310,7 +6311,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchJobPreparationAndReleaseTaskStatus]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchJobPreparationAndReleaseTaskStatus]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6366,7 +6367,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized.get("value", [])
+                list[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized.get("value", [])
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -6563,7 +6564,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchCertificate"]:
         """Lists all of the Certificates that have been added to the specified Account.
@@ -6582,7 +6583,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        `https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates
+         `https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates
          <https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-certificates>`_.
          Default value is None.
         :paramtype filter: str
@@ -6595,7 +6596,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchCertificate]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchCertificate]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6649,7 +6650,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchCertificate], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchCertificate], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6853,7 +6854,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models.BatchCertificate:
         """Gets information about the specified Certificate.
@@ -7162,8 +7163,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -7917,8 +7918,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchJobSchedule"]:
         """Lists all of the Job Schedules in the specified Account.
@@ -7952,7 +7953,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchJobSchedule]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchJobSchedule]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8007,7 +8008,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchJobSchedule], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchJobSchedule], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -8126,8 +8127,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchTask"]:
         """Lists all of the Tasks that are associated with the specified Job.
@@ -8165,7 +8166,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchTask]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchTask]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8221,7 +8222,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchTask], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchTask], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -8473,8 +8474,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
-        expand: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
+        expand: Optional[list[str]] = None,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
@@ -8717,7 +8718,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchSubtask"]:
         """Lists all of the subtasks that are associated with the specified multi-instance
@@ -8746,7 +8747,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchSubtask]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchSubtask]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8800,7 +8801,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchSubtask], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchSubtask], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -9403,7 +9404,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchNodeFile]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchNodeFile]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -9459,7 +9460,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchNodeFile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -9757,7 +9758,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNode:
         """Gets information about the specified Compute Node.
@@ -9887,9 +9888,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
+        content_type: Optional[str] = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
         )
+        content_type = content_type if options else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if options is not None:
@@ -10060,9 +10062,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
+        content_type: Optional[str] = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
         )
+        content_type = content_type if options else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if options is not None:
@@ -10152,9 +10155,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
+        content_type: Optional[str] = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
         )
+        content_type = content_type if options else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if options is not None:
@@ -10247,9 +10251,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
+        content_type: Optional[str] = kwargs.pop(
             "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
         )
+        content_type = content_type if options else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         if options is not None:
@@ -10584,7 +10589,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
         filter: Optional[str] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchNode"]:
         """Lists the Compute Nodes in the specified Pool.
@@ -10618,7 +10623,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchNode]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchNode]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10673,7 +10678,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNode], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchNode], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -10705,7 +10710,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         *,
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> _models.BatchNodeVMExtension:
         """Gets information about the specified Compute Node Extension.
@@ -10804,7 +10809,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         ocpdate: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
-        select: Optional[List[str]] = None,
+        select: Optional[list[str]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.BatchNodeVMExtension"]:
         """Lists the Compute Nodes Extensions in the specified Pool.
@@ -10835,7 +10840,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchNodeVMExtension]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchNodeVMExtension]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -10890,7 +10895,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNodeVMExtension], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchNodeVMExtension], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -11253,7 +11258,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
          applications can be returned. Default value is None.
         :paramtype max_results: int
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files
+         `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files
          <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-compute-node-files>`_.
          Default value is None.
         :paramtype filter: str
@@ -11266,7 +11271,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.BatchNodeFile]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.BatchNodeFile]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -11322,7 +11327,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BatchNodeFile], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.BatchNodeFile], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)

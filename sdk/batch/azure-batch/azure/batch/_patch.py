@@ -40,6 +40,7 @@ __all__ = [
     "BatchClient",
 ]  # Add all objects you want publicly available to users at this package level
 
+
 class BatchSharedKeyAuthPolicy(SansIOHTTPPolicy):
 
     headers_to_sign = [
@@ -133,6 +134,7 @@ class BatchErrorFormat(ODataV4Format):
                     self.details.append(ODataV4Format({"code": item["key"], "message": item["value"]}))
         except KeyError:
             super().__init__(odata_error)
+
 
 class BatchExceptionPolicy(SansIOHTTPPolicy):
 

@@ -25,12 +25,12 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
     ):
         """Initialize the DeleteJobPollingMethodAsync.
 
@@ -113,6 +113,7 @@ class DeleteJobPollingMethodAsync(AsyncPollingMethod):
             self._status = "InProgress"
             self._finished = False
 
+
 class DisableJobPollingMethodAsync(AsyncPollingMethod):
     """Polling method for job disable operation.
 
@@ -121,12 +122,12 @@ class DisableJobPollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
     ):
         """Initialize the DisableJobPollingMethodAsync.
 
@@ -215,12 +216,12 @@ class EnableJobPollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
     ):
         """Initialize the EnableJobPollingMethodAsync.
 
@@ -309,12 +310,12 @@ class DeleteJobSchedulePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_schedule_id: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_schedule_id: str,
+        polling_interval: int = 5,
     ):
         """Initialize the DeleteJobSchedulePollingMethodAsync.
 
@@ -402,12 +403,12 @@ class DeletePoolPollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
     ):
         """Initialize the DeletePoolPollingMethodAsync.
 
@@ -496,13 +497,13 @@ class DeleteCertificatePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            thumbprint_algorithm: str,
-            thumbprint: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        polling_interval: int = 5,
     ):
         """Initialize the DeleteCertificatePollingMethodAsync.
 
@@ -596,13 +597,13 @@ class DeallocateNodePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
     ):
         """Initialize the DeallocateNodePollingMethodAsync.
 
@@ -696,14 +697,14 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the RebootNodePollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -803,14 +804,14 @@ class ReimageNodePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the ReimageNodePollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -902,13 +903,13 @@ class RemoveNodePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the RemoveNodePollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -998,13 +999,13 @@ class ResizePoolPollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the ResizePoolPollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -1093,14 +1094,14 @@ class StartNodePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the StartNodePollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -1192,13 +1193,13 @@ class StopPoolResizePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the StopPoolResizePollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -1288,13 +1289,13 @@ class TerminateJobPollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the TerminateJobPollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling
@@ -1382,13 +1383,13 @@ class TerminateJobSchedulePollingMethodAsync(AsyncPollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_schedule_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_schedule_id: str,
+        polling_interval: int = 5,
+    ):
         """Initialize the TerminateJobSchedulePollingMethodAsync.
 
         Sets the initial status of this long-running operation, verifies that polling

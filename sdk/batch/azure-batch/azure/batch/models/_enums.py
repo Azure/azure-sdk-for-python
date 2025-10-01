@@ -216,9 +216,10 @@ class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Deallocate the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Deallocate the Compute Node when all Task
-    retention periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Deallocate the Compute
+    Node when all Task retention periods have expired."""
 
 
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -234,9 +235,10 @@ class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Remove Compute
     Nodes when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Remove Compute Nodes when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Remove Compute Nodes
+    when all Task retention periods have expired."""
 
 
 class BatchNodeDisableSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -288,9 +290,10 @@ class BatchNodeRebootKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Restart the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Restart the Compute Node when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Restart the Compute Node
+    when all Task retention periods have expired."""
 
 
 class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -307,9 +310,10 @@ class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Reimage the Compute Node
+    when all Task retention periods have expired."""
 
 
 class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

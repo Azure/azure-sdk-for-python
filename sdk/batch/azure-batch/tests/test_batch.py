@@ -50,6 +50,7 @@ import asyncio
 if platform.system() == "Windows":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
+
 def get_redacted_key(key):
     redacted_value = "redacted"
     digest = hashlib.sha256(six.ensure_binary(key)).digest()
@@ -685,7 +686,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         options = models.BatchNodeRemoveOptions(node_ids=[n.id for n in nodes])
         poller = await wrap_result(client.begin_remove_nodes(batch_pool.name, options))
         assert poller is not None
-        
+
         result = poller.result()
         if hasattr(result, "__await__"):
             # Async poller
@@ -1217,7 +1218,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test LRO disable job
         poller = await wrap_result(
             client.begin_disable_job(
-                job_id=job_param.id, disable_options=models.BatchJobDisableOptions(disable_tasks="requeue"), polling_interval=5
+                job_id=job_param.id,
+                disable_options=models.BatchJobDisableOptions(disable_tasks="requeue"),
+                polling_interval=5,
             )
         )
         assert poller is not None

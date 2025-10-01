@@ -24,13 +24,13 @@ class DeleteJobPollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -99,13 +99,13 @@ class DisableJobPollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -171,13 +171,13 @@ class EnableJobPollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -243,13 +243,13 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_schedule_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_schedule_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -317,13 +317,13 @@ class DeletePoolPollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -389,14 +389,14 @@ class DeleteCertificatePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            thumbprint_algorithm: str,
-            thumbprint: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        thumbprint_algorithm: str,
+        thumbprint: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -458,14 +458,14 @@ class DeallocateNodePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -533,14 +533,14 @@ class RebootNodePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -607,14 +607,14 @@ class ReimageNodePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -681,13 +681,13 @@ class RemoveNodePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -754,13 +754,13 @@ class ResizePoolPollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -827,14 +827,14 @@ class StartNodePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            node_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        node_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -901,13 +901,13 @@ class StopPoolResizePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            pool_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        pool_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -974,13 +974,13 @@ class TerminateJobPollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
@@ -1046,13 +1046,13 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
     """
 
     def __init__(
-            self,
-            client: Any,
-            initial_response: PipelineResponse,
-            deserialization_callback: Optional[Callable],
-            job_schedule_id: str,
-            polling_interval: int = 5
-        ):
+        self,
+        client: Any,
+        initial_response: PipelineResponse,
+        deserialization_callback: Optional[Callable],
+        job_schedule_id: str,
+        polling_interval: int = 5,
+    ):
         self._client = client
         self._initial_response = initial_response
         self._deserialization_callback = deserialization_callback
