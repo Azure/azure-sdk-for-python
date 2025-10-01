@@ -23,6 +23,7 @@ import json
 import os
 import urllib
 from typing import Any, cast, Dict, List, Optional
+from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
