@@ -420,7 +420,7 @@ class TestAsyncAvailabilityStrategy:
                             FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
-            500,  # Add delay to trigger hedging
+            700,  # Add delay to trigger hedging
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
         custom_transport = self.get_custom_transport_with_fault_injection(predicate, error_lambda)

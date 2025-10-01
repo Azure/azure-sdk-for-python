@@ -231,9 +231,11 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             completion_status.set()
             if first_task is None:
                 raise RuntimeError("first task can not be none")
-            if first_task.exception() is None:
+
+            first_task_exception = first_task.exception()
+            if first_task_exception is None:
                 raise RuntimeError("first task should have failed")
-            raise first_task.exception()
+            raise first_task_exception
         finally:
             for task in active_tasks:
                 if not task.done():
