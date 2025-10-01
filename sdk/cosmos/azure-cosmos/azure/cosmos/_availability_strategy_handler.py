@@ -78,13 +78,13 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             delay = 0
         elif location_index == 1:
             # First hedged request after threshold
-            delay = request_params.availability_strategy_config["threshold_ms"]
+            delay = request_params.availability_strategy_config.threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
             strategy = request_params.availability_strategy_config
-            delay = (strategy["threshold_ms"] +
-                    (steps * strategy["threshold_steps_ms"]))
+            delay = (strategy.threshold_ms +
+                    (steps * strategy.threshold_steps_ms))
 
         if delay > 0:
             time.sleep(delay / 1000)
@@ -222,12 +222,10 @@ def execute_with_hedging(
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     :raises: Any exceptions raised by the hedging handler's execute_request method
     """
-    strategy = request_params.availability_strategy_config
-    if isinstance(strategy, dict) and "threshold_ms" in strategy and "threshold_steps_ms" in strategy:
-        return _cross_region_hedging_handler.execute_request(
-            request_params,
-            global_endpoint_manager,
-            request,
-            execute_request_fn
-        )
-    raise ValueError("Missing required fields in availability strategy config")
+    return _cross_region_hedging_handler.execute_request(
+        request_params,
+        global_endpoint_manager,
+        request,
+        execute_request_fn
+    )
+

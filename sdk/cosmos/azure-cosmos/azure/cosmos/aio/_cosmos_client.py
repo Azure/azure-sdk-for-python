@@ -36,7 +36,6 @@ from azure.cosmos.offer import ThroughputProperties
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
 from ._retry_utility_async import _ConnectionRetryPolicy
-from .. import CrossRegionHedgingStrategyConfig
 from .._base import build_options as _build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
@@ -204,7 +203,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, Dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
-            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None,
+            availability_strategy_config: Optional[Dict[str, Any]] = None,
             availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:

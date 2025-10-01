@@ -30,6 +30,7 @@ from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-lega
 
 from ._global_partition_endpoint_manager_circuit_breaker_async import \
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync
+from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
 from .._availability_strategy_handler_base import AvailabilityStrategyHandlerMixin
 from .._request_object import RequestObject
 
@@ -86,13 +87,13 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             delay = 0  # No delay for initial request
         elif location_index == 1:
             # First hedged request after threshold
-            delay = request_params.availability_strategy_config["threshold_ms"]
+            delay = request_params.availability_strategy_config.threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
             strategy = request_params.availability_strategy_config
-            delay = (strategy["threshold_ms"] +
-                    (steps * strategy["threshold_steps_ms"]))
+            delay = (strategy.threshold_ms+
+                    (steps * strategy.threshold_steps_ms))
 
         if delay > 0:
             await asyncio.sleep(delay / 1000)
@@ -271,16 +272,12 @@ async def execute_with_availability_strategy(
     :returns: Tuple containing response data and headers from the successful request
     :rtype: ResponseType
     :raises: CosmosClientError if all hedged requests fail
-    :raises: ValueError if availability strategy is not supported
     """
 
-    availability_strategy = request_params.availability_strategy_config
-    if isinstance(availability_strategy, dict) and "threshold_ms" in availability_strategy and "threshold_steps_ms" in availability_strategy:
-        return await _cross_region_hedging_handler.execute_request(
-            request_params,
-            global_endpoint_manager,
-            request,
-            execute_request_fn
-        )
+    return await _cross_region_hedging_handler.execute_request(
+        request_params,
+        global_endpoint_manager,
+        request,
+        execute_request_fn
+    )
 
-    raise ValueError("Missing required fields in availability strategy config")

@@ -223,7 +223,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, Dict[str, Any]],
         consistency_level: Optional[str] = None,
-        availability_strategy_config: Optional['CrossRegionHedgingStrategyConfig'] = None,
+        availability_strategy_config: Optional[Dict[str, Any]] = None,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         **kwargs
     ) -> None:

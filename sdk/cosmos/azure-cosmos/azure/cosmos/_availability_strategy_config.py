@@ -21,54 +21,48 @@
 
 """Configuration types for Azure Cosmos DB availability strategies."""
 
-from typing import Dict, Optional
-
-from typing_extensions import Literal, TypedDict
+from typing import Dict, Optional, Any
 
 
-class CrossRegionHedgingStrategyConfig(TypedDict, total=False):
+class CrossRegionHedgingStrategyConfig:
     """Configuration for cross-region request hedging strategy.
 
-    :ivar type: Type of strategy, must be "CrossRegionHedging"
-    :vartype type: str
-    :ivar threshold_ms: Time in ms before routing to alternate region (default: 500)
-    :vartype threshold_ms: int
-    :ivar threshold_steps_ms: Time interval between routing attempts (default: 100)
-    :vartype threshold_steps_ms: int
+    :param config: Dictionary containing configuration values, defaults to None
+    :type config: Optional[Dict[str, Any]]
+    :raises ValueError: If configuration values are invalid
+    
+    The config dictionary can contain:
+    - threshold_ms: Time in ms before routing to alternate region (default: 500)
+    - threshold_steps_ms: Time interval between routing attempts (default: 100)
+    - type: Must be "CrossRegionHedging" if provided
     """
-    type: Literal["CrossRegionHedging"]
-    threshold_ms: int
-    threshold_steps_ms: int
+    def __init__(self, config: Optional[Dict[str, Any]] = None) -> None:
+        if config is None:
+            self.threshold_ms = 500
+            self.threshold_steps_ms = 100
+        else:
+            self.threshold_ms = config.get("threshold_ms", 500)
+            self.threshold_steps_ms = config.get("threshold_steps_ms", 100)
 
-def _validate_hedging_config(config: Optional[CrossRegionHedgingStrategyConfig])\
-        -> Optional[CrossRegionHedgingStrategyConfig]:
+        if self.threshold_ms <= 0:
+            raise ValueError("threshold_ms must be positive")
+        if self.threshold_steps_ms <= 0:
+            raise ValueError("threshold_steps_ms must be positive")
+
+def _validate_hedging_config(config: Optional[Dict[str, Any]]) -> Optional[CrossRegionHedgingStrategyConfig]:
     """Validate and create a CrossRegionHedgingStrategyConfig.
     
     :param config: Dictionary containing configuration values
-    :type config: Dict[str, Any]
-    :returns: Validated configuration
-    :rtype: CrossRegionHedgingStrategyConfig
-    :raises ValueError: If configuration is invalid
+    :type config: Optional[Dict[str, Any]]
+    :returns: Validated configuration object
+    :rtype: Optional[CrossRegionHedgingStrategyConfig]
     """
-
     if config is None:
-        return config
+        return None
 
-    threshold_ms = config.get("threshold_ms", 500)
-    threshold_steps_ms = config.get("threshold_steps_ms", 100)
-    
-    if not isinstance(threshold_ms, int):
-        raise ValueError("threshold_ms must be an integer")
-    if not isinstance(threshold_steps_ms, int):
-        raise ValueError("threshold_steps_ms must be an integer")
+    if "type" not in config:
+        raise ValueError("Missing type field in availability strategy config")
+    if config["type"] != "CrossRegionHedging":
+        raise ValueError("Wrong availability strategy type is provided")
         
-    if threshold_ms <= 0:
-        raise ValueError("threshold_ms must be positive")
-    if threshold_steps_ms <= 0:
-        raise ValueError("threshold_steps_ms must be positive")
-
-    return CrossRegionHedgingStrategyConfig(
-        type="CrossRegionHedging",
-        threshold_ms=threshold_ms,
-        threshold_steps_ms=threshold_steps_ms
-    )
+    return CrossRegionHedgingStrategyConfig(config)

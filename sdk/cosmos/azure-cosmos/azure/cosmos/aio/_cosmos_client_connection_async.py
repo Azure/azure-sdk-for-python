@@ -53,7 +53,8 @@ from azure.cosmos.aio._global_partition_endpoint_manager_circuit_breaker_async i
     _GlobalPartitionEndpointManagerForCircuitBreakerAsync)
 from ._read_items_helper_async import ReadItemsHelperAsync
 
-from .. import _base as base, CrossRegionHedgingStrategyConfig
+from .. import _base as base
+from .._availability_strategy_config import CrossRegionHedgingStrategyConfig, _validate_hedging_config
 from .._base import _build_properties_cache
 from .. import documents
 from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
@@ -83,8 +84,6 @@ from ..partition_key import (
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
-
-
 
 
 class CredentialDict(TypedDict, total=False):
@@ -124,7 +123,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             auth: CredentialDict,
             connection_policy: Optional[ConnectionPolicy] = None,
             consistency_level: Optional[str] = None,
-            availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None,
+            availability_strategy_config: Optional[Dict[str, Any]] = None,
             availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:
@@ -143,7 +142,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
-        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = availability_strategy_config
+        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] =\
+            _validate_hedging_config(availability_strategy_config)
         self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
