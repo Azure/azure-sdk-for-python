@@ -1,5 +1,5 @@
 {
-    "CrossLanguagePackageId": "VoiceLive.WebSocket",
+    "CrossLanguagePackageId": "VoiceLive",
     "CrossLanguageDefinitionId": {
         "azure.ai.voicelive.models.Animation": "VoiceLive.Animation",
         "azure.ai.voicelive.models.ConversationRequestItem": "VoiceLive.ConversationRequestItem",
