@@ -7,7 +7,7 @@
 from typing import Any, Optional, TYPE_CHECKING
 import uuid
 import logging
-
+logging.basicConfig(level=logging.INFO)
 from .error import AMQPError, ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
 from .endpoints import Source, Target
 from .constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, SenderSettleMode, ReceiverSettleMode
@@ -161,6 +161,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             desired_capabilities=self.desired_capabilities if self.state == LinkState.DETACHED else None,
             properties=self.properties,
         )
+        _LOGGER.info(f"Sending Attach frame with max_message_size={self.max_message_size}")
         if self.network_trace:
             _LOGGER.debug("-> %r", attach_frame, extra=self.network_trace_params)
         self._session._outgoing_attach(attach_frame)  # pylint: disable=protected-access
