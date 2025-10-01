@@ -1131,11 +1131,13 @@ def _preprocess_data(
     # via target mapping.
     # If both the data and the output dictionary of the target function
     # have the same column, then the target function value is used.
-    _validate_columns_for_evaluators(input_data_df, evaluators, target, target_generated_columns, column_mapping)
-
     # NEW: flatten nested object columns (e.g., 'item') so we can map leaf values automatically.
+    # Ensure the data does not contain top-level 'conversation' or 'messages' columns (which indicate chat/conversation data)
     if input_data_df is not None:
-        input_data_df = _flatten_object_columns_for_default_mapping(input_data_df)
+        if "conversation" in input_data_df.columns or "messages" in input_data_df.columns:
+            pass
+        else:
+            input_data_df = _flatten_object_columns_for_default_mapping(input_data_df)
 
     # Build default mapping for leaves:
     if input_data_df is not None:
