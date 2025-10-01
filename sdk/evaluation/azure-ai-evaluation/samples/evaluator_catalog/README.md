@@ -40,59 +40,59 @@ Sample PR: [pullrequest/1816050](https://msdata.visualstudio.com/Vienna/_git/azu
 
 Please follow directions given below. 
 
-## spec.yaml content
+## Asset Content - spec.yaml
+
+
+| Asset Property | API Property  | Example | Description |
+| - | - | - | - |
+| type | type | evaluator | It is always 'evaluator'. It identifies type of the asset.  |
+| name | name | test.f1_score| Name of the evaluator, alway in URL | 
+| version | version | 1 | It is auto incremented version number, starts with 1 | 
+| displayName: | display name | F1 Score | It is the name of the evaluator shown in UI | 
+| description: | description | | This is description of the evaluator. | 
+| evaluatorType: | evaluator_type | "builtin"| For Built-in evaluators, value is "builtin". For custom evaluators, value is "custom". API only supports 'custom'| 
+| evaluatorSubType | definition.type | "code" | It represents what type of evaluator It is. For #1 & #2 type evaluators, please add "code". For #3 type evaluator, please provide "prompt". For #4 type evaluator, please provide "service" | 
+| categories | categories | ["Quality"] | The categories of the evaluator. It's an array. Allowed values are Quality, Safety, Agents. Multiple values are allowed | 
+| initParameterSchema |  |  |  The JSON schema (Draft 2020-12) for the evaluator's input parameters. This includes parameters like type, properties, required. | 
+| dataMappingSchema |  |  | The JSON schema (Draft 2020-12) for the evaluator's input data. This includes parameters like type, properties, required.  | 
+| outputSchema |  |  | List of output metrics produced by this evaluator | 
+| path |  Not expose in API |  ./evaluator |  Fixed. | 
+
+Example:
 
 ```yml
 
 type: "evaluator"
-name: "test.{name}"
+name: "test.bleu_score"
 version: 1
-displayName: "{display name}"
-description: "{description}"
+displayName: "Bleu-Score-Evaluator"
+description: "| | |\n| -- | -- |\n| Score range | Float [0-1]: higher means better quality. |\n| What is this metric? | BLEU (Bilingual Evaluation Understudy) score is commonly used in natural language processing (NLP) and machine translation. It measures how closely the generated text matches the reference text. |\n| How does it work? | The BLEU score calculates the geometric mean of the precision of n-grams between the model-generated text and the reference text, with an added brevity penalty for shorter generated text. The precision is computed for unigrams, bigrams, trigrams, etc., depending on the desired BLEU score level. The more n-grams that are shared between the generated and reference texts, the higher the BLEU score. |\n| When to use it? | The recommended scenario is Natural Language Processing (NLP) tasks. It's widely used in text summarization and text generation use cases. |\n| What does it need as input? | Response, Ground Truth |\n"
 evaluatorType: "builtin"
 evaluatorSubType: "code"
-It represents what type of evaluator It is. 
-For #1 & #2 type evaluators, please add "code"
-For #3 type evaluator, please provide "prompt"
-For #4 type evaluator, please provide "service"
-
-**categories: **
-It represents an array of categories (Quality, Safety, Agents)
-Example- ["Quality", "Safety"]
-
-**initParameterSchema:**
-The JSON schema (Draft 2020-12) for the evaluator's input parameters. This includes parameters like type, properties, required.
-Example-
-          type: "object"
-          properties:
-            threshold:
-              type: "number"
-              minimumValue: 0
-              maximumValue: 1
-              step: 0.1
-          required: ["threshold"]
-
-
-**dataMappingSchema:**
-The JSON schema (Draft 2020-12) for the evaluator's input data. This includes parameters like type, properties, required.
-Example-
-          type: "object"
-          properties:
-            ground_truth:
-              type: "string"
-            response:
-              type: "string"
-          required: ["ground_truth", "response"]
-
-**outputSchema:**
-List of output metrics produced by this evaluator
-Example-
-          bleu:
-            type: "continuous"
-            desirable_direction: "increase"
-            min_value: 0
-            max_value: 1
-
+categories: ["quality"]
+initParameterSchema:
+  type: "object"
+  properties:
+    threshold:
+      type: "number"
+      minimumValue: 0
+      maximumValue: 1
+      step: 0.1
+  required: ["threshold"]
+dataMappingSchema:
+  type: "object"
+  properties:
+    ground_truth:
+      type: "string"
+    response:
+      type: "string"
+  required: ["ground_truth", "response"]
+outputSchema:
+  bleu:
+    type: "continuous"
+    desirable_direction: "increase"
+    min_value: 0
+    max_value: 1
 path: ./evaluator
 ```
 
