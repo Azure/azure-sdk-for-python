@@ -106,7 +106,45 @@ class RedTeam:
         or None to use default binary evaluation (evaluation results determine success).
         When using thresholds, scores >= threshold are considered successful attacks.
     :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
+    :param rai_service_url: Optional URL for a local or custom RAI service endpoint (e.g., "http://localhost:5000").
+        Can also be set globally using RedTeam.configure_rai_service() or via RAI_SVC_URL environment variable.
+    :type rai_service_url: Optional[str]
+    
+    .. note::
+        For local development or custom RAI service endpoints, you can configure the service URL in three ways:
+        
+        1. Set the RAI_SVC_URL environment variable: ``export RAI_SVC_URL="http://localhost:5000"``
+        2. Use the class method: ``RedTeam.configure_rai_service("http://localhost:5000")``
+        3. Pass it to the constructor: ``RedTeam(..., rai_service_url="http://localhost:5000")``
     """
+
+    @classmethod
+    def configure_rai_service(cls, service_url: str) -> None:
+        """
+        Configure the RAI service URL globally for all RedTeam instances.
+        
+        This is useful when you want to use a local or custom RAI service endpoint
+        for all RedTeam operations in your application.
+        
+        :param service_url: The URL of the RAI service (e.g., "http://localhost:5000")
+        :type service_url: str
+        
+        Example:
+            >>> RedTeam.configure_rai_service("http://localhost:5000")
+            >>> red_team = RedTeam(azure_ai_project=project, credential=cred)
+            # Will use the configured local service
+        """
+        os.environ["RAI_SVC_URL"] = service_url
+        
+    @classmethod 
+    def get_current_rai_service_url(cls) -> Optional[str]:
+        """
+        Get the currently configured RAI service URL.
+        
+        :return: The RAI service URL if configured, None otherwise
+        :rtype: Optional[str]
+        """
+        return os.environ.get("RAI_SVC_URL")
 
     def __init__(
         self,
@@ -120,6 +158,7 @@ class RedTeam:
         language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
         attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
+        rai_service_url: Optional[str] = None,
     ):
         """Initialize a new Red Team agent for AI model evaluation.
 
@@ -149,6 +188,8 @@ class RedTeam:
             or None to use default binary evaluation (evaluation results determine success).
             When using thresholds, scores >= threshold are considered successful attacks.
         :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
+        :param rai_service_url: Optional URL for a local or custom RAI service endpoint (e.g., "http://localhost:5000")
+        :type rai_service_url: Optional[str]
         """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -156,6 +197,10 @@ class RedTeam:
         self.output_dir = output_dir
         self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
+        
+        # Set RAI service URL if provided
+        if rai_service_url:
+            os.environ["RAI_SVC_URL"] = rai_service_url
 
         # Configure attack success thresholds
         self.attack_success_thresholds = self._configure_attack_success_thresholds(attack_success_thresholds)
@@ -171,6 +216,13 @@ class RedTeam:
             console_formatter = logging.Formatter("%(levelname)s - %(message)s")
             console_handler.setFormatter(console_formatter)
             self.logger.addHandler(console_handler)
+
+        # Log current RAI service configuration (after logger is initialized)
+        current_rai_url = os.environ.get("RAI_SVC_URL")
+        if current_rai_url:
+            self.logger.info(f"Using custom RAI service URL: {current_rai_url}")
+        else:
+            self.logger.debug("Using default Azure RAI service discovery")
 
         if not self._one_dp_project:
             self.token_manager = ManagedIdentityAPITokenManager(
@@ -632,6 +684,27 @@ class RedTeam:
                         # Preserve the original baseline context if it exists
                         baseline_context = message.get("context", "")
                         
+                        # If baseline context exists and doesn't have tool_name/context_type,
+                        # append it to the baseline attack content before XPIA injection
+                        if baseline_context:
+                            # Check if baseline_context is a string or needs to be extracted from dict/list
+                            if isinstance(baseline_context, str):
+                                baseline_context_text = baseline_context
+                            elif isinstance(baseline_context, list) and len(baseline_context) > 0:
+                                # Extract content from first context item if it's a list
+                                first_ctx = baseline_context[0]
+                                if isinstance(first_ctx, dict):
+                                    baseline_context_text = first_ctx.get("content", "")
+                                else:
+                                    baseline_context_text = str(first_ctx)
+                            else:
+                                baseline_context_text = ""
+                            
+                            # Append baseline context to attack content before injection
+                            if baseline_context_text:
+                                baseline_attack_content = f"{baseline_attack_content}\n\nContext:\n{baseline_context_text}"
+                                self.logger.debug(f"Appended baseline context to attack content before XPIA injection (context length={len(baseline_context_text)})")
+                        
                         # Randomly select an XPIA wrapper prompt
                         xpia_prompt = random.choice(xpia_prompts)
                         xpia_message = xpia_prompt.get("messages", [{}])[0]
@@ -642,7 +715,7 @@ class RedTeam:
                         context_type = xpia_message.get("context_type") or "text"
                         tool_name = xpia_message.get("tool_name", "")
                         
-                        # Inject baseline attack into the {attack_text} placeholder
+                        # Inject baseline attack (now with appended context) into the {attack_text} placeholder
                         if "{attack_text}" in attack_vehicle_context:
                             injected_context = attack_vehicle_context.replace("{attack_text}", baseline_attack_content)
                         else:
@@ -663,11 +736,7 @@ class RedTeam:
                             "tool_name": tool_name
                         }]
                         
-                        # Add baseline context without context_type/tool_name (unless it has its own)
-                        if baseline_context:
-                            contexts.append({"content": baseline_context})
-                            self.logger.debug(f"Preserved {len(contexts)} context sources (XPIA wrapper + baseline)")
-                        
+                        # No need to add baseline context separately since it's now embedded in the XPIA wrapper
                         message["context"] = contexts
                         message["context_type"] = context_type  # Keep at message level for backward compat
                         message["tool_name"] = tool_name
@@ -727,7 +796,7 @@ class RedTeam:
                 if isinstance(message, dict) and "content" in message:
                     content = message["content"]
                     context_raw = message.get("context", "")
-                    selected_prompts.append(content)
+                    
                     # Normalize context to always be a list of dicts with 'content' key
                     if isinstance(context_raw, list):
                         # Already a list - ensure each item is a dict with 'content' key
@@ -744,23 +813,41 @@ class RedTeam:
                     else:
                         contexts = []
                     
-                    if contexts:
-                        # Always use dict format for context_data
-                        context_dict = {"contexts": contexts}
+                    # Check if any context has agent-specific fields
+                    has_agent_fields = any(
+                        isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
+                        for ctx in contexts
+                    )
+                    
+                    # For contexts without agent fields, append them to the content
+                    # This applies to baseline and any other attack objectives with plain context
+                    if contexts and not has_agent_fields:
+                        # Extract all context content and append to the attack content
+                        context_texts = []
+                        for ctx in contexts:
+                            if isinstance(ctx, dict):
+                                ctx_content = ctx.get("content", "")
+                                if ctx_content:
+                                    context_texts.append(ctx_content)
                         
-                        # Log based on whether any context has agent-specific fields
-                        has_agent_fields = any(
-                            isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
-                            for ctx in contexts
-                        )
+                        if context_texts:
+                            # Append context to content
+                            combined_context = "\n\n".join(context_texts)
+                            content = f"{content}\n\nContext:\n{combined_context}"
+                            self.logger.debug(f"Appended {len(context_texts)} context source(s) to attack content (total context length={len(combined_context)})")
+                    
+                    selected_prompts.append(content)
+                    
+                    # Always store contexts if they exist (whether or not they have agent fields)
+                    if contexts:
+                        context_dict = {"contexts": contexts}
                         if has_agent_fields:
                             self.logger.debug(f"Stored context with agent fields: {len(contexts)} context source(s)")
                         else:
-                            self.logger.debug(f"Stored model context: {len(contexts)} context source(s)")
-                        
+                            self.logger.debug(f"Stored context without agent fields: {len(contexts)} context source(s) (also embedded in content)")
                         self.prompt_to_context[content] = context_dict
                     else:
-                        self.logger.debug(f"No context available for objective")
+                        self.logger.debug(f"No context to store")
         return selected_prompts
 
     def _cache_attack_objectives(
