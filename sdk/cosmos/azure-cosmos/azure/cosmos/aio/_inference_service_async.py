@@ -23,7 +23,6 @@ import json
 import os
 import urllib
 from typing import Any, cast, Dict, List, Optional
-from urllib.parse import urlparse
 from urllib3.util.retry import Retry
 
 from azure.core import AsyncPipelineClient
@@ -58,7 +57,7 @@ class _InferenceService:
     semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
 
     def __init__(self, cosmos_client_connection):
-        """Initialize semantic reranker with credentials and endpoint information.
+        """Initialize inference service with credentials and endpoint information.
 
         :param cosmos_client_connection: Optional reference to cosmos client connection for accessing settings
         :type cosmos_client_connection: Optional[CosmosClientConnection]

@@ -58,7 +58,7 @@ class _InferenceService:
     semantic_reranking_inference_endpoint = os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_ENDPOINT)
 
     def __init__(self, cosmos_client_connection):
-        """Initialize semantic reranker with credentials and endpoint information.
+        """Initialize inference service with credentials and endpoint information.
 
         :param cosmos_client_connection: Optional reference to cosmos client connection for accessing settings
         :type cosmos_client_connection: Optional[CosmosClientConnection]
@@ -68,6 +68,7 @@ class _InferenceService:
         self._token_scope = self.inference_service_default_scope
 
         self._inference_endpoint = f"{self.semantic_reranking_inference_endpoint}/inference/semanticReranking"
+        # self._inference_endpoint = "https://akataria-search-testing.dbinference.azure.com/inference/semanticReranking"
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> PipelineClient:
