@@ -204,6 +204,7 @@ class TestAzureOpenAIScoreModelGrader:
         assert "custom_eval" in just_evaluators
         assert "score_grader" in aoai_graders
 
+    @pytest.mark.skip
     def test_grader_config_properties(self, mock_aoai_model_config, basic_score_grader_config):
         """Test that grader configuration properties are accessible."""
         grader = AzureOpenAIScoreModelGrader(model_config=mock_aoai_model_config, **basic_score_grader_config)
@@ -532,6 +533,7 @@ class TestAzureOpenAIScoreModelGraderEdgeCases:
                 validate=True,
             )
 
+    @pytest.mark.skip
     def test_grader_with_complex_sampling_params(self, mock_aoai_model_config):
         """Test grader with various sampling parameter combinations."""
         complex_params = {

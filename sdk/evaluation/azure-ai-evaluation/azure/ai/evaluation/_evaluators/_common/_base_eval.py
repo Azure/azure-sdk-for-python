@@ -4,12 +4,14 @@
 
 import inspect
 from abc import ABC, abstractmethod
+import json
 from typing import (
     Any,
     Callable,
     Dict,
     Generic,
     List,
+    Tuple,
     TypedDict,
     TypeVar,
     Union,
@@ -510,6 +512,67 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return tool_calls
 
+    def _extract_tool_names_and_params_from_response(self, response) -> List[Tuple[str, Dict[str, str]]]:
+        """Extract tool names and parameters from the response.
+
+        :param response: The response to parse.
+        :type response: Union[str, List[dict]]
+        :return: List of tuples containing (tool_name, parameters_dict) extracted from the response.
+        :rtype: List[Tuple[str, Dict[str, str]]]
+        """
+        tool_calls = self._parse_tools_from_response(response)
+        tool_name_param_pairs = []
+        for tool_call in tool_calls:
+            if not isinstance(tool_call, dict):
+                raise EvaluationException(
+                    "Tool call must be a dictionary.",
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.UNKNOWN,
+                )
+            if tool_call.get("type") != "tool_call":
+                raise EvaluationException(
+                    "Tool call must have 'type' set to 'tool_call'.",
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.INVALID_VALUE,
+                )
+
+            if "name" not in tool_call:
+                raise EvaluationException(
+                    "Tool call missing 'name' field.",
+                    internal_message=str(tool_call),
+                    target=ErrorTarget.EVALUATE,
+                    category=ErrorCategory.MISSING_FIELD,
+                )
+
+            tool_name = str(tool_call["name"]).strip()
+
+            # Extract parameters/arguments
+            parameters = {}
+            if "arguments" in tool_call:
+                args = tool_call["arguments"]
+                if isinstance(args, dict):
+                    # Convert all values to strings for consistent comparison
+                    parameters = {str(k): str(v) for k, v in args.items()}
+                elif isinstance(args, str):
+                    # If arguments is a string, try to parse it as JSON
+                    try:
+                        parsed_args = json.loads(args)
+                        if isinstance(parsed_args, dict):
+                            parameters = {str(k): str(v) for k, v in parsed_args.items()}
+                    except json.JSONDecodeError:
+                        raise EvaluationException(
+                            "Failed to parse tool call arguments as JSON.",
+                            internal_message=str(tool_call),
+                            target=ErrorTarget.EVALUATE,
+                            category=ErrorCategory.INVALID_VALUE,
+                        )
+
+            tool_name_param_pairs.append((tool_name, parameters))
+
+        return tool_name_param_pairs
+
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.
 
@@ -532,14 +595,25 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                         base_key = key[:-6]  # Remove "_score" suffix
                         result_key = f"{base_key}_result"
                         threshold_key = f"{base_key}_threshold"
-                        result[threshold_key] = self._threshold
+                        threshold_value = (
+                            self._threshold.get(base_key) if isinstance(self._threshold, dict) else self._threshold
+                        )
+                        if not isinstance(threshold_value, (int, float)):
+                            raise EvaluationException(
+                                "Threshold value must be a number.",
+                                internal_message=str(threshold_value),
+                                target=ErrorTarget.EVALUATE,
+                                category=ErrorCategory.INVALID_VALUE,
+                            )
+
+                        result[threshold_key] = threshold_value
                         if self._higher_is_better:
-                            if float(score_value) >= self._threshold:
+                            if float(score_value) >= threshold_value:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
                         else:
-                            if float(score_value) <= self._threshold:
+                            if float(score_value) <= threshold_value:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]

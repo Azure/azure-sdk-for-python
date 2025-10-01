@@ -107,6 +107,13 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
+      - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+        parameters:
+          ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+            TokenToUseForAuth: $(azuresdk-github-pat)
+          Paths:
+            - '**'
+
       - ${{ parameters.PreSteps }}
 
       - template: /eng/common/pipelines/templates/steps/verify-agent-os.yml

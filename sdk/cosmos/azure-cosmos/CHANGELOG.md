@@ -1,12 +1,27 @@
 ## Release History
 
-### 4.14.0b3 (Unreleased)
+### 4.14.0b5 (Unreleased)
+
+#### Features Added
+* Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
+#### Breaking Changes
+
+#### Bugs Fixed
+
+#### Other Changes
+* Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
+* Reverted typehints to fix the mismatch issue. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
+
+### 4.14.0b4 (2025-09-11)
+
+#### Bugs Fixed
+* Fixed bug where client provided session token was not respected when client-side session management was disabled. See [PR 42965](https://github.com/Azure/azure-sdk-for-python/pull/42965)
+ 
+### 4.14.0b3 (2025-09-09)
 
 #### Features Added
 * Added read_items API to provide an efficient method for retrieving multiple items in a single request. See [PR 42167](https://github.com/Azure/azure-sdk-for-python/pull/42167).
 * Added ability to replace a container's indexing policy if a vector embedding policy was present. See [PR 42810](https://github.com/Azure/azure-sdk-for-python/pull/42810).
-
-#### Breaking Changes
 
 #### Bugs Fixed
 * Improved the resilience of Database Account Read metadata operation against short-lived network issues by increasing number of retries. See [PR 42525](https://github.com/Azure/azure-sdk-for-python/pull/42525).
@@ -15,9 +30,11 @@
 * Fixed bug where `excluded_locations` was not being honored for some metadata calls. See [PR 42266](https://github.com/Azure/azure-sdk-for-python/pull/42266).
 * Fixed bug where Hybrid Search queries using parameters were not working. See [PR 42787](https://github.com/Azure/azure-sdk-for-python/pull/42787)
 * Fixed partition scoping for per partition circuit breaker. See [PR 42751](https://github.com/Azure/azure-sdk-for-python/pull/42751)
+* Fixed bug where `partition_key` set to None was not properly handled for some operations. See [PR 42747](https://github.com/Azure/azure-sdk-for-python/pull/42747)
 
 #### Other Changes
 * Added session token false progress merge logic. See [42393](https://github.com/Azure/azure-sdk-for-python/pull/42393)
+* Added a fallback mechanism to AAD scope override. See [PR 42731](https://github.com/Azure/azure-sdk-for-python/pull/42731).
 
 ### 4.14.0b2 (2025-08-12)
 

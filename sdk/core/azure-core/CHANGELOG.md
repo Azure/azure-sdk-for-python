@@ -1,6 +1,6 @@
 # Release History
 
-## 1.35.1 (Unreleased)
+## 1.35.2 (Unreleased)
 
 ### Features Added
 
@@ -8,9 +8,21 @@
 
 ### Bugs Fixed
 
+- Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #43092
+
+### Other Changes
+
+- Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
+
+## 1.35.1 (2025-09-11)
+
+### Bugs Fixed
+
 - Fixed an issue where the `retry_backoff_max` parameter in `RetryPolicy` and `AsyncRetryPolicy` constructors was being ignored, causing retry operations to use default maximum backoff values instead of the user-specified limits. #42444
 
 ### Other Changes
+
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now properly surface credential exceptions when handling claims challenges. Previously, exceptions from credential token requests were suppressed; now they are raised and chained with the original 401 `HttpResponseError` response for better debugging visibility. #42536
 
 ## 1.35.0 (2025-07-02)
 

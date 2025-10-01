@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Callable, Coroutine, Any
 
-from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.credentials_async import AsyncTokenProvider
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.pipeline import PipelineRequest, PipelineContext
 from azure.core.rest import HttpRequest
@@ -14,7 +14,7 @@ def _make_request() -> PipelineRequest[HttpRequest]:
     return PipelineRequest(HttpRequest("CredentialWrapper", "https://fakeurl"), PipelineContext(None))
 
 
-def get_bearer_token_provider(credential: AsyncTokenCredential, *scopes: str) -> Callable[[], Coroutine[Any, Any, str]]:
+def get_bearer_token_provider(credential: AsyncTokenProvider, *scopes: str) -> Callable[[], Coroutine[Any, Any, str]]:
     """Returns a callable that provides a bearer token.
 
     It can be used for instance to write code like:
@@ -31,7 +31,7 @@ def get_bearer_token_provider(credential: AsyncTokenCredential, *scopes: str) ->
         request.headers["Authorization"] = "Bearer " + await bearer_token_provider()
 
     :param credential: The credential used to authenticate the request.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenProvider
     :param str scopes: The scopes required for the bearer token.
     :rtype: coroutine
     :return: A coroutine that returns a bearer token.
