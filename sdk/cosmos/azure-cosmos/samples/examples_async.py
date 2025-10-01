@@ -312,11 +312,7 @@ async def examples_async():
 
         # configure availability strategy config on request level
         # [START read_item_with_availability_strategy_config]
-        strategy = CrossRegionHedgingStrategyConfig(
-            type="CrossRegionHedging",
-            threshold_ms=500,  # Try alternate region after 500ms
-            threshold_steps_ms=100)  # Wait 100ms between region attempt
-
+        strategy = strategy = {'type': 'CrossRegionHedging', 'threshold_ms':500, 'threshold_steps_ms':100}
         await container.read_item(
             item="id1",
             partition_key="pk1",

@@ -305,11 +305,7 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0],
 
 # configure availability strategy config on request level
 # [START read_item_with_availability_strategy_config]
-strategy = CrossRegionHedgingStrategyConfig(
-    type="CrossRegionHedging",
-    threshold_ms=500,  # Try alternate region after 500ms
-    threshold_steps_ms=100)  # Wait 100ms between region attempt
-
+strategy = {'type': 'CrossRegionHedging', 'threshold_ms':500, 'threshold_steps_ms':100}
 container.read_item(
     item="id1",
     partition_key="pk1",
