@@ -19,26 +19,38 @@ There are 3 types of evaluators we support as Built-In Evaluators.
 3. Prompt Based - It contains only Prompty file.
 4. Service Based - It references the evaluator from Evaluation SDK or RAI Service.
 
-## Step 1: Run Evaluator with SDK.
+## Step 1: Run Your evaluators with Evaluation SDK.
 
 Create builtin evaluator and use azure-ai-evaluation SDK to run locally. 
 List of evaluators can be found at [here](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_evaluators)
 
-## Step 2: Create a PR 
-Add a new folder with name as the Evaluator name. 
+## Step 2: Create a PR to provide
 
-Please include following files. 
+We are storing all the builtin evaluators in Azureml-asset Repo. Please provide your evaluators files by creating a PR in this repo. Please follow the steps.
+
+1. Add a new folder with name as the Evaluator name. 
+
+2. Please include following files.
 
 * asset.yaml
 * spec.yaml
-* 'evaluator' folder. Please include python files and prompty files in this folder.
+* 'evaluator' folder. 
+
+This 'evaluator' folder contains two files.
+1. Python file name should be same as evaluator name with '_' prefix.
+2. Prompty file name should be same as evaluator name with .prompty extension.  
+
+Example: Coherence evaluator contains 2 files. 
+_coherence.py
+coherence.prompty
 
 Please look at existing built-in evaluators for reference. 
 Location : [/assets/evaluators/builtin](https://msdata.visualstudio.com/Vienna/_git/azureml-asset?path=/assets/evaluators/builtin)
-
 Sample PR: [pullrequest/1816050](https://msdata.visualstudio.com/Vienna/_git/azureml-asset/pullrequest/1816050?_a=files\)
 
-Please follow directions given below. 
+3. Please copy asset.yaml from sample. No change is required. 
+   
+4. Please follow directions given below to create spec.yaml. 
 
 ## Asset Content - spec.yaml
 
@@ -96,18 +108,24 @@ outputSchema:
 path: ./evaluator
 ```
 
-## Step 3: Publish
-When PR is merged. Evaluation Team will be able to kick off the CI Pipeline to publish evaluator in the Evaluator Catalog. 
-This is done is 2 steps. 
+## Step 3: Test in RAI Service ACA Code.
 
-In Step 1, new evaluator is published in azureml-dev registry so that it can be tested in INT environment. Once all looks good, Step 2 is performed.
-In Step 2, new evaluator is published in azure-ml registry (for Production).
+Once PR is merged, Evaluation Team will use your evaluator files to run them in ACA to make sure no errors. You also need to provide jsonl dataset files for testing.
 
+## Step 4: Publish on Dev Registry (Azureml-dev)
+When PR is review and merged. Evaluation Team will be able to kick off the CI Pipeline to publish evaluator in the Evaluator Catalog in azureml-dev registry.
 
-## Step 4: Verify Evaluator
-Now, use Evaluators CRUD APIs to view evaluator in GET /evaluator list. 
+## Step 5: Test is INT Environment
+Team will verify following items:
 
-Use following links
+1. Verify if new evaluator is available in Evaluator REST APIs.
+2. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA. 
 
-INT: 
-PROD: 
+## Step 6: Publish on Prod Registry (Azureml)
+Evaluation Team will be able to kick off the CI Pipeline again to publish evaluator in the Evaluator Catalog in azureml registry.
+
+## Step 7: Test is Prod Environment
+Team will verify following items:
+
+1. Verify if new evaluator is available in Evaluator REST APIs. 
+2. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA.
