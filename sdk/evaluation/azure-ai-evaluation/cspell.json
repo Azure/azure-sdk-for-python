@@ -19,11 +19,10 @@
         "qrels",
         "ollama",
         "prompty",
-		    "Likert",
+		"Likert",
         "Comptoir",
         "Tuileries",
         "Fallafel",
-
         "isna",
         "dtype",
         "duckdb"
