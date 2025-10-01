@@ -1,7 +1,6 @@
 {
-    "CrossLanguagePackageId": "VoiceLive.WebSocket",
+    "CrossLanguagePackageId": "VoiceLive",
     "CrossLanguageDefinitionId": {
-        "azure.ai.voicelive.models.AgentConfig": "VoiceLive.AgentConfig",
         "azure.ai.voicelive.models.Animation": "VoiceLive.Animation",
         "azure.ai.voicelive.models.ConversationRequestItem": "VoiceLive.ConversationRequestItem",
         "azure.ai.voicelive.models.MessageItem": "VoiceLive.MessageItem",
@@ -13,7 +12,7 @@
         "azure.ai.voicelive.models.AzureVoice": "VoiceLive.AzureVoice",
         "azure.ai.voicelive.models.AzureCustomVoice": "VoiceLive.AzureCustomVoice",
         "azure.ai.voicelive.models.AzurePersonalVoice": "VoiceLive.AzurePersonalVoice",
-        "azure.ai.voicelive.models.EOUDetection": "VoiceLive.EOUDetection",
+        "azure.ai.voicelive.models.EouDetection": "VoiceLive.EouDetection",
         "azure.ai.voicelive.models.AzureSemanticDetection": "VoiceLive.AzureSemanticDetection",
         "azure.ai.voicelive.models.AzureSemanticDetectionEn": "VoiceLive.AzureSemanticDetectionEn",
         "azure.ai.voicelive.models.AzureSemanticDetectionMultilingual": "VoiceLive.AzureSemanticDetectionMultilingual",
@@ -114,8 +113,8 @@
         "azure.ai.voicelive.models.SessionBase": "VoiceLive.SessionBase",
         "azure.ai.voicelive.models.SystemMessageItem": "VoiceLive.SystemMessageItem",
         "azure.ai.voicelive.models.TokenUsage": "VoiceLive.TokenUsage",
-        "azure.ai.voicelive.models.ToolChoiceObject": "VoiceLive.ToolChoiceObject",
-        "azure.ai.voicelive.models.ToolChoiceFunctionObject": "VoiceLive.ToolChoiceFunctionObject",
+        "azure.ai.voicelive.models.ToolChoiceSelection": "VoiceLive.ToolChoiceObject",
+        "azure.ai.voicelive.models.ToolChoiceFunctionSelection": "VoiceLive.ToolChoiceFunctionObject",
         "azure.ai.voicelive.models.UserMessageItem": "VoiceLive.UserMessageItem",
         "azure.ai.voicelive.models.VideoCrop": "VoiceLive.VideoCrop",
         "azure.ai.voicelive.models.VideoParams": "VoiceLive.VideoParams",
@@ -125,8 +124,9 @@
         "azure.ai.voicelive.models.ItemType": "VoiceLive.ItemType",
         "azure.ai.voicelive.models.ItemParamStatus": "VoiceLive.ItemParamStatus",
         "azure.ai.voicelive.models.MessageRole": "VoiceLive.MessageRole",
+        "azure.ai.voicelive.models.ContentPartType": "VoiceLive.ContentPartType",
         "azure.ai.voicelive.models.Modality": "VoiceLive.Modality",
-        "azure.ai.voicelive.models.OAIVoice": "VoiceLive.OAIVoice",
+        "azure.ai.voicelive.models.OpenAIVoiceName": "VoiceLive.OAIVoice",
         "azure.ai.voicelive.models.AzureVoiceType": "VoiceLive.AzureVoiceType",
         "azure.ai.voicelive.models.PersonalVoiceModels": "VoiceLive.PersonalVoiceModels",
         "azure.ai.voicelive.models.OutputAudioFormat": "VoiceLive.OutputAudioFormat",
@@ -139,7 +139,6 @@
         "azure.ai.voicelive.models.ToolChoiceLiteral": "VoiceLive.ToolChoiceLiteral",
         "azure.ai.voicelive.models.ResponseStatus": "VoiceLive.ResponseStatus",
         "azure.ai.voicelive.models.ResponseItemStatus": "VoiceLive.ResponseItemStatus",
-        "azure.ai.voicelive.models.ContentPartType": "VoiceLive.ContentPartType",
         "azure.ai.voicelive.models.ServerEventType": "VoiceLive.ServerEventType"
     }
 }

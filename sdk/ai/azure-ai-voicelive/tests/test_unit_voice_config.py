@@ -12,7 +12,7 @@ from azure.ai.voicelive.models import (
     AzurePersonalVoice,
     AzureVoice,
     # Enums
-    OAIVoice,
+    OpenAIVoiceName,
     AzureVoiceType,
     PersonalVoiceModels,
     # Session Models
@@ -25,11 +25,11 @@ class TestOpenAIVoiceConfiguration:
     """Test OpenAI voice configuration."""
 
     def test_create_openai_voice_with_enum(self):
-        """Test creating OpenAI voice with OAIVoice enum."""
-        voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        """Test creating OpenAI voice with OpenAIVoiceName enum."""
+        voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
 
         assert voice.type == "openai"
-        assert voice.name == OAIVoice.ALLOY
+        assert voice.name == OpenAIVoiceName.ALLOY
         assert voice.name == "alloy"
 
     def test_create_openai_voice_with_string(self):
@@ -42,14 +42,14 @@ class TestOpenAIVoiceConfiguration:
     def test_all_openai_voice_values(self):
         """Test all OpenAI voice enum values."""
         voices = [
-            OAIVoice.ALLOY,
-            OAIVoice.ASH,
-            OAIVoice.BALLAD,
-            OAIVoice.CORAL,
-            OAIVoice.ECHO,
-            OAIVoice.SAGE,
-            OAIVoice.SHIMMER,
-            OAIVoice.VERSE,
+            OpenAIVoiceName.ALLOY,
+            OpenAIVoiceName.ASH,
+            OpenAIVoiceName.BALLAD,
+            OpenAIVoiceName.CORAL,
+            OpenAIVoiceName.ECHO,
+            OpenAIVoiceName.SAGE,
+            OpenAIVoiceName.SHIMMER,
+            OpenAIVoiceName.VERSE,
         ]
 
         for voice_name in voices:
@@ -60,10 +60,10 @@ class TestOpenAIVoiceConfiguration:
 
     def test_openai_voice_string_comparison(self):
         """Test OpenAI voice string comparison."""
-        voice = OpenAIVoice(name=OAIVoice.CORAL)
+        voice = OpenAIVoice(name=OpenAIVoiceName.CORAL)
 
         assert voice.name == "coral"
-        assert voice.name == OAIVoice.CORAL
+        assert voice.name == OpenAIVoiceName.CORAL
 
 
 class TestAzureCustomVoiceConfiguration:
@@ -248,12 +248,12 @@ class TestVoiceConfigurationInSession:
 
     def test_request_session_with_openai_voice(self):
         """Test RequestSession with OpenAI voice."""
-        voice = OpenAIVoice(name=OAIVoice.ECHO)
+        voice = OpenAIVoice(name=OpenAIVoiceName.ECHO)
         session = RequestSession(model="gpt-4o-realtime-preview", voice=voice)
 
         assert session.voice == voice
         assert session.voice.type == "openai"
-        assert session.voice.name == OAIVoice.ECHO
+        assert session.voice.name == OpenAIVoiceName.ECHO
 
     def test_request_session_with_azure_custom_voice(self):
         """Test RequestSession with Azure custom voice."""
@@ -288,12 +288,12 @@ class TestVoiceConfigurationInSession:
 
     def test_response_session_with_voice(self):
         """Test ResponseSession with voice configuration."""
-        voice = OpenAIVoice(name=OAIVoice.SAGE)
+        voice = OpenAIVoice(name=OpenAIVoiceName.SAGE)
         session = ResponseSession(model="gpt-4o-realtime-preview", voice=voice, id="session-123")
 
         assert session.voice == voice
         assert session.id == "session-123"
-        assert isinstance(session, RequestSession)  # Inheritance
+        assert isinstance(session, ResponseSession)  # Inheritance
 
 
 class TestVoiceConfigurationValidation:
@@ -366,7 +366,7 @@ class TestVoiceConfigurationIntegration:
     def test_mixed_voice_types_in_workflow(self):
         """Test using different voice types in a workflow."""
         # Start with OpenAI voice
-        openai_session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OAIVoice.ALLOY))
+        openai_session = RequestSession(model="gpt-4o-realtime-preview", voice=OpenAIVoice(name=OpenAIVoiceName.ALLOY))
 
         # Switch to Azure standard
         azure_session = RequestSession(
@@ -390,7 +390,7 @@ class TestVoiceConfigurationIntegration:
     def test_voice_configuration_serialization_ready(self):
         """Test that voice configurations are ready for serialization."""
         voices = [
-            OpenAIVoice(name=OAIVoice.CORAL),
+            OpenAIVoice(name=OpenAIVoiceName.CORAL),
             AzureStandardVoice(name="en-US-DavisNeural", temperature=0.7),
             AzureCustomVoice(name="custom", endpoint_id="e1"),
             AzurePersonalVoice(name="personal", model=PersonalVoiceModels.DRAGON_LATEST_NEURAL),
