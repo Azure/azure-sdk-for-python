@@ -121,6 +121,8 @@ def _begin_single_aoai_evaluation(
 
     :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
     :type graders: Dict[str, AoaiGrader]
+    :param data: The input data to evaluate, as a pandas DataFrame.
+    :type data: pd.DataFrame
     :param column_mapping: The column mapping to apply. If None, an empty mapping is used.
     :type column_mapping: Optional[Dict[str, str]]
     :param run_name: The name of the evaluation run.
