@@ -9,6 +9,7 @@ import os
 import re
 import tempfile
 import json
+import time
 from typing import Any, Callable, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
@@ -21,6 +22,11 @@ from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_oned
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
+
+from opentelemetry import _logs
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler, LogRecord
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
 from .._constants import (
     CONTENT_SAFETY_DEFECT_RATE_THRESHOLD_DEFAULT,
@@ -993,13 +999,6 @@ def _create_eval_results_summary(results: List[Dict]) -> Dict:
     return {}
 
 
-from opentelemetry import _logs
-from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
-from opentelemetry.sdk._logs import LogRecord
-import time
-
 def _log_events_to_app_insights(
     connection_string: str,
     events: List[Dict[str, Any]],
@@ -1091,7 +1090,7 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
     Each result is logged as an independent log record without any trace context.
     
     :param app_insights_config: App Insights configuration containing connection string
-    :type app_insights_config: _AppInsightsConfig
+    :type app_insights_config: AppInsightsConfig
     :param results: List of evaluation results to log
     :type results: List[Dict]
     """
