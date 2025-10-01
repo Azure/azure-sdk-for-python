@@ -1,5 +1,5 @@
 
-# How to publish new evaluator in Evaluator Catalog.
+# How to publish new built-in evaluator in Evaluator Catalog.
 
 This guide helps our partners to bring their evaluators into Microsoft provided Evaluator Catalog in Next Gen UI. 
 
