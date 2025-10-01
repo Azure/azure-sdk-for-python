@@ -28,7 +28,7 @@ import isodate
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
-from azure.core.serialization import _Null
+from azure.core.serialization import _Null, Serializable
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -161,6 +161,11 @@ class SdkJSONEncoder(JSONEncoder):
             except AttributeError:
                 # This will be raised when it hits value.total_seconds in the method above
                 pass
+
+            # Check if the object implements the Serializable protocol
+            if isinstance(o, Serializable):
+                return o.to_dict()
+
             return super(SdkJSONEncoder, self).default(o)
 
 
@@ -510,6 +515,9 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
     except AttributeError:
         # This will be raised when it hits value.total_seconds in the method above
         pass
+
+    if isinstance(o, Serializable):
+        return o.to_dict()
     return o
 
 
@@ -885,6 +893,9 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
 
     if get_deserializer(annotation, rf):
         return functools.partial(_deserialize_default, get_deserializer(annotation, rf))
+
+    if isinstance(annotation, Serializable):
+        return annotation.from_dict  # type: ignore
 
     return functools.partial(_deserialize_default, annotation)
 

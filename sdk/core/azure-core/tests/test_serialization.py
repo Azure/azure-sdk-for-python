@@ -10,9 +10,16 @@ import sys
 from typing import Any, Dict, List, Optional
 from io import BytesIO
 
-from azure.core.serialization import AzureJSONEncoder, NULL, as_attribute_dict, is_generated_model, attribute_list
+from azure.core.serialization import (
+    AzureJSONEncoder,
+    NULL,
+    as_attribute_dict,
+    is_generated_model,
+    attribute_list,
+    Serializable,
+)
 import pytest
-from modeltypes._utils.model_base import Model as HybridModel, rest_field
+from modeltypes._utils.model_base import Model as HybridModel, SdkJSONEncoder, rest_field, _deserialize
 from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
 
@@ -972,3 +979,120 @@ def test_as_attribute_dict_additional_properties():
         "birthdate": "2017-12-13T02:29:51Z",
         "complexProperty": {"color": "Red"},
     }
+
+
+class TestSerializableProtocol:
+
+    class FooModel:
+
+        foo: str
+        bar: int
+        baz: float
+
+        def __init__(self, foo: str, bar: int, baz: float):
+            self.foo = foo
+            self.bar = bar
+            self.baz = baz
+
+        def to_dict(self) -> Dict[str, Any]:
+            return {"foo": self.foo, "bar": self.bar, "baz": self.baz}
+
+        @classmethod
+        def from_dict(cls, data: Dict[str, Any]) -> "TestSerializableProtocol.FooModel":
+            return cls(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+
+    def test_is_serializable_protocol(self):
+        model = TestSerializableProtocol.FooModel("hello", 42, 3.14)
+        assert isinstance(model, Serializable)
+        assert issubclass(TestSerializableProtocol.FooModel, Serializable)
+
+        assert not isinstance(models.Fish(kind="goldfish", age=1), Serializable)
+        assert not issubclass(models.Fish, Serializable)
+
+        assert hasattr(model, "to_dict")
+        assert hasattr(TestSerializableProtocol.FooModel, "from_dict")
+
+    def test_serialization(self):
+        model = TestSerializableProtocol.FooModel("hello", 42, 3.14)
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == {"foo": "hello", "bar": 42, "baz": 3.14}
+
+    def test_serialize_custom_model_in_generated_model(self):
+
+        class GeneratedModel(HybridModel):
+            dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            external: TestSerializableProtocol.FooModel = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        model = GeneratedModel(
+            dog=models.HybridDog(name="doggy", species="dog", breed="samoyed", is_best_boy=True),
+            external=TestSerializableProtocol.FooModel(foo="foo", bar=42, baz=3.14),
+        )
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+
+        expected_dict = {
+            "dog": {
+                "name": "doggy",
+                "species": "dog",
+                "breed": "samoyed",
+                "isBestBoy": True,
+            },
+            "external": {
+                "foo": "foo",
+                "bar": 42,
+                "baz": 3.14,
+            },
+        }
+
+        json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
+        assert json.loads(json_str) == expected_dict
+        assert model.as_dict() == expected_dict
+
+    def test_deserialize_custom_model(self):
+        json_dict = {
+            "foo": "foo",
+            "bar": 42,
+            "baz": 3.14,
+        }
+        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        deserialized = _deserialize(TestSerializableProtocol.FooModel, json_dict)
+        assert isinstance(deserialized, TestSerializableProtocol.FooModel)
+        assert deserialized.foo == "foo"
+        assert deserialized.bar == 42
+        assert deserialized.baz == 3.14
+
+    def test_deserialize_custom_model_in_generated_model(self):
+
+        class GeneratedModel(HybridModel):
+            dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            external: TestSerializableProtocol.FooModel = rest_field(
+                visibility=["read", "create", "update", "delete", "query"]
+            )
+
+        json_dict = {
+            "dog": {
+                "name": "doggy",
+                "species": "dog",
+                "breed": "samoyed",
+                "isBestBoy": True,
+            },
+            "external": {
+                "foo": "foo",
+                "bar": 42,
+                "baz": 3.14,
+            },
+        }
+        deserialized = _deserialize(GeneratedModel, json_dict)
+        assert isinstance(deserialized, GeneratedModel)
+        assert isinstance(deserialized.dog, models.HybridDog)
+        assert deserialized.dog.name == "doggy"
+        assert deserialized.dog.species == "dog"
+        assert deserialized.dog.breed == "samoyed"
+        assert deserialized.dog.is_best_boy is True
+        assert isinstance(deserialized.external, TestSerializableProtocol.FooModel)
+        assert deserialized.external.foo == "foo"
+        assert deserialized.external.bar == 42
+        assert deserialized.external.baz == 3.14
