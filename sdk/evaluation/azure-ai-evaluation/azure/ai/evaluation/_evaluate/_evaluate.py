@@ -1171,7 +1171,10 @@ def _preprocess_data(
         batch_run_data=batch_run_data,
     )
 
-def _flatten_object_columns_for_default_mapping(df: pd.DataFrame, root_prefixes: Optional[Iterable[str]] = None) -> pd.DataFrame:
+
+def _flatten_object_columns_for_default_mapping(
+    df: pd.DataFrame, root_prefixes: Optional[Iterable[str]] = None
+) -> pd.DataFrame:
     """
     For any column whose cells are (some) dictionaries, flatten nested dict structure into new
     DataFrame columns using dotted paths "<original_col>.<nested.path.leaf>" for each leaf.
@@ -1230,6 +1233,7 @@ def _flatten_object_columns_for_default_mapping(df: pd.DataFrame, root_prefixes:
             df[path] = df[root_col].map(lambda rv: getter(rv) if isinstance(rv, dict) else None)
 
     return df
+
 
 def _run_callable_evaluators(
     validated_data: __ValidatedData,

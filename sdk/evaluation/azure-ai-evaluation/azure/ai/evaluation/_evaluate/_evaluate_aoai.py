@@ -550,6 +550,7 @@ def _build_schema_tree_from_paths(
 
     return to_schema(root)
 
+
 def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]) -> Dict[str, Any]:
     """
     Produce a data source config (JSON schema) that reflects nested object structure
@@ -666,7 +667,9 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     path_specs: List[Tuple[str, List[str], str]] = []
 
     for name, formatted_entry in column_mapping.items():
-        if not (isinstance(formatted_entry, str) and formatted_entry.startswith("${") and formatted_entry.endswith("}")):
+        if not (
+            isinstance(formatted_entry, str) and formatted_entry.startswith("${") and formatted_entry.endswith("}")
+        ):
             continue
         body = formatted_entry[2:-1]  # remove ${ }
         pieces = body.split(".")
