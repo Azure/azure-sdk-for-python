@@ -586,10 +586,11 @@ def _generate_data_source_config(input_data_df: pd.DataFrame, column_mapping: Di
 
     :type input_data_df: pd.DataFrame
     :param input_data_df: The input data to be evaluated, as produced by the `_validate_and_load_data`
-    :param column_mapping: The column mapping to use for the evaluation. If None, the default mapping will be used.
     :type column_mapping: Optional[Dict[str, str]]
+    :param column_mapping: The column mapping to use for the evaluation. If None, the default mapping will be used.
     :return: A dictionary that can act as data source config for OAI evaluation group creation.
     :rtype: Dict[str, Any]
+    helper function.
     """
     # Extract referenced data paths from mapping values of the form ${data.<path>} (ignore ${run.outputs.*})
     referenced_paths: List[str] = []
