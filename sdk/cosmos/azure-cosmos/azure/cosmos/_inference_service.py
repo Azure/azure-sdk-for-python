@@ -49,7 +49,6 @@ from .http_constants import HttpHeaders
 class _InferenceService:
     """Internal client for inference service."""
 
-    DEFAULT_SCOPE = "https://dbinference.azure.com/.default"
     TOTAL_RETRIES = 3
     RETRY_BACKOFF_MAX = 120  # seconds
     RETRY_AFTER_STATUS_CODES = frozenset([429, 500])
@@ -68,7 +67,6 @@ class _InferenceService:
         self._token_scope = self.inference_service_default_scope
 
         self._inference_endpoint = f"{self.semantic_reranking_inference_endpoint}/inference/semanticReranking"
-        # self._inference_endpoint = "https://akataria-search-testing.dbinference.azure.com/inference/semanticReranking"
         self._inference_pipeline_client = self._create_inference_pipeline_client()
 
     def _create_inference_pipeline_client(self) -> PipelineClient:
