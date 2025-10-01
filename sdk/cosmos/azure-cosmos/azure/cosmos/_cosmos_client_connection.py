@@ -27,7 +27,9 @@ import os
 import urllib.parse
 import uuid
 from concurrent.futures.thread import ThreadPoolExecutor
-from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast, TYPE_CHECKING
+from typing import Callable, Dict, Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union, cast
+from typing_extensions import TypedDict
+from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.credentials import TokenCredential
@@ -57,6 +59,7 @@ from . import _utils
 from . import documents
 from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
+from ._availability_strategy_config import _validate_hedging_config, CrossRegionHedgingStrategyConfig
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
@@ -81,8 +84,6 @@ from .partition_key import (
     _return_undefined_or_empty_partition_key,
 )
 
-if TYPE_CHECKING:
-    from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -121,9 +122,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         auth: CredentialDict,
         connection_policy: Optional[ConnectionPolicy] = None,
         consistency_level: Optional[str] = None,
-        availability_strategy_config: Optional['CrossRegionHedgingStrategyConfig'] = None,
+        availability_strategy_config: Optional[Dict[str, Any]] = None,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
-        availability_strategy_max_concurrency: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -142,14 +142,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The availability strategy configuration for routing requests across regions.
         :param concurrent.futures.ThreadPoolExecutor availability_strategy_executor:
             The thread pool executor for handling availability strategy requests.
-        :param int availability_strategy_max_concurrency:
-            The maximum number of parallel requests that can be issued by the availability strategy.
         """
         self.client_id = str(uuid.uuid4())
         self.url_connection = url_connection
-        self.availability_strategy_config: Optional['CrossRegionHedgingStrategyConfig'] = availability_strategy_config
+        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] =\
+            _validate_hedging_config(availability_strategy_config)
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
-        self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
         self.master_key: Optional[str] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[TokenCredential] = None
@@ -3283,7 +3281,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_availability_strategy_config(options, self.availability_strategy_config)
-        request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
+        request_params.availability_strategy_executor = self.availability_strategy_executor
 
         if not is_query_plan:
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"

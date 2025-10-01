@@ -80,19 +80,22 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :raises: CancelledError if request is cancelled due to completion status
         """
 
+        availability_strategy_config = request_params.availability_strategy_config
+        if availability_strategy_config is None:
+            raise ValueError("availability_strategy_config should not be null")
+
         delay: int
         # Calculate delay based on location index
         if location_index == 0:
             delay = 0  # No delay for initial request
         elif location_index == 1:
             # First hedged request after threshold
-            delay = request_params.availability_strategy_config["threshold_ms"]
+            delay = availability_strategy_config.threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            strategy = request_params.availability_strategy_config
-            delay = (strategy["threshold_ms"] +
-                    (steps * strategy["threshold_steps_ms"]))
+            delay = (availability_strategy_config.threshold_ms+
+                    (steps * availability_strategy_config.threshold_steps_ms))
 
         if delay > 0:
             await asyncio.sleep(delay / 1000)
@@ -191,7 +194,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                             return result
 
                         # successful response does not come from the initial request, record failure for it
-                        await self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
+                        await self._record_cancel_for_first_request(
+                            first_request_params_holder,
+                            global_endpoint_manager)
                         return result
                     except Exception as e:  # pylint: disable=broad-exception-caught
                         if completed_task is first_task:
@@ -203,7 +208,7 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                                 first_request_params_holder,
                                 global_endpoint_manager)
                             raise e
-                
+
                 # If no success yet, create new tasks to replace completed ones
                 if not completion_status.is_set():
                     num_completed = len(done)
@@ -224,9 +229,13 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
             # in this case, raise the exception from the first task
             completion_status.set()
-            if first_task is None or first_task.exception() is None:
-                raise RuntimeError("first task can not be none and it should have failed")
-            raise first_task.exception()
+            if first_task is None:
+                raise RuntimeError("first task can not be none")
+
+            first_task_exception = first_task.exception()
+            if first_task_exception is None:
+                raise RuntimeError("first task should have failed")
+            raise first_task_exception
         finally:
             for task in active_tasks:
                 if not task.done():
@@ -271,16 +280,11 @@ async def execute_with_availability_strategy(
     :returns: Tuple containing response data and headers from the successful request
     :rtype: ResponseType
     :raises: CosmosClientError if all hedged requests fail
-    :raises: ValueError if availability strategy is not supported
     """
 
-    availability_strategy = request_params.availability_strategy_config
-    if isinstance(availability_strategy, dict) and "threshold_ms" in availability_strategy and "threshold_steps_ms" in availability_strategy:
-        return await _cross_region_hedging_handler.execute_request(
-            request_params,
-            global_endpoint_manager,
-            request,
-            execute_request_fn
-        )
-
-    raise ValueError("Missing required fields in availability strategy config")
+    return await _cross_region_hedging_handler.execute_request(
+        request_params,
+        global_endpoint_manager,
+        request,
+        execute_request_fn
+    )

@@ -34,14 +34,13 @@ from azure.core.tracing.decorator import distributed_trace
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
+from ._cosmos_responses import CosmosDict
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
-from ._cosmos_responses import CosmosDict
 
 if TYPE_CHECKING:
-    from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
     from . import ThroughputProperties
 
 __all__ = ("CosmosClient",)
@@ -225,7 +224,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, Dict[str, Any]],
         consistency_level: Optional[str] = None,
-        availability_strategy_config: Optional['CrossRegionHedgingStrategyConfig'] = None,
+        availability_strategy_config: Optional[Dict[str, Any]] = None,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         **kwargs
     ) -> None:

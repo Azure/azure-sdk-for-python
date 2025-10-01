@@ -261,11 +261,7 @@ def SynchronizedRequest(
     if request_params.availability_strategy_config is None:
         # if ppaf is enabled, then hedging is enabled by default
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
-            request_params.availability_strategy_config =\
-                CrossRegionHedgingStrategyConfig(
-                    type="CrossRegionHedging",
-                    threshold_ms=500,
-                    threshold_steps_ms=100)
+            request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
 
     # Handle hedging if availability strategy is applicable
     if _is_availability_strategy_applicable(request_params):

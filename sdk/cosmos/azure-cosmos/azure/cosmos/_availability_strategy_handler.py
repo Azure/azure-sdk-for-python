@@ -73,19 +73,22 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         :rtype: ResponseType
         """
 
+        availability_strategy_config = request_params.availability_strategy_config
+        if availability_strategy_config is None:
+            raise ValueError("availability_strategy_config should not be null")
+
         delay: int
         if location_index == 0:
             # No delay for initial request
             delay = 0
         elif location_index == 1:
             # First hedged request after threshold
-            delay = request_params.availability_strategy_config["threshold_ms"]
+            delay = availability_strategy_config.threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            strategy = request_params.availability_strategy_config
-            delay = (strategy["threshold_ms"] +
-                    (steps * strategy["threshold_steps_ms"]))
+            delay = (availability_strategy_config.threshold_ms +
+                    (steps * availability_strategy_config.threshold_steps_ms))
 
         if delay > 0:
             time.sleep(delay / 1000)
@@ -135,7 +138,9 @@ class CrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         # Determine locations based on operation type
         available_locations = self._get_applicable_endpoints(request_params, global_endpoint_manager)
         effective_executor = request_params.availability_strategy_executor or self._shared_executor
-        request_params.availability_strategy_executor = None # reset the executor here else will get cannot pickle '_queue.SimpleQueue' object
+
+        # reset the executor here else will get cannot pickle '_queue.SimpleQueue' object
+        request_params.availability_strategy_executor = None
 
         futures: List[Future] = []
         first_request_future: Optional[Future] = None
@@ -223,12 +228,9 @@ def execute_with_hedging(
     :rtype: Tuple[Dict[str, Any], Dict[str, Any]]
     :raises: Any exceptions raised by the hedging handler's execute_request method
     """
-    strategy = request_params.availability_strategy_config
-    if isinstance(strategy, dict) and "threshold_ms" in strategy and "threshold_steps_ms" in strategy:
-        return _cross_region_hedging_handler.execute_request(
-            request_params,
-            global_endpoint_manager,
-            request,
-            execute_request_fn
-        )
-    raise ValueError("Missing required fields in availability strategy config")
+    return _cross_region_hedging_handler.execute_request(
+        request_params,
+        global_endpoint_manager,
+        request,
+        execute_request_fn
+    )

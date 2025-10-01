@@ -29,8 +29,9 @@ from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import _retry_utility_async
-from .. import exceptions, CrossRegionHedgingStrategyConfig
+from .. import exceptions
 from .. import http_constants
+from .._availability_strategy_config import CrossRegionHedgingStrategyConfig
 from .._request_object import RequestObject
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 from ..documents import _OperationType
@@ -209,11 +210,7 @@ async def AsynchronousRequest(
     if request_params.availability_strategy_config is None:
         # if ppaf is enabled, then hedging is enabled by default
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
-            request_params.availability_strategy_config =(
-                CrossRegionHedgingStrategyConfig(
-                    type="CrossRegionHedging",
-                    threshold_ms=500,
-                    threshold_steps_ms=100))
+            request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
 
     # Handle hedging if strategy is configured
     if _is_availability_strategy_applicable(request_params):
