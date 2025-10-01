@@ -1135,6 +1135,8 @@ def _preprocess_data(
     # Ensure the data does not contain top-level 'conversation' or 'messages' columns (which indicate chat/conversation data)
     if input_data_df is not None:
         if "conversation" in input_data_df.columns or "messages" in input_data_df.columns:
+            # No action is taken when 'conversation' or 'messages' columns are present,
+            # as these indicate chat/conversation data which should not be flattened or mapped by default.
             pass
         else:
             input_data_df = _flatten_object_columns_for_default_mapping(input_data_df)
