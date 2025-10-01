@@ -110,22 +110,24 @@ path: ./evaluator
 
 ## Step 3: Test in RAI Service ACA Code.
 
-Once PR is merged, Evaluation Team will use your evaluator files to run them in ACA to make sure no errors. You also need to provide jsonl dataset files for testing.
+Once PR is reviewed and merged, Evaluation Team will use your evaluator files to run them in ACA to make sure no errors found. You also need to provide jsonl dataset files for testing.
 
 ## Step 4: Publish on Dev Registry (Azureml-dev)
-When PR is review and merged. Evaluation Team will be able to kick off the CI Pipeline to publish evaluator in the Evaluator Catalog in azureml-dev registry.
+Evaluation Team will kick off the CI Pipeline to publish evaluator in the Evaluator Catalog in azureml-dev (dev) registry.
 
 ## Step 5: Test is INT Environment
-Team will verify following items:
+Team will verify following:
 
 1. Verify if new evaluator is available in Evaluator REST APIs.
-2. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA. 
+2. Verify if there are rendered correctly in NextGen UI. 
+3. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA. 
 
 ## Step 6: Publish on Prod Registry (Azureml)
-Evaluation Team will be able to kick off the CI Pipeline again to publish evaluator in the Evaluator Catalog in azureml registry.
+Evaluation Team will be able to kick off the CI Pipeline again to publish evaluator in the Evaluator Catalog in azureml (prod) registry.
 
 ## Step 7: Test is Prod Environment
 Team will verify following items:
 
 1. Verify if new evaluator is available in Evaluator REST APIs. 
-2. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA.
+2. Verify if there are rendered correctly in NextGen UI. 
+3. Verify if Evaluation API (Eval Run and Open AI Eval) both are able to reference these evaluators from Evaluator Catalog and run in ACA.
