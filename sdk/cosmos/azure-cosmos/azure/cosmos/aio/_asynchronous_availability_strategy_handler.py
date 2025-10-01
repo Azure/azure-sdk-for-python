@@ -229,8 +229,10 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             # if we have reached here, it means all tasks completed_task but all failed with transient exceptions
             # in this case, raise the exception from the first task
             completion_status.set()
-            if first_task is None or first_task.exception() is None:
-                raise RuntimeError("first task can not be none and it should have failed")
+            if first_task is None:
+                raise RuntimeError("first task can not be none")
+            if first_task.exception() is None:
+                raise RuntimeError("first task should have failed")
             raise first_task.exception()
         finally:
             for task in active_tasks:
