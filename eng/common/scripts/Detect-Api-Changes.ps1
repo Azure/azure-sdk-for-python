@@ -22,7 +22,7 @@ Param (
 $configFileDir = Join-Path -Path $ArtifactPath "PackageInfo"
 
 # Submit API review request and return status whether current revision is approved or pending or failed to create review
-function Submit-Request($filePath, $packageName)
+function Submit-Request($filePath, $packageName, $packageType)
 {
     $repoName = $RepoFullName
     if (!$repoName) {
@@ -39,6 +39,7 @@ function Submit-Request($filePath, $packageName)
     $query.Add('packageName', $packageName)
     $query.Add('language', $LanguageShort)
     $query.Add('project', $DevopsProject)
+    $query.Add('packageType', $packageType)
     $reviewFileFullName = Join-Path -Path $ArtifactPath $packageName $reviewFileName
     # If CI generates token file then it passes both token file name and original file (filePath) to APIView
     # If both files are passed then APIView downloads the parent directory as a zip
@@ -135,6 +136,7 @@ foreach ($packagePropFile in $packageProperties)
 {
     $packageMetadata = Get-Content $packagePropFile | ConvertFrom-Json
     $pkgArtifactName = $packageMetadata.ArtifactName ?? $packageMetadata.Name
+    $packageType = $packageMetadata.SdkType
 
     LogInfo "Processing $($pkgArtifactName)"
 
@@ -148,7 +150,7 @@ foreach ($packagePropFile in $packageProperties)
         if ($isRequired -eq $True)
         {
             $filePath = $pkgPath.Replace($ArtifactPath , "").Replace("\", "/")
-            $respCode = Submit-Request -filePath $filePath -packageName $pkgArtifactName
+            $respCode = Submit-Request -filePath $filePath -packageName $pkgArtifactName -packageType $packageType
             if ($respCode -ne '200')
             {
                 $responses[$pkgArtifactName] = $respCode
