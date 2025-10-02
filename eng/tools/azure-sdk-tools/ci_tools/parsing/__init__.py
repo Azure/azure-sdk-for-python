@@ -14,7 +14,7 @@ from .parse_functions import (
     extract_package_metadata,
     VERSION_REGEX,
     VERSION_PY,
-    OLD_VERSION_PY
+    OLD_VERSION_PY,
 )
 
 __all__ = [
@@ -33,5 +33,5 @@ __all__ = [
     "extract_package_metadata",
     "VERSION_REGEX",
     "VERSION_PY",
-    "OLD_VERSION_PY"
+    "OLD_VERSION_PY",
 ]

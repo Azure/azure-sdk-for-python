@@ -22,7 +22,7 @@
 """Classes and enums for documents in the Azure Cosmos database service.
 """
 
-from typing import List, Optional, TYPE_CHECKING, Union, Dict, Any
+from typing import Optional, TYPE_CHECKING, Union
 
 from typing_extensions import Literal, TypedDict
 
@@ -75,23 +75,23 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self.ReservedDocumentStorageInMB: int = 0
         self.ProvisionedDocumentStorageInMB: int = 0
         self.ConsistencyPolicy: Optional[UserConsistencyPolicy] = None
-        self._WritableLocations: List[dict] = []
-        self._ReadableLocations: List[dict] = []
+        self._WritableLocations: list[dict[str, str]] = []
+        self._ReadableLocations: list[dict[str, str]] = []
         self._EnableMultipleWritableLocations = False
 
     @property
-    def WritableLocations(self) -> List[Dict[Any, Any]]:
+    def WritableLocations(self) -> list[dict[str, str]]:
         """The list of writable locations for a geo-replicated database account.
         :returns: List of writable locations for the database account.
-        :rtype: List[str]
+        :rtype: list[dict[str, str]]
         """
         return self._WritableLocations
 
     @property
-    def ReadableLocations(self) -> List[Dict[Any, Any]]:
+    def ReadableLocations(self) -> list[dict[str, str]]:
         """The list of readable locations for a geo-replicated database account.
         :returns: List of readable locations for the database account.
-        :rtype: List[str]
+        :rtype: list[dict[str, str]]
         """
         return self._ReadableLocations
 
@@ -307,14 +307,14 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         taking into consideration the order specified in PreferredLocations. The
         locations in this list are specified as the names of the azure Cosmos
         locations like, 'West US', 'East US', 'Central India' and so on.
-    :vartype PreferredLocations: List[str]
+    :vartype PreferredLocations: list[str]
     :ivar ExcludedLocations:
         Gets or sets the excluded locations for geo-replicated database
         accounts. When ExcludedLocations is non-empty, the client will skip this
         set of locations from the final location evaluation. The locations in
         this list are specified as the names of the azure Cosmos locations like,
         'West US', 'East US', 'Central India' and so on.
-    :vartype ExcludedLocations: List[str]
+    :vartype ExcludedLocations: list[str]
     :ivar RetryOptions:
         Gets or sets the retry options to be applied to all requests when
         retrying.
@@ -359,8 +359,8 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.SSLConfiguration: Optional[SSLConfiguration] = None
         self.ProxyConfiguration: Optional[ProxyConfiguration] = None
         self.EnableEndpointDiscovery: bool = True
-        self.PreferredLocations: List[str] = []
-        self.ExcludedLocations: Optional[List[str]] = None
+        self.PreferredLocations: list[str] = []
+        self.ExcludedLocations: Optional[list[str]] = None
         self.RetryOptions: RetryOptions = RetryOptions()
         self.DisableSSLVerification: bool = False
         self.UseMultipleWriteLocations: bool = False
@@ -368,7 +368,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: bool = False
 
-    def override_dba_timeouts(
+    def _override_dba_timeouts(
             self,
             connection_timeout: Optional[int] = None,
             read_timeout: Optional[int] = None
