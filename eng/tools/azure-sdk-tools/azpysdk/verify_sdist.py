@@ -3,8 +3,6 @@ import os
 from typing import List, Mapping, Any, Dict, Optional
 from ci_tools.parsing import ParsedSetup, extract_package_metadata
 from ci_tools.functions import verify_package_classifiers
-import argparse
-import os
 import sys
 
 from typing import Optional, List
