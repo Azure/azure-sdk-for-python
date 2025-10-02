@@ -128,10 +128,12 @@ def mgmt_apidoc(output_dir: str, target_folder: str, executable: str) -> int:
     return 0
 
 
-def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str) -> int:
+def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: str) -> int:
     working_doc_folder = os.path.join(output_dir, "doc")
     command_array = [
-        "sphinx-apidoc",
+        executable,
+        "-m",
+        "sphinx.ext.apidoc",
         "--no-toc",
         "--module-first",
         "-o",
@@ -194,9 +196,11 @@ def should_build_docs(package_name: str) -> bool:
     )
 
 
-def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool) -> int:
+def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool, executable: str) -> int:
     command_array = [
-        "sphinx-build",
+        executable,
+        "-m",
+        "sphinx",
         "-b",
         "html",
         "-A",
@@ -326,7 +330,7 @@ class sphinx(Check):
                 if is_mgmt_package(parsed.name):
                     results.append(mgmt_apidoc(doc_folder, package_dir, executable))
                 else:
-                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace))
+                    results.append(sphinx_apidoc(staging_directory, package_dir, parsed.namespace, executable))
             else:
                 logger.info("Skipping sphinx source generation for {}".format(parsed.name))
 
@@ -340,6 +344,7 @@ class sphinx(Check):
                         doc_folder,  # source
                         site_folder,  # output
                         fail_on_warning=fail_on_warning,
+                        executable=executable,
                     )
                 )
 
