@@ -339,8 +339,6 @@ class ScanResult(TypedDict):
     :type parameters: RedTeamingParameters
     :param attack_details: List of AttackDetails objects representing the conversations in the evaluation
     :type attack_details: List[AttackDetails]
-    :param output_items: List of structured output items from the evaluation
-    :type output_items: List[RedTeamOutputItem]
     :param AOAI_Compatible_Row_Results: List of evaluation results for each risk category
     :type AOAI_Compatible_Row_Results: List[RedTeamRunOutputItemResult]
     :param AOAI_Compatible_Summary: The evaluation run metadata in eval.run format
@@ -352,7 +350,6 @@ class ScanResult(TypedDict):
     scorecard: RedTeamingScorecard
     parameters: RedTeamingParameters
     attack_details: List[AttackDetails]
-    output_items: List[RedTeamOutputItem]
     AOAI_Compatible_Row_Results: List[RedTeamRunOutputItemResult]
     AOAI_Compatible_Summary: "RedTeamRun"
     studio_url: Optional[str]

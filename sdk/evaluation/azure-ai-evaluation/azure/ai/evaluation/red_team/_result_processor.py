@@ -344,7 +344,6 @@ class ResultProcessor:
             scorecard=cast(RedTeamingScorecard, scorecard),
             parameters=cast(RedTeamingParameters, redteaming_parameters),
             attack_details=conversations,
-            output_items=ordered_output_items,
             AOAI_Compatible_Row_Results=aoai_row_results,
             AOAI_Compatible_Summary=aoai_summary,
             studio_url=self.ai_studio_url or None,
@@ -1065,11 +1064,11 @@ class ResultProcessor:
                 "scorecard": scorecard,
                 "parameters": redteaming_parameters,
                 "attack_details": conversations,
-                "output_items": output_items,
                 "studio_url": self.ai_studio_url,
                 # Note: AOAI fields will be populated by _build_results_payload
                 "AOAI_Compatible_Row_Results": [],
                 "AOAI_Compatible_Summary": {},
+                # output_items passed separately to _build_results_payload via output_items parameter
             }
             
             temp_redteam_result = RedTeamResult(

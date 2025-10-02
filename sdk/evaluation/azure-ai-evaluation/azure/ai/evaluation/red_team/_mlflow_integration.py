@@ -733,8 +733,6 @@ class MLflowIntegration:
             legacy_payload["scorecard"] = {}
         if "parameters" not in legacy_payload:
             legacy_payload["parameters"] = {}
-        if "output_items" not in legacy_payload:
-            legacy_payload["output_items"] = []
         if "attack_details" not in legacy_payload:
             legacy_payload["attack_details"] = redteam_result.attack_details or []
 
