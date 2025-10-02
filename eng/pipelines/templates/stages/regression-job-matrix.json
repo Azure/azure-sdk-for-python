@@ -9,7 +9,6 @@
     },
     "DependentService": [
       "schemaregistry",
-      "remoterendering",
       "eventhub",
       "cognitivelanguage",
       "tables",
