@@ -117,7 +117,6 @@ class TestCallMediaClient(unittest.TestCase):
             play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False),
-            interrupt_call_media_operation=False,
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -158,7 +157,7 @@ class TestCallMediaClient(unittest.TestCase):
         )
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(
-            expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation
+            expected_play_request.interrupt_call_media_operation, actual_play_request.interrupt_call_media_operation
         )
     def test_play_file_play_interrupt_hold_audio(self):
         mock_play = Mock()
@@ -181,7 +180,7 @@ class TestCallMediaClient(unittest.TestCase):
             expected_play_request.play_sources[0].play_source_cache_id,
             actual_play_request.play_sources[0].play_source_cache_id,
         )
-        self.assertEqual(expected_play_request.play_to[0]['raw_id'], actual_play_request.play_to[0]['raw_id'])
+        self.assertEqual(expected_play_request.play_to[0].raw_id, actual_play_request.play_to[0].raw_id)
         self.assertEqual(expected_play_request.play_options.interrupt_hold_audio, actual_play_request.play_options.interrupt_hold_audio)
 
     def test_play_file_to_all_back_compat_with_barge_in(self):
@@ -195,7 +194,6 @@ class TestCallMediaClient(unittest.TestCase):
             play_sources=[play_source._to_generated()],
             play_to=[],
             play_options=PlayOptions(loop=False),
-            interrupt_call_media_operation=True,
         )
         mock_play.assert_called_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -208,7 +206,7 @@ class TestCallMediaClient(unittest.TestCase):
         )
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(
-            expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation
+            expected_play_request.interrupt_call_media_operation, actual_play_request.interrupt_call_media_operation
         )
 
     def test_play_multiple_source_to_all(self):

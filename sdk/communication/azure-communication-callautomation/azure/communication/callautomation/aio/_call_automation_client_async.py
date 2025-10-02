@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Sequence, Union, Optional, TYPE_CHECKING, AsyncIterable, overload, Dict
+from typing import Sequence, Union, Optional, TYPE_CHECKING, AsyncIterable, cast, overload, Dict
 from urllib.parse import urlparse
 import warnings
 
@@ -117,7 +117,7 @@ class CallAutomationClient:
         if custom_enabled and custom_url is not None:
             self._client = AzureCommunicationCallAutomationService(
                 custom_url,
-                credential,
+                cast(AzureKeyCredential, credential),
                 api_version=api_version or DEFAULT_VERSION,
                 authentication_policy=get_call_automation_auth_policy(
                     custom_url, credential, acs_url=endpoint, is_async=True
@@ -419,8 +419,7 @@ class CallAutomationClient:
             media_streaming_options=media_config,
             transcription_options=transcription_config,
             CustomCallingContext=user_custom_context,
-            call_intelligence_options=call_intelligence_options,
-            teams_app_source=serialize_msft_teams_app_identifier(teams_app_source),
+            call_intelligence_options=call_intelligence_options
         )
         process_repeatability_first_sent(kwargs)
         result = await self._client.create_call(create_call_request=create_call_request, **kwargs)

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Sequence, Union, Optional, TYPE_CHECKING, Iterable, overload, Dict
+from typing import List, Sequence, Union, Optional, TYPE_CHECKING, Iterable, cast, overload, Dict
 from urllib.parse import urlparse
 import warnings
 
@@ -116,9 +116,9 @@ class CallAutomationClient:
         if custom_enabled and custom_url is not None:
             self._client = AzureCommunicationCallAutomationService(
                 custom_url,
-                credential,
+                cast(AzureKeyCredential, credential),
                 api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_call_automation_auth_policy(custom_url, credential, acs_url=endpoint),
+                authentication_policy=get_call_automation_auth_policy(custom_url, cast(AzureKeyCredential, credential), acs_url=endpoint),
                 sdk_moniker=SDK_MONIKER,
                 **kwargs,
             )

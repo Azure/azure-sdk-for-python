@@ -116,7 +116,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
             if custom_enabled and custom_url is not None:
                 self._client = AzureCommunicationCallAutomationService(
                     custom_url,
-                    credential,
+                    cast(AzureKeyCredential, credential),  # credential,
                     api_version=api_version or DEFAULT_VERSION,
                     authentication_policy=get_call_automation_auth_policy(
                         custom_url, credential, acs_url=endpoint, is_async=True
@@ -1248,17 +1248,18 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
+            # play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
+            play_sources=[source._to_generated() for source in play_sources],
             play_to=serialize_identifier(target_participant),
             operation_context=operation_context,
             kwargs=kwargs,
         )
 
-        self._call_media_client.interrupt_audio_and_announce(
-            self._call_connection_id,
-            interrupt_audio_announce_request,
-            **kwargs
-            )
+        # self._call_media_client.interrupt_audio_and_announce(
+        #     self._call_connection_id,
+        #     interrupt_audio_announce_request,
+        #     **kwargs
+        #     )
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()
