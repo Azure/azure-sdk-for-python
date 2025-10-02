@@ -20,6 +20,33 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_gallery_application_versions_list_by_gallery_application(self, resource_group):
+        response = self.client.gallery_application_versions.list_by_gallery_application(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            gallery_application_name="str",
+            api_version="2024-03-03",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_gallery_application_versions_get(self, resource_group):
+        response = self.client.gallery_application_versions.get(
+            resource_group_name=resource_group.name,
+            gallery_name="str",
+            gallery_application_name="str",
+            gallery_application_version_name="str",
+            api_version="2024-03-03",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_gallery_application_versions_begin_create_or_update(self, resource_group):
         response = self.client.gallery_application_versions.begin_create_or_update(
             resource_group_name=resource_group.name,
@@ -57,7 +84,7 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
                     "publishedDate": "2020-02-20 00:00:00",
                     "replicaCount": 0,
                     "replicationMode": "str",
-                    "settings": {"configFileName": "str", "packageFileName": "str"},
+                    "settings": {"configFileName": "str", "packageFileName": "str", "scriptBehaviorAfterReboot": "str"},
                     "storageAccountType": "str",
                     "targetExtendedLocations": [
                         {
@@ -80,6 +107,7 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
                     "targetRegions": [
                         {
                             "name": "str",
+                            "additionalReplicaSets": [{"regionalReplicaCount": 0, "storageAccountType": "str"}],
                             "encryption": {
                                 "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
                                 "osDiskImage": {
@@ -101,10 +129,18 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
                     "summary": [{"details": "str", "progress": 0, "region": "str", "state": "str"}],
                 },
                 "safetyProfile": {"allowDeletionOfReplicatedLocations": bool},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-07-03",
+            api_version="2024-03-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -148,7 +184,7 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
                     "publishedDate": "2020-02-20 00:00:00",
                     "replicaCount": 0,
                     "replicationMode": "str",
-                    "settings": {"configFileName": "str", "packageFileName": "str"},
+                    "settings": {"configFileName": "str", "packageFileName": "str", "scriptBehaviorAfterReboot": "str"},
                     "storageAccountType": "str",
                     "targetExtendedLocations": [
                         {
@@ -171,6 +207,7 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
                     "targetRegions": [
                         {
                             "name": "str",
+                            "additionalReplicaSets": [{"regionalReplicaCount": 0, "storageAccountType": "str"}],
                             "encryption": {
                                 "dataDiskImages": [{"lun": 0, "diskEncryptionSetId": "str"}],
                                 "osDiskImage": {
@@ -195,22 +232,8 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2023-07-03",
+            api_version="2024-03-03",
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_gallery_application_versions_get(self, resource_group):
-        response = self.client.gallery_application_versions.get(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            gallery_application_name="str",
-            gallery_application_version_name="str",
-            api_version="2023-07-03",
-        )
 
         # please add some check logic here by yourself
         # ...
@@ -223,21 +246,8 @@ class TestComputeManagementGalleryApplicationVersionsOperations(AzureMgmtRecorde
             gallery_name="str",
             gallery_application_name="str",
             gallery_application_version_name="str",
-            api_version="2023-07-03",
+            api_version="2024-03-03",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_gallery_application_versions_list_by_gallery_application(self, resource_group):
-        response = self.client.gallery_application_versions.list_by_gallery_application(
-            resource_group_name=resource_group.name,
-            gallery_name="str",
-            gallery_application_name="str",
-            api_version="2023-07-03",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

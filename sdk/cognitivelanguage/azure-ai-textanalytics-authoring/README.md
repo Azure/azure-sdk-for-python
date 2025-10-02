@@ -13,7 +13,7 @@
 
 [Source code][text_authoring_client_src]
 | [Package (PyPI)][text_authoring_pypi_package]
-| [API reference][api_reference_text_authoring]
+| [API reference][api_reference_authoring]
 | [Samples][text_authoring_samples]
 | [Product docs][text_authoring_docs]
 | [REST API docs][text_authoring_restdocs]
@@ -36,7 +36,13 @@ Install the Azure Text Authoring client library for Python with [pip][pip_link]:
 pip install azure-ai-textanalytics-authoring
 ```
 
-> Note: This version of the client library defaults to the 2025-05-15-preview version of the service
+> Note: This version of the client library defaults to the 2025-05-15-preview version of the service.
+
+This table shows the relationship between SDK versions and supported API versions of the service
+
+| SDK version  | Supported API version of service  |
+| ------------ | --------------------------------- |
+| 1.0.0b1 - Latest preview release | 2023-04-01, 2024-11-15-preview, 2025-05-15-preview (default) |
 
 ### Authenticate the client
 

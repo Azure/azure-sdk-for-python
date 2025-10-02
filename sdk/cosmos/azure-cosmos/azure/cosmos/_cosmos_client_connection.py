@@ -71,6 +71,7 @@ from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider, routing_range
+from ._inference_service import _InferenceService
 from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
     _Undefined,
@@ -236,6 +237,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             policies=policies
         )
 
+        self._inference_service: Optional[_InferenceService] = None
+        if self.aad_credentials:
+            self._inference_service = _InferenceService(self)
+
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
         # application/sql is no longer supported.
@@ -301,6 +306,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             self.session = _session.Session(self.url_connection)
         else:
             self.session = None
+
+    def _get_inference_service(self) -> Optional[_InferenceService]:
+        """Get inference service instance"""
+        return self._inference_service
 
     @property
     def Session(self) -> Optional[_session.Session]:
@@ -370,7 +379,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a database.
 
         :param dict database:
@@ -393,7 +402,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a database.
 
         :param str database_link:
@@ -527,7 +536,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a collection in a database.
 
         :param str database_link:
@@ -556,7 +565,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection: Dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a collection and return it.
 
         :param str collection_link:
@@ -586,7 +595,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         collection_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a collection.
 
         :param str collection_link:
@@ -2554,7 +2563,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         offer_link: str,
         offer: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces an offer and returns it.
 
         :param str offer_link:

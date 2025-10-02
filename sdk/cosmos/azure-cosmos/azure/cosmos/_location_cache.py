@@ -30,7 +30,7 @@ from urllib.parse import urlparse
 
 from . import documents, _base as base
 from .http_constants import ResourceType
-from .documents import _OperationType, ConnectionPolicy
+from .documents import ConnectionPolicy
 from ._request_object import RequestObject
 
 # pylint: disable=protected-access
@@ -43,40 +43,27 @@ class EndpointOperationType(object):
     WriteType = "Write"
 
 class RegionalRoutingContext(object):
-    def __init__(self, primary_endpoint: str, alternate_endpoint: str):
+    def __init__(self, primary_endpoint: str):
         self.primary_endpoint: str = primary_endpoint
-        self.alternate_endpoint: str = alternate_endpoint
 
     def set_primary(self, endpoint: str):
         self.primary_endpoint = endpoint
 
-    def set_alternate(self, endpoint: str):
-        self.alternate_endpoint = endpoint
-
     def get_primary(self):
         return self.primary_endpoint
 
-    def get_alternate(self):
-        return self.alternate_endpoint
-
     def __eq__(self, other):
-        return (self.primary_endpoint == other.primary_endpoint
-                and self.alternate_endpoint == other.alternate_endpoint)
+        return self.primary_endpoint == other.primary_endpoint
 
     def __str__(self):
-        return "Primary: " + self.primary_endpoint + ", Alternate: " + self.alternate_endpoint
+        return "Primary: " + self.primary_endpoint
 
-def get_endpoints_by_location(new_locations: List[Dict[str, str]],
-                              old_regional_routing_contexts_by_location: Dict[str, RegionalRoutingContext],
-                              default_regional_endpoint: RegionalRoutingContext,
-                              writes: bool,
-                              use_multiple_write_locations: bool):
+def get_regional_routing_contexts_by_loc(new_locations: List[Dict[str, str]]):
     # construct from previous object
-    regional_routing_context_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
+    regional_routing_contexts_by_location: OrderedDict[str, RegionalRoutingContext] = collections.OrderedDict()
     parsed_locations = []
 
-
-    for new_location in new_locations: # pylint: disable=too-many-nested-blocks
+    for new_location in new_locations:
         # if name in new_location and same for database account endpoint
         if "name" in new_location and "databaseAccountEndpoint" in new_location:
             if not new_location["name"]:
@@ -85,44 +72,19 @@ def get_endpoints_by_location(new_locations: List[Dict[str, str]],
             try:
                 region_uri = new_location["databaseAccountEndpoint"]
                 parsed_locations.append(new_location["name"])
-                if not writes or use_multiple_write_locations:
-                    regional_object = RegionalRoutingContext(region_uri, region_uri)
-                elif new_location["name"] in old_regional_routing_contexts_by_location:
-                    regional_object = old_regional_routing_contexts_by_location[new_location["name"]]
-                    current = regional_object.get_primary()
-                    # swap the previous with current and current with new region_uri received from the gateway
-                    if current != region_uri:
-                        regional_object.set_alternate(current)
-                        regional_object.set_primary(region_uri)
-                # This is the bootstrapping condition
-                else:
-                    regional_object = RegionalRoutingContext(region_uri, region_uri)
-                    # if it is for writes, then we update the previous to default_endpoint
-                    if writes:
-                        # if region_uri is different than global endpoint set global endpoint
-                        # as fallback
-                        # else construct regional uri
-                        if region_uri != default_regional_endpoint.get_primary():
-                            regional_object.set_alternate(default_regional_endpoint.get_primary())
-                        else:
-                            constructed_region_uri =  LocationCache.GetLocationalEndpoint(
-                                default_regional_endpoint.get_primary(),
-                                new_location["name"])
-                            regional_object.set_alternate(constructed_region_uri)
-                regional_routing_context_by_location.update({new_location["name"]: regional_object})
+                regional_object = RegionalRoutingContext(region_uri)
+                regional_routing_contexts_by_location.update({new_location["name"]: regional_object})
             except Exception as e:
                 raise e
 
     # Also store a hash map of endpoints for each location
-    locations_by_endpoints = {value.get_primary(): key for key, value in regional_routing_context_by_location.items()}
+    locations_by_endpoints = {value.get_primary(): key for key, value in regional_routing_contexts_by_location.items()}
 
-    return regional_routing_context_by_location, locations_by_endpoints, parsed_locations
+    return regional_routing_contexts_by_location, locations_by_endpoints, parsed_locations
 
 def _get_health_check_endpoints(regional_routing_contexts) -> Set[str]:
     # should use the endpoints in the order returned from gateway and only the ones specified in preferred locations
-    preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}.union(
-        {context.get_alternate() for context in regional_routing_contexts}
-    )
+    preferred_endpoints = {context.get_primary() for context in regional_routing_contexts}
     return preferred_endpoints
 
 def _get_applicable_regional_routing_contexts(regional_routing_contexts: List[RegionalRoutingContext],
@@ -157,8 +119,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         default_endpoint: str,
         connection_policy: ConnectionPolicy,
     ):
-        self.default_regional_routing_context: RegionalRoutingContext = RegionalRoutingContext(default_endpoint,
-                                                                                               default_endpoint)
+        self.default_regional_routing_context: RegionalRoutingContext = RegionalRoutingContext(default_endpoint)
         self.effective_preferred_locations: List[str] = []
         self.enable_multiple_writable_locations: bool = False
         self.write_regional_routing_contexts: List[RegionalRoutingContext] = [self.default_regional_routing_context]
@@ -205,9 +166,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def get_all_write_endpoints(self) -> Set[str]:
         return {
-            endpoint
+            context.get_primary()
             for context in self.get_write_regional_routing_contexts()
-            for endpoint in (context.get_primary(), context.get_alternate())
         }
 
     def get_ordered_write_locations(self):
@@ -272,10 +232,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             request.use_preferred_locations if request.use_preferred_locations is not None else True
         )
 
-        # whether to check for write or read unavailable
-        endpoint_operation_type = EndpointOperationType.WriteType if (
-            documents._OperationType.IsWriteOperation(request.operation_type)) else EndpointOperationType.ReadType
-
         if not use_preferred_locations or (
             documents._OperationType.IsWriteOperation(request.operation_type)
             and not self.can_use_multiple_write_locations_for_request(request)
@@ -290,14 +246,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                         and write_location in self.account_write_regional_routing_contexts_by_location):
                     write_regional_routing_context = (
                         self.account_write_regional_routing_contexts_by_location)[write_location]
-                    if (
-                            request.last_routed_location_endpoint_within_region is not None
-                            and request.last_routed_location_endpoint_within_region
-                            == write_regional_routing_context.get_primary()
-                            or self.is_endpoint_unavailable_internal(write_regional_routing_context.get_primary(),
-                                                             endpoint_operation_type)
-                    ):
-                        return write_regional_routing_context.get_alternate()
                     return write_regional_routing_context.get_primary()
             # if endpoint discovery is off for reads it should use passed in endpoint
             return self.default_regional_routing_context.get_primary()
@@ -308,14 +256,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             else self._get_applicable_read_regional_routing_contexts(request)
         )
         regional_routing_context = regional_routing_contexts[location_index % len(regional_routing_contexts)]
-        if (
-                request.last_routed_location_endpoint_within_region is not None
-                and request.last_routed_location_endpoint_within_region
-                == regional_routing_context.get_primary()
-                or self.is_endpoint_unavailable_internal(regional_routing_context.get_primary(),
-                                                          endpoint_operation_type)
-        ):
-            return regional_routing_context.get_alternate()
         return regional_routing_context.get_primary()
 
     def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
@@ -342,7 +282,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                     return True
 
             if not self.can_use_multiple_write_locations():
-                if self.is_location_unavailable(self.write_regional_routing_contexts[0],
+                if self.is_endpoint_unavailable(self.write_regional_routing_contexts[0].get_primary(),
                                                 EndpointOperationType.WriteType):
                     # same logic as other
                     # Since most preferred write endpoint is unavailable, we can only refresh in background if
@@ -360,16 +300,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             return should_refresh
         return False
 
-    def is_location_unavailable(self, endpoint: RegionalRoutingContext, operation_type: str):
-        # For writes with single write region accounts only mark it unavailable if both are down
-        if not _OperationType.IsReadOnlyOperation(operation_type) and not self.can_use_multiple_write_locations():
-            return (self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
-                    and self.is_endpoint_unavailable_internal(endpoint.get_alternate(), operation_type))
-
-        # For reads mark the region as down if primary endpoint is unavailable
-        return self.is_endpoint_unavailable_internal(endpoint.get_primary(), operation_type)
-
-    def is_endpoint_unavailable_internal(self, endpoint: str, expected_available_operation: str):
+    def is_endpoint_unavailable(self, endpoint: str, expected_available_operation: str):
         unavailability_info = (
             self.location_unavailability_info_by_endpoint[endpoint]
             if endpoint in self.location_unavailability_info_by_endpoint
@@ -420,24 +351,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             if read_locations:
                 (self.account_read_regional_routing_contexts_by_location,
                  self.account_locations_by_read_endpoints,
-                 self.account_read_locations) = get_endpoints_by_location(
-                    read_locations,
-                    self.account_read_regional_routing_contexts_by_location,
-                    self.default_regional_routing_context,
-                    False,
-                    self.connection_policy.UseMultipleWriteLocations
-                )
+                 self.account_read_locations) = get_regional_routing_contexts_by_loc(read_locations)
 
             if write_locations:
                 (self.account_write_regional_routing_contexts_by_location,
                  self.account_locations_by_write_endpoints,
-                 self.account_write_locations) = get_endpoints_by_location(
-                    write_locations,
-                    self.account_write_regional_routing_contexts_by_location,
-                    self.default_regional_routing_context,
-                    True,
-                    self.connection_policy.UseMultipleWriteLocations
-                )
+                 self.account_write_locations) = get_regional_routing_contexts_by_loc(write_locations)
 
         # if preferred locations is empty and the default endpoint is a global endpoint,
         # we should use the read locations from gateway as effective preferred locations
@@ -482,7 +401,8 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                         regional_endpoint = endpoints_by_location[location] if location in endpoints_by_location \
                             else None
                         if regional_endpoint:
-                            if self.is_location_unavailable(regional_endpoint, expected_available_operation):
+                            if self.is_endpoint_unavailable(regional_endpoint.get_primary(),
+                                                            expected_available_operation):
                                 unavailable_endpoints.append(regional_endpoint)
                             else:
                                 regional_endpoints.append(regional_endpoint)
@@ -525,12 +445,10 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def endpoints_to_health_check(self) -> Set[str]:
         # add read endpoints from gateway and in preferred locations
-        health_check_endpoints = _get_health_check_endpoints(
-            self.read_regional_routing_contexts
-        )
+        health_check_endpoints = _get_health_check_endpoints(self.read_regional_routing_contexts)
         # add first write endpoint in case that the write region is not in preferred locations
-        health_check_endpoints = health_check_endpoints.union(_get_health_check_endpoints(
-            self.write_regional_routing_contexts[:1]
+        health_check_endpoints = health_check_endpoints.union(
+            _get_health_check_endpoints(self.write_regional_routing_contexts[:1]
         ))
 
         return health_check_endpoints

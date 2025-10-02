@@ -74,7 +74,7 @@ from azure.ai.voicelive.models import (
     FunctionCallOutputItem,
     ItemType,
     ToolChoiceLiteral,
-    AudioInputTranscriptionSettings,
+    AudioInputTranscriptionOptions,
     ResponseFunctionCallItem,
     ServerEventConversationItemCreated,
     ServerEventResponseFunctionCallArgumentsDone,
@@ -472,7 +472,7 @@ class AsyncFunctionCallingClient:
             turn_detection=turn_detection_config,
             tools=function_tools,
             tool_choice=ToolChoiceLiteral.AUTO,  # Let the model decide when to call functions
-            input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
+            input_audio_transcription=AudioInputTranscriptionOptions(model="whisper-1"),
         )
 
         # Send session configuration asynchronously
