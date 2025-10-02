@@ -52,9 +52,6 @@ class TypeHandlerRegistry:
     def register_serializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
         """Decorator to register a serializer.
 
-        - If the condition is a type, we add it to a type map.
-        - If the condition is a callable function, we add it to a predicate list.
-
         The handler function is expected to take a single argument, the object to serialize,
         and return a dictionary representation of that object.
 
@@ -98,9 +95,6 @@ class TypeHandlerRegistry:
 
     def register_deserializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
         """Decorator to register a deserializer.
-
-        - If the condition is a type, we add it to a type map.
-        - If the condition is a callable function, we add it to a predicate list.
 
         The handler function is expected to take two arguments: the target type and the data dictionary,
         and return an instance of the target type.
