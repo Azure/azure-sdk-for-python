@@ -140,7 +140,6 @@ def verify_prior_version_metadata(
             else:
                 cmd += ["download", "--no-deps", is_binary, f"{package_name}=={prior_version}", "--dest", tmp_dir]
 
-            logger.warning(cmd)
             subprocess.run(
                 cmd,
                 check=True,
