@@ -82,7 +82,7 @@ class TestConfig(object):
 
     @classmethod
     def get_account_info(cls, client: CosmosClient):
-        account_info = client.get_database_account()
+        account_info = client.get_database_account(assert_kwarg_passthrough=True)
         cls.WRITE_LOCATION = account_info.WritableLocations[0]["name"]
         if len(account_info.ReadableLocations) > 1:
             cls.READ_LOCATION = account_info.ReadableLocations[1]["name"]
@@ -91,7 +91,8 @@ class TestConfig(object):
     def create_database_if_not_exist(cls, client):
         # type: (CosmosClient) -> DatabaseProxy
         test_database = client.create_database_if_not_exists(cls.TEST_DATABASE_ID,
-                                                             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+                                                             offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION,
+                                                             assert_kwarg_passthrough=True)
         return test_database
 
     @classmethod
@@ -101,7 +102,8 @@ class TestConfig(object):
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_SINGLE_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
-            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION,
+            assert_kwarg_passthrough=True)
         return document_collection
 
     @classmethod
@@ -111,7 +113,8 @@ class TestConfig(object):
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_MULTI_PARTITION_CONTAINER_ID,
             partition_key=PartitionKey(path='/' + cls.TEST_CONTAINER_PARTITION_KEY, kind='Hash'),
-            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
+            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS,
+            assert_kwarg_passthrough=True)
         return document_collection
 
     @classmethod
@@ -121,7 +124,8 @@ class TestConfig(object):
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID,
             partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
-            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION)
+            offer_throughput=cls.THROUGHPUT_FOR_1_PARTITION,
+            assert_kwarg_passthrough=True)
         return document_collection
 
     @classmethod
@@ -131,14 +135,15 @@ class TestConfig(object):
         document_collection = database.create_container_if_not_exists(
             id=cls.TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID,
             partition_key=PartitionKey(path=cls.TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH, kind='MultiHash'),
-            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS)
+            offer_throughput=cls.THROUGHPUT_FOR_5_PARTITIONS,
+            assert_kwarg_passthrough=True)
         return document_collection
 
     @classmethod
     def try_delete_database(cls, client):
         # type: (CosmosClient) -> None
         try:
-            client.delete_database(cls.TEST_DATABASE_ID)
+            client.delete_database(cls.TEST_DATABASE_ID, assert_kwarg_passthrough=True)
         except exceptions.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
@@ -147,7 +152,7 @@ class TestConfig(object):
     def try_delete_database_with_id(cls, client, database_id):
         # type: (CosmosClient, str) -> None
         try:
-            client.delete_database(database_id)
+            client.delete_database(database_id, assert_kwarg_passthrough=True)
         except exceptions.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
@@ -223,14 +228,14 @@ class TestConfig(object):
     @staticmethod
     def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
-        container.replace_throughput(throughput)
+        container.replace_throughput(throughput, assert_kwarg_passthrough=True)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
         print("Waiting for split to complete")
         start_time = time.time()
 
         while True:
-            offer = container.get_throughput()
+            offer = container.get_throughput(assert_kwarg_passthrough=True)
             if offer.properties['content'].get('isOfferReplacePending', False):
                 if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
                     raise unittest.SkipTest("Partition split didn't complete in time")

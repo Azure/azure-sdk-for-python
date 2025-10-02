@@ -4,7 +4,7 @@
 import test_config
 from azure.cosmos import CosmosClient as CosmosSyncClient
 
-cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
+cosmos_sync_client = CosmosSyncClient(test_config.TestConfig.host, test_config.TestConfig.masterKey, assert_kwarg_passthrough=True)
 
 
 def pytest_configure(config):
