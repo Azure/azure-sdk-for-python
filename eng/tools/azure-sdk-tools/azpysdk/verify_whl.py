@@ -120,21 +120,38 @@ def verify_prior_version_metadata(
     package_name: str, prior_version: str, current_metadata: Dict[str, Any], executable: str, package_type: str = "*.whl"
 ) -> bool:
     """Download prior version and verify metadata compatibility."""
-    pip_cmd = get_pip_command(executable)
+    # cmd = get_pip_command(executable)
+    cmd = ["uv", "pip"]
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
             is_binary = "--only-binary=:all:" if package_type == "*.whl" else "--no-binary=:all:"
+
+            # pip download is not supported by uv
+            if cmd[0] == "uv":
+                cmd += ["install", "--target", tmp_dir, "--no-deps", is_binary, f"{package_name}=={prior_version}"]
+            else:
+                cmd += ["download", "--no-deps", is_binary, f"{package_name}=={prior_version}", "--dest", tmp_dir]
+            
+            logger.warning(cmd)
             subprocess.run(
-                pip_cmd + ["download", "--no-deps", is_binary, f"{package_name}=={prior_version}", "--dest", tmp_dir],
+                cmd,
                 check=True,
                 capture_output=True,
             )
-            zip_files = glob.glob(os.path.join(tmp_dir, package_type))
-            if not zip_files:
-                return True
 
-            prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
+            if cmd[0] == "uv":
+                package_path = glob.glob(os.path.join(tmp_dir, package_name.replace("-", "_") + "-*"))[0]
+                if not package_path:
+                    return True
+                prior_metadata = extract_package_metadata(package_path)
+            else:
+                zip_files = glob.glob(os.path.join(tmp_dir, package_type))
+                if not zip_files:
+                    return True
+                prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
+
             is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
+            breakpoint()
             if not is_compatible:
                 missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
                 logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
