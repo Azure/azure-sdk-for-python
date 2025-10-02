@@ -128,8 +128,8 @@ def verify_prior_version_metadata(
     package_type: str = "*.whl",
 ) -> bool:
     """Download prior version and verify metadata compatibility."""
-    # cmd = get_pip_command(executable)
-    cmd = ["uv", "pip"]
+    cmd = get_pip_command(executable)
+
     with tempfile.TemporaryDirectory() as tmp_dir:
         try:
             is_binary = "--only-binary=:all:" if package_type == "*.whl" else "--no-binary=:all:"
@@ -158,7 +158,7 @@ def verify_prior_version_metadata(
                 prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
 
             is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
-
+            
             if not is_compatible:
                 missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
                 logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
