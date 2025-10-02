@@ -21,6 +21,7 @@ class RiskCategory(str, Enum):
     ProtectedMaterial = "protected_material"
     CodeVulnerability = "code_vulnerability"
     UngroundedAttributes = "ungrounded_attributes"
+    SensitiveDataLeakage = "sensitive_data_leakage"  # Agent targets only
 
 
 @experimental

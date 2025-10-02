@@ -270,22 +270,32 @@ class OrchestratorManager:
                 # Build context_dict to pass via memory labels
                 context_dict = {"contexts": contexts}
                 
-                processed_prompt = prompt
-                
-                if has_agent_fields:
-                    # Agent target - don't embed context in prompt
-                    tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
-                    self.logger.debug(f"Agent target context on prompt {prompt_idx+1}: {len(contexts)} context source(s), tool_names={tool_names}")
+                # Determine how to handle the prompt based on target type and context fields
+                if isinstance(chat_target, _CallbackChatTarget):
+                    # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
+                    if contexts and not has_agent_fields:
+                        # For contexts without agent fields, the prompt already has context embedded
+                        # (done in _extract_objective_content), so just use it as-is
+                        processed_prompt = prompt
+                        self.logger.debug(f"CallbackChatTarget: Prompt has embedded context, passing {len(contexts)} context source(s) in context_dict")
+                    else:
+                        # Agent fields present - prompt is clean, contexts have structure
+                        processed_prompt = prompt
+                        tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
+                        self.logger.debug(f"CallbackChatTarget: Passing {len(contexts)} structured context(s) with agent fields, tool_names={tool_names}")
                 else:
-                    # Model target - may need to embed context in prompt for non-CallbackChatTarget
-                    if contexts and not isinstance(chat_target, _CallbackChatTarget):
-                        # Embed all contexts in the prompt - extract 'content' from each dict
-                        context_texts = [ctx.get("content", "") for ctx in contexts if isinstance(ctx, dict)]
-                        context_text = "\n\n".join(context_texts)
-                        processed_prompt = f"{prompt}\n\n<context>{context_text}</context>"
-                        self.logger.debug(f"Appended {len(contexts)} context source(s) to prompt {prompt_idx+1}")
-                    elif contexts and isinstance(chat_target, _CallbackChatTarget):
-                        self.logger.debug(f"Context will be passed separately to _CallbackChatTarget for prompt {prompt_idx+1}: {len(contexts)} source(s)")
+                    # Non-CallbackChatTarget: Embed contexts in the actual PyRIT message
+                    if has_agent_fields:
+                        # Agent target with structured context - don't embed in prompt
+                        processed_prompt = prompt
+                        tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
+                        self.logger.debug(f"Non-CallbackChatTarget with agent fields: {len(contexts)} context source(s), tool_names={tool_names}")
+                    elif contexts:
+                        # Model target without agent fields - embed context in prompt
+                        # Note: The prompt already has context embedded from _extract_objective_content
+                        # But for non-CallbackChatTarget, we may need additional wrapping
+                        processed_prompt = prompt
+                        self.logger.debug(f"Non-CallbackChatTarget: Using prompt with embedded context")
 
                 try:
                     # Create retry-enabled function using the reusable decorator

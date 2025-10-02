@@ -518,7 +518,6 @@ class RedTeam:
 
             if isinstance(objectives_response, list):
                 self.logger.debug(f"API returned {len(objectives_response)} objectives")
-
             # Handle jailbreak strategy
             if strategy == "jailbreak":
                 objectives_response = await self._apply_jailbreak_prefixes(objectives_response)
@@ -684,26 +683,40 @@ class RedTeam:
                         # Preserve the original baseline context if it exists
                         baseline_context = message.get("context", "")
                         
-                        # If baseline context exists and doesn't have tool_name/context_type,
-                        # append it to the baseline attack content before XPIA injection
+                        # Normalize baseline_context to a list of context dicts
+                        baseline_contexts = []
                         if baseline_context:
-                            # Check if baseline_context is a string or needs to be extracted from dict/list
-                            if isinstance(baseline_context, str):
-                                baseline_context_text = baseline_context
-                            elif isinstance(baseline_context, list) and len(baseline_context) > 0:
-                                # Extract content from first context item if it's a list
-                                first_ctx = baseline_context[0]
-                                if isinstance(first_ctx, dict):
-                                    baseline_context_text = first_ctx.get("content", "")
+                            # Extract baseline context from RAI service format
+                            context_dict = {"content": baseline_context}
+                            if message.get("tool_name"):
+                                context_dict["tool_name"] = message["tool_name"]
+                            if message.get("context_type"):
+                                context_dict["context_type"] = message["context_type"]
+                            baseline_contexts = [context_dict]
+                        
+                        # Check if baseline contexts have agent fields (context_type, tool_name)
+                        baseline_contexts_with_agent_fields = []
+                        baseline_contexts_without_agent_fields = []
+                        
+                        for ctx in baseline_contexts:
+                            if isinstance(ctx, dict):
+                                if "context_type" in ctx or "tool_name" in ctx:
+                                    # This baseline context has agent fields - preserve it separately
+                                    baseline_contexts_with_agent_fields.append(ctx)
+                                    self.logger.debug(f"Found baseline context with agent fields: tool_name={ctx.get('tool_name')}, context_type={ctx.get('context_type')}")
                                 else:
-                                    baseline_context_text = str(first_ctx)
+                                    # This baseline context has no agent fields - can be embedded
+                                    baseline_contexts_without_agent_fields.append(ctx)
                             else:
-                                baseline_context_text = ""
-                            
-                            # Append baseline context to attack content before injection
-                            if baseline_context_text:
-                                baseline_attack_content = f"{baseline_attack_content}\n\nContext:\n{baseline_context_text}"
-                                self.logger.debug(f"Appended baseline context to attack content before XPIA injection (context length={len(baseline_context_text)})")
+                                baseline_contexts_without_agent_fields.append({"content": str(ctx)})
+                        
+                        # For baseline contexts without agent fields, embed them in the attack content
+                        if baseline_contexts_without_agent_fields:
+                            context_texts = [ctx.get("content", "") for ctx in baseline_contexts_without_agent_fields if ctx.get("content")]
+                            if context_texts:
+                                combined_context = "\n\n".join(context_texts)
+                                baseline_attack_content = f"{baseline_attack_content}\n\nContext:\n{combined_context}"
+                                self.logger.debug(f"Embedded {len(context_texts)} baseline context(s) without agent fields into attack content")
                         
                         # Randomly select an XPIA wrapper prompt
                         xpia_prompt = random.choice(xpia_prompts)
@@ -728,20 +741,23 @@ class RedTeam:
                         # Update the message with benign user query
                         message["content"] = user_query
                         
-                        # Store contexts as a list of dicts with 'content' key
-                        # XPIA wrapper context includes context_type and tool_name
+                        # Build the contexts list: XPIA context + any baseline contexts with agent fields
                         contexts = [{
                             "content": formatted_context,
                             "context_type": context_type,
                             "tool_name": tool_name
                         }]
                         
-                        # No need to add baseline context separately since it's now embedded in the XPIA wrapper
+                        # Add baseline contexts with agent fields as separate context entries
+                        if baseline_contexts_with_agent_fields:
+                            contexts.extend(baseline_contexts_with_agent_fields)
+                            self.logger.debug(f"Preserved {len(baseline_contexts_with_agent_fields)} baseline context(s) with agent fields")
+                        
                         message["context"] = contexts
-                        message["context_type"] = context_type  # Keep at message level for backward compat
+                        message["context_type"] = context_type  # Keep at message level for backward compat (XPIA primary)
                         message["tool_name"] = tool_name
                         
-                        self.logger.debug(f"Wrapped baseline attack in XPIA: tool_name={tool_name}, context_type={context_type}")
+                        self.logger.debug(f"Wrapped baseline attack in XPIA: total contexts={len(contexts)}, xpia_tool={tool_name}, xpia_type={context_type}")
                         
         except Exception as e:
             self.logger.error(f"Error applying XPIA prompts: {str(e)}")
@@ -766,10 +782,30 @@ class RedTeam:
 
             if baseline_objective_ids:
                 self.logger.debug(f"Filtering by {len(baseline_objective_ids)} baseline objective IDs for {strategy}")
-                selected_cat_objectives = [
+                # Filter by baseline IDs
+                filtered_objectives = [
                     obj for obj in objectives_response if obj.get("id") in baseline_objective_ids
                 ]
-                self.logger.debug(f"Found {len(selected_cat_objectives)} matching objectives with baseline IDs")
+                self.logger.debug(f"Found {len(filtered_objectives)} matching objectives with baseline IDs")
+                
+                # For strategies like indirect_jailbreak, the RAI service may return multiple 
+                # objectives per baseline ID (e.g., multiple XPIA variations for one baseline objective).
+                # We need to limit the selection per baseline objective to respect num_objectives.
+                # Group by baseline ID and select one objective per baseline ID.
+                selected_by_id = {}
+                for obj in filtered_objectives:
+                    obj_id = obj.get("id")
+                    if obj_id not in selected_by_id:
+                        selected_by_id[obj_id] = []
+                    selected_by_id[obj_id].append(obj)
+                
+                # Now select one objective per baseline ID
+                selected_cat_objectives = []
+                for obj_id, obj_list in selected_by_id.items():
+                    # Randomly select one objective from the variations for this baseline ID
+                    selected_cat_objectives.append(random.choice(obj_list))
+                
+                self.logger.debug(f"Selected {len(selected_cat_objectives)} objectives (one per baseline ID) from {len(filtered_objectives)} total variations")
             else:
                 self.logger.warning("No baseline objective IDs found, using random selection")
                 selected_cat_objectives = random.sample(
@@ -796,7 +832,7 @@ class RedTeam:
                 if isinstance(message, dict) and "content" in message:
                     content = message["content"]
                     context_raw = message.get("context", "")
-                    
+                    # TODO is first if necessary?
                     # Normalize context to always be a list of dicts with 'content' key
                     if isinstance(context_raw, list):
                         # Already a list - ensure each item is a dict with 'content' key
@@ -810,6 +846,10 @@ class RedTeam:
                     elif context_raw:
                         # Single string value - wrap in dict
                         contexts = [{"content": context_raw}]
+                        if message.get("tool_name"):
+                            contexts[0]["tool_name"] = message["tool_name"]
+                        if message.get("context_type"):
+                            contexts[0]["context_type"] = message["context_type"]
                     else:
                         contexts = []
                     
@@ -1119,6 +1159,19 @@ class RedTeam:
 
             self.risk_categories = self.attack_objective_generator.risk_categories
             self.result_processor.risk_categories = self.risk_categories
+            
+            # Validate risk categories for target type
+            if not is_agent_target:
+                # Check if any agent-only risk categories are used with model targets
+                for risk_cat in self.risk_categories:
+                    if risk_cat == RiskCategory.SensitiveDataLeakage:
+                        raise EvaluationException(
+                            message=f"Risk category '{risk_cat.value}' is only available for agent targets",
+                            internal_message=f"Risk category {risk_cat.value} requires agent target",
+                            target=ErrorTarget.RED_TEAM,
+                            category=ErrorCategory.INVALID_VALUE,
+                            blame=ErrorBlame.USER_ERROR,
+                        )
 
             # Show risk categories to user
             tqdm.write(f"📊 Risk categories: {[rc.value for rc in self.risk_categories]}")
