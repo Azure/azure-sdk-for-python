@@ -91,7 +91,7 @@ def verify_sdist_pytyped(
     result = True
     manifest_location = os.path.join(pkg_dir, "MANIFEST.in")
 
-    if include_package_data is None or False:
+    if not include_package_data:
         logger.info(
             "Ensure that the setup.py present in directory {} has kwarg 'include_package_data' defined and set to 'True'."
         )
