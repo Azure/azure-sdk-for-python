@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from .._internal import AsyncContextManager
@@ -23,8 +23,16 @@ class VisualStudioCodeCredential(AsyncContextManager):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self._sync_credential = SyncVSCodeCredential(**kwargs)
+    def __init__(
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        self._sync_credential = SyncVSCodeCredential(
+            tenant_id=tenant_id, additionally_allowed_tenants=additionally_allowed_tenants, **kwargs
+        )
 
     async def __aenter__(self) -> "VisualStudioCodeCredential":
         self._sync_credential.__enter__()

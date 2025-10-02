@@ -2,11 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Callable, Optional, Any
+from typing import Callable, Optional, Any, List, TYPE_CHECKING
 
 from azure.core.credentials import AccessTokenInfo
 from .._internal import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
+
+if TYPE_CHECKING:
+    from .._persistent_cache import TokenCachePersistenceOptions
 
 
 class ClientAssertionCredential(GetTokenMixin):
@@ -41,12 +44,20 @@ class ClientAssertionCredential(GetTokenMixin):
             :caption: Create a ClientAssertionCredential.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        tenant_id: str,
+        client_id: str,
+        func: Callable[[], str],
+        *,
+        authority: Optional[str] = None,
+        cache_persistence_options: Optional["TokenCachePersistenceOptions"] = None,
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         self._func = func
-        authority = kwargs.pop("authority", None)
         cache = kwargs.pop("cache", None)
         cae_cache = kwargs.pop("cae_cache", None)
-        additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", None)
         self._client = AadClient(
             tenant_id,
             client_id,
@@ -54,6 +65,7 @@ class ClientAssertionCredential(GetTokenMixin):
             cache=cache,
             cae_cache=cae_cache,
             additionally_allowed_tenants=additionally_allowed_tenants,
+            cache_persistence_options=cache_persistence_options,
             **kwargs
         )
         super().__init__()
