@@ -19,7 +19,14 @@ from typing import Any, Dict, List, Optional, Union, cast
 import pandas as pd
 
 # Local imports
-from ._red_team_result import RedTeamResult, RedTeamingScorecard, RedTeamingParameters, ScanResult, RedTeamRun, OutputItemsList
+from ._red_team_result import (
+    RedTeamResult,
+    RedTeamingScorecard,
+    RedTeamingParameters,
+    ScanResult,
+    RedTeamRun,
+    OutputItemsList,
+)
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
 from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_attack_success
@@ -54,8 +61,8 @@ class ResultProcessor:
         self.mlflow_integration = mlflow_integration
 
     def to_red_team_result(
-        self, 
-        red_team_info: Dict, 
+        self,
+        red_team_info: Dict,
         eval_run: Optional[Any] = None,
         scan_name: Optional[str] = None,
         run_id_override: Optional[str] = None,
@@ -362,7 +369,7 @@ class ResultProcessor:
             scan_result=scan_result,
             attack_details=conversations,
         )
-        
+
         results_payload = self._build_results_payload(
             redteam_result=red_team_result,
             output_items=ordered_output_items,
@@ -374,17 +381,17 @@ class ResultProcessor:
             eval_id_override=eval_id_override,
             created_at_override=created_at_override,
         )
-        
+
         # Populate AOAI-compatible fields
         red_team_result.scan_result["AOAI_Compatible_Summary"] = results_payload
-        
+
         # Extract all results from all output items
         all_row_results = []
         for output_item in ordered_output_items:
             item_results = output_item.get("results", [])
             if item_results:
                 all_row_results.extend(item_results)
-        
+
         red_team_result.scan_result["AOAI_Compatible_Row_Results"] = all_row_results if all_row_results else None
 
         return red_team_result
@@ -1179,7 +1186,7 @@ class ResultProcessor:
         created_at_override: Optional[int] = None,
     ) -> RedTeamRun:
         """Assemble the new structure for results.json with eval.run format.
-        
+
         :param redteam_result: The red team result containing scan data
         :param output_items: List of output items containing results for each conversation
         :param eval_run: The MLFlow run object (optional)

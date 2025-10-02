@@ -1115,7 +1115,9 @@ class RedTeam:
                     self.logger.error(f"Error processing task {i+1}: {str(e)}")
                     continue
 
-    async def _finalize_results(self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str, scan_name: str) -> RedTeamResult:
+    async def _finalize_results(
+        self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str, scan_name: str
+    ) -> RedTeamResult:
         """Process and finalize scan results."""
         log_section_header(self.logger, "Processing results")
 
@@ -1134,8 +1136,8 @@ class RedTeam:
             self.logger.info("Logging results to AI Foundry")
             await self.mlflow_integration.log_redteam_results_to_mlflow(
                 redteam_result=red_team_result,
-                eval_run=eval_run, 
-                red_team_info=self.red_team_info, 
+                eval_run=eval_run,
+                red_team_info=self.red_team_info,
                 _skip_evals=skip_evals,
                 aoai_summary=aoai_summary,
             )
@@ -1143,16 +1145,16 @@ class RedTeam:
         if output_path and red_team_result.scan_result:
             abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
             self.logger.info(f"Writing output to {abs_output_path}")
-            
+
             # Ensure output_path is treated as a directory
             # If it exists as a file, remove it first
             if os.path.exists(abs_output_path) and not os.path.isdir(abs_output_path):
                 os.remove(abs_output_path)
             os.makedirs(abs_output_path, exist_ok=True)
-            
+
             # Write scan result to eval_result.json (default name when path is directory)
             _write_output(abs_output_path, red_team_result.scan_result)
-            
+
             # Write the AOAI summary to results.json
             if aoai_summary:
                 _write_output(os.path.join(abs_output_path, "results.json"), aoai_summary)

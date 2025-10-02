@@ -202,11 +202,13 @@ class MLflowIntegration:
                     if aoai_summary is None:
                         self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
                         raise ValueError("aoai_summary parameter is required but was not provided")
-                    
+
                     payload = dict(aoai_summary)  # Make a copy
                     # Ensure conversations are included for scan output
                     if "conversations" not in payload:
-                        payload["conversations"] = redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        payload["conversations"] = (
+                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        )
                     json.dump(payload, f)
 
                 # Save legacy format as instance_results.json
@@ -256,7 +258,7 @@ class MLflowIntegration:
                     if aoai_summary is None:
                         self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
                         raise ValueError("aoai_summary parameter is required but was not provided")
-                    
+
                     payload = dict(aoai_summary)  # Make a copy
                     # Remove conversations for MLFlow artifact
                     payload.pop("conversations", None)
@@ -307,11 +309,13 @@ class MLflowIntegration:
                     if aoai_summary is None:
                         self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
                         raise ValueError("aoai_summary parameter is required but was not provided")
-                    
+
                     payload = dict(aoai_summary)  # Make a copy
                     # Include conversations only if _skip_evals is True
                     if _skip_evals and "conversations" not in payload:
-                        payload["conversations"] = redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        payload["conversations"] = (
+                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        )
                     elif not _skip_evals:
                         payload.pop("conversations", None)
                     json.dump(payload, f)
