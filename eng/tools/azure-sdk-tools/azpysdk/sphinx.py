@@ -131,7 +131,9 @@ def mgmt_apidoc(output_dir: str, target_folder: str, executable: str) -> int:
 def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: str) -> int:
     working_doc_folder = os.path.join(output_dir, "doc")
     command_array = [
-        "sphinx-apidoc",
+        executable,
+        "-m",
+        "sphinx.ext.apidoc",
         "--no-toc",
         "--module-first",
         "-o",
@@ -143,6 +145,10 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: 
         os.path.join(target_dir, "setup.py"),
         os.path.join(target_dir, "conftest.py"),
     ]
+
+    # Set environment variable to match tox behavior
+    env = os.environ.copy()
+    env["SPHINX_APIDOC_OPTIONS"] = "members,undoc-members,inherited-members"
 
     try:
         # if a `doc` folder exists, just leverage the sphinx sources found therein.
@@ -165,7 +171,7 @@ def sphinx_apidoc(output_dir: str, target_dir: str, namespace: str, executable: 
             logger.info(f"PATH: {os.environ.get('PATH','')}")
             ###
 
-            check_call(command_array, cwd=target_dir)
+            check_call(command_array, cwd=target_dir, env=env)
             # We need to clean "azure.rst", and other RST before the main namespaces, as they are never
             # used and will log as a warning later by sphinx-build, which is blocking strict_sphinx
             base_path = Path(os.path.join(output_dir, "docgen/"))
@@ -206,9 +212,11 @@ def should_build_docs(package_name: str) -> bool:
     )
 
 
-def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool) -> int:
+def sphinx_build(package_dir: str, target_dir: str, output_dir: str, fail_on_warning: bool, executable: str) -> int:
     command_array = [
-        "sphinx-build",
+        executable,
+        "-m",
+        "sphinx",
         "-b",
         "html",
         "-A",
@@ -358,6 +366,7 @@ class sphinx(Check):
                         doc_folder,  # source
                         site_folder,  # output
                         fail_on_warning=fail_on_warning,
+                        executable=executable,
                     )
                 )
 
