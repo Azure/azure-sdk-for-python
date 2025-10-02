@@ -172,7 +172,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         process_timeout = kwargs.pop("process_timeout", 10)
         require_envvar = kwargs.pop("require_envvar", False)
-        if require_envvar and not os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS):
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
+        if require_envvar and not token_credentials_env:
             raise ValueError(
                 "AZURE_TOKEN_CREDENTIALS environment variable is required but is not set or is empty. "
                 "Set it to 'dev', 'prod', or a specific credential name."
@@ -270,12 +271,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
             except ValueError as ex:
                 credentials.append(FailedDACCredential("WorkloadIdentityCredential", error=str(ex)))
         if not exclude_managed_identity_credential:
-            managed_identity_only = all(value for cred, value in exclude_flags.items() if cred != "managed_identity")
             credentials.append(
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
-                    _enable_imds_probe=not managed_identity_only,
+                    _enable_imds_probe=token_credentials_env != "managedidentitycredential",
                     **kwargs,
                 )
             )
