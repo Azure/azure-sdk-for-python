@@ -8,7 +8,14 @@ import os
 import sys
 
 from typing import Optional, List
-from .verify_whl import cleanup, should_verify_package, get_prior_version, verify_prior_version_metadata, get_path_to_zip, unzip_file_to_directory
+from .verify_whl import (
+    cleanup,
+    should_verify_package,
+    get_prior_version,
+    verify_prior_version_metadata,
+    get_path_to_zip,
+    unzip_file_to_directory,
+)
 from ci_tools.scenario.generation import create_package_and_install
 from .Check import Check
 from ci_tools.variables import set_envvar_defaults
@@ -19,7 +26,8 @@ ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure", "azure-common"]
 
 EXCLUDED_CLASSIFICATION_PACKAGES = []
-        
+
+
 def get_root_directories_in_source(package_dir: str) -> List[str]:
     """
     Find all allowed directories in source path.
@@ -51,7 +59,7 @@ def verify_sdist_helper(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup
     version = parsed_pkg.version
     # Extract metadata from zip file to ensure we're checking the built package metadata
     metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version, package_type="*.tar.gz"))
-    
+
     source_folders = get_root_directories_in_source(package_dir)
     sdist_folders = get_root_directories_in_sdist(dist_dir, version)
 
@@ -68,7 +76,9 @@ def verify_sdist_helper(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup
     # Verify metadata compatibility with prior version
     prior_version = get_prior_version(parsed_pkg.name, version)
     if prior_version:
-        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, package_type="*.tar.gz", executable=executable):
+        if not verify_prior_version_metadata(
+            parsed_pkg.name, prior_version, metadata, package_type="*.tar.gz", executable=executable
+        ):
             return False
 
     return True

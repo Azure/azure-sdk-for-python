@@ -28,6 +28,7 @@ EXCLUDED_PACKAGES = [
     "azure-loganalytics",
 ]
 
+
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
     if path_to_zip_file.endswith(".zip"):
         with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
@@ -39,6 +40,7 @@ def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str
             tar_ref.extractall(extract_location)
             extracted_dir = os.path.basename(path_to_zip_file).replace(".tar.gz", "")
             return os.path.join(extract_location, extracted_dir)
+
 
 def extract_whl(dist_dir, version):
     # Find whl for the package
@@ -56,7 +58,9 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
-def verify_whl_root_directory(dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup, executable: str) -> bool:
+def verify_whl_root_directory(
+    dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup, executable: str
+) -> bool:
     # Verify metadata compatibility with prior version
     version: str = parsed_pkg.version
     metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
@@ -117,7 +121,11 @@ def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
 
 
 def verify_prior_version_metadata(
-    package_name: str, prior_version: str, current_metadata: Dict[str, Any], executable: str, package_type: str = "*.whl"
+    package_name: str,
+    prior_version: str,
+    current_metadata: Dict[str, Any],
+    executable: str,
+    package_type: str = "*.whl",
 ) -> bool:
     """Download prior version and verify metadata compatibility."""
     # cmd = get_pip_command(executable)
@@ -131,7 +139,7 @@ def verify_prior_version_metadata(
                 cmd += ["install", "--target", tmp_dir, "--no-deps", is_binary, f"{package_name}=={prior_version}"]
             else:
                 cmd += ["download", "--no-deps", is_binary, f"{package_name}=={prior_version}", "--dest", tmp_dir]
-            
+
             logger.warning(cmd)
             subprocess.run(
                 cmd,
