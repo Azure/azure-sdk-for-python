@@ -305,6 +305,7 @@ class RedTeam:
             application_scenario=getattr(self, "application_scenario", ""),
             risk_categories=getattr(self, "risk_categories", []),
             ai_studio_url=getattr(self.mlflow_integration, "ai_studio_url", None),
+            mlflow_integration=self.mlflow_integration,
         )
 
     async def _get_attack_objectives(

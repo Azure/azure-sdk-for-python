@@ -35,6 +35,7 @@ class ResultProcessor:
         application_scenario,
         risk_categories,
         ai_studio_url=None,
+        mlflow_integration=None,
     ):
         """Initialize the result processor.
 
@@ -43,12 +44,14 @@ class ResultProcessor:
         :param application_scenario: Application scenario description
         :param risk_categories: List of risk categories being evaluated
         :param ai_studio_url: URL to the AI Studio run
+        :param mlflow_integration: MLflow integration instance for reusing payload building logic
         """
         self.logger = logger
         self.attack_success_thresholds = attack_success_thresholds
         self.application_scenario = application_scenario
         self.risk_categories = risk_categories
         self.ai_studio_url = ai_studio_url
+        self.mlflow_integration = mlflow_integration
 
     def to_red_team_result(self, red_team_info: Dict) -> RedTeamResult:
         """Convert tracking data from red_team_info to the RedTeamResult format.
@@ -327,12 +330,23 @@ class ResultProcessor:
 
         self.logger.info("RedTeamResult creation completed")
 
+        # Build AOAI compatible structures
+        aoai_row_results = self._build_aoai_row_results(ordered_output_items)
+        aoai_summary = self._build_aoai_summary(
+            conversations=conversations,
+            output_items=ordered_output_items,
+            scorecard=scorecard,
+            redteaming_parameters=redteaming_parameters,
+        )
+
         # Create the final result
         red_team_result = ScanResult(
             scorecard=cast(RedTeamingScorecard, scorecard),
             parameters=cast(RedTeamingParameters, redteaming_parameters),
             attack_details=conversations,
             output_items=ordered_output_items,
+            AOAI_Compatible_Row_Results=aoai_row_results,
+            AOAI_Compatible_Summary=aoai_summary,
             studio_url=self.ai_studio_url or None,
         )
 
@@ -1001,3 +1015,194 @@ class ResultProcessor:
                     formatted_thresholds[risk_cat_value] = 3
 
         return formatted_thresholds
+
+    def _build_aoai_row_results(self, output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Extract all result entries from output items for AOAI compatibility.
+
+        :param output_items: List of output items containing results
+        :type output_items: List[Dict[str, Any]]
+        :return: Flattened list of all result entries
+        :rtype: List[Dict[str, Any]]
+        """
+        row_results = []
+        
+        for output_item in output_items:
+            if not isinstance(output_item, dict):
+                continue
+            
+            results = output_item.get("results", [])
+            if isinstance(results, list):
+                for result in results:
+                    if isinstance(result, dict):
+                        row_results.append(result)
+        
+        return row_results
+
+    def _build_aoai_summary(
+        self,
+        conversations: List[Dict[str, Any]],
+        output_items: List[Dict[str, Any]],
+        scorecard: Dict[str, Any],
+        redteaming_parameters: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Build AOAI-compatible summary in eval.run format using MLflow integration.
+
+        :param conversations: List of attack detail conversations
+        :type conversations: List[Dict[str, Any]]
+        :param output_items: List of structured output items
+        :type output_items: List[Dict[str, Any]]
+        :param scorecard: Scorecard containing summary information
+        :type scorecard: Dict[str, Any]
+        :param redteaming_parameters: Red teaming parameters
+        :type redteaming_parameters: Dict[str, Any]
+        :return: RedTeamRun structure with evaluation run metadata
+        :rtype: Dict[str, Any]
+        """
+        # If mlflow_integration is available, use its method for consistency
+        if self.mlflow_integration:
+            # Create a temporary RedTeamResult-like structure for the mlflow method
+            temp_scan_result = {
+                "scorecard": scorecard,
+                "parameters": redteaming_parameters,
+                "attack_details": conversations,
+                "output_items": output_items,
+                "studio_url": self.ai_studio_url,
+                # Note: AOAI fields will be populated by _build_results_payload
+                "AOAI_Compatible_Row_Results": [],
+                "AOAI_Compatible_Summary": {},
+            }
+            
+            temp_redteam_result = RedTeamResult(
+                scan_result=cast(Any, temp_scan_result),
+                attack_details=conversations,
+            )
+            
+            # Use mlflow's _build_results_payload method
+            return self.mlflow_integration._build_results_payload(
+                redteam_result=temp_redteam_result,
+                eval_run=None,
+                red_team_info=None,
+                include_conversations=True,
+                scan_name="red_team_evaluation",
+            )
+        
+        # Fallback implementation if mlflow_integration is not available
+        return self._build_aoai_summary_fallback(
+            conversations=conversations,
+            output_items=output_items,
+            scorecard=scorecard,
+            redteaming_parameters=redteaming_parameters,
+        )
+
+    def _build_aoai_summary_fallback(
+        self,
+        conversations: List[Dict[str, Any]],
+        output_items: List[Dict[str, Any]],
+        scorecard: Dict[str, Any],
+        redteaming_parameters: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Fallback implementation for building AOAI-compatible summary.
+
+        :param conversations: List of attack detail conversations
+        :type conversations: List[Dict[str, Any]]
+        :param output_items: List of structured output items
+        :type output_items: List[Dict[str, Any]]
+        :param scorecard: Scorecard containing summary information
+        :type scorecard: Dict[str, Any]
+        :param redteaming_parameters: Red teaming parameters
+        :type redteaming_parameters: Dict[str, Any]
+        :return: RedTeamRun structure with evaluation run metadata
+        :rtype: Dict[str, Any]
+        """
+        # Generate unique IDs
+        run_id = str(uuid.uuid4())
+        eval_id = str(uuid.uuid4())
+        created_at = int(datetime.utcnow().timestamp())
+
+        # Calculate result counts
+        total_count = len(output_items)
+        passed_count = 0
+        failed_count = 0
+        errored_count = 0
+
+        for item in output_items:
+            status = item.get("status", "unknown")
+            if status == "pass":
+                passed_count += 1
+            elif status == "fail":
+                failed_count += 1
+            elif status == "error":
+                errored_count += 1
+
+        result_count = {
+            "total": total_count,
+            "passed": passed_count,
+            "failed": failed_count,
+            "errored": errored_count,
+        }
+
+        # Build per testing criteria results
+        per_testing_criteria_results = []
+        risk_category_summary = scorecard.get("risk_category_summary", [])
+        
+        if risk_category_summary and len(risk_category_summary) > 0:
+            summary = risk_category_summary[0]
+            
+            for risk in self.risk_categories:
+                risk_value = risk.value
+                risk_key = risk_value.replace("-", "_")
+                
+                # Get total and successful attacks for this risk category
+                total_key = f"{risk_key}_total"
+                successful_key = f"{risk_key}_successful_attacks"
+                
+                if total_key in summary and successful_key in summary:
+                    total = summary[total_key]
+                    successful = summary[successful_key]
+                    failed = total - successful
+                    
+                    per_testing_criteria_results.append({
+                        "testing_criteria": risk_value,
+                        "passed": successful,
+                        "failed": failed,
+                    })
+
+        # Build data source information
+        data_source = {
+            "type": "azure_ai_red_team",
+            "target": {},
+            "item_generation_params": {
+                "type": "red_team",
+                "attack_strategies": [],
+                "num_turns": 1,
+            },
+        }
+
+        # Wrap output items
+        output_items_list = {
+            "object": "list",
+            "data": output_items,
+        }
+
+        # Build the summary
+        aoai_summary = {
+            "object": "eval.run",
+            "id": run_id,
+            "eval_id": eval_id,
+            "created_at": created_at,
+            "status": "completed",
+            "name": "red_team_evaluation",
+            "report_url": self.ai_studio_url,
+            "data_source": data_source,
+            "metadata": {
+                "application_scenario": self.application_scenario,
+                "risk_categories": [risk.value for risk in self.risk_categories],
+            },
+            "result_count": result_count,
+            "per_model_usage": [],
+            "per_testing_criteria_results": per_testing_criteria_results,
+            "output_items": output_items_list,
+            "conversations": conversations,
+        }
+
+        return aoai_summary
