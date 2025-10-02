@@ -158,7 +158,7 @@ def verify_prior_version_metadata(
                 prior_metadata: Dict[str, Any] = extract_package_metadata(zip_files[0])
 
             is_compatible = verify_metadata_compatibility(current_metadata, prior_metadata)
-            breakpoint()
+
             if not is_compatible:
                 missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
                 logging.error(f"Metadata compatibility failed for {package_name}. Missing keys: {missing_keys}")
