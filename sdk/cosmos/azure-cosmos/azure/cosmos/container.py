@@ -18,14 +18,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Union, Tuple, Mapping, cast, overload, Iterable, Callable
+from typing import Any, Callable, cast, Dict, Iterable, List, Mapping, Optional, overload, Sequence, Tuple, Union
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -34,36 +33,27 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, validate_kwargs
 
 from . import _utils as utils
-from ._base import (
-    build_options,
-    validate_cache_staleness_value,
-    _deserialize_throughput,
-    _replace_throughput,
-    GenerateGuidId,
-    _build_properties_cache
-)
+from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
+                    GenerateGuidId, validate_cache_staleness_value)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
+from .exceptions import CosmosHttpResponseError
 from .offer import Offer, ThroughputProperties
-from .partition_key import (
-    NonePartitionKeyValue,
-    PartitionKey,
-    _PartitionKeyType,
-    _SequentialPartitionKeyType,
-    _build_partition_key_from_properties,
-    _return_undefined_or_empty_partition_key, NullPartitionKeyValue,
-)
+from .partition_key import (_build_partition_key_from_properties, _PartitionKeyType,
+                            _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
+                            NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from .scripts import ScriptsProxy
 
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=too-many-lines,disable=protected-access
+# pylint: disable=too-many-lines,disable=protected-access,line-too-long
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
 def _get_epk_range_for_partition_key(
         container_properties: Dict[str, Any],
@@ -982,6 +972,52 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             **kwargs
         )
         return items
+
+    @distributed_trace
+    def semantic_rerank(
+        self,
+        reranking_context: str,
+        documents: List[str],
+        semantic_reranking_options: Optional[Dict[str, Any]] = None
+    ) -> CosmosDict:
+        """Rerank a list of documents using semantic reranking.
+
+        This method uses a semantic reranker to score and reorder the provided documents
+        based on their relevance to the given reranking context.
+
+        :param str reranking_context: The context or query string to use for reranking the documents.
+        :param list[str] documents: A list of documents (as strings) to be reranked.
+        :param semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
+
+         Supported options:
+
+         * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
+         * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
+         * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
+         * **sort** (bool): Whether to sort the results by relevance score in descending order. Default is True.
+         * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
+         * **target_paths** (list[str]): If document_type is "json", the list of JSON paths to extract text from for reranking.
+
+        :type semantic_reranking_options: Optional[Dict[str, Any]]
+        :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
+        """
+
+        inference_service = self.client_connection._get_inference_service()
+        if inference_service is None:
+            raise CosmosHttpResponseError(
+                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                response=None
+            )
+
+        result = inference_service.rerank(
+            reranking_context=reranking_context,
+            documents=documents,
+            semantic_reranking_options=semantic_reranking_options
+        )
+
+        return result
 
     @distributed_trace
     def replace_item(  # pylint:disable=docstring-missing-param
