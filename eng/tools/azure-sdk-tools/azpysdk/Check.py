@@ -120,23 +120,21 @@ class Check(abc.ABC):
         if os.path.exists(dev_requirements):
             requirements += ["-r", dev_requirements]
         else:
-            logger.warning(f"No dev_requirements.txt found for {package_dir}, skipping installation of dev requirements.")
+            logger.warning(
+                f"No dev_requirements.txt found for {package_dir}, skipping installation of dev requirements."
+            )
             return
 
         temp_req_file = None
         if not getattr(args, "isolate", False):
             # don't install azure-sdk-tools when not isolated
             with open(dev_requirements, "r") as f:
-                filtered_req_lines = [
-                    line.strip()
-                    for line in f 
-                    if "eng/tools/azure-sdk-tools" not in line
-                ]
+                filtered_req_lines = [line.strip() for line in f if "eng/tools/azure-sdk-tools" not in line]
             with tempfile.NamedTemporaryFile(mode="w", delete=False) as temp_req_file:
                 temp_req_file.write("\n".join(filtered_req_lines))
             if temp_req_file.name:
                 requirements = ["-r", temp_req_file.name]
-        try: 
+        try:
             logger.info(f"Installing dev requirements for {package_dir}")
             install_into_venv(executable, requirements, package_dir)
         except CalledProcessError as e:

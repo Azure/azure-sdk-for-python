@@ -4,12 +4,14 @@
 
 import inspect
 from abc import ABC, abstractmethod
+import json
 from typing import (
     Any,
     Callable,
     Dict,
     Generic,
     List,
+    Tuple,
     TypedDict,
     TypeVar,
     Union,
@@ -510,15 +512,16 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
         return tool_calls
 
-    def _extract_tool_names_from_response(self, response) -> List[str]:
-        """Extract tool names from the response.
+    def _extract_tool_names_and_params_from_response(self, response) -> List[Tuple[str, Dict[str, str]]]:
+        """Extract tool names and parameters from the response.
+
         :param response: The response to parse.
         :type response: Union[str, List[dict]]
-        :return: List of tool names extracted from the response.
-        :rtype: List[str]
+        :return: List of tuples containing (tool_name, parameters_dict) extracted from the response.
+        :rtype: List[Tuple[str, Dict[str, str]]]
         """
         tool_calls = self._parse_tools_from_response(response)
-        tool_names = []
+        tool_name_param_pairs = []
         for tool_call in tool_calls:
             if not isinstance(tool_call, dict):
                 raise EvaluationException(
@@ -534,16 +537,41 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.INVALID_VALUE,
                 )
-            if "name" in tool_call:
-                tool_names.append(tool_call["name"])
-            else:
+
+            if "name" not in tool_call:
                 raise EvaluationException(
                     "Tool call missing 'name' field.",
                     internal_message=str(tool_call),
                     target=ErrorTarget.EVALUATE,
                     category=ErrorCategory.MISSING_FIELD,
                 )
-        return tool_names
+
+            tool_name = str(tool_call["name"]).strip()
+
+            # Extract parameters/arguments
+            parameters = {}
+            if "arguments" in tool_call:
+                args = tool_call["arguments"]
+                if isinstance(args, dict):
+                    # Convert all values to strings for consistent comparison
+                    parameters = {str(k): str(v) for k, v in args.items()}
+                elif isinstance(args, str):
+                    # If arguments is a string, try to parse it as JSON
+                    try:
+                        parsed_args = json.loads(args)
+                        if isinstance(parsed_args, dict):
+                            parameters = {str(k): str(v) for k, v in parsed_args.items()}
+                    except json.JSONDecodeError:
+                        raise EvaluationException(
+                            "Failed to parse tool call arguments as JSON.",
+                            internal_message=str(tool_call),
+                            target=ErrorTarget.EVALUATE,
+                            category=ErrorCategory.INVALID_VALUE,
+                        )
+
+            tool_name_param_pairs.append((tool_name, parameters))
+
+        return tool_name_param_pairs
 
     async def _real_call(self, **kwargs) -> Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]:
         """The asynchronous call where real end-to-end evaluation logic is performed.

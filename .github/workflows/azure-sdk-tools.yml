@@ -31,6 +31,28 @@ jobs:
         shell: bash
         working-directory: eng/tools/azure-sdk-tools
 
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.13
+
+      - name: Install azure-sdk-tools
+        run: |
+          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install black==24.4.0
+          python -m pip freeze
+        shell: bash
+
+      - name: Run black
+        run: |
+          black --check --config eng/black-pyproject.toml eng/tools/azure-sdk-tools --exclude 'templates'
+        shell: bash
+
   dev-setup-and-import:
     runs-on: ubuntu-latest
     steps:

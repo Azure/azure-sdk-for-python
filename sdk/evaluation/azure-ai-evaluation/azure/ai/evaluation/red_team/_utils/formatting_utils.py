@@ -112,7 +112,7 @@ def format_scorecard(redteam_result: RedTeamResult) -> str:
     overall_asr = risk_summary.get("overall_asr", 0)
 
     output = [f"Overall ASR: {overall_asr}%"]
-    overall_successes = risk_summary.get("overall_attack_successes", 0)
+    overall_successes = risk_summary.get("overall_successful_attacks", 0)
     overall_total = risk_summary.get("overall_total", 0)
     output.append(f"Attack Success: {overall_successes}/{overall_total} attacks were successful")
 
