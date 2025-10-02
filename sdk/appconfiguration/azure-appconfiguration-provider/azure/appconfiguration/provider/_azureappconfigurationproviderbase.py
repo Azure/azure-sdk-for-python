@@ -589,3 +589,18 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         for feature_flag in feature_flags:
             watched_feature_flags[(feature_flag.key, feature_flag.label)] = feature_flag.etag
         return watched_feature_flags
+
+    def _deduplicate_settings(
+        self, configuration_settings: List[ConfigurationSetting]
+    ) -> Dict[str, ConfigurationSetting]:
+        """
+        Deduplicates configuration settings by key.
+
+        :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
+        :return: A dictionary mapping keys to their unique configuration settings
+        :rtype: Dict[str, ConfigurationSetting]
+        """
+        unique_settings: Dict[str, ConfigurationSetting] = {}
+        for settings in configuration_settings:
+            unique_settings[settings.key] = settings
+        return unique_settings

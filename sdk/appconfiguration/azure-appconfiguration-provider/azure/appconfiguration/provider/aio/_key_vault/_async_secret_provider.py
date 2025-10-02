@@ -6,6 +6,7 @@
 import inspect
 from typing import Mapping, Any, Dict
 from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:ignore # pylint:disable=no-name-in-module
+from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from azure.keyvault.secrets.aio import SecretClient
 from azure.core.exceptions import ServiceRequestError
 from ..._key_vault._secret_provider_base import _SecretProviderBase
@@ -25,37 +26,48 @@ class SecretProvider(_SecretProviderBase):
     async def resolve_keyvault_reference(self, config: SecretReferenceConfigurationSetting) -> str:
         keyvault_identifier, vault_url = self.resolve_keyvault_reference_base(config)
         if keyvault_identifier.source_id in self._secret_cache:
-            return self._secret_cache[keyvault_identifier.source_id]
+            value, _ = self._secret_cache[keyvault_identifier.source_id]
+            return value
         if keyvault_identifier.source_id in self._secret_version_cache:
-            return self._secret_version_cache[keyvault_identifier.source_id]
+            value, _ = self._secret_version_cache[keyvault_identifier.source_id]
+            return value
 
-        referenced_client = self._secret_clients.get(vault_url, None)
+        return await self.__get_secret_value(keyvault_identifier.source_id, keyvault_identifier)
 
-        vault_config = self._keyvault_client_configs.get(vault_url, {})
+    def refresh_secrets(self) -> None:
+        original_cache = self._secret_cache.copy()
+        self._secret_cache.clear()
+        for secret_id, (_, secret_identifier) in original_cache.items():
+            self._secret_cache[secret_id] = self.__get_secret_value(secret_id, secret_identifier), secret_identifier
+
+    async def __get_secret_value(self, secret_id: str, secret_identifier: KeyVaultSecretIdentifier) -> str:
+        referenced_client = self._secret_clients.get(secret_identifier.vault_url, None)
+
+        vault_config = self._keyvault_client_configs.get(secret_identifier.vault_url, {})
         credential = vault_config.pop("credential", self._keyvault_credential)
 
         if referenced_client is None and credential is not None:
-            referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
-            self._secret_clients[vault_url] = referenced_client
+            referenced_client = SecretClient(vault_url=secret_identifier.vault_url, credential=credential, **vault_config)
+            self._secret_clients[secret_identifier.vault_url] = referenced_client
 
         secret_value = None
 
         if referenced_client:
             try:
                 secret_value = (
-                    await referenced_client.get_secret(keyvault_identifier.name, version=keyvault_identifier.version)
+                    await referenced_client.get_secret(secret_identifier.name, version=secret_identifier.version)
                 ).value
             except ServiceRequestError as e:
                 raise ValueError("Failed to retrieve secret from Key Vault") from e
 
         if self._secret_resolver and secret_value is None:
-            secret_value = self._secret_resolver(config.secret_id)
+            secret_value = self._secret_resolver(secret_id)
             if inspect.isawaitable(secret_value):
                 # Secret resolver was async
                 # Need to ignore type, mypy doesn't like the callback could return `Never`
                 secret_value = await secret_value  # type: ignore
 
-        return self._cache_value(keyvault_identifier, secret_value, vault_url)
+        return self._cache_value(secret_id, secret_identifier, secret_value)
 
     async def close(self) -> None:
         """

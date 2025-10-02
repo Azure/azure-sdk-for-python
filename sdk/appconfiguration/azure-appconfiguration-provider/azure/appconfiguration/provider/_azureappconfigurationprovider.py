@@ -377,6 +377,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         exception: Optional[Exception] = None
         is_failover_request = False
         try:
+            if self._secret_provider.secret_refresh_timer and self._secret_provider.secret_refresh_timer.needs_refresh():
+                secrets = self._secret_provider.refresh_secrets()
             self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1
@@ -473,9 +475,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         raise exception
 
     def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+        # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
+        # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
+        unique_settings = self._deduplicate_settings(configuration_settings)
+
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in configuration_settings:
+        for settings in unique_settings.values():
             if isinstance(settings, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 feature_flag_value = self._process_feature_flag(settings)
