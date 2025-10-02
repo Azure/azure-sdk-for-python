@@ -150,7 +150,7 @@ def verify_prior_version_metadata(
                 package_path = glob.glob(os.path.join(tmp_dir, package_name.replace("-", "_") + "-*"))[0]
                 if not package_path:
                     return True
-                prior_metadata = extract_package_metadata(package_path)
+                prior_metadata: Dict[str, Any] = extract_package_metadata(package_path)
             else:
                 zip_files = glob.glob(os.path.join(tmp_dir, package_type))
                 if not zip_files:
