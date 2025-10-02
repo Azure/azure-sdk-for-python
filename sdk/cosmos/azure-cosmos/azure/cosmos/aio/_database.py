@@ -1333,6 +1333,8 @@ class DatabaseProxy(object):
     async def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the database-level throughput.
@@ -1365,5 +1367,8 @@ class DatabaseProxy(object):
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                          offer=throughput_properties[0], **kwargs)
+        
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, data)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
