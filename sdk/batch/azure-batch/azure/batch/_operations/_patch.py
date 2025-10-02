@@ -1003,8 +1003,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
-        :param parameters: The options to use for terminating the Job. Default value is None.
-        :type parameters: ~azure.batch.models.BatchJobTerminateOptions
+        :param options: The options to use for terminating the Job. Default value is None.
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
         :keyword timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -1182,9 +1182,6 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocpdate: ~datetime.datetime
-        :keyword content_type: Type of content. Default value is "application/json;
-         odata=minimalmetadata".
-        :paramtype content_type: str
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
         :raises ~azure.batch.custom.CreateTasksError:
@@ -1223,9 +1220,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.failure_tasks,
                 task_workflow_manager.errors,
             )
-        else:
-            submitted_tasks = _handle_output(results_queue)
-            return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
+        submitted_tasks = _handle_output(results_queue)
+        return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
 
     @distributed_trace
     def get_node_file(
@@ -1592,7 +1588,7 @@ class _TaskWorkflowManager:
                     failed_task = chunk_tasks_to_add.pop()
                     self.errors.appendleft(e)
                     _LOGGER.error(
-                        "Failed to add task with ID %s due to the body" " exceeding the maximum request size",
+                        "Failed to add task with ID %s due to the body exceeding the maximum request size",
                         failed_task.id,
                     )
                 else:

@@ -1179,8 +1179,8 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
         :param concurrencies: number of coroutines to use in parallel when adding tasks. If specified
-        and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
-        Otherwise will submit create_task_collection requests sequentially on main thread
+         and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
+         Otherwise will submit create_task_collection requests sequentially on main thread
         :type concurrencies: int
         :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
@@ -1570,7 +1570,7 @@ class _TaskWorkflowManager:
                     failed_task = chunk_tasks_to_add.pop()
                     self.errors.appendleft(e)
                     _LOGGER.error(
-                        "Failed to add task with ID %s due to the body" " exceeding the maximum request size",
+                        "Failed to add task with ID %s due to the body exceeding the maximum request size",
                         failed_task.id,
                     )
                 else:

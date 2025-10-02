@@ -745,14 +745,6 @@ class RebootNodePollingMethodAsync(AsyncPollingMethod):
         pass
 
     def status(self) -> str:
-        """Should return the current status as a string. The initial status is set by
-        the polling strategy with set_initial_status() and then subsequently set by
-        each call to get_status().
-
-        This is what is returned to the user when status() is called on the LROPoller.
-
-        :rtype: str
-        """
         return self._status
 
     def finished(self) -> bool:
