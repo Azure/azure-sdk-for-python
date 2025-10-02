@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python stac_collection_operations_create_or_replace.py
+    python stac_collections_get_all.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,24 +29,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    client.stac.begin_create_or_replace_collection(
-        collection_id="test-collection-568725878606",
-        body={
-            "description": "A collection for integration tests purposes",
-            "extent": {
-                "spatial": {"bbox": [[-180, -90, 180, 90]]},
-                "temporal": {"interval": [["2020-01-01T00:00:00Z", None]]},
-            },
-            "id": "test-collection-d45537668d06",
-            "license": "CC-BY-4.0",
-            "links": [],
-            "stac_version": "1.0.0",
-            "title": "Test Collection d45537668d06",
-            "type": "Collection",
-        },
-    ).result()
+    response = client.stac.list_collections()
+    print(response)
 
 
-# x-ms-original-file: 2025-04-30-preview/StacCollectionOperations_CreateOrReplace.json
+# x-ms-original-file: 2025-04-30-preview/StacCollections_GetAll.json
 if __name__ == "__main__":
     main()

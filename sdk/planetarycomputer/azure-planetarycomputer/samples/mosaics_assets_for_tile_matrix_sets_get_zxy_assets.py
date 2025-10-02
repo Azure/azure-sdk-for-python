@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_mosaics_assets_for_tile_with_matrix_set(
+    response = client.tiler.get_mosaics_assets_for_tile(
         search_id="e32e0b12176246816953d75e3356d613",
         tile_matrix_set_id="WebMercatorQuad",
         z=12,

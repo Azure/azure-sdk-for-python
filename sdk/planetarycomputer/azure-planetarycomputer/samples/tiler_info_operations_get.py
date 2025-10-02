@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_info(
+    response = client.tiler.get_assets_info(
         collection_id="{{collectionId}}",
         item_id="{{itemId}}",
     )

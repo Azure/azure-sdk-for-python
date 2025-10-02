@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python mosaics_tile_json_operations_get.py
+    python stac_collections_create_or_replace.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,24 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_mosaics_tile_json(
-        search_id="searchid-0df36a74d7ed",
-    )
-    print(response)
+    client.stac.begin_create_or_replace_collection(
+        collection_id="test-collection-568725878606",
+        body={
+            "description": "A collection for integration tests purposes",
+            "extent": {
+                "spatial": {"bbox": [[-180, -90, 180, 90]]},
+                "temporal": {"interval": [["2020-01-01T00:00:00Z", None]]},
+            },
+            "id": "test-collection-d45537668d06",
+            "license": "CC-BY-4.0",
+            "links": [],
+            "stac_version": "1.0.0",
+            "title": "Test Collection d45537668d06",
+            "type": "Collection",
+        },
+    ).result()
 
 
-# x-ms-original-file: 2025-04-30-preview/MosaicsTileJsonOperations_Get.json
+# x-ms-original-file: 2025-04-30-preview/StacCollections_CreateOrReplace.json
 if __name__ == "__main__":
     main()

@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_delete_ingestion_operation(self, planetarycomputer_endpoint):
+    async def test_ingestion_cancel_ingestion_operation(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.delete_ingestion_operation(
+        response = await client.ingestion.cancel_ingestion_operation(
             operation_id="str",
         )
 
@@ -26,9 +26,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_delete_all_ingestion_operations(self, planetarycomputer_endpoint):
+    async def test_ingestion_cancel_all_ingestion_operations(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.delete_all_ingestion_operations()
+        response = await client.ingestion.cancel_all_ingestion_operations()
 
         # please add some check logic here by yourself
         # ...

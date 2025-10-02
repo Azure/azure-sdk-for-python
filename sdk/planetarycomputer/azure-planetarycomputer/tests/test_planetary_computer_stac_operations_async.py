@@ -58,9 +58,9 @@ class TestPlanetaryComputerStacOperationsAsync(PlanetaryComputerClientTestBaseAs
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_stac_get_collection_config(self, planetarycomputer_endpoint):
+    async def test_stac_get_collection_configuration(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.stac.get_collection_config(
+        response = await client.stac.get_collection_configuration(
             collection_id="str",
         )
 
@@ -765,9 +765,9 @@ class TestPlanetaryComputerStacOperationsAsync(PlanetaryComputerClientTestBaseAs
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_stac_create_search_operations(self, planetarycomputer_endpoint):
+    async def test_stac_search(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.stac.create_search_operations(
+        response = await client.stac.search(
             body={
                 "bbox": [0.0],
                 "collections": ["str"],
@@ -787,15 +787,6 @@ class TestPlanetaryComputerStacOperationsAsync(PlanetaryComputerClientTestBaseAs
                 "token": "str",
             },
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy_async
-    async def test_stac_get_search_operations(self, planetarycomputer_endpoint):
-        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.stac.get_search_operations()
 
         # please add some check logic here by yourself
         # ...

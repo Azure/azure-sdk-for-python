@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_tile_with_matrix_set(
+    response = client.tiler.get_tile(
         collection_id="collectionId-0df36a74d7ed",
         item_id="item-0df36a74d7ed",
         tile_matrix_set_id="WebMercatorQuad",

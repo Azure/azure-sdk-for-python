@@ -76,7 +76,66 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
             collection_id="str",
             item_id="str",
             format="str",
-            body={"coordinates": [0.0], "type": "LineString", "bbox": [0.0]},
+            body={
+                "assets": {
+                    "str": {
+                        "href": "str",
+                        "constellation": "str",
+                        "created": "2020-02-20 00:00:00",
+                        "description": "str",
+                        "gsd": 0.0,
+                        "instruments": ["str"],
+                        "mission": "str",
+                        "platform": "str",
+                        "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
+                        "roles": ["str"],
+                        "title": "str",
+                        "type": "str",
+                        "updated": "2020-02-20 00:00:00",
+                    }
+                },
+                "bbox": [0.0],
+                "geometry": "geometry",
+                "id": "str",
+                "properties": {
+                    "datetime": "str",
+                    "constellation": "str",
+                    "created": "2020-02-20 00:00:00",
+                    "description": "str",
+                    "end_datetime": "2020-02-20 00:00:00",
+                    "gsd": 0.0,
+                    "instruments": ["str"],
+                    "mission": "str",
+                    "platform": "str",
+                    "providers": [{"name": "str", "description": "str", "roles": ["str"], "url": "str"}],
+                    "start_datetime": "2020-02-20 00:00:00",
+                    "title": "str",
+                    "updated": "2020-02-20 00:00:00",
+                },
+                "type": "Feature",
+                "_msft:etag": "str",
+                "_msft:ts": "str",
+                "collection": "str",
+                "links": [
+                    {
+                        "href": "str",
+                        "body": {"str": {}},
+                        "headers": {"str": "str"},
+                        "hreflang": "str",
+                        "length": 0,
+                        "merge": bool,
+                        "method": "GET",
+                        "rel": "str",
+                        "title": "str",
+                        "type": "str",
+                    }
+                ],
+                "msft:_created": "str",
+                "msft:_updated": "str",
+                "msft:short_description": "str",
+                "stac_extensions": ["str"],
+                "stac_version": "str",
+            },
         )
 
         # please add some check logic here by yourself
@@ -269,9 +328,9 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_get_info(self, planetarycomputer_endpoint):
+    def test_tiler_get_assets_info(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_info(
+        response = client.tiler.get_assets_info(
             collection_id="str",
             item_id="str",
         )
@@ -406,37 +465,7 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
         response = client.tiler.get_tile_json(
             collection_id="str",
             item_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_tiler_get_tile_json_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_tile_json_with_matrix_set(
-            collection_id="str",
-            item_id="str",
             tile_matrix_set_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_tiler_get_tile_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_tile_with_matrix_set(
-            collection_id="str",
-            item_id="str",
-            tile_matrix_set_id="str",
-            z=0.0,
-            x=0.0,
-            y=0.0,
-            scale=0.0,
-            format="str",
         )
 
         # please add some check logic here by yourself
@@ -449,6 +478,7 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
         response = client.tiler.get_tile(
             collection_id="str",
             item_id="str",
+            tile_matrix_set_id="str",
             z=0.0,
             x=0.0,
             y=0.0,
@@ -464,18 +494,6 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
     def test_tiler_get_wmts_capabilities(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.tiler.get_wmts_capabilities(
-            collection_id="str",
-            item_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_tiler_get_wmts_capabilities_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_wmts_capabilities_with_matrix_set(
             collection_id="str",
             item_id="str",
             tile_matrix_set_id="str",
@@ -532,25 +550,11 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_get_mosaics_assets_for_tile_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_mosaics_assets_for_tile_with_matrix_set(
-            search_id="str",
-            tile_matrix_set_id="str",
-            z=0.0,
-            x=0.0,
-            y=0.0,
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
     def test_tiler_get_mosaics_assets_for_tile(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.tiler.get_mosaics_assets_for_tile(
             search_id="str",
+            tile_matrix_set_id="str",
             z=0.0,
             x=0.0,
             y=0.0,
@@ -606,17 +610,6 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.tiler.get_mosaics_tile_json(
             search_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_tiler_get_mosaics_tile_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_mosaics_tile_with_matrix_set(
-            search_id="str",
             tile_matrix_set_id="str",
             z=0.0,
             x=0.0,
@@ -661,17 +654,6 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
     def test_tiler_get_mosaics_wmts_capabilities(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         response = client.tiler.get_mosaics_wmts_capabilities(
-            search_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_tiler_get_mosaics_wmts_capabilities_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_mosaics_wmts_capabilities_with_matrix_set(
             search_id="str",
             tile_matrix_set_id="str",
         )

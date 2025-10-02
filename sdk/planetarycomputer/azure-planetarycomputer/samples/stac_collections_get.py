@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python tiler_tile_json_operations_get.py
+    python stac_collections_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,12 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_tile_json(
-        collection_id="{{collectionId}}",
-        item_id="{{itemId}}",
+    response = client.stac.get_collection(
+        collection_id="test-collection-568725878606",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-30-preview/TilerTileJsonOperations_Get.json
+# x-ms-original-file: 2025-04-30-preview/StacCollections_Get.json
 if __name__ == "__main__":
     main()

@@ -57,9 +57,9 @@ class TestPlanetaryComputerStacOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_stac_get_collection_config(self, planetarycomputer_endpoint):
+    def test_stac_get_collection_configuration(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.stac.get_collection_config(
+        response = client.stac.get_collection_configuration(
             collection_id="str",
         )
 
@@ -750,9 +750,9 @@ class TestPlanetaryComputerStacOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_stac_create_search_operations(self, planetarycomputer_endpoint):
+    def test_stac_search(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.stac.create_search_operations(
+        response = client.stac.search(
             body={
                 "bbox": [0.0],
                 "collections": ["str"],
@@ -772,15 +772,6 @@ class TestPlanetaryComputerStacOperations(PlanetaryComputerClientTestBase):
                 "token": "str",
             },
         )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy
-    def test_stac_get_search_operations(self, planetarycomputer_endpoint):
-        client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.stac.get_search_operations()
 
         # please add some check logic here by yourself
         # ...

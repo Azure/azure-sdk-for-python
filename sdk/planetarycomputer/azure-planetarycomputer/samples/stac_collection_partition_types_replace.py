@@ -29,11 +29,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.replace_partition_type(
+    client.stac.replace_partition_type(
         collection_id="naip",
         body={"scheme": "none"},
     )
-    print(response)
 
 
 # x-ms-original-file: 2025-04-30-preview/StacCollectionPartitionTypes_Replace.json

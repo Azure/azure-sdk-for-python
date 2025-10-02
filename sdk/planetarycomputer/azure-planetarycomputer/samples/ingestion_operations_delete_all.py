@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    client.ingestion.delete_all_ingestion_operations()
+    client.ingestion.cancel_all_ingestion_operations()
 
 
 # x-ms-original-file: 2025-04-30-preview/IngestionOperations_DeleteAll.json

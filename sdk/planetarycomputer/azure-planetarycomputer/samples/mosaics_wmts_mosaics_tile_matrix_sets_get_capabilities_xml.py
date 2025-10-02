@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_mosaics_wmts_capabilities_with_matrix_set(
+    response = client.tiler.get_mosaics_wmts_capabilities(
         search_id="searchid-0df36a74d7ed",
         tile_matrix_set_id="WebMercatorQuad",
     )

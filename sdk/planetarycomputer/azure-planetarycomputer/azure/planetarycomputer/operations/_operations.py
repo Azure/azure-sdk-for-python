@@ -46,7 +46,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_ingestion_delete_ingestion_operation_request(  # pylint: disable=name-too-long
+def build_ingestion_cancel_ingestion_operation_request(  # pylint: disable=name-too-long
     operation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -66,7 +66,7 @@ def build_ingestion_delete_ingestion_operation_request(  # pylint: disable=name-
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_delete_all_ingestion_operations_request(  # pylint: disable=name-too-long
+def build_ingestion_cancel_all_ingestion_operations_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -577,7 +577,9 @@ def build_stac_delete_collection_asset_request(  # pylint: disable=name-too-long
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_stac_get_collection_config_request(collection_id: str, **kwargs: Any) -> HttpRequest:
+def build_stac_get_collection_configuration_request(  # pylint: disable=name-too-long
+    collection_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -871,7 +873,7 @@ def build_stac_get_partition_type_request(collection_id: str, **kwargs: Any) -> 
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/stac/collections/{collectionId}/configurations/partition-type"
+    _url = "/stac/collections/{collectionId}/config/partition-type"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -895,10 +897,8 @@ def build_stac_replace_partition_type_request(  # pylint: disable=name-too-long
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
-    _url = "/stac/collections/{collectionId}/configurations/partition-type"
+    _url = "/stac/collections/{collectionId}/config/partition-type"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
     }
@@ -911,7 +911,6 @@ def build_stac_replace_partition_type_request(  # pylint: disable=name-too-long
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1450,7 +1449,7 @@ def build_stac_list_queryables_by_collection_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_create_search_operations_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_stac_search_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1470,67 +1469,6 @@ def build_stac_create_search_operations_request(**kwargs: Any) -> HttpRequest:  
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_stac_get_search_operations_request(
-    *,
-    collections: Optional[list[str]] = None,
-    ids: Optional[list[str]] = None,
-    bounding_box: Optional[list[float]] = None,
-    intersects: Optional[str] = None,
-    datetime: Optional[str] = None,
-    limit: Optional[int] = None,
-    sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
-    duration_in_minutes: Optional[int] = None,
-    query: Optional[str] = None,
-    sort_by: Optional[str] = None,
-    fields: Optional[str] = None,
-    filter: Optional[str] = None,
-    token: Optional[str] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/stac/search"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if collections is not None:
-        _params["collections"] = _SERIALIZER.query("collections", collections, "[str]", div=",")
-    if ids is not None:
-        _params["ids"] = _SERIALIZER.query("ids", ids, "[str]", div=",")
-    if bounding_box is not None:
-        _params["bbox"] = _SERIALIZER.query("bounding_box", bounding_box, "[float]", div=",")
-    if intersects is not None:
-        _params["intersects"] = _SERIALIZER.query("intersects", intersects, "str")
-    if datetime is not None:
-        _params["datetime"] = _SERIALIZER.query("datetime", datetime, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if sign is not None:
-        _params["sign"] = _SERIALIZER.query("sign", sign, "str")
-    if duration_in_minutes is not None:
-        _params["duration"] = _SERIALIZER.query("duration_in_minutes", duration_in_minutes, "int")
-    if query is not None:
-        _params["query"] = _SERIALIZER.query("query", query, "str")
-    if sort_by is not None:
-        _params["sortby"] = _SERIALIZER.query("sort_by", sort_by, "str")
-    if fields is not None:
-        _params["fields"] = _SERIALIZER.query("fields", fields, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
-    if token is not None:
-        _params["token"] = _SERIALIZER.query("token", token, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_tiler_get_tile_matrix_definitions_request(  # pylint: disable=name-too-long
@@ -1981,7 +1919,7 @@ def build_tiler_get_info_geo_json_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_info_request(
+def build_tiler_get_assets_info_request(
     collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2561,96 +2499,6 @@ def build_tiler_list_statistics_request(
 def build_tiler_get_tile_json_request(
     collection_id: str,
     item_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data/collections/{collectionId}/items/{itemId}/tilejson.json"
-    path_format_arguments = {
-        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if tile_matrix_set_id is not None:
-        _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_tiler_get_tile_json_with_matrix_set_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
     tile_matrix_set_id: str,
     *,
     assets: Optional[list[str]] = None,
@@ -2737,7 +2585,7 @@ def build_tiler_get_tile_json_with_matrix_set_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_tile_with_matrix_set_request(  # pylint: disable=name-too-long
+def build_tiler_get_tile_request(
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2831,192 +2679,7 @@ def build_tiler_get_tile_with_matrix_set_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_tile_request(
-    collection_id: str,
-    item_id: str,
-    z: float,
-    x: float,
-    y: float,
-    scale: float,
-    format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    subdataset_name: Optional[str] = None,
-    subdataset_bands: Optional[list[str]] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", None)
-
-    # Construct URL
-    _url = "/data/collections/{collectionId}/items/{itemId}/tiles/{z}/{x}/{y}@{scale}x.{format}"
-    path_format_arguments = {
-        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "z": _SERIALIZER.url("z", z, "float"),
-        "x": _SERIALIZER.url("x", x, "float"),
-        "y": _SERIALIZER.url("y", y, "float"),
-        "scale": _SERIALIZER.url("scale", scale, "float"),
-        "format": _SERIALIZER.url("format", format, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if tile_matrix_set_id is not None:
-        _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-    if subdataset_name is not None:
-        _params["subdataset_name"] = _SERIALIZER.query("subdataset_name", subdataset_name, "str")
-    if subdataset_bands is not None:
-        _params["subdataset_bands"] = _SERIALIZER.query("subdataset_bands", subdataset_bands, "[str]", div=",")
-
-    # Construct headers
-    if accept is not None:
-        _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_tiler_get_wmts_capabilities_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = "/data/collections/{collectionId}/items/{itemId}/WMTSCapabilities.xml"
-    path_format_arguments = {
-        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if tile_matrix_set_id is not None:
-        _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_tiler_get_wmts_capabilities_with_matrix_set_request(  # pylint: disable=name-too-long
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -3255,7 +2918,7 @@ def build_tiler_get_assets_for_point_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_mosaics_assets_for_tile_with_matrix_set_request(  # pylint: disable=name-too-long
+def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -3299,58 +2962,6 @@ def build_tiler_get_mosaics_assets_for_tile_with_matrix_set_request(  # pylint: 
         _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
     if skip_covered is not None:
         _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too-long
-    search_id: str,
-    z: float,
-    x: float,
-    y: float,
-    *,
-    scan_limit: Optional[int] = None,
-    items_limit: Optional[int] = None,
-    time_limit: Optional[int] = None,
-    exit_when_full: Optional[bool] = None,
-    skip_covered: Optional[bool] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data/mosaic/{searchId}/tiles/{z}/{x}/{y}/assets"
-    path_format_arguments = {
-        "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "z": _SERIALIZER.url("z", z, "float"),
-        "x": _SERIALIZER.url("x", x, "float"),
-        "y": _SERIALIZER.url("y", y, "float"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if scan_limit is not None:
-        _params["scan_limit"] = _SERIALIZER.query("scan_limit", scan_limit, "int")
-    if items_limit is not None:
-        _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
-    if time_limit is not None:
-        _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exit_when_full is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
-    if skip_covered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
-    if tile_matrix_set_id is not None:
-        _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -3407,115 +3018,6 @@ def build_tiler_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  
 
 
 def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
-    search_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    scan_limit: Optional[int] = None,
-    items_limit: Optional[int] = None,
-    time_limit: Optional[int] = None,
-    exit_when_full: Optional[bool] = None,
-    skip_covered: Optional[bool] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    buffer: Optional[float] = None,
-    color_formula: Optional[str] = None,
-    collection: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    rescale: Optional[list[str]] = None,
-    colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    colormap: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/data/mosaic/{searchId}/tilejson.json"
-    path_format_arguments = {
-        "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if scan_limit is not None:
-        _params["scan_limit"] = _SERIALIZER.query("scan_limit", scan_limit, "int")
-    if items_limit is not None:
-        _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
-    if time_limit is not None:
-        _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exit_when_full is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
-    if skip_covered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
-    if tile_matrix_set_id is not None:
-        _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "float")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if pixel_selection is not None:
-        _params["pixel_selection"] = _SERIALIZER.query("pixel_selection", pixel_selection, "str")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if colormap_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("colormap_name", colormap_name, "str")
-    if colormap is not None:
-        _params["colormap"] = _SERIALIZER.query("colormap", colormap, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_tiler_get_mosaics_tile_with_matrix_set_request(  # pylint: disable=name-too-long
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -3840,94 +3342,6 @@ def build_tiler_get_mosaics_tile_request(
 
 def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long
     search_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any,
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
-    accept = _headers.pop("Accept", "application/xml")
-
-    # Construct URL
-    _url = "/data/mosaic/{searchId}/WMTSCapabilities.xml"
-    path_format_arguments = {
-        "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if tile_matrix_set_id is not None:
-        _params["tileMatrixSetId"] = _SERIALIZER.query("tile_matrix_set_id", tile_matrix_set_id, "str")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_tiler_get_mosaics_wmts_capabilities_with_matrix_set_request(  # pylint: disable=name-too-long
-    search_id: str,
     tile_matrix_set_id: str,
     *,
     assets: Optional[list[str]] = None,
@@ -4100,7 +3514,7 @@ class IngestionOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def delete_ingestion_operation(  # pylint: disable=inconsistent-return-statements
+    def cancel_ingestion_operation(  # pylint: disable=inconsistent-return-statements
         self, operation_id: str, **kwargs: Any
     ) -> None:
         """Cancel a running operation of a geo-catalog collection.
@@ -4124,7 +3538,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_ingestion_operation_request(
+        _request = build_ingestion_cancel_ingestion_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4150,7 +3564,7 @@ class IngestionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def delete_all_ingestion_operations(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def cancel_all_ingestion_operations(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Cancel all running operations of a geo-catalog collection.
 
         :return: None
@@ -4170,7 +3584,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_all_ingestion_operations_request(
+        _request = build_ingestion_cancel_all_ingestion_operations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4547,29 +3961,29 @@ class IngestionOperations:
     def create_ingestion(
         self,
         collection_id: str,
-        definition: _models.IngestionDefinition,
+        definition: _models.Ingestion,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param definition: Definition of the ingestion. Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition
+        :type definition: ~azure.planetarycomputer.models.Ingestion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_ingestion(
         self, collection_id: str, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -4579,15 +3993,15 @@ class IngestionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_ingestion(
         self, collection_id: str, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -4597,24 +4011,24 @@ class IngestionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_ingestion(
-        self, collection_id: str, definition: Union[_models.IngestionDefinition, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.IngestionDefinition:
+        self, collection_id: str, definition: Union[_models.Ingestion, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Ingestion:
         """Create a new ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param definition: Definition of the ingestion. Is one of the following types:
-         IngestionDefinition, JSON, IO[bytes] Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :param definition: Definition of the ingestion. Is one of the following types: Ingestion, JSON,
+         IO[bytes] Required.
+        :type definition: ~azure.planetarycomputer.models.Ingestion or JSON or IO[bytes]
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4629,7 +4043,7 @@ class IngestionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -4673,7 +4087,7 @@ class IngestionOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
+            deserialized = _deserialize(_models.Ingestion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4790,15 +4204,15 @@ class IngestionOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_ingestion(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionDefinition:
+    def get_ingestion(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.Ingestion:
         """Get the definition of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4812,7 +4226,7 @@ class IngestionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
 
         _request = build_ingestion_get_ingestion_request(
             collection_id=collection_id,
@@ -4845,7 +4259,7 @@ class IngestionOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
+            deserialized = _deserialize(_models.Ingestion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4855,7 +4269,7 @@ class IngestionOperations:
     @distributed_trace
     def list_ingestions(
         self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.PageIngestionDefinition:
+    ) -> _models.PageIngestion:
         """Get ingestions of a catalog.
 
         :param collection_id: Catalog collection id. Required.
@@ -4864,8 +4278,8 @@ class IngestionOperations:
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: PageIngestionDefinition. The PageIngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestionDefinition
+        :return: PageIngestion. The PageIngestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.PageIngestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4879,7 +4293,7 @@ class IngestionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.PageIngestionDefinition] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PageIngestion] = kwargs.pop("cls", None)
 
         _request = build_ingestion_list_ingestions_request(
             collection_id=collection_id,
@@ -4913,7 +4327,7 @@ class IngestionOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.PageIngestionDefinition, response.json())
+            deserialized = _deserialize(_models.PageIngestion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4925,11 +4339,11 @@ class IngestionOperations:
         self,
         collection_id: str,
         ingestion_id: str,
-        definition: _models.IngestionDefinition,
+        definition: _models.Ingestion,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any,
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -4937,12 +4351,12 @@ class IngestionOperations:
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
         :param definition: Ingestion properties to update. Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition
+        :type definition: ~azure.planetarycomputer.models.Ingestion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4955,7 +4369,7 @@ class IngestionOperations:
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any,
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -4967,8 +4381,8 @@ class IngestionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4981,7 +4395,7 @@ class IngestionOperations:
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any,
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -4993,8 +4407,8 @@ class IngestionOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5003,20 +4417,20 @@ class IngestionOperations:
         self,
         collection_id: str,
         ingestion_id: str,
-        definition: Union[_models.IngestionDefinition, JSON, IO[bytes]],
+        definition: Union[_models.Ingestion, JSON, IO[bytes]],
         **kwargs: Any,
-    ) -> _models.IngestionDefinition:
+    ) -> _models.Ingestion:
         """Update an existing ingestion.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
         :param ingestion_id: Ingestion id. Required.
         :type ingestion_id: str
-        :param definition: Ingestion properties to update. Is one of the following types:
-         IngestionDefinition, JSON, IO[bytes] Required.
-        :type definition: ~azure.planetarycomputer.models.IngestionDefinition or JSON or IO[bytes]
-        :return: IngestionDefinition. The IngestionDefinition is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.IngestionDefinition
+        :param definition: Ingestion properties to update. Is one of the following types: Ingestion,
+         JSON, IO[bytes] Required.
+        :type definition: ~azure.planetarycomputer.models.Ingestion or JSON or IO[bytes]
+        :return: Ingestion. The Ingestion is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.Ingestion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5031,7 +4445,7 @@ class IngestionOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
-        cls: ClsType[_models.IngestionDefinition] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _content = None
@@ -5073,7 +4487,7 @@ class IngestionOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.IngestionDefinition, response.json())
+            deserialized = _deserialize(_models.Ingestion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5939,7 +5353,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_collection_config(self, collection_id: str, **kwargs: Any) -> _models.UserCollectionSettings:
+    def get_collection_configuration(self, collection_id: str, **kwargs: Any) -> _models.UserCollectionSettings:
         """Get Config.
 
         Get the complete user configuration for a given collection.
@@ -5963,7 +5377,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.UserCollectionSettings] = kwargs.pop("cls", None)
 
-        _request = build_stac_get_collection_config_request(
+        _request = build_stac_get_collection_configuration_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6520,7 +5934,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [202]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -6692,7 +6106,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
             try:
                 response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -7155,7 +6569,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     @overload
     def replace_partition_type(
         self, collection_id: str, body: _models.PartitionType, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.PartitionType:
+    ) -> None:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -7181,15 +6595,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PartitionType. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def replace_partition_type(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.PartitionType:
+    ) -> None:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -7215,15 +6629,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PartitionType. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def replace_partition_type(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.PartitionType:
+    ) -> None:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -7249,15 +6663,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: PartitionType. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def replace_partition_type(
+    def replace_partition_type(  # pylint: disable=inconsistent-return-statements
         self, collection_id: str, body: Union[_models.PartitionType, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.PartitionType:
+    ) -> None:
         """Create Partitiontype.
 
         Updates partition type for a GeoCatalog Collection. This will
@@ -7280,8 +6694,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param body: Partition type configuration determining how items are partitioned in storage. Is
          one of the following types: PartitionType, JSON, IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.PartitionType or JSON or IO[bytes]
-        :return: PartitionType. The PartitionType is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PartitionType
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7296,7 +6710,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PartitionType] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7318,7 +6732,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7326,23 +6740,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PartitionType, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def create_render_option(
@@ -7705,7 +7107,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_render_option(self, collection_id: str, render_option_id: str, **kwargs: Any) -> list[_models.RenderOption]:
+    def get_render_option(self, collection_id: str, render_option_id: str, **kwargs: Any) -> _models.RenderOption:
         """Get Collection Render Option.
 
         Get a render option for a given collection.
@@ -7714,8 +7116,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param render_option_id: Unique identifier for the render option. Required.
         :type render_option_id: str
-        :return: list of RenderOption
-        :rtype: list[~azure.planetarycomputer.models.RenderOption]
+        :return: RenderOption. The RenderOption is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.RenderOption
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7729,7 +7131,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.RenderOption]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.RenderOption] = kwargs.pop("cls", None)
 
         _request = build_stac_get_render_option_request(
             collection_id=collection_id,
@@ -7762,7 +7164,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.RenderOption], response.json())
+            deserialized = _deserialize(_models.RenderOption, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8165,7 +7567,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     def _create_item_initial(
-        self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
+        self, collection_id: str, body: Union[_models.StacItemOrStacItemCollection, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8231,7 +7633,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     def begin_create_item(
         self,
         collection_id: str,
-        body: _models.StacItemOrItemCollection,
+        body: _models.StacItemOrStacItemCollection,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -8240,20 +7642,20 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: STAC Item or ItemCollection
+        :param body: STAC Item or StacItemCollection
 
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+         Represents a STAC Item or StacItemCollection as defined by the STAC 1.0.0 standard.
 
          **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
 
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         **StacItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items.
          Required.
-        :type body: ~azure.planetarycomputer.models.StacItemOrItemCollection
+        :type body: ~azure.planetarycomputer.models.StacItemOrStacItemCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8270,15 +7672,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: STAC Item or ItemCollection
+        :param body: STAC Item or StacItemCollection
 
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+         Represents a STAC Item or StacItemCollection as defined by the STAC 1.0.0 standard.
 
          **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
 
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         **StacItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items.
@@ -8300,15 +7702,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: STAC Item or ItemCollection
+        :param body: STAC Item or StacItemCollection
 
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+         Represents a STAC Item or StacItemCollection as defined by the STAC 1.0.0 standard.
 
          **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
 
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         **StacItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items.
@@ -8324,26 +7726,26 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def begin_create_item(
-        self, collection_id: str, body: Union[_models.StacItemOrItemCollection, JSON, IO[bytes]], **kwargs: Any
+        self, collection_id: str, body: Union[_models.StacItemOrStacItemCollection, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Create a new STAC item or a set of items in a collection.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
-        :param body: STAC Item or ItemCollection
+        :param body: STAC Item or StacItemCollection
 
-         Represents a STAC Item or ItemCollection as defined by the STAC 1.0.0 standard.
+         Represents a STAC Item or StacItemCollection as defined by the STAC 1.0.0 standard.
 
          **Item**: A GeoJSON Feature that represents a single spatiotemporal asset.
          It includes metadata such as geometry, datetime, and links to related assets.
          Example: A satellite image with its metadata.
 
-         **ItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
+         **StacItemCollection**: A GeoJSON FeatureCollection that contains multiple Items.
          It is used to group multiple related Items together, such as a collection of satellite images.
 
          This union allows the request body to accept either a single Item or a collection of Items. Is
-         one of the following types: StacItemOrItemCollection, JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacItemOrItemCollection or JSON or IO[bytes]
+         one of the following types: StacItemOrStacItemCollection, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacItemOrStacItemCollection or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8773,7 +8175,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         bounding_box: Optional[list[str]] = None,
         datetime: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.ItemCollection:
+    ) -> _models.StacItemCollection:
         """Fetch features of the feature collection with id ``collectionId``.
 
         Every feature in a dataset belongs to a collection. A dataset may
@@ -8842,8 +8244,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
          server whether only a single temporal property is used to determine
          the extent or all relevant temporal properties. Default value is None.
         :paramtype datetime: str
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8857,7 +8259,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacItemCollection] = kwargs.pop("cls", None)
 
         _request = build_stac_list_items_request(
             collection_id=collection_id,
@@ -8892,7 +8294,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ItemCollection, response.json())
+            deserialized = _deserialize(_models.StacItemCollection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9634,9 +9036,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def create_search_operations(
+    def search(
         self, body: _models.SearchOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ItemCollection:
+    ) -> _models.StacItemCollection:
         """Search.
 
         Endpoint.
@@ -9646,15 +9048,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_search_operations(
+    def search(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ItemCollection:
+    ) -> _models.StacItemCollection:
         """Search.
 
         Endpoint.
@@ -9664,15 +9066,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create_search_operations(
+    def search(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ItemCollection:
+    ) -> _models.StacItemCollection:
         """Search.
 
         Endpoint.
@@ -9682,15 +9084,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def create_search_operations(
-        self, body: Union[_models.SearchOptions, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.ItemCollection:
+    def search(self, body: Union[_models.SearchOptions, JSON, IO[bytes]], **kwargs: Any) -> _models.StacItemCollection:
         """Search.
 
         Endpoint.
@@ -9698,8 +9098,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param body: Request body. Is one of the following types: SearchOptions, JSON, IO[bytes]
          Required.
         :type body: ~azure.planetarycomputer.models.SearchOptions or JSON or IO[bytes]
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
+        :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9714,7 +9114,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacItemCollection] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -9723,7 +9123,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_stac_create_search_operations_request(
+        _request = build_stac_search_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9754,128 +9154,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ItemCollection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_search_operations(
-        self,
-        *,
-        collections: Optional[list[str]] = None,
-        ids: Optional[list[str]] = None,
-        bounding_box: Optional[list[float]] = None,
-        intersects: Optional[str] = None,
-        datetime: Optional[str] = None,
-        limit: Optional[int] = None,
-        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
-        duration_in_minutes: Optional[int] = None,
-        query: Optional[str] = None,
-        sort_by: Optional[str] = None,
-        fields: Optional[str] = None,
-        filter: Optional[str] = None,
-        token: Optional[str] = None,
-        **kwargs: Any,
-    ) -> _models.ItemCollection:
-        """Search.
-
-        Endpoint.
-
-        :keyword collections: List of Collection IDs to include in the search. Only items in these
-         collections will be searched. Default value is None.
-        :paramtype collections: list[str]
-        :keyword ids: Array of Item IDs to return specific items. Default value is None.
-        :paramtype ids: list[str]
-        :keyword bounding_box: Bounding box for spatial filtering in format [west, south, east, north].
-         Default value is None.
-        :paramtype bounding_box: list[float]
-        :keyword intersects: GeoJSON geometry for spatial filtering. Default value is None.
-        :paramtype intersects: str
-        :keyword datetime: Temporal filter in RFC 3339 format, can be a single time or range. Default
-         value is None.
-        :paramtype datetime: str
-        :keyword limit: Maximum number of results to return. Default value is None.
-        :paramtype limit: int
-        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
-         "false". Default value is None.
-        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
-        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
-        :paramtype duration_in_minutes: int
-        :keyword query: Property-based filtering expressed as a JSON object. Default value is None.
-        :paramtype query: str
-        :keyword sort_by: Sort order for items. Format is property name prefixed with "+" for ascending
-         or "-" for descending. Default value is None.
-        :paramtype sort_by: str
-        :keyword fields: Determines which fields to include in the response. Format is comma-separated
-         field names with "-" prefix to exclude fields. Default value is None.
-        :paramtype fields: str
-        :keyword filter: CQL filter expression for advanced filtering of items. Default value is None.
-        :paramtype filter: str
-        :keyword token: Pagination token for fetching the next set of results. Default value is None.
-        :paramtype token: str
-        :return: ItemCollection. The ItemCollection is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ItemCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ItemCollection] = kwargs.pop("cls", None)
-
-        _request = build_stac_get_search_operations_request(
-            collections=collections,
-            ids=ids,
-            bounding_box=bounding_box,
-            intersects=intersects,
-            datetime=datetime,
-            limit=limit,
-            sign=sign,
-            duration_in_minutes=duration_in_minutes,
-            query=query,
-            sort_by=sort_by,
-            fields=fields,
-            filter=filter,
-            token=token,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ItemCollection, response.json())
+            deserialized = _deserialize(_models.StacItemCollection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -10304,7 +9583,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         format: str,
-        body: _models.Geometry,
+        body: _models.StacItem,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -10339,7 +9618,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          Required.
         :type format: str
         :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.Geometry
+        :type body: ~azure.planetarycomputer.models.StacItem
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -10673,7 +9952,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         format: str,
-        body: Union[_models.Geometry, JSON, IO[bytes]],
+        body: Union[_models.StacItem, JSON, IO[bytes]],
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -10706,9 +9985,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
-        :param body: Request GeoJson body. Is one of the following types: Geometry, JSON, IO[bytes]
+        :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
          Required.
-        :type body: ~azure.planetarycomputer.models.Geometry or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -11447,7 +10726,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        body: _models.ItemCollection,
+        body: _models.StacItemCollection,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -11465,7 +10744,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -11475,7 +10754,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.ItemCollection
+        :type body: ~azure.planetarycomputer.models.StacItemCollection
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -11532,9 +10811,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsItemCollectionResponse. The GeoJsonStatisticsItemCollectionResponse
-         is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsItemCollectionResponse
+        :return: GeoJsonStatisticsStacItemCollectionResponse. The
+         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11561,7 +10840,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -11628,9 +10907,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsItemCollectionResponse. The GeoJsonStatisticsItemCollectionResponse
-         is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsItemCollectionResponse
+        :return: GeoJsonStatisticsStacItemCollectionResponse. The
+         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11657,7 +10936,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -11724,9 +11003,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsItemCollectionResponse. The GeoJsonStatisticsItemCollectionResponse
-         is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsItemCollectionResponse
+        :return: GeoJsonStatisticsStacItemCollectionResponse. The
+         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11735,7 +11014,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        body: Union[_models.ItemCollection, JSON, IO[bytes]],
+        body: Union[_models.StacItemCollection, JSON, IO[bytes]],
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -11752,7 +11031,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -11761,9 +11040,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param body: Request GeoJson body. Is one of the following types: ItemCollection, JSON,
+        :param body: Request GeoJson body. Is one of the following types: StacItemCollection, JSON,
          IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.ItemCollection or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.StacItemCollection or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -11817,9 +11096,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: GeoJsonStatisticsItemCollectionResponse. The GeoJsonStatisticsItemCollectionResponse
-         is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsItemCollectionResponse
+        :return: GeoJsonStatisticsStacItemCollectionResponse. The
+         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -11834,7 +11113,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.GeoJsonStatisticsItemCollectionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GeoJsonStatisticsStacItemCollectionResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -11890,7 +11169,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.GeoJsonStatisticsItemCollectionResponse, response.json())
+            deserialized = _deserialize(_models.GeoJsonStatisticsStacItemCollectionResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11968,7 +11247,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_info(
+    def get_assets_info(
         self, collection_id: str, item_id: str, *, assets: Optional[list[str]] = None, **kwargs: Any
     ) -> _models.InfoOperationResponse:
         """Info.
@@ -11998,7 +11277,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.InfoOperationResponse] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_info_request(
+        _request = build_tiler_get_assets_info_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -13305,204 +12584,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> _models.TileJsonResponse:
-        """TileJson.
-
-        Return TileJson.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
-
-        _request = build_tiler_get_tile_json_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_tile_json_with_matrix_set(
-        self,
-        collection_id: str,
-        item_id: str,
         tile_matrix_set_id: str,
         *,
         assets: Optional[list[str]] = None,
@@ -13633,7 +12714,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_tile_json_with_matrix_set_request(
+        _request = build_tiler_get_tile_json_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -13692,7 +12773,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_tile_with_matrix_set(
+    def get_tile(
         self,
         collection_id: str,
         item_id: str,
@@ -13837,227 +12918,10 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_tile_with_matrix_set_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            z=z,
-            x=x,
-            y=y,
-            scale=scale,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            subdataset_name=subdataset_name,
-            subdataset_bands=subdataset_bands,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_tile(
-        self,
-        collection_id: str,
-        item_id: str,
-        z: float,
-        x: float,
-        y: float,
-        scale: float,
-        format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[list[str]] = None,
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        """Tile.
-
-        Create map tile from a dataset.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
-         "1"). Required.
-        :type scale: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
-        :paramtype subdataset_name: str
-        :keyword subdataset_bands: The index of a subdataset band within the asset. Default value is
-         None.
-        :paramtype subdataset_bands: list[str]
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
         _request = build_tiler_get_tile_request(
             collection_id=collection_id,
             item_id=item_id,
+            tile_matrix_set_id=tile_matrix_set_id,
             z=z,
             x=x,
             y=y,
@@ -14071,7 +12935,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             unscale=unscale,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
             buffer=buffer,
             color_formula=color_formula,
             resampling=resampling,
@@ -14124,205 +12987,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_wmts_capabilities(
-        self,
-        collection_id: str,
-        item_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> str:
-        """Wmts.
-
-        OGC WMTS endpoint.
-
-        :param collection_id: STAC Collection Identifier. Required.
-        :type collection_id: str
-        :param item_id: STAC Item Identifier. Required.
-        :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: str
-        :rtype: str
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[str] = kwargs.pop("cls", None)
-
-        _request = build_tiler_get_wmts_capabilities_request(
-            collection_id=collection_id,
-            item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(str, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_wmts_capabilities_with_matrix_set(
         self,
         collection_id: str,
         item_id: str,
@@ -14454,7 +13118,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_wmts_capabilities_with_matrix_set_request(
+        _request = build_tiler_get_wmts_capabilities_request(
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
@@ -14871,7 +13535,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaics_assets_for_tile_with_matrix_set(  # pylint: disable=name-too-long
+    def get_mosaics_assets_for_tile(
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -14936,125 +13600,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[list[Any]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_assets_for_tile_with_matrix_set_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            z=z,
-            x=x,
-            y=y,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(list[Any], response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_mosaics_assets_for_tile(
-        self,
-        search_id: str,
-        z: float,
-        x: float,
-        y: float,
-        *,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        **kwargs: Any,
-    ) -> list[Any]:
-        """Assets For Tile.
-
-        Return a list of assets which overlap a given tile.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :return: list of any
-        :rtype: list[any]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[list[Any]] = kwargs.pop("cls", None)
-
         _request = build_tiler_get_mosaics_assets_for_tile_request(
             search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
             z=z,
             x=x,
             y=y,
@@ -15063,7 +13611,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             time_limit=time_limit,
             exit_when_full=exit_when_full,
             skip_covered=skip_covered,
-            tile_matrix_set_id=tile_matrix_set_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -15383,234 +13930,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
     def get_mosaics_tile_json(
         self,
         search_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[float] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        rescale: Optional[list[str]] = None,
-        colormap_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        colormap: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> _models.TileJsonResponse:
-        """TileJson.
-
-        Return TileJSON document for a searchId.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default: 'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: float
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword colormap_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype colormap_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword colormap: JSON encoded custom Colormap. Default value is None.
-        :paramtype colormap: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
-
-        _request = build_tiler_get_mosaics_tile_json_request(
-            search_id=search_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            rescale=rescale,
-            colormap_name=colormap_name,
-            colormap=colormap,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_mosaics_tile_with_matrix_set(
-        self,
-        search_id: str,
         tile_matrix_set_id: str,
         z: float,
         x: float,
@@ -15771,7 +14090,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_tile_with_matrix_set_request(
+        _request = build_tiler_get_mosaics_tile_json_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             z=z,
@@ -16310,198 +14629,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
     def get_mosaics_wmts_capabilities(
         self,
         search_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> Iterator[bytes]:
-        """Wmts.
-
-        OGC WMTS endpoint.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: Iterator[bytes]
-        :rtype: Iterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_tiler_get_mosaics_wmts_capabilities_request(
-            search_id=search_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_mosaics_wmts_capabilities_with_matrix_set(  # pylint: disable=name-too-long
-        self,
-        search_id: str,
         tile_matrix_set_id: str,
         *,
         assets: Optional[list[str]] = None,
@@ -16628,7 +14755,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_wmts_capabilities_with_matrix_set_request(
+        _request = build_tiler_get_mosaics_wmts_capabilities_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
             assets=assets,

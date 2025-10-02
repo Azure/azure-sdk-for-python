@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.get_collection_config(
+    response = client.stac.get_collection_configuration(
         collection_id="sentinel-2-l2a-tutorial-7",
     )
     print(response)

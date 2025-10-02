@@ -14,9 +14,9 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 class TestPlanetaryComputerIngestionOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestion_delete_ingestion_operation(self, planetarycomputer_endpoint):
+    def test_ingestion_cancel_ingestion_operation(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestion.delete_ingestion_operation(
+        response = client.ingestion.cancel_ingestion_operation(
             operation_id="str",
         )
 
@@ -25,9 +25,9 @@ class TestPlanetaryComputerIngestionOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_ingestion_delete_all_ingestion_operations(self, planetarycomputer_endpoint):
+    def test_ingestion_cancel_all_ingestion_operations(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.ingestion.delete_all_ingestion_operations()
+        response = client.ingestion.cancel_all_ingestion_operations()
 
         # please add some check logic here by yourself
         # ...

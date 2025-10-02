@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python stac_search_operations_create.py
+    python stac_search_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.create_search_operations(
+    response = client.stac.search(
         body={
             "filter": {
                 "args": [
@@ -71,6 +71,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-30-preview/StacSearchOperations_Create.json
+# x-ms-original-file: 2025-04-30-preview/StacSearch_Create.json
 if __name__ == "__main__":
     main()

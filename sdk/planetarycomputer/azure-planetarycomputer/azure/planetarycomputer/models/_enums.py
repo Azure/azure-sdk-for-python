@@ -517,13 +517,6 @@ class IngestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Static STAC Catalog"""
 
 
-class ItemCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the GeoJSON feature collection type for STAC item collections."""
-
-    FEATURE_COLLECTION = "FeatureCollection"
-    """Standard GeoJSON FeatureCollection type."""
-
-
 class LegendConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Legend type to make, one of: ``continuous``, ``classmap``, ``interval`` or ``none``
     (note, ``none`` is a string literal).Defines the legend configuration types for data
@@ -689,6 +682,13 @@ class StacAssetUrlSigningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sign asset URLs in the response."""
     FALSE = "false"
     """Do not sign asset URLs in the response."""
+
+
+class StacItemCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the GeoJSON feature collection type for STAC item collections."""
+
+    FEATURE_COLLECTION = "FeatureCollection"
+    """Standard GeoJSON FeatureCollection type."""
 
 
 class StacModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

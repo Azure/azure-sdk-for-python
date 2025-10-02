@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,16 +35,76 @@ def main():
         item_id="item-0df36a74d7ed",
         format="png",
         body={
-            "coordinates": [
-                [
-                    [-65.75386020444417, 18.252659831448764],
-                    [-65.75385878091376, 18.252569552371305],
-                    [-65.75376429311993, 18.252570912467043],
-                    [-65.75376571660163, 18.252661191551685],
-                    [-65.75386020444417, 18.252659831448764],
-                ]
+            "_msft:etag": "e99a9415-f26f-48ad-9553-3a5dd7260cde",
+            "_msft:ts": "2024-09-26T17:46:10.688245Z",
+            "assets": {
+                "predict": {
+                    "description": "Argmax-parsed inference values.",
+                    "href": "https://sample.blob.core.windows.net/example-collection-16f38ddf/c8a/S2A_MSIL2A_20231017T013651_R117_T53SPA_20231017T053413/predict.tif",
+                    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                },
+                "softmax": {
+                    "description": "Maximum raw inference values converted to uint8.",
+                    "href": "https://sample.blob.core.windows.net/example-collection-16f38ddf/c8a/S2A_MSIL2A_20231017T013651_R117_T53SPA_20231017T053413/softmax.tif",
+                    "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                },
+            },
+            "bbox": [136.11023969131566, 36.03410504840171, 137.35846754627107, 37.041254047568394],
+            "collection": "example-collection",
+            "geometry": {
+                "coordinates": [
+                    [
+                        [136.11023969131566, 36.05158282566385],
+                        [137.32861422946507, 36.03410504840171],
+                        [137.35846754627107, 37.02313780213882],
+                        [136.12448554733595, 37.041254047568394],
+                        [136.11023969131566, 36.05158282566385],
+                    ]
+                ],
+                "type": "Polygon",
+            },
+            "id": "S2A_MSIL2A_20231017T013651_R117_T53SPA_20231017T053413",
+            "links": [
+                {
+                    "href": "https://sample.cmbtazhseqhgeudd.uksouth.geocatalog.spatio.azure.com/stac/collections/example-collection",
+                    "rel": "collection",
+                    "type": "application/json",
+                },
+                {
+                    "href": "https://sample.cmbtazhseqhgeudd.uksouth.geocatalog.spatio.azure.com/stac/collections/example-collection",
+                    "rel": "parent",
+                    "type": "application/json",
+                },
+                {
+                    "href": "https://sample.cmbtazhseqhgeudd.uksouth.geocatalog.spatio.azure.com/stac/",
+                    "rel": "root",
+                    "type": "application/json",
+                },
+                {
+                    "href": "https://sample.cmbtazhseqhgeudd.uksouth.geocatalog.spatio.azure.com/stac/collections/example-collection/items/S2A_MSIL2A_20231017T013651_R117_T53SPA_20231017T053413",
+                    "rel": "self",
+                    "type": "application/geo+json",
+                },
             ],
-            "type": "Polygon",
+            "properties": {
+                "datetime": "2023-10-17T01:36:51.024000Z",
+                "eo:cloud_cover": 19.538534,
+                "proj:bbox": [600000, 3990240, 709800, 4100040],
+                "proj:epsg": 32653,
+                "proj:geometry": {
+                    "coordinates": [
+                        [[600000, 3990240], [709800, 3990240], [709800, 4100040], [600000, 4100040], [600000, 3990240]]
+                    ],
+                    "type": "Polygon",
+                },
+                "proj:shape": [10980, 10980],
+                "proj:transform": [10, 0, 600000, 0, -10, 4100040, 0, 0, 1],
+                "s2:mgrs_tile": "53SPA",
+                "s2:nodata_pixel_percentage": 0.000129,
+            },
+            "stac_extensions": ["https://stac-extensions.github.io/projection/v1.1.0/schema.json"],
+            "stac_version": "1.0.0",
+            "type": "Feature",
         },
     )
     print(response)

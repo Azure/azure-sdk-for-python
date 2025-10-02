@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python mosaics_assets_for_tiles_get_zxy_assets.py
+    python stac_collections_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,11 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_mosaics_assets_for_tile(
-        search_id="e32e0b12176246816953d75e3356d613",
-        z=12,
-        x=47.6062,
-        y=17,
-    )
-    print(response)
+    client.stac.begin_delete_collection(
+        collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
+    ).result()
 
 
-# x-ms-original-file: 2025-04-30-preview/MosaicsAssetsForTiles_GetZxyAssets.json
+# x-ms-original-file: 2025-04-30-preview/StacCollections_Delete.json
 if __name__ == "__main__":
     main()
