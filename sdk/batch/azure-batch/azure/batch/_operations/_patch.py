@@ -1564,7 +1564,7 @@ class _TaskWorkflowManager:
         :param results_queue: Queue to place the return value of the request
         :type results_queue: collections.deque
         :param chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
-        :type chunk_tasks_to_add: list[~BatchTaskAddResult]
+        :type chunk_tasks_to_add: list[~azure.batch.models.BatchTaskCreateOptions]
         """
 
         try:

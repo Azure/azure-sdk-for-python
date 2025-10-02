@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines, C4763
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -1191,7 +1191,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :paramtype ocpdate: ~datetime.datetime
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
-        :raises ~azure.batch.custom.CreateTasksError
+        :raises ~azure.batch.custom.CreateTasksError:
         """
 
         kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
@@ -1545,8 +1545,8 @@ class _TaskWorkflowManager:
 
         :param results_queue: Queue to place the return value of the request
         :type results_queue: collections.deque
-        :ivar chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
-        :vartype chunk_tasks_to_add: list[~azure.batch.models.BatchTaskCreateContent]
+        :param chunk_tasks_to_add: Chunk of at most 100 tasks with retry details
+        :type chunk_tasks_to_add: list[~azure.batch.models.BatchTaskCreateOptions]
         """
 
         try:
