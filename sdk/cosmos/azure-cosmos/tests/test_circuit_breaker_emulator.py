@@ -52,7 +52,7 @@ class TestCircuitBreakerEmulator:
     def setup_method_with_custom_transport(self, custom_transport, default_endpoint=host, **kwargs):
         client = CosmosClient(default_endpoint, self.master_key, consistency_level="Session",
                               preferred_locations=["Write Region", "Read Region"],
-                              transport=custom_transport, **kwargs)
+                              transport=custom_transport, assert_kwarg_passthrough=True, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
@@ -100,7 +100,7 @@ class TestCircuitBreakerEmulator:
     def test_pk_range_wrapper(self):
         _, _, _, _, custom_setup, _, _ = self.setup_info()
         container = custom_setup['col']
-        prop = container.read()
+        prop = container.read(assert_kwarg_passthrough=True)
         headers = {HttpHeaders.IntendedCollectionRID: prop['_rid']}
         # check request with partition key flow
         request = RequestObject(
@@ -109,7 +109,7 @@ class TestCircuitBreakerEmulator:
             headers,
             "pk-8584",
         )
-        pk_range_wrapper = container.client_connection._global_endpoint_manager.create_pk_range_wrapper(request)
+        pk_range_wrapper = container.client_connection._global_endpoint_manager.create_pk_range_wrapper(request, assert_kwarg_passthrough=True)
         assert pk_range_wrapper.partition_key_range.max == "33333333333333333333333333333330"
         assert pk_range_wrapper.partition_key_range.min == "26666666666666666666666666666664"
 
@@ -121,7 +121,7 @@ class TestCircuitBreakerEmulator:
             headers,
             None,
         )
-        pk_range_wrapper = container.client_connection._global_endpoint_manager.create_pk_range_wrapper(request)
+        pk_range_wrapper = container.client_connection._global_endpoint_manager.create_pk_range_wrapper(request, assert_kwarg_passthrough=True)
         assert pk_range_wrapper.partition_key_range.max == "0CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
         assert pk_range_wrapper.partition_key_range.min == ""
 
@@ -222,7 +222,7 @@ class TestCircuitBreakerEmulator:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
                     custom_transport.faults = []
-                    fault_injection_container.upsert_item(body=doc)
+                    fault_injection_container.upsert_item(body=doc, assert_kwarg_passthrough=True)
                     custom_transport.add_fault(predicate,
                                                lambda r: FaultInjectionTransport.error_after_delay(
                                                    0,
@@ -263,7 +263,7 @@ class TestCircuitBreakerEmulator:
                     # perform some successful creates to reset consecutive counter
                     # remove faults and perform a write
                     custom_transport.faults = []
-                    fault_injection_container.upsert_item(body=doc)
+                    fault_injection_container.upsert_item(body=doc, assert_kwarg_passthrough=True)
                     custom_transport.add_fault(predicate,
                                                lambda r: FaultInjectionTransport.error_after_delay(
                                                    0,

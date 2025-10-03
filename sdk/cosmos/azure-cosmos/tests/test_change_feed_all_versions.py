@@ -30,7 +30,7 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(config.host, config.masterKey),
+    test_client = cosmos_client.CosmosClient(config.host, config.masterKey, assert_kwarg_passthrough=True),
     return {
         "created_db": test_client[0].get_database_client(config.TEST_DATABASE_ID),
         "is_emulator": config.is_emulator
@@ -74,12 +74,13 @@ class TestChangeAllVersionsFeed:
         change_feed_policy = {"retentionDuration": 10} if setup["is_emulator"] else None
         created_collection = setup["created_db"].create_container("change_feed_test_" + str(uuid.uuid4()),
                                                                   PartitionKey(path=f"/{partition_key}"),
-                                                                  change_feed_policy=change_feed_policy)
+                                                                  change_feed_policy=change_feed_policy, assert_kwarg_passthrough=True)
         mode = 'AllVersionsAndDeletes'
 
         ## Test Change Feed with empty collection(Save the continuation token)
         query_iterable = created_collection.query_items_change_feed(
             mode=mode,
+            assert_kwarg_passthrough=True
         )
         expected_change_feeds = []
         actual_change_feeds = list(query_iterable)
@@ -90,11 +91,12 @@ class TestChangeAllVersionsFeed:
         new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
         created_items = []
         for document in new_documents:
-            created_item = created_collection.create_item(body=document)
+            created_item = created_collection.create_item(body=document, assert_kwarg_passthrough=True)
             created_items.append(created_item)
         query_iterable = created_collection.query_items_change_feed(
             continuation=cont_token1,
             mode=mode,
+            assert_kwarg_passthrough=True
         )
 
         expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]
@@ -104,10 +106,11 @@ class TestChangeAllVersionsFeed:
 
         ## Test change_feed for deleted items
         for item in created_items:
-            created_collection.delete_item(item=item, partition_key=item['pk'])
+            created_collection.delete_item(item=item, partition_key=item['pk'], assert_kwarg_passthrough=True)
         query_iterable = created_collection.query_items_change_feed(
             continuation=cont_token2,
             mode=mode,
+            assert_kwarg_passthrough=True
         )
 
         expected_change_feeds = [{CURRENT: {}, PREVIOUS: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: DELETE}} for i in range(4)]
@@ -117,7 +120,8 @@ class TestChangeAllVersionsFeed:
         ## Test change_feed for created/deleted items
         query_iterable = created_collection.query_items_change_feed(
             continuation=cont_token1,
-            mode = mode
+            mode=mode,
+            assert_kwarg_passthrough=True
         )
 
         expected_change_feeds = [{CURRENT: {ID: f'doc{i}'}, METADATA: {OPERATION_TYPE: CREATE}} for i in range(4)]\
@@ -126,19 +130,21 @@ class TestChangeAllVersionsFeed:
         assert_change_feed(expected_change_feeds, actual_change_feeds)
 
         query_iterable = created_collection.query_items_change_feed(
-            mode = mode,
-            partition_key = 'pk1'
+            mode=mode,
+            partition_key='pk1',
+            assert_kwarg_passthrough=True
         )
         list(query_iterable)
         pk_cont_token = created_collection.client_connection.last_response_headers[E_TAG]
         new_documents = [{partition_key: f'pk{i}', ID: f'doc{i}'} for i in range(4)]
         created_items = []
         for document in new_documents:
-            created_item = created_collection.create_item(body=document)
+            created_item = created_collection.create_item(body=document, assert_kwarg_passthrough=True)
             created_items.append(created_item)
         query_iterable = created_collection.query_items_change_feed(
             continuation=pk_cont_token,
-            mode=mode
+            mode=mode,
+            assert_kwarg_passthrough=True
         )
         expected_change_feeds = [{CURRENT: {ID: f'doc1'}, METADATA: {OPERATION_TYPE: CREATE}}]
         actual_change_feeds = list(query_iterable)

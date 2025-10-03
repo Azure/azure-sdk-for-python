@@ -71,7 +71,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.config.host, cls.config.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.config.host, cls.config.masterKey, assert_kwarg_passthrough=True)
         cls.db = cls.client.get_database_client(cls.config.TEST_DATABASE_ID)
 
     def create_container(self, db, container_id, partition_key, version=None, throughput=None):
@@ -82,23 +82,23 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         else:
             pk_definition = PartitionKey(path=partition_key, kind='Hash', version=version)
         if throughput:
-            return db.create_container(id=container_id, partition_key=pk_definition, offer_throughput=throughput)
-        return db.create_container(id=container_id, partition_key=pk_definition)
+            return db.create_container(id=container_id, partition_key=pk_definition, offer_throughput=throughput, assert_kwarg_passthrough=True)
+        return db.create_container(id=container_id, partition_key=pk_definition, assert_kwarg_passthrough=True)
 
     def insert_items(self, container, items):
         """Helper to insert items into a container."""
         for item in items:
-            container.create_item(body=item)
+            container.create_item(body=item, assert_kwarg_passthrough=True)
 
     def validate_changefeed(self, container):
         """Helper to validate changefeed results."""
         partition_keys = ["short_string", "long_string_" + "a" * 251, 1000, 1000 * 1.1111, True]
         for pk in partition_keys:
-            changefeed = container.query_items_change_feed(is_start_from_beginning=True, partition_key=pk)
+            changefeed = container.query_items_change_feed(is_start_from_beginning=True, partition_key=pk, assert_kwarg_passthrough=True)
             changefeed_items = [item for item in changefeed]
 
             # Perform a regular query
-            regular_query = container.query_items(query="SELECT * FROM c", partition_key=pk)
+            regular_query = container.query_items(query="SELECT * FROM c", partition_key=pk, assert_kwarg_passthrough=True)
             regular_query_items = [item for item in regular_query]
 
             # Compare the number of documents returned
@@ -118,11 +118,11 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         ]
         for pk in partition_keys:
             # Perform a change feed query
-            changefeed = container.query_items_change_feed(is_start_from_beginning=True, partition_key=pk)
+            changefeed = container.query_items_change_feed(is_start_from_beginning=True, partition_key=pk, assert_kwarg_passthrough=True)
             changefeed_items = [item for item in changefeed]
 
             # Perform a regular query
-            regular_query = container.query_items(query="SELECT * FROM c", partition_key=pk)
+            regular_query = container.query_items(query="SELECT * FROM c", partition_key=pk, assert_kwarg_passthrough=True)
             regular_query_items = [item for item in regular_query]
 
             # Compare the number of documents returned
@@ -154,7 +154,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         items = self.single_hash_items
         self.insert_items(container, items)
         self.validate_changefeed(container)
-        self.db.delete_container(container.id)
+        self.db.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_hash_v2_partition_key(self):
         """Test changefeed with Hash V2 partition key."""
@@ -164,7 +164,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         items = self.single_hash_items
         self.insert_items(container, items)
         self.validate_changefeed(container)
-        self.db.delete_container(container.id)
+        self.db.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_hpk_partition_key(self):
         """Test changefeed with hierarchical partition key."""
@@ -174,7 +174,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         items = self.hpk_items
         self.insert_items(container, items)
         self.validate_changefeed_hpk(container)
-        self.db.delete_container(container.id)
+        self.db.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_multiple_physical_partitions(self):
         """Test change feed with a container having multiple physical partitions."""
@@ -186,48 +186,48 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         container_v1 = self.create_container(db, container_id_v1, "/pk", version=1, throughput=throughput)
 
         # Verify the container has more than one physical partition
-        feed_ranges_v1 = container_v1.read_feed_ranges()
+        feed_ranges_v1 = container_v1.read_feed_ranges(assert_kwarg_passthrough=True)
         feed_ranges_v1 = [feed_range for feed_range in feed_ranges_v1]
         assert len(feed_ranges_v1) > 1, "Hash V1 container does not have multiple physical partitions."
 
         # Insert items and validate change feed for Hash V1
         self.insert_items(container_v1, self.single_hash_items)
         self.validate_changefeed(container_v1)
-        self.db.delete_container(container_v1.id)
+        self.db.delete_container(container_v1.id, assert_kwarg_passthrough=True)
 
         # Test for Hash V2 partition key
         container_id_v2 = f"container_test_multiple_partitions_hash_v2_{uuid.uuid4()}"
         container_v2 = self.create_container(db, container_id_v2, "/pk", version=2, throughput=throughput)
 
         # Verify the container has more than one physical partition
-        feed_ranges_v2 = container_v2.read_feed_ranges()
+        feed_ranges_v2 = container_v2.read_feed_ranges(assert_kwarg_passthrough=True)
         feed_ranges_v2 = [feed_range for feed_range in feed_ranges_v2]
         assert len(feed_ranges_v2) > 1, "Hash V2 container does not have multiple physical partitions."
 
         # Insert items and validate change feed for Hash V2
         self.insert_items(container_v2, self.single_hash_items)
         self.validate_changefeed(container_v2)
-        self.db.delete_container(container_v2.id)
+        self.db.delete_container(container_v2.id, assert_kwarg_passthrough=True)
 
         # Test for Hierarchical Partition Keys (HPK)
         container_id_hpk = f"container_test_multiple_partitions_hpk_{uuid.uuid4()}"
         container_hpk = self.create_container(db, container_id_hpk, ["/pk1", "/pk2"], throughput=throughput)
 
         # Verify the container has more than one physical partition
-        feed_ranges_hpk = container_hpk.read_feed_ranges()
+        feed_ranges_hpk = container_hpk.read_feed_ranges(assert_kwarg_passthrough=True)
         feed_ranges_hpk = [feed_range for feed_range in feed_ranges_hpk]
         assert len(feed_ranges_hpk) > 1, "HPK container does not have multiple physical partitions."
 
         # Insert items and validate change feed for HPK
         self.insert_items(container_hpk, self.hpk_items)
         self.validate_changefeed_hpk(container_hpk)
-        self.db.delete_container(container_hpk.id)
+        self.db.delete_container(container_hpk.id, assert_kwarg_passthrough=True)
 
     def test_partition_key_version_1_properties(self):
         """Test container with version 1 partition key definition and validate properties."""
         container_id = f"container_test_pk_version_1_properties_{uuid.uuid4()}"
         pk = PartitionKey(path="/pk", kind="Hash", version=1)
-        container = self.db.create_container(id=container_id, partition_key=pk)
+        container = self.db.create_container(id=container_id, partition_key=pk, assert_kwarg_passthrough=True)
         original_get_properties = container._get_properties
 
         # Simulate the version key not being in the definition
@@ -268,7 +268,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
                 except Exception as e:
                     assert False, f"Failed to get EPK range for partition key {item['pk']}: {str(e)}"
             # Query the change feed and validate the results
-            change_feed = container.query_items_change_feed(is_start_from_beginning=True)
+            change_feed = container.query_items_change_feed(is_start_from_beginning=True, assert_kwarg_passthrough=True)
             change_feed_items = [item for item in change_feed]
 
             # Ensure the same items are retrieved
@@ -282,7 +282,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
         finally:
             # Clean up the container
             container._get_properties = original_get_properties
-            self.db.delete_container(container.id)
+            self.db.delete_container(container.id, assert_kwarg_passthrough=True)
 
 
 if __name__ == "__main__":
