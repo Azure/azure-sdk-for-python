@@ -132,7 +132,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The connection policy for the client.
         :param documents.ConsistencyLevel consistency_level:
             The default consistency policy for client operations.
-
         """
         self.url_connection = url_connection
         self.master_key: Optional[str] = None
@@ -200,9 +199,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         credentials_policy = None
         if self.aad_credentials:
-            scope = base.create_scope_from_url(self.url_connection)
-            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(self.aad_credentials, scope)
-
+            scope_override = os.environ.get(Constants.AAD_SCOPE_OVERRIDE, "")
+            account_scope = base.create_scope_from_url(self.url_connection)
+            credentials_policy = AsyncCosmosBearerTokenCredentialPolicy(
+                self.aad_credentials,
+                account_scope,
+                scope_override
+            )
+        self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
