@@ -1458,7 +1458,7 @@ class ContainerProxy:
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: [Callable[[Mapping[str, Any], CosmosDict], None]]
+        :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
