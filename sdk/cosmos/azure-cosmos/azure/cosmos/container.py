@@ -1628,6 +1628,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
@@ -1636,6 +1638,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
@@ -1654,6 +1658,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
+        
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, data)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
