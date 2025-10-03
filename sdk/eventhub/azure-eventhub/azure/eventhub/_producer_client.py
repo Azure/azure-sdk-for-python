@@ -359,8 +359,6 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
                     )
                     or self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES
                 )
-                print(f">>> _get_max_message_size: _max_message_size_on_link = {self._max_message_size_on_link}")
-                print(f">>> _get_max_message_size: MAX_MESSAGE_LENGTH_BYTES = {self._amqp_transport.MAX_MESSAGE_LENGTH_BYTES}")
 
     def _start_producer(self, partition_id: str, send_timeout: Optional[float] = None) -> None:
         with self._lock:
@@ -799,9 +797,6 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         """
         if not self._max_message_size_on_link:
             self._get_max_message_size()
-            
-        print(f">>> create_batch: max_size_in_bytes parameter = {max_size_in_bytes}")
-        print(f">>> create_batch: _max_message_size_on_link = {self._max_message_size_on_link}")
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
