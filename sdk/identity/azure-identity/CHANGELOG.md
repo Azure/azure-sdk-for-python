@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Improved error messages from `ManagedIdentityCredential` to include the full error response from managed identity endpoints for better troubleshooting. ([#43231](https://github.com/Azure/azure-sdk-for-python/pull/43231))
+
 ## 1.25.0 (2025-09-11)
 
 ### Features Added
