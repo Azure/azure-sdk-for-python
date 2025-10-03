@@ -105,7 +105,6 @@ from ...operations._operations import (
     build_tiler_get_mosaics_assets_for_tile_request,
     build_tiler_get_mosaics_search_info_request,
     build_tiler_get_mosaics_tile_json_request,
-    build_tiler_get_mosaics_tile_json_with_matrix_set_request,
     build_tiler_get_mosaics_tile_request,
     build_tiler_get_mosaics_wmts_capabilities_request,
     build_tiler_get_part_request,
@@ -5236,6 +5235,26 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_queryables(
+        self, collection_id: str, body: list[JSON], *, content_type: str = "application/json", **kwargs: Any
+    ) -> list[_models.StacQueryable]:
+        """Set Collection Queryables.
+
+        Set queryables for a collection given a list of queryable definitions.
+
+        :param collection_id: Unique identifier for the STAC collection. Required.
+        :type collection_id: str
+        :param body: Request queryable definition body. Required.
+        :type body: list[JSON]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: list of StacQueryable
+        :rtype: list[~azure.planetarycomputer.models.StacQueryable]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_queryables(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> list[_models.StacQueryable]:
         """Set Collection Queryables.
@@ -5256,7 +5275,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def create_queryables(
-        self, collection_id: str, body: Union[list[_models.StacQueryable], IO[bytes]], **kwargs: Any
+        self, collection_id: str, body: Union[list[_models.StacQueryable], list[JSON], IO[bytes]], **kwargs: Any
     ) -> list[_models.StacQueryable]:
         """Set Collection Queryables.
 
@@ -5264,9 +5283,9 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
-        :param body: Request queryable definition body. Is either a [StacQueryable] type or a IO[bytes]
-         type. Required.
-        :type body: list[~azure.planetarycomputer.models.StacQueryable] or IO[bytes]
+        :param body: Request queryable definition body. Is one of the following types: [StacQueryable],
+         [JSON], IO[bytes] Required.
+        :type body: list[~azure.planetarycomputer.models.StacQueryable] or list[JSON] or IO[bytes]
         :return: list of StacQueryable
         :rtype: list[~azure.planetarycomputer.models.StacQueryable]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10365,7 +10384,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         query: Optional[dict[str, Any]] = None,
         filter: Optional[dict[str, Any]] = None,
         datetime: Optional[str] = None,
-        sort_by: Optional[list[_models.SortExtension]] = None,
+        sort_by: Optional[list[_models.StacSortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.MosaicMetadata] = None,
         **kwargs: Any
@@ -10395,7 +10414,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword datetime: Temporal filter in RFC 3339 format or interval. Default value is None.
         :paramtype datetime: str
         :keyword sort_by: Criteria for ordering items in the mosaic. Default value is None.
-        :paramtype sort_by: list[~azure.planetarycomputer.models.SortExtension]
+        :paramtype sort_by: list[~azure.planetarycomputer.models.StacSortExtension]
         :keyword filter_language: Query language format used in the filter parameter. Known values are:
          "cql-json", "cql2-json", and "cql2-text". Default value is None.
         :paramtype filter_language: str or ~azure.planetarycomputer.models.FilterLanguage
@@ -10457,7 +10476,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         query: Optional[dict[str, Any]] = None,
         filter: Optional[dict[str, Any]] = None,
         datetime: Optional[str] = None,
-        sort_by: Optional[list[_models.SortExtension]] = None,
+        sort_by: Optional[list[_models.StacSortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.MosaicMetadata] = None,
         **kwargs: Any
@@ -10486,7 +10505,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword datetime: Temporal filter in RFC 3339 format or interval. Default value is None.
         :paramtype datetime: str
         :keyword sort_by: Criteria for ordering items in the mosaic. Default value is None.
-        :paramtype sort_by: list[~azure.planetarycomputer.models.SortExtension]
+        :paramtype sort_by: list[~azure.planetarycomputer.models.StacSortExtension]
         :keyword filter_language: Query language format used in the filter parameter. Known values are:
          "cql-json", "cql2-json", and "cql2-text". Default value is None.
         :paramtype filter_language: str or ~azure.planetarycomputer.models.FilterLanguage
@@ -10572,6 +10591,230 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_mosaics_tile_json(
+        self,
+        search_id: str,
+        tile_matrix_set_id: str,
+        *,
+        assets: Optional[list[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[list[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        no_data: Optional[float] = None,
+        unscale: Optional[bool] = None,
+        scan_limit: Optional[int] = None,
+        items_limit: Optional[int] = None,
+        time_limit: Optional[int] = None,
+        exit_when_full: Optional[bool] = None,
+        skip_covered: Optional[bool] = None,
+        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
+        algorithm_params: Optional[str] = None,
+        min_zoom: Optional[int] = None,
+        max_zoom: Optional[int] = None,
+        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
+        tile_scale: Optional[int] = None,
+        buffer: Optional[str] = None,
+        color_formula: Optional[str] = None,
+        collection: Optional[str] = None,
+        resampling: Optional[Union[str, _models.Resampling]] = None,
+        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
+        rescale: Optional[list[str]] = None,
+        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
+        color_map: Optional[str] = None,
+        return_mask: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.TileJsonMetaData:
+        """TileJson Tilematrixsetid As Path.
+
+        Return TileJSON document for a searchId.
+
+        :param search_id: Search Id (pgSTAC Search Hash). Required.
+        :type search_id: str
+        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
+        :type tile_matrix_set_id: str
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
+         None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: float
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
+         value is None.
+        :paramtype scan_limit: int
+        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
+         PgSTAC). Default value is None.
+        :paramtype items_limit: int
+        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
+         Default value is None.
+        :paramtype time_limit: int
+        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
+         PgSTAC). Default value is None.
+        :paramtype exit_when_full: bool
+        :keyword skip_covered: Skip any items that would show up completely under the previous items
+         (defaults
+         to True in PgSTAC). Default value is None.
+        :paramtype skip_covered: bool
+        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
+         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
+        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
+        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
+        :paramtype algorithm_params: str
+        :keyword min_zoom: Overwrite default minzoom. Default value is None.
+        :paramtype min_zoom: int
+        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
+        :paramtype max_zoom: int
+        :keyword tile_format: Default will be automatically defined if the output image needs a mask
+         (png) or
+         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
+         Default value is None.
+        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
+        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
+         (e.g., 1=256x256, 2=512x512). Default value is None.
+        :paramtype tile_scale: int
+        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
+         Output
+         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
+         1.0 = 258x258). Default value is None.
+        :paramtype buffer: str
+        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
+         <https://github.com/mapbox/rio-color>`_). Default value is None.
+        :paramtype color_formula: str
+        :keyword collection: STAC Collection ID. Default value is None.
+        :paramtype collection: str
+        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
+         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
+        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
+        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
+        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
+         bands. Default value is None.
+        :paramtype rescale: list[str]
+        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
+         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
+         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
+         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
+         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
+         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
+         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
+         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
+         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
+         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
+         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
+         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
+         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
+         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
+         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
+         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
+         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
+         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
+         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
+         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
+         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
+         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
+         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
+         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
+         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
+         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
+         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
+         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
+         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
+         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
+         is None.
+        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
+        :keyword color_map: JSON encoded custom Colormap. Default value is None.
+        :paramtype color_map: str
+        :keyword return_mask: Add mask to the output data. Default value is None.
+        :paramtype return_mask: bool
+        :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TileJsonMetaData] = kwargs.pop("cls", None)
+
+        _request = build_tiler_get_mosaics_tile_json_request(
+            search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            no_data=no_data,
+            unscale=unscale,
+            scan_limit=scan_limit,
+            items_limit=items_limit,
+            time_limit=time_limit,
+            exit_when_full=exit_when_full,
+            skip_covered=skip_covered,
+            algorithm=algorithm,
+            algorithm_params=algorithm_params,
+            min_zoom=min_zoom,
+            max_zoom=max_zoom,
+            tile_format=tile_format,
+            tile_scale=tile_scale,
+            buffer=buffer,
+            color_formula=color_formula,
+            collection=collection,
+            resampling=resampling,
+            pixel_selection=pixel_selection,
+            rescale=rescale,
+            color_map_name=color_map_name,
+            color_map=color_map,
+            return_mask=return_mask,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TileJsonMetaData, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_mosaics_tile(
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -10734,472 +10977,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_mosaics_tile_json_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            z=z,
-            x=x,
-            y=y,
-            scale=scale,
-            format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_mosaics_tile_json_with_matrix_set(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.TileJsonMetaData:
-        """TileJson Tilematrixsetid As Path.
-
-        Return TileJSON document for a searchId.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
-        :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.TileJsonMetaData] = kwargs.pop("cls", None)
-
-        _request = build_tiler_get_mosaics_tile_json_with_matrix_set_request(
-            search_id=search_id,
-            tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.TileJsonMetaData, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_mosaics_tile(
-        self,
-        search_id: str,
-        z: float,
-        x: float,
-        y: float,
-        scale: float,
-        format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_matrix_set_id: Optional[Union[str, _models.TileMatrixSetId]] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Tile.
-
-        Create map tile.
-
-        :param search_id: Search Id (pgSTAC Search Hash). Required.
-        :type search_id: str
-        :param z: Identifier (Z) selecting one of the scales defined in the TileMatrixSet and
-         representing the scaleDenominator the tile. Required.
-        :type z: float
-        :param x: Column (X) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixHeight-1 for the selected TileMatrix. Required.
-        :type x: float
-        :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
-         MatrixWidth-1 for the selected TileMatrix. Required.
-        :type y: float
-        :param scale: Numeric scale factor for the tile. Higher values produce larger tiles (default:
-         "1"). Required.
-        :type scale: float
-        :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
-         Required.
-        :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported
-         (default:
-         'WebMercatorQuad'). Known values are: "CanadianNAD83_LCC", "EuropeanETRS89_LAEAQuad",
-         "LINZAntarticaMapTilegrid", "NZTM2000Quad", "UPSAntarcticWGS84Quad", "UPSArcticWGS84Quad",
-         "UTM31WGS84Quad", "WGS1984Quad", "WebMercatorQuad", "WorldCRS84Quad", and
-         "WorldMercatorWGS84Quad". Default value is None.
-        :paramtype tile_matrix_set_id: str or ~azure.planetarycomputer.models.TileMatrixSetId
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
         _request = build_tiler_get_mosaics_tile_request(
             search_id=search_id,
+            tile_matrix_set_id=tile_matrix_set_id,
             z=z,
             x=x,
             y=y,
@@ -11218,7 +10998,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             skip_covered=skip_covered,
             algorithm=algorithm,
             algorithm_params=algorithm_params,
-            tile_matrix_set_id=tile_matrix_set_id,
             buffer=buffer,
             color_formula=color_formula,
             collection=collection,

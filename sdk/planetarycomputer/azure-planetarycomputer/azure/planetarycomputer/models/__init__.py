@@ -56,7 +56,6 @@ from ._models import (  # type: ignore
     SharedAccessSignatureTokenConnection,
     SharedAccessSignatureTokenIngestionSource,
     SignedLink,
-    SortExtension,
     StacAsset,
     StacAssetStatistics,
     StacCatalogCollections,
@@ -78,6 +77,7 @@ from ._models import (  # type: ignore
     StacProvider,
     StacQueryable,
     StacSearchParameters,
+    StacSortExtension,
     StatisticsResponse,
     TileJsonMetaData,
     TileMatrix,
@@ -119,7 +119,6 @@ from ._enums import (  # type: ignore
     TerrainAlgorithm,
     TileAddressingScheme,
     TileMatrixCornerOfOrigin,
-    TileMatrixSetId,
     TilerImageFormat,
 )
 from ._patch import __all__ as _patch_all
@@ -169,7 +168,6 @@ __all__ = [
     "SharedAccessSignatureTokenConnection",
     "SharedAccessSignatureTokenIngestionSource",
     "SignedLink",
-    "SortExtension",
     "StacAsset",
     "StacAssetStatistics",
     "StacCatalogCollections",
@@ -191,6 +189,7 @@ __all__ = [
     "StacProvider",
     "StacQueryable",
     "StacSearchParameters",
+    "StacSortExtension",
     "StatisticsResponse",
     "TileJsonMetaData",
     "TileMatrix",
@@ -229,7 +228,6 @@ __all__ = [
     "TerrainAlgorithm",
     "TileAddressingScheme",
     "TileMatrixCornerOfOrigin",
-    "TileMatrixSetId",
     "TilerImageFormat",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

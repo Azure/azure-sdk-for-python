@@ -2087,45 +2087,6 @@ class SignedLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SortExtension(_Model):
-    """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension
-    <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension>`_
-
-    Represents a sort specification for STAC API queries.
-
-    :ivar field: The field name to sort by. Required.
-    :vartype field: str
-    :ivar direction: The sort direction (ascending or descending). Required. Known values are:
-     "asc" and "desc".
-    :vartype direction: str or ~azure.planetarycomputer.models.StacSearchSortingDirection
-    """
-
-    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The field name to sort by. Required."""
-    direction: Union[str, "_models.StacSearchSortingDirection"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The sort direction (ascending or descending). Required. Known values are: \"asc\" and \"desc\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        field: str,
-        direction: Union[str, "_models.StacSearchSortingDirection"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class StacAsset(_Model):
     """`https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/item-spec.md#asset-object
     <https://github.com/radiantearth/stac-spec/blob/v1.0.0/item-spec/item-spec.md#asset-object>`_
@@ -3363,7 +3324,7 @@ class StacSearchParameters(_Model):
     :ivar sort_by: Sort criteria for the search results.
 
      See the `STAC Sort Extension <https://github.com/stac-api-extensions/sort>`_.
-    :vartype sort_by: list[~azure.planetarycomputer.models.SortExtension]
+    :vartype sort_by: list[~azure.planetarycomputer.models.StacSortExtension]
     :ivar fields: Specifies which fields to include or exclude in the STAC search results.
 
      See the `STAC Fields Extension <https://github.com/stac-api-extensions/fields>`_.
@@ -3413,7 +3374,7 @@ class StacSearchParameters(_Model):
     """STAC Query
      
      See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_."""
-    sort_by: Optional[list["_models.SortExtension"]] = rest_field(
+    sort_by: Optional[list["_models.StacSortExtension"]] = rest_field(
         name="sortby", visibility=["read", "create", "update", "delete", "query"]
     )
     """Sort criteria for the search results.
@@ -3455,12 +3416,51 @@ class StacSearchParameters(_Model):
         sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = None,
         duration_in_minutes: Optional[int] = None,
         query: Optional[dict[str, Any]] = None,
-        sort_by: Optional[list["_models.SortExtension"]] = None,
+        sort_by: Optional[list["_models.StacSortExtension"]] = None,
         fields: Optional[list["_models.SearchOptionsFields"]] = None,
         filter: Optional[dict[str, Any]] = None,  # pylint: disable=redefined-builtin
         filter_coordinate_reference_system: Optional[str] = None,
         filter_lang: Optional[Union[str, "_models.FilterLanguage"]] = None,
         token: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StacSortExtension(_Model):
+    """`https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension
+    <https://github.com/radiantearth/stac-api-spec/tree/master/extensions/sort#sort-api-extension>`_
+
+    Represents a sort specification for STAC API queries.
+
+    :ivar field: The field name to sort by. Required.
+    :vartype field: str
+    :ivar direction: The sort direction (ascending or descending). Required. Known values are:
+     "asc" and "desc".
+    :vartype direction: str or ~azure.planetarycomputer.models.StacSearchSortingDirection
+    """
+
+    field: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The field name to sort by. Required."""
+    direction: Union[str, "_models.StacSearchSortingDirection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The sort direction (ascending or descending). Required. Known values are: \"asc\" and \"desc\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        field: str,
+        direction: Union[str, "_models.StacSearchSortingDirection"],
     ) -> None: ...
 
     @overload

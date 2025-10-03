@@ -29,7 +29,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_mosaics_tile_json(
+    response = client.tiler.get_mosaics_tile(
         search_id="search-0df36a74d7ed",
         tile_matrix_set_id="WebMercatorQuad",
         z=12,

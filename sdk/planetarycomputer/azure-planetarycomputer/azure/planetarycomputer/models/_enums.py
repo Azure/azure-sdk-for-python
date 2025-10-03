@@ -767,36 +767,6 @@ class TileMatrixCornerOfOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Origin at the bottom-left corner (Y increases upward)"""
 
 
-class TileMatrixSetId(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Identifier selecting one of the TileMatrixSetId supported (default:
-    'WebMercatorQuad')Standard identifier for a coordinate reference system and tiling scheme used
-    for serving map tiles.
-    """
-
-    CANADIAN_NAD83_LCC = "CanadianNAD83_LCC"
-    """Canadian NAD83 Lambert Conformal Conic projection tile matrix set"""
-    EUROPEAN_ETRS89_LAEAQUAD = "EuropeanETRS89_LAEAQuad"
-    """European ETRS89 Lambert Azimuthal Equal Area Quad tile matrix set"""
-    LINZ_ANTARTICA_MAP_TILEGRID = "LINZAntarticaMapTilegrid"
-    """Land Information New Zealand (LINZ) Antarctica Map tile grid matrix set"""
-    NZTM2000_QUAD = "NZTM2000Quad"
-    """New Zealand Transverse Mercator 2000 Quad tile matrix set"""
-    UPS_ANTARCTIC_WGS84_QUAD = "UPSAntarcticWGS84Quad"
-    """Universal Polar Stereographic Antarctic WGS84 Quad tile matrix set"""
-    UPS_ARCTIC_WGS84_QUAD = "UPSArcticWGS84Quad"
-    """Universal Polar Stereographic Arctic WGS84 Quad tile matrix set"""
-    UTM31_WGS84_QUAD = "UTM31WGS84Quad"
-    """Universal Transverse Mercator Zone 31 WGS84 Quad tile matrix set"""
-    WGS1984_QUAD = "WGS1984Quad"
-    """WGS 1984 Quad tile matrix set"""
-    WEB_MERCATOR_QUAD = "WebMercatorQuad"
-    """Web Mercator Quad tile matrix set"""
-    WORLD_CRS84_QUAD = "WorldCRS84Quad"
-    """World CRS84 Quad tile matrix set"""
-    WORLD_MERCATOR_WGS84_QUAD = "WorldMercatorWGS84Quad"
-    """World Mercator WGS84 Quad tile matrix set"""
-
-
 class TilerImageFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Image format specifier for tile and image requests."""
 

@@ -612,23 +612,6 @@ class TestPlanetaryComputerTilerOperationsAsync(PlanetaryComputerClientTestBaseA
         response = await client.tiler.get_mosaics_tile_json(
             search_id="str",
             tile_matrix_set_id="str",
-            z=0.0,
-            x=0.0,
-            y=0.0,
-            scale=0.0,
-            format="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @PlanetaryComputerPreparer()
-    @recorded_by_proxy_async
-    async def test_tiler_get_mosaics_tile_json_with_matrix_set(self, planetarycomputer_endpoint):
-        client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.tiler.get_mosaics_tile_json_with_matrix_set(
-            search_id="str",
-            tile_matrix_set_id="str",
         )
 
         # please add some check logic here by yourself
@@ -640,6 +623,7 @@ class TestPlanetaryComputerTilerOperationsAsync(PlanetaryComputerClientTestBaseA
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await client.tiler.get_mosaics_tile(
             search_id="str",
+            tile_matrix_set_id="str",
             z=0.0,
             x=0.0,
             y=0.0,
