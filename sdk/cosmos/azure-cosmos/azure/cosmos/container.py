@@ -685,7 +685,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> ItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -772,7 +772,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> ItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
