@@ -37,7 +37,7 @@ class BuildContextSchema(metaclass=PatchedSchemaMeta):
         [
             LocalPathField(),
             # build context also support http url
-            fields.URL(),
+            fields.Url(),
         ]
     )
 
