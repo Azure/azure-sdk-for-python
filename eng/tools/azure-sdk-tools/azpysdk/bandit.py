@@ -2,13 +2,14 @@ import argparse
 import os
 import sys
 from typing import Optional, List
+import subprocess
 from subprocess import check_call, CalledProcessError
 
 from .Check import Check
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.variables import in_ci, set_envvar_defaults
 from ci_tools.logging import logger
-from ci_tools.functions import install_into_venv
+from ci_tools.functions import install_into_venv, get_pip_command
 
 class bandit(Check):
     def __init__(self) -> None:
@@ -50,6 +51,14 @@ class bandit(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install bandit: {e}")
                 return e.returncode
+            
+            # debug a pip freeze result
+            cmd = get_pip_command(executable) + ["freeze"]
+            freeze_result = subprocess.run(
+                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+            logger.debug(f"Running pip freeze with {cmd}")
+            logger.debug(freeze_result.stdout)            
 
             if in_ci():
                 if not is_check_enabled(package_dir, "bandit"):
