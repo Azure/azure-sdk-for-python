@@ -1411,7 +1411,7 @@ class ContainerProxy:
         self,
         throughput: Union[int, ThroughputProperties],
         *,
-        response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
