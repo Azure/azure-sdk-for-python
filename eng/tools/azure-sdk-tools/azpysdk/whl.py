@@ -13,11 +13,14 @@ from ci_tools.parsing import ParsedSetup
 from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.logging import logger
 
+
 class whl(Check):
     def __init__(self) -> None:
         super().__init__()
 
-    def register(self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None) -> None:
+    def register(
+        self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
+    ) -> None:
         """Register the `whl` check. The `whl` check installs the wheel version of the target package + its dev_requirements.txt,
         then invokes pytest. Failures indicate a test issue.
         """
@@ -53,14 +56,15 @@ class whl(Check):
                 force_create=False,
                 package_type="wheel",
                 pre_download_disabled=False,
-                python_executable=executable
+                python_executable=executable,
             )
 
             # TODO: split sys.argv[1:] on -- and pass in everything after the -- as additional arguments
             # TODO: handle mark_args
             logger.info(f"Invoke pytest for {pkg}")
             exit_code = run(
-                [executable, "-m", "pytest", "."] + [
+                [executable, "-m", "pytest", "."]
+                + [
                     "-rsfE",
                     f"--junitxml={pkg}/test-junit-{args.command}.xml",
                     "--verbose",
@@ -70,9 +74,9 @@ class whl(Check):
                     "--ignore-glob=.venv*",
                     "--ignore=build",
                     "--ignore=.eggs",
-                    "--ignore=samples"
-                ]
-                , cwd=pkg
+                    "--ignore=samples",
+                ],
+                cwd=pkg,
             ).returncode
 
             if exit_code != 0:
