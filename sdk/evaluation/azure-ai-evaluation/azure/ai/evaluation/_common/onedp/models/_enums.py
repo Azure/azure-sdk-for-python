@@ -73,35 +73,6 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     attack objective."""
 
 
-class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A description of the intended purpose of a message within a chat completions interaction."""
-
-    SYSTEM = "system"
-    """The role that instructs or sets the behavior of the assistant."""
-    DEVELOPER = "developer"
-    """The role that provides instructions to the model prioritized ahead of user messages."""
-    USER = "user"
-    """The role that provides input for chat completions."""
-    ASSISTANT = "assistant"
-    """The role that provides responses to system-instructed, user-prompted input."""
-    TOOL = "tool"
-    """The role that represents extension tool activity within a chat completions operation."""
-
-
-class CompletionsFinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Representation of the manner in which a completions response concluded."""
-
-    STOPPED = "stop"
-    """Completions ended normally and reached its end of token generation."""
-    TOKEN_LIMIT_REACHED = "length"
-    """Completions exhausted available token limits before generation could complete."""
-    CONTENT_FILTERED = "content_filter"
-    """Completions generated a response that was identified as potentially sensitive per content
-    moderation policies."""
-    TOOL_CALLS = "tool_calls"
-    """Completion ended with the model calling a provided tool for output."""
-
-
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
@@ -156,6 +127,13 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment"""
 
 
+class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed types of evaluation targets."""
+
+    MODEL_RESPONSE_GENERATION = "modelResponseGeneration"
+    """Evaluation target that uses a model for response generation."""
+
+
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IndexType."""
 
@@ -167,37 +145,13 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search"""
 
 
-class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List View Type Definition."""
-
-    ACTIVE_ONLY = "ActiveOnly"
-    """List only active items."""
-    ARCHIVED_ONLY = "ArchivedOnly"
-    """List only archived items."""
-    ALL = "All"
-    """List all items."""
-
-
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of pending upload."""
 
     NONE = "None"
     """No pending upload."""
-    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
-    """Temporary Blob Reference is the only supported type."""
-
-
-class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Evaluation result."""
-
-    BENCHMARK = "Benchmark"
-    """Benchmark result"""
-    EVALUATION = "Evaluation"
-    """Evaluations Result"""
-    REDTEAM = "Redteam"
-    """Red Team Result"""
-    SIMULATION = "Simulation"
-    """Simulation Result"""
+    BLOB_REFERENCE = "BlobReference"
+    """Blob Reference is the only supported type."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -211,20 +165,3 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content of a sexual nature."""
     SELF_HARM = "SelfHarm"
     """Represents content related to self-harm."""
-    PROTECTED_MATERIAL = "ProtectedMaterial"
-    """Represents content involving protected material."""
-    CODE_VULNERABILITY = "CodeVulnerability"
-    """Represents content related to code vulnerabilities."""
-    UNGROUNDED_ATTRIBUTES = "UngroundedAttributes"
-    """Represents content with ungrounded attributes."""
-
-
-class SimulationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Simulation type."""
-
-    DEFAULT = "Default"
-    """Default simulation type."""
-    CUSTOM_PERSONA = "CustomPersona"
-    """Custom persona simulation type."""
-    HARM_TURN_GENERATOR = "HarmTurnGenerator"
-    """Harm turn generator simulation type."""
