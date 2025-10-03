@@ -3331,7 +3331,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return __GetBodiesFromQueryResult(result), last_response_headers
 
     def _GetQueryPlanThroughGateway(self, query: str, resource_link: str,
-                                    excluded_locations: Optional[list[str]] = None,
+                                    excluded_locations: Optional[Sequence[str]] = None,
                                     **kwargs: Any) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +

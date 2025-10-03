@@ -3356,7 +3356,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self._set_container_properties_cache(container_link, _build_properties_cache(container, container_link))
 
     async def _GetQueryPlanThroughGateway(self, query: str, resource_link: str,
-                                          excluded_locations: Optional[str] = None,
+                                          excluded_locations: Optional[Sequence[str]] = None,
                                           **kwargs) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +
