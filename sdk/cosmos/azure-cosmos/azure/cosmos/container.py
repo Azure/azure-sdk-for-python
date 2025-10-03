@@ -248,7 +248,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This excluded_location will override existing excluded_locations in client level.
         :returns: A CosmosDict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
-        :rtype: ~azure.cosmos.Cosmosdict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
 
         .. admonition:: Example:
 
@@ -1000,7 +1000,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         :type semantic_reranking_options: Optional[dict[str, Any]]
         :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
-        :rtype: ~azure.cosmos.Cosmosdict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
         """
 
@@ -1074,7 +1074,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             given id does not exist.
         :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
             is specified.
-        :rtype: ~azure.cosmos.Cosmosdict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         item_link = self._get_document_link(item)
         if pre_trigger_include is not None:
@@ -1168,7 +1168,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
         :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
-        :rtype: ~azure.cosmos.Cosmosdict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
@@ -1263,7 +1263,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This excluded_location will override existing excluded_locations in client level.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
-        :rtype: ~azure.cosmos.Cosmosdict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         etag = kwargs.get('etag')
         if etag is not None:
@@ -1374,7 +1374,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             given id does not exist.
         :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty
             if `no_response` is specified.
-        :rtype: ~azure.cosmos.Cosmosdict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         if pre_trigger_include is not None:
             kwargs['pre_trigger_include'] = pre_trigger_include
