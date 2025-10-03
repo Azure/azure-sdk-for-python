@@ -1421,7 +1421,7 @@ class ContainerProxy:
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], CosmosDict], None]
+        :paramtype response_hook: Callable[[Dict[str, str], List[CosmosDict]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
@@ -1444,7 +1444,7 @@ class ContainerProxy:
                                                          offer=throughput_properties[0], **kwargs)
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
+            response_hook(self.client_connection.last_response_headers, list(data))
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
