@@ -743,7 +743,7 @@
 # ServiceOwners:          @sunilagarwal @lfittl-msft @sr-msft @niklarin
 
 # ServiceLabel: %Redis Cache %Service Attention
-# ServiceOwners:          @yegu-ms
+# ServiceOwners:                                                   @yegu-ms @ArthurMa1978 @m-nash
 
 # ServiceLabel: %Reservations %Service Attention
 # ServiceOwners:          @Rkapso
