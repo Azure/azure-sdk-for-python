@@ -24,7 +24,7 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
 from datetime import datetime
-from typing import (Any, AsyncIterable, Callable, cast, Dict, List, Mapping, Optional, overload, Sequence, Tuple, Type,
+from typing import (Any, AsyncIterable, Callable, cast, Dict, List, Mapping, Optional, overload, Sequence, Tuple,
                     Union)
 from typing_extensions import Literal
 
@@ -56,8 +56,6 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
 # cspell:ignore rerank reranker reranking
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:

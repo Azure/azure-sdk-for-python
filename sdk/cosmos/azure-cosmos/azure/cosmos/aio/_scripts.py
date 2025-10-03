@@ -24,7 +24,7 @@
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence, TYPE_CHECKING
+from typing import Any, Dict, List, Mapping, Union, Optional, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -33,14 +33,10 @@ from azure.core.tracing.decorator import distributed_trace
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
 from ..scripts import ScriptType
-from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
+from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key, PartitionKeyType
 
 if TYPE_CHECKING:
     from ._container import ContainerProxy
-
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
 
 class ScriptsProxy:
     """An interface to interact with stored procedures.
