@@ -533,38 +533,7 @@ class LegendConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No legend."""
 
 
-class LinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """MIME types for links."""
-
-    IMAGE_TIFF_APPLICATION_GEOTIFF = "image/tiff; application=geotiff"
-    """Represents an image/tiff with application=geotiff."""
-    IMAGE_JP2 = "image/jp2"
-    """Represents an image/jp2."""
-    IMAGE_PNG = "image/png"
-    """Represents an image/png."""
-    IMAGE_JPEG = "image/jpeg"
-    """Represents an image/jpeg."""
-    IMAGE_JPG = "image/jpg"
-    """Represents an image/jpg."""
-    IMAGE_WEBP = "image/webp"
-    """Represents an image/webp."""
-    APPLICATION_X_BINARY = "application/x-binary"
-    """Represents an application/x-binary."""
-    APPLICATION_XML = "application/xml"
-    """Represents an application/xml."""
-    APPLICATION_JSON = "application/json"
-    """Represents an application/json."""
-    APPLICATION_GEO_JSON = "application/geo+json"
-    """Represents an application/geo+json."""
-    TEXT_HTML = "text/html"
-    """Represents a text/html."""
-    TEXT_PLAIN = "text/plain"
-    """Represents a text/plain."""
-    APPLICATION_X_PROTOBUF = "application/x-protobuf"
-    """Represents an application/x-protobuf."""
-
-
-class MetadataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class MosaicMetadataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of metadata resource in the system."""
 
     MOSAIC = "mosaic"
@@ -691,6 +660,37 @@ class StacItemCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Standard GeoJSON FeatureCollection type."""
 
 
+class StacLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MIME types for links."""
+
+    IMAGE_TIFF_APPLICATION_GEOTIFF = "image/tiff; application=geotiff"
+    """Represents an image/tiff with application=geotiff."""
+    IMAGE_JP2 = "image/jp2"
+    """Represents an image/jp2."""
+    IMAGE_PNG = "image/png"
+    """Represents an image/png."""
+    IMAGE_JPEG = "image/jpeg"
+    """Represents an image/jpeg."""
+    IMAGE_JPG = "image/jpg"
+    """Represents an image/jpg."""
+    IMAGE_WEBP = "image/webp"
+    """Represents an image/webp."""
+    APPLICATION_X_BINARY = "application/x-binary"
+    """Represents an application/x-binary."""
+    APPLICATION_XML = "application/xml"
+    """Represents an application/xml."""
+    APPLICATION_JSON = "application/json"
+    """Represents an application/json."""
+    APPLICATION_GEO_JSON = "application/geo+json"
+    """Represents an application/geo+json."""
+    TEXT_HTML = "text/html"
+    """Represents a text/html."""
+    TEXT_PLAIN = "text/plain"
+    """Represents a text/plain."""
+    APPLICATION_X_PROTOBUF = "application/x-protobuf"
+    """Represents an application/x-protobuf."""
+
+
 class StacModelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum discriminator for STAC item and collection types."""
 
@@ -722,7 +722,7 @@ class StacQueryableDefinitionDataType(str, Enum, metaclass=CaseInsensitiveEnumMe
     Example (JSON): { "date": "1969-07-20" }"""
 
 
-class StacQueryResultsSortingDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class StacSearchSortingDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the sorting directions for query results in STAC API."""
 
     ASC = "asc"

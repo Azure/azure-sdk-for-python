@@ -381,8 +381,8 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
         response = client.tiler.get_point(
             collection_id="str",
             item_id="str",
-            lon=0.0,
-            lat=0.0,
+            longitude=0.0,
+            latitude=0.0,
         )
 
         # please add some check logic here by yourself
@@ -537,12 +537,12 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_get_assets_for_point(self, planetarycomputer_endpoint):
+    def test_tiler_get_mosaics_assets_for_point(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_assets_for_point(
+        response = client.tiler.get_mosaics_assets_for_point(
             search_id="str",
-            lon=0.0,
-            lat=0.0,
+            longitude=0.0,
+            latitude=0.0,
         )
 
         # please add some check logic here by yourself

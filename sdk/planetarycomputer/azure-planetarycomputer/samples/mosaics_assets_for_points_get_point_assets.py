@@ -29,10 +29,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.get_assets_for_point(
+    response = client.tiler.get_mosaics_assets_for_point(
         search_id="e32e0b12176246816953d75e3356d613",
-        lon=-122.3321,
-        lat=47.6062,
+        longitude=-122.3321,
+        latitude=47.6062,
     )
     print(response)
 

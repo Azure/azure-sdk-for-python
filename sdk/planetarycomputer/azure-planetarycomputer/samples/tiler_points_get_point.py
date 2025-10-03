@@ -32,8 +32,8 @@ def main():
     response = client.tiler.get_point(
         collection_id="{{collectionId}}",
         item_id="{{itemId}}",
-        lon=-65.75381224878205,
-        lat=18.252615371961497,
+        longitude=-65.75381224878205,
+        latitude=18.252615371961497,
     )
     print(response)
 

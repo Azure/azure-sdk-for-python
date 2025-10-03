@@ -1651,7 +1651,7 @@ def build_tiler_crop_geo_json_request(
     algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
     algorithm_params: Optional[str] = None,
     color_formula: Optional[str] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
@@ -1699,8 +1699,8 @@ def build_tiler_crop_geo_json_request(
         _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
     if color_formula is not None:
         _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
         _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
     if max_size is not None:
@@ -1743,7 +1743,7 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
     algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
     algorithm_params: Optional[str] = None,
     color_formula: Optional[str] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     rescale: Optional[list[str]] = None,
@@ -1791,8 +1791,8 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
         _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
     if color_formula is not None:
         _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
         _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
     if max_size is not None:
@@ -1825,7 +1825,7 @@ def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-lo
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     categorical: Optional[bool] = None,
@@ -1865,8 +1865,8 @@ def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-lo
         _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
     if unscale is not None:
         _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
         _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
     if max_size is not None:
@@ -1967,7 +1967,7 @@ def build_tiler_get_part_request(
     algorithm_params: Optional[str] = None,
     color_formula: Optional[str] = None,
     dst_crs: Optional[str] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     height: Optional[int] = None,
@@ -2020,8 +2020,8 @@ def build_tiler_get_part_request(
         _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
     if dst_crs is not None:
         _params["dst-crs"] = _SERIALIZER.query("dst_crs", dst_crs, "str")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
         _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
     if max_size is not None:
@@ -2067,7 +2067,7 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     algorithm_params: Optional[str] = None,
     color_formula: Optional[str] = None,
     dst_crs: Optional[str] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     max_size: Optional[int] = None,
     rescale: Optional[list[str]] = None,
@@ -2120,8 +2120,8 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
         _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
     if dst_crs is not None:
         _params["dst-crs"] = _SERIALIZER.query("dst_crs", dst_crs, "str")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
         _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
     if max_size is not None:
@@ -2145,8 +2145,8 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
 def build_tiler_get_point_request(
     collection_id: str,
     item_id: str,
-    lon: float,
-    lat: float,
+    longitude: float,
+    latitude: float,
     *,
     assets: Optional[list[str]] = None,
     expression: Optional[str] = None,
@@ -2154,7 +2154,7 @@ def build_tiler_get_point_request(
     asset_as_band: Optional[bool] = None,
     no_data: Optional[float] = None,
     unscale: Optional[bool] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
@@ -2165,12 +2165,12 @@ def build_tiler_get_point_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/data/collections/{collectionId}/items/{itemId}/point/{lon},{lat}"
+    _url = "/data/collections/{collectionId}/items/{itemId}/point/{longitude},{latitude}"
     path_format_arguments = {
         "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
         "itemId": _SERIALIZER.url("item_id", item_id, "str"),
-        "lon": _SERIALIZER.url("lon", lon, "float"),
-        "lat": _SERIALIZER.url("lat", lat, "float"),
+        "longitude": _SERIALIZER.url("longitude", longitude, "float"),
+        "latitude": _SERIALIZER.url("latitude", latitude, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2189,8 +2189,8 @@ def build_tiler_get_point_request(
         _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
     if unscale is not None:
         _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
     if resampling is not None:
         _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
 
@@ -2868,17 +2868,17 @@ def build_tiler_get_legend_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_assets_for_point_request(
+def build_tiler_get_mosaics_assets_for_point_request(  # pylint: disable=name-too-long
     search_id: str,
-    lon: float,
-    lat: float,
+    longitude: float,
+    latitude: float,
     *,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
     exit_when_full: Optional[bool] = None,
     skip_covered: Optional[bool] = None,
-    coord_crs: Optional[str] = None,
+    coordinate_reference_system: Optional[str] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2888,11 +2888,11 @@ def build_tiler_get_assets_for_point_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/data/mosaic/{searchId}/{lon},{lat}/assets"
+    _url = "/data/mosaic/{searchId}/{longitude},{latitude}/assets"
     path_format_arguments = {
         "searchId": _SERIALIZER.url("search_id", search_id, "str"),
-        "lon": _SERIALIZER.url("lon", lon, "float"),
-        "lat": _SERIALIZER.url("lat", lat, "float"),
+        "longitude": _SERIALIZER.url("longitude", longitude, "float"),
+        "latitude": _SERIALIZER.url("latitude", latitude, "float"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2909,8 +2909,8 @@ def build_tiler_get_assets_for_point_request(
         _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
     if skip_covered is not None:
         _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
-    if coord_crs is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coord_crs", coord_crs, "str")
+    if coordinate_reference_system is not None:
+        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -5416,8 +5416,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def add_mosaic(
-        self, collection_id: str, body: _models.Mosaic, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Mosaic:
+        self, collection_id: str, body: _models.StacMosaic, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.StacMosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
@@ -5425,19 +5425,19 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
         :param body: Mosaic definition to be created or updated. Required.
-        :type body: ~azure.planetarycomputer.models.Mosaic
+        :type body: ~azure.planetarycomputer.models.StacMosaic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def add_mosaic(
         self, collection_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Mosaic:
+    ) -> _models.StacMosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
@@ -5449,15 +5449,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def add_mosaic(
         self, collection_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Mosaic:
+    ) -> _models.StacMosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
@@ -5469,26 +5469,26 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def add_mosaic(
-        self, collection_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Mosaic:
+        self, collection_id: str, body: Union[_models.StacMosaic, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.StacMosaic:
         """Add Collection Mosaic.
 
         Add a mosaic definition to a given collection.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
-        :param body: Mosaic definition to be created or updated. Is one of the following types: Mosaic,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.Mosaic or JSON or IO[bytes]
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :param body: Mosaic definition to be created or updated. Is one of the following types:
+         StacMosaic, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacMosaic or JSON or IO[bytes]
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5503,7 +5503,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacMosaic] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -5544,7 +5544,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Mosaic, response.json())
+            deserialized = _deserialize(_models.StacMosaic, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5556,11 +5556,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         mosaic_id: str,
-        body: _models.Mosaic,
+        body: _models.StacMosaic,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.Mosaic:
+    ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
@@ -5570,19 +5570,19 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
         :param body: Mosaic definition to be created or updated. Required.
-        :type body: ~azure.planetarycomputer.models.Mosaic
+        :type body: ~azure.planetarycomputer.models.StacMosaic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_or_replace_mosaic(
         self, collection_id: str, mosaic_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Mosaic:
+    ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
@@ -5596,8 +5596,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -5610,7 +5610,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.Mosaic:
+    ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
@@ -5624,15 +5624,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_or_replace_mosaic(
-        self, collection_id: str, mosaic_id: str, body: Union[_models.Mosaic, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Mosaic:
+        self, collection_id: str, mosaic_id: str, body: Union[_models.StacMosaic, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
         Update a mosaic definition from a given collection.
@@ -5641,11 +5641,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
-        :param body: Mosaic definition to be created or updated. Is one of the following types: Mosaic,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.Mosaic or JSON or IO[bytes]
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :param body: Mosaic definition to be created or updated. Is one of the following types:
+         StacMosaic, JSON, IO[bytes] Required.
+        :type body: ~azure.planetarycomputer.models.StacMosaic or JSON or IO[bytes]
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5660,7 +5660,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacMosaic] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -5702,7 +5702,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Mosaic, response.json())
+            deserialized = _deserialize(_models.StacMosaic, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5765,7 +5765,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_mosaic(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> _models.Mosaic:
+    def get_mosaic(self, collection_id: str, mosaic_id: str, **kwargs: Any) -> _models.StacMosaic:
         """Get Collection Mosaic.
 
         Get a mosaic definition from a given collection.
@@ -5774,8 +5774,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param mosaic_id: Unique identifier for the mosaic configuration. Required.
         :type mosaic_id: str
-        :return: Mosaic. The Mosaic is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.Mosaic
+        :return: StacMosaic. The StacMosaic is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacMosaic
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5789,7 +5789,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Mosaic] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacMosaic] = kwargs.pop("cls", None)
 
         _request = build_stac_get_mosaic_request(
             collection_id=collection_id,
@@ -5822,7 +5822,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Mosaic, response.json())
+            deserialized = _deserialize(_models.StacMosaic, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5830,15 +5830,15 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_mosaics(self, collection_id: str, **kwargs: Any) -> list[_models.Mosaic]:
+    def list_mosaics(self, collection_id: str, **kwargs: Any) -> list[_models.StacMosaic]:
         """Get Collection Mosaics.
 
         Get the mosaic definitions for a given collection.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
-        :return: list of Mosaic
-        :rtype: list[~azure.planetarycomputer.models.Mosaic]
+        :return: list of StacMosaic
+        :rtype: list[~azure.planetarycomputer.models.StacMosaic]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5852,7 +5852,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Mosaic]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.StacMosaic]] = kwargs.pop("cls", None)
 
         _request = build_stac_list_mosaics_request(
             collection_id=collection_id,
@@ -5884,7 +5884,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.Mosaic], response.json())
+            deserialized = _deserialize(list[_models.StacMosaic], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6433,7 +6433,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
         duration_in_minutes: Optional[int] = None,
         **kwargs: Any,
-    ) -> _models.FeatureCollections:
+    ) -> _models.StacCatalogCollections:
         """Get Collections.
 
         Endpoint.
@@ -6443,8 +6443,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
         :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
         :paramtype duration_in_minutes: int
-        :return: FeatureCollections. The FeatureCollections is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.FeatureCollections
+        :return: StacCatalogCollections. The StacCatalogCollections is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacCatalogCollections
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6458,7 +6458,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.FeatureCollections] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacCatalogCollections] = kwargs.pop("cls", None)
 
         _request = build_stac_list_collections_request(
             sign=sign,
@@ -6491,7 +6491,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.FeatureCollections, response.json())
+            deserialized = _deserialize(_models.StacCatalogCollections, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6739,7 +6739,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -7508,13 +7508,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_conformance_class(self, **kwargs: Any) -> _models.ConformanceClasses:
+    def get_conformance_class(self, **kwargs: Any) -> _models.StacConformanceClasses:
         """Conformance Classes.
 
         Endpoint.
 
-        :return: ConformanceClasses. The ConformanceClasses is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ConformanceClasses
+        :return: StacConformanceClasses. The StacConformanceClasses is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacConformanceClasses
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7528,7 +7528,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ConformanceClasses] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacConformanceClasses] = kwargs.pop("cls", None)
 
         _request = build_stac_get_conformance_class_request(
             api_version=self._config.api_version,
@@ -7559,7 +7559,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ConformanceClasses, response.json())
+            deserialized = _deserialize(_models.StacConformanceClasses, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8507,13 +8507,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_stac_landing_page(self, **kwargs: Any) -> _models.LandingPage:
+    def get_stac_landing_page(self, **kwargs: Any) -> _models.StacLandingPage:
         """Landing Page.
 
         Endpoint.
 
-        :return: LandingPage. The LandingPage is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.LandingPage
+        :return: StacLandingPage. The StacLandingPage is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacLandingPage
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8527,7 +8527,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.LandingPage] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacLandingPage] = kwargs.pop("cls", None)
 
         _request = build_stac_get_stac_landing_page_request(
             api_version=self._config.api_version,
@@ -8558,7 +8558,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.LandingPage, response.json())
+            deserialized = _deserialize(_models.StacLandingPage, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9037,14 +9037,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def search(
-        self, body: _models.SearchOptions, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _models.StacSearchParameters, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.StacItemCollection:
         """Search.
 
         Endpoint.
 
         :param body: Request body. Required.
-        :type body: ~azure.planetarycomputer.models.SearchOptions
+        :type body: ~azure.planetarycomputer.models.StacSearchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9090,14 +9090,16 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def search(self, body: Union[_models.SearchOptions, JSON, IO[bytes]], **kwargs: Any) -> _models.StacItemCollection:
+    def search(
+        self, body: Union[_models.StacSearchParameters, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.StacItemCollection:
         """Search.
 
         Endpoint.
 
-        :param body: Request body. Is one of the following types: SearchOptions, JSON, IO[bytes]
+        :param body: Request body. Is one of the following types: StacSearchParameters, JSON, IO[bytes]
          Required.
-        :type body: ~azure.planetarycomputer.models.SearchOptions or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.StacSearchParameters or JSON or IO[bytes]
         :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9320,7 +9322,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.AssetStatisticsResponse:
+    ) -> _models.StacAssetStatistics:
         """Asset Statistics.
 
         Per Asset statistics.
@@ -9379,8 +9381,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: AssetStatisticsResponse. The AssetStatisticsResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.AssetStatisticsResponse
+        :return: StacAssetStatistics. The StacAssetStatistics is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacAssetStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9394,7 +9396,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AssetStatisticsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacAssetStatistics] = kwargs.pop("cls", None)
 
         _request = build_tiler_list_asset_statistics_request(
             collection_id=collection_id,
@@ -9440,7 +9442,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AssetStatisticsResponse, response.json())
+            deserialized = _deserialize(_models.StacAssetStatistics, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9513,7 +9515,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_bounds(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.BoundsResponse:
+    def list_bounds(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StacItemBounds:
         """Bounds.
 
         Return all Bounds.
@@ -9522,8 +9524,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :return: BoundsResponse. The BoundsResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.BoundsResponse
+        :return: StacItemBounds. The StacItemBounds is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemBounds
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9537,7 +9539,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BoundsResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacItemBounds] = kwargs.pop("cls", None)
 
         _request = build_tiler_list_bounds_request(
             collection_id=collection_id,
@@ -9570,7 +9572,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.BoundsResponse, response.json())
+            deserialized = _deserialize(_models.StacItemBounds, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9594,7 +9596,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
@@ -9640,9 +9642,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -9717,7 +9719,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
@@ -9763,9 +9765,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -9840,7 +9842,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
@@ -9886,9 +9888,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -9963,7 +9965,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
@@ -10009,9 +10011,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10099,7 +10101,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             algorithm=algorithm,
             algorithm_params=algorithm_params,
             color_formula=color_formula,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             max_size=max_size,
             height=height,
@@ -10170,7 +10172,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
@@ -10217,9 +10219,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10292,7 +10294,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
@@ -10339,9 +10341,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10414,7 +10416,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
@@ -10461,9 +10463,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10536,7 +10538,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
@@ -10583,9 +10585,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
          <https://github.com/mapbox/rio-color>`_). Default value is None.
         :paramtype color_formula: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10671,7 +10673,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             algorithm=algorithm,
             algorithm_params=algorithm_params,
             color_formula=color_formula,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             max_size=max_size,
             rescale=rescale,
@@ -10734,7 +10736,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
@@ -10744,7 +10746,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -10768,9 +10770,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10811,9 +10813,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsStacItemCollectionResponse. The
-         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
+        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -10830,7 +10832,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
@@ -10840,7 +10842,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -10864,9 +10866,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -10907,9 +10909,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsStacItemCollectionResponse. The
-         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
+        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -10926,7 +10928,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
@@ -10936,7 +10938,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -10960,9 +10962,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -11003,9 +11005,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsStacItemCollectionResponse. The
-         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
+        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -11022,7 +11024,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         categorical: Optional[bool] = None,
@@ -11031,7 +11033,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any,
-    ) -> _models.GeoJsonStatisticsStacItemCollectionResponse:
+    ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
         Get Statistics from a geojson feature or featureCollection.
@@ -11056,9 +11058,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -11096,9 +11098,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: GeoJsonStatisticsStacItemCollectionResponse. The
-         GeoJsonStatisticsStacItemCollectionResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsStacItemCollectionResponse
+        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
+         compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -11113,7 +11115,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.GeoJsonStatisticsStacItemCollectionResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GeoJsonStatisticsForStacItemCollection] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -11131,7 +11133,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             asset_as_band=asset_as_band,
             no_data=no_data,
             unscale=unscale,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             max_size=max_size,
             categorical=categorical,
@@ -11169,7 +11171,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.GeoJsonStatisticsStacItemCollectionResponse, response.json())
+            deserialized = _deserialize(_models.GeoJsonStatisticsForStacItemCollection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11337,7 +11339,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
         dst_crs: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         height: Optional[int] = None,
@@ -11389,9 +11391,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype color_formula: str
         :keyword dst_crs: Output Coordinate Reference System. Default value is None.
         :paramtype dst_crs: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -11476,7 +11478,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             algorithm_params=algorithm_params,
             color_formula=color_formula,
             dst_crs=dst_crs,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             max_size=max_size,
             height=height,
@@ -11549,7 +11551,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         algorithm_params: Optional[str] = None,
         color_formula: Optional[str] = None,
         dst_crs: Optional[str] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         max_size: Optional[int] = None,
         rescale: Optional[list[str]] = None,
@@ -11603,9 +11605,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype color_formula: str
         :keyword dst_crs: Output Coordinate Reference System. Default value is None.
         :paramtype dst_crs: str
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -11688,7 +11690,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             algorithm_params=algorithm_params,
             color_formula=color_formula,
             dst_crs=dst_crs,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             max_size=max_size,
             rescale=rescale,
@@ -11741,8 +11743,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        lon: float,
-        lat: float,
+        longitude: float,
+        latitude: float,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -11750,7 +11752,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         asset_as_band: Optional[bool] = None,
         no_data: Optional[float] = None,
         unscale: Optional[bool] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
         **kwargs: Any,
     ) -> _models.TilerCoreModelsResponsesPoint:
@@ -11762,10 +11764,10 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param lon: Longitude. Required.
-        :type lon: float
-        :param lat: Latitude. Required.
-        :type lat: float
+        :param longitude: Longitude. Required.
+        :type longitude: float
+        :param latitude: Latitude. Required.
+        :type latitude: float
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -11779,9 +11781,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype no_data: float
         :keyword unscale: Apply internal Scale or Offset. Default value is None.
         :paramtype unscale: bool
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
         :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
@@ -11806,15 +11808,15 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _request = build_tiler_get_point_request(
             collection_id=collection_id,
             item_id=item_id,
-            lon=lon,
-            lat=lat,
+            longitude=longitude,
+            latitude=latitude,
             assets=assets,
             expression=expression,
             asset_band_indices=asset_band_indices,
             asset_as_band=asset_as_band,
             no_data=no_data,
             unscale=unscale,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             resampling=resampling,
             api_version=self._config.api_version,
             headers=_headers,
@@ -12606,7 +12608,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
-    ) -> _models.TileJsonResponse:
+    ) -> _models.TileJsonMetaData:
         """TileJson Tilematrixsetid As Path.
 
         Return the TileJson Tilematrixsetid As a path.
@@ -12697,8 +12699,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
+        :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -12712,7 +12714,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TileJsonMetaData] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_tile_json_request(
             collection_id=collection_id,
@@ -12765,7 +12767,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+            deserialized = _deserialize(_models.TileJsonMetaData, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13429,30 +13431,30 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_assets_for_point(
+    def get_mosaics_assets_for_point(
         self,
         search_id: str,
-        lon: float,
-        lat: float,
+        longitude: float,
+        latitude: float,
         *,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
-        coord_crs: Optional[str] = None,
+        coordinate_reference_system: Optional[str] = None,
         **kwargs: Any,
-    ) -> list[_models.Asset]:
+    ) -> list[_models.StacAsset]:
         """Assets For Point.
 
         Return a list of assets for a given point.
 
         :param search_id: Search Id (pgSTAC Search Hash). Required.
         :type search_id: str
-        :param lon: Longitude. Required.
-        :type lon: float
-        :param lat: Latitude. Required.
-        :type lat: float
+        :param longitude: Longitude. Required.
+        :type longitude: float
+        :param latitude: Latitude. Required.
+        :type latitude: float
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -13469,11 +13471,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          (defaults
          to True in PgSTAC). Default value is None.
         :paramtype skip_covered: bool
-        :keyword coord_crs: Coordinate Reference System of the input coords. Default to ``epsg:4326``.
-         Default value is None.
-        :paramtype coord_crs: str
-        :return: list of Asset
-        :rtype: list[~azure.planetarycomputer.models.Asset]
+        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
+         to ``epsg:4326``. Default value is None.
+        :paramtype coordinate_reference_system: str
+        :return: list of StacAsset
+        :rtype: list[~azure.planetarycomputer.models.StacAsset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13487,18 +13489,18 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Asset]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.StacAsset]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_assets_for_point_request(
+        _request = build_tiler_get_mosaics_assets_for_point_request(
             search_id=search_id,
-            lon=lon,
-            lat=lat,
+            longitude=longitude,
+            latitude=latitude,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
             exit_when_full=exit_when_full,
             skip_covered=skip_covered,
-            coord_crs=coord_crs,
+            coordinate_reference_system=coordinate_reference_system,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -13527,7 +13529,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(list[_models.Asset], response.json())
+            deserialized = _deserialize(list[_models.StacAsset], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13723,7 +13725,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sort_by: Optional[list[_models.SortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
-        metadata: Optional[_models.Metadata] = None,
+        metadata: Optional[_models.MosaicMetadata] = None,
         **kwargs: Any,
     ) -> _models.TilerMosaicSearchRegistrationResponse:
         """Register Search.
@@ -13756,7 +13758,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "cql-json", "cql2-json", and "cql2-text". Default value is None.
         :paramtype filter_language: str or ~azure.planetarycomputer.models.FilterLanguage
         :keyword metadata: Additional metadata to associate with the mosaic. Default value is None.
-        :paramtype metadata: ~azure.planetarycomputer.models.Metadata
+        :paramtype metadata: ~azure.planetarycomputer.models.MosaicMetadata
         :return: TilerMosaicSearchRegistrationResponse. The TilerMosaicSearchRegistrationResponse is
          compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TilerMosaicSearchRegistrationResponse
@@ -13815,7 +13817,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         datetime: Optional[str] = None,
         sort_by: Optional[list[_models.SortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
-        metadata: Optional[_models.Metadata] = None,
+        metadata: Optional[_models.MosaicMetadata] = None,
         **kwargs: Any,
     ) -> _models.TilerMosaicSearchRegistrationResponse:
         """Register Search.
@@ -13847,7 +13849,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "cql-json", "cql2-json", and "cql2-text". Default value is None.
         :paramtype filter_language: str or ~azure.planetarycomputer.models.FilterLanguage
         :keyword metadata: Additional metadata to associate with the mosaic. Default value is None.
-        :paramtype metadata: ~azure.planetarycomputer.models.Metadata
+        :paramtype metadata: ~azure.planetarycomputer.models.MosaicMetadata
         :return: TilerMosaicSearchRegistrationResponse. The TilerMosaicSearchRegistrationResponse is
          compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TilerMosaicSearchRegistrationResponse
@@ -14194,7 +14196,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         color_map: Optional[str] = None,
         return_mask: Optional[bool] = None,
         **kwargs: Any,
-    ) -> _models.TileJsonResponse:
+    ) -> _models.TileJsonMetaData:
         """TileJson Tilematrixsetid As Path.
 
         Return TileJSON document for a searchId.
@@ -14304,8 +14306,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :paramtype color_map: str
         :keyword return_mask: Add mask to the output data. Default value is None.
         :paramtype return_mask: bool
-        :return: TileJsonResponse. The TileJsonResponse is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.TileJsonResponse
+        :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14319,7 +14321,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TileJsonResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TileJsonMetaData] = kwargs.pop("cls", None)
 
         _request = build_tiler_get_mosaics_tile_json_with_matrix_set_request(
             search_id=search_id,
@@ -14378,7 +14380,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.TileJsonResponse, response.json())
+            deserialized = _deserialize(_models.TileJsonMetaData, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14831,7 +14833,7 @@ class SharedAccessSignatureOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_sign(self, *, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any) -> _models.UnsignedLink:
+    def get_sign(self, *, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any) -> _models.SignedLink:
         """sign an HREF in the format of a URL and returns a SingedLink.
 
         Signs a HREF (a link URL) by appending a `SAS Token
@@ -14842,8 +14844,8 @@ class SharedAccessSignatureOperations:
         :paramtype href: str
         :keyword duration_in_minutes: Duration. Default value is None.
         :paramtype duration_in_minutes: int
-        :return: UnsignedLink. The UnsignedLink is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.UnsignedLink
+        :return: SignedLink. The SignedLink is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.SignedLink
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14857,7 +14859,7 @@ class SharedAccessSignatureOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UnsignedLink] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SignedLink] = kwargs.pop("cls", None)
 
         _request = build_shared_access_signature_get_sign_request(
             href=href,
@@ -14890,7 +14892,7 @@ class SharedAccessSignatureOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.UnsignedLink, response.json())
+            deserialized = _deserialize(_models.SignedLink, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14900,7 +14902,7 @@ class SharedAccessSignatureOperations:
     @distributed_trace
     def get_token(
         self, collection_id: str, *, duration_in_minutes: Optional[int] = None, **kwargs: Any
-    ) -> _models.ManagedStorageSharedAccessSignatureToken:
+    ) -> _models.SharedAccessSignatureToken:
         """generate a SAS Token for the given Azure Blob storage account and container.
 
         Generate a `SAS Token
@@ -14912,9 +14914,9 @@ class SharedAccessSignatureOperations:
         :type collection_id: str
         :keyword duration_in_minutes: Duration. Default value is None.
         :paramtype duration_in_minutes: int
-        :return: ManagedStorageSharedAccessSignatureToken. The ManagedStorageSharedAccessSignatureToken
-         is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.ManagedStorageSharedAccessSignatureToken
+        :return: SharedAccessSignatureToken. The SharedAccessSignatureToken is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.SharedAccessSignatureToken
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -14928,7 +14930,7 @@ class SharedAccessSignatureOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ManagedStorageSharedAccessSignatureToken] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SharedAccessSignatureToken] = kwargs.pop("cls", None)
 
         _request = build_shared_access_signature_get_token_request(
             collection_id=collection_id,
@@ -14961,7 +14963,7 @@ class SharedAccessSignatureOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ManagedStorageSharedAccessSignatureToken, response.json())
+            deserialized = _deserialize(_models.SharedAccessSignatureToken, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
