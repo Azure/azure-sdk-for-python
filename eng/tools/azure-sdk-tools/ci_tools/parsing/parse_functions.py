@@ -156,7 +156,7 @@ def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
     # Homepage from PEP 566 style
     if pkg_info.home_page:
         metadata["homepage"] = pkg_info.home_page
-    elif pkg_info.project_urls: # If homepage not found, try to extract from project_urls
+    elif pkg_info.project_urls:  # If homepage not found, try to extract from project_urls
         if isinstance(pkg_info.project_urls, (list, tuple)):
             for url_entry in pkg_info.project_urls:
                 if isinstance(url_entry, str) and "," in url_entry:
