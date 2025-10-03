@@ -1658,9 +1658,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
-        
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, data)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
