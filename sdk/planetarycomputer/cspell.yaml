@@ -41,6 +41,7 @@ words:
   - naip  # National Agriculture Imagery Program
   - usgs  # United States Geological Survey
   - viirs # Visible Infrared Imaging Radiometer Suite
+  - mgrs  # Sentinel-2 Military Grid Reference System
 
   # Geographic coordinate systems and projections
   - Antartica  # LINZAntarticaMapTilegrid Tile matrix set

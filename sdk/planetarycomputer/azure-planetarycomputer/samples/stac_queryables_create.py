@@ -9,6 +9,7 @@
 from azure.identity import DefaultAzureCredential
 
 from azure.planetarycomputer import PlanetaryComputerClient
+from azure.planetarycomputer.models import StacQueryable, StacQueryableDefinitionDataType
 
 """
 # PREREQUISITES
@@ -29,14 +30,18 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
+    queryable = StacQueryable(
+        name="eo:cloud_cover",
+        data_type=StacQueryableDefinitionDataType.NUMBER,
+        create_index=False,
+        definition={
+            "data_type": StacQueryableDefinitionDataType.NUMBER,
+        },
+    )
+
     response = client.stac.create_queryables(
         collection_id="36fcb8da-9b15-49e0-b400-0d2e751e2061",
-        body=[
-            {
-                "definition": {"data_type": "number", "description": "Like cloud cover, but with more party tricks"},
-                "name": "eo:clown_cover",
-            }
-        ],
+        body=[queryable],
     )
     print(response)
 
