@@ -191,15 +191,15 @@ class _PartitionHealthTracker(object):
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper
         ) -> List[str]:
-        excluded_locations = []
+        unhealthy_locations = []
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if (partition_health_info.unavailability_info and
                         not (request.healthy_tentative_location and request.healthy_tentative_location == location)):
                     health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
                     if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY) :
-                        excluded_locations.append(location)
-        return excluded_locations
+                        unhealthy_locations.append(location)
+        return unhealthy_locations
 
     def add_failure(
             self,

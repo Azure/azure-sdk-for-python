@@ -78,7 +78,7 @@ from ..partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _build_partition_key_from_properties, _PartitionKeyType
+    _build_partition_key_from_properties, PartitionKeyType
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -2269,7 +2269,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     async def read_items(
             self,
             collection_link: str,
-            items: Sequence[Tuple[str, _PartitionKeyType]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             options: Optional[Mapping[str, Any]] = None,
             **kwargs: Any
      ) -> CosmosList:
@@ -2332,7 +2332,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[_PartitionKeyType] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
