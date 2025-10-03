@@ -1593,7 +1593,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self,
         throughput: Union[int, ThroughputProperties],
         *,
-        response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
+        response_hook: Optional[Callable[[Dict[str, str], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
@@ -1603,7 +1603,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
+        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
