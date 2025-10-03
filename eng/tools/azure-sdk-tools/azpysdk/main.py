@@ -31,34 +31,26 @@ from ci_tools.logging import configure_logging, logger
 __all__ = ["main", "build_parser"]
 __version__ = "0.0.0"
 
+
 def build_parser() -> argparse.ArgumentParser:
     """Create and return the top-level ArgumentParser for the CLI."""
-    parser = argparse.ArgumentParser(
-        prog="azpysdk", description="Azure SDK Python tools (minimal CLI)"
-    )
+    parser = argparse.ArgumentParser(prog="azpysdk", description="Azure SDK Python tools (minimal CLI)")
     parser.add_argument("-V", "--version", action="version", version=__version__)
     # global flag: allow --isolate to appear before the subcommand as well
-    parser.add_argument("--isolate", action="store_true", default=False,
-                        help="If set, run in an isolated virtual environment.")
+    parser.add_argument(
+        "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
+    )
 
     # mutually exclusive logging options
     log_group = parser.add_mutually_exclusive_group()
     log_group.add_argument(
-        "--quiet",
-        action="store_true",
-        default=False,
-        help="Enable quiet mode (only shows ERROR logs)"
+        "--quiet", action="store_true", default=False, help="Enable quiet mode (only shows ERROR logs)"
     )
     log_group.add_argument(
-        "--verbose",
-        action="store_true",
-        default=False,
-        help="Enable verbose mode (shows DEBUG logs)"
+        "--verbose", action="store_true", default=False, help="Enable verbose mode (shows DEBUG logs)"
     )
     log_group.add_argument(
-        "--log-level",
-        choices=["DEBUG", "INFO", "WARN", "ERROR", "FATAL"],
-        help="Set the logging level."
+        "--log-level", choices=["DEBUG", "INFO", "WARN", "ERROR", "FATAL"], help="Set the logging level."
     )
 
     common = argparse.ArgumentParser(add_help=False)
@@ -66,14 +58,11 @@ def build_parser() -> argparse.ArgumentParser:
         "target",
         nargs="?",
         default="**",
-        help="Glob pattern for packages. Defaults to '**', but will match patterns below CWD if a value is provided."
+        help="Glob pattern for packages. Defaults to '**', but will match patterns below CWD if a value is provided.",
     )
     # allow --isolate to be specified after the subcommand as well
     common.add_argument(
-        "--isolate",
-        action="store_true",
-        default=False,
-        help="If set, run in an isolated virtual environment."
+        "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
     )
 
     subparsers = parser.add_subparsers(title="commands", dest="command")
@@ -92,8 +81,9 @@ def build_parser() -> argparse.ArgumentParser:
     next_pyright().register(subparsers, [common])
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
-    
+
     return parser
+
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     """CLI entrypoint.
@@ -122,6 +112,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except Exception as exc:  # pragma: no cover - simple top-level error handling
         logger.error(f"Error: {exc}")
         return 2
+
 
 if __name__ == "__main__":
     raise SystemExit(main())

@@ -5,6 +5,7 @@ import zipfile
 import tarfile
 import stat
 from ast import Not
+from packaging import tags
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from packaging.requirements import Requirement
@@ -198,8 +199,8 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     excluded = set(PATHS_EXCLUDED_FROM_DISCOVERY)
     filtered = []
     for pkg_path in collected_top_level_directories:
-        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, '/')
-        if not any(rel == excl or rel.startswith(excl + '/') for excl in excluded):
+        rel = os.path.relpath(pkg_path, target_root_dir).replace(os.sep, "/")
+        if not any(rel == excl or rel.startswith(excl + "/") for excl in excluded):
             filtered.append(pkg_path)
     collected_top_level_directories = filtered
 
@@ -525,13 +526,11 @@ def get_venv_python(venv_path: str) -> str:
 
     # cross-platform python in a venv
     bin_dir = "Scripts" if os.name == "nt" else "bin"
-    python_exe =  "python.exe" if os.name == "nt" else "python"
+    python_exe = "python.exe" if os.name == "nt" else "python"
     return os.path.join(venv_path, bin_dir, python_exe)
 
 
-def install_into_venv(
-    venv_path_or_executable: str, requirements: List[str], working_directory: str
-) -> None:
+def install_into_venv(venv_path_or_executable: str, requirements: List[str], working_directory: str) -> None:
     """
     Install the requirements into an existing venv (venv_path) without activating it.
 
@@ -612,24 +611,7 @@ def get_interpreter_compatible_tags() -> List[str]:
     This function invokes pip from the invoking interpreter and discovers which tags the interpreter is compatible with.
     """
 
-    commands = [sys.executable, "-m", "pip", "debug", "--verbose"]
-
-    output = subprocess.run(
-        commands,
-        check=True,
-        capture_output=True,
-    ).stdout.decode(encoding="utf-8")
-
-    tag_strings = output.split(os.linesep)
-
-    index = 0
-    for index, value in enumerate(tag_strings):
-        if "Compatible tags" in value:
-            break
-
-    tags = tag_strings[index + 1 :]
-
-    return [tag.strip() for tag in tags if tag]
+    return [str(t) for t in tags.sys_tags()]
 
 
 def check_whl_against_tags(whl_name: str, tags: List[str]) -> bool:
@@ -1050,7 +1032,6 @@ def get_pip_command(python_exe: Optional[str] = None) -> List[str]:
         return ["uv", "pip"]
     else:
         return [python_exe if python_exe else sys.executable, "-m", "pip"]
-
 
 
 def is_error_code_5_allowed(target_pkg: str, pkg_name: str):

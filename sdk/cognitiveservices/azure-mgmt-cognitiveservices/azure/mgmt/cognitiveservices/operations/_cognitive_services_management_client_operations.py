@@ -125,7 +125,7 @@ def build_calculate_model_capacity_request(subscription_id: str, **kwargs: Any) 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class CognitiveServicesManagementClientOperationsMixin(  # pylint: disable=name-too-long
+class _CognitiveServicesManagementClientOperationsMixin(
     ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], CognitiveServicesManagementClientConfiguration]
 ):
 

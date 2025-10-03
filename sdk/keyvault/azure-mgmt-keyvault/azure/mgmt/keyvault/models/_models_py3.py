@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -337,7 +337,7 @@ class DeletedManagedHsmListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.DeletedManagedHsm"]] = None,
+        value: Optional[list["_models.DeletedManagedHsm"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -397,7 +397,7 @@ class DeletedManagedHsmProperties(_serialization.Model):
         self.deletion_date: Optional[datetime.datetime] = None
         self.scheduled_purge_date: Optional[datetime.datetime] = None
         self.purge_protection_enabled: Optional[bool] = None
-        self.tags: Optional[Dict[str, str]] = None
+        self.tags: Optional[dict[str, str]] = None
 
 
 class DeletedVault(_serialization.Model):
@@ -455,7 +455,7 @@ class DeletedVaultListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.DeletedVault"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.DeletedVault"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of deleted vaults.
@@ -512,7 +512,7 @@ class DeletedVaultProperties(_serialization.Model):
         self.location: Optional[str] = None
         self.deletion_date: Optional[datetime.datetime] = None
         self.scheduled_purge_date: Optional[datetime.datetime] = None
-        self.tags: Optional[Dict[str, str]] = None
+        self.tags: Optional[dict[str, str]] = None
         self.purge_protection_enabled: Optional[bool] = None
 
 
@@ -658,7 +658,7 @@ class Resource(_serialization.Model):
         self.name: Optional[str] = None
         self.type: Optional[str] = None
         self.location: Optional[str] = None
-        self.tags: Optional[Dict[str, str]] = None
+        self.tags: Optional[dict[str, str]] = None
 
 
 class Key(Resource):
@@ -734,7 +734,7 @@ class Key(Resource):
         *,
         attributes: Optional["_models.KeyAttributes"] = None,
         kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
-        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
+        key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_size: Optional[int] = None,
         curve_name: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         rotation_policy: Optional["_models.RotationPolicy"] = None,
@@ -867,7 +867,7 @@ class KeyCreateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: "_models.KeyProperties", tags: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, *, properties: "_models.KeyProperties", tags: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: The tags that will be assigned to the key.
@@ -895,7 +895,7 @@ class KeyListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Key"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Key"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The key resources.
@@ -961,7 +961,7 @@ class KeyProperties(_serialization.Model):
         *,
         attributes: Optional["_models.KeyAttributes"] = None,
         kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
-        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
+        key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_size: Optional[int] = None,
         curve_name: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         rotation_policy: Optional["_models.RotationPolicy"] = None,
@@ -1182,7 +1182,7 @@ class ManagedHsmResource(_serialization.Model):
         *,
         location: Optional[str] = None,
         sku: Optional["_models.ManagedHsmSku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         **kwargs: Any
     ) -> None:
@@ -1257,7 +1257,7 @@ class ManagedHsm(ManagedHsmResource):
         *,
         location: Optional[str] = None,
         sku: Optional["_models.ManagedHsmSku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         properties: Optional["_models.ManagedHsmProperties"] = None,
         **kwargs: Any
@@ -1353,7 +1353,7 @@ class ProxyResourceWithoutSystemData(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1433,10 +1433,10 @@ class ManagedHsmKey(ProxyResourceWithoutSystemData):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         attributes: Optional["_models.ManagedHsmKeyAttributes"] = None,
         kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
-        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
+        key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_size: Optional[int] = None,
         curve_name: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         rotation_policy: Optional["_models.ManagedHsmRotationPolicy"] = None,
@@ -1571,7 +1571,7 @@ class ManagedHsmKeyCreateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: "_models.ManagedHsmKeyProperties", tags: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, *, properties: "_models.ManagedHsmKeyProperties", tags: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: The tags that will be assigned to the key.
@@ -1599,7 +1599,7 @@ class ManagedHsmKeyListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ManagedHsmKey"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ManagedHsmKey"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The key resources.
@@ -1665,7 +1665,7 @@ class ManagedHsmKeyProperties(_serialization.Model):
         *,
         attributes: Optional["_models.ManagedHsmKeyAttributes"] = None,
         kty: Optional[Union[str, "_models.JsonWebKeyType"]] = None,
-        key_ops: Optional[List[Union[str, "_models.JsonWebKeyOperation"]]] = None,
+        key_ops: Optional[list[Union[str, "_models.JsonWebKeyOperation"]]] = None,
         key_size: Optional[int] = None,
         curve_name: Optional[Union[str, "_models.JsonWebKeyCurveName"]] = None,
         rotation_policy: Optional["_models.ManagedHsmRotationPolicy"] = None,
@@ -1819,7 +1819,7 @@ class ManagedHsmListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ManagedHsm"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.ManagedHsm"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of managed HSM Pools.
@@ -1919,13 +1919,13 @@ class ManagedHsmProperties(_serialization.Model):
         self,
         *,
         tenant_id: Optional[str] = None,
-        initial_admin_object_ids: Optional[List[str]] = None,
+        initial_admin_object_ids: Optional[list[str]] = None,
         enable_soft_delete: bool = True,
         soft_delete_retention_in_days: int = 90,
         enable_purge_protection: bool = True,
         create_mode: Optional[Union[str, "_models.CreateMode"]] = None,
         network_acls: Optional["_models.MHSMNetworkRuleSet"] = None,
-        regions: Optional[List["_models.MHSMGeoReplicatedRegion"]] = None,
+        regions: Optional[list["_models.MHSMGeoReplicatedRegion"]] = None,
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
         **kwargs: Any
     ) -> None:
@@ -1973,7 +1973,7 @@ class ManagedHsmProperties(_serialization.Model):
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.network_acls = network_acls
         self.regions = regions
-        self.private_endpoint_connections: Optional[List["_models.MHSMPrivateEndpointConnectionItem"]] = None
+        self.private_endpoint_connections: Optional[list["_models.MHSMPrivateEndpointConnectionItem"]] = None
         self.public_network_access = public_network_access
         self.scheduled_purge_date: Optional[datetime.datetime] = None
         self.security_domain_properties: Optional["_models.ManagedHSMSecurityDomainProperties"] = None
@@ -1997,7 +1997,7 @@ class ManagedHsmRotationPolicy(_serialization.Model):
         self,
         *,
         attributes: Optional["_models.ManagedHsmKeyRotationPolicyAttributes"] = None,
-        lifetime_actions: Optional[List["_models.ManagedHsmLifetimeAction"]] = None,
+        lifetime_actions: Optional[list["_models.ManagedHsmLifetimeAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2154,7 +2154,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2226,10 +2226,10 @@ class MetricSpecification(_serialization.Model):
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
         aggregation_type: Optional[str] = None,
-        supported_aggregation_types: Optional[List[str]] = None,
-        supported_time_grain_types: Optional[List[str]] = None,
+        supported_aggregation_types: Optional[list[str]] = None,
+        supported_time_grain_types: Optional[list[str]] = None,
         lock_aggregation_type: Optional[str] = None,
-        dimensions: Optional[List["_models.DimensionProperties"]] = None,
+        dimensions: Optional[list["_models.DimensionProperties"]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         internal_metric_name: Optional[str] = None,
         **kwargs: Any
@@ -2355,6 +2355,8 @@ class MHSMNetworkRuleSet(_serialization.Model):
     :vartype default_action: str or ~azure.mgmt.keyvault.models.NetworkRuleAction
     :ivar ip_rules: The list of IP address rules.
     :vartype ip_rules: list[~azure.mgmt.keyvault.models.MHSMIPRule]
+    :ivar service_tags: The list of service tags.
+    :vartype service_tags: list[~azure.mgmt.keyvault.models.MHSMServiceTagRule]
     :ivar virtual_network_rules: The list of virtual network rules.
     :vartype virtual_network_rules: list[~azure.mgmt.keyvault.models.MHSMVirtualNetworkRule]
     """
@@ -2363,6 +2365,7 @@ class MHSMNetworkRuleSet(_serialization.Model):
         "bypass": {"key": "bypass", "type": "str"},
         "default_action": {"key": "defaultAction", "type": "str"},
         "ip_rules": {"key": "ipRules", "type": "[MHSMIPRule]"},
+        "service_tags": {"key": "serviceTags", "type": "[MHSMServiceTagRule]"},
         "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[MHSMVirtualNetworkRule]"},
     }
 
@@ -2371,8 +2374,9 @@ class MHSMNetworkRuleSet(_serialization.Model):
         *,
         bypass: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
         default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
-        ip_rules: Optional[List["_models.MHSMIPRule"]] = None,
-        virtual_network_rules: Optional[List["_models.MHSMVirtualNetworkRule"]] = None,
+        ip_rules: Optional[list["_models.MHSMIPRule"]] = None,
+        service_tags: Optional[list["_models.MHSMServiceTagRule"]] = None,
+        virtual_network_rules: Optional[list["_models.MHSMVirtualNetworkRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2386,6 +2390,8 @@ class MHSMNetworkRuleSet(_serialization.Model):
         :paramtype default_action: str or ~azure.mgmt.keyvault.models.NetworkRuleAction
         :keyword ip_rules: The list of IP address rules.
         :paramtype ip_rules: list[~azure.mgmt.keyvault.models.MHSMIPRule]
+        :keyword service_tags: The list of service tags.
+        :paramtype service_tags: list[~azure.mgmt.keyvault.models.MHSMServiceTagRule]
         :keyword virtual_network_rules: The list of virtual network rules.
         :paramtype virtual_network_rules: list[~azure.mgmt.keyvault.models.MHSMVirtualNetworkRule]
         """
@@ -2393,6 +2399,7 @@ class MHSMNetworkRuleSet(_serialization.Model):
         self.bypass = bypass
         self.default_action = default_action
         self.ip_rules = ip_rules
+        self.service_tags = service_tags
         self.virtual_network_rules = virtual_network_rules
 
 
@@ -2484,7 +2491,7 @@ class MHSMPrivateEndpointConnection(ManagedHsmResource):
         *,
         location: Optional[str] = None,
         sku: Optional["_models.ManagedHsmSku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         etag: Optional[str] = None,
         private_endpoint: Optional["_models.MHSMPrivateEndpoint"] = None,
@@ -2599,7 +2606,7 @@ class MHSMPrivateEndpointConnectionsListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.MHSMPrivateEndpointConnection"]] = None,
+        value: Optional[list["_models.MHSMPrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2672,9 +2679,9 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
         *,
         location: Optional[str] = None,
         sku: Optional["_models.ManagedHsmSku"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        required_zone_names: Optional[List[str]] = None,
+        required_zone_names: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2691,7 +2698,7 @@ class MHSMPrivateLinkResource(ManagedHsmResource):
         """
         super().__init__(location=location, sku=sku, tags=tags, identity=identity, **kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -2706,7 +2713,7 @@ class MHSMPrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[MHSMPrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MHSMPrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.MHSMPrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.keyvault.models.MHSMPrivateLinkResource]
@@ -2775,7 +2782,7 @@ class MHSMRegionsListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.MHSMGeoReplicatedRegion"]] = None,
+        value: Optional[list["_models.MHSMGeoReplicatedRegion"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2788,6 +2795,32 @@ class MHSMRegionsListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class MHSMServiceTagRule(_serialization.Model):
+    """A rule governing the accessibility of a managed hsm pool from a specific service tags.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar tag: Name of the service tag. Required.
+    :vartype tag: str
+    """
+
+    _validation = {
+        "tag": {"required": True},
+    }
+
+    _attribute_map = {
+        "tag": {"key": "tag", "type": "str"},
+    }
+
+    def __init__(self, *, tag: str, **kwargs: Any) -> None:
+        """
+        :keyword tag: Name of the service tag. Required.
+        :paramtype tag: str
+        """
+        super().__init__(**kwargs)
+        self.tag = tag
 
 
 class MHSMVirtualNetworkRule(_serialization.Model):
@@ -2849,8 +2882,8 @@ class NetworkRuleSet(_serialization.Model):
         *,
         bypass: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
         default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
-        ip_rules: Optional[List["_models.IPRule"]] = None,
-        virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
+        ip_rules: Optional[list["_models.IPRule"]] = None,
+        virtual_network_rules: Optional[list["_models.VirtualNetworkRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2989,7 +3022,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
@@ -3025,10 +3058,10 @@ class Permissions(_serialization.Model):
     def __init__(
         self,
         *,
-        keys: Optional[List[Union[str, "_models.KeyPermissions"]]] = None,
-        secrets: Optional[List[Union[str, "_models.SecretPermissions"]]] = None,
-        certificates: Optional[List[Union[str, "_models.CertificatePermissions"]]] = None,
-        storage: Optional[List[Union[str, "_models.StoragePermissions"]]] = None,
+        keys: Optional[list[Union[str, "_models.KeyPermissions"]]] = None,
+        secrets: Optional[list[Union[str, "_models.SecretPermissions"]]] = None,
+        certificates: Optional[list[Union[str, "_models.CertificatePermissions"]]] = None,
+        storage: Optional[list[Union[str, "_models.StoragePermissions"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3230,7 +3263,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
+        value: Optional[list["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -3289,14 +3322,14 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: Required DNS zone names of the the private link resource.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -3311,7 +3344,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.keyvault.models.PrivateLinkResource]
@@ -3378,7 +3411,7 @@ class ResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Resource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Resource"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of vault resources.
@@ -3409,7 +3442,7 @@ class RotationPolicy(_serialization.Model):
         self,
         *,
         attributes: Optional["_models.KeyRotationPolicyAttributes"] = None,
-        lifetime_actions: Optional[List["_models.LifetimeAction"]] = None,
+        lifetime_actions: Optional[list["_models.LifetimeAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3510,7 +3543,7 @@ class SecretCreateOrUpdateParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, properties: "_models.SecretProperties", tags: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, *, properties: "_models.SecretProperties", tags: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: The tags that will be assigned to the secret.
@@ -3538,7 +3571,7 @@ class SecretListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of secrets.
@@ -3568,7 +3601,7 @@ class SecretPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.SecretPatchProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -3697,8 +3730,8 @@ class ServiceSpecification(_serialization.Model):
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["_models.LogSpecification"]] = None,
-        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[list["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[list["_models.MetricSpecification"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3919,7 +3952,7 @@ class Vault(_serialization.Model):
         *,
         properties: "_models.VaultProperties",
         location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4006,7 +4039,7 @@ class VaultAccessPolicyProperties(_serialization.Model):
         "access_policies": {"key": "accessPolicies", "type": "[AccessPolicyEntry]"},
     }
 
-    def __init__(self, *, access_policies: List["_models.AccessPolicyEntry"], **kwargs: Any) -> None:
+    def __init__(self, *, access_policies: list["_models.AccessPolicyEntry"], **kwargs: Any) -> None:
         """
         :keyword access_policies: An array of 0 to 16 identities that have access to the key vault. All
          identities in the array must use the same tenant ID as the key vault's tenant ID. Required.
@@ -4080,7 +4113,7 @@ class VaultCreateOrUpdateParameters(_serialization.Model):
         *,
         location: str,
         properties: "_models.VaultProperties",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4113,7 +4146,7 @@ class VaultListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Vault"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Vault"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of vaults.
@@ -4143,7 +4176,7 @@ class VaultPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VaultPatchProperties"] = None,
         **kwargs: Any
     ) -> None:
@@ -4230,7 +4263,7 @@ class VaultPatchProperties(_serialization.Model):
         *,
         tenant_id: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
-        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
+        access_policies: Optional[list["_models.AccessPolicyEntry"]] = None,
         enabled_for_deployment: Optional[bool] = None,
         enabled_for_disk_encryption: Optional[bool] = None,
         enabled_for_template_deployment: Optional[bool] = None,
@@ -4412,7 +4445,7 @@ class VaultProperties(_serialization.Model):
         *,
         tenant_id: str,
         sku: "_models.Sku",
-        access_policies: Optional[List["_models.AccessPolicyEntry"]] = None,
+        access_policies: Optional[list["_models.AccessPolicyEntry"]] = None,
         vault_uri: Optional[str] = None,
         enabled_for_deployment: bool = False,
         enabled_for_disk_encryption: bool = False,
@@ -4500,7 +4533,7 @@ class VaultProperties(_serialization.Model):
         self.enable_purge_protection = enable_purge_protection
         self.network_acls = network_acls
         self.provisioning_state = provisioning_state
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnectionItem"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnectionItem"]] = None
         self.public_network_access = public_network_access
 
 
