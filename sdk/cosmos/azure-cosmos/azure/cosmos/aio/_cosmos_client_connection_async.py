@@ -88,7 +88,7 @@ class CredentialDict(TypedDict, total=False):
     clientSecretCredential: AsyncTokenCredential
 
 
-class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-many-instance-attributes,too-many-statements
     """Represents a document client.
 
     Provides a client-side logical representation of the Azure Cosmos

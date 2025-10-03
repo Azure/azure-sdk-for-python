@@ -5,6 +5,7 @@ import base64
 import json
 import time
 import unittest
+import os
 from io import StringIO
 
 import pytest
