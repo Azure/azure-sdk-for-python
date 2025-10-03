@@ -206,7 +206,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 account_scope,
                 scope_override
             )
-        self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         policies = [
             HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),

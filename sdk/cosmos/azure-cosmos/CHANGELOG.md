@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.9.1 (2025-10-2)
+### 4.9.1 (2025-10-03)
 
 #### Other Changes
 * Added an option to override AAD audience scope through environment variable. See [PR 42228](https://github.com/Azure/azure-sdk-for-python/pull/42228).
