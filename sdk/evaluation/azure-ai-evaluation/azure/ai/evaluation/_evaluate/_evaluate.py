@@ -55,6 +55,7 @@ from ._utils import (
     _write_output,
     DataLoaderFactory,
     _log_metrics_and_instance_results_onedp,
+    _convert_results_to_aoai_evaluation_results
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -796,7 +797,7 @@ def evaluate(
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
-            return _evaluate(
+            results = _evaluate(
                 evaluation_name=evaluation_name,
                 target=target,
                 data=data,
@@ -808,6 +809,8 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
+            results_converted = _convert_results_to_aoai_evaluation_results(results)
+            return results_converted
     except Exception as e:
         # Handle multiprocess bootstrap error
         bootstrap_error = (
