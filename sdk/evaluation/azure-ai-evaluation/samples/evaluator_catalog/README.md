@@ -47,7 +47,7 @@ _coherence.py
 coherence.prompty
 
 Please look at existing built-in evaluators for reference. 
-* Evaluator Catalog Repo : [/assets/evaluators/builtin](https://msdata.visualstudio.com/Vienna/_git/azureml-asset?path=/assets/evaluators/builtin)
+* Evaluator Catalog Repo : [/assets/evaluators/builtin](https://github.com/Azure/azureml-assets/tree/main/assets/evaluators/builtin)
 * Sample PR: [PR 1816050](https://msdata.visualstudio.com/Vienna/_git/azureml-asset/pullrequest/1816050)
 
 3. Please copy asset.yaml from sample. No change is required. 
