@@ -156,86 +156,29 @@ def _normalize_url_fields(pkg_info, metadata: Dict[str, Any]) -> None:
     # Homepage from PEP 566 style
     if pkg_info.home_page:
         metadata["homepage"] = pkg_info.home_page
-
-    # Handle project URLs (can be in various formats)
-    if pkg_info.project_urls:
-        raw_project_urls = pkg_info.project_urls
-
-        # Normalize into:
-        #   project_urls: normalized_label -> normalized_url (trimmed)
-        #   project_urls_label_map: normalized_label -> original label casing
-        normalized: Dict[str, str] = {}
-        label_map: Dict[str, str] = {}
-        if isinstance(raw_project_urls, dict):
-            for k, v in raw_project_urls.items():
-                if isinstance(k, str) and isinstance(v, str):
-                    norm = k.strip().lower()
-                    if norm not in label_map:
-                        label_map[norm] = k.strip()
-                    normalized[norm] = v.strip()
-        elif isinstance(raw_project_urls, (list, tuple)):
-            for item in raw_project_urls:
-                if isinstance(item, str) and "," in item:
-                    label, url = item.split(",", 1)
-                    norm = label.strip().lower()
-                    if norm not in label_map:
-                        label_map[norm] = label.strip()
-                    normalized[norm] = url.strip()
-        # Persist normalized dict if not empty
-        if normalized:
-            metadata["project_urls"] = normalized
-            if label_map:
-                metadata["project_urls_label_map"] = label_map
-        else:
-            # Fallback: preserve raw structure (unlikely path)
-            metadata["project_urls"] = raw_project_urls
-
-        # Derive homepage only after normalization (avoid double attempts)
-        if "homepage" not in metadata:
-            homepage = _extract_homepage_from_project_urls(raw_project_urls)
-            if homepage:
-                metadata["homepage"] = homepage
+    elif pkg_info.project_urls: # If homepage not found, try to extract from project_urls
+        if isinstance(pkg_info.project_urls, (list, tuple)):
+            for url_entry in pkg_info.project_urls:
+                if isinstance(url_entry, str) and "," in url_entry:
+                    # Format: "Label, https://example.com"
+                    label, url_value = url_entry.split(",", 1)
+                    label_lower = label.strip().lower()
+                    url_value = url_value.strip()
+                    if label_lower in ["homepage", "home-page", "home"]:
+                        metadata["homepage"] = url_value
+                    elif label_lower == "repository":
+                        metadata["repository"] = url_value
+        elif isinstance(pkg_info.project_urls, dict):
+            for key, value in pkg_info.project_urls.items():
+                key_lower = key.lower()
+                if key_lower in ["homepage", "home-page", "home"]:
+                    metadata["homepage"] = value
+                elif key_lower == "repository":
+                    metadata["repository"] = value
 
     # Download URL
     if hasattr(pkg_info, "download_url") and getattr(pkg_info, "download_url", None):
         metadata["download_url"] = pkg_info.download_url
-
-
-def _extract_homepage_from_project_urls(project_urls) -> Optional[str]:
-    """Extract a canonical homepage URL from project_urls."""
-    if not project_urls:
-        return None
-
-    # Keys compared in lower-case; include capitalized variants implicitly via lower().
-    homepage_keys = {"homepage", "home-page", "home"}
-    # Treat 'repository' as a homepage fallback since certain versions of codegen use repository instead of homepage.
-    repo_keys = {"repository"}
-    found_repo: Optional[str] = None
-
-    # Handle different project_urls formats
-    if isinstance(project_urls, (list, tuple)):
-        for url_entry in project_urls:
-            if isinstance(url_entry, str) and "," in url_entry:
-                # Format: "Label, https://example.com"
-                label, url_value = url_entry.split(",", 1)
-                label_l = label.strip().lower()
-                url_value = url_value.strip()
-                if label_l in homepage_keys:
-                    return url_value
-                if label_l in repo_keys and not found_repo:
-                    found_repo = url_value
-    elif isinstance(project_urls, dict):
-        # First pass: look for homepage keys
-        for key, value in project_urls.items():
-            if key.lower() in homepage_keys:
-                return value
-        # Second pass: repository fallback
-        for key, value in project_urls.items():
-            if key.lower() in repo_keys:
-                found_repo = value
-                break
-
-    return found_repo
 
 
 def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:

@@ -141,36 +141,31 @@ def verify_prior_version_metadata(package_name: str, prior_version: str, current
 def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metadata: Dict[str, Any]) -> bool:
     """Verify that all keys from prior version metadata are present in current version.
 
-    project_urls normalization now occurs during metadata extraction; no nested label checks required.
+    Special handling: homepage/repository keys are exempt from prior compatibility check,
+    but current version must have at least one of them.
     """
-    if not prior_metadata:
-        return True
     if not current_metadata:
         return False
-
-    # Shallow key set inclusion
-    if not set(prior_metadata.keys()).issubset(set(current_metadata.keys())):
-        missing_keys = set(prior_metadata.keys()) - set(current_metadata.keys())
-        logging.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
+    # Check that current version has at least one homepage or repository URL
+    repo_urls = ['homepage', 'repository']
+    current_keys_lower = {k.lower() for k in current_metadata.keys()}
+    if not any(key in current_keys_lower for key in repo_urls):
+        logging.error(f"Current metadata must contain at least one of: {repo_urls}")
         return False
 
-    # Enforce prior project_urls label subset (labels already lower-cased during extraction)
-    if 'project_urls' in prior_metadata:
-            prior_urls = prior_metadata.get('project_urls') or {}
-            current_urls = current_metadata.get('project_urls') or {}
-            prior_label_map = prior_metadata.get('project_urls_label_map', {}) or {}
-            if isinstance(prior_urls, dict) and isinstance(current_urls, dict):
-                missing_labels = set(prior_urls.keys()) - set(current_urls.keys())
-                if missing_labels:
-                    # Show original casing and (normalized) URL value for context
-                    display = set(prior_label_map.get(lbl, lbl) for lbl in sorted(missing_labels))
-                    logging.error(
-                        "Metadata compatibility failed. Missing project_urls labels: %s",
-                        display,
-                    )
-                    return False
+    if not prior_metadata:
+        return True
 
-    return True
+    # For backward compatibility check, exclude homepage/repository from prior requirements
+    prior_keys_filtered = {k for k in prior_metadata.keys() if k.lower() not in repo_urls}
+    current_keys = set(current_metadata.keys())
+
+    is_compatible = prior_keys_filtered.issubset(current_keys)
+    if not is_compatible:
+        missing_keys = prior_keys_filtered - current_keys
+        logging.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
+    return is_compatible
+
 
 def get_path_to_zip(dist_dir: str, version: str, package_type: str = "*.whl") -> str:
     return glob.glob(os.path.join(dist_dir, "**", "*{}{}".format(version, package_type)), recursive=True)[0]
