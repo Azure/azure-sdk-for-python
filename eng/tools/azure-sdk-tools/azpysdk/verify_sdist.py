@@ -30,7 +30,11 @@ def get_root_directories_in_source(package_dir: str) -> List[str]:
     """
     Find all allowed directories in source path.
     """
-    source_folders = [d for d in os.listdir(package_dir) if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES]
+    source_folders = [
+        d
+        for d in os.listdir(package_dir)
+        if os.path.isdir(os.path.join(package_dir, d)) and d in ALLOWED_ROOT_DIRECTORIES
+    ]
     return source_folders
 
 
@@ -45,7 +49,7 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     # Cleanup any files in unzipped
     cleanup(extract_location)
     unzipped_dir = unzip_file_to_directory(path_to_zip, extract_location)
-    sdist_folders = [d for d in os.listdir(unzipped_dir) if os.path.isdir(d)]
+    sdist_folders = [d for d in os.listdir(unzipped_dir) if os.path.isdir(os.path.join(unzipped_dir, d))]
     return sdist_folders
 
 
