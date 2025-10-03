@@ -63,6 +63,81 @@ class ArchiveStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FS_SCAN_IN_PROGRESS = "FSScanInProgress"
 
 
+class AutoExportJobAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The administrative status of the auto export job. Possible values: 'Enable', 'Disable'. Passing
+    in a value of 'Disable' will disable the current active auto export job. By default it is set
+    to 'Enable'.
+    """
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
+class AutoExportJobProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ARM provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+
+class AutoExportStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of auto export. InProgress indicates the export is running.  Disabling
+    indicates the user has requested to disable the export but the disabling is still in progress.
+    Disabled indicates auto export has been disabled.  DisableFailed indicates the disabling has
+    failed.  Failed means the export was unable to continue, due to a fatal error.
+    """
+
+    IN_PROGRESS = "InProgress"
+    DISABLING = "Disabling"
+    DISABLED = "Disabled"
+    DISABLE_FAILED = "DisableFailed"
+    FAILED = "Failed"
+
+
+class AutoImportJobPropertiesAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The administrative status of the auto import job. Possible values: 'Enable', 'Disable'. Passing
+    in a value of 'Disable' will disable the current active auto import job. By default it is set
+    to 'Enable'.
+    """
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
+class AutoImportJobPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ARM provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+    CANCELED = "Canceled"
+
+
+class AutoImportJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the auto import operation."""
+
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+    DISABLING = "Disabling"
+    DISABLED = "Disabled"
+
+
+class AutoImportJobUpdatePropertiesAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The administrative status of the auto import job. Possible values: 'Enable', 'Disable'. Passing
+    in a value of 'Disable' will disable the current active auto import job. By default it is set
+    to 'Enable'.
+    """
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
 class CacheIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the cache."""
 
@@ -145,6 +220,15 @@ class HealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     UPGRADE_FAILED = "UpgradeFailed"
 
 
+class ImportJobAdminStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The administrative status of the import job. Possible values: 'Active', 'Cancel'. Passing in a
+    value of 'Cancel' will cancel the current active import job. By default it is set to 'Active'.
+    """
+
+    ACTIVE = "Active"
+    CANCEL = "Cancel"
+
+
 class ImportJobProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ARM provisioning state."""
 
@@ -157,11 +241,12 @@ class ImportJobProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMet
 
 
 class ImportStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the import job. InProgress indicates the import is still running. Canceled
-    indicates it has been canceled by the user. Completed indicates import finished, successfully
-    importing all discovered blobs into the Lustre namespace. CompletedPartial indicates the import
-    finished but some blobs either were found to be conflicting and could not be imported or other
-    errors were encountered. Failed means the import was unable to complete due to a fatal error.
+    """The operational state of the import job. InProgress indicates the import is still running.
+    Canceled indicates it has been canceled by the user. Completed indicates import finished,
+    successfully importing all discovered blobs into the Lustre namespace. CompletedPartial
+    indicates the import finished but some blobs either were found to be conflicting and could not
+    be imported or other errors were encountered. Failed means the import was unable to complete
+    due to a fatal error.
     """
 
     IN_PROGRESS = "InProgress"
