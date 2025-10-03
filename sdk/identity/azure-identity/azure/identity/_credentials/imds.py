@@ -82,6 +82,9 @@ def _check_forbidden_response(ex: HttpResponseError) -> None:
 
 class ImdsCredential(MsalManagedIdentityClient):
     def __init__(self, **kwargs: Any) -> None:
+        # If set to True/False, _enable_imds_probe forces whether or not the credential
+        # probes for the IMDS endpoint before attempting to get a token. If None (the default),
+        # the credential probes only if it's part of a ChainedTokenCredential chain.
         self._enable_imds_probe = kwargs.pop("_enable_imds_probe", None)
         super().__init__(retry_policy_class=ImdsRetryPolicy, **dict(PIPELINE_SETTINGS, **kwargs))
         self._config = kwargs
