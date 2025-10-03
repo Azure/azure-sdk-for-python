@@ -11,10 +11,10 @@ from devtools_testutils import (
     get_region_override,
     get_credential as get_devtools_credential,
 )
-# from azure.eventhub.extensions.checkpointstoreblobaio import (
-#     BlobCheckpointStore as BlobCheckpointStoreAsync,
-# )
-# from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblobaio import (
+    BlobCheckpointStore as BlobCheckpointStoreAsync,
+)
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.eventhub._pyamqp.authentication import SASTokenAuth
 from azure.eventhub._pyamqp import ReceiveClient
 from azure.eventhub import EventHubProducerClient, TransportType
