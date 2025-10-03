@@ -22,7 +22,7 @@
 import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING,Mapping
+from typing import Tuple, Any, Optional, TYPE_CHECKING, Mapping
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -45,7 +45,7 @@ class ReadItemsHelperSync:
             collection_link: str,
             items: Sequence[Tuple[str, "_PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
-            partition_key_definition: Dict[str, Any],
+            partition_key_definition: dict[str, Any],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
             max_concurrency: int = 10,
@@ -87,7 +87,7 @@ class ReadItemsHelperSync:
     def _execute_with_executor(
             self,
             executor: ThreadPoolExecutor,
-            query_chunks: List[Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]]
+            query_chunks: list[dict[str, list[Tuple[int, str, "_PartitionKeyType"]]]]
     ) -> CosmosList:
         """Execute the queries using the provided executor with improved error handling.
 
@@ -141,7 +141,7 @@ class ReadItemsHelperSync:
 
         return cosmos_list
 
-    def _partition_items_by_range(self) -> Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]:
+    def _partition_items_by_range(self) -> dict[str, list[Tuple[int, str, "_PartitionKeyType"]]]:
         # pylint: disable=protected-access
         """Groups items by their partition key range ID efficiently while preserving original order.
 
@@ -150,10 +150,10 @@ class ReadItemsHelperSync:
         """
         collection_rid = _base.GetResourceIdOrFullNameFromLink(self.collection_link)
         partition_key = _get_partition_key_from_partition_key_definition(self.partition_key_definition)
-        items_by_partition: Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]] = {}
+        items_by_partition: dict[str, list[Tuple[int, str, "_PartitionKeyType"]]] = {}
 
         # Group items by logical partition key first to avoid redundant range lookups
-        items_by_pk_value: Dict[Any, List[Tuple[int, str, "_PartitionKeyType"]]] = {}
+        items_by_pk_value: dict[Any, list[Tuple[int, str, "_PartitionKeyType"]]] = {}
         for idx, (item_id, pk_value) in enumerate(self.items):
             # Convert list to tuple to use as a dictionary key, as lists are unhashable
             key = tuple(pk_value) if isinstance(pk_value, list) else pk_value
@@ -180,8 +180,8 @@ class ReadItemsHelperSync:
 
     def _create_query_chunks(
             self,
-            items_by_partition: Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]
-    ) -> List[Dict[str, List[Tuple[int, str, "_PartitionKeyType"]]]]:
+            items_by_partition: dict[str, list[Tuple[int, str, "_PartitionKeyType"]]]
+    ) -> list[dict[str, list[Tuple[int, str, "_PartitionKeyType"]]]]:
         """Create query chunks for concurrency control while preserving original indices.
 
         :param items_by_partition: A dictionary mapping partition key range IDs to lists of items with indices.
@@ -199,7 +199,7 @@ class ReadItemsHelperSync:
 
     def _execute_query_chunk_worker(
             self, partition_id: str, chunk_partition_items: Sequence[Tuple[int, str, "_PartitionKeyType"]]
-    ) -> Tuple[List[Tuple[int, Dict[str, Any]]], float]:
+    ) -> Tuple[list[Tuple[int, dict[str, Any]]], float]:
         """Synchronous worker to build and execute a query for a chunk of items.
 
         :param str partition_id: The ID of the partition to query.
@@ -232,9 +232,9 @@ class ReadItemsHelperSync:
             self,
             partition_id: str,
             items_for_query: Sequence[Tuple[str, "_PartitionKeyType"]],
-            id_to_idx: Dict[str, int],
-            request_kwargs: Dict[str, Any]
-    ) -> Tuple[List[Tuple[int, Any]], CaseInsensitiveDict]:
+            id_to_idx: dict[str, int],
+            request_kwargs: dict[str, Any]
+    ) -> Tuple[list[Tuple[int, Any]], CaseInsensitiveDict]:
         """
         Builds and executes a query for a chunk of items.
 
@@ -282,7 +282,7 @@ class ReadItemsHelperSync:
             self,
             item_id: str,
             pk_value: "_PartitionKeyType",
-            request_kwargs: Dict[str, Any]
+            request_kwargs: dict[str, Any]
     ) -> Tuple[Optional[Any], CaseInsensitiveDict]:
         """
         Executes a point read for a single item.
