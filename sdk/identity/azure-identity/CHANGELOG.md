@@ -10,6 +10,7 @@
 
 ### Other Changes
 
+- When `AZURE_TOKEN_CREDENTIALS` is set to `ManagedIdentityCredential`, `DefaultAzureCredential` now skips the IMDS endpoint probe request and directly attempts token acquisition with full retry logic, matching the behavior of using `ManagedIdentityCredential` standalone. ([#43080](https://github.com/Azure/azure-sdk-for-python/pull/43080))
 - Improved error messages from `ManagedIdentityCredential` to include the full error response from managed identity endpoints for better troubleshooting. ([#43231](https://github.com/Azure/azure-sdk-for-python/pull/43231))
 
 ## 1.25.0 (2025-09-11)
