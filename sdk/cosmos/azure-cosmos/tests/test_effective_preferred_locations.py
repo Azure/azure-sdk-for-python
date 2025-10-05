@@ -181,7 +181,7 @@ class TestPreferredLocations:
         ):
             self.regions = regions
 
-        def __call__(self, endpoint):
+        def __call__(self, endpoint, **kwargs):
             read_regions = self.regions
             read_locations = []
             counter = 0

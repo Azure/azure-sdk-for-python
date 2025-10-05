@@ -15,7 +15,7 @@ class TestClientUserAgentAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_client_user_agent(self):
         async with async_client(url=TestConfig.host, credential=TestConfig.masterKey) as client_async:
-            client_sync = sync_client(url=TestConfig.host, credential=TestConfig.masterKey)
+            client_sync = sync_client(url=TestConfig.host, credential=TestConfig.masterKey, assert_kwarg_passthrough=True)
 
             self.assertTrue(client_sync.client_connection._user_agent.startswith("azsdk-python-cosmos/"))
             self.assertTrue(client_async.client_connection._user_agent.startswith("azsdk-python-cosmos-async/"))
@@ -23,7 +23,7 @@ class TestClientUserAgentAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_client_user_agent_suffix(self):
         async with async_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testAsyncSuffix") as client_async:
-            client_sync = sync_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testSyncSuffix")
+            client_sync = sync_client(url=TestConfig.host, credential=TestConfig.masterKey, user_agent_suffix="testSyncSuffix", assert_kwarg_passthrough=True)
 
             self.assertTrue(client_sync.client_connection._user_agent.endswith(" testSyncSuffix"))
             self.assertTrue(client_async.client_connection._user_agent.endswith(" testAsyncSuffix"))
