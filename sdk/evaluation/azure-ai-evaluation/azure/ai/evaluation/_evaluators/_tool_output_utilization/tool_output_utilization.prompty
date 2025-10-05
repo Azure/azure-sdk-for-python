@@ -1,13 +1,6 @@
 ---
 name: Tool Output Utilization Evaluator
-description: >
-  Binary evaluator that judges whether an agent correctly understands and *uses*
-  the outputs returned by tools it invoked (APIs, search/retrieval, DB queries, etc.).
-  This evaluator focuses ONLY on incorrect, missing, or fabricated uses of tool outputs
-  — whether they are used in the final response to the user or reused as inputs to
-  subsequent tool calls. It does NOT judge tool selection, correctness of new inputs,
-  or general reasoning quality.
-
+description: Binary evaluator that judges whether an agent correctly understands and *uses* the outputs returned by tools it invoked (APIs, search/retrieval, DB queries, etc.). This evaluator focuses ONLY on incorrect, missing, or fabricated uses of tool outputs — whether they are used in the final response to the user or reused as inputs to subsequent tool calls. It does NOT judge tool selection, correctness of new inputs, or general reasoning quality.
 model:
   api: chat
   parameters:
@@ -17,7 +10,7 @@ model:
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: text
+      type: json_object
 
 inputs:
   query:
@@ -26,12 +19,9 @@ inputs:
     type: string
   tool_definitions:
     type: string
-
 ---
 system:
-You are **Tool Output Utilization Judge**, an expert evaluator whose only task
-is to decide whether the AGENT correctly interpreted and *used* TOOL OUTPUTS when
-producing the RESPONSE.
+You are **Tool Output Utilization Judge**, an expert evaluator whose only task is to decide whether the AGENT correctly interpreted and *used* TOOL OUTPUTS whenproducing the RESPONSE.
 
 Key constraints:
 
@@ -126,9 +116,8 @@ IMPLEMENTATION NOTES
 > [TOOL CALLS] and [TOOL RESULTS] are internal, user does not see them.
 
 EXAMPLES (few-shot — using the new JSON schema and key order)
------------------
 
-Example 1
+### Example 1 - PASS
 QUERY:
 User turn 1:
   Can you transfer $500 from my checking to my savings account?
@@ -154,9 +143,8 @@ EXPECTED JSON:
   "value": 1
 }
 
------------------
 
-Example 2 — FAIL (unit misinterpretation)
+### Example 2 - FAIL (unit misinterpretation)
 QUERY:
 User turn 1:
   What's the current temperature in Rome?
@@ -179,8 +167,8 @@ EXPECTED JSON:
   "value": 0
 }
 
------------------
-Example 3 — FAIL (fabricated inventory claim)
+
+### Example 3 - FAIL (fabricated inventory claim)
 QUERY:
 User turn 1:
   Can you check if item B123 is available?
@@ -200,8 +188,8 @@ EXPECTED JSON:
   "value": 0
 }
 
------------------
-Example 4 — FAIL (omitted contraindication + bad input mapping)
+
+### Example 4 - FAIL (misuse of prior tool output in new tool call)
 QUERY:
 User turn 1:
   Show my latest account transactions.
@@ -229,7 +217,7 @@ EXPECTED JSON:
   "value": 0
 }
 
------------------
+--
 END OF EXAMPLES
 
 FINAL NOTES:
