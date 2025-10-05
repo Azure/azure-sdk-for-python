@@ -116,9 +116,9 @@ class DatabaseProxy(object):
             return user_or_id.user_link
         return "{}/users/{}".format(self.database_link, user_or_id["id"])
 
-    def _get_properties(self) -> Dict[str, Any]:
+    def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
         if self._properties is None:
-            self._properties = self.read()
+            self._properties = self.read(**kwargs)
         return self._properties
 
     @distributed_trace
@@ -1313,7 +1313,7 @@ class DatabaseProxy(object):
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        properties = self._get_properties()
+        properties = self._get_properties(**kwargs)
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
@@ -1346,7 +1346,7 @@ class DatabaseProxy(object):
             If no throughput properties exists for the database or if the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        properties = self._get_properties()
+        properties = self._get_properties(**kwargs)
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",
