@@ -27,7 +27,7 @@ def setup():
                                             connection_policy=TestTimeoutRetryPolicy.connectionPolicy, assert_kwarg_passthrough=True)
     created_database = client.get_database_client(TestTimeoutRetryPolicy.TEST_DATABASE_ID)
     created_collection = created_database.create_container(TestTimeoutRetryPolicy.TEST_CONTAINER_SINGLE_PARTITION_ID,
-                                                               partition_key=PartitionKey("/pk"))
+                                                               partition_key=PartitionKey("/pk"), assert_kwarg_passthrough=True)
     yield {
         COLLECTION: created_collection
     }

@@ -24,7 +24,7 @@ def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
     test_client = CosmosClient(config.host, config.masterKey, assert_kwarg_passthrough=True)
-    database = test_client.create_database_if_not_exists(id=config.TEST_DATABASE_ID)
+    database = test_client.create_database_if_not_exists(id=config.TEST_DATABASE_ID, assert_kwarg_passthrough=True)
     created_container = database.create_container_if_not_exists(
         id=config.TEST_SINGLE_PARTITION_CONTAINER_ID,
         partition_key=PartitionKey(path="/pk"),
