@@ -66,7 +66,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     """
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
-        pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
+        pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0], **kwargs)
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args

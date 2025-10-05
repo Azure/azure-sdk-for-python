@@ -2134,7 +2134,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_data = {}
         if options.get("filterPredicate"):
@@ -2229,7 +2229,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         return cast(
             Tuple[List[Dict[str, Any]], CaseInsensitiveDict],
             self.__Post(path, request_params, batch_operations, headers, **kwargs)
@@ -2761,7 +2761,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2812,7 +2812,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2861,7 +2861,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         result, last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
         self.last_response_headers = last_response_headers
@@ -2909,7 +2909,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, last_response_headers)
@@ -2955,7 +2955,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        documents._OperationType.Delete,
                                        headers,
                                        options.get("partitionKey", None))
-        base.set_session_token_header(self, headers, path, request_params, options)
+        base.set_session_token_header(self, headers, path, request_params, options, **kwargs)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
         request_params.set_excluded_location_from_options(options)
         result, last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
@@ -3209,7 +3209,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options.get("partitionKey", None)
             )
             request_params.set_excluded_location_from_options(options)
-            base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id)
+            base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id, **kwargs)
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
@@ -3254,7 +3254,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         if not is_query_plan:
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"
-            base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id)
+            base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id, **kwargs)
 
         # Check if the over lapping ranges can be populated
         feed_range_epk = None
@@ -3271,7 +3271,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if feed_range_epk is not None:
             last_response_headers = CaseInsensitiveDict()
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(resource_id, [feed_range_epk],
-                                                                                    options)
+                                                                                    options, **kwargs)
             # It is possible to get more than one over lapping range. We need to get the query results for each one
             results: Dict[str, Any] = {}
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
