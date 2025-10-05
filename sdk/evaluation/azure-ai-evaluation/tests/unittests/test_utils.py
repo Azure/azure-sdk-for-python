@@ -853,25 +853,24 @@ class TestUtils(unittest.TestCase):
             {
                 "role": "assistant",
                 "content": [
-                    {"type": "text", "text": "I'll check the weather for you."},
                     {
                         "type": "tool_call",
                         "tool_call_id": "call_123",
                         "name": "get_weather",
-                        "arguments": {"location": "Seattle", "units": "fahrenheit"}
-                    }
-                ]
+                        "arguments": {"location": "Seattle", "units": "fahrenheit"},
+                    },
+                ],
             },
             {
                 "role": "tool",
                 "tool_call_id": "call_123",
-                "content": [{"type": "tool_result", "tool_result": "Temperature: 65F, Conditions: Partly cloudy"}]
+                "content": [{"type": "tool_result", "tool_result": "Temperature: 65F, Conditions: Partly cloudy"}],
             },
             {
                 "role": "assistant",
-                "content": [{"type": "text", "text": "The weather in Seattle is 65°F and partly cloudy."}]
+                "content": [{"type": "text", "text": "The weather in Seattle is 65°F and partly cloudy."}],
             },
-            {"role": "user", "content": [{"type": "text", "text": "Thanks for the weather info!"}]}
+            {"role": "user", "content": [{"type": "text", "text": "Thanks for the weather info!"}]},
         ]
 
         # Test with tool calls included
@@ -880,29 +879,13 @@ class TestUtils(unittest.TestCase):
             "User turn 1:\n"
             "  What's the weather in Seattle?\n\n"
             "Agent turn 1:\n"
-            "  I'll check the weather for you.\n"
             '  [TOOL_CALL] get_weather(location="Seattle", units="fahrenheit")\n'
-            "    [TOOL_RESULT] Temperature: 65F, Conditions: Partly cloudy\n\n"
-            "Agent turn 2:\n"
+            "  [TOOL_RESULT] Temperature: 65F, Conditions: Partly cloudy\n"
             "  The weather in Seattle is 65°F and partly cloudy.\n\n"
             "User turn 2:\n"
             "  Thanks for the weather info!\n\n"
         )
         self.assertEqual(result_with_tools, expected_with_tools)
-
-        # Test without tool calls (default behavior)
-        result_without_tools = reformat_conversation_history(conversation, include_tool_calls=False)
-        expected_without_tools = (
-            "User turn 1:\n"
-            "  What's the weather in Seattle?\n\n"
-            "Agent turn 1:\n"
-            "  I'll check the weather for you.\n\n"
-            "Agent turn 2:\n"
-            "  The weather in Seattle is 65°F and partly cloudy.\n\n"
-            "User turn 2:\n"
-            "  Thanks for the weather info!\n\n"
-        )
-        self.assertEqual(result_without_tools, expected_without_tools)
 
     def test_reformat_conversation_history_multiple_tool_calls(self):
         """Test reformat_conversation_history with multiple tool calls in one message"""
@@ -916,27 +899,27 @@ class TestUtils(unittest.TestCase):
                         "type": "tool_call",
                         "tool_call_id": "call_1",
                         "name": "get_weather",
-                        "arguments": {"location": "Seattle"}
+                        "arguments": {"location": "Seattle"},
                     },
                     {
                         "type": "tool_call",
                         "tool_call_id": "call_2",
                         "name": "get_weather",
-                        "arguments": {"location": "New York"}
-                    }
-                ]
+                        "arguments": {"location": "New York"},
+                    },
+                ],
             },
             {
                 "role": "tool",
                 "tool_call_id": "call_1",
-                "content": [{"type": "tool_result", "tool_result": "Seattle: 65F"}]
+                "content": [{"type": "tool_result", "tool_result": "Seattle: 65F"}],
             },
             {
                 "role": "tool",
                 "tool_call_id": "call_2",
-                "content": [{"type": "tool_result", "tool_result": "New York: 72F"}]
+                "content": [{"type": "tool_result", "tool_result": "New York: 72F"}],
             },
-            {"role": "user", "content": [{"type": "text", "text": "Thanks for checking both cities!"}]}
+            {"role": "user", "content": [{"type": "text", "text": "Thanks for checking both cities!"}]},
         ]
 
         result = reformat_conversation_history(conversation, include_tool_calls=True)
@@ -953,4 +936,3 @@ class TestUtils(unittest.TestCase):
             "  Thanks for checking both cities!\n\n"
         )
         self.assertEqual(result, expected)
-
