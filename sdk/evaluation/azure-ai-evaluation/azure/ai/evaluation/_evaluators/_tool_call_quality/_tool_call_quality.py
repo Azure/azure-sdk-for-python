@@ -65,7 +65,7 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         - Parameter value extraction from the conversation.
 
     The evaluator uses a scoring rubric of 1 to 5:
-        - Score 1: The tool calls are irrelevant
+        - Score 1: The tool calls are irrelevant.
         - Score 2: The tool calls are partially relevant, but not enough tools were called or the parameters were not correctly passed.
         - Score 3: The tool calls are relevant, but there were unnecessary, excessive tool calls made.
         - Score 4: The tool calls are relevant, but some tools returned errors and agent retried calling them again and succeeded.
