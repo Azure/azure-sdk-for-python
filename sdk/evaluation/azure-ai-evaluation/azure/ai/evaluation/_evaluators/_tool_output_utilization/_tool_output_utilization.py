@@ -19,6 +19,7 @@ from ..._common.utils import (
     reformat_conversation_history,
     reformat_agent_response,
     reformat_tool_definitions,
+    filter_to_used_tools,
 )
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
@@ -165,28 +166,62 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR,
             )
+        if (
+            "tool_definitions" in eval_input
+            and eval_input["tool_definitions"] is not None
+        ):
+            tool_definitions = eval_input["tool_definitions"]
+            filtered_tool_definitions = filter_to_used_tools(
+                tool_definitions=tool_definitions,
+                msgs_lists=[eval_input["query"], eval_input["response"]],
+                logger=logger
+            )
+            eval_input["tool_definitions"] = reformat_tool_definitions(
+                filtered_tool_definitions, logger
+            )
+        
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"], logger, include_system_messages=False, include_tool_messages=True 
         )
         eval_input["response"] = reformat_agent_response(
             eval_input["response"], logger, include_tool_messages=True
         )
-        if (
-            "tool_definitions" in eval_input
-            and eval_input["tool_definitions"] is not None
-        ):
-            eval_input["tool_definitions"] = reformat_tool_definitions(
-                eval_input["tool_definitions"], logger
-            )
+        
+        # print('-------------')
+        # for k, v in eval_input.items():
+        #     print(f'{k}:\n{v}')
+        #     print('---')
+        # print('-------------')
+
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
-            score = float(llm_output.get("score", math.nan))
-            score_result = "pass" if score >= self.threshold else "fail"
-            reason = llm_output.get("explanation", "")
+            output_label = llm_output.get("label", None)
+            if output_label is None:
+                if logger:
+                    logger.warning(
+                        "LLM output does not contain 'label' key, returning NaN for the score."
+                    )
+                output_label = "fail"
+            
+            output_label = output_label.lower()
+            if output_label not in ["pass", "fail"]:
+                if logger:
+                    logger.warning(
+                        f"LLM output label is not 'pass' or 'fail' (got '{output_label}'), returning NaN for the score."
+                    )
+                
+            
+            # `faulty_details`, `reason`, `label`
+            score = 1.0 if output_label == "pass" else 0.0
+            score_result = output_label
+            reason = llm_output.get("reason", "")
+            faulty_details = llm_output.get("faulty_details", [])
+            if faulty_details:
+                reason += " Issues found: " + "; ".join(faulty_details)
+
             return {
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": self.threshold,
                 f"{self._result_key}_reason": reason,
                 # Uncomment the following line in the next iteration after UI contracts are validated.
                 # f"{self._result_key}_additional_details": llm_output
