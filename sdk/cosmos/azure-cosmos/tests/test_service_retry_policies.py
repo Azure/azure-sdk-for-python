@@ -344,7 +344,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
                 raise exception
             return self.original_execute_function(func, *args, **kwargs)
 
-    def MockGetDatabaseAccountStub(self, endpoint):
+    def MockGetDatabaseAccountStub(self, endpoint, **kwargs):
         read_regions = ["West US", "East US"]
         read_locations = []
         for loc in read_regions:

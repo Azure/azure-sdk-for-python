@@ -152,7 +152,7 @@ class TestGlobalDBMock(unittest.TestCase):
         global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.OriginalGetDatabaseAccountStub
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
-    def MockGetDatabaseAccountStub(self, endpoint):
+    def MockGetDatabaseAccountStub(self, endpoint, **kwargs):
         raise exceptions.CosmosHttpResponseError(
             status_code=StatusCodes.INTERNAL_SERVER_ERROR, message="Internal Server Error")
 
@@ -163,7 +163,7 @@ class TestGlobalDBMock(unittest.TestCase):
         write_location_client = cosmos_client.CosmosClient(TestGlobalDBMock.write_location_host,
                                                            TestGlobalDBMock.masterKey,
                                                            consistency_level="Session",
-                                                           connection_policy=connection_policy)
+                                                           connection_policy=connection_policy, assert_kwarg_passthrough=True)
         write_location_client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(write_location_client.client_connection)
         write_location_client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         self.assertEqual(write_location_client.client_connection.WriteEndpoint,
