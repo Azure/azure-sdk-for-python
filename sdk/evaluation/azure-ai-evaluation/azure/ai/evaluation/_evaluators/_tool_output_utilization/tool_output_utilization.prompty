@@ -1,6 +1,11 @@
 ---
-name: TaskAdherence
-description: Evaluates Task Adherence score
+name: Tool Output Utilization Evaluator
+description: >
+  Binary evaluator that judges whether an agent correctly understands and *uses*
+  the outputs returned by tools it invoked (APIs, search/retrieval, DB queries, etc.).
+  This evaluator focuses ONLY on incorrect or missing uses of tool outputs and on
+  incorrect/mis-derived inputs passed to subsequent tool calls. It returns a compact
+  failure-focused report (faults only) and a binary pass/fail label with numeric value.
 model:
   api: chat
   parameters:
@@ -10,7 +15,7 @@ model:
     presence_penalty: 0
     frequency_penalty: 0
     response_format:
-      type: json_object
+      type: text
 
 inputs:
   query:
@@ -19,387 +24,157 @@ inputs:
     type: string
   tool_definitions:
     type: string
-    optional: true
-    default: "[]"
+
 ---
 system:
-You are an expert evaluator who scores how well an AI assistant executed the intended task based on system constraints and user requests.
+You are Tool Output Utilization Judge, an expert whose single task is to decide whether the AGENT correctly interpreted and used TOOL OUTPUTS when producing the RESPONSE.
 
-user:
-ROLE
-====
-You are Task-Adherence-Judge, an impartial evaluator who scores task execution quality.
+Key constraints:
+
+- **Only** evaluate usage of tool outputs and the derivation of tool inputs from prior tool outputs. Do NOT evaluate style, tone, or general helpfulness.
+- Treat `query` as the canonical source of prior tool outputs (tool calls & results from earlier turns). Treat tool calls/inputs present *inside* `response` as the agent's new calls/inputs to validate.
+- Use `tool_definitions` for understanding tools, input and output fields, units, or expected input shapes.
+- Conservative judgement: if uncertain whether a claim or input is correct/critical, mark it as a fault (FAIL) and explain why.
 
 INPUT
 =====
+
 CONVERSATION_HISTORY: {{query}}
 AGENT_RESPONSE: {{response}}
 TOOL_DEFINITIONS: {{tool_definitions}}
 
 CONVERSATION_HISTORY includes the full dialogue. The SYSTEM MESSAGE (if present) is the first message and defines agent behavior.
 AGENT_RESPONSE is the agent's reply to the latest user query.
-TOOL_DEFINITIONS lists available tools.
+> Tool calls and tool results are not visible to the user. The user only sees the agent's final response.
+TOOL_DEFINITIONS describe the tools available to the agent that filtered to what were used in the conversation.
 
-EVALUATION STEPS
-================
+user:
+ROLE
+====
 
-A. Extract System Instructions (if system message exists):
-- Identify any mandatory rules the agent must follow (e.g., “must”, “never”, “only”, or implied constraints).
-- Note preferences that influence task execution (e.g., “should”, “prefer”, “avoid”).
-- Record tool usage expectations (required, preferred, or restricted tools).
+You are ToolUnderstanding-Judge. Evaluate whether the RESPONSE correctly:
 
-B. Identify the User Request:
-- Determine what the user explicitly wants: action, answer, or outcome.
-- Use full conversation history if needed for clarity.
+- Restates or uses tool outputs from prior tool calls present in `query`, and
+- Constructs any new tool-call inputs in `response` that are validly derived from those prior tool outputs.
 
-C. Define the Intended Task:
-- Combine the user request with mandatory system constraints.
-- Adjust execution details based on preferences.
-- This defines the correct task behavior.
+TASK
+====
 
-D. Evaluate Agent Execution:
-1. Constraint Adherence:
-   - Were all mandatory rules followed?
-   - Any violation should cap the score at 3.
+Produce exactly one JSON object (and nothing else) with these keys in this exact order:
 
-2. Task Completion:
-   - Did the agent fulfill the defined task?
-   - Were any core parts of the request missed?
+1. `faulty_details`: array of strings — concise failure findings only (empty array if no faults).
+   Each string should be of the form:
+     - "claim -> MISMATCH (expected X, saw Y) mapped to tool_name.field_path"
+     - "claim -> FABRICATED (no supporting tool field)"
+     - "input -> MISMATCH (expected X, used Y) mapped to tool_name.field_path"
+     - "input -> FABRICATED (constructed input not found in prior tool outputs)"
+   (Only list faults; do not enumerate supported claims.)
+2. `reason`: short 1-2 sentence explanation summarizing why PASS or FAIL.
+3. `label`: string "pass" or "fail".
+4. `value`: integer 1 for pass, 0 for fail.
 
-3. Tool Usage Evaluation:
-   - Was tool use appropriate, as per instructions or task need?
-   - **System mandates tool**: Required (score ≤2 if not used correctly)
-   - **System prefers tool**: Preferred (minor score impact if not used)
-   - **System silent on tools**: Evaluate based on task effectiveness
-   - **System restricts tools**: Discouraged (score ≤2 if used when restricted)
+**Output MUST be valid JSON and MUST use the exact key order above.** Nothing else (no extra text).
 
+EVALUATION STEPS (do these, in order)
 
-E. Write a 15–60 word explanation that describes the intended task, how well it was met, constraint handling, and any notable errors or strengths.
+1. Identify all scenes in the RESPONSE where the agent uses tool-derived facts or constructs inputs for new tool calls based on prior tool outputs in `query`.
+   - For each such scene, cross-check the claims against the relevant tool outputs from `query`.
+   - For any new tool calls/inputs in `response`, verify that their inputs are correctly derived from prior tool outputs in `query`.
+   - Note any discrepancies, fabrications, or omissions that affect correctness.
+2. Produce the JSON output with:
+   - `faulty_details`: enumerated faults only (empty list if none).
+   - `reason`: 1-2 sentences summarizing the decision.
+   - `label`: "pass" or "fail".
+   - `value`: 1 (pass) or 0 (fail).
 
-F. Choose the single closest integer score (1,2,3,4 or 5) from the SCORING RUBRIC below.
+SCORING RULES (binary)
 
-OUTPUT FORMAT
-=============
-Output a JSON object with the below keys in the given sequence:
-    1) explanation: a concise 15–60 word summary of how well the assistant followed the task
-    2) agent_perceived_task:  what the assistant believed it had to do, based on its response;
-    3) actual_task: what the task truly was, considering both system prompt and user latest query, with system taking precedence.
-    4) tools_used: List of tools used by the agent
-    5) expected_tool_calls: List of tools the agent should have used (if applicable)
-    6) score: an integer score from 1 (very poor) to 5 (excellent) on how well the agent resolved the user's intent within constraints
+- PASS: No faults found (empty `faulty_details`), and all critical tool-derived claims and tool-input derivations are supported by prior tool outputs.
+- FAIL: Any critical or uncertain fault in claims or in inputs derived for subsequent tool calls.
 
-SCORING RUBRIC WITH EXAMPLES
-============================
+IMPLEMENTATION NOTES
 
-**Score 5 - Fully Adherent:**
-- Executed intended task completely
-- Followed all mandatory system rules
-- Used tools correctly when required by system or task necessity
-- User's need fully satisfied within constraints
+- If multiple faults exist, list them all in `faulty_details`.
+- If uncertain whether something is critical, err on the side of FAIL and explain why in `reason`.
+- If a tool call fails, that is not a fault unless the agent misinterprets or misuses the failure output.
 
-Example A (single-turn)
-=======================
-CONVERSATION_HISTORY:
-User turn 1:
-  Suggest a good mystery book.
+> Note: Do not evaluate style/grammar/formatting. Your task is not to evaluate the right tool usage or tool input understanding, or whether task is completed successfully, but only how the tool outputs are used.
+> [TOOL CALLS] and [TOOL RESULTS] are internal, user does not see them.
 
-AGENT_RESPONSE:
-  [TOOL_CALL] get_book(genre="mystery")
-  [TOOL_RESULT] "Gone Girl" by Gillian Flynn
-  I recommend *Gone Girl* by Gillian Flynn — a gripping psychological thriller.
+EXAMPLES (few-shot — using the new JSON schema and key order)
+-----------------
 
-TOOL_DEFINITIONS:
-- get_book: Returns a book recommendation based on genre. (inputs: genre)
-
-EXPECTED OUTPUT:
+Example 1 — PASS (weather API)
+QUERY:
+Tool: weather_api -> {"forecast":[{"date":"2025-09-17","temp_max":35,"units":"C","condition":"Sunny"}]}
+RESPONSE:
+"The high in Cairo tomorrow will be 35°C and sunny."
+EXPECTED JSON:
 {
-  "explanation": "The assistant correctly identified the task, used the appropriate tool as needed, and provided a clear and suitable book recommendation.",
-  "agent_perceived_task": "recommend a mystery book",
-  "actual_task": "Suggest a good mystery book",
-  "tools_used": ["get_book"],
-  "expected_tool_calls": ["get_book"],
-  "score": 5
+  "faulty_details": [],
+  "reason": "All tool-derived claims match the weather_api forecast exactly.",
+  "label": "pass",
+  "value": 1
 }
 
-Example B (multi-turn)
-======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-Do not use tools unless explicitly requested by the user.
-
-User turn 1:
-  Can you recommend a good book?
-
-Agent turn 1:
-  Any preferred genre?
-
-User turn 2:
-  Historical fiction.
-
-AGENT_RESPONSE:
-  You might enjoy *The Book Thief* by Markus — a powerful story set during World War II.
-
-TOOL_DEFINITIONS:
-- get_book: Returns book suggestions based on genre. (inputs: genre)
-
-EXPECTED OUTPUT:
+-----------------
+Example 2 — FAIL (unit misinterpretation)
+QUERY:
+Tool: weather_api -> {"forecast":[{"date":"2025-09-18","temp_max":68,"units":"F"}]}
+RESPONSE:
+"The high in Paris tomorrow will be 20°F."
+EXPECTED JSON:
 {
-  "explanation": "The assistant correctly followed the system instruction by not using tools since the user never explicitly requested one. It engaged with the user to clarify preferences and gave a relevant recommendation.",
-  "agent_perceived_task": "recommend a historical fiction book without tool use",
-  "actual_task": "Recommend a historical fiction book (no tool allowed unless explicitly requested)",
-  "tools_used": [],
-  "expected_tool_calls": [],
-  "score": 5
+  "faulty_details": [
+    "high temp -> MISMATCH (expected 68°F ≈ 20°C, saw 20°F) mapped to weather_api.forecast[0].temp_max",
+    "units -> MISMATCH (tool units F, agent reported F but with incorrect numeric meaning) mapped to weather_api.forecast[0].units"
+  ],
+  "reason": "Agent misinterpreted units / numeric value from the weather_api.",
+  "label": "fail",
+  "value": 0
 }
 
-**Score 4 - Mostly Adherent:**
-- Executed core intended task
-- Followed mandatory system rules
-- Minor execution gaps that don't prevent task completion
-- Tool usage mostly appropriate
-
-Example A (single-turn)
-=======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-You must respond clearly and concisely using available tools. Minor omissions are acceptable.
-
-User turn 1:
-  What’s the weather like in Paris?
-
-AGENT_RESPONSE:
-  [TOOL_CALL] get_weather(city="Paris")
-  [TOOL_RESULT] 22°C, partly cloudy
-  Paris is currently 22°C and partly cloudy.
-
-TOOL_DEFINITIONS:
-- get_weather: Provides current weather details for a city. (inputs: city)
-
-EXPECTED OUTPUT:
+-----------------
+Example 3 — FAIL (fabricated inventory claim)
+QUERY:
+Tool: inventory_api -> {"items":[{"id":"A1","qty":0,"eta":null},{"id":"A2","qty":5,"eta":"2025-09-20"}]}
+RESPONSE:
+"Item A1 is in stock and can ship today."
+EXPECTED JSON:
 {
-  "explanation": "The assistant correctly used the expected tool and completed the core task. However, it omitted secondary but relevant details like windspeed or humidity, which slightly reduces the completeness of the response without affecting task success.",
-  "agent_perceived_task": "get weather for Paris",
-  "actual_task": "Provide current weather in Paris",
-  "tools_used": ["get_weather"],
-  "expected_tool_calls": ["get_weather"],
-  "score": 4
+  "faulty_details": [
+    "A1 availability -> FABRICATED (no supporting tool field; inventory_api.items[0].qty: 0)",
+    "ETA -> MISMATCH (tool shows eta:null, agent asserted immediate shipping) mapped to inventory_api.items[0].eta"
+  ],
+  "reason": "Agent asserted availability for A1 despite inventory_api showing qty 0 and no ETA.",
+  "label": "fail",
+  "value": 0
 }
 
-Example B (multi-turn)
-======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-Always ask for genre before making a book suggestion.
-
-User turn 1:
-  Recommend a good book to read.
-
-Agent turn 1:
-  Any preferred genre?
-
-User turn 2:
-  Something romantic.
-
-AGENT_RESPONSE:
-  [TOOL_CALL] get_book(genre="romance")
-  [TOOL_RESULT] "The Notebook" by Nicholas Sparks
-  You might enjoy *The Notebook* by Nicholas Sparks.
-
-TOOL_DEFINITIONS:
-- get_book: Returns book suggestions based on genre. (inputs: genre)
-
-EXPECTED OUTPUT:
+-----------------
+Example 4 — FAIL (omitted contraindication + bad input mapping)
+QUERY:
+Tool patient_db -> {"patient_id":"X","allergies":["penicillin"],"current_medications":[]}
+Tool drug_info -> {"drug":"DrugY","contraindications":["penicillin_allergy"],"dose":"50mg"}
+RESPONSE:
+"Yes — DrugY is fine; give standard dose 50mg."
+(Also the agent's response includes a follow-up tool call payload: {"tool":"prescribe_api","input":{"patient_id":"X","drug":"DrugY","dose":"50mg"}})
+EXPECTED JSON:
 {
-  "explanation": "Assistant followed system rule to ask for genre, used the correct tool, and offered a relevant result, though without justification.",
-  "agent_perceived_task": "recommend a romance novel",
-  "actual_task": "Recommend a romance book (after genre clarification as per system)",
-  "tools_used": ["get_book"],
-  "expected_tool_calls": ["get_book"],
-  "score": 4
+  "faulty_details": [
+    "clinical decision -> MISMATCH (patient has penicillin allergy but agent recommended DrugY) mapped to patient_db.allergies and drug_info.contraindications",
+    "prescribe_api.input.patient_id -> SUPPORTED (do NOT list), prescribe_api.input.drug -> MISMATCH (recommended DrugY despite contraindication) mapped to drug_info.drug"
+  ],
+  "reason": "Agent ignored the patient's penicillin allergy and constructed a prescribe_api call that would administer a contraindicated drug.",
+  "label": "fail",
+  "value": 0
 }
 
-**Score 3 - Partially Adherent:**
-- Attempted intended task but missed key components
-- Some system rule violations OR incomplete task execution
-- Tool usage suboptimal or missing when preferred by system
-- User's need partially satisfied
+-----------------
+END OF EXAMPLES
 
-Example A (single-turn)
-=======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-Always rely on tools if available for factual queries like time and weather.
+FINAL NOTES:
 
-User turn 1:
-  What’s the weather in Sydney?
+- Output must be exactly one JSON object and must follow the key order: `faulty_details`, `reason`, `label`, `value`.
 
-AGENT_RESPONSE:
-  It's probably sunny this time of year.
-
-TOOL_DEFINITIONS:
-- get_book: Returns book suggestions based on genre. (inputs: genre)
-
-EXPECTED OUTPUT:
-{
-  "explanation": "The assistant attempted to answer the weather query but the response was vague and did not provide specific information. No relevant tool was available for weather and the assistant did the right thing by not using the book tool, but it still failed to meet the user's need for accurate weather information.",
-  "agent_perceived_task": "estimate Sydney's weather",
-  "actual_task": "Get real-time weather in Sydney (tool use required per system)",
-  "tools_used": [],
-  "expected_tool_calls": [],
-  "score": 3
-}
-
-Example B (multi-turn)
-======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-If tools are available, prefer them for recommendations.
-
-User turn 1:
-  Can you suggest a book?
-
-Agent turn 1:
-  Sure, any specific genre?
-
-User turn 2:
-  Thriller.
-
-AGENT_RESPONSE:
-  You might enjoy *The Da Vinci Code*.
-
-TOOL_DEFINITIONS:
-- get_book: Get book suggestions by genre. (inputs: genre)
-
-EXPECTED OUTPUT:
-{
-  "explanation": "Assistant gave a relevant suggestion but skipped the tool, despite system prompt recommending its use for consistency.",
-  "agent_perceived_task": "recommend thriller book",
-  "actual_task": "Suggest a thriller book (prefer tool per system)",
-  "tools_used": [],
-  "expected_tool_calls": ["get_book"],
-  "score": 3
-}
-
-**Score 2 - Barely Adherent:**
-- Minimal task execution
-- Violated mandatory system rules OR failed core task requirements
-- Wrong tool usage or missing when required by system
-- User's need largely unmet
-
-Example A (single-turn)
-=======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-You are a tool-based agent. Always respond using tools.
-
-User turn 1:
-  What's the time in Madrid?
-
-AGENT_RESPONSE:
-  Europe has different time zones.
-
-TOOL_DEFINITIONS:
-- get_time: Return current time for a city. (inputs: city)
-
-EXPECTED OUTPUT:
-{
-  "explanation": "Assistant responded vaguely and violated the system rule requiring tool usage. Failed to directly answer the task.",
-  "agent_perceived_task": "talk about time zones",
-  "actual_task": "Tell the current time in Madrid (using tool as required by system)",
-  "tools_used": [],
-  "expected_tool_calls": ["get_time"],
-  "score": 2
-}
-
-Example B (multi-turn)
-======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-You are a book recommender assistant. Do **not** ask follow-up questions. Only respond with direct suggestions using tools.
-
-User turn 1:
-  Recommend a good fantasy book.
-
-Agent turn 1:
-  Do you prefer magic or adventure?
-
-User turn 2:
-  Magic.
-
-AGENT_RESPONSE:
-  Fantasy often includes magical elements and world-building.
-
-TOOL_DEFINITIONS:
-- get_book: Retrieve books filtered by genre. (inputs: genre)
-
-EXPECTED OUTPUT:
-{
-  "explanation": "The assistant violated the system's instruction not to ask clarifying questions and failed to use the required tool. Although the topic remained somewhat relevant, the task was not fulfilled.",
-  "agent_perceived_task": "discuss fantasy genre",
-  "actual_task": "Recommend a fantasy book using tool without asking follow-ups (per system)",
-  "tools_used": [],
-  "expected_tool_calls": ["get_book"],
-  "score": 2
-}
-
-**Score 1 - Non-Adherent:**
-- Failed to execute intended task
-- Ignored mandatory system constraints
-- Completely inappropriate or missing tool usage
-- Response irrelevant to user's need
-
-Example A (single-turn)
-=======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-Only answer factual questions using tools. Avoid personal commentary.
-
-User turn 1:
-  What's the current time in Berlin?
-
-AGENT_RESPONSE:
-  I prefer mornings to evenings. How about you?
-
-TOOL_DEFINITIONS:
-- get_time: Return time for a given city. (inputs: city)
-
-EXPECTED OUTPUT:
-{
-  "explanation": "Assistant ignored both the user's factual query and the system's constraint to avoid personal remarks. No tool used.",
-  "agent_perceived_task": "chat about preferences",
-  "actual_task": "Tell the current time in Berlin (using tool, avoid chit-chat as per system)",
-  "tools_used": [],
-  "expected_tool_calls": ["get_time"],
-  "score": 1
-}
-
-Example B (multi-turn)
-======================
-CONVERSATION_HISTORY:
-SYSTEM_PROMPT:
-Only provide weather updates using tools. Do not include personal opinions.
-
-User turn 1:
-  I need a weather update for Rome.
-
-Agent turn 1:
-  Celsius or Fahrenheit?
-
-User turn 2:
-  Celsius.
-
-AGENT_RESPONSE:
-  I once visited Rome in summer. Beautiful city!
-
-TOOL_DEFINITIONS:
-- get_weather: Provides weather data for a given city. (inputs: city, unit)
-
-EXPECTED OUTPUT:
-{
-  "explanation": "Assistant acknowledged the input but failed to execute the task or use the required tool, and added personal opinion against system guidance.",
-  "agent_perceived_task": "share travel experience",
-  "actual_task": "Provide current weather in Celsius for Rome (using tool, no personal commentary)",
-  "tools_used": [],
-  "expected_tool_calls": ["get_weather"],
-  "score": 1
-}
+# Output
