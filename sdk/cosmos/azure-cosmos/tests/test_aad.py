@@ -140,7 +140,7 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             credential = CosmosEmulatorCredential()
-            client = cosmos_client.CosmosClient(self.host, credential)
+            client = cosmos_client.CosmosClient(self.host, credential, assert_kwarg_passthrough=True)
             db = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
             container.create_item(get_test_item(10), assert_kwarg_passthrough=True)
@@ -167,7 +167,7 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             with pytest.raises(Exception) as excinfo:
-                client = cosmos_client.CosmosClient(self.host, FailingCredential())
+                client = cosmos_client.CosmosClient(self.host, FailingCredential(), assert_kwarg_passthrough=True)
                 db = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
                 container.create_item(get_test_item(11), assert_kwarg_passthrough=True)
@@ -187,7 +187,7 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             credential = CosmosEmulatorCredential()
-            client = cosmos_client.CosmosClient(self.host, credential)
+            client = cosmos_client.CosmosClient(self.host, credential, assert_kwarg_passthrough=True)
             db = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
             container.create_item(get_test_item(12), assert_kwarg_passthrough=True)
@@ -221,7 +221,7 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             credential = FallbackCredential()
-            client = cosmos_client.CosmosClient(self.host, credential)
+            client = cosmos_client.CosmosClient(self.host, credential, assert_kwarg_passthrough=True)
             db = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
             container.create_item(get_test_item(13), assert_kwarg_passthrough=True)
