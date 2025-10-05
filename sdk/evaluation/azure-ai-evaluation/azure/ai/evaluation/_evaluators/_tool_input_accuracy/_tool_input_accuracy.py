@@ -157,9 +157,9 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Format conversation history for cleaner evaluation
         if "query" in eval_input:
             eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True
+                eval_input["query"], logger, include_system_messages=True, include_tool_calls=True
             )
-
+            
         # Call the LLM to evaluate
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
