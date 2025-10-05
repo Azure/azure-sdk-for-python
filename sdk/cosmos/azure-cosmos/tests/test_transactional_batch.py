@@ -39,16 +39,16 @@ class TestTransactionalBatch(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.client = CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.test_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
 
     def test_invalid_batch_sizes(self):
         container = self.test_database.create_container(id="invalid_batch_size" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
 
         # empty batch
         try:
-            container.execute_item_batch(batch_operations=[], partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=[], partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Operation should have failed.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -59,7 +59,7 @@ class TestTransactionalBatch(unittest.TestCase):
         for i in range(101):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Operation should have failed.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -73,22 +73,22 @@ class TestTransactionalBatch(unittest.TestCase):
                 massive_item.update({str(uuid.uuid4()): str(uuid.uuid4())})
         batch = [("create", (massive_item,))]
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("test should have failed")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.REQUEST_ENTITY_TOO_LARGE
             assert e.message.startswith("(RequestEntityTooLarge)")
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_create(self):
         container = self.test_database.create_container(id="batch_create" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 100
 
         # create the same item twice
@@ -97,7 +97,7 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("create", ({"id": item_id, "company": "Microsoft"},))]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.CONFLICT
@@ -112,7 +112,7 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("create", ({"id": str(uuid.uuid4()), "company": "Not-Microsoft"},))]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -127,7 +127,7 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("create", ({"id": str(uuid.uuid4()), "name": "Simon"},))]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -141,13 +141,13 @@ class TestTransactionalBatch(unittest.TestCase):
 
     def test_batch_read(self):
         container = self.test_database.create_container(id="batch_read" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         batch = []
         for i in range(100):
-            container.create_item({"id": "item" + str(i), "company": "Microsoft"})
+            container.create_item({"id": "item" + str(i), "company": "Microsoft"}, assert_kwarg_passthrough=True)
             batch.append(("read", ("item" + str(i),)))
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 100
         for result in batch_response:
             assert result.get("statusCode") == 200
@@ -157,7 +157,7 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("read", (str(uuid.uuid4()),))]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
@@ -171,11 +171,11 @@ class TestTransactionalBatch(unittest.TestCase):
 
     def test_batch_replace(self):
         container = self.test_database.create_container(id="batch_replace" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 2
         assert batch_response[1].get("resourceBody").get("message") == "item was replaced"
 
@@ -183,7 +183,7 @@ class TestTransactionalBatch(unittest.TestCase):
         batch = [("replace", ("no-item", {"id": "no-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
@@ -201,7 +201,7 @@ class TestTransactionalBatch(unittest.TestCase):
                   {"if_none_match_etag": "some-tag"})]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.PRECONDITION_FAILED
@@ -216,21 +216,21 @@ class TestTransactionalBatch(unittest.TestCase):
 
     def test_batch_upsert(self):
         container = self.test_database.create_container(id="batch_upsert" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
                  ("upsert", ({"id": item_id, "company": "Microsoft", "message": "item was upsert"},)),
                  ("upsert", ({"id": str(uuid.uuid4()), "company": "Microsoft"},))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 3
         assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_patch(self):
         container = self.test_database.create_container(id="batch_patch" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id,
                               "company": "Microsoft",
@@ -247,7 +247,7 @@ class TestTransactionalBatch(unittest.TestCase):
                      {"op": "incr", "path": "/port", "value": 5},
                      {"op": "move", "from": "/move_path", "path": "/moved_path"}]))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 2
         assert batch_response[1].get("resourceBody").get("favorite_color") == "red"
         assert batch_response[1].get("resourceBody").get("remove_path") is None
@@ -270,7 +270,7 @@ class TestTransactionalBatch(unittest.TestCase):
                   {"filter_predicate": "from c where c.set_path = 0"})]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.PRECONDITION_FAILED
@@ -291,14 +291,14 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("patch", (item_id, [{"op": "add", "path": "/favorite_color", "value": "red"}]),
                   {"filter_predicate": "from c where c.set_path = 1"})]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 2
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_delete(self):
         container = self.test_database.create_container(id="batch_delete" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         create_batch = []
         delete_batch = []
         for i in range(10):
@@ -306,20 +306,20 @@ class TestTransactionalBatch(unittest.TestCase):
             create_batch.append(("create", ({"id": item_id, "company": "Microsoft"},)))
             delete_batch.append(("delete", (item_id,)))
 
-        batch_response = container.execute_item_batch(batch_operations=create_batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=create_batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 10
-        assert len(list(container.read_all_items())) == 10
+        assert len(list(container.read_all_items(assert_kwarg_passthrough=True))) == 10
 
-        batch_response = container.execute_item_batch(batch_operations=delete_batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=delete_batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 10
-        assert len(list(container.read_all_items())) == 0
+        assert len(list(container.read_all_items(assert_kwarg_passthrough=True))) == 0
 
         # delete non-existent item
         batch = [("delete", ("new-item",)),
                  ("delete", ("new-item",))]
 
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
@@ -329,18 +329,18 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_lsn(self):
         container = self.test_database.create_container(id="batch_lsn" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"))
+                                                        partition_key=PartitionKey(path="/company"), assert_kwarg_passthrough=True)
         # create test items
-        container.upsert_item({"id": "read_item", "company": "Microsoft"})
-        container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
-        container.upsert_item({"id": "patch_item", "company": "Microsoft"})
-        container.upsert_item({"id": "delete_item", "company": "Microsoft"})
+        container.upsert_item({"id": "read_item", "company": "Microsoft"}, assert_kwarg_passthrough=True)
+        container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0}, assert_kwarg_passthrough=True)
+        container.upsert_item({"id": "patch_item", "company": "Microsoft"}, assert_kwarg_passthrough=True)
+        container.upsert_item({"id": "delete_item", "company": "Microsoft"}, assert_kwarg_passthrough=True)
 
-        read_response = container.read_item(item="read_item", partition_key="Microsoft")
+        read_response = container.read_item(item="read_item", partition_key="Microsoft", assert_kwarg_passthrough=True)
         lsn = read_response.get_response_headers().get(HttpHeaders.LSN)
 
         batch = [("create", ({"id": "create_item", "company": "Microsoft"},)),
@@ -350,32 +350,32 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("read", ("read_item",)),
                  ("delete", ("delete_item",))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft", assert_kwarg_passthrough=True)
         assert len(batch_response) == 6
         assert int(lsn) == int(batch_response.get_response_headers().get(HttpHeaders.LSN)) - 1
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_subpartition(self):
         container = self.test_database.create_container(
             id="batch_subpartition" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
+            partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"), assert_kwarg_passthrough=True)
         item_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]
         container.upsert_item({'id': item_ids[0],
                                'key': 'value',
                                'state': 'WA',
                                'city': 'Redmond',
-                               'zipcode': '98052'})
+                               'zipcode': '98052'}, assert_kwarg_passthrough=True)
         container.upsert_item({'id': item_ids[1],
                                'key': 'value',
                                'state': 'WA',
                                'city': 'Redmond',
-                               'zipcode': '98052'})
+                               'zipcode': '98052'}, assert_kwarg_passthrough=True)
         container.upsert_item({'id': item_ids[2],
                                'key': 'value',
                                'state': 'WA',
                                'city': 'Redmond',
-                               'zipcode': '98052'})
+                               'zipcode': '98052'}, assert_kwarg_passthrough=True)
 
         batch = [("create", (get_subpartition_item(str(uuid.uuid4())),)),
                  ("replace", (item_ids[0], {"id": item_ids[0],
@@ -388,12 +388,12 @@ class TestTransactionalBatch(unittest.TestCase):
                  ("read", (item_ids[2],)),
                  ("delete", (item_ids[2],))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond", "98052"])
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond", "98052"], assert_kwarg_passthrough=True)
         assert len(batch_response) == 6
 
         # try to use incomplete key
         try:
-            container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond"])
+            container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond"], assert_kwarg_passthrough=True)
             self.fail("Request should have failed.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -401,7 +401,7 @@ class TestTransactionalBatch(unittest.TestCase):
                    "definition in the collection or doesn't match partition key " \
                    "field values specified in the document." in e.message
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
 
 if __name__ == '__main__':

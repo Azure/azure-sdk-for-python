@@ -46,7 +46,7 @@ class TestTimeToLive(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.created_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
 
     def test_collection_and_document_ttl_values(self):
@@ -54,8 +54,8 @@ class TestTimeToLive(unittest.TestCase):
         created_collection = self.created_db.create_container(
             id='test_ttl_values1' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/id'),
-            default_ttl=ttl)
-        created_collection_properties = created_collection.read()
+            default_ttl=ttl, assert_kwarg_passthrough=True)
+        created_collection_properties = created_collection.read(assert_kwarg_passthrough=True)
         self.assertEqual(created_collection_properties['defaultTtl'], ttl)
 
         collection_id = 'test_ttl_values4' + str(uuid.uuid4())
@@ -68,7 +68,7 @@ class TestTimeToLive(unittest.TestCase):
             collection_id,
             PartitionKey(path='/id'),
             None,
-            ttl)
+            ttl, assert_kwarg_passthrough=True)
 
         document_definition = {'id': 'doc1' + str(uuid.uuid4()),
                                'name': 'sample document',
@@ -79,7 +79,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             created_collection.create_item,
-            document_definition)
+            document_definition,
+            assert_kwarg_passthrough=True)
 
         document_definition['id'] = 'doc2' + str(uuid.uuid4())
         document_definition['ttl'] = None
@@ -88,7 +89,8 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             created_collection.create_item,
-            document_definition)
+            document_definition,
+            assert_kwarg_passthrough=True)
 
         document_definition['id'] = 'doc3' + str(uuid.uuid4())
         document_definition['ttl'] = -10
@@ -97,9 +99,10 @@ class TestTimeToLive(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(
             StatusCodes.BAD_REQUEST,
             created_collection.create_item,
-            document_definition)
+            document_definition,
+            assert_kwarg_passthrough=True)
 
-        self.created_db.delete_container(container=created_collection)
+        self.created_db.delete_container(container=created_collection, assert_kwarg_passthrough=True)
 
 
 if __name__ == '__main__':

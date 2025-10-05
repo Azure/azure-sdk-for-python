@@ -24,7 +24,7 @@ def setup():
             "tests.")
 
     client = cosmos_client.CosmosClient(TestTimeoutRetryPolicy.host, TestTimeoutRetryPolicy.masterKey, consistency_level="Session",
-                                            connection_policy=TestTimeoutRetryPolicy.connectionPolicy)
+                                            connection_policy=TestTimeoutRetryPolicy.connectionPolicy, assert_kwarg_passthrough=True)
     created_database = client.get_database_client(TestTimeoutRetryPolicy.TEST_DATABASE_ID)
     created_collection = created_database.create_container(TestTimeoutRetryPolicy.TEST_CONTAINER_SINGLE_PARTITION_ID,
                                                                partition_key=PartitionKey("/pk"))
@@ -32,7 +32,7 @@ def setup():
         COLLECTION: created_collection
     }
 
-    created_database.delete_container(TestTimeoutRetryPolicy.TEST_CONTAINER_SINGLE_PARTITION_ID)
+    created_database.delete_container(TestTimeoutRetryPolicy.TEST_CONTAINER_SINGLE_PARTITION_ID, assert_kwarg_passthrough=True)
 
 
 
@@ -58,14 +58,14 @@ class TestTimeoutRetryPolicy:
                                'name': 'sample document',
                                'key': 'value'}
 
-        created_document = setup[COLLECTION].create_item(body=document_definition)
+        created_document = setup[COLLECTION].create_item(body=document_definition, assert_kwarg_passthrough=True)
         self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             # should retry once and then succeed
             mf = self.MockExecuteFunction(self.original_execute_function, 1, error_code)
             _retry_utility.ExecuteFunction = mf
             doc = setup[COLLECTION].read_item(item=created_document['id'],
-                                                    partition_key=created_document['pk'])
+                                                    partition_key=created_document['pk'], assert_kwarg_passthrough=True)
             assert doc == created_document
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
@@ -77,14 +77,14 @@ class TestTimeoutRetryPolicy:
                                'name': 'sample document',
                                'key': 'value'}
 
-        created_document = setup[COLLECTION].create_item(body=document_definition)
+        created_document = setup[COLLECTION].create_item(body=document_definition, assert_kwarg_passthrough=True)
         self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             # should retry once and then fail
             mf = self.MockExecuteFunction(self.original_execute_function, 2, error_code)
             _retry_utility.ExecuteFunction = mf
             setup[COLLECTION].read_item(item=created_document['id'],
-                                              partition_key=created_document['pk'])
+                                              partition_key=created_document['pk'], assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except exceptions.CosmosHttpResponseError as err:
             assert err.status_code == error_code
@@ -104,7 +104,7 @@ class TestTimeoutRetryPolicy:
             mf = self.MockExecuteFunction(self.original_execute_function,0, error_code)
             _retry_utility.ExecuteFunction = mf
             try:
-                setup[COLLECTION].create_item(body=document_definition)
+                setup[COLLECTION].create_item(body=document_definition, assert_kwarg_passthrough=True)
                 pytest.fail("Exception was not raised.")
             except exceptions.CosmosHttpResponseError as err:
                 assert err.status_code == error_code
@@ -113,7 +113,7 @@ class TestTimeoutRetryPolicy:
 
     @pytest.mark.parametrize("error_code", error_codes())
     def test_cross_region_retry(self, setup, error_code):
-        mock_client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        mock_client = cosmos_client.CosmosClient(self.host, self.masterKey, assert_kwarg_passthrough=True)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         document_definition = {'id': 'failoverDoc' + str(uuid.uuid4()),
@@ -121,7 +121,7 @@ class TestTimeoutRetryPolicy:
                                'name': 'sample document',
                                'key': 'value'}
 
-        created_document = container.create_item(body=document_definition)
+        created_document = container.create_item(body=document_definition, assert_kwarg_passthrough=True)
         self.original_execute_function = _retry_utility.ExecuteFunction
         original_location_cache = mock_client.client_connection._global_endpoint_manager.location_cache
         fake_endpoint = "other-region"
@@ -139,7 +139,7 @@ class TestTimeoutRetryPolicy:
             mf = self.MockExecuteFunctionCrossRegion(self.original_execute_function, error_code, fake_endpoint)
             _retry_utility.ExecuteFunction = mf
             container.read_item(item=created_document['id'],
-                                              partition_key=created_document['pk'])
+                                              partition_key=created_document['pk'], assert_kwarg_passthrough=True)
         finally:
             _retry_utility.ExecuteFunction = self.original_execute_function
 

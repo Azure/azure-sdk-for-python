@@ -36,23 +36,23 @@ class TestRoutingMapEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_COLLECTION_ID)
         cls.collection_link = cls.created_container.container_link
 
     def test_read_partition_key_ranges(self):
-        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link, assert_kwarg_passthrough=True))
         self.assertEqual(1, len(partition_key_ranges))
 
     def test_routing_map_provider(self):
-        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link))
+        partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(self.collection_link, assert_kwarg_passthrough=True))
 
         routing_mp = PartitionKeyRangeCache(self.client.client_connection)
         overlapping_partition_key_ranges = routing_mp.get_overlapping_ranges(
             self.collection_link,
             routing_range.Range("", "FF", True, False),
-            {})
+            {}, assert_kwarg_passthrough=True)
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 

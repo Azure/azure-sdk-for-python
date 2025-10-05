@@ -34,16 +34,16 @@ class TestServiceRetryPolicies(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.client = CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
     def test_service_request_retry_policy(self):
-        mock_client = CosmosClient(self.host, self.masterKey)
+        mock_client = CosmosClient(self.host, self.masterKey, assert_kwarg_passthrough=True)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
-        created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+        created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
         # Save the original function
         self.original_execute_function = _retry_utility.ExecuteFunction
 
@@ -61,7 +61,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Mock the function to return the ServiceRequestException we retry
             mf = self.MockExecuteServiceRequestExceptionIgnoreQuery(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
+            container.read_item(created_item['id'], created_item['pk'], assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == expected_counter
@@ -87,7 +87,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Mock the function to return the ServiceRequestException we retry
             mf = self.MockExecuteServiceRequestException()
             _retry_utility.ExecuteFunction = mf
-            items = list(container.query_items(query="SELECT * FROM c", partition_key=created_item['pk']))
+            items = list(container.query_items(query="SELECT * FROM c", partition_key=created_item['pk'], assert_kwarg_passthrough=True))
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == expected_counter
@@ -102,7 +102,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceRequestException()
             _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
+            container.read_item(created_item['id'], created_item['pk'], assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert mf.counter == expected_counter
@@ -119,7 +119,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceRequestException()
             _retry_utility.ExecuteFunction = mf
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             # Should retry twice in each region
@@ -132,7 +132,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
-        created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+        created_item = container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
         # Save the original function
         self.original_execute_function = _retry_utility.ExecuteFunction
 
@@ -148,7 +148,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Mock the function to return the ServiceResponseException we retry
             mf = self.MockExecuteServiceResponseExceptionIgnoreQuery(Exception, self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
+            container.read_item(created_item['id'], created_item['pk'], assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 3
@@ -162,7 +162,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceResponseException(Exception)
             _retry_utility.ExecuteFunction = mf
-            container.read_item(created_item['id'], created_item['pk'])
+            container.read_item(created_item['id'], created_item['pk'], assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 1
@@ -180,7 +180,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = mf
             # Even though we have 2 preferred write endpoints,
             # we will only run the exception once due to no retries on write requests
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 1
@@ -192,7 +192,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             # Reset the function to reset the counter
             mf = self.MockExecuteServiceResponseException(Exception)
             _retry_utility.ExecuteFunction = mf
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert mf.counter == 2
@@ -204,20 +204,20 @@ class TestServiceRetryPolicies(unittest.TestCase):
         exception = ServiceRequestError("mock exception")
         exception.exc_type = Exception
         connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs", error=exception)
-        mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy)
+        mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy, assert_kwarg_passthrough=True)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
         # We retry ServiceRequestExceptions 3 times in the to the same endpoint before raising the exception
         # regardless of operation type
         try:
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
 
         try:
-            container.read_item("some_id", "some_pk")
+            container.read_item("some_id", "some_pk", assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
@@ -227,20 +227,20 @@ class TestServiceRetryPolicies(unittest.TestCase):
         exception = ServiceResponseError("mock exception")
         exception.exc_type = Exception
         connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs", error=exception)
-        mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy)
+        mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy, assert_kwarg_passthrough=True)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
         # We retry ServiceResponseExceptions 3 times in the to the same endpoint before raising the exception
         # for read operations, but 0 times for write requests
         try:
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert connection_retry_policy.counter == 0
 
         try:
-            container.read_item("some_id", "some_pk")
+            container.read_item("some_id", "some_pk", assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceResponseError:
             assert connection_retry_policy.counter == 3
@@ -255,14 +255,14 @@ class TestServiceRetryPolicies(unittest.TestCase):
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
         connection_retry_policy = test_config.MockConnectionRetryPolicy(resource_type="docs", error=exception)
         mock_client = CosmosClient(self.host, self.masterKey, connection_retry_policy=connection_retry_policy,
-                                   preferred_locations=[self.REGION1, self.REGION2])
+                                   preferred_locations=[self.REGION1, self.REGION2], assert_kwarg_passthrough=True)
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_get_database_account_stub
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
         try:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
-            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())})
+            container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
@@ -275,7 +275,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
         connection_retry_policy.request_endpoints = []
         try:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccountStub
-            container.read_item("some_id", "some_pk")
+            container.read_item("some_id", "some_pk", assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised.")
         except ServiceRequestError:
             assert connection_retry_policy.counter == 3
