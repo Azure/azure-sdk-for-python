@@ -110,7 +110,7 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Extract tool calls from response
         if not response:
             return {"error_message": "Response parameter is required to extract tool calls."}
-            
+
         tool_calls = self._parse_tools_from_response(response)
         if not tool_calls:
             return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
@@ -138,7 +138,7 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Get agent response with tool calls and results using _get_agent_response
         agent_response_with_tools = _get_agent_response(response, include_tool_messages=True)
-        
+
         return {
             "query": query,
             "tool_calls": agent_response_with_tools,
@@ -159,7 +159,7 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             eval_input["query"] = reformat_conversation_history(
                 eval_input["query"], logger, include_system_messages=True, include_tool_calls=True
             )
-            
+
         # Call the LLM to evaluate
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
@@ -253,5 +253,3 @@ class ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :rtype: Dict[str, Union[str, float]]
         """
         return super().__call__(*args, **kwargs)
-
-

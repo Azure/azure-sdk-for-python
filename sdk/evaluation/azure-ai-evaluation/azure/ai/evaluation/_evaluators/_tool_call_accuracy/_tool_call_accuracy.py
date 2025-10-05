@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
 
+
 @experimental
 class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
@@ -176,7 +177,9 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
         try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR)
+            needed_tool_definitions = self._extract_needed_tool_definitions(
+                tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR
+            )
         except EvaluationException as e:
             # Check if this is because no tool definitions were provided at all
             if len(tool_definitions) == 0:
