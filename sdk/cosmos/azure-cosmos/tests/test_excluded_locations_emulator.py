@@ -110,13 +110,13 @@ class TestExcludedLocationsEmulator:
             # create an item
             id_value: str = str(uuid.uuid4())
             document_definition = {'id': id_value, 'pk': id_value}
-            container.create_item(body=document_definition)
+            container.create_item(body=document_definition, assert_kwarg_passthrough=True)
 
             # API call: delete_all_items_by_partition_key
             if request_excluded_locations is None:
-                container.delete_all_items_by_partition_key(id_value)
+                container.delete_all_items_by_partition_key(id_value, assert_kwarg_passthrough=True)
             else:
-                container.delete_all_items_by_partition_key(id_value, excluded_locations=request_excluded_locations)
+                container.delete_all_items_by_partition_key(id_value, excluded_locations=request_excluded_locations, assert_kwarg_passthrough=True)
 
             # Verify endpoint locations
             actual_location = get_location(initialized_objects)
@@ -176,9 +176,9 @@ class TestExcludedLocationsEmulator:
 
             custom_transport.reset_counters()
             if request_excluded_locations is None:
-                container.read()
+                container.read(assert_kwarg_passthrough=True)
             else:
-                container.read(excluded_locations=request_excluded_locations)
+                container.read(excluded_locations=request_excluded_locations, assert_kwarg_passthrough=True)
 
             # Verify endpoint locations
             actual_location = get_location(initialized_objects)

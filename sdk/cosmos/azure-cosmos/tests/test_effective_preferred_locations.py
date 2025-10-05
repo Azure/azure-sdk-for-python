@@ -29,7 +29,7 @@ def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
 
-    client = CosmosClient(TestPreferredLocations.host, TestPreferredLocations.master_key, consistency_level="Session")
+    client = CosmosClient(TestPreferredLocations.host, TestPreferredLocations.master_key, consistency_level="Session", assert_kwarg_passthrough=True)
     created_database = client.get_database_client(TestPreferredLocations.TEST_DATABASE_ID)
     created_collection = created_database.get_container_client(TestPreferredLocations.TEST_CONTAINER_SINGLE_PARTITION_ID)
     yield {
@@ -92,7 +92,7 @@ class TestPreferredLocations:
         client = CosmosClient(default_endpoint,
                               self.master_key,
                               multiple_write_locations=True,
-                              transport=custom_transport, consistency_level="Session", **kwargs)
+                              transport=custom_transport, consistency_level="Session", assert_kwarg_passthrough=True, **kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_SINGLE_PARTITION_ID)
         return {"client": client, "db": db, "col": container}
@@ -106,7 +106,7 @@ class TestPreferredLocations:
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.MockGetDatabaseAccount(ACCOUNT_REGIONS)
         try:
-            client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location)
+            client = CosmosClient(default_endpoint, self.master_key, preferred_locations=preferred_location, assert_kwarg_passthrough=True)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
         finally:
@@ -136,7 +136,7 @@ class TestPreferredLocations:
     def test_read_no_preferred_locations_with_errors(self, setup, error):
         container = setup[COLLECTION]
         item_to_read = construct_item()
-        container.create_item(item_to_read)
+        container.create_item(item_to_read, assert_kwarg_passthrough=True)
 
         # setup fault injection so that first account region fails
         custom_transport = FaultInjectionTransport()
@@ -147,14 +147,14 @@ class TestPreferredLocations:
         expected = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
         fault_setup = self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
         fault_container = fault_setup["col"]
-        response = fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key])
+        response = fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], assert_kwarg_passthrough=True)
         request = response.get_response_headers()["_request"]
         # Validate the response comes from another region meaning that the account locations were used
         assert request.url.startswith(expected)
 
         # should fail if using excluded locations because no where to failover to
         with pytest.raises(CosmosHttpResponseError):
-            fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2])
+            fault_container.read_item(item=item_to_read["id"], partition_key=item_to_read[self.partition_key], excluded_locations=[REGION_2], assert_kwarg_passthrough=True)
 
     @pytest.mark.cosmosMultiRegion
     def test_write_no_preferred_locations_with_errors(self, setup):
@@ -165,14 +165,14 @@ class TestPreferredLocations:
 
         fault_setup = self.setup_method_with_custom_transport(custom_transport=custom_transport, error_lambda=error_lambda)
         fault_container = fault_setup["col"]
-        response = fault_container.create_item(body=construct_item())
+        response = fault_container.create_item(body=construct_item(), assert_kwarg_passthrough=True)
         request = response.get_response_headers()["_request"]
         # Validate the response comes from another region meaning that the account locations were used
         assert request.url.startswith(expected)
 
         # should fail if using excluded locations because no where to failover to
         with pytest.raises(ServiceRequestError):
-            fault_container.create_item(body=construct_item(), excluded_locations=[REGION_2])
+            fault_container.create_item(body=construct_item(), excluded_locations=[REGION_2], assert_kwarg_passthrough=True)
 
     class MockGetDatabaseAccount(object):
         def __init__(

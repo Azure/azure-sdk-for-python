@@ -37,7 +37,7 @@ class TestHeaders(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_MULTI_PARTITION_CONTAINER_ID)
 
@@ -120,68 +120,68 @@ class TestHeaders(unittest.TestCase):
     def test_client_level_throughput_bucket(self):
         cosmos_client.CosmosClient(self.host, self.masterKey,
             throughput_bucket=client_throughput_bucket_number,
-            raw_response_hook=client_raw_response_hook)
+            raw_response_hook=client_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_request_precedence_throughput_bucket(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                   throughput_bucket=client_throughput_bucket_number)
+                                   throughput_bucket=client_throughput_bucket_number, assert_kwarg_passthrough=True)
         created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
         created_container = created_db.create_container(
             str(uuid.uuid4()),
-            PartitionKey(path="/pk"))
+            PartitionKey(path="/pk"), assert_kwarg_passthrough=True)
         created_container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
-        created_db.delete_container(created_container.id)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
+        created_db.delete_container(created_container.id, assert_kwarg_passthrough=True)
 
     def test_container_read_item_throughput_bucket(self):
-        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'}, assert_kwarg_passthrough=True)
         self.container.read_item(
              item=created_document['id'],
              partition_key="mypk",
              throughput_bucket=request_throughput_bucket_number,
-             raw_response_hook=request_raw_response_hook)
+             raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_read_all_items_throughput_bucket(self):
         for i in range(10):
-            self.container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'})
+            self.container.create_item(body={'id': ''.format(i) + str(uuid.uuid4()), 'pk': 'mypk'}, assert_kwarg_passthrough=True)
 
         self.container.read_all_items(
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_query_items_throughput_bucket(self):
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
-        self.container.create_item(body=document_definition)
+        self.container.create_item(body=document_definition, assert_kwarg_passthrough=True)
 
         query = 'SELECT * from c'
         self.container.query_items(
             query=query,
             partition_key='pk',
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_replace_item_throughput_bucket(self):
-        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        created_document = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'}, assert_kwarg_passthrough=True)
         self.container.replace_item(
             item=created_document['id'],
             body={'id': '2' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_upsert_item_throughput_bucket(self):
        self.container.upsert_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_create_item_throughput_bucket(self):
         self.container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_patch_item_throughput_bucket(self):
         pkValue = "patch_item_pk" + str(uuid.uuid4())
@@ -195,7 +195,7 @@ class TestHeaders(unittest.TestCase):
             },
             "company": "Microsoft",
             "number": 3}
-        self.container.create_item(item)
+        self.container.create_item(item, assert_kwarg_passthrough=True)
         # Define and run patch operations
         operations = [
             {"op": "add", "path": "/color", "value": "yellow"},
@@ -210,12 +210,12 @@ class TestHeaders(unittest.TestCase):
             partition_key=pkValue,
             patch_operations=operations,
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_execute_item_batch_throughput_bucket(self):
         created_collection = self.database.create_container(
             id='test_execute_item ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/company'))
+            partition_key=PartitionKey(path='/company'), assert_kwarg_passthrough=True)
         batch = []
         for i in range(100):
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
@@ -224,23 +224,23 @@ class TestHeaders(unittest.TestCase):
             batch_operations=batch,
             partition_key="Microsoft",
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
-        self.database.delete_container(created_collection)
+        self.database.delete_container(created_collection, assert_kwarg_passthrough=True)
 
     def test_container_delete_item_throughput_bucket(self):
-        created_item = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
+        created_item = self.container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'}, assert_kwarg_passthrough=True)
 
         self.container.delete_item(
             created_item['id'],
             partition_key='mypk',
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_delete_all_items_by_partition_key_throughput_bucket(self):
         created_collection = self.database.create_container(
             id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/pk', kind='Hash'))
+            partition_key=PartitionKey(path='/pk', kind='Hash'), assert_kwarg_passthrough=True)
 
         # Create two partition keys
         partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
@@ -249,18 +249,18 @@ class TestHeaders(unittest.TestCase):
         # add items for partition key 1
         for i in range(1, 3):
             created_collection.upsert_item(
-                dict(id="item{}".format(i), pk=partition_key1))
+                dict(id="item{}".format(i), pk=partition_key1), assert_kwarg_passthrough=True)
 
         # add items for partition key 2
-        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
+        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2), assert_kwarg_passthrough=True)
 
         # delete all items for partition key 1
         created_collection.delete_all_items_by_partition_key(
             partition_key1,
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook)
+            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
-        self.database.delete_container(created_collection)
+        self.database.delete_container(created_collection, assert_kwarg_passthrough=True)
 
     # TODO Re-enable once Throughput Bucket Validation Changes are rolled out
     """

@@ -90,17 +90,20 @@ class TestCosmosHttpLogger(unittest.TestCase):
         cls.client_default = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                         consistency_level="Session",
                                                         connection_policy=cls.connectionPolicy,
-                                                        logger=cls.logger_default)
+                                                        logger=cls.logger_default,
+                                                        assert_kwarg_passthrough=True)
         cls.client_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                            consistency_level="Session",
                                                            connection_policy=cls.connectionPolicy,
                                                            logger=cls.logger_diagnostic,
-                                                           enable_diagnostics_logging=True)
+                                                           enable_diagnostics_logging=True,
+                                                           assert_kwarg_passthrough=True)
         cls.client_filtered_diagnostic = cosmos_client.CosmosClient(cls.host, cls.masterKey,
                                                                     consistency_level="Session",
                                                                     connection_policy=cls.connectionPolicy,
                                                                     logger=cls.logger_filtered_diagnostic,
-                                                                    enable_diagnostics_logging=True)
+                                                                    enable_diagnostics_logging=True,
+                                                                    assert_kwarg_passthrough=True)
 
         # Create a root logger with a mock handler and a filter for status codes above 400
         cls.root_mock_handler = test_config.MockHandler()
@@ -118,13 +121,14 @@ class TestCosmosHttpLogger(unittest.TestCase):
             consistency_level="Session",
             connection_policy=cls.connectionPolicy,
             logger=cls.root_logger_grandchild,
-            enable_diagnostics_logging=True
+            enable_diagnostics_logging=True,
+            assert_kwarg_passthrough=True
         )
 
     def test_default_http_logging_policy(self):
         # Test if we can log into from creating a database
         database_id = "database_test-" + str(uuid.uuid4())
-        self.client_default.create_database(id=database_id)
+        self.client_default.create_database(id=database_id, assert_kwarg_passthrough=True)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_default.messages)
         messages_request = self.mock_handler_default.messages[0].message.split("\n")
         messages_response = self.mock_handler_default.messages[1].message.split("\n")
@@ -137,12 +141,12 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_default.reset()
 
         # delete database
-        self.client_default.delete_database(database_id)
+        self.client_default.delete_database(database_id, assert_kwarg_passthrough=True)
 
     def test_cosmos_http_logging_policy(self):
         # Test if we can log info from reading a database
         database_id = "database_test-" + str(uuid.uuid4())
-        self.client_diagnostic.create_database(id=database_id)
+        self.client_diagnostic.create_database(id=database_id, assert_kwarg_passthrough=True)
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
         # Check that we made a databaseaccount read request only once and that we only logged it once
         messages_request = self.mock_handler_diagnostic.messages[0]
@@ -171,7 +175,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         self.mock_handler_diagnostic.reset()
         # now test in case of an error
         try:
-            self.client_diagnostic.create_database(id=database_id)
+            self.client_diagnostic.create_database(id=database_id, assert_kwarg_passthrough=True)
         except:
             pass
         assert all(m.levelname == 'INFO' for m in self.mock_handler_diagnostic.messages)
@@ -187,7 +191,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert "Response headers" in messages_response.msg
 
         # delete database
-        self.client_diagnostic.delete_database(database_id)
+        self.client_diagnostic.delete_database(database_id, assert_kwarg_passthrough=True)
 
         self.mock_handler_diagnostic.reset()
 
@@ -195,14 +199,14 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Test if we can log errors with the filtered diagnostics logger
         database_id = "database_test_" + str(uuid.uuid4())
         container_id = "diagnostics_container_test_" + str(uuid.uuid4())
-        self.client_filtered_diagnostic.create_database(id=database_id)
+        self.client_filtered_diagnostic.create_database(id=database_id, assert_kwarg_passthrough=True)
         database = self.client_filtered_diagnostic.get_database_client(database_id)
-        database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+        database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"), assert_kwarg_passthrough=True)
 
         # Try to read an item that doesn't exist
         try:
             container = database.get_container_client(container_id)
-            container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
+            container.read_item(item="nonexistent_item", partition_key="nonexistent_pk", assert_kwarg_passthrough=True)
         except:
             pass
 
@@ -218,7 +222,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
 
         # Try to create an item with an invalid partition key
         try:
-            container.create_item(body={"FakeProperty": "item1", "NotPk": None})
+            container.create_item(body={"FakeProperty": "item1", "NotPk": None}, assert_kwarg_passthrough=True)
         except:
             pass
 
@@ -231,7 +235,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert len(self.mock_handler_filtered_diagnostic.messages) == 2
 
         # Clean up
-        self.client_filtered_diagnostic.delete_database(database_id)
+        self.client_filtered_diagnostic.delete_database(database_id, assert_kwarg_passthrough=True)
         self.mock_handler_filtered_diagnostic.reset()
 
     def test_client_settings(self):
@@ -276,7 +280,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         id_value: str = str(uuid.uuid4())
         document_definition = {'id': id_value, 'pk': id_value}
         container: ContainerProxy = initialized_objects["col"]
-        container.create_item(body=document_definition)
+        container.create_item(body=document_definition, assert_kwarg_passthrough=True)
 
         # Verify endpoint locations
         messages_split = mock_handler.messages[1].message.split("\n")
@@ -306,7 +310,8 @@ class TestCosmosHttpLogger(unittest.TestCase):
             consistency_level="Session",
             connection_policy=self.connectionPolicy,
             logger=self.logger_activity_id,
-            enable_diagnostics_logging=True
+            enable_diagnostics_logging=True,
+            assert_kwarg_passthrough=True
         )
 
         # Generate a custom activity ID
@@ -315,15 +320,15 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Create a database and container for the test
         database_id = "database_test_activity_id_" + str(uuid.uuid4())
         container_id = "container_test_activity_id_" + str(uuid.uuid4())
-        database = self.client_activity_id.create_database(id=database_id)
-        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+        database = self.client_activity_id.create_database(id=database_id, assert_kwarg_passthrough=True)
+        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"), assert_kwarg_passthrough=True)
         # Reset the mock handler to clear previous messages
         self.mock_handler_activity_id.reset()
 
         # Upsert an item and verify the request and response activity IDs match
         item_id = str(uuid.uuid4())
         item_body = {"id": item_id, "pk": item_id}
-        container.upsert_item(body=item_body)
+        container.upsert_item(body=item_body, assert_kwarg_passthrough=True)
 
         # Verify that the request activity ID matches the response activity ID
         # Having the Request Activity confirms we generated one from SDK
@@ -336,7 +341,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         headers = {"x-ms-activity-id": custom_activity_id}
         item_id_2 = str(uuid.uuid4())
         item_body_2 = {"id": item_id_2, "pk": item_id_2}
-        container.upsert_item(body=item_body_2, initial_headers=headers)
+        container.upsert_item(body=item_body_2, initial_headers=headers, assert_kwarg_passthrough=True)
 
         # Verify that the custom activity ID does not match the request activity ID from the log record
         # Users should not be able to pass in their own activity ID.
@@ -344,7 +349,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert log_record_request_2.activity_id != custom_activity_id
 
         # Clean up by deleting the database
-        self.client_activity_id.delete_database(database_id)
+        self.client_activity_id.delete_database(database_id, assert_kwarg_passthrough=True)
         self.mock_handler_activity_id.reset()
 
     def test_logging_exceptions_with_no_response(self):
@@ -385,7 +390,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Attempt to create an item, which should trigger the injected 502 error
         container: ContainerProxy = initialized_objects["col"]
         try:
-            container.create_item(body=document_definition)
+            container.create_item(body=document_definition, assert_kwarg_passthrough=True)
             pytest.fail("Expected exception not thrown")
         except CosmosHttpResponseError as cosmosError:
             # Verify that the logger captured the 502 error and was called from on_exception
@@ -398,11 +403,11 @@ class TestCosmosHttpLogger(unittest.TestCase):
         # Attempt to read a nonexistent item
         database_id = "database_test_hierarchical_logger_" + str(uuid.uuid4())
         container_id = "container_test_hierarchical_logger_" + str(uuid.uuid4())
-        database = self.client_grandchild_logger.create_database(id=database_id)
-        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+        database = self.client_grandchild_logger.create_database(id=database_id, assert_kwarg_passthrough=True)
+        container = database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"), assert_kwarg_passthrough=True)
 
         try:
-            container.read_item(item="nonexistent_item", partition_key="nonexistent_pk")
+            container.read_item(item="nonexistent_item", partition_key="nonexistent_pk", assert_kwarg_passthrough=True)
         except:
             pass
 
@@ -417,7 +422,7 @@ class TestCosmosHttpLogger(unittest.TestCase):
         assert bool(self.root_mock_handler.filters)
 
         # Clean up
-        self.client_grandchild_logger.delete_database(database_id)
+        self.client_grandchild_logger.delete_database(database_id, assert_kwarg_passthrough=True)
         self.root_mock_handler.reset()
 
 if __name__ == "__main__":

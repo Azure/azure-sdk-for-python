@@ -20,7 +20,7 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestFeedRange.host, test_config.TestConfig.masterKey),
+    test_client = cosmos_client.CosmosClient(TestFeedRange.host, test_config.TestConfig.masterKey, assert_kwarg_passthrough=True),
     created_db = test_client[0].get_database_client(TestFeedRange.TEST_DATABASE_ID)
     return {
         "created_db": created_db,
@@ -95,13 +95,14 @@ class TestFeedRange:
     def test_partition_key_to_feed_range(self, setup):
         created_container = setup["created_db"].create_container(
             id='container_' + str(uuid.uuid4()),
-            partition_key=partition_key.PartitionKey(path="/id")
+            partition_key=partition_key.PartitionKey(path="/id"),
+            assert_kwarg_passthrough=True
         )
-        feed_range = created_container.feed_range_from_partition_key("1")
+        feed_range = created_container.feed_range_from_partition_key("1", assert_kwarg_passthrough=True)
         feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
         assert feed_range_epk.get_normalized_range() == Range("3C80B1B7310BB39F29CC4EA05BDD461E",
                         "3c80b1b7310bb39f29cc4ea05bdd461f", True, False)
-        setup["created_db"].delete_container(created_container)
+        setup["created_db"].delete_container(created_container, assert_kwarg_passthrough=True)
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)
     def test_feed_range_is_subset(self, setup, parent_feed_range, child_feed_range, is_subset):

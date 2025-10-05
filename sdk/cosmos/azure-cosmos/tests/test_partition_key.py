@@ -36,12 +36,12 @@ def _assert_pk(item: ItemDict, pk_field: PkField = 'pk') -> None:
 
 
 def _read_and_assert(container: ContainerProxy, doc_id: str, pk_field: PkField = 'pk', pk_value: Any = None) -> None:
-    item = container.read_item(item=doc_id, partition_key=pk_value)
+    item = container.read_item(item=doc_id, partition_key=pk_value, assert_kwarg_passthrough=True)
     _assert_pk(item, pk_field)
 
 
 def _query_and_assert_single(container: ContainerProxy, pk_field: PkField = 'pk', pk_value: Any = None) -> None:
-    query_iterable = container.query_items(query='SELECT * from c', partition_key=pk_value)
+    query_iterable = container.query_items(query='SELECT * from c', partition_key=pk_value, assert_kwarg_passthrough=True)
     results = list(query_iterable)
     assert len(results) > 0
     for result in results:
@@ -49,7 +49,7 @@ def _query_and_assert_single(container: ContainerProxy, pk_field: PkField = 'pk'
 
 
 def _change_feed_and_assert(container: ContainerProxy, pk_field: PkField = 'pk', pk_value: Any = None) -> None:
-    changes_iterable = container.query_items_change_feed(is_start_from_beginning=True, partition_key=pk_value)
+    changes_iterable = container.query_items_change_feed(is_start_from_beginning=True, partition_key=pk_value, assert_kwarg_passthrough=True)
     changes = list(changes_iterable)
     assert len(changes) > 0
     for change in changes:
@@ -58,16 +58,16 @@ def _change_feed_and_assert(container: ContainerProxy, pk_field: PkField = 'pk',
 
 def _replace_update_cycle(container: ContainerProxy, doc: ItemDict, pk_field: PkField = 'pk') -> None:
     doc['newField'] = 'newValue'
-    item = container.replace_item(item=doc['id'], body=doc)
+    item = container.replace_item(item=doc['id'], body=doc, assert_kwarg_passthrough=True)
     assert item['newField'] == 'newValue'
     _assert_pk(item, pk_field)
-    item = container.upsert_item(body=doc)
+    item = container.upsert_item(body=doc, assert_kwarg_passthrough=True)
     _assert_pk(item, pk_field)
 
 
 def _patch_and_assert(container: ContainerProxy, doc_id: str, pk_field: PkField = 'pk', pk_value: Any = None) -> None:
     operations = [{"op": "add", "path": "/favorite_color", "value": "red"}]
-    item = container.patch_item(item=doc_id, partition_key=pk_value, patch_operations=operations)
+    item = container.patch_item(item=doc_id, partition_key=pk_value, patch_operations=operations, assert_kwarg_passthrough=True)
     assert item['favorite_color'] == 'red'
     _assert_pk(item, pk_field)
 
@@ -85,7 +85,7 @@ def _batch_and_assert(container: ContainerProxy, pk_field: PkField = 'pk', pk_va
         batch_operations = [
             ("upsert", (({"id": str(uuid.uuid4())}),)),
         ]
-    items = container.execute_item_batch(batch_operations=batch_operations, partition_key=pk_value)
+    items = container.execute_item_batch(batch_operations=batch_operations, partition_key=pk_value, assert_kwarg_passthrough=True)
     assert len(items) == 1
     _assert_pk(items[0]['resourceBody'], pk_field)
 
@@ -97,7 +97,7 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestPartitionKey.host, TestPartitionKey.masterKey),
+    test_client = cosmos_client.CosmosClient(TestPartitionKey.host, TestPartitionKey.masterKey, assert_kwarg_passthrough=True),
     created_db = test_client[0].get_database_client(TestPartitionKey.TEST_DATABASE_ID)
     return {
         DATABASE: created_db,
@@ -108,16 +108,19 @@ def setup():
 def _assert_no_conflicts(container: ContainerProxy, pk_value: PkField) -> None:
     conflict_definition: ItemDict = {'id': 'new conflict', 'resourceId': 'doc1', 'operationType': 'create', 'resourceType': 'document'}
     if pk_value:
-        assert len(list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'', partition_key=pk_value))) == 0
+        assert len(list(container.query_conflicts(
+            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
+            partition_key=pk_value, assert_kwarg_passthrough=True))) == 0
     else:
         try:
-            list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'', partition_key=pk_value))
+            list(container.query_conflicts(query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
+                                            partition_key=pk_value, assert_kwarg_passthrough=True))
             pytest.fail("Should have thrown since cross partition query not allowed")
         except CosmosHttpResponseError as ex:
             assert ex.status_code, 400
     for api_call in (container.get_conflict, container.delete_conflict):
         try:
-            api_call(conflict_definition['id'], partition_key=pk_value)
+            api_call(conflict_definition['id'], partition_key=pk_value, assert_kwarg_passthrough=True)
             pytest.fail("Should have thrown since there are no conflicts")
         except AzureError as ex:
             assert isinstance(ex, CosmosResourceNotFoundError)
@@ -126,11 +129,11 @@ def _assert_no_conflicts(container: ContainerProxy, pk_value: PkField) -> None:
 def _perform_operations_on_pk(created_container, pk_field, pk_value):
     # Create initial null PK doc
     document_definition = _new_null_pk_doc(pk_field)
-    item = created_container.create_item(body=document_definition)
+    item = created_container.create_item(body=document_definition, assert_kwarg_passthrough=True)
     _assert_pk(item, pk_field)
     # Read & point reads
     _read_and_assert(created_container, document_definition['id'], pk_field, pk_value)
-    items_iter = created_container.read_items(items=[(document_definition['id'], pk_value)])
+    items_iter = created_container.read_items(items=[(document_definition['id'], pk_value)], assert_kwarg_passthrough=True)
     items_list = list(items_iter)
     assert len(items_list) == 1
     _assert_pk(items_list[0], pk_field)
@@ -157,20 +160,20 @@ def _perform_operations_on_pk(created_container, pk_field, pk_value):
     # Conflicts
     _assert_no_conflicts(created_container, pk_value)
     # Get Feed Range
-    feed_range = created_container.feed_range_from_partition_key(partition_key=pk_value)
+    feed_range = created_container.feed_range_from_partition_key(partition_key=pk_value, assert_kwarg_passthrough=True)
     assert feed_range is not None
     items_iter = created_container.query_items(query='SELECT * FROM c',
                                                feed_range=feed_range,
-                                               enable_cross_partition_query=True)
+                                               enable_cross_partition_query=True, assert_kwarg_passthrough=True)
     items_list = list(items_iter)
     assert len(items_list) > 0
     for item in items_list:
         _assert_pk(item, pk_field)
     # Delete
-    created_container.delete_item(item=document_definition['id'], partition_key=pk_value)
+    created_container.delete_item(item=document_definition['id'], partition_key=pk_value, assert_kwarg_passthrough=True)
     # recreate the item to test delete item api
-    created_container.create_item(body=document_definition)
-    created_container.delete_all_items_by_partition_key(partition_key=pk_value)
+    created_container.create_item(body=document_definition, assert_kwarg_passthrough=True)
+    created_container.delete_all_items_by_partition_key(partition_key=pk_value, assert_kwarg_passthrough=True)
 
 
 @pytest.mark.cosmosEmulator
@@ -194,12 +197,13 @@ class TestPartitionKey:
         pk_val: PkField = partition_key.NonePartitionKeyValue  # type: ignore[assignment]
         created_container = setup[DATABASE].create_container_if_not_exists(
             id="container_with_no_pk" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk", kind='Hash', version=version)
+            partition_key=PartitionKey(path="/pk", kind='Hash', version=version),
+            assert_kwarg_passthrough=True
         )
         try:
            _perform_operations_on_pk(created_container, None, pk_val)
         finally:
-            setup[DATABASE].delete_container(created_container)
+            setup[DATABASE].delete_container(created_container, assert_kwarg_passthrough=True)
 
     @pytest.mark.parametrize("version", VERSIONS)
     def test_with_null_pk(self, setup, version) -> None:
@@ -207,26 +211,28 @@ class TestPartitionKey:
         pk_vals = [None, partition_key.NullPartitionKeyValue]
         created_container = setup[DATABASE].create_container_if_not_exists(
             id="container_with_nul_pk" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk", kind='Hash', version=version)
+            partition_key=PartitionKey(path="/pk", kind='Hash', version=version),
+            assert_kwarg_passthrough=True
         )
         try:
             for pk_value in pk_vals:
                 _perform_operations_on_pk(created_container, pk_field, pk_value)
         finally:
-            setup[DATABASE].delete_container(created_container)
+            setup[DATABASE].delete_container(created_container, assert_kwarg_passthrough=True)
 
     def test_hash_v2_partition_key_definition(self, setup) -> None:
-        created_container_properties = setup[COLLECTION].read()
+        created_container_properties = setup[COLLECTION].read(assert_kwarg_passthrough=True)
         assert created_container_properties['partitionKey']['version'] == 2
 
     def test_hash_v1_partition_key_definition(self, setup) -> None:
         created_container = setup[DATABASE].create_container(
             id='container_with_pkd_v2' + str(uuid.uuid4()),
-            partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1)
+            partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1),
+            assert_kwarg_passthrough=True
         )
-        created_container_properties = created_container.read()
+        created_container_properties = created_container.read(assert_kwarg_passthrough=True)
         assert created_container_properties['partitionKey']['version'] == 1
-        setup[DATABASE].delete_container(created_container)
+        setup[DATABASE].delete_container(created_container, assert_kwarg_passthrough=True)
 
 
 if __name__ == '__main__':

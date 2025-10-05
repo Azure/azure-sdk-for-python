@@ -26,7 +26,7 @@ def setup():
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
 
-    client = CosmosClient(TestHealthCheck.host, TestHealthCheck.masterKey, consistency_level="Session")
+    client = CosmosClient(TestHealthCheck.host, TestHealthCheck.masterKey, consistency_level="Session", assert_kwarg_passthrough=True)
     created_database = client.get_database_client(TestHealthCheck.TEST_DATABASE_ID)
     created_collection = created_database.get_container_client(TestHealthCheck.TEST_CONTAINER_SINGLE_PARTITION_ID)
     yield {

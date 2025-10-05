@@ -41,7 +41,7 @@ class TestMultiMaster(unittest.TestCase):
             connectionPolicy.UseMultipleWriteLocations = True
             client = cosmos_client.CosmosClient(TestMultiMaster.host, TestMultiMaster.masterKey,
                                                 consistency_level="Session",
-                                                connection_policy=connectionPolicy)
+                                                connection_policy=connectionPolicy, assert_kwarg_passthrough=True)
 
             created_db = client.get_database_client(self.configs.TEST_DATABASE_ID)
 
@@ -51,36 +51,36 @@ class TestMultiMaster(unittest.TestCase):
                                    'pk': 'pk',
                                    'name': 'sample document',
                                    'operation': 'insertion'}
-            created_document = created_collection.create_item(body=document_definition)
+            created_document = created_collection.create_item(body=document_definition, assert_kwarg_passthrough=True)
 
             sproc_definition = {
                 'id': 'sample sproc' + str(uuid.uuid4()),
                 'serverScript': 'function() {var x = 10;}'
             }
-            sproc = created_collection.scripts.create_stored_procedure(body=sproc_definition)
+            sproc = created_collection.scripts.create_stored_procedure(body=sproc_definition, assert_kwarg_passthrough=True)
 
             created_collection.scripts.execute_stored_procedure(
                 sproc=sproc['id'],
-                partition_key='pk'
+                partition_key='pk', assert_kwarg_passthrough=True
             )
 
             created_collection.read_item(
                 item=created_document,
-                partition_key='pk'
+                partition_key='pk', assert_kwarg_passthrough=True
             )
 
             created_document['operation'] = 'replace'
             replaced_document = created_collection.replace_item(
                 item=created_document['id'],
-                body=created_document
+                body=created_document, assert_kwarg_passthrough=True
             )
 
             replaced_document['operation'] = 'upsert'
-            upserted_document = created_collection.upsert_item(body=replaced_document)
+            upserted_document = created_collection.upsert_item(body=replaced_document, assert_kwarg_passthrough=True)
 
             created_collection.delete_item(
                 item=upserted_document,
-                partition_key='pk'
+                partition_key='pk', assert_kwarg_passthrough=True
             )
 
             print(len(self.last_headers))

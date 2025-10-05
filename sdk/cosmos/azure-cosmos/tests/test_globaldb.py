@@ -99,7 +99,7 @@ class TestGlobalDB(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.test_db = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.test_coll = cls.test_db.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
@@ -116,13 +116,13 @@ class TestGlobalDB(unittest.TestCase):
                                'key': 'value'}
 
         # When EnableEndpointDiscovery is False, WriteEndpoint is set to the endpoint passed while creating the client instance
-        created_document = self.test_coll.create_item(document_definition)
+        created_document = self.test_coll.create_item(document_definition, assert_kwarg_passthrough=True)
         self.assertEqual(client.client_connection.WriteEndpoint, TestGlobalDB.host)
 
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        read_response = self.test_coll.read_item(item=created_document, partition_key=created_document['pk'])
+        read_response = self.test_coll.read_item(item=created_document, partition_key=created_document['pk'], assert_kwarg_passthrough=True)
         content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
         # When EnableEndpointDiscovery is False, ReadEndpoint is set to the endpoint passed while creating the client
@@ -133,20 +133,20 @@ class TestGlobalDB(unittest.TestCase):
         document_definition['id'] = 'doc2'
 
         client = cosmos_client.CosmosClient(TestGlobalDB.host, TestGlobalDB.masterKey,
-                                            connection_policy=connection_policy)
+                                            connection_policy=connection_policy, assert_kwarg_passthrough=True)
 
         database = client.get_database_client(self.configs.TEST_DATABASE_ID)
         container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # When EnableEndpointDiscovery is True, WriteEndpoint is set to the write endpoint
-        created_document = container.create_item(document_definition)
+        created_document = container.create_item(document_definition, assert_kwarg_passthrough=True)
         if is_not_default_host(TestGlobalDB.write_location_host):
             self.assertEqual(client.client_connection.WriteEndpoint, TestGlobalDB.write_location_host)
 
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'], assert_kwarg_passthrough=True)
         content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
@@ -163,7 +163,8 @@ class TestGlobalDB(unittest.TestCase):
 
         read_location_client = cosmos_client.CosmosClient(self.read_location_host,
                                                           self.masterKey,
-                                                          connection_policy=connection_policy)
+                                                          connection_policy=connection_policy,
+                                                          assert_kwarg_passthrough=True)
 
         document_definition = {'id': 'doc1',
                                'name': 'sample document',
@@ -179,23 +180,25 @@ class TestGlobalDB(unittest.TestCase):
                 StatusCodes.FORBIDDEN,
                 SubStatusCodes.WRITE_FORBIDDEN,
                 container.create_item,
-                document_definition)
+                document_definition,
+                assert_kwarg_passthrough=True)
 
         # Query databases will pass for the read location client as it's a GET operation
         list(read_location_client.query_databases(
             query='SELECT * FROM root r WHERE r.id=@id',
-            parameters=[{'name': '@id', 'value': self.test_db.id}]))
+            parameters=[{'name': '@id', 'value': self.test_db.id}], assert_kwarg_passthrough=True))
 
         connection_policy.EnableEndpointDiscovery = True
         read_location_client = cosmos_client.CosmosClient(self.read_location_host,
                                                           self.masterKey,
-                                                          connection_policy=connection_policy)
+                                                          connection_policy=connection_policy,
+                                                          assert_kwarg_passthrough=True)
 
         database = read_location_client.get_database_client(self.configs.TEST_DATABASE_ID)
         container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
         # CreateDocument call will go to the WriteEndpoint as EnableEndpointDiscovery is set to True and client will resolve the right endpoint based on the operation
-        created_document = container.create_item(document_definition)
+        created_document = container.create_item(document_definition, assert_kwarg_passthrough=True)
         self.assertEqual(created_document['id'], document_definition['id'])
 
     def test_global_db_preferred_locations(self):
@@ -203,7 +206,8 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = True
 
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                            connection_policy=connection_policy)
+                                            connection_policy=connection_policy,
+                                            assert_kwarg_passthrough=True)
 
         document_definition = {'id': 'doc3',
                                'pk': 'pk',
@@ -213,13 +217,13 @@ class TestGlobalDB(unittest.TestCase):
         database = client.get_database_client(self.configs.TEST_DATABASE_ID)
         container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-        created_document = container.create_item(document_definition)
+        created_document = container.create_item(document_definition, assert_kwarg_passthrough=True)
         self.assertEqual(created_document['id'], document_definition['id'])
 
         # Delay to get these resources replicated to read location due to Eventual consistency
         time.sleep(5)
 
-        read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+        read_response = container.read_item(item=created_document, partition_key=created_document['pk'], assert_kwarg_passthrough=True)
         content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
         content_location_url = urlparse(content_location)
@@ -234,18 +238,19 @@ class TestGlobalDB(unittest.TestCase):
             connection_policy.PreferredLocations = [self.read_location2]
 
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                connection_policy=connection_policy)
+                                                connection_policy=connection_policy,
+                                                assert_kwarg_passthrough=True)
 
             database = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
             document_definition['id'] = 'doc4'
-            created_document = container.create_item(document_definition)
+            created_document = container.create_item(document_definition, assert_kwarg_passthrough=True)
 
             # Delay to get these resources replicated to read location due to Eventual consistency
             time.sleep(5)
 
-            read_response = container.read_item(item=created_document, partition_key=created_document['pk'])
+            read_response = container.read_item(item=created_document, partition_key=created_document['pk'], assert_kwarg_passthrough=True)
             content_location = str(read_response.get_response_headers()[HttpHeaders.ContentLocation])
 
             content_location_url = urlparse(content_location)
@@ -260,7 +265,8 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = False
 
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                            connection_policy=connection_policy)
+                                            connection_policy=connection_policy,
+                                            assert_kwarg_passthrough=True)
 
         # When EnableEndpointDiscovery is set to False, both Read and Write Endpoints point to endpoint passed while creating the client instance
         self.assertEqual(client.client_connection.WriteEndpoint, self.host)
@@ -268,7 +274,8 @@ class TestGlobalDB(unittest.TestCase):
 
         connection_policy.EnableEndpointDiscovery = True
         client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                            connection_policy=connection_policy)
+                                            connection_policy=connection_policy,
+                                            assert_kwarg_passthrough=True)
 
         # If no preferred locations is set, we return the write endpoint as ReadEndpoint for better latency performance, write endpoint is set as expected
         self.assertEqual(client.client_connection.WriteEndpoint,
@@ -280,7 +287,8 @@ class TestGlobalDB(unittest.TestCase):
         if is_not_default_host(self.read_location2):
             connection_policy.PreferredLocations = [self.read_location2]
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                connection_policy=connection_policy)
+                                                connection_policy=connection_policy,
+                                                assert_kwarg_passthrough=True)
 
             # Test that the preferred location is set as ReadEndpoint instead of default write endpoint when no preference is set
             self.assertEqual(client.client_connection._global_endpoint_manager.WriteEndpoint,
@@ -289,7 +297,7 @@ class TestGlobalDB(unittest.TestCase):
                              self.read_location2_host)
 
     def test_global_db_update_locations_cache(self):
-        client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        client = cosmos_client.CosmosClient(self.host, self.masterKey, assert_kwarg_passthrough=True)
 
         writable_locations = [{'name': self.write_location,
                                'databaseAccountEndpoint': self.write_location_host}]
@@ -351,7 +359,8 @@ class TestGlobalDB(unittest.TestCase):
             connection_policy.PreferredLocations = [self.read_location2]
 
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                connection_policy=connection_policy)
+                                                connection_policy=connection_policy,
+                                                assert_kwarg_passthrough=True)
 
             write_endpoint, read_endpoint = client.client_connection._global_endpoint_manager.location_cache.update_location_cache(
                 writable_locations, readable_locations)
@@ -371,7 +380,8 @@ class TestGlobalDB(unittest.TestCase):
             connection_policy.PreferredLocations = [self.read_location2]
 
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                connection_policy=connection_policy)
+                                                connection_policy=connection_policy,
+                                                assert_kwarg_passthrough=True)
 
             write_endpoint, read_endpoint = client.client_connection._global_endpoint_manager.location_cache.update_location_cache(
                 writable_locations, readable_locations)
@@ -389,7 +399,8 @@ class TestGlobalDB(unittest.TestCase):
 
             connection_policy.EnableEndpointDiscovery = False
             client = cosmos_client.CosmosClient(self.host, self.masterKey,
-                                                connection_policy=connection_policy)
+                                                connection_policy=connection_policy,
+                                                assert_kwarg_passthrough=True)
 
             write_endpoint, read_endpoint = client.client_connection._global_endpoint_manager.location_cache.update_location_cache(
                 writable_locations, readable_locations)
@@ -426,16 +437,16 @@ class TestGlobalDB(unittest.TestCase):
             retry_backoff_factor=0.8,
         )
         try:
-            cosmos_client.CosmosClient(self.host, self.masterKey, connection_retry_policy=mock_retry_policy)
+            cosmos_client.CosmosClient(self.host, self.masterKey, connection_retry_policy=mock_retry_policy, assert_kwarg_passthrough=True)
             pytest.fail("Exception was not raised")
         except ServiceRequestError:
             # Database account calls should not be retried in connection retry policy
             assert mock_retry_policy.counter == 0
 
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
-        client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        client = cosmos_client.CosmosClient(self.host, self.masterKey, assert_kwarg_passthrough=True)
         database = client.get_database_client(self.configs.TEST_DATABASE_ID)
-        container = database.create_container_if_not_exists("TEST" + str(uuid.uuid4()), PartitionKey(path="/pk"))
+        container = database.create_container_if_not_exists("TEST" + str(uuid.uuid4()), PartitionKey(path="/pk"), assert_kwarg_passthrough=True)
 
         # Replace GetDatabaseAccount method
         original_get_database_account = client.client_connection.GetDatabaseAccount
@@ -463,12 +474,13 @@ class TestGlobalDB(unittest.TestCase):
                 StatusCodes.FORBIDDEN,
                 SubStatusCodes.WRITE_FORBIDDEN,
                 container.create_item,
-                document_definition)
+                document_definition,
+                assert_kwarg_passthrough=True)
 
         with patch.object(_synchronized_request, '_PipelineRunFunction', new=_mock_pipeline_run_function):
             # Verify next outgoing requests have the new updated regions from the 403 retry
             _synchronized_request._PipelineRunFunction = _mock_pipeline_run_function
-            container.create_item(document_definition)
+            container.create_item(document_definition, assert_kwarg_passthrough=True)
         cc_copy.GetDatabaseAccount = original_get_database_account
         client.client_connection = cc_copy
 
