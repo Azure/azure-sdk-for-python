@@ -576,7 +576,10 @@ class EvaluationEvaluateSamples(object):
         # [END tool_call_accuracy_evaluator]
 
         # [START task_navigation_efficiency_evaluator]
-        from azure.ai.evaluation._evaluators._path_efficiency import TaskNavigationEfficiencyEvaluator, TaskNavigationEfficiencyMatchingMode
+        from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
+            TaskNavigationEfficiencyEvaluator,
+            TaskNavigationEfficiencyMatchingMode,
+        )
 
         task_navigation_efficiency_evaluator = TaskNavigationEfficiencyEvaluator(
             matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH

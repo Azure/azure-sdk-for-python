@@ -19,7 +19,7 @@ from azure.ai.evaluation._exceptions import (
 class TaskNavigationEfficiencyMatchingMode(str, Enum):
     """
     Enumeration of task navigation efficiency matching mode.
-    
+
     This enum allows you to specify which single matching technique should be used when evaluating
     the efficiency of an agent's tool calls sequence against a ground truth path.
     """
@@ -107,26 +107,29 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     def __init__(
         self,
         *,
-        matching_mode: Union[str, TaskNavigationEfficiencyMatchingMode] = TaskNavigationEfficiencyMatchingMode.EXACT_MATCH,
+        matching_mode: Union[
+            str, TaskNavigationEfficiencyMatchingMode
+        ] = TaskNavigationEfficiencyMatchingMode.EXACT_MATCH,
     ):
         # Type checking for metric parameter
         if isinstance(matching_mode, str):
             try:
                 self.matching_mode = TaskNavigationEfficiencyMatchingMode(matching_mode)
             except ValueError:
-                raise ValueError(f"matching_mode must be one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'")
+                raise ValueError(
+                    f"matching_mode must be one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'"
+                )
         elif isinstance(matching_mode, TaskNavigationEfficiencyMatchingMode):
             self.matching_mode = matching_mode
         else:
             raise EvaluationException(
-                                f"matching_mode must be a string with one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]} or TaskNavigationEfficiencyMatchingMode enum, got {type(matching_mode)}",
-                                internal_message=str(self.matching_mode),
-                                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
-                                category=ErrorCategory.INVALID_VALUE,
-                            )
+                f"matching_mode must be a string with one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]} or TaskNavigationEfficiencyMatchingMode enum, got {type(matching_mode)}",
+                internal_message=str(matching_mode),
+                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+            )
 
         super().__init__()
-
 
     def _prepare_steps_for_comparison(
         self,
@@ -306,29 +309,27 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
         # Calculate precision, recall, and F1 scores
         additional_properties_metrics = self._calculate_precision_recall_f1_scores(agent_steps, ground_truth_steps)
 
-        
         # Convert metrics to floats, using nan for None or non-convertible values
         for metric, score in additional_properties_metrics.items():
-            additional_properties_metrics[metric] = (
-                float(score) if score is not None else float("nan")
-            )
-
+            additional_properties_metrics[metric] = float(score) if score is not None else float("nan")
 
         if self.matching_mode in self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS:
             # Calculate binary match metrics
-            match_result = self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS[self.matching_mode](self, agent_steps, ground_truth_steps)
+            match_result = self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS[self.matching_mode](
+                self, agent_steps, ground_truth_steps
+            )
 
             return {
                 "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
-                "properties": additional_properties_metrics
+                "properties": additional_properties_metrics,
             }
         else:
             raise EvaluationException(
-                                f"Unsupported matching_mode '{self.matching_mode}'",
-                                internal_message=str(self.matching_mode),
-                                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
-                                category=ErrorCategory.INVALID_VALUE,
-                            )
+                f"Unsupported matching_mode '{self.matching_mode}'",
+                internal_message=str(self.matching_mode),
+                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+            )
 
     @overload
     def __call__(  # type: ignore
