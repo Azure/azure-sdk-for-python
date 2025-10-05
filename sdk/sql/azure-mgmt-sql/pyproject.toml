@@ -53,6 +53,8 @@ content-type = "text/markdown"
 
 [tool.setuptools.packages.find]
 exclude = [
+    "generated_samples",
+    "generated_tests",
     "tests*",
     "samples*",
     "doc*",
