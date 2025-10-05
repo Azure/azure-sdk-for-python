@@ -26,37 +26,6 @@ logger = logging.getLogger(__name__)
 
 T_EvalValue = TypeVar("T_EvalValue")
 
-
-def _get_built_in_definition(tool_name: str):
-    """Get the definition for the built-in tool."""
-    if tool_name in _BUILT_IN_DESCRIPTIONS:
-        return {
-            "type": tool_name,
-            "description": _BUILT_IN_DESCRIPTIONS[tool_name],
-            "name": tool_name,
-            "parameters": _BUILT_IN_PARAMS.get(tool_name, {}),
-        }
-    return None
-
-
-def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
-    """Extract tool definitions needed for the given built-in tool calls."""
-    needed_definitions = []
-    for tool_call in tool_calls:
-        if isinstance(tool_call, dict):
-            tool_type = tool_call.get("type")
-
-            # Only support converter format: {type: "tool_call", name: "bing_custom_search", arguments: {...}}
-            if tool_type == "tool_call":
-                tool_name = tool_call.get("name")
-                if tool_name in _BUILT_IN_DESCRIPTIONS:
-                    built_in_def = _get_built_in_definition(tool_name)
-                    if built_in_def and built_in_def not in needed_definitions:
-                        needed_definitions.append(built_in_def)
-
-    return needed_definitions
-
-
 @experimental
 class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
@@ -207,7 +176,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
         try:
-            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions)
+            needed_tool_definitions = self._extract_needed_tool_definitions(tool_calls, tool_definitions, ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR)
         except EvaluationException as e:
             # Check if this is because no tool definitions were provided at all
             if len(tool_definitions) == 0:
@@ -248,6 +217,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     blame=ErrorBlame.SYSTEM_ERROR,
                 )
 
