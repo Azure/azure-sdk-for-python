@@ -128,32 +128,53 @@ IMPLEMENTATION NOTES
 EXAMPLES (few-shot — using the new JSON schema and key order)
 -----------------
 
-Example 1 — PASS (weather API)
+Example 1
 QUERY:
-Tool: weather_api -> {"forecast":[{"date":"2025-09-17","temp_max":35,"units":"C","condition":"Sunny"}]}
+User turn 1:
+  Can you transfer $500 from my checking to my savings account?
+
+Agent turn 1:
+  [TOOL_CALL] get_account_balances(user_id="USER456")
+  [TOOL_RESULT] {'accounts': [{'account_id': 'CHK001', 'type': 'checking', 'balance': 1250.75}, {'account_id': 'SAV001', 'type': 'savings', 'balance': 3400.20}]}
+  You have $1,250.75 in checking and $3,400.20 in savings. You have enough for the transfer.
+
+User turn 2:
+  Great, please go ahead.
+
 RESPONSE:
-"The high in Cairo tomorrow will be 35°C and sunny."
+[TOOL_CALL] transfer_funds(from_account="CHK001", to_account="SAV001", amount=500)
+[TOOL_RESULT] {'transaction_id':'TXN789123','status':'completed','from_account':'CHK001','to_account':'SAV001','amount':500,'new_balances':{'CHK001':750.75,'SAV001':3900.20}}
+Transfer completed successfully. Checking now has $750.75 and savings $3,900.20.
+
 EXPECTED JSON:
 {
   "faulty_details": [],
-  "reason": "All tool-derived claims match the weather_api forecast exactly.",
+  "reason": "All tool-derived claims and uses in the response match the prior tool outputs correctly.",
   "label": "pass",
   "value": 1
 }
 
 -----------------
+
 Example 2 — FAIL (unit misinterpretation)
 QUERY:
-Tool: weather_api -> {"forecast":[{"date":"2025-09-18","temp_max":68,"units":"F"}]}
+User turn 1:
+  What's the current temperature in Rome?
+
 RESPONSE:
-"The high in Paris tomorrow will be 20°F."
+[TOOL_CALL] weather_api(city="Rome")
+[TOOL_RESULT] {"city":"Rome","temp":28,"condition":"Sunny"}
+It’s currently 28°F and sunny in Rome.
+
+TOOL_DEFINITIONS:
+- weather_api: Gets current weather for a city and returns temperature in Celsius (inputs: city) (outputs: city, temp, condition)
+
 EXPECTED JSON:
 {
   "faulty_details": [
-    "high temp -> MISMATCH (expected 68°F ≈ 20°C, saw 20°F) mapped to weather_api.forecast[0].temp_max",
-    "units -> MISMATCH (tool units F, agent reported F but with incorrect numeric meaning) mapped to weather_api.forecast[0].units"
+    "claim -> MISMATCH (expected 28°C, saw 28°F) mapped to weather_api.temp"
   ],
-  "reason": "Agent misinterpreted units / numeric value from the weather_api.",
+  "reason": "Agent incorrectly reported the temperature in Fahrenheit instead of Celsius as provided by the tool output.",
   "label": "fail",
   "value": 0
 }
@@ -161,16 +182,20 @@ EXPECTED JSON:
 -----------------
 Example 3 — FAIL (fabricated inventory claim)
 QUERY:
-Tool: inventory_api -> {"items":[{"id":"A1","qty":0,"eta":null},{"id":"A2","qty":5,"eta":"2025-09-20"}]}
+User turn 1:
+  Can you check if item B123 is available?
+
 RESPONSE:
-"Item A1 is in stock and can ship today."
+[TOOL_CALL] inventory_api(item_id="B123")
+[TOOL_RESULT] {"item_id":"B123","qty":0,"eta":"2025-10-07"}
+The item is in stock till the 7th of October.
+
 EXPECTED JSON:
 {
   "faulty_details": [
-    "A1 availability -> FABRICATED (no supporting tool field; inventory_api.items[0].qty: 0)",
-    "ETA -> MISMATCH (tool shows eta:null, agent asserted immediate shipping) mapped to inventory_api.items[0].eta"
+    "claim -> FABRICATED (no supporting tool field; inventory_api.qty is 0, eta is future date)"
   ],
-  "reason": "Agent asserted availability for A1 despite inventory_api showing qty 0 and no ETA.",
+  "reason": "Agent fabricated a claim that the item is in stock, whereas the tool output indicates a quantity of 0 and misunderstood availability eta",
   "label": "fail",
   "value": 0
 }
@@ -178,18 +203,28 @@ EXPECTED JSON:
 -----------------
 Example 4 — FAIL (omitted contraindication + bad input mapping)
 QUERY:
-Tool patient_db -> {"patient_id":"X","allergies":["penicillin"],"current_medications":[]}
-Tool drug_info -> {"drug":"DrugY","contraindications":["penicillin_allergy"],"dose":"50mg"}
+User turn 1:
+  Show my latest account transactions.
+
+Agent turn 1:
+  [TOOL_CALL] get_account_list(user_id="U123")
+  [TOOL_RESULT] {"accounts":[{"id":"CHK100","type":"checking"},{"id":"SAV200","type":"savings"}]}
+  You have two accounts: CHK100 and SAV200. Which one do you want transactions for?
+
+User turn 2:
+  Please get the transaction history for my checking account.
+
 RESPONSE:
-"Yes — DrugY is fine; give standard dose 50mg."
-(Also the agent's response includes a follow-up tool call payload: {"tool":"prescribe_api","input":{"patient_id":"X","drug":"DrugY","dose":"50mg"}})
+[TOOL_CALL] get_transactions(account_id="SAV200")
+[TOOL_RESULT] ...
+The latest transactions for your checking account are: ...
+
 EXPECTED JSON:
 {
   "faulty_details": [
-    "clinical decision -> MISMATCH (patient has penicillin allergy but agent recommended DrugY) mapped to patient_db.allergies and drug_info.contraindications",
-    "prescribe_api.input.patient_id -> SUPPORTED (do NOT list), prescribe_api.input.drug -> MISMATCH (recommended DrugY despite contraindication) mapped to drug_info.drug"
+    "use -> MISMATCH (expected CHK100, used SAV200) mapped to get_transactions.account_id"
   ],
-  "reason": "Agent ignored the patient's penicillin allergy and constructed a prescribe_api call that would administer a contraindicated drug.",
+  "reason": "Agent incorrectly used the savings account ID instead of the requested checking account ID, leading to a mismatch in the transactions reported.",
   "label": "fail",
   "value": 0
 }
