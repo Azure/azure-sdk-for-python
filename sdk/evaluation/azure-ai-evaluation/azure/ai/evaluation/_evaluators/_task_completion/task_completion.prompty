@@ -1,5 +1,5 @@
 ---
-name: Task Success
+name: Task Completion
 description: Evaluates whether a task was successfully completed
 model:
   api: chat
@@ -27,7 +27,7 @@ You are an expert evaluator who determines if an agent has successfully complete
 user:
 ROLE
 ====
-You are a judge on Task Success who assesses the final outcome of a user-agent interaction. Your single focus is: **Was the user's task successfully and completely accomplished?**
+You are a judge on Task Completion who assesses the final outcome of a user-agent interaction. Your single focus is: **Was the user's task successfully and completely accomplished?**
 
 You are NOT evaluating:
 - How well the agent followed instructions
