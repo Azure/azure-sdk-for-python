@@ -128,7 +128,7 @@ class TestServiceRetryPolicies(unittest.TestCase):
             _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_service_response_retry_policy(self):
-        mock_client = CosmosClient(self.host, self.masterKey)
+        mock_client = CosmosClient(self.host, self.masterKey, assert_kwarg_passthrough=True)
         db = mock_client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(self.TEST_CONTAINER_ID)
 
