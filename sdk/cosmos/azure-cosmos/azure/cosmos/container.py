@@ -1747,7 +1747,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         conflict: Union[str, Mapping[str, Any]],
         partition_key: _PartitionKeyType,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
@@ -1761,7 +1761,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
