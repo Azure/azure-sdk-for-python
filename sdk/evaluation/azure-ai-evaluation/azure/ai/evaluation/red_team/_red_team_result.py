@@ -283,7 +283,6 @@ class RedTeamRunOutputItemResult(TypedDict, total=False):
     metric: Optional[str]
     threshold: Optional[float]
     reason: Optional[str]
-    sample: "RedTeamRunOutputItemSample"
     properties: RedTeamOutputResultProperties
 
 
@@ -376,11 +375,13 @@ class ResultCount(TypedDict):
 
 
 @experimental
-class PerTestingCriteriaResult(TypedDict):
+class PerTestingCriteriaResult(TypedDict, total=False):
     """Result count for a specific testing criteria.
 
     :param testing_criteria: The name of the testing criteria (e.g., risk category)
     :type testing_criteria: str
+    :param attack_strategy: The attack strategy used (optional, for attack strategy summaries)
+    :type attack_strategy: Optional[str]
     :param passed: Number of passed results for this criteria
     :type passed: int
     :param failed: Number of failed results for this criteria
@@ -388,6 +389,7 @@ class PerTestingCriteriaResult(TypedDict):
     """
 
     testing_criteria: str
+    attack_strategy: Optional[str]
     passed: int
     failed: int
 

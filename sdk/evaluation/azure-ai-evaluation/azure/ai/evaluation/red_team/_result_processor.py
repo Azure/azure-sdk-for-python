@@ -375,7 +375,6 @@ class ResultProcessor:
             output_items=ordered_output_items,
             eval_run=eval_run,
             red_team_info=red_team_info,
-            include_conversations=False,
             scan_name=scan_name,
             run_id_override=run_id_override,
             eval_id_override=eval_id_override,
@@ -413,7 +412,7 @@ class ResultProcessor:
         results = self._build_output_result(
             conversation,
             eval_row,
-            sample_payload=sample_payload,
+            sample_payload=None,
         )
         output_item_id = self._resolve_output_item_id(
             eval_row, datasource_item_id, conversation_key, conversation_index
@@ -431,6 +430,7 @@ class ResultProcessor:
             "id": output_item_id,
             "created_time": created_time,
             "status": status,
+            "sample": sample_payload,
             "results": results,
         }
 
@@ -592,9 +592,6 @@ class ResultProcessor:
             if properties:
                 result_entry["properties"] = properties
 
-            if sample_payload:
-                result_entry["sample"] = sample_payload
-
             results.append(result_entry)
 
         if not results:
@@ -631,9 +628,6 @@ class ResultProcessor:
 
             if properties:
                 fallback_result["properties"] = properties
-
-            if sample_payload:
-                fallback_result["sample"] = sample_payload
 
             results.append(fallback_result)
 
@@ -1096,9 +1090,12 @@ class ResultProcessor:
 
     @staticmethod
     def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Build aggregated pass/fail counts per testing criteria (risk category)."""
+        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy)."""
 
+        # Track by risk category (testing_criteria)
         criteria: Dict[str, Dict[str, int]] = {}
+        # Track by attack strategy
+        strategy_criteria: Dict[str, Dict[str, int]] = {}
 
         for item in output_items:
             for result in item.get("results", []):
@@ -1111,13 +1108,28 @@ class ResultProcessor:
                 if passed_value is None:
                     continue
 
+                # Track by risk category
                 bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
                 if passed_value:
                     bucket["passed"] += 1
                 else:
                     bucket["failed"] += 1
 
-        return [
+                # Track by attack strategy from properties
+                properties = result.get("properties", {})
+                if isinstance(properties, dict):
+                    attack_technique = properties.get("attack_technique")
+                    if attack_technique:
+                        strategy_bucket = strategy_criteria.setdefault(
+                            str(attack_technique), {"passed": 0, "failed": 0}
+                        )
+                        if passed_value:
+                            strategy_bucket["passed"] += 1
+                        else:
+                            strategy_bucket["failed"] += 1
+
+        # Build results list with risk categories
+        results = [
             {
                 "testing_criteria": criteria_name,
                 "passed": counts["passed"],
@@ -1125,6 +1137,19 @@ class ResultProcessor:
             }
             for criteria_name, counts in sorted(criteria.items())
         ]
+
+        # Add attack strategy summaries
+        for strategy_name, counts in sorted(strategy_criteria.items()):
+            results.append(
+                {
+                    "testing_criteria": strategy_name,
+                    "attack_strategy": strategy_name,
+                    "passed": counts["passed"],
+                    "failed": counts["failed"],
+                }
+            )
+
+        return results
 
     @staticmethod
     def _build_data_source_section(parameters: Dict[str, Any], red_team_info: Optional[Dict]) -> Dict[str, Any]:
@@ -1179,7 +1204,6 @@ class ResultProcessor:
         output_items: List[Dict[str, Any]],
         eval_run: Optional[Any] = None,
         red_team_info: Optional[Dict] = None,
-        include_conversations: bool = False,
         scan_name: Optional[str] = None,
         run_id_override: Optional[str] = None,
         eval_id_override: Optional[str] = None,
@@ -1191,7 +1215,6 @@ class ResultProcessor:
         :param output_items: List of output items containing results for each conversation
         :param eval_run: The MLFlow run object (optional)
         :param red_team_info: Red team tracking information (optional)
-        :param include_conversations: Whether to include conversation details (optional)
         :param scan_name: Name of the scan (optional)
         :param run_id_override: Override for run ID (optional)
         :param eval_id_override: Override for eval ID (optional)
@@ -1289,8 +1312,5 @@ class ResultProcessor:
             "per_testing_criteria_results": per_testing_results,
             "output_items": list_wrapper,
         }
-
-        if include_conversations:
-            run_payload["conversations"] = redteam_result.attack_details or scan_result.get("attack_details") or []
 
         return run_payload
