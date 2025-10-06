@@ -272,7 +272,7 @@ class EvaluationRunOutputItemMessage(TypedDict, total=False):
 @experimental
 class RedTeamRunOutputItemResult(TypedDict, total=False):
     """Flattened evaluation result for a single risk category.
-    
+
     :param label: String label "pass" or "fail" that aligns with the passed field
     :type label: Optional[str]
     """
