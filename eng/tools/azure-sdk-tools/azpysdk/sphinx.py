@@ -22,6 +22,7 @@ SPHINX_VERSION = "8.2.0"
 SPHINX_RTD_THEME_VERSION = "3.0.2"
 MYST_PARSER_VERSION = "4.0.1"
 SPHINX_CONTRIB_JQUERY_VERSION = "4.1"
+PYGITHUB_VERSION = "1.59.0"
 
 RST_EXTENSION_FOR_INDEX = """
 
@@ -264,6 +265,8 @@ class sphinx(Check):
                 logger.error("This tool requires Python 3.11 or newer. Please upgrade your Python interpreter.")
                 return 1
 
+            self.install_dev_reqs(executable, args, package_dir)
+
             create_package_and_install(
                 distribution_directory=staging_directory,
                 target_setup=package_dir,
@@ -280,7 +283,15 @@ class sphinx(Check):
             try:
                 if args.next:
                     install_into_venv(
-                        executable, ["sphinx", "sphinx_rtd_theme", "myst_parser", "sphinxcontrib-jquery"], package_dir
+                        executable,
+                        [
+                            "sphinx",
+                            "sphinx_rtd_theme",
+                            "myst_parser",
+                            "sphinxcontrib-jquery",
+                            f"PyGithub=={PYGITHUB_VERSION}",
+                        ],
+                        package_dir,
                     )
                 else:
                     install_into_venv(
@@ -291,10 +302,10 @@ class sphinx(Check):
                             f"myst_parser=={MYST_PARSER_VERSION}",
                             f"sphinxcontrib-jquery=={SPHINX_CONTRIB_JQUERY_VERSION}",
                         ],
-                        package_dir
+                        package_dir,
                     )
             except CalledProcessError as e:
-                logger.error("Failed to install sphinx:", e)
+                logger.error(f"Failed to install sphinx: {e}")
                 return e.returncode
 
             logger.info(f"Running sphinx against {package_name}")

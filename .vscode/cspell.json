@@ -197,6 +197,8 @@
     "avroencoder",
     "Avs",
     "azcmagent",
+    "azpysdk",
+    "pyenv",
     "azsdk",
     "azurecr",
     "azuremgmtcore",
@@ -245,6 +247,7 @@
     "dpkg",
     "dtlk",
     "dtlksd",
+    "duckdb",
     "DWORD",
     "eastus",
     "Easm",
@@ -899,6 +902,10 @@
       "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
+      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
       "words": [ "unassigning" ],
       "caseSensitive": false
@@ -1166,7 +1173,12 @@
         "nbconvert",
         "rollupby",
         "milli",
-        "resourceid"
+        "resourceid",
+        "Exceps",
+        "processiorate",
+        "processiobytessec",
+        "iowait",
+        "softirq"
       ]
     },
     {
@@ -1186,7 +1198,8 @@
         "psutil",
         "psycopg",
         "uninstrument",
-        "uninstrumented"
+        "uninstrumented",
+        "scputimes"
       ]
     },
     {

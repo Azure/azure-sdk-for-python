@@ -22,6 +22,7 @@ from .managed_virtual_env import ManagedVirtualEnv
 
 from ci_tools.logging import logger
 
+
 def prepare_environment(package_folder: str, venv_directory: str, env_name: str) -> str:
     """
     Empties the venv_directory directory and creates a virtual environment within. Returns the path to the new python executable.
@@ -116,7 +117,7 @@ def create_package_and_install(
                     download_command = [
                         sys.executable,
                         "-m",
-                        "pip", # uv pip doesn't have a download command, so we use the system pip
+                        "pip",  # uv pip doesn't have a download command, so we use the system pip
                         "download",
                         "-d",
                         tmp_dl_folder,
@@ -177,8 +178,12 @@ def create_package_and_install(
 
             pip_cmd = get_pip_command(python_exe)
             commands = pip_cmd + ["install", built_pkg_path]
+
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
+
+            if pip_cmd[0] == "uv":
+                commands += ["--python", python_exe]
 
             if work_dir and os.path.exists(work_dir):
                 logger.info("Executing command from {0}:{1}".format(work_dir, commands))

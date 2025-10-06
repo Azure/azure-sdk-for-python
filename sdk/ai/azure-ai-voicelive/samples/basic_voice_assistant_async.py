@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 #!/usr/bin/env python
 
 # -------------------------------------------------------------------------
@@ -50,11 +51,14 @@ except ImportError:
     print("This sample requires pyaudio. Install with: pip install pyaudio")
     sys.exit(1)
 
+# Change to the directory where this script is located
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
 # Environment variable loading
 try:
     from dotenv import load_dotenv
 
-    load_dotenv()
+    load_dotenv(".env", override=True)
 except ImportError:
     print("Note: python-dotenv not installed. Using existing environment variables.")
 
@@ -72,14 +76,29 @@ if TYPE_CHECKING:
 from azure.ai.voicelive.models import (
     RequestSession,
     ServerVad,
-    AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
-    AudioFormat,
+    InputAudioFormat,
+    OutputAudioFormat,
 )
 
 # Set up logging
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+## Add folder for logging
+if not os.path.exists("logs"):
+    os.makedirs("logs")
+
+## Add timestamp for logfiles
+from datetime import datetime
+
+timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+## Set up logging
+logging.basicConfig(
+    filename=f"logs/{timestamp}_voicelive.log",
+    filemode="w",
+    format="%(asctime)s:%(name)s:%(levelname)s:%(message)s",
+    level=logging.INFO,
+)
 logger = logging.getLogger(__name__)
 
 
@@ -343,11 +362,6 @@ class BasicVoiceAssistant:
                 endpoint=self.endpoint,
                 credential=self.credential,
                 model=self.model,
-                connection_options={
-                    "max_msg_size": 10 * 1024 * 1024,
-                    "heartbeat": 20,
-                    "timeout": 20,
-                },
             ) as connection:
                 conn = connection
                 self.connection = conn
@@ -397,16 +411,17 @@ class BasicVoiceAssistant:
             voice_config = self.voice
 
         # Create strongly typed turn detection configuration
-        turn_detection_config = ServerVad(threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500)
+        turn_detection_config = ServerVad(
+            threshold=0.5, prefix_padding_ms=300, silence_duration_ms=500, interrupt_response=True
+        )
 
         # Create strongly typed session configuration
         session_config = RequestSession(
             modalities=[Modality.TEXT, Modality.AUDIO],
             instructions=self.instructions,
             voice=voice_config,
-            input_audio_format=AudioFormat.PCM16,
-            output_audio_format=AudioFormat.PCM16,
-            input_audio_echo_cancellation=AudioEchoCancellation(),
+            input_audio_format=InputAudioFormat.PCM16,
+            output_audio_format=OutputAudioFormat.PCM16,
             turn_detection=turn_detection_config,
         )
 
@@ -452,11 +467,13 @@ class BasicVoiceAssistant:
             # Stop current assistant audio playback (interruption handling)
             await ap.stop_playback()
 
-            # Cancel any ongoing response
-            try:
-                await conn.response.cancel()
-            except Exception as e:
-                logger.debug(f"No response to cancel: {e}")
+            # No need to call conn.response.cancel() here —
+            # if your VAD is configured with interrupt_response=True,
+            # the server will automatically cancel the assistant's response.
+            # try:
+            #     await conn.response.cancel()
+            # except Exception as e:
+            #     logger.debug(f"No response to cancel: {e}")
 
         elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
             logger.info("🎤 User stopped speaking")
@@ -516,25 +533,14 @@ def parse_arguments():
         "--model",
         help="VoiceLive model to use",
         type=str,
-        default=os.environ.get("VOICELIVE_MODEL", "gpt-4o-realtime-preview"),
+        default=os.environ.get("AZURE_VOICELIVE_MODEL", "gpt-4o-realtime-preview"),
     )
 
     parser.add_argument(
         "--voice",
-        help="Voice to use for the assistant",
+        help="Voice to use for the assistant. E.g. alloy, echo, fable, en-US-AvaNeural, en-US-GuyNeural",
         type=str,
-        default=os.environ.get("VOICELIVE_VOICE", "en-US-AvaNeural"),
-        choices=[
-            "alloy",
-            "echo",
-            "fable",
-            "onyx",
-            "nova",
-            "shimmer",
-            "en-US-AvaNeural",
-            "en-US-JennyNeural",
-            "en-US-GuyNeural",
-        ],
+        default=os.environ.get("AZURE_VOICELIVE_VOICE", "en-US-AvaNeural"),
     )
 
     parser.add_argument(
@@ -542,14 +548,17 @@ def parse_arguments():
         help="System instructions for the AI assistant",
         type=str,
         default=os.environ.get(
-            "VOICELIVE_INSTRUCTIONS",
+            "AZURE_VOICELIVE_INSTRUCTIONS",
             "You are a helpful AI assistant. Respond naturally and conversationally. "
             "Keep your responses concise but engaging.",
         ),
     )
 
     parser.add_argument(
-        "--use-token-credential", help="Use Azure token credential instead of API key", action="store_true"
+        "--use-token-credential",
+        help="Use Azure token credential instead of API key",
+        action="store_true",
+        default=True,
     )
 
     parser.add_argument("--verbose", help="Enable verbose logging", action="store_true")

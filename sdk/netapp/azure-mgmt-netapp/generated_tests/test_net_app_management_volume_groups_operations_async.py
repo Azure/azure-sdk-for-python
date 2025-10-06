@@ -25,7 +25,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
         response = self.client.volume_groups.list_by_net_app_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-06-01",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             account_name="str",
             volume_group_name="str",
-            api_version="2025-06-01",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -88,6 +88,10 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                                         {"region": "str", "replicationType": "str", "resourceId": "str", "zone": "str"}
                                     ],
                                     "endpointType": "str",
+                                    "externalReplicationSetupInfo": "str",
+                                    "externalReplicationSetupStatus": "str",
+                                    "mirrorState": "str",
+                                    "relationshipStatus": "str",
                                     "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                                     "remoteVolumeRegion": "str",
                                     "remoteVolumeResourceId": "str",
@@ -135,7 +139,9 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                             "isRestoring": bool,
                             "kerberosEnabled": False,
                             "keyVaultPrivateEndpointResourceId": "str",
+                            "language": "str",
                             "ldapEnabled": False,
+                            "ldapServerType": "str",
                             "maximumNumberOfFiles": 0,
                             "mountTargets": [
                                 {
@@ -175,7 +181,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                         }
                     ],
                 },
-                api_version="2025-06-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -190,7 +196,7 @@ class TestNetAppManagementVolumeGroupsOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 account_name="str",
                 volume_group_name="str",
-                api_version="2025-06-01",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
