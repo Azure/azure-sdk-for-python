@@ -110,6 +110,7 @@ class TestConfigure(unittest.TestCase):
                 "requests": {"enabled": False},
             },
             "enable_live_metrics": False,
+            "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
@@ -153,6 +154,7 @@ class TestConfigure(unittest.TestCase):
             "disable_logging": True,
             "disable_metrics": False,
             "enable_live_metrics": False,
+            "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
@@ -196,6 +198,7 @@ class TestConfigure(unittest.TestCase):
             "disable_logging": False,
             "disable_metrics": True,
             "enable_live_metrics": False,
+            "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
@@ -239,6 +242,7 @@ class TestConfigure(unittest.TestCase):
             "disable_logging": False,
             "disable_metrics": False,
             "enable_live_metrics": True,
+            "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
         }
         config_mock.return_value = configurations
@@ -247,6 +251,50 @@ class TestConfigure(unittest.TestCase):
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_called_once_with(configurations)
+        instrumentation_mock.assert_called_once_with(configurations)
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_instrumentations",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_live_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_metrics",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_logging",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._setup_tracing",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure._get_configurations",
+    )
+    def test_configure_azure_monitor_disable_perf_counters(
+        self,
+        config_mock,
+        tracing_mock,
+        logging_mock,
+        metrics_mock,
+        live_metrics_mock,
+        instrumentation_mock,
+    ):
+        configurations = {
+            "connection_string": "test_cs",
+            "disable_tracing": False,
+            "disable_logging": False,
+            "disable_metrics": False,
+            "enable_live_metrics": False,
+            "enable_performance_counters": False,
+            "resource": TEST_RESOURCE,
+        }
+        config_mock.return_value = configurations
+        configure_azure_monitor()
+        tracing_mock.assert_called_once_with(configurations)
+        logging_mock.assert_called_once_with(configurations)
+        metrics_mock.assert_called_once_with(configurations)
+        live_metrics_mock.assert_not_called()
         instrumentation_mock.assert_called_once_with(configurations)
 
     @patch(
