@@ -189,7 +189,7 @@ class AudioProcessor:
                     raise
 
                 if not packet or not packet.data:
-                    #None packet indicates end of stream
+                    # None packet indicates end of stream
                     logger.info("End of playback queue.")
                     break
 
