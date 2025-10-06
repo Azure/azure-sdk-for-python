@@ -223,7 +223,7 @@ def _default_enable_live_metrics(configurations):
 
 
 def _default_enable_performance_counters(configurations):
-    configurations.setdefault(ENABLE_PERFORMANCE_COUNTERS_ARG, False)
+    configurations.setdefault(ENABLE_PERFORMANCE_COUNTERS_ARG, True)
 
 
 def _default_views(configurations):
