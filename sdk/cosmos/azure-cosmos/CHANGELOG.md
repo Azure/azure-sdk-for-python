@@ -9,6 +9,7 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Corrected type hints for `ConsistencyPolicy` in `DatabaseAccount` class. See [PR 43150](https://github.com/Azure/azure-sdk-for-python/pull/43150)
 
 ### 4.14.0b4 (2025-09-11)
 
