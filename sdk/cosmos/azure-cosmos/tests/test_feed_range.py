@@ -113,7 +113,7 @@ class TestFeedRange:
     def test_feed_range_is_subset_from_pk(self, setup):
         epk_parent_feed_range = FeedRangeInternalEpk(
             Range("", "FF", True, False)).to_dict()
-        epk_child_feed_range = setup["created_collection"].feed_range_from_partition_key("1")
+        epk_child_feed_range = setup["created_collection"].feed_range_from_partition_key("1", assert_kwarg_passthrough=True)
         assert setup["created_collection"].is_feed_range_subset(epk_parent_feed_range, epk_child_feed_range)
 
     @pytest.mark.parametrize("range1, range2, overlaps", test_overlaps_ranges)

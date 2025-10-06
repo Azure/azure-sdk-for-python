@@ -54,10 +54,10 @@ class TestHealthCheck:
             self.MockGetDatabaseAccount(REGIONS))
         _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS, assert_kwarg_passthrough=True)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_needed = True
-            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
+            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None, assert_kwarg_passthrough=True)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
@@ -77,10 +77,10 @@ class TestHealthCheck:
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS))
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS, assert_kwarg_passthrough=True)
             # this will setup the location cache
             client.client_connection._global_endpoint_manager.refresh_needed = True
-            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
+            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None, assert_kwarg_passthrough=True)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
@@ -110,7 +110,7 @@ class TestHealthCheck:
         self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
         setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
         try:
-            setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+            setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'}, assert_kwarg_passthrough=True)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
@@ -124,7 +124,7 @@ class TestHealthCheck:
             self.index = 0
 
 
-        def __call__(self, endpoint):
+        def __call__(self, endpoint, **kwargs):
             if self.endpoint_unavailable:
                 assert self.client_connection.connection_policy.DBAReadTimeout == 1
             self.index -= 1
@@ -137,7 +137,7 @@ class TestHealthCheck:
         ):
             self.regions = regions
 
-        def __call__(self, endpoint):
+        def __call__(self, endpoint, **kwargs):
             read_regions = self.regions
             read_locations = []
             for loc in read_regions:

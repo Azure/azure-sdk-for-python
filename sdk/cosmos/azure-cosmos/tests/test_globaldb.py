@@ -108,7 +108,7 @@ class TestGlobalDB(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = False
 
         client = cosmos_client.CosmosClient(TestGlobalDB.host, TestGlobalDB.masterKey,
-                                            connection_policy=connection_policy)
+                                            connection_policy=connection_policy, assert_kwarg_passthrough=True)
 
         document_definition = {'id': 'doc',
                                'pk': 'pk',

@@ -50,7 +50,7 @@ class TestEncoding(unittest.TestCase):
         document_definition = {'pk': 'pk', 'id': 'myid' + str(uuid.uuid4()), 'unicode_content': test_string}
         created_doc = self.created_container.create_item(body=document_definition, assert_kwarg_passthrough=True)
 
-        read_doc = self.created_container.read_item(item=created_doc['id'], partition_key='pk')
+        read_doc = self.created_container.read_item(item=created_doc['id'], partition_key='pk', assert_kwarg_passthrough=True)
         self.assertEqual(read_doc['unicode_content'], test_string)
 
     def test_create_stored_procedure_with_line_separator_para_seperator_next_line_unicodes(self):

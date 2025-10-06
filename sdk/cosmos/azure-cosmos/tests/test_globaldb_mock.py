@@ -177,7 +177,7 @@ class TestGlobalDBMock(unittest.TestCase):
         connection_policy.EnableEndpointDiscovery = True
 
         client = cosmos_client.CosmosClient(TestGlobalDBMock.host, TestGlobalDBMock.masterKey,
-                                            consistency_level="Session", connection_policy=connection_policy)
+                                            consistency_level="Session", connection_policy=connection_policy, assert_kwarg_passthrough=True)
         client.client_connection._global_endpoint_manager = MockGlobalEndpointManager(client.client_connection)
         client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
 
