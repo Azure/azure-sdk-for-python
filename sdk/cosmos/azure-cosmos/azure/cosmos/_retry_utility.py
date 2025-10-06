@@ -26,11 +26,12 @@ import time
 import logging
 from typing import Optional
 
+import requests
 from azure.core.exceptions import AzureError, ClientAuthenticationError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy
+from . import _container_recreate_retry_policy, _database_account_retry_policy, http_constants
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -39,11 +40,11 @@ from . import _service_request_retry_policy, _service_response_retry_policy
 from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
+from ._constants import _Constants
 from .documents import _OperationType
 from .exceptions import CosmosHttpResponseError
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes, ResourceType
 from ._cosmos_http_logging_policy import _log_diagnostics_error
-
 
 # pylint: disable=protected-access, disable=too-many-lines, disable=too-many-statements, disable=too-many-branches
 
@@ -64,6 +65,13 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     :returns: the result of running the passed in function as a (result, headers) tuple
     :rtype: tuple of (dict, dict)
     """
+    # Capture the client timeout and start time at the beginning
+    timeout = kwargs.get('timeout')
+    operation_start_time = kwargs.get(_Constants.OperationStartTime, time.time())
+
+    # Track the last error for chaining
+    last_error = None
+
     pk_range_wrapper = None
     if args and global_endpoint_manager.is_circuit_breaker_applicable(args[0]):
         pk_range_wrapper = global_endpoint_manager.create_pk_range_wrapper(args[0])
@@ -110,14 +118,25 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
             client, client._container_properties_cache, None, *args)
 
     while True:
-        client_timeout = kwargs.get('timeout')
         start_time = time.time()
+        # Check timeout before executing function
+        if timeout:
+            elapsed = time.time() - operation_start_time
+            if elapsed >= timeout:
+                raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
+
         try:
             if args:
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
                 global_endpoint_manager.record_success(args[0])
             else:
                 result = ExecuteFunction(function, *args, **kwargs)
+            # Check timeout after successful execution
+            if timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
+
             if not client.last_response_headers:
                 client.last_response_headers = {}
 
@@ -157,99 +176,105 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 raise e_offer
 
             return result
-        except exceptions.CosmosHttpResponseError as e:
-            if request:
-                # update session token for relevant operations
-                client._UpdateSessionIfRequired(request.headers, {}, e.headers)
-            if request and _has_database_account_header(request.headers):
-                retry_policy = database_account_retry_policy
-            # Re-assign retry policy based on error code
-            elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
-                    [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
-                retry_policy = endpointDiscovery_retry_policy
-            elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
-                retry_policy = resourceThrottle_retry_policy
-            elif (
-                e.status_code == StatusCodes.NOT_FOUND
-                and e.sub_status
-                and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
-            ):
-                retry_policy = sessionRetry_policy
-            elif exceptions._partition_range_is_gone(e):
-                retry_policy = partition_key_range_gone_retry_policy
-            elif exceptions._container_recreate_exception(e):
-                retry_policy = container_recreate_retry_policy
-                # Before we retry if retry policy is container recreate, we need refresh the cache of the
-                # container properties and pass in the new RID in the headers.
-                client._refresh_container_properties_cache(retry_policy.container_link)
-                if e.sub_status != SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
-                        retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
-                    retry_policy.refresh_container_properties_cache = False
+        except (exceptions.CosmosHttpResponseError, ServiceRequestError, ServiceResponseError) as e:
+            # Store the last error
+            last_error = e
+
+            if timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(inner_exception=last_error)
+
+            if isinstance(e, exceptions.CosmosHttpResponseError):
+                if request:
+                    # update session token for relevant operations
+                    client._UpdateSessionIfRequired(request.headers, {}, e.headers)
+                if request and _has_database_account_header(request.headers):
+                    retry_policy = database_account_retry_policy
+                # Re-assign retry policy based on error code
+                elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
+                        [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
+                    retry_policy = endpointDiscovery_retry_policy
+                elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
+                    retry_policy = resourceThrottle_retry_policy
+                elif (
+                    e.status_code == StatusCodes.NOT_FOUND
+                    and e.sub_status
+                    and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
+                ):
+                    retry_policy = sessionRetry_policy
+                elif exceptions._partition_range_is_gone(e):
+                    retry_policy = partition_key_range_gone_retry_policy
+                elif exceptions._container_recreate_exception(e):
+                    retry_policy = container_recreate_retry_policy
+                    # Before we retry if retry policy is container recreate, we need refresh the cache of the
+                    # container properties and pass in the new RID in the headers.
+                    client._refresh_container_properties_cache(retry_policy.container_link)
+                    if e.sub_status != SubStatusCodes.COLLECTION_RID_MISMATCH and retry_policy.check_if_rid_different(
+                          retry_policy.container_link, client._container_properties_cache, retry_policy.container_rid):
+                        retry_policy.refresh_container_properties_cache = False
+                    else:
+                        cached_container = client._container_properties_cache[retry_policy.container_link]
+                        # If partition key value was previously extracted from the document definition
+                        # reattempt to extract partition key with updated partition key definition
+                        if retry_policy.should_extract_partition_key(cached_container):
+                            new_partition_key = retry_policy._extract_partition_key(
+                                client, container_cache=cached_container, body=request.body
+                            )
+                            request.headers[HttpHeaders.PartitionKey] = new_partition_key
+                        # If getting throughput, we have to replace the container link received from stale cache
+                        # with refreshed cache
+                        if retry_policy.should_update_throughput_link(request.body, cached_container):
+                            new_body = retry_policy._update_throughput_link(request.body)
+                            request.body = new_body
+
+                        retry_policy.container_rid = cached_container["_rid"]
+                        request.headers[retry_policy._intended_headers] = retry_policy.container_rid
+                elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
+                    if args:
+                        # record the failure for circuit breaker tracking
+                        global_endpoint_manager.record_failure(args[0])
+                    retry_policy = timeout_failover_retry_policy
                 else:
-                    cached_container = client._container_properties_cache[retry_policy.container_link]
-                    # If partition key value was previously extracted from the document definition
-                    # reattempt to extract partition key with updated partition key definition
-                    if retry_policy.should_extract_partition_key(cached_container):
-                        new_partition_key = retry_policy._extract_partition_key(
-                            client, container_cache=cached_container, body=request.body
-                        )
-                        request.headers[HttpHeaders.PartitionKey] = new_partition_key
-                    # If getting throughput, we have to replace the container link received from stale cache
-                    # with refreshed cache
-                    if retry_policy.should_update_throughput_link(request.body, cached_container):
-                        new_body = retry_policy._update_throughput_link(request.body)
-                        request.body = new_body
+                    retry_policy = defaultRetry_policy
 
-                    retry_policy.container_rid = cached_container["_rid"]
-                    request.headers[retry_policy._intended_headers] = retry_policy.container_rid
-            elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
-                if args:
-                    # record the failure for circuit breaker tracking
-                    global_endpoint_manager.record_failure(args[0])
-                retry_policy = timeout_failover_retry_policy
-            else:
-                retry_policy = defaultRetry_policy
+                # If none of the retry policies applies or there is no retry needed, set the
+                # throttle related response headers and re-throw the exception back arg[0]
+                # is the request. It needs to be modified for write forbidden exception
+                if not retry_policy.ShouldRetry(e):
+                    if not client.last_response_headers:
+                        client.last_response_headers = {}
+                    client.last_response_headers[
+                        HttpHeaders.ThrottleRetryCount
+                    ] = resourceThrottle_retry_policy.current_retry_attempt_count
+                    client.last_response_headers[
+                        HttpHeaders.ThrottleRetryWaitTimeInMs
+                    ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+                    if args and args[0].should_clear_session_token_on_session_read_failure:
+                        client.session.clear_session_token(client.last_response_headers)
 
-            # If none of the retry policies applies or there is no retry needed, set the
-            # throttle related response headers and re-throw the exception back arg[0]
-            # is the request. It needs to be modified for write forbidden exception
-            if not retry_policy.ShouldRetry(e):
-                if not client.last_response_headers:
-                    client.last_response_headers = {}
-                client.last_response_headers[
-                    HttpHeaders.ThrottleRetryCount
-                ] = resourceThrottle_retry_policy.current_retry_attempt_count
-                client.last_response_headers[
-                    HttpHeaders.ThrottleRetryWaitTimeInMs
-                ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
-                if args and args[0].should_clear_session_token_on_session_read_failure:
-                    client.session.clear_session_token(client.last_response_headers)
-                raise
+                    raise
 
-            # Wait for retry_after_in_milliseconds time before the next retry
-            time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
-            if client_timeout:
-                kwargs['timeout'] = client_timeout - (time.time() - start_time)
-                if kwargs['timeout'] <= 0:
-                    raise exceptions.CosmosClientTimeoutError()
+                # Wait for retry_after_in_milliseconds time before the next retry
+                time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 
-        except ServiceRequestError as e:
-            if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
-                    raise e
-            else:
-                if args:
-                    global_endpoint_manager.record_failure(args[0])
-                _handle_service_request_retries(client, service_request_retry_policy, e, *args)
+            elif isinstance(e, ServiceRequestError):
+                if request and _has_database_account_header(request.headers):
+                    if not database_account_retry_policy.ShouldRetry(e):
+                        raise e
+                else:
+                    if args:
+                        global_endpoint_manager.record_failure(args[0])
+                    _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
-        except ServiceResponseError as e:
-            if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
-                    raise e
-            else:
-                if args:
-                    global_endpoint_manager.record_failure(args[0])
-                _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+            elif isinstance(e, ServiceResponseError):
+                if request and _has_database_account_header(request.headers):
+                    if not database_account_retry_policy.ShouldRetry(e):
+                        raise e
+                else:
+                    if args:
+                        global_endpoint_manager.record_failure(args[0])
+                    _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
 
 def ExecuteFunction(function, *args, **kwargs):
     """Stub method so that it can be used for mocking purposes as well.
@@ -259,6 +284,7 @@ def ExecuteFunction(function, *args, **kwargs):
     :rtype: tuple(dict, dict)
     """
     return function(*args, **kwargs)
+
 
 def _has_read_retryable_headers(request_headers):
     if _OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)):
@@ -334,6 +360,7 @@ class ConnectionRetryPolicy(RetryPolicy):
         :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
         :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
+
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
         request_params = request.context.options.pop('request_params', None)
@@ -386,6 +413,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         continue
+
                 raise err
             except CosmosHttpResponseError as err:
                 raise err

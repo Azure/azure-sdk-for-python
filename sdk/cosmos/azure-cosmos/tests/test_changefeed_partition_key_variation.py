@@ -232,7 +232,7 @@ class TestChangeFeedPKVariation(unittest.TestCase):
 
         # Simulate the version key not being in the definition
 
-        def _get_properties_override():
+        def _get_properties_override(**kwargs):
             properties = original_get_properties()
             partition_key = properties["partitionKey"]
             partition_key.pop("version", None)  # Remove version key for validation

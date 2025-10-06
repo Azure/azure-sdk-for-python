@@ -99,8 +99,14 @@ class ContainerProxy:
 
     async def _get_properties_with_options(self, options: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         kwargs = {}
-        if options and "excludedLocations" in options:
-            kwargs['excluded_locations'] = options['excludedLocations']
+        if options:
+           if "excludedLocations" in options:
+               kwargs['excluded_locations'] = options['excludedLocations']
+           if Constants.OperationStartTime in options:
+               kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
+           if "timeout" in options:
+               kwargs['timeout'] = options['timeout']
+
         return await self._get_properties(**kwargs)
 
     async def _get_properties(self, **kwargs: Any) -> Dict[str, Any]:
@@ -486,6 +492,7 @@ class ContainerProxy:
         query_options = _build_options(kwargs)
         await self._get_properties_with_options(query_options)
         query_options["enableCrossPartitionQuery"] = True
+        query_options[Constants.UseOperationTimeout] = True
 
         item_tuples = [(item_id, await self._set_partition_key(pk)) for item_id, pk in items]
         return await self.client_connection.read_items(

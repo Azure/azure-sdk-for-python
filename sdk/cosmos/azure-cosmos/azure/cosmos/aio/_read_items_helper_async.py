@@ -30,7 +30,6 @@ from typing import (
     Optional,
     TYPE_CHECKING, Union, Mapping
 )
-
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
@@ -80,6 +79,7 @@ class ReadItemsHelperAsync:
         :return: A list of the retrieved items in the same order as the input.
         :rtype: ~azure.cosmos.CosmosList
         """
+
         if not self.items:
             return CosmosList([], response_headers=CaseInsensitiveDict())
 
