@@ -21,12 +21,13 @@
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
-import asyncio # pylint: disable=do-not-import-asyncio
-from datetime import datetime
-from typing import (Any, Dict, Mapping, Optional, Sequence, Union, List, Tuple, cast, overload, AsyncIterable,
-                    Callable, Type)
+import asyncio  # pylint: disable=do-not-import-asyncio
 import warnings
+from datetime import datetime
+from typing import (Any, AsyncIterable, Callable, cast, Dict, List, Mapping, Optional, overload, Sequence, Tuple, Type,
+                    Union)
 from typing_extensions import Literal
+
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator import distributed_trace
@@ -36,31 +37,25 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
 from .. import _utils as utils
-from .._base import (
-    build_options as _build_options,
-    validate_cache_staleness_value,
-    _deserialize_throughput,
-    _replace_throughput,
-    GenerateGuidId,
-    _build_properties_cache
-)
+from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
+                     build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
-from .._cosmos_responses import CosmosDict, CosmosList
 from .._constants import _Constants as Constants
+from .._cosmos_responses import CosmosDict, CosmosList
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
+from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
-from ..partition_key import (
-    NonePartitionKeyValue,
-    _return_undefined_or_empty_partition_key,
-    _get_partition_key_from_partition_key_definition, NullPartitionKeyValue, _PartitionKeyType
-)
+from ..partition_key import (_get_partition_key_from_partition_key_definition, _PartitionKeyType,
+                             _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
+
 __all__ = ("ContainerProxy",)
 
-# pylint: disable=protected-access, too-many-lines
+# pylint: disable=protected-access,too-many-lines,line-too-long
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
+# cspell:ignore rerank reranker reranking
 
 PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
@@ -473,7 +468,6 @@ class ContainerProxy:
         :rtype: ~azure.cosmos.CosmosList
         """
 
-
         if session_token is not None:
             kwargs['session_token'] = session_token
         if initial_headers is not None:
@@ -511,7 +505,7 @@ class ContainerProxy:
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[List[Dict[str, object]]] = None,
-            partition_key: Optional[PartitionKeyType] = None,
+            partition_key: PartitionKeyType,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -519,7 +513,7 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -563,7 +557,7 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -590,7 +584,7 @@ class ContainerProxy:
             *,
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
-            feed_range: Optional[Dict[str, Any]] = None,
+            feed_range: Dict[str, Any],
             initial_headers: Optional[Dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
@@ -602,7 +596,7 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -642,7 +636,84 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: AsyncItemPaged[Dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+        """
+        ...
+
+    @overload
+    def query_items(
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param str query: The Azure Cosmos DB SQL query to execute.
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -710,13 +781,12 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword str query: The Azure Cosmos DB SQL query to execute.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -819,7 +889,6 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :paramtype priority: Literal["High", "Low"]
         :keyword mode: The modes to query change feed. If `continuation` was passed, 'mode' argument will be ignored.
             LATEST_VERSION: Query latest items from 'start_time' or 'continuation' token.
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
@@ -951,7 +1020,7 @@ class ContainerProxy:
         ...
 
     @distributed_trace
-    def query_items_change_feed( # pylint: disable=unused-argument
+    def query_items_change_feed(  # pylint: disable=unused-argument
             self,
             **kwargs: Any
     ) -> AsyncItemPaged[Dict[str, Any]]:
@@ -1110,6 +1179,52 @@ class ContainerProxy:
             options=request_options,
             **kwargs
         )
+        return result
+
+    @distributed_trace_async
+    async def semantic_rerank(
+        self,
+        reranking_context: str,
+        documents: List[str],
+        semantic_reranking_options: Optional[Dict[str, Any]] = None
+    ) -> CosmosDict:
+        """Rerank a list of documents using semantic reranking.
+
+        This method uses a semantic reranker to score and reorder the provided documents
+        based on their relevance to the given reranking context.
+
+        :param str reranking_context: The context or query string to use for reranking the documents.
+        :param list[str] documents: A list of documents (as strings) to be reranked.
+        :param semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
+
+         Supported options:
+
+         * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
+         * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
+         * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
+         * **sort** (bool): Whether to sort the results by relevance score in descending order. Default is True.
+         * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
+         * **target_paths** (list[str]): If document_type is "json", the list of JSON paths to extract text from for reranking.
+
+        :type semantic_reranking_options: Optional[Dict[str, Any]]
+        :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
+        """
+
+        inference_service = self.client_connection._get_inference_service()
+        if inference_service is None:
+            raise CosmosHttpResponseError(
+                message="Semantic reranking requires AAD credentials (inference service not initialized).",
+                response=None
+            )
+
+        result = await inference_service.rerank(
+            reranking_context=reranking_context,
+            documents=documents,
+            semantic_reranking_options=semantic_reranking_options
+        )
+
         return result
 
     @distributed_trace_async
@@ -1407,9 +1522,11 @@ class ContainerProxy:
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
-    async def replace_throughput(
+    async def replace_throughput( # pylint: disable=unused-argument
         self,
         throughput: Union[int, ThroughputProperties],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
@@ -1419,7 +1536,7 @@ class ContainerProxy:
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
@@ -1740,16 +1857,17 @@ class ContainerProxy:
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
-        async def get_next(continuation_token:str) -> List[Dict[str, Any]]: # pylint: disable=unused-argument
+        async def get_next(continuation_token: str) -> List[Dict[str, Any]]:  # pylint: disable=unused-argument
             partition_key_ranges = \
-                await self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
+                await self.client_connection._routing_map_provider.get_overlapping_ranges(
+                    # pylint: disable=protected-access
                     self.container_link,
                     # default to full range
                     [Range("", "FF", True, False)],
                     **kwargs)
 
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                       for partitionKeyRange in partition_key_ranges]
+                           for partitionKeyRange in partition_key_ranges]
 
             return feed_ranges
 

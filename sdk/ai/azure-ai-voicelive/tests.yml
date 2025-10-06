@@ -1,0 +1,13 @@
+extends:
+    template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      BuildTargetingString: 'azure-ai-voicelive'
+      JobName: chat
+      ServiceDirectory: ai
+      TestResourceDirectories:
+      - ai/azure-ai-voicelive
+      EnvVars:
+        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TEST_USE_CLI_AUTH: 'true'
+        VOICELIVE_OPENAI_ENDPOINT: $(VoiceLiveOpenAIEndpoint)
+        VOICELIVE_OPENAI_API_KEY: $(VoiceLiveOpenAIApiKey)
