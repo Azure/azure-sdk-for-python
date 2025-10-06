@@ -178,10 +178,13 @@ class TestHeaders(unittest.TestCase):
             raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
 
     def test_container_create_item_throughput_bucket(self):
-        self.container.create_item(
+        # Because multiple requests are being made in create_item, the response_hook function will
+        # fail as the header is only in the last response.
+        item = self.container.create_item(
             body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
             throughput_bucket=request_throughput_bucket_number,
-            raw_response_hook=request_raw_response_hook, assert_kwarg_passthrough=True)
+            assert_kwarg_passthrough=True)
+        assert item.get_response_headers()[http_constants.HttpHeaders.ThroughputBucket] == str(request_throughput_bucket_number)
 
     def test_container_patch_item_throughput_bucket(self):
         pkValue = "patch_item_pk" + str(uuid.uuid4())

@@ -22,7 +22,7 @@
 import logging
 from collections.abc import Sequence
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING,Mapping
+from typing import Dict, List, Tuple, Any, Optional, TYPE_CHECKING, Mapping, Callable
 
 from azure.core.utils import CaseInsensitiveDict
 
@@ -49,6 +49,7 @@ class ReadItemsHelperSync:
             *,
             executor: Optional[ThreadPoolExecutor] = None,
             max_concurrency: int = 10,
+            response_hook: Optional[Callable] = None,
             **kwargs: Any
     ):
         self.client = client
@@ -60,6 +61,7 @@ class ReadItemsHelperSync:
         self.executor = executor
         self.max_concurrency = max_concurrency
         self.max_items_per_query = 1000
+        self.response_hook = response_hook
 
     def read_items(self) -> CosmosList:
         """Reads many items synchronously using a query-based approach with a thread pool.
@@ -136,8 +138,8 @@ class ReadItemsHelperSync:
         cosmos_list = CosmosList(results, response_headers=final_headers)
 
         # Call the original response hook with the final results if provided
-        if 'response_hook' in self.kwargs:
-            self.kwargs['response_hook'](final_headers, cosmos_list)
+        if self.response_hook:
+            self.response_hook(final_headers, cosmos_list)
 
         return cosmos_list
 

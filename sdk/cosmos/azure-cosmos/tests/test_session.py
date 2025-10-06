@@ -131,9 +131,11 @@ class TestSession(unittest.TestCase):
                                                                raw_response_hook=test_config.no_token_response_hook, assert_kwarg_passthrough=True)
         response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
         read_item = self.created_collection.read_item(item=created_document['id'], partition_key='mypk',
-                                                      raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+                                                      assert_kwarg_passthrough=True)
+        assert read_item.get_response_headers().get(HttpHeaders.SessionToken) is not None
         read_item2 = self.created_collection.read_item(item=created_document['id'], partition_key='mypk',
-                                                       raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+                                                       assert_kwarg_passthrough=True)
+        assert read_item.get_response_headers().get(HttpHeaders.SessionToken) is not None
 
         # Since the session hasn't been updated (no write requests have happened) verify session is still the same
         assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
@@ -146,8 +148,9 @@ class TestSession(unittest.TestCase):
             ("read", (replaced_item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 'mypk'},)),
         ]
-        batch_result = self.created_collection.execute_item_batch(batch_operations, 'mypk', raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+        batch_result = self.created_collection.execute_item_batch(batch_operations, 'mypk', assert_kwarg_passthrough=True)
         batch_response_token = batch_result.get_response_headers().get(HttpHeaders.SessionToken)
+        assert batch_response_token is not None
         assert batch_response_token != response_session_token
 
         # Verify no session tokens are sent for delete requests either - but verify session token is updated
@@ -168,8 +171,8 @@ class TestSession(unittest.TestCase):
             created_document = test_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
                                                                    raw_response_hook=test_config.no_token_response_hook, assert_kwarg_passthrough=True)
             response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
-            read_item = test_container.read_item(item=created_document['id'], partition_key='mypk',
-                                                          raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+            read_item = test_container.read_item(item=created_document['id'], partition_key='mypk', assert_kwarg_passthrough=True)
+            assert read_item.get_response_headers().get(HttpHeaders.SessionToken) is not None
             query_iterable = test_container.query_items(
                 "SELECT * FROM c WHERE c.id = '" + str(created_document['id']) + "'",
                 partition_key='mypk',
@@ -212,20 +215,23 @@ class TestSession(unittest.TestCase):
 
         # Session token should be sent for all document requests since we have mwr configuration
         # First write request won't have since tokens need to be populated on the client first
-        container.upsert_item(body={'id': '0' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                    raw_response_hook=test_config.no_token_response_hook, assert_kwarg_passthrough=True)
-        up_item = container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
+        up_item = container.upsert_item(body={'id': '0' + str(uuid.uuid4()), 'pk': 'mypk'}, assert_kwarg_passthrough=True)
+        assert up_item.get_response_headers()[HttpHeaders.SessionToken] is None
+        up_item2 = container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
                                               raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
-        replaced_item = container.replace_item(item=up_item['id'], body={'id': up_item['id'], 'song': 'song',
+        assert up_item2.get_response_headers()[HttpHeaders.SessionToken] is not None
+        replaced_item = container.replace_item(item=up_item2['id'], body={'id': up_item2['id'], 'song': 'song',
                                                                          'pk': 'mypk'},
-                                               raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+                                               assert_kwarg_passthrough=True)
+        assert replaced_item.get_response_headers()[HttpHeaders.SessionToken] is not None
         created_document = container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'},
-                                                 raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+                                                 assert_kwarg_passthrough=True)
         response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
+        assert response_session_token is not None
         read_item = container.read_item(item=created_document['id'], partition_key='mypk',
-                                        raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+                                        assert_kwarg_passthrough=True)
         read_item2 = container.read_item(item=created_document['id'], partition_key='mypk',
-                                         raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+                                         assert_kwarg_passthrough=True)
 
         # Since the session hasn't been updated (no write requests have happened) verify session is still the same
         assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
@@ -238,9 +244,9 @@ class TestSession(unittest.TestCase):
             ("read", (replaced_item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 'mypk'},)),
         ]
-        batch_result = container.execute_item_batch(batch_operations, 'mypk',
-                                                    raw_response_hook=test_config.token_response_hook, assert_kwarg_passthrough=True)
+        batch_result = container.execute_item_batch(batch_operations, 'mypk', assert_kwarg_passthrough=True)
         batch_response_token = batch_result.get_response_headers().get(HttpHeaders.SessionToken)
+        assert batch_response_token is not None
         assert batch_response_token != response_session_token
 
         # Should get sent now that we have mwr configuration

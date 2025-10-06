@@ -1058,6 +1058,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options: Optional[Mapping[str, Any]] = None,
             *,
             executor: Optional[ThreadPoolExecutor] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]] = None,
             **kwargs: Any
     ) -> CosmosList:
         """Reads many items.
@@ -1091,6 +1092,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition=partition_key_definition,
             executor=executor,
             max_concurrency=max_concurrency,
+            response_hook=response_hook,
             **kwargs)
         return helper.read_items()
 

@@ -137,7 +137,7 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
             assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_read(self):
         container = self.test_database.create_container(id="batch_read" + str(uuid.uuid4()),
@@ -167,7 +167,7 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
             assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_replace(self):
         container = self.test_database.create_container(id="batch_replace" + str(uuid.uuid4()),
@@ -212,7 +212,7 @@ class TestTransactionalBatch(unittest.TestCase):
             assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
             assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-        self.test_database.delete_container(container.id)
+        self.test_database.delete_container(container.id, assert_kwarg_passthrough=True)
 
     def test_batch_upsert(self):
         container = self.test_database.create_container(id="batch_upsert" + str(uuid.uuid4()),
