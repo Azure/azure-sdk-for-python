@@ -547,9 +547,9 @@ class EvaluationEvaluateSamples(object):
         )
         # [END groundedness_pro_evaluator]
 
-        # [START tool_call_accuracy_evaluator]
+        # [START tool_call_quality_evaluator]
         import os
-        from azure.ai.evaluation import ToolCallAccuracyEvaluator
+        from azure.ai.evaluation import ToolCallQualityEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
@@ -557,8 +557,8 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        tool_call_accuracy_evaluator = ToolCallAccuracyEvaluator(model_config=model_config)
-        tool_call_accuracy_evaluator(
+        tool_call_quality_evaluator = ToolCallQualityEvaluator(model_config=model_config)
+        tool_call_quality_evaluator(
             query="How is the weather in New York?",
             response="The weather in New York is sunny.",
             tool_calls={
@@ -579,7 +579,7 @@ class EvaluationEvaluateSamples(object):
                 },
             },
         )
-        # [END tool_call_accuracy_evaluator]
+        # [END tool_call_quality_evaluator]
 
         # [START path_efficiency_evaluator]
         from azure.ai.evaluation._evaluators._path_efficiency import PathEfficiencyEvaluator
