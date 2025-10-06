@@ -16,6 +16,9 @@ from azure.ai.evaluation._common.utils import (
     reformat_agent_response,
     reformat_tool_definitions,
 )
+from azure.ai.evaluation._evaluate._utils import (
+    _convert_results_to_aoai_evaluation_results
+)
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
 
@@ -845,3 +848,162 @@ class TestUtils(unittest.TestCase):
         tools = []
         expected_output = "TOOL_DEFINITIONS:"
         self.assertEqual(reformat_tool_definitions(tools), expected_output)
+
+    def test_convert_results_to_aoai_evaluation_results(self):
+        """Test _convert_results_to_aoai_evaluation_results function with test data"""
+        import asyncio
+        import logging
+        
+        # Load test data from the JSON file
+        parent = pathlib.Path(__file__).parent.resolve()
+        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.json")
+        
+        # Read and parse the JSONL file (contains multiple JSON objects)
+        test_rows = []
+        with open(test_data_path, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line:
+                    print(line)
+                    test_rows.append(json.loads(line))
+        
+        # Create EvaluationResult structure
+        test_results = {
+            "metrics": {"overall_score": 0.75},
+            "rows": test_rows,
+            "studio_url": "https://test-studio.com"
+        }
+        
+        # Create logger
+        logger = logging.getLogger("test_logger")
+        
+        # Test the conversion function
+        async def run_test():
+            converted_results = await _convert_results_to_aoai_evaluation_results(
+                results=test_results,
+                eval_id="test_eval_group_123",
+                eval_run_id="test_run_456",
+                logger=logger
+            )
+            return converted_results
+        
+        # Run the async function
+        converted_results = asyncio.run(run_test())
+        
+        # Verify the structure
+        self.assertIn("metrics", converted_results)
+        self.assertIn("rows", converted_results) 
+        self.assertIn("studio_url", converted_results)
+        self.assertIn("evaluation_results_list", converted_results)
+        self.assertIn("evaluation_summary", converted_results)
+        
+        # Verify metrics preserved
+        self.assertEqual(converted_results["metrics"]["overall_score"], 0.75)
+        
+        # Verify studio URL preserved
+        self.assertEqual(converted_results["studio_url"], "https://test-studio.com")
+        
+        # Verify evaluation_results_list is same as rows (converted format)
+        self.assertEqual(len(converted_results["evaluation_results_list"]), len(test_rows))
+        self.assertEqual(len(converted_results["evaluation_results_list"]), len(converted_results["rows"]))
+
+        # Verify conversion structure for each row
+        for i, converted_row in enumerate(converted_results["evaluation_results_list"]):
+            # Check RunOutputItem structure
+            self.assertIn("object", converted_row)
+            self.assertEqual(converted_row["object"], "eval.run.output_item")
+            self.assertIn("id", converted_row)
+            self.assertIn("run_id", converted_row)
+            self.assertIn("eval_id", converted_row)
+            self.assertIn("created_at", converted_row)
+            self.assertIn("datasource_item_id", converted_row)
+            self.assertIn("results", converted_row)
+            self.assertIn("sample", converted_row)
+            
+            # Verify IDs
+            self.assertEqual(converted_row["run_id"], "test_run_456")
+            self.assertEqual(converted_row["eval_id"], "test_eval_group_123")
+            self.assertEqual(converted_row["datasource_item_id"], i)
+            
+            # Verify results array structure
+            self.assertIsInstance(converted_row["results"], list)
+            
+            # Check that results contain expected evaluator results
+            result_names = [result.get("name") for result in converted_row["results"]]
+            
+            # Based on test data, should have violence and labelgrader
+            if i < len(test_rows):
+                original_row = test_rows[i]
+                expected_evaluators = set()
+                for key in original_row.keys():
+                    if key.startswith("outputs."):
+                        parts = key.split(".", 2)
+                        if len(parts) >= 2:
+                            expected_evaluators.add(parts[1])
+                
+                # Verify all expected evaluators are present in results
+                for evaluator in expected_evaluators:
+                    self.assertIn(evaluator, result_names)
+            
+            # Check individual result structure
+            for result in converted_row["results"]:
+                self.assertIn("type", result)
+                self.assertIn("name", result)
+                self.assertIn("metric", result)
+                # Optional fields that might be present
+                optional_fields = ["score", "label", "reason", "threshold", "passed", "sample"]
+                for field in optional_fields:
+                    if field in result:
+                        self.assertIsNotNone(result[field])
+        
+        # Verify evaluation summary structure
+        summary = converted_results["evaluation_summary"]
+        self.assertIn("result_counts", summary)
+        self.assertIn("per_model_usage", summary)
+        self.assertIn("per_testing_criteria_results", summary)
+        
+        # Check result counts structure
+        result_counts = summary["result_counts"]
+        self.assertIn("total", result_counts)
+        self.assertIn("passed", result_counts)
+        self.assertIn("failed", result_counts)
+        self.assertIn("errored", result_counts)
+        
+        # Verify counts are non-negative integers
+        for count_type, count_value in result_counts.items():
+            self.assertIsInstance(count_value, int)
+            self.assertGreaterEqual(count_value, 0)
+        
+        # Check per_testing_criteria_results structure
+        criteria_results = summary["per_testing_criteria_results"]
+        self.assertIsInstance(criteria_results, list)
+        for criteria_result in criteria_results:
+            self.assertIn("testing_criteria", criteria_result)
+            self.assertIn("passed", criteria_result)
+            self.assertIn("failed", criteria_result)
+            self.assertIsInstance(criteria_result["passed"], int)
+            self.assertIsInstance(criteria_result["failed"], int)
+        
+        # Check per_model_usage structure
+        model_usage = summary["per_model_usage"]
+        self.assertIsInstance(model_usage, list)
+        for usage_item in model_usage:
+            self.assertIn("model_name", usage_item)
+            self.assertIn("invocation_count", usage_item)
+            self.assertIn("total_tokens", usage_item)
+            self.assertIn("prompt_tokens", usage_item)
+            self.assertIn("completion_tokens", usage_item)
+            self.assertIn("cached_tokens", usage_item)
+        
+        # Test with empty results
+        empty_results = {"metrics": {}, "rows": [], "studio_url": None}
+        empty_converted = asyncio.run(_convert_results_to_aoai_evaluation_results(
+            results=empty_results,
+            eval_id="empty_eval",
+            eval_run_id="empty_run",
+            logger=logger
+        ))
+        
+        self.assertEqual(len(empty_converted["rows"]), 0)
+        self.assertEqual(len(empty_converted["evaluation_results_list"]), 0)
+        self.assertEqual(empty_converted["evaluation_summary"]["result_counts"]["total"], 0)
