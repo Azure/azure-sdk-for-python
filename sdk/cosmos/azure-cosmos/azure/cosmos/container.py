@@ -1451,7 +1451,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :returns: A CosmosList representing the items after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: ~azure.cosmos.Cosmoslist[dict[str, Any]]
+        :rtype: ~azure.cosmos.CosmosList[dict[str, Any]]
         """
         etag = kwargs.get('etag')
         if etag is not None:
