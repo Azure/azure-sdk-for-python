@@ -685,7 +685,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -772,7 +772,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -843,18 +843,18 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             continuation_token_limit: Optional[int] = None,
             enable_cross_partition_query: Optional[bool] = None,
             enable_scan_in_query: Optional[bool] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
+            initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
-            parameters: Optional[List[Dict[str, object]]] = None,
+            parameters: Optional[list[dict[str, object]]] = None,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
