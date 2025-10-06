@@ -40,7 +40,8 @@ from datetime import datetime
 import logging
 import queue
 import signal
-from typing import Union, Optional, TYPE_CHECKING, cast, Self
+from typing import Union, Optional, TYPE_CHECKING, cast
+from typing_extensions import Self
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -116,7 +117,7 @@ class AudioProcessor:
 
         # Capture and playback state
         self.input_stream = None
-        self.loop: Optional[asyncio.AbstractEventLoop] = None  # Store the event loop
+        self.loop: asyncio.AbstractEventLoop = None  # Store the event loop
 
         self.playback_queue: queue.Queue[Self.AudioPlaybackPacket] = queue.Queue()
         self.playback_base = 0
@@ -228,7 +229,7 @@ class AudioProcessor:
         self.next_seq_num += 1
         return seq
 
-    def queue_audio(self, audio_data: bytes):
+    def queue_audio(self, audio_data: Optional[bytes]) -> None:
         """Queue audio data for playback."""
         self.playback_queue.put(
             AudioProcessor.AudioPlaybackPacket(
@@ -330,7 +331,7 @@ class BasicVoiceAssistant:
         voice_config: Union[AzureStandardVoice, str]
         if self.voice.startswith("en-US-") or self.voice.startswith("en-CA-") or "-" in self.voice:
             # Azure voice
-            voice_config = AzureStandardVoice(name=self.voice, type="azure-standard")
+            voice_config = AzureStandardVoice(name=self.voice)
         else:
             # OpenAI voice (alloy, echo, fable, onyx, nova, shimmer)
             voice_config = self.voice
