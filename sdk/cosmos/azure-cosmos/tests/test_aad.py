@@ -151,10 +151,7 @@ class TestAAD(unittest.TestCase):
             assert all(scope == override_scope for scope in scopes), f"Expected only override scope(s), got: {scopes}"
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
-            try:
-                container.delete_item(item='Item_10', partition_key='pk')
-            except Exception:
-                pass
+            container.delete_item(item='Item_10', partition_key='pk', assert_kwarg_passthrough=True)
 
     def test_override_scope_auth_error_no_fallback(self):
         """When override scope is provided and auth fails, no fallback to other scopes occurs."""
@@ -198,10 +195,7 @@ class TestAAD(unittest.TestCase):
             # Accept multiple calls, but only the account_scope should be used
             assert all(scope == account_scope for scope in scopes), f"Expected only account scope, got: {scopes}"
         finally:
-            try:
-                container.delete_item(item='Item_12', partition_key='pk')
-            except Exception:
-                pass
+            container.delete_item(item='Item_12', partition_key='pk', assert_kwarg_passthrough=True)
 
     def test_account_scope_fallback_on_error(self):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
@@ -232,10 +226,7 @@ class TestAAD(unittest.TestCase):
             # Accept multiple calls, but the first should be account_scope, and fallback_scope should appear after error
             assert account_scope in scopes and fallback_scope in scopes, f"Expected fallback to default scope, got: {scopes}"
         finally:
-            try:
-                container.delete_item(item='Item_13', partition_key='pk', assert_kwarg_passthrough=True)
-            except Exception:
-                pass
+            container.delete_item(item='Item_13', partition_key='pk', assert_kwarg_passthrough=True)
 
 
 if __name__ == "__main__":
