@@ -1578,7 +1578,7 @@ class ContainerProxy:
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
-        :returns: A dict representing the retrieved conflict.
+        :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)

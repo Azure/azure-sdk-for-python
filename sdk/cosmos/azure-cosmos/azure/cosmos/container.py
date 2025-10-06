@@ -1759,8 +1759,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
             None, Sequence[Union[str, int, float, bool, None]]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
+        :returns: A CosmosDict representing the retrieved conflict.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
