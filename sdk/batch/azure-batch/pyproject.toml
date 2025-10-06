@@ -40,7 +40,7 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+homepage = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.batch._version.VERSION"}

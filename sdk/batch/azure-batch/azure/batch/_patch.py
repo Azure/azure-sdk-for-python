@@ -144,7 +144,7 @@ class BatchExceptionPolicy(SansIOHTTPPolicy):
 
         if not (res.status_code >= 200 and res.status_code < 300):
             raise_error = HttpResponseError
-            error = _failsafe_deserialize(_models.BatchError, res.json())
+            error = _failsafe_deserialize(_models.BatchError, res)
 
             # for 412 status code error handling
             if_match = req.headers.get("If-Match")

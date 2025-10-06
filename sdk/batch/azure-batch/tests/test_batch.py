@@ -1234,15 +1234,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller.done()
         assert poller.status() == "Succeeded"
 
-        # Test Disable Job
-        # response = await wrap_result(
-        #     client.disable_job(
-        #         job_id=job_param.id,
-        #         content=models.BatchJobDisableOptions(disable_tasks="requeue"),
-        #     )
-        # )
-        # assert response is None
-
         # Test LRO enable job
         poller = await wrap_result(client.begin_enable_job(job_id=job_param.id, polling_interval=5))
         assert poller is not None
@@ -1255,21 +1246,20 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller.done()
         assert poller.status() == "Succeeded"
 
-        # Test Enable Job
-        # response = await wrap_result(client.enable_job(job_param.id))
-        # assert response is None
-
         # Prep and release task status
         task_status = await wrap_list_result(client.list_job_preparation_and_release_task_status(job_param.id))
         assert isinstance(task_status, Iterable)
         assert list(task_status) == []
 
-        # Test Terminate Job
-        # response = await wrap_result(client.terminate_job(job_param.id))
-        # assert response is None
-
         # Test Terminate Job using LRO
-        poller = await wrap_result(client.begin_terminate_job(job_id=job_param.id, polling_interval=5))
+        # TODO: default for termination_reason wasn't set so manually adding it. fix later
+        poller = await wrap_result(
+            client.begin_terminate_job(
+                job_id=job_param.id,
+                options=models.BatchJobTerminateOptions(termination_reason='UserTerminate'),
+                polling_interval=5
+            )
+        )
         assert poller is not None
 
         result = poller.result()
