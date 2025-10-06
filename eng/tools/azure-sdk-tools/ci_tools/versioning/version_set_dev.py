@@ -102,5 +102,10 @@ def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
             set_version_py(target_package.setup_filename, new_version)
             set_dev_classifier(target_package.setup_filename, new_version)
             print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
-        except:
+        except Exception as e:
+            breakpoint()
             print("Could not set dev version for package: {0}".format(target_package.name))
+            print(e)
+
+if __name__ == "__main__":
+    version_set_dev_main()
