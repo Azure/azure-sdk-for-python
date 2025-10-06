@@ -1723,8 +1723,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the database.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Database.
+
         :rtype:
             None
         """
@@ -1747,10 +1746,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the user entity.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted user.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1772,10 +1770,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the permission.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Permission.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1797,10 +1794,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document collection.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Collection.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1822,10 +1818,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Document.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1847,8 +1842,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the user-defined function.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted UDF.
+
         :rtype:
             None
         """
@@ -1872,10 +1866,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the trigger.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Trigger.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1897,10 +1890,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the stored procedure.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Stored Procedure.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1922,10 +1914,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the conflict.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Conflict.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1952,10 +1943,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Azure Cosmos resource.
+
         :rtype:
-            dict
+            None
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -3262,6 +3252,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param object partition_resolver:
             An instance of PartitionResolver.
 
+        :rtype:
+            None
+
         """
         if not database_link:
             raise ValueError("database_link is None or empty.")
@@ -3422,8 +3415,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options:
             The request options for the request.
 
-        :return:
-            None
         :rtype:
             None
 
