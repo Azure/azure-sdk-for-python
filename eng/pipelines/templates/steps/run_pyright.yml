@@ -17,6 +17,10 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --check="pyright"
         ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
 
   - task: PythonScript@0
@@ -28,4 +32,8 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --check="verifytypes"
         ${{ parameters.AdditionalTestArgs }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))

@@ -74,6 +74,8 @@ def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = Fa
 
         report = json.loads(e.output)
         if check_pytyped:
+            logger.error("TODO DEBUG ^_^")
+            logger.error(json.dumps(report, indent=4))
             pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
             if not pytyped_present:
                 logger.error(f"No py.typed file was found. See https://aka.ms/python/typing-guide for information.")
