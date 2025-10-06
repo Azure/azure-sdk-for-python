@@ -1,0 +1,42 @@
+{% set def = "async def" if async_mode else "def" %}
+{% set a_prefix = "a" if async_mode else "" %}
+{% set await = "await " if async_mode else "" %}
+{% set generated_client = code_model.client.generated_class(async_mode) %}
+{{ imports }}
+from .operations import (
+    {% for operation_group in code_model.operation_groups %}
+    {{ operation_group.name }},
+    {% endfor %}
+)
+from {{ ".." if async_mode else "." }}_validation import api_version_validation
+from {{ ".." if async_mode else "." }} import models
+{{ client_initialization }}
+
+    @classmethod
+    def _models_dict(cls):
+        return {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+
+{% for operation_group in operation_group_properties %}
+
+    @property
+    {% if operation_group.need_decorator %}
+    {{ operation_group.decorator | indent }}
+    {% endif %}
+    def {{ operation_group.property_name }}(self):
+        api_version = self._get_api_version("{{ operation_group.property_name }}")
+        return {{ operation_group.name }}(
+            self._client,
+            self._config,
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
+            api_version=api_version,
+        )
+    {% endfor %}
+
+    {{ def }} close(self):
+        {{ await }}self._client.close()
+    {{ def }} __{{ a_prefix }}enter__(self):
+        {{ await }}self._client.__{{ a_prefix }}enter__()
+        return self
+    {{ def }} __{{ a_prefix }}exit__(self, *exc_details):
+        {{ await }}self._client.__{{ a_prefix }}exit__(*exc_details)

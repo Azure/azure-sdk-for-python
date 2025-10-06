@@ -19,7 +19,7 @@ function Get-ChangeLogEntries {
     LogError "ChangeLog[${ChangeLogLocation}] does not exist"
     return $null
   }
-  LogDebug "Extracting entries from [${ChangeLogLocation}]."
+  Write-Verbose "Extracting entries from [${ChangeLogLocation}]."
   return Get-ChangeLogEntriesFromContent (Get-Content -Path $ChangeLogLocation)
 }
 
@@ -52,6 +52,7 @@ function Get-ChangeLogEntriesFromContent {
   $sectionHeaderRegex = "^${initialAtxHeader}${SECTION_HEADER_REGEX_SUFFIX}"
   $changeLogEntries | Add-Member -NotePropertyName "InitialAtxHeader" -NotePropertyValue $initialAtxHeader
   $releaseTitleAtxHeader = $initialAtxHeader + "#"
+  $headerLines = @()
 
   try {
     # walk the document, finding where the version specifiers are and creating lists
@@ -83,6 +84,9 @@ function Get-ChangeLogEntriesFromContent {
 
           $changeLogEntry.ReleaseContent += $line
         }
+        else {
+          $headerLines += $line
+        }
       }
     }
   }
@@ -90,6 +94,8 @@ function Get-ChangeLogEntriesFromContent {
     Write-Error "Error parsing Changelog."
     Write-Error $_
   }
+
+  $changeLogEntries | Add-Member -NotePropertyName "HeaderBlock" -NotePropertyValue ($headerLines -Join [Environment]::NewLine)
   return $changeLogEntries
 }
 
@@ -265,8 +271,13 @@ function Set-ChangeLogContent {
   )
 
   $changeLogContent = @()
-  $changeLogContent += "$($ChangeLogEntries.InitialAtxHeader) Release History"
-  $changeLogContent += ""
+  if ($ChangeLogEntries.HeaderBlock) {
+    $changeLogContent += $ChangeLogEntries.HeaderBlock
+  }
+  else {
+    $changeLogContent += "$($ChangeLogEntries.InitialAtxHeader) Release History"
+    $changeLogContent += ""
+  }
 
   $ChangeLogEntries = Sort-ChangeLogEntries -changeLogEntries $ChangeLogEntries
 
@@ -297,8 +308,8 @@ function Remove-EmptySections {
   {
     $parsedSections = $ChangeLogEntry.Sections
     $sanitizedReleaseContent = New-Object System.Collections.ArrayList(,$releaseContent)
-  
-    foreach ($key in @($parsedSections.Keys)) 
+
+    foreach ($key in @($parsedSections.Keys))
     {
       if ([System.String]::IsNullOrWhiteSpace($parsedSections[$key]))
       {
@@ -442,6 +453,7 @@ function Confirm-ChangeLogForRelease {
   if (!$foundRecommendedSection)
   {
     $ChangeLogStatus.Message = "The changelog entry did not contain any of the recommended sections ($($RecommendedSectionHeaders -join ', ')), please add at least one. See https://aka.ms/azsdk/guideline/changelogs for more info."
+    $ChangeLogStatus.IsValid = $false
     if (!$SuppressErrors) {
       LogError "$($ChangeLogStatus.Message)"
     }

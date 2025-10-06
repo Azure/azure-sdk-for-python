@@ -23,6 +23,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
+PYTHON_VERSION = "3.9"
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run mypy against target folder. ")
 
@@ -53,13 +55,13 @@ if __name__ == "__main__":
 
     pkg_details = ParsedSetup.from_path(package_dir)
     top_level_module = pkg_details.namespace.split(".")[0]
-    python_version = "3.8"
+
     commands = [
         sys.executable,
         "-m",
         "mypy",
         "--python-version",
-        python_version,
+        PYTHON_VERSION,
         "--show-error-codes",
         "--ignore-missing-imports",
     ]
@@ -80,7 +82,9 @@ if __name__ == "__main__":
         )
     else:
         # check if samples dir exists, if not, skip sample code check
-        if not os.path.exists(os.path.join(args.target_package, "samples")):
+        samples = os.path.exists(os.path.join(args.target_package, "samples"))
+        generated_samples = os.path.exists(os.path.join(args.target_package, "generated_samples"))
+        if not samples and not generated_samples:
             logging.info(
                 f"Package {package_name} does not have a samples directory."
             )
@@ -89,7 +93,7 @@ if __name__ == "__main__":
                 *commands,
                 "--check-untyped-defs",
                 "--follow-imports=silent",
-                os.path.join(args.target_package, "samples")
+                os.path.join(args.target_package, "samples" if samples else "generated_samples"),
             ]
             try:
                 logging.info(
@@ -102,7 +106,7 @@ if __name__ == "__main__":
     if args.next and in_ci() and not is_typing_ignored(package_name):
         from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
         if src_code_error or sample_code_error:
-            create_vnext_issue(package_name, "mypy")
+            create_vnext_issue(package_dir, "mypy")
         else:
             close_vnext_issue(package_name, "mypy")
 

@@ -5,15 +5,10 @@ parameters:
   Artifacts: []
   TestPipeline: false
   VerifyAutorest: false
-  ValidateFormatting: false
   GenerateApiReviewForManualOnly: false
+  DevFeedName: 'public/azure-sdk-for-python'
 
-# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
-#     eng/pipelines/templates/jobs/ci.tests.yml
-#     eng/pipelines/templates/jobs/ci.yml
-#     eng/pipelines/templates/jobs/live.test.yml
-
-# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+# Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
     parameters:
@@ -25,22 +20,35 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
+  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+    - template: ../steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+
   - task: PythonScript@0
     displayName: 'Set Tox Environment Skips'
+    condition: succeededOrFailed()
     inputs:
       scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
-  - ${{ each artifact in parameters.Artifacts }}:
-    - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
-      - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
-        parameters:
-          PackageName: ${{artifact.name}}
-          ServiceName: ${{parameters.ServiceDirectory}}
-          ForRelease: false
+  - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    - template: /eng/common/pipelines/templates/steps/verify-changelogs.yml
+      parameters:
+        PackagePropertiesFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+        Condition: succeededOrFailed()
+  - ${{ else }}:
+    - ${{ each artifact in parameters.Artifacts }}:
+      - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
+        - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
+          parameters:
+            PackageName: ${{artifact.name}}
+            ServiceName: ${{parameters.ServiceDirectory}}
+            ForRelease: false
+            Condition: succeededOrFailed()
 
   - script: |
-      python -m pip install "./tools/azure-sdk-tools[build]" -q -I
+      $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
@@ -60,10 +68,12 @@ steps:
         }
       }
     displayName: Check for CRLF Line endings
+    condition: succeededOrFailed()
 
   - template: /eng/common/pipelines/templates/steps/verify-path-length.yml
     parameters:
       SourceDirectory: $(Build.SourcesDirectory)
+      Condition: succeededOrFailed()
 
   - template: ../steps/verify-autorest.yml
     parameters:
@@ -73,7 +83,7 @@ steps:
   - template: ../steps/set-dev-build.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      
+
   - task: PythonScript@0
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
@@ -105,11 +115,9 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
-  - ${{ if parameters.ValidateFormatting }}:
-    - template: run_black.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        ValidateFormatting: ${{ parameters.ValidateFormatting }}
+  - template: run_black.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
   - task: PythonScript@0
     displayName: 'Run Keyword Validation Check'
@@ -126,8 +134,7 @@ steps:
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
-      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
-      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+      PackageInfoFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
 
   - template: ../steps/run_breaking_changes.yml
     parameters:
@@ -152,6 +159,16 @@ steps:
       ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
+
+  # the pip authenticate task sets PIP_INDEX_URL value to the internal feed URL
+  # we should reset it such that the next task uses public pypi
+  - pwsh: |
+      if (Test-Path "~/.pypirc") {
+        Remove-Item "~/.pypirc"
+      }
+
+      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL;]"
+    displayName: Reset PIP INDEX URL
 
   - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
     parameters:

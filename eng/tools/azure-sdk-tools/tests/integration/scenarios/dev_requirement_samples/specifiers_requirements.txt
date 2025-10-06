@@ -1,0 +1,5 @@
+pytest-xdist
+cloudevents<=2.0.0; python_version >= "3.7"
+opencensus>=0.6.0
+pywin32==304 ; sys_platform == 'win32'
+azure-mgmt-cognitiveservices<12.0.0

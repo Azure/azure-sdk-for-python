@@ -38,11 +38,11 @@ def verify_packages(package_file_path):
     for p in get_installed_packages():
         if "==" in p:
             [package, version] = p.split("==")
-            installed[package.upper()] = version
+            installed[package.upper().replace("_","-")] = version
     expected = {}
     for p in packages:
         [package, version] = p.split("==")
-        expected[package.upper()] = version
+        expected[package.upper().replace("_","-")] = version
 
     missing_packages = [pkg for pkg in expected.keys() if installed.get(pkg) != expected.get(pkg)]
 
