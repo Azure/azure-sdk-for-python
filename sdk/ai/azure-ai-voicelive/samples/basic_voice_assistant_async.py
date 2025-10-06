@@ -70,7 +70,7 @@ if TYPE_CHECKING:
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Environment variable loading
-load_dotenv('.\\.env', override=True)
+load_dotenv('./.env', override=True)
 
 # Set up logging
 ## Add folder for logging
@@ -190,7 +190,7 @@ class AudioProcessor:
                     raise
 
                 if not packet or not packet.data:
-                    #None packet indicates end of stream
+                    # None packet indicates end of stream
                     logger.info("End of playback queue.")
                     break
 
