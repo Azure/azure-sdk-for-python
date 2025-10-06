@@ -503,7 +503,7 @@ class ContainerProxy:
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[List[Dict[str, object]]] = None,
-            partition_key: Optional[PartitionKeyType] = None,
+            partition_key: PartitionKeyType,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -511,7 +511,7 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -555,7 +555,7 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -582,7 +582,7 @@ class ContainerProxy:
             *,
             continuation_token_limit: Optional[int] = None,
             enable_scan_in_query: Optional[bool] = None,
-            feed_range: Optional[Dict[str, Any]] = None,
+            feed_range: Dict[str, Any],
             initial_headers: Optional[Dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
@@ -594,7 +594,85 @@ class ContainerProxy:
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
             **kwargs: Any
-    ):
+    ) -> AsyncItemPaged[Dict[str, Any]]:
+        """Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but
+        often the container name is used. In the examples below, the container
+        name is "products," and is aliased as "p" for easier referencing in
+        the WHERE clause.
+
+        :param str query: The Azure Cosmos DB SQL query to execute.
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
+        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+            in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
+            If all preferred locations were excluded, primary/hub location will be used.
+            This excluded_location will override existing excluded_locations in client level.
+        :keyword Dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
+            milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
+            responses are guaranteed to be no staler than this value.
+        :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword parameters: Optional array of parameters to the query.
+            Each parameter is a dict() with 'name' and 'value' keys.
+            Ignored if no query is provided.
+        :paramtype parameters: [List[Dict[str, object]]]
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+            existing indexes and how it could use potential new indexes. Please note that this option will incur
+            overhead, so it should be enabled only when debugging slow queries.
+        :keyword bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
+            request. Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled. Feature must first be enabled at the account level.
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword int throughput_bucket: The desired throughput bucket for the client.
+        :returns: An Iterable of items (dicts).
+        :rtype: AsyncItemPaged[Dict[str, Any]]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items]
+                :end-before: [END query_items]
+                :language: python
+                :dedent: 0
+                :caption: Get all products that have not been discontinued:
+
+            .. literalinclude:: ../samples/examples_async.py
+                :start-after: [START query_items_param]
+                :end-before: [END query_items_param]
+                :language: python
+                :dedent: 0
+                :caption: Parameterized query to get all products that have been discontinued:
+        """
+        ...
+
+    @overload
+    def query_items(
+            self,
+            query: str,
+            *,
+            continuation_token_limit: Optional[int] = None,
+            enable_scan_in_query: Optional[bool] = None,
+            initial_headers: Optional[Dict[str, str]] = None,
+            max_integrated_cache_staleness_in_ms: Optional[int] = None,
+            max_item_count: Optional[int] = None,
+            parameters: Optional[List[Dict[str, object]]] = None,
+            populate_index_metrics: Optional[bool] = None,
+            populate_query_metrics: Optional[bool] = None,
+            priority: Optional[Literal["High", "Low"]] = None,
+            response_hook: Optional[Callable[[Mapping[str, str], Dict[str, Any]], None]] = None,
+            session_token: Optional[str] = None,
+            throughput_bucket: Optional[int] = None,
+            **kwargs: Any
+    ) -> AsyncItemPaged[Dict[str, Any]]:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -633,7 +711,7 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -706,7 +784,7 @@ class ContainerProxy:
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :returns: An Iterable of items (dicts).
-        :rtype: ItemPaged[Dict[str, Any]]
+        :rtype: AsyncItemPaged[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -1442,9 +1520,11 @@ class ContainerProxy:
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
-    async def replace_throughput(
+    async def replace_throughput( # pylint: disable=unused-argument
         self,
         throughput: Union[int, ThroughputProperties],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         **kwargs: Any
     ) -> ThroughputProperties:
         """Replace the container's throughput.
@@ -1454,7 +1534,7 @@ class ContainerProxy:
         :param throughput: The throughput to be set.
         :type throughput: Union[int, ~azure.cosmos.ThroughputProperties]
         :keyword response_hook: A callable invoked with the response metadata.
-        :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
+        :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
             or the throughput properties could not be updated.
         :returns: ThroughputProperties for the container, updated with new throughput.
