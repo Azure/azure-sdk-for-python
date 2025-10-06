@@ -20,6 +20,7 @@ from .._generated.models import (
     IndexingResult,
     QueryAnswerType,
     QueryCaptionType,
+    QueryDebugMode,
     QueryType,
     SearchMode,
     ScoringStatistics,
@@ -183,6 +184,7 @@ class SearchClient(HeadersMixin):
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
+        debug: Optional[Union[str, QueryDebugMode]] = None,
         **kwargs
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -284,6 +286,9 @@ class SearchClient(HeadersMixin):
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
+        :keyword debug: Enables a debugging tool that can be used to further explore your reranked
+             results. Known values are: "disabled" and "vector".
+        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype:  AsyncSearchItemPaged[dict]
@@ -358,6 +363,7 @@ class SearchClient(HeadersMixin):
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+            debug=debug,
         )
         if isinstance(select, list):
             query.select(select)
