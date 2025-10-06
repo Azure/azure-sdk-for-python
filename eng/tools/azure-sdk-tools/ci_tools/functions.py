@@ -317,7 +317,7 @@ def is_required_version_on_pypi(package_name, spec):
 def get_package_from_repo(pkg_name: str, repo_root: Optional[str] = None) -> Optional[ParsedSetup]:
     root_dir = discover_repo_root(repo_root)
 
-    paths = discover_targeted_packages(pkg_name, root_dir, filter_type="Build")
+    paths = discover_targeted_packages(pkg_name, root_dir, filter_type="Build", include_inactive=True)
 
     if len(paths) >= 2:
         raise RuntimeError(f"Multiple packages found for {pkg_name} within {root_dir}, please specify a more specific glob.")
