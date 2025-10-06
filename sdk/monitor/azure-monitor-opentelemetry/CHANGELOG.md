@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Performance Counters
+  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+
 ### Breaking Changes
 
 ### Bugs Fixed
