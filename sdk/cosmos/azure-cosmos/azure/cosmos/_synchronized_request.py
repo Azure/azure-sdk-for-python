@@ -127,7 +127,10 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         and parse_result.hostname != "127.0.0.1"
         and not connection_policy.DisableSSLVerification
     )
-
+    try:
+        kwargs.pop("assert_kwarg_passthrough")
+    except KeyError:
+        raise AssertionError(f"Kwargs are not passed through correctly: {kwargs}")
     if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)

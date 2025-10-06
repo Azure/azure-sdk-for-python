@@ -47,9 +47,9 @@ class TestFaultInjectionTransport:
         cls.database_id = TEST_DATABASE_ID
         cls.single_partition_container_name = SINGLE_PARTITION_CONTAINER_NAME
 
-        cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger)
+        cls.mgmt_client = CosmosClient(cls.host, cls.master_key, consistency_level="Session", logger=logger, assert_kwarg_passthrough=True)
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
-        created_database.create_container(cls.single_partition_container_name, partition_key=PartitionKey("/pk"))
+        created_database.create_container(cls.single_partition_container_name, partition_key=PartitionKey("/pk"), assert_kwarg_passthrough=True)
 
 
     @classmethod
@@ -57,7 +57,7 @@ class TestFaultInjectionTransport:
         logger.info("tearing down class: {}".format(cls.__name__))
         created_database = cls.mgmt_client.get_database_client(cls.database_id)
         try:
-            created_database.delete_container(cls.single_partition_container_name),
+            created_database.delete_container(cls.single_partition_container_name, assert_kwarg_passthrough=True)
         except Exception as containerDeleteError:
             logger.warning("Exception trying to delete database {}. {}".format(created_database.id, containerDeleteError))
 
@@ -71,7 +71,7 @@ class TestFaultInjectionTransport:
             custom_logger = logger,
             **kwargs):
         client = CosmosClient(default_endpoint, key, consistency_level="Session",
-                              transport=custom_transport, logger=custom_logger, enable_diagnostics_logging=True, **kwargs)
+                              transport=custom_transport, logger=custom_logger, enable_diagnostics_logging=True, assert_kwarg_passthrough=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(database_id)
         container: ContainerProxy = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
@@ -96,7 +96,7 @@ class TestFaultInjectionTransport:
         start: float = time.perf_counter()
         try:
             container: ContainerProxy = initialized_objects["col"]
-            container.create_item(body=document_definition)
+            container.create_item(body=document_definition, assert_kwarg_passthrough=True)
             pytest.fail("Expected exception not thrown")
         except CosmosHttpResponseError as cosmosError:
             end = time.perf_counter() - start
@@ -140,14 +140,14 @@ class TestFaultInjectionTransport:
             preferred_locations=["Read Region", "Write Region"])
         container: ContainerProxy = initialized_objects["col"]
 
-        created_document = container.create_item(body=document_definition)
+        created_document = container.create_item(body=document_definition, assert_kwarg_passthrough=True)
         request: HttpRequest = created_document.get_response_headers()["_request"]
         # Validate the response comes from "Write Region" (the write region)
         assert request.url.startswith(expected_write_region_uri)
         start: float = time.perf_counter()
 
         while (time.perf_counter() - start) < 2:
-            read_document = container.read_item(id_value, partition_key=id_value)
+            read_document = container.read_item(id_value, partition_key=id_value, assert_kwarg_passthrough=True)
             request = read_document.get_response_headers()["_request"]
             # Validate the response comes from "Read Region" (the most preferred read-only region)
             assert request.url.startswith(expected_read_region_uri)
@@ -197,14 +197,14 @@ class TestFaultInjectionTransport:
             preferred_locations=["Read Region", "Write Region"])
         container: ContainerProxy = initialized_objects["col"]
 
-        created_document = container.create_item(body=document_definition)
+        created_document = container.create_item(body=document_definition, assert_kwarg_passthrough=True)
         request: HttpRequest = created_document.get_response_headers()["_request"]
         # Validate the response comes from "South Central US" (the write region)
         assert request.url.startswith(expected_write_region_uri)
         start:float = time.perf_counter()
 
         while (time.perf_counter() - start) < 2:
-            read_document = container.read_item(id_value, partition_key=id_value)
+            read_document = container.read_item(id_value, partition_key=id_value, assert_kwarg_passthrough=True)
             request = read_document.get_response_headers()["_request"]
             # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
             assert request.url.startswith(expected_write_region_uri)
@@ -259,14 +259,14 @@ class TestFaultInjectionTransport:
         preferred_locations=["Read Region", "Write Region"])
         container: ContainerProxy = initialized_objects["col"]
 
-        created_document = container.create_item(body=document_definition)
+        created_document = container.create_item(body=document_definition, assert_kwarg_passthrough=True)
         request: HttpRequest = created_document.get_response_headers()["_request"]
         # Validate the response comes from "South Central US" (the write region)
         assert request.url.startswith(expected_write_region_uri)
         start:float = time.perf_counter()
 
         while (time.perf_counter() - start) < 2:
-            read_document = container.read_item(id_value, partition_key=id_value)
+            read_document = container.read_item(id_value, partition_key=id_value, assert_kwarg_passthrough=True)
             request = read_document.get_response_headers()["_request"]
             # Validate the response comes from "Write Region" ("Read Region" the most preferred read-only region is down)
             assert request.url.startswith(expected_write_region_uri)
@@ -302,14 +302,14 @@ class TestFaultInjectionTransport:
         )
         container: ContainerProxy = initialized_objects["col"]
 
-        created_document = container.create_item(body=document_definition)
+        created_document = container.create_item(body=document_definition, assert_kwarg_passthrough=True)
         request: HttpRequest = created_document.get_response_headers()["_request"]
         # Validate the response comes from "South Central US" (the write region)
         assert request.url.startswith(first_region_uri)
         start:float = time.perf_counter()
 
         while (time.perf_counter() - start) < 2:
-            read_document = container.read_item(id_value, partition_key=id_value)
+            read_document = container.read_item(id_value, partition_key=id_value, assert_kwarg_passthrough=True)
             request = read_document.get_response_headers()["_request"]
             # Validate the response comes from "East US" (the most preferred read-only region)
             assert request.url.startswith(first_region_uri)
@@ -357,10 +357,10 @@ class TestFaultInjectionTransport:
         start:float = time.perf_counter()
         while (time.perf_counter() - start) < 2:
             # reads and writes should failover to second region
-            upsert_document = container.upsert_item(body=document_definition)
+            upsert_document = container.upsert_item(body=document_definition, assert_kwarg_passthrough=True)
             request = upsert_document.get_response_headers()["_request"]
             assert request.url.startswith(second_region_uri)
-            read_document = container.read_item(id_value, partition_key=id_value)
+            read_document = container.read_item(id_value, partition_key=id_value, assert_kwarg_passthrough=True)
             request = read_document.get_response_headers()["_request"]
             # Validate the response comes from "East US" (the most preferred read-only region)
             assert request.url.startswith(second_region_uri)
@@ -422,9 +422,9 @@ class TestFaultInjectionTransport:
             custom_transport,
             preferred_locations=["First Region", "Second Region"])
         container: ContainerProxy = initialized_objects["col"]
-        container.upsert_item(body=document_definition)
+        container.upsert_item(body=document_definition, assert_kwarg_passthrough=True)
         with pytest.raises(ServiceRequestError):
-            container.read_item(id_value, partition_key=id_value)
+            container.read_item(id_value, partition_key=id_value, assert_kwarg_passthrough=True)
 
     def test_mwr_all_regions_down(self: "TestFaultInjectionTransport"):
 
@@ -475,7 +475,7 @@ class TestFaultInjectionTransport:
         )
         container: ContainerProxy = initialized_objects["col"]
         with pytest.raises(ServiceRequestError):
-            container.upsert_item(body=document_definition)
+            container.upsert_item(body=document_definition, assert_kwarg_passthrough=True)
 
 
 if __name__ == '__main__':

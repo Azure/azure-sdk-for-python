@@ -24,7 +24,7 @@ class TestRegionalRoutingContext(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.client = CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.created_database = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_container = cls.created_database.get_container_client(cls.TEST_CONTAINER_ID)
 
@@ -32,7 +32,7 @@ class TestRegionalRoutingContext(unittest.TestCase):
 
         original_read_endpoint = (self.client.client_connection._global_endpoint_manager
                                   .location_cache.get_read_regional_routing_context())
-        self.created_container.create_item(body={"id": str(uuid.uuid4())})
+        self.created_container.create_item(body={"id": str(uuid.uuid4())}, assert_kwarg_passthrough=True)
         # Check for if there was a swap
         self.assertEqual(original_read_endpoint,
                          self.client.client_connection._global_endpoint_manager

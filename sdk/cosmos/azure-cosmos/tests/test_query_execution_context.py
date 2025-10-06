@@ -46,11 +46,12 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.created_db = cls.client.get_database_client(cls.TEST_DATABASE_ID)
         cls.created_collection = cls.created_db.create_container(
             id='query_execution_context_tests_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path='/id', kind='Hash'),
+            assert_kwarg_passthrough=True
         )
         cls.document_definitions = []
 
@@ -66,18 +67,18 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         try:
-            cls.created_db.delete_container(cls.created_collection.id)
+            cls.created_db.delete_container(cls.created_collection.id, assert_kwarg_passthrough=True)
         except CosmosHttpResponseError:
             pass
 
     def setUp(self):
         # sanity check:
         partition_key_ranges = list(self.client.client_connection._ReadPartitionKeyRanges(
-            get_document_collection_link(self.created_db, self.created_collection)))
+            get_document_collection_link(self.created_db, self.created_collection), assert_kwarg_passthrough=True))
         self.assertGreaterEqual(len(partition_key_ranges), 1)
 
         # sanity check: read documents after creation
-        queried_docs = list(self.created_collection.read_all_items())
+        queried_docs = list(self.created_collection.read_all_items(assert_kwarg_passthrough=True))
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),
@@ -109,7 +110,8 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
         res = self.created_collection.query_items(
             query=query,
             enable_cross_partition_query=True,
-            max_item_count=2
+            max_item_count=2,
+            assert_kwarg_passthrough=True
         )
         self.assertEqual(len(list(res)), 19)
 
@@ -141,7 +143,7 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
             return self.client.client_connection.QueryFeed(path,
                                                            collection_id,
                                                            query,
-                                                           options)
+                                                           options, assert_kwarg_passthrough=True)
 
         ######################################
         # test next() behavior
@@ -195,7 +197,7 @@ class TestQueryExecutionContextEndToEnd(unittest.TestCase):
         # create a document using the document definition
         created_docs = []
         for d in document_definitions:
-            created_doc = cls.created_collection.create_item(body=d)
+            created_doc = cls.created_collection.create_item(body=d, assert_kwarg_passthrough=True)
             created_docs.append(created_doc)
 
         return created_docs

@@ -347,7 +347,9 @@ def set_session_token_header(
         path: str,
         request_object: "RequestObject",
         options: Mapping[str, Any],
-        partition_key_range_id: Optional[str] = None) -> None:
+        partition_key_range_id: Optional[str] = None,
+        **kwargs
+) -> None:
     # set session token if required
     if _is_session_token_request(cosmos_client_connection, headers, request_object):
         # if there is a token set via option, then use it to override default
@@ -367,7 +369,8 @@ def set_session_token_header(
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
                                                                 partition_key_range_id,
-                                                                options))
+                                                                options,
+                                                                **kwargs))
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 

@@ -54,16 +54,33 @@ class ScriptsProxy:
         self,
         client_connection: CosmosClientConnection,
         container_link: str,
-        is_system_key: bool
+        is_system_key: Optional[bool],
+        **kwargs
     ) -> None:
         self.client_connection = client_connection
         self.container_link = container_link
-        self.is_system_key = is_system_key
+        self._is_system_key = is_system_key
+        self._container = kwargs.pop("container")
 
     def _get_resource_link(self, script_or_id: Union[str, Mapping[str, Any]], typ: str) -> str:
         if isinstance(script_or_id, str):
             return "{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
+
+    @property
+    def is_system_key(self) -> bool:
+        if self._is_system_key is None:
+            self._is_system_key = self._container.is_system_key
+        return self._is_system_key
+    
+    @is_system_key.setter
+    def is_system_key(self, value: bool) -> None:
+        self._is_system_key = value
+    
+    def _get_is_system_key(self, **kwargs) -> bool:
+        if self._is_system_key is None:
+            self._is_system_key = self._container._get_is_system_key(**kwargs)
+        return self._is_system_key
 
     @distributed_trace
     def list_stored_procedures(
@@ -217,7 +234,7 @@ class ScriptsProxy:
         request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
-                _return_undefined_or_empty_partition_key(self.is_system_key)
+                _return_undefined_or_empty_partition_key(self._get_is_system_key(**kwargs))
                 if partition_key == NonePartitionKeyValue
                 else partition_key
             )

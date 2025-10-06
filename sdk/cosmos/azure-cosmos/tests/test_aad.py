@@ -97,22 +97,22 @@ class TestAAD(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.credential, assert_kwarg_passthrough=True)
         cls.database = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.container = cls.database.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_aad_credentials(self):
-        print("Container info: " + str(self.container.read()))
-        self.container.create_item(get_test_item(0))
-        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk')))
-        query_results = list(self.container.query_items(query='select * from c', partition_key='pk'))
+        print("Container info: " + str(self.container.read(assert_kwarg_passthrough=True)))
+        self.container.create_item(get_test_item(0),assert_kwarg_passthrough=True)
+        print("Point read result: " + str(self.container.read_item(item='Item_0', partition_key='pk', assert_kwarg_passthrough=True)))
+        query_results = list(self.container.query_items(query='select * from c', partition_key='pk', assert_kwarg_passthrough=True))
         assert len(query_results) == 1
         print("Query result: " + str(query_results[0]))
-        self.container.delete_item(item='Item_0', partition_key='pk')
+        self.container.delete_item(item='Item_0', partition_key='pk', assert_kwarg_passthrough=True)
 
         # Attempting to do management operations will return a 403 Forbidden exception
         try:
-            self.client.delete_database(self.configs.TEST_DATABASE_ID)
+            self.client.delete_database(self.configs.TEST_DATABASE_ID, assert_kwarg_passthrough=True)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 403
             print("403 error assertion success")
@@ -140,10 +140,10 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             credential = CosmosEmulatorCredential()
-            client = cosmos_client.CosmosClient(self.host, credential)
+            client = cosmos_client.CosmosClient(self.host, credential, assert_kwarg_passthrough=True)
             db = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-            container.create_item(get_test_item(10))
+            container.create_item(get_test_item(10), assert_kwarg_passthrough=True)
             return container
 
         scopes, container = self._run_with_scope_capture(CosmosEmulatorCredential, action)
@@ -151,10 +151,7 @@ class TestAAD(unittest.TestCase):
             assert all(scope == override_scope for scope in scopes), f"Expected only override scope(s), got: {scopes}"
         finally:
             del os.environ["AZURE_COSMOS_AAD_SCOPE_OVERRIDE"]
-            try:
-                container.delete_item(item='Item_10', partition_key='pk')
-            except Exception:
-                pass
+            container.delete_item(item='Item_10', partition_key='pk', assert_kwarg_passthrough=True)
 
     def test_override_scope_auth_error_no_fallback(self):
         """When override scope is provided and auth fails, no fallback to other scopes occurs."""
@@ -167,10 +164,10 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             with pytest.raises(Exception) as excinfo:
-                client = cosmos_client.CosmosClient(self.host, FailingCredential())
+                client = cosmos_client.CosmosClient(self.host, FailingCredential(), assert_kwarg_passthrough=True)
                 db = client.get_database_client(self.configs.TEST_DATABASE_ID)
                 container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-                container.create_item(get_test_item(11))
+                container.create_item(get_test_item(11), assert_kwarg_passthrough=True)
             assert "Simulated auth error" in str(excinfo.value)
             return None
 
@@ -187,10 +184,10 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             credential = CosmosEmulatorCredential()
-            client = cosmos_client.CosmosClient(self.host, credential)
+            client = cosmos_client.CosmosClient(self.host, credential, assert_kwarg_passthrough=True)
             db = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-            container.create_item(get_test_item(12))
+            container.create_item(get_test_item(12), assert_kwarg_passthrough=True)
             return container
 
         scopes, container = self._run_with_scope_capture(CosmosEmulatorCredential, action)
@@ -198,10 +195,7 @@ class TestAAD(unittest.TestCase):
             # Accept multiple calls, but only the account_scope should be used
             assert all(scope == account_scope for scope in scopes), f"Expected only account scope, got: {scopes}"
         finally:
-            try:
-                container.delete_item(item='Item_12', partition_key='pk')
-            except Exception:
-                pass
+            container.delete_item(item='Item_12', partition_key='pk', assert_kwarg_passthrough=True)
 
     def test_account_scope_fallback_on_error(self):
         """When account scope is provided and auth fails, fallback to default scope occurs."""
@@ -221,10 +215,10 @@ class TestAAD(unittest.TestCase):
 
         def action(scopes_captured):
             credential = FallbackCredential()
-            client = cosmos_client.CosmosClient(self.host, credential)
+            client = cosmos_client.CosmosClient(self.host, credential, assert_kwarg_passthrough=True)
             db = client.get_database_client(self.configs.TEST_DATABASE_ID)
             container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-            container.create_item(get_test_item(13))
+            container.create_item(get_test_item(13), assert_kwarg_passthrough=True)
             return container
 
         scopes, container = self._run_with_scope_capture(FallbackCredential, action)
@@ -232,10 +226,7 @@ class TestAAD(unittest.TestCase):
             # Accept multiple calls, but the first should be account_scope, and fallback_scope should appear after error
             assert account_scope in scopes and fallback_scope in scopes, f"Expected fallback to default scope, got: {scopes}"
         finally:
-            try:
-                container.delete_item(item='Item_13', partition_key='pk')
-            except Exception:
-                pass
+            container.delete_item(item='Item_13', partition_key='pk', assert_kwarg_passthrough=True)
 
 
 if __name__ == "__main__":

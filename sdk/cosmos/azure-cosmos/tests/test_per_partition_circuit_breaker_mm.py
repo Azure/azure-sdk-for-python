@@ -103,26 +103,26 @@ def perform_write_operation(operation, container, fault_injection_container, doc
            'name': 'sample document',
            'key': 'value'}
     if operation == CREATE:
-        resp = fault_injection_container.create_item(body=doc)
+        resp = fault_injection_container.create_item(body=doc, assert_kwarg_passthrough=True)
     elif operation == UPSERT:
-        resp = fault_injection_container.upsert_item(body=doc)
+        resp = fault_injection_container.upsert_item(body=doc, assert_kwarg_passthrough=True)
     elif operation == REPLACE:
-        container.create_item(body=doc)
+        container.create_item(body=doc, assert_kwarg_passthrough=True)
         sleep(1)
         new_doc = {'id': doc_id,
                    'pk': pk,
                    'name': 'sample document' + str(uuid),
                    'key': 'value'}
-        resp = fault_injection_container.replace_item(item=doc['id'], body=new_doc)
+        resp = fault_injection_container.replace_item(item=doc['id'], body=new_doc, assert_kwarg_passthrough=True)
     elif operation == DELETE:
-        container.create_item(body=doc)
+        container.create_item(body=doc, assert_kwarg_passthrough=True)
         sleep(1)
-        resp = fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
+        resp = fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'], assert_kwarg_passthrough=True)
     elif operation == PATCH:
-        container.create_item(body=doc)
+        container.create_item(body=doc, assert_kwarg_passthrough=True)
         sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
-        resp = fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
+        resp = fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations, assert_kwarg_passthrough=True)
     elif operation == BATCH:
         batch_operations = [
             ("create", (doc, )),
@@ -130,17 +130,17 @@ def perform_write_operation(operation, container, fault_injection_container, doc
             ("upsert", (doc,)),
             ("upsert", (doc,)),
         ]
-        resp = fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
+        resp = fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'], assert_kwarg_passthrough=True)
     # this will need to be emulator only
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
-        container.create_item(body=doc)
-        resp = fault_injection_container.delete_all_items_by_partition_key(pk)
+        container.create_item(body=doc, assert_kwarg_passthrough=True)
+        resp = fault_injection_container.delete_all_items_by_partition_key(pk, assert_kwarg_passthrough=True)
     if resp:
         validate_response_uri(resp, expected_uri)
 
 def perform_read_operation(operation, container, doc_id, pk, expected_uri):
     if operation == READ:
-        read_resp = container.read_item(item=doc_id, partition_key=pk)
+        read_resp = container.read_item(item=doc_id, partition_key=pk, assert_kwarg_passthrough=True)
         request = read_resp.get_response_headers()["_request"]
         # Validate the response comes from "Read Region" (the most preferred read-only region)
         assert request.url.startswith(expected_uri)
@@ -148,28 +148,28 @@ def perform_read_operation(operation, container, doc_id, pk, expected_uri):
         # partition key filtered query
         query = "SELECT * FROM c WHERE c.id = @id AND c.pk = @pk"
         parameters = [{"name": "@id", "value": doc_id}, {"name": "@pk", "value": pk}]
-        for item in container.query_items(query=query, partition_key=pk, parameters=parameters):
+        for item in container.query_items(query=query, partition_key=pk, parameters=parameters, assert_kwarg_passthrough=True):
             assert item['id'] == doc_id
         # need to do query with no pk and with feed range
     elif operation == QUERY:
         # cross partition query
         query = "SELECT * FROM c WHERE c.id = @id"
-        for item in container.query_items(query=query):
+        for item in container.query_items(query=query, assert_kwarg_passthrough=True):
             assert item['id'] == doc_id
     elif operation == CHANGE_FEED:
-        for _ in container.query_items_change_feed():
+        for _ in container.query_items_change_feed(assert_kwarg_passthrough=True):
             pass
     elif operation == CHANGE_FEED_PK:
         # partition key filtered change feed
-        for _ in container.query_items_change_feed(partition_key=pk):
+        for _ in container.query_items_change_feed(partition_key=pk, assert_kwarg_passthrough=True):
             pass
     elif operation == CHANGE_FEED_EPK:
         # partition key filtered by feed range
-        feed_range = container.feed_range_from_partition_key(partition_key=pk)
-        for _ in container.query_items_change_feed(feed_range=feed_range):
+        feed_range = container.feed_range_from_partition_key(partition_key=pk, assert_kwarg_passthrough=True)
+        for _ in container.query_items_change_feed(feed_range=feed_range, assert_kwarg_passthrough=True):
             pass
     elif operation == READ_ALL_ITEMS:
-        for _ in container.read_all_items():
+        for _ in container.read_all_items(assert_kwarg_passthrough=True):
             pass
 
 @pytest.mark.cosmosCircuitBreaker

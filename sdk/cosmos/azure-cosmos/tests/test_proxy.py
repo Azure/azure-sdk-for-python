@@ -86,7 +86,7 @@ class TestProxy(unittest.TestCase):
         connection_policy.ProxyConfiguration.Port = self.serverPort + 1
         try:
             # client does a getDatabaseAccount on initialization, which fails
-            cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey}, connection_policy=connection_policy)
+            cosmos_client.CosmosClient(self.host, {'masterKey': self.masterKey}, connection_policy=connection_policy, assert_kwarg_passthrough=True)
             self.fail("Client instantiation is not expected")
         except Exception as e:
             self.assertTrue(type(e) is ServiceRequestError, msg="Error is not a ServiceRequestError")

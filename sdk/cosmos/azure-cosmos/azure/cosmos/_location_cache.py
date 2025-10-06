@@ -69,13 +69,10 @@ def get_regional_routing_contexts_by_loc(new_locations: List[Dict[str, str]]):
             if not new_location["name"]:
                 # during fail-over the location name is empty
                 continue
-            try:
-                region_uri = new_location["databaseAccountEndpoint"]
-                parsed_locations.append(new_location["name"])
-                regional_object = RegionalRoutingContext(region_uri)
-                regional_routing_contexts_by_location.update({new_location["name"]: regional_object})
-            except Exception as e:
-                raise e
+            region_uri = new_location["databaseAccountEndpoint"]
+            parsed_locations.append(new_location["name"])
+            regional_object = RegionalRoutingContext(region_uri)
+            regional_routing_contexts_by_location.update({new_location["name"]: regional_object})
 
     # Also store a hash map of endpoints for each location
     locations_by_endpoints = {value.get_primary(): key for key, value in regional_routing_contexts_by_location.items()}

@@ -35,13 +35,13 @@ class TestBackwardsCompatibility(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.client = CosmosClient(cls.host, cls.masterKey, assert_kwarg_passthrough=True)
         cls.databaseForTest = cls.client.get_database_client(cls.configs.TEST_DATABASE_ID)
         cls.containerForTest = cls.databaseForTest.get_container_client(cls.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
     def test_offer_methods(self):
-        database_offer = self.databaseForTest.get_throughput()
-        container_offer = self.containerForTest.get_throughput()
+        database_offer = self.databaseForTest.get_throughput(assert_kwarg_passthrough=True)
+        container_offer = self.containerForTest.get_throughput(assert_kwarg_passthrough=True)
 
         self.assertTrue("ThroughputProperties" in str(type(database_offer)))
         self.assertTrue("ThroughputProperties" in str(type(container_offer)))
@@ -50,103 +50,103 @@ class TestBackwardsCompatibility(unittest.TestCase):
         self.assertTrue(isinstance(container_offer, Offer))
 
     def test_populate_quota_info(self):
-            self.containerForTest.read(populate_quota_info=True, raw_response_hook=check_quota_info_request_headers)
-            self.containerForTest.read(False, False, True, raw_response_hook=check_quota_info_request_headers)
+            self.containerForTest.read(populate_quota_info=True, raw_response_hook=check_quota_info_request_headers, assert_kwarg_passthrough=True)
+            self.containerForTest.read(False, False, True, raw_response_hook=check_quota_info_request_headers, assert_kwarg_passthrough=True)
 
     def test_populate_partition_key_range_statistics(self):
-        self.containerForTest.read(populate_partition_key_range_statistics=True, raw_response_hook=check_pk_range_statistics_request_headers)
-        self.containerForTest.read(False, True, raw_response_hook=check_pk_range_statistics_request_headers)
+        self.containerForTest.read(populate_partition_key_range_statistics=True, raw_response_hook=check_pk_range_statistics_request_headers, assert_kwarg_passthrough=True)
+        self.containerForTest.read(False, True, raw_response_hook=check_pk_range_statistics_request_headers, assert_kwarg_passthrough=True)
 
     def test_session_token_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods
         # Database
-        database = self.client.create_database(str(uuid.uuid4()), session_token=str(uuid.uuid4()))
+        database = self.client.create_database(str(uuid.uuid4()), session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         assert database is not None
-        database2 = self.client.create_database_if_not_exists(str(uuid.uuid4()), session_token=str(uuid.uuid4()))
+        database2 = self.client.create_database_if_not_exists(str(uuid.uuid4()), session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         assert database2 is not None
-        database_list = list(self.client.list_databases(session_token=str(uuid.uuid4())))
-        database_list2 = list(self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4())))
+        database_list = list(self.client.list_databases(session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True))
+        database_list2 = list(self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True))
         assert len(database_list) > 0
         assert len(database_list2) > 0
-        database_read = database.read(session_token=str(uuid.uuid4()))
+        database_read = database.read(session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         assert database_read is not None
-        self.client.delete_database(database2.id, session_token=str(uuid.uuid4()))
+        self.client.delete_database(database2.id, session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         try:
-            database2.read()
+            database2.read(assert_kwarg_passthrough=True)
             pytest.fail("Database read should have failed")
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
         # Container
-        container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
+        container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         assert container is not None
-        container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()))
+        container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"), session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         assert container2 is not None
-        container_list = list(self.databaseForTest.list_containers(session_token=str(uuid.uuid4())))
-        container_list2 = list(self.databaseForTest.query_containers(query="select * from c", session_token=str(uuid.uuid4())))
+        container_list = list(self.databaseForTest.list_containers(session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True))
+        container_list2 = list(self.databaseForTest.query_containers(query="select * from c", session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True))
         assert len(container_list) > 0
         assert len(container_list2) > 0
-        container2_read = container2.read(session_token=str(uuid.uuid4()))
+        container2_read = container2.read(session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         assert container2_read is not None
-        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()))
-        replace_container_read = replace_container.read()
+        replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30, session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
+        replace_container_read = replace_container.read(assert_kwarg_passthrough=True)
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        self.databaseForTest.delete_container(replace_container.id, session_token=str(uuid.uuid4()))
+        self.databaseForTest.delete_container(replace_container.id, session_token=str(uuid.uuid4()), assert_kwarg_passthrough=True)
         try:
-            container2.read()
+            container2.read(assert_kwarg_passthrough=True)
             pytest.fail("Container read should have failed")
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
-        self.client.delete_database(database.id)
+        self.client.delete_database(database.id, assert_kwarg_passthrough=True)
 
     def test_etag_match_condition_compatibility(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
         # Database
-        database = self.client.create_database(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        database = self.client.create_database(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
         assert database is not None
-        database2 = self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+        database2 = self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified, assert_kwarg_passthrough=True)
         assert database2 is not None
-        self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
         try:
-            database2.read()
+            database2.read(assert_kwarg_passthrough=True)
             pytest.fail("Database read should have failed")
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
         # Container
         container = self.databaseForTest.create_container(str(uuid.uuid4()), PartitionKey(path="/pk"),
-                                              etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+                                              etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
         assert container is not None
         container2 = self.databaseForTest.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/pk"),
-                                                             etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+                                                             etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified, assert_kwarg_passthrough=True)
         assert container2 is not None
-        container2_read = container2.read()
+        container2_read = container2.read(assert_kwarg_passthrough=True)
         assert container2_read is not None
         replace_container = self.databaseForTest.replace_container(container2, PartitionKey(path="/pk"), default_ttl=30,
-                                                       etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
-        replace_container_read = replace_container.read()
+                                                       etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
+        replace_container_read = replace_container.read(assert_kwarg_passthrough=True)
         assert replace_container is not None
         assert replace_container_read != container2_read
         assert 'defaultTtl' in replace_container_read # Check for default_ttl as a new additional property
-        self.databaseForTest.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        self.databaseForTest.delete_container(replace_container.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
         try:
-            container2.read()
+            container2.read(assert_kwarg_passthrough=True)
             pytest.fail("Container read should have failed")
         except CosmosHttpResponseError as e:
             assert e.status_code == 404
 
         # Item
-        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
         assert item is not None
         item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=str(uuid.uuid4()),
-                                     match_condition=MatchConditions.IfNotModified)
+                                     match_condition=MatchConditions.IfNotModified, assert_kwarg_passthrough=True)
         assert item2 is not None
-        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        item = container.create_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None, assert_kwarg_passthrough=True)
         assert item is not None
-        item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None)
+        item2 = container.upsert_item({"id": str(uuid.uuid4()), "pk": 0}, etag=None, match_condition=None, assert_kwarg_passthrough=True)
         assert item2 is not None
         batch_operations = [
             ("create", ({"id": str(uuid.uuid4()), "pk": 0},)),
@@ -154,12 +154,12 @@ class TestBackwardsCompatibility(unittest.TestCase):
             ("read", (item['id'],)),
             ("upsert", ({"id": str(uuid.uuid4()), "pk": 0},)),
         ]
-        batch_results = container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        batch_results = container.execute_item_batch(batch_operations, partition_key=0, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified, assert_kwarg_passthrough=True)
         assert len(batch_results) == 4
         for result in batch_results:
             assert result['statusCode'] in (200, 201)
 
-        self.client.delete_database(database.id)
+        self.client.delete_database(database.id, assert_kwarg_passthrough=True)
 
 if __name__ == "__main__":
     unittest.main()

@@ -36,18 +36,19 @@ class TestReadItems(unittest.TestCase):
                 "tests.")
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, self.masterKey)
+        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, assert_kwarg_passthrough=True)
         self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
         self.container = self.database.create_container(
             id='read_items_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/id")
+            partition_key=PartitionKey(path="/id"),
+            assert_kwarg_passthrough=True
         )
 
     def tearDown(self):
         """Clean up async resources after each test."""
         if self.container:
             try:
-                self.database.delete_container(self.container)
+                self.database.delete_container(self.container, assert_kwarg_passthrough=True)
             except exceptions.CosmosHttpResponseError as e:
                 # Container may have been deleted by the test itself
                 if e.status_code != 404:
@@ -62,13 +63,13 @@ class TestReadItems(unittest.TestCase):
             doc_id = f"{id_prefix}_{i}_{uuid.uuid4()}"
             item_ids.append(doc_id)
             items_to_read.append((doc_id, doc_id))
-            container.create_item({'id': doc_id, 'data': i})
+            container.create_item({'id': doc_id, 'data': i}, assert_kwarg_passthrough=True)
         return items_to_read, item_ids
 
     def _setup_fault_injection(self, error_to_inject, inject_once=False):
         """Helper to set up a client with fault injection for read_items queries."""
         fault_injection_transport = FaultInjectionTransport()
-        client_with_faults = cosmos_client.CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        client_with_faults = cosmos_client.CosmosClient(self.host, self.masterKey, transport=fault_injection_transport, assert_kwarg_passthrough=True)
         container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
             self.container.id)
 
@@ -100,7 +101,7 @@ class TestReadItems(unittest.TestCase):
         # Add 2 non-existent items
         items_to_read.append(("non_existent_item1" + str(uuid.uuid4()), "non_existent_pk1"))
         items_to_read.append(("non_existent_item2" + str(uuid.uuid4()), "non_existent_pk2"))
-        read_items = self.container.read_items(items=items_to_read)
+        read_items = self.container.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
         self.assertEqual(len(read_items), 3)
         returned_ids = {item['id'] for item in read_items}
@@ -112,7 +113,7 @@ class TestReadItems(unittest.TestCase):
         items_to_read, item_ids = self._create_records_for_read_items(self.container, 1)
 
         # Read the single item using read_items
-        read_items = self.container.read_items(items=items_to_read)
+        read_items = self.container.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
         # Verify that one item was returned and it's the correct one
         self.assertEqual(len(read_items), 1)
@@ -123,7 +124,8 @@ class TestReadItems(unittest.TestCase):
         """Tests read_items with partition key different from id."""
         container_pk = self.database.create_container(
             id='read_items_pk_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
+            partition_key=PartitionKey(path="/pk"),
+            assert_kwarg_passthrough=True
         )
         try:
             items_to_read = []
@@ -132,23 +134,23 @@ class TestReadItems(unittest.TestCase):
                 doc_id = f"item{i}_{uuid.uuid4()}"
                 pk_value = f"pk_{i}"
                 item_ids.append(doc_id)
-                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'data': i})
+                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'data': i}, assert_kwarg_passthrough=True)
                 items_to_read.append((doc_id, pk_value))
 
-            read_items = container_pk.read_items(items=items_to_read)
+            read_items = container_pk.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
             self.assertEqual(len(read_items), len(item_ids))
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            self.database.delete_container(container_pk)
+            self.database.delete_container(container_pk, assert_kwarg_passthrough=True)
 
 
     def test_read_items_fails_with_incomplete_hierarchical_pk(self):
         """Tests that read_items raises ValueError for an incomplete hierarchical partition key."""
         container_hpk = self.database.create_container(
             id='read_items_hpk_incomplete_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
+            partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash"), assert_kwarg_passthrough=True
         )
         try:
             items_to_read = []
@@ -156,7 +158,7 @@ class TestReadItems(unittest.TestCase):
             doc_id = f"item_valid_{uuid.uuid4()}"
             tenant_id = "tenant1"
             user_id = "user1"
-            container_hpk.create_item({'id': doc_id, 'tenantId': tenant_id, 'userId': user_id})
+            container_hpk.create_item({'id': doc_id, 'tenantId': tenant_id, 'userId': user_id}, assert_kwarg_passthrough=True)
             items_to_read.append((doc_id, [tenant_id, user_id]))
 
             # Add an item with an incomplete partition key
@@ -165,18 +167,18 @@ class TestReadItems(unittest.TestCase):
 
             # The operation should fail with a ValueError
             with self.assertRaises(ValueError) as context:
-                container_hpk.read_items(items=items_to_read)
+                container_hpk.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
             self.assertIn("Number of components in partition key value (1) does not match definition (2)",
                           str(context.exception))
         finally:
-            self.database.delete_container(container_hpk)
+            self.database.delete_container(container_hpk, assert_kwarg_passthrough=True)
 
     def test_read_items_hierarchical_partition_key(self):
         """Tests read_items with hierarchical partition key."""
         container_hpk = self.database.create_container(
             id='read_hpk_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash")
+            partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash"), assert_kwarg_passthrough=True
         )
         try:
             items_to_read = []
@@ -186,16 +188,16 @@ class TestReadItems(unittest.TestCase):
                 tenant_id = f"tenant{i % 2}"
                 user_id = f"user{i}"
                 item_ids.append(doc_id)
-                container_hpk.create_item({'id': doc_id, 'tenantId': tenant_id, 'userId': user_id, 'data': i})
+                container_hpk.create_item({'id': doc_id, 'tenantId': tenant_id, 'userId': user_id, 'data': i}, assert_kwarg_passthrough=True)
                 items_to_read.append((doc_id, [tenant_id, user_id]))
 
-            read_items = container_hpk.read_items(items=items_to_read)
+            read_items = container_hpk.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
             self.assertEqual(len(read_items), len(item_ids))
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            self.database.delete_container(container_hpk)
+            self.database.delete_container(container_hpk, assert_kwarg_passthrough=True)
 
     def test_read_items_with_no_results_preserve_headers(self):
         """Tests read_items with only non-existent items, expecting an empty result."""
@@ -205,7 +207,7 @@ class TestReadItems(unittest.TestCase):
         ]
 
         # Call read_items with the list of non-existent items.
-        read_items = self.container.read_items(items=items_to_read)
+        read_items = self.container.read_items(items=items_to_read, assert_kwarg_passthrough=True)
         headers = read_items.get_response_headers()
         # Verify that the result is an empty list.
         self.assertEqual(len(read_items), 0)
@@ -217,7 +219,7 @@ class TestReadItems(unittest.TestCase):
         """Tests that on success, only the aggregated request charge header is returned."""
         items_to_read, item_ids = self._create_records_for_read_items(self.container, 5)
 
-        read_items = self.container.read_items(items=items_to_read)
+        read_items = self.container.read_items(items=items_to_read, assert_kwarg_passthrough=True)
         headers = read_items.get_response_headers()
 
         self.assertEqual(len(read_items), len(item_ids))
@@ -232,7 +234,7 @@ class TestReadItems(unittest.TestCase):
         """Tests read_items with a large number of items."""
         items_to_read, item_ids = self._create_records_for_read_items(self.container, 3100)
 
-        read_items = self.container.read_items(items=items_to_read)
+        read_items = self.container.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
         self.assertEqual(len(read_items), len(item_ids))
         read_ids = {item['id'] for item in read_items}
@@ -245,7 +247,7 @@ class TestReadItems(unittest.TestCase):
         items_to_read, _ = self._create_records_for_read_items(self.container, 10)
 
         with self.assertRaises(CosmosHttpResponseError) as context:
-            container_with_faults.read_items(items=items_to_read)
+            container_with_faults.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
         self.assertEqual(context.exception.status_code, 503)
         self.assertIn("Injected Service Unavailable Error", str(context.exception))
@@ -281,7 +283,7 @@ class TestReadItems(unittest.TestCase):
 
         # 6. Call read_items and assert that the correct exception is raised
         with self.assertRaises(CosmosHttpResponseError) as context:
-            container_with_faults.read_items(items=items_to_read)
+            container_with_faults.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
         # 7. Verify the exception contains the injected headers
         exc = context.exception
@@ -311,7 +313,7 @@ class TestReadItems(unittest.TestCase):
                 side_effect=side_effect_should_retry,
                 autospec=True
         ) as mock_should_retry:
-            read_items = container_with_faults.read_items(items=items_to_read)
+            read_items = container_with_faults.read_items(items=items_to_read, assert_kwarg_passthrough=True)
             mock_should_retry.assert_called_once()
             self.assertEqual(len(read_items), len(item_ids))
             read_ids = {item['id'] for item in read_items}
@@ -332,7 +334,7 @@ class TestReadItems(unittest.TestCase):
                 'azure.cosmos._gone_retry_policy.PartitionKeyRangeGoneRetryPolicy.ShouldRetry',
                 autospec=True
         ) as mock_should_retry:
-            read_items = container_with_faults.read_items(items=items_to_read)
+            read_items = container_with_faults.read_items(items=items_to_read, assert_kwarg_passthrough=True)
             mock_should_retry.assert_called_once()
             self.assertEqual(len(read_items), len(item_ids))
             read_ids = {item['id'] for item in read_items}
@@ -343,16 +345,17 @@ class TestReadItems(unittest.TestCase):
         container_id = self.container.id
         initial_items_to_read, initial_item_ids = self._create_records_for_read_items(self.container, 3, "initial")
 
-        read_items_before = self.container.read_items(items=initial_items_to_read)
+        read_items_before = self.container.read_items(items=initial_items_to_read, assert_kwarg_passthrough=True)
         self.assertEqual(len(read_items_before), len(initial_item_ids))
 
-        self.database.delete_container(self.container)
+        self.database.delete_container(self.container, assert_kwarg_passthrough=True)
 
         # Recreate the container with a different partition key and throughput
         self.container = self.database.create_container(
             id=container_id,
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=10100
+            offer_throughput=10100,
+            assert_kwarg_passthrough=True
         )
 
         # Create new items with the new partition key structure
@@ -362,10 +365,10 @@ class TestReadItems(unittest.TestCase):
             doc_id = f"new_item_{i}_{uuid.uuid4()}"
             pk_value = f"new_pk_{i}"
             new_item_ids.append(doc_id)
-            self.container.create_item({'id': doc_id, 'pk': pk_value, 'data': i})
+            self.container.create_item({'id': doc_id, 'pk': pk_value, 'data': i}, assert_kwarg_passthrough=True)
             new_items_to_read.append((doc_id, pk_value))
 
-        read_items_after = self.container.read_items(items=new_items_to_read)
+        read_items_after = self.container.read_items(items=new_items_to_read, assert_kwarg_passthrough=True)
         self.assertEqual(len(read_items_after), len(new_item_ids))
         read_ids = {item['id'] for item in read_items_after}
         self.assertSetEqual(read_ids, set(new_item_ids))
@@ -374,7 +377,7 @@ class TestReadItems(unittest.TestCase):
         """Tests that read_items preserves the original order of input items."""
         container_pk = self.database.create_container(
             id='read_order_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
+            partition_key=PartitionKey(path="/pk"), assert_kwarg_passthrough=True
         )
 
         try:
@@ -388,7 +391,7 @@ class TestReadItems(unittest.TestCase):
                 pk_value = f"pk_{i % 5}"
 
                 # Create the item in the container
-                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i})
+                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i}, assert_kwarg_passthrough=True)
 
                 # Add to our master list
                 all_items.append((doc_id, pk_value))
@@ -407,7 +410,7 @@ class TestReadItems(unittest.TestCase):
                 scrambled_items.extend(moved_items)
 
             # Read items using read_items with scrambled order
-            read_items = container_pk.read_items(items=scrambled_items)
+            read_items = container_pk.read_items(items=scrambled_items, assert_kwarg_passthrough=True)
 
             # Verify that all items were returned
             self.assertEqual(len(read_items), len(scrambled_items))
@@ -429,13 +432,13 @@ class TestReadItems(unittest.TestCase):
 
         finally:
             # Clean up
-            self.database.delete_container(container_pk)
+            self.database.delete_container(container_pk, assert_kwarg_passthrough=True)
 
     def test_read_items_order_using_zip_comparison(self):
         """Tests that read_items preserves the original order using zip and boolean comparison."""
         container_pk = self.database.create_container(
             id='read_order_zip_container_' + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/pk")
+            partition_key=PartitionKey(path="/pk"), assert_kwarg_passthrough=True
         )
 
         try:
@@ -446,13 +449,13 @@ class TestReadItems(unittest.TestCase):
                 pk_value = f"pk_{i % 5}"  # Distribute across 5 partition keys
 
                 # Create the item in the container
-                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i})
+                container_pk.create_item({'id': doc_id, 'pk': pk_value, 'order_value': i}, assert_kwarg_passthrough=True)
 
                 # Add to our list
                 all_items.append((doc_id, pk_value))
 
             # Read items with the scrambled order
-            read_items = container_pk.read_items(items=all_items)
+            read_items = container_pk.read_items(items=all_items, assert_kwarg_passthrough=True)
 
             # Verify correct count
             self.assertEqual(len(read_items), len(all_items))
@@ -466,7 +469,7 @@ class TestReadItems(unittest.TestCase):
                             "Order was not preserved. Input order doesn't match output order.")
 
         finally:
-            self.database.delete_container(container_pk)
+            self.database.delete_container(container_pk, assert_kwarg_passthrough=True)
 
     def test_read_items_concurrency_internals(self):
         """Tests that read_items properly chunks large requests."""
@@ -478,7 +481,7 @@ class TestReadItems(unittest.TestCase):
         with patch.object(self.container.client_connection, 'QueryItems') as mock_query:
             mock_query.return_value = []
 
-            self.container.read_items(items=items_to_read)
+            self.container.read_items(items=items_to_read, assert_kwarg_passthrough=True)
 
             self.assertEqual(mock_query.call_count, 3)
             call_args = mock_query.call_args_list
@@ -493,12 +496,13 @@ class TestReadItems(unittest.TestCase):
         multi_partition_container = self.database.create_container(
             id='multi_partition_container_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/pk"),
-            offer_throughput=11000
+            offer_throughput=11000,
+            assert_kwarg_passthrough=True
         )
         try:
             # 1. Verify that we have more than one physical partition
             pk_ranges = list(multi_partition_container.client_connection._ReadPartitionKeyRanges(
-                multi_partition_container.container_link))
+                multi_partition_container.container_link, assert_kwarg_passthrough=True))
             self.assertGreater(len(pk_ranges), 1, "Container should have multiple physical partitions.")
 
             # 2. Create items across different logical partitions
@@ -508,7 +512,7 @@ class TestReadItems(unittest.TestCase):
                 doc_id = f"item_{i}_{uuid.uuid4()}"
                 pk = i % 2
                 all_item_ids.add(doc_id)
-                multi_partition_container.create_item({'id': doc_id, 'pk': pk, 'data': i})
+                multi_partition_container.create_item({'id': doc_id, 'pk': pk, 'data': i}, assert_kwarg_passthrough=True)
                 items_to_read.append((doc_id, pk))
 
             # 3. Check item distribution across physical partitions
@@ -518,7 +522,7 @@ class TestReadItems(unittest.TestCase):
                 # Query items within this specific physical partition
                 items_in_partition = list(multi_partition_container.query_items(
                     "SELECT c.id FROM c",
-                    partition_key_range_id=pk_range_id
+                    partition_key_range_id=pk_range_id, assert_kwarg_passthrough=True
                 ))
                 if items_in_partition:
                     partition_item_map[pk_range_id] = {item['id'] for item in items_in_partition}
@@ -538,7 +542,8 @@ class TestReadItems(unittest.TestCase):
             # 4. Execute read_items with the hook
             read_items_result = multi_partition_container.read_items(
                 items=items_to_read,
-                response_hook=response_hook
+                response_hook=response_hook,
+                assert_kwarg_passthrough=True
             )
 
             # 5. Verify the response_hook was called correctly
@@ -561,5 +566,5 @@ class TestReadItems(unittest.TestCase):
             self.assertIs(read_items_result, hook_results)
 
         finally:
-            self.database.delete_container(multi_partition_container)
+            self.database.delete_container(multi_partition_container, assert_kwarg_passthrough=True)
 

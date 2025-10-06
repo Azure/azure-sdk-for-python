@@ -32,11 +32,11 @@ class TestsUtils(unittest.TestCase):
     def test_connection_string(self):
         client: CosmosClient = (azure.cosmos.CosmosClient
                                 .from_connection_string(test_config.TestConfig.connection_str,
-                                                        consistency_level="Session"))
+                                                        consistency_level="Session", assert_kwarg_passthrough=True))
         database_id = "connection_string_test" + str(uuid.uuid4())
-        db = client.create_database(database_id)
+        db = client.create_database(database_id, assert_kwarg_passthrough=True)
         self.assertTrue(db is not None)
-        client.delete_database(db.id)
+        client.delete_database(db.id, assert_kwarg_passthrough=True)
 
     def test_add_args_to_kwargs(self):
         arg_names = ["arg1", "arg2", "arg3", "arg4"]

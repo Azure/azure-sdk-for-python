@@ -22,7 +22,7 @@ def setup():
             "You must specify your Azure Cosmos account values for "
             "'masterKey' and 'host' at the top of this class to run the "
             "tests.")
-    test_client = cosmos_client.CosmosClient(TestSessionTokenHelpers.host, test_config.TestConfig.masterKey),
+    test_client = cosmos_client.CosmosClient(TestSessionTokenHelpers.host, test_config.TestConfig.masterKey, assert_kwarg_passthrough=True),
     created_db = test_client[0].get_database_client(TestSessionTokenHelpers.TEST_DATABASE_ID)
     return {
         DATABASE: created_db,
