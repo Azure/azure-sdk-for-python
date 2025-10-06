@@ -257,95 +257,11 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"))
+            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result
         return result
-
-    def _not_applicable_result(self, error_message):
-        """Return a result indicating that the tool call is not applicable for evaluation.
-        :param eval_input: The input to the evaluator.
-        :type eval_input: Dict
-        :return: A dictionary containing the result of the evaluation.
-        :rtype: Dict[str, Union[str, float]]
-        """
-        # If no tool calls were made or tool call type is not supported, return not applicable result
-        return {
-            self._result_key: self._NOT_APPLICABLE_RESULT,
-            f"{self._result_key}_result": "pass",
-            f"{self._result_key}_threshold": self.threshold,
-            f"{self._result_key}_reason": error_message,
-            "details": {},
-        }
-
-    def _extract_needed_tool_definitions(self, tool_calls, tool_definitions):
-        """Extract the tool definitions that are needed for the provided tool calls."""
-        needed_tool_definitions = []
-
-        # Add all user-provided tool definitions
-        needed_tool_definitions.extend(tool_definitions)
-
-        # Add the needed built-in tool definitions (if they are called)
-        built_in_definitions = _get_needed_built_in_definitions(tool_calls)
-        needed_tool_definitions.extend(built_in_definitions)
-
-        # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(
-            chain.from_iterable(
-                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
-                for tool in needed_tool_definitions
-            )
-        )
-
-        # Validate that all tool calls have corresponding definitions
-        for tool_call in tool_calls:
-            if isinstance(tool_call, dict):
-                tool_type = tool_call.get("type")
-
-                if tool_type == "tool_call":
-                    tool_name = tool_call.get("name")
-                    if tool_name and tool_name in _BUILT_IN_DESCRIPTIONS:
-                        # This is a built-in tool from converter, already handled above
-                        continue
-                    elif tool_name:
-                        # This is a regular function tool from converter
-                        tool_definition_exists = any(
-                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                            for tool in tool_definitions_expanded
-                        )
-                        if not tool_definition_exists:
-                            raise EvaluationException(
-                                message=f"Tool definition for {tool_name} not found",
-                                blame=ErrorBlame.USER_ERROR,
-                                category=ErrorCategory.INVALID_VALUE,
-                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                            )
-                    else:
-                        raise EvaluationException(
-                            message=f"Tool call missing name: {tool_call}",
-                            blame=ErrorBlame.USER_ERROR,
-                            category=ErrorCategory.INVALID_VALUE,
-                            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                        )
-                else:
-                    # Unsupported tool format - only converter format is supported
-                    raise EvaluationException(
-                        message=f"Unsupported tool call format. Only converter format is supported: {tool_call}",
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                    )
-            else:
-                # Tool call is not a dictionary
-                raise EvaluationException(
-                    message=f"Tool call is not a dictionary: {tool_call}",
-                    blame=ErrorBlame.USER_ERROR,
-                    category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
-                )
-
-        return needed_tool_definitions
 
     @override
     def __call__(  # pylint: disable=docstring-missing-param
