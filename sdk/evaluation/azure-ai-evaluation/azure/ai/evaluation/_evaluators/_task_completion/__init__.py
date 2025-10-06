@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._tool_call_accuracy import ToolCallAccuracyEvaluator
+from ._task_completion import TaskCompletionEvaluator
 
-__all__ = [
-    "ToolCallAccuracyEvaluator",
-]
+__all__ = ["TaskCompletionEvaluator"]
