@@ -39,7 +39,11 @@ def get_authentication_policy(credential, *, is_async: bool = False, **kwargs):
     if not audience:
         audience = DEFAULT_AUDIENCE
     scope = audience.rstrip("/") + "/.default"
-    _policy = BearerTokenCredentialPolicy if not is_async else AsyncBearerTokenCredentialPolicy
+    _policy = (
+        BearerTokenCredentialPolicy
+        if not is_async
+        else AsyncBearerTokenCredentialPolicy
+    )
     authentication_policy = _policy(credential, scope)
     return authentication_policy
 

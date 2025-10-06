@@ -18,6 +18,8 @@ from .._generated.models import (
     CorsOptions,
     SearchSuggester,
     LexicalAnalyzer,
+    LexicalNormalizer,
+    LexicalNormalizerName,
     LexicalTokenizer,
     TokenFilter,
     CharFilter,
@@ -165,6 +167,11 @@ class SearchField(_serialization.Model):
         "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
         "whitespace".
     :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
+    :ivar normalizer_name: The name of the normalizer to use for the field. This option can be used
+         only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
+         chosen, it cannot be changed for the field. Must be null for complex fields. Known values are:
+         "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar vector_search_dimensions: The dimensionality of the vector field.
     :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
@@ -198,6 +205,7 @@ class SearchField(_serialization.Model):
         analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         search_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
         index_analyzer_name: Optional[Union[str, LexicalAnalyzerName]] = None,
+        normalizer_name: Optional[Union[str, LexicalNormalizerName]] = None,
         synonym_map_names: Optional[List[str]] = None,
         fields: Optional[List["SearchField"]] = None,
         vector_search_dimensions: Optional[int] = None,
@@ -218,6 +226,7 @@ class SearchField(_serialization.Model):
         self.analyzer_name = analyzer_name
         self.search_analyzer_name = search_analyzer_name
         self.index_analyzer_name = index_analyzer_name
+        self.normalizer_name = normalizer_name
         self.synonym_map_names = synonym_map_names
         self.fields = fields
         self.vector_search_dimensions = vector_search_dimensions
@@ -240,6 +249,7 @@ class SearchField(_serialization.Model):
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
+            normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
             vector_search_dimensions=self.vector_search_dimensions,
@@ -253,11 +263,18 @@ class SearchField(_serialization.Model):
             return None
         # pylint:disable=protected-access
         fields = (
-            [cast(SearchField, SearchField._from_generated(x)) for x in search_field.fields]
+            [
+                cast(SearchField, SearchField._from_generated(x))
+                for x in search_field.fields
+            ]
             if search_field.fields
             else None
         )
-        hidden = not search_field.retrievable if search_field.retrievable is not None else None
+        hidden = (
+            not search_field.retrievable
+            if search_field.retrievable is not None
+            else None
+        )
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -271,6 +288,7 @@ class SearchField(_serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
+            normalizer_name=search_field.normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.vector_search_dimensions,
@@ -278,7 +296,9 @@ class SearchField(_serialization.Model):
             vector_encoding_format=search_field.vector_encoding_format,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -295,12 +315,16 @@ class SearchField(_serialization.Model):
         :returns: A SearchField instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchField.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -335,7 +359,9 @@ class SearchField(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
-            _SearchField.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            _SearchField.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 
@@ -618,6 +644,8 @@ class SearchIndex(_serialization.Model):
     :vartype tokenizers: list[~azure.search.documents.indexes.models.LexicalTokenizer]
     :ivar token_filters: The token filters for the index.
     :vartype token_filters: list[~azure.search.documents.indexes.models.TokenFilter]
+    :ivar normalizers: The normalizers for the index.
+    :vartype normalizers: list[~azure.search.documents.indexes.models.LexicalNormalizer]
     :ivar char_filters: The character filters for the index.
     :vartype char_filters: list[~azure.search.documents.indexes.models.CharFilter]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
@@ -655,6 +683,7 @@ class SearchIndex(_serialization.Model):
         analyzers: Optional[List[LexicalAnalyzer]] = None,
         tokenizers: Optional[List[LexicalTokenizer]] = None,
         token_filters: Optional[List[TokenFilter]] = None,
+        normalizers: Optional[list[LexicalNormalizer]] = None,
         char_filters: Optional[List[CharFilter]] = None,
         encryption_key: Optional[SearchResourceEncryptionKey] = None,
         similarity: Optional[SimilarityAlgorithm] = None,
@@ -674,6 +703,7 @@ class SearchIndex(_serialization.Model):
         self.analyzers = analyzers
         self.tokenizers = tokenizers
         self.token_filters = token_filters
+        self.normalizers = normalizers
         self.char_filters = char_filters
         self.encryption_key = encryption_key
         self.similarity = similarity
@@ -688,7 +718,11 @@ class SearchIndex(_serialization.Model):
             analyzers = None
         if self.tokenizers:
             tokenizers = [
-                x._to_generated() if isinstance(x, PatternTokenizer) else x  # pylint:disable=protected-access
+                (
+                    x._to_generated()  # pylint:disable=protected-access
+                    if isinstance(x, PatternTokenizer)
+                    else x
+                )
                 for x in self.tokenizers
             ]
         else:
@@ -708,9 +742,12 @@ class SearchIndex(_serialization.Model):
             analyzers=analyzers,
             tokenizers=tokenizers,
             token_filters=self.token_filters,
+            normalizers=self.normalizers,
             char_filters=self.char_filters,
             # pylint:disable=protected-access
-            encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
+            encryption_key=(
+                self.encryption_key._to_generated() if self.encryption_key else None
+            ),
             similarity=self.similarity,
             semantic_search=self.semantic_search,
             e_tag=self.e_tag,
@@ -728,7 +765,9 @@ class SearchIndex(_serialization.Model):
         if search_index.tokenizers:
             tokenizers = [
                 (
-                    PatternTokenizer._from_generated(x)  # pylint:disable=protected-access
+                    PatternTokenizer._from_generated(  # pylint:disable=protected-access
+                        x
+                    )
                     if isinstance(x, _PatternTokenizer)
                     else x
                 )
@@ -738,7 +777,10 @@ class SearchIndex(_serialization.Model):
             tokenizers = None
         if search_index.fields:
             # pylint:disable=protected-access
-            fields = [cast(SearchField, SearchField._from_generated(x)) for x in search_index.fields]
+            fields = [
+                cast(SearchField, SearchField._from_generated(x))
+                for x in search_index.fields
+            ]
         else:
             fields = []
         return cls(
@@ -752,16 +794,21 @@ class SearchIndex(_serialization.Model):
             analyzers=analyzers,
             tokenizers=tokenizers,
             token_filters=search_index.token_filters,
+            normalizers=search_index.normalizers,
             char_filters=search_index.char_filters,
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
+            encryption_key=SearchResourceEncryptionKey._from_generated(
+                search_index.encryption_key
+            ),
             similarity=search_index.similarity,
             semantic_search=search_index.semantic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -779,12 +826,16 @@ class SearchIndex(_serialization.Model):
         :rtype: SearchIndex
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchIndex.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -819,7 +870,9 @@ class SearchIndex(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
-            _SearchIndex.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            _SearchIndex.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 

@@ -1,14 +1,30 @@
 # Release History
 
-## 11.6.0 (Unreleased)
+## 11.6.0 (2025-10-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added `azure.search.documents.DocumentDebugInfo`.
+- Added `azure.search.documents.QueryDebugMode`.
+- Added `azure.search.documents.QueryResultDocumentSubscores`.
+- Added `azure.search.documents.SingleVectorFieldResult`.
+- Added `azure.search.documents.TextResult`.
+- Added `azure.search.documents.VectorsDebugInfo`.
+- Added new parameter `debug` in `azure.search.documents.SearchClient.search`.
+- Added `azure.search.documents.indexes.LexicalNormalizer`.
+- Added `azure.search.documents.indexes.LexicalNormalizerName`.
+- Added `azure.search.documents.indexes.AnalyzeTextOptions.normalizer_name`.
+- Added `azure.search.documents.indexes.CustomNormalizer`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkill`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingProperties`.
+- Added `azure.search.documents.indexes.RescoringOptions`.
+- Added `azure.search.documents.indexes.SearchField.normalizer_name`.
+- Added `azure.search.documents.indexes.SearchIndex.normalizer`.
+- Added `azure.search.documents.indexes.SearchIndexerKnowledgeStoreParameters`.
 
 ### Other Changes
+
+- Updated default API version to `2025-09-01`.
 
 ## 11.5.2 (2024-10-31)
 

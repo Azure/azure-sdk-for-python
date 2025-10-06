@@ -100,7 +100,9 @@ class SearchIndexerSkillset(_serialization.Model):
         generated_skills = []
         for skill in self.skills:
             if hasattr(skill, "_to_generated"):
-                generated_skills.append(skill._to_generated())  # pylint:disable=protected-access
+                generated_skills.append(
+                    skill._to_generated()  # pylint:disable=protected-access
+                )
             else:
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
@@ -109,12 +111,16 @@ class SearchIndexerSkillset(_serialization.Model):
             name=getattr(self, "name", None),
             description=getattr(self, "description", None),
             skills=generated_skills,
-            cognitive_services_account=getattr(self, "cognitive_services_account", None),
+            cognitive_services_account=getattr(
+                self, "cognitive_services_account", None
+            ),
             knowledge_store=getattr(self, "knowledge_store", None),
             index_projection=getattr(self, "index_projection", None),
             e_tag=getattr(self, "e_tag", None),
             encryption_key=(
-                encryption_key._to_generated() if encryption_key else None  # pylint:disable=protected-access
+                encryption_key._to_generated()  # pylint:disable=protected-access
+                if encryption_key
+                else None
             ),
         )
 
@@ -126,19 +132,31 @@ class SearchIndexerSkillset(_serialization.Model):
         for skill in skillset.skills:
             skill_cls = type(skill)
             if skill_cls in [_EntityRecognitionSkillV3]:
-                custom_skills.append(EntityRecognitionSkill._from_generated(skill))  # pylint:disable=protected-access
+                custom_skills.append(
+                    EntityRecognitionSkill._from_generated(  # pylint:disable=protected-access
+                        skill
+                    )
+                )
             elif skill_cls in [_SentimentSkillV3]:
-                custom_skills.append(SentimentSkill._from_generated(skill))  # pylint:disable=protected-access
+                custom_skills.append(
+                    SentimentSkill._from_generated(  # pylint:disable=protected-access
+                        skill
+                    )
+                )
             else:
                 custom_skills.append(skill)
         assert len(skillset.skills) == len(custom_skills)
         kwargs = skillset.as_dict()
         # pylint:disable=protected-access
-        kwargs["encryption_key"] = SearchResourceEncryptionKey._from_generated(skillset.encryption_key)
+        kwargs["encryption_key"] = SearchResourceEncryptionKey._from_generated(
+            skillset.encryption_key
+        )
         kwargs["skills"] = custom_skills
         return cls(**kwargs)
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -156,12 +174,16 @@ class SearchIndexerSkillset(_serialization.Model):
         :rtype: SearchIndexerSkillset
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndexerSkillset.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchIndexerSkillset.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -196,7 +218,9 @@ class SearchIndexerSkillset(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(  # type: ignore
-            _SearchIndexerSkillset.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            _SearchIndexerSkillset.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 
@@ -319,7 +343,9 @@ class EntityRecognitionSkill(SearchIndexerSkill):
             return None
         kwargs = skill.as_dict()
         if isinstance(skill, _EntityRecognitionSkillV3):
-            return EntityRecognitionSkill(skill_version=EntityRecognitionSkillVersion.V3, **kwargs)
+            return EntityRecognitionSkill(
+                skill_version=EntityRecognitionSkillVersion.V3, **kwargs
+            )
         return None
 
 
@@ -470,6 +496,9 @@ class AnalyzeTextOptions(_serialization.Model):
      "letter", "lowercase", "microsoft_language_tokenizer", "microsoft_language_stemming_tokenizer",
      "nGram", "path_hierarchy_v2", "pattern", "standard_v2", "uax_url_email", "whitespace".
     :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :ivar normalizer_name: The name of the normalizer to use to normalize the given text. Known values
+     are: "asciifolding", "elision", "lowercase", "standard", and "uppercase".
+    :vartype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :ivar token_filters: An optional list of token filters to use when breaking the given text.
      This parameter can only be set when using the tokenizer parameter.
     :vartype token_filters: list[str or ~azure.search.documents.indexes.models.TokenFilterName]
@@ -518,7 +547,9 @@ class AnalyzeTextOptions(_serialization.Model):
             char_filters=analyze_request.char_filters,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -536,12 +567,16 @@ class AnalyzeTextOptions(_serialization.Model):
         :rtype: AnalyzeTextOptions
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_analyze_request(AnalyzeRequest.deserialize(data, content_type=content_type))
+        return cls._from_analyze_request(
+            AnalyzeRequest.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -576,7 +611,9 @@ class AnalyzeTextOptions(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_analyze_request(
-            AnalyzeRequest.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            AnalyzeRequest.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 
@@ -854,8 +891,12 @@ class SearchResourceEncryptionKey(_serialization.Model):
         if not search_resource_encryption_key:
             return None
         if search_resource_encryption_key.access_credentials:
-            application_id = search_resource_encryption_key.access_credentials.application_id
-            application_secret = search_resource_encryption_key.access_credentials.application_secret
+            application_id = (
+                search_resource_encryption_key.access_credentials.application_id
+            )
+            application_secret = (
+                search_resource_encryption_key.access_credentials.application_secret
+            )
         else:
             application_id = None
             application_secret = None
@@ -867,7 +908,9 @@ class SearchResourceEncryptionKey(_serialization.Model):
             application_secret=application_secret,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -884,12 +927,16 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :returns: A SearchResourceEncryptionKey instance
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchResourceEncryptionKey.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchResourceEncryptionKey.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -924,7 +971,9 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
-            _SearchResourceEncryptionKey.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            _SearchResourceEncryptionKey.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 
@@ -978,7 +1027,9 @@ class SynonymMap(_serialization.Model):
             name=self.name,
             synonyms="\n".join(self.synonyms),
             encryption_key=(
-                self.encryption_key._to_generated() if self.encryption_key else None  # pylint:disable=protected-access
+                self.encryption_key._to_generated()  # pylint:disable=protected-access
+                if self.encryption_key
+                else None
             ),
             e_tag=self.e_tag,
         )
@@ -991,11 +1042,15 @@ class SynonymMap(_serialization.Model):
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(synonym_map.encryption_key),
+            encryption_key=SearchResourceEncryptionKey._from_generated(
+                synonym_map.encryption_key
+            ),
             e_tag=synonym_map.e_tag,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -1013,12 +1068,16 @@ class SynonymMap(_serialization.Model):
         :rtype: SynonymMap
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SynonymMap.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SynonymMap.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -1053,7 +1112,9 @@ class SynonymMap(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
-            _SynonymMap.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            _SynonymMap.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 
@@ -1133,7 +1194,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             data_deletion_detection_policy=self.data_deletion_detection_policy,
             e_tag=self.e_tag,
             encryption_key=(
-                self.encryption_key._to_generated() if self.encryption_key else None  # pylint: disable=protected-access
+                self.encryption_key._to_generated()  # pylint: disable=protected-access
+                if self.encryption_key
+                else None
             ),
         )
 
@@ -1142,7 +1205,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         if not search_indexer_data_source:
             return None
         connection_string = (
-            search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
+            search_indexer_data_source.credentials.connection_string
+            if search_indexer_data_source.credentials
+            else None
         )
         return cls(
             name=search_indexer_data_source.name,
@@ -1162,7 +1227,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             ),
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -1180,12 +1247,16 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         :rtype: SearchIndexerDataSourceConnection
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndexerDataSource.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchIndexerDataSource.deserialize(data, content_type=content_type)
+        )
 
     def as_dict(
         self,
         keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
+        key_transformer: Callable[
+            [str, Dict[str, Any], Any], Any
+        ] = _serialization.attribute_transformer,
         **kwargs: Any
     ) -> MutableMapping[str, Any]:
         """Return a dict that can be serialized using json.dump.
@@ -1220,7 +1291,9 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         :raises: DeserializationError if something went wrong
         """
         return cls._from_generated(
-            _SearchIndexerDataSource.from_dict(data, content_type=content_type, key_extractors=key_extractors)
+            _SearchIndexerDataSource.from_dict(
+                data, content_type=content_type, key_extractors=key_extractors
+            )
         )
 
 
@@ -1236,13 +1309,19 @@ def unpack_analyzer(analyzer):
     if not analyzer:
         return None
     if isinstance(analyzer, _PatternAnalyzer):
-        return PatternAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
+        return PatternAnalyzer._from_generated(  # pylint:disable=protected-access
+            analyzer
+        )
     if isinstance(analyzer, _CustomAnalyzer):
-        return CustomAnalyzer._from_generated(analyzer)  # pylint:disable=protected-access
+        return CustomAnalyzer._from_generated(  # pylint:disable=protected-access
+            analyzer
+        )
     return analyzer
 
 
-class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class SearchIndexer(
+    _serialization.Model
+):  # pylint: disable=too-many-instance-attributes
     """Represents an indexer.
 
     All required parameters must be populated in order to send to server.
@@ -1366,7 +1445,9 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
             is_disabled=self.is_disabled,
             e_tag=self.e_tag,
             encryption_key=(
-                self.encryption_key._to_generated() if self.encryption_key else None  # pylint:disable=protected-access
+                self.encryption_key._to_generated()  # pylint:disable=protected-access
+                if self.encryption_key
+                else None
             ),
         )
 
@@ -1387,10 +1468,14 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
             is_disabled=search_indexer.is_disabled,
             e_tag=search_indexer.e_tag,
             # pylint:disable=protected-access
-            encryption_key=SearchResourceEncryptionKey._from_generated(search_indexer.encryption_key),
+            encryption_key=SearchResourceEncryptionKey._from_generated(
+                search_indexer.encryption_key
+            ),
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(
+        self, keep_readonly: bool = False, **kwargs: Any
+    ) -> MutableMapping[str, Any]:
         """Return the JSON that would be sent to server from this model.
         :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible object
@@ -1407,4 +1492,6 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         :rtype: SearchIndexer
         :raises: DeserializationError if something went wrong
         """
-        return cls._from_generated(_SearchIndexer.deserialize(data, content_type=content_type))
+        return cls._from_generated(
+            _SearchIndexer.deserialize(data, content_type=content_type)
+        )

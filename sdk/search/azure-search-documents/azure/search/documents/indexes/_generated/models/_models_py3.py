@@ -192,7 +192,9 @@ class AnalyzeResult(_serialization.Model):
         "tokens": {"key": "tokens", "type": "[AnalyzedTokenInfo]"},
     }
 
-    def __init__(self, *, tokens: list["_models.AnalyzedTokenInfo"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, tokens: list["_models.AnalyzedTokenInfo"], **kwargs: Any
+    ) -> None:
         """
         :keyword tokens: The list of tokens returned by the analyzer specified in the request.
          Required.
@@ -305,7 +307,9 @@ class AsciiFoldingTokenFilter(TokenFilter):
         "preserve_original": {"key": "preserveOriginal", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, preserve_original: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, preserve_original: bool = False, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -320,7 +324,9 @@ class AsciiFoldingTokenFilter(TokenFilter):
         self.preserve_original = preserve_original
 
 
-class AzureActiveDirectoryApplicationCredentials(_serialization.Model):  # pylint: disable=name-too-long
+class AzureActiveDirectoryApplicationCredentials(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Credentials of a registered application created for your search service, used for authenticated
     access to the encryption keys stored in Azure Key Vault.
 
@@ -343,7 +349,13 @@ class AzureActiveDirectoryApplicationCredentials(_serialization.Model):  # pylin
         "application_secret": {"key": "applicationSecret", "type": "str"},
     }
 
-    def __init__(self, *, application_id: str, application_secret: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        application_id: str,
+        application_secret: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword application_id: An AAD Application ID that was granted the required access permissions
          to the Azure Key Vault that is to be used when encrypting your data at rest. The Application ID
@@ -689,7 +701,12 @@ class VectorSearchVectorizer(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {"kind": {"azureOpenAI": "AzureOpenAIVectorizer", "customWebApi": "WebApiVectorizer"}}
+    _subtype_map = {
+        "kind": {
+            "azureOpenAI": "AzureOpenAIVectorizer",
+            "customWebApi": "WebApiVectorizer",
+        }
+    }
 
     def __init__(self, *, vectorizer_name: str, **kwargs: Any) -> None:
         """
@@ -725,7 +742,10 @@ class AzureOpenAIVectorizer(VectorSearchVectorizer):
     _attribute_map = {
         "vectorizer_name": {"key": "name", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
-        "parameters": {"key": "azureOpenAIParameters", "type": "AzureOpenAIVectorizerParameters"},
+        "parameters": {
+            "key": "azureOpenAIParameters",
+            "type": "AzureOpenAIVectorizerParameters",
+        },
     }
 
     def __init__(
@@ -792,7 +812,10 @@ class VectorSearchCompression(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
         "rescoring_options": {"key": "rescoringOptions", "type": "RescoringOptions"},
         "truncation_dimension": {"key": "truncationDimension", "type": "int"},
-        "rerank_with_original_vectors": {"key": "rerankWithOriginalVectors", "type": "bool"},
+        "rerank_with_original_vectors": {
+            "key": "rerankWithOriginalVectors",
+            "type": "bool",
+        },
         "default_oversampling": {"key": "defaultOversampling", "type": "float"},
     }
 
@@ -887,7 +910,10 @@ class BinaryQuantizationCompression(VectorSearchCompression):
         "kind": {"key": "kind", "type": "str"},
         "rescoring_options": {"key": "rescoringOptions", "type": "RescoringOptions"},
         "truncation_dimension": {"key": "truncationDimension", "type": "int"},
-        "rerank_with_original_vectors": {"key": "rerankWithOriginalVectors", "type": "bool"},
+        "rerank_with_original_vectors": {
+            "key": "rerankWithOriginalVectors",
+            "type": "bool",
+        },
         "default_oversampling": {"key": "defaultOversampling", "type": "float"},
     }
 
@@ -999,7 +1025,9 @@ class BM25SimilarityAlgorithm(SimilarityAlgorithm):
         "b": {"key": "b", "type": "float"},
     }
 
-    def __init__(self, *, k1: Optional[float] = None, b: Optional[float] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, k1: Optional[float] = None, b: Optional[float] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword k1: This property controls the scaling function between the term frequency of each
          matching terms and the final relevance score of a document-query pair. By default, a value of
@@ -1097,7 +1125,9 @@ class CjkBigramTokenFilter(TokenFilter):
         self,
         *,
         name: str,
-        ignore_scripts: Optional[list[Union[str, "_models.CjkBigramTokenFilterScripts"]]] = None,
+        ignore_scripts: Optional[
+            list[Union[str, "_models.CjkBigramTokenFilterScripts"]]
+        ] = None,
         output_unigrams: bool = False,
         **kwargs: Any
     ) -> None:
@@ -1231,7 +1261,9 @@ class ClassicTokenizer(LexicalTokenizer):
         "max_token_length": {"key": "maxTokenLength", "type": "int"},
     }
 
-    def __init__(self, *, name: str, max_token_length: int = 255, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, max_token_length: int = 255, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
          or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -1313,7 +1345,9 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
         "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(self, *, key: str, description: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, key: str, description: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of the Azure AI service resource attached to a skillset.
         :paramtype description: str
@@ -1464,7 +1498,14 @@ class ConditionalSkill(SearchIndexerSkill):
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Util.ConditionalSkill"
 
 
@@ -1492,7 +1533,13 @@ class CorsOptions(_serialization.Model):
         "max_age_in_seconds": {"key": "maxAgeInSeconds", "type": "int"},
     }
 
-    def __init__(self, *, allowed_origins: list[str], max_age_in_seconds: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        allowed_origins: list[str],
+        max_age_in_seconds: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allowed_origins: The list of origins from which JavaScript code will be granted access
          to your index. Can contain a list of hosts of the form
@@ -1702,7 +1749,10 @@ class CustomEntity(_serialization.Model):
         "fuzzy_edit_distance": {"key": "fuzzyEditDistance", "type": "int"},
         "default_case_sensitive": {"key": "defaultCaseSensitive", "type": "bool"},
         "default_accent_sensitive": {"key": "defaultAccentSensitive", "type": "bool"},
-        "default_fuzzy_edit_distance": {"key": "defaultFuzzyEditDistance", "type": "int"},
+        "default_fuzzy_edit_distance": {
+            "key": "defaultFuzzyEditDistance",
+            "type": "int",
+        },
         "aliases": {"key": "aliases", "type": "[CustomEntityAlias]"},
     }
 
@@ -1898,10 +1948,22 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
         "outputs": {"key": "outputs", "type": "[OutputFieldMappingEntry]"},
         "default_language_code": {"key": "defaultLanguageCode", "type": "str"},
         "entities_definition_uri": {"key": "entitiesDefinitionUri", "type": "str"},
-        "inline_entities_definition": {"key": "inlineEntitiesDefinition", "type": "[CustomEntity]"},
-        "global_default_case_sensitive": {"key": "globalDefaultCaseSensitive", "type": "bool"},
-        "global_default_accent_sensitive": {"key": "globalDefaultAccentSensitive", "type": "bool"},
-        "global_default_fuzzy_edit_distance": {"key": "globalDefaultFuzzyEditDistance", "type": "int"},
+        "inline_entities_definition": {
+            "key": "inlineEntitiesDefinition",
+            "type": "[CustomEntity]",
+        },
+        "global_default_case_sensitive": {
+            "key": "globalDefaultCaseSensitive",
+            "type": "bool",
+        },
+        "global_default_accent_sensitive": {
+            "key": "globalDefaultAccentSensitive",
+            "type": "bool",
+        },
+        "global_default_fuzzy_edit_distance": {
+            "key": "globalDefaultFuzzyEditDistance",
+            "type": "int",
+        },
     }
 
     def __init__(
@@ -1912,7 +1974,9 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.CustomEntityLookupSkillLanguage"]] = None,
+        default_language_code: Optional[
+            Union[str, "_models.CustomEntityLookupSkillLanguage"]
+        ] = None,
         entities_definition_uri: Optional[str] = None,
         inline_entities_definition: Optional[list["_models.CustomEntity"]] = None,
         global_default_case_sensitive: Optional[bool] = None,
@@ -1960,7 +2024,14 @@ class CustomEntityLookupSkill(SearchIndexerSkill):
          FuzzyEditDistance is not set in CustomEntity, this value will be the default value.
         :paramtype global_default_fuzzy_edit_distance: int
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.CustomEntityLookupSkill"
         self.default_language_code = default_language_code
         self.entities_definition_uri = entities_definition_uri
@@ -1997,7 +2068,9 @@ class LexicalNormalizer(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    _subtype_map = {"odata_type": {"#Microsoft.Azure.Search.CustomNormalizer": "CustomNormalizer"}}
+    _subtype_map = {
+        "odata_type": {"#Microsoft.Azure.Search.CustomNormalizer": "CustomNormalizer"}
+    }
 
     def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
@@ -2160,7 +2233,9 @@ class DataSourceCredentials(_serialization.Model):
         "connection_string": {"key": "connectionString", "type": "str"},
     }
 
-    def __init__(self, *, connection_string: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, connection_string: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword connection_string: The connection string for the datasource. For Azure SQL, Azure
          Blob, ADLS Gen 2 and Azure Table, this would be the connection string or resource ID if using
@@ -2284,7 +2359,9 @@ class DictionaryDecompounderTokenFilter(TokenFilter):
         :paramtype only_longest_match: bool
         """
         super().__init__(name=name, **kwargs)
-        self.odata_type: str = "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"
+        self.odata_type: str = (
+            "#Microsoft.Azure.Search.DictionaryDecompounderTokenFilter"
+        )
         self.word_list = word_list
         self.min_word_size = min_word_size
         self.min_subword_size = min_subword_size
@@ -2342,7 +2419,9 @@ class ScoringFunction(_serialization.Model):
         *,
         field_name: str,
         boost: float,
-        interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
+        interpolation: Optional[
+            Union[str, "_models.ScoringFunctionInterpolation"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2407,7 +2486,9 @@ class DistanceScoringFunction(ScoringFunction):
         field_name: str,
         boost: float,
         parameters: "_models.DistanceScoringParameters",
-        interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
+        interpolation: Optional[
+            Union[str, "_models.ScoringFunctionInterpolation"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2424,7 +2505,9 @@ class DistanceScoringFunction(ScoringFunction):
         :keyword parameters: Parameter values for the distance scoring function. Required.
         :paramtype parameters: ~azure.search.documents.indexes.models.DistanceScoringParameters
         """
-        super().__init__(field_name=field_name, boost=boost, interpolation=interpolation, **kwargs)
+        super().__init__(
+            field_name=field_name, boost=boost, interpolation=interpolation, **kwargs
+        )
         self.type: str = "distance"
         self.parameters = parameters
 
@@ -2452,7 +2535,9 @@ class DistanceScoringParameters(_serialization.Model):
         "boosting_distance": {"key": "boostingDistance", "type": "float"},
     }
 
-    def __init__(self, *, reference_point_parameter: str, boosting_distance: float, **kwargs: Any) -> None:
+    def __init__(
+        self, *, reference_point_parameter: str, boosting_distance: float, **kwargs: Any
+    ) -> None:
         """
         :keyword reference_point_parameter: The name of the parameter passed in search queries to
          specify the reference location. Required.
@@ -2555,7 +2640,14 @@ class DocumentExtractionSkill(SearchIndexerSkill):
         :keyword configuration: A dictionary of configurations for the skill.
         :paramtype configuration: dict[str, any]
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Util.DocumentExtractionSkill"
         self.parsing_mode = parsing_mode
         self.data_to_extract = data_to_extract
@@ -2638,13 +2730,21 @@ class DocumentIntelligenceLayoutSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        output_format: Union[str, "_models.DocumentIntelligenceLayoutSkillOutputFormat"] = "markdown",
-        output_mode: Union[str, "_models.DocumentIntelligenceLayoutSkillOutputMode"] = "oneToMany",
-        markdown_header_depth: Union[str, "_models.DocumentIntelligenceLayoutSkillMarkdownHeaderDepth"] = "h6",
+        output_format: Union[
+            str, "_models.DocumentIntelligenceLayoutSkillOutputFormat"
+        ] = "markdown",
+        output_mode: Union[
+            str, "_models.DocumentIntelligenceLayoutSkillOutputMode"
+        ] = "oneToMany",
+        markdown_header_depth: Union[
+            str, "_models.DocumentIntelligenceLayoutSkillMarkdownHeaderDepth"
+        ] = "h6",
         extraction_options: Optional[
             list[Union[str, "_models.DocumentIntelligenceLayoutSkillExtractionOptions"]]
         ] = None,
-        chunking_properties: Optional["_models.DocumentIntelligenceLayoutSkillChunkingProperties"] = None,
+        chunking_properties: Optional[
+            "_models.DocumentIntelligenceLayoutSkillChunkingProperties"
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2685,7 +2785,14 @@ class DocumentIntelligenceLayoutSkill(SearchIndexerSkill):
         :paramtype chunking_properties:
          ~azure.search.documents.indexes.models.DocumentIntelligenceLayoutSkillChunkingProperties
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Util.DocumentIntelligenceLayoutSkill"
         self.output_format = output_format
         self.output_mode = output_mode
@@ -2694,7 +2801,9 @@ class DocumentIntelligenceLayoutSkill(SearchIndexerSkill):
         self.chunking_properties = chunking_properties
 
 
-class DocumentIntelligenceLayoutSkillChunkingProperties(_serialization.Model):  # pylint: disable=name-too-long
+class DocumentIntelligenceLayoutSkillChunkingProperties(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Controls the cardinality for chunking the content.
 
     :ivar unit: The unit of the chunk. "characters"
@@ -2715,7 +2824,9 @@ class DocumentIntelligenceLayoutSkillChunkingProperties(_serialization.Model):  
     def __init__(
         self,
         *,
-        unit: Union[str, "_models.DocumentIntelligenceLayoutSkillChunkingUnit"] = "characters",
+        unit: Union[
+            str, "_models.DocumentIntelligenceLayoutSkillChunkingUnit"
+        ] = "characters",
         maximum_length: Optional[int] = None,
         overlap_length: Optional[int] = None,
         **kwargs: Any
@@ -2959,7 +3070,9 @@ class ElisionTokenFilter(TokenFilter):
         "articles": {"key": "articles", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, articles: Optional[list[str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, articles: Optional[list[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -3070,7 +3183,14 @@ class EntityLinkingSkill(SearchIndexerSkill):
          specify this value unless absolutely necessary.
         :paramtype model_version: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.V3.EntityLinkingSkill"
         self.default_language_code = default_language_code
         self.minimum_precision = minimum_precision
@@ -3146,7 +3266,9 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         description: Optional[str] = None,
         context: Optional[str] = None,
         categories: Optional[list[Union[str, "_models.EntityCategory"]]] = None,
-        default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = None,
+        default_language_code: Optional[
+            Union[str, "_models.EntityRecognitionSkillLanguage"]
+        ] = None,
         include_typeless_entities: Optional[bool] = None,
         minimum_precision: Optional[float] = None,
         **kwargs: Any
@@ -3186,7 +3308,14 @@ class EntityRecognitionSkill(SearchIndexerSkill):
          set to null, all entities will be included.
         :paramtype minimum_precision: float
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.EntityRecognitionSkill"
         self.categories = categories
         self.default_language_code = default_language_code
@@ -3297,7 +3426,14 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
          value unless absolutely necessary.
         :paramtype model_version: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
         self.categories = categories
         self.default_language_code = default_language_code
@@ -3388,7 +3524,9 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.search.documents.indexes.models.ErrorDetail
@@ -3423,7 +3561,10 @@ class VectorSearchAlgorithmConfiguration(_serialization.Model):
     }
 
     _subtype_map = {
-        "kind": {"exhaustiveKnn": "ExhaustiveKnnAlgorithmConfiguration", "hnsw": "HnswAlgorithmConfiguration"}
+        "kind": {
+            "exhaustiveKnn": "ExhaustiveKnnAlgorithmConfiguration",
+            "hnsw": "HnswAlgorithmConfiguration",
+        }
     }
 
     def __init__(self, *, name: str, **kwargs: Any) -> None:
@@ -3459,11 +3600,18 @@ class ExhaustiveKnnAlgorithmConfiguration(VectorSearchAlgorithmConfiguration):
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
-        "parameters": {"key": "exhaustiveKnnParameters", "type": "ExhaustiveKnnParameters"},
+        "parameters": {
+            "key": "exhaustiveKnnParameters",
+            "type": "ExhaustiveKnnParameters",
+        },
     }
 
     def __init__(
-        self, *, name: str, parameters: Optional["_models.ExhaustiveKnnParameters"] = None, **kwargs: Any
+        self,
+        *,
+        name: str,
+        parameters: Optional["_models.ExhaustiveKnnParameters"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword name: The name to associate with this particular configuration. Required.
@@ -3489,7 +3637,10 @@ class ExhaustiveKnnParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, metric: Optional[Union[str, "_models.VectorSearchAlgorithmMetric"]] = None, **kwargs: Any
+        self,
+        *,
+        metric: Optional[Union[str, "_models.VectorSearchAlgorithmMetric"]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword metric: The similarity metric to use for vector comparisons. Known values are:
@@ -3568,7 +3719,9 @@ class FieldMappingFunction(_serialization.Model):
         "parameters": {"key": "parameters", "type": "{object}"},
     }
 
-    def __init__(self, *, name: str, parameters: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, parameters: Optional[dict[str, Any]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the field mapping function. Required.
         :paramtype name: str
@@ -3624,7 +3777,9 @@ class FreshnessScoringFunction(ScoringFunction):
         field_name: str,
         boost: float,
         parameters: "_models.FreshnessScoringParameters",
-        interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
+        interpolation: Optional[
+            Union[str, "_models.ScoringFunctionInterpolation"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3641,7 +3796,9 @@ class FreshnessScoringFunction(ScoringFunction):
         :keyword parameters: Parameter values for the freshness scoring function. Required.
         :paramtype parameters: ~azure.search.documents.indexes.models.FreshnessScoringParameters
         """
-        super().__init__(field_name=field_name, boost=boost, interpolation=interpolation, **kwargs)
+        super().__init__(
+            field_name=field_name, boost=boost, interpolation=interpolation, **kwargs
+        )
         self.type: str = "freshness"
         self.parameters = parameters
 
@@ -3730,7 +3887,10 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
 
     _attribute_map = {
         "odata_type": {"key": "@odata\\.type", "type": "str"},
-        "high_water_mark_column_name": {"key": "highWaterMarkColumnName", "type": "str"},
+        "high_water_mark_column_name": {
+            "key": "highWaterMarkColumnName",
+            "type": "str",
+        },
     }
 
     def __init__(self, *, high_water_mark_column_name: str, **kwargs: Any) -> None:
@@ -3739,7 +3899,9 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
         :paramtype high_water_mark_column_name: str
         """
         super().__init__(**kwargs)
-        self.odata_type: str = "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"
+        self.odata_type: str = (
+            "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"
+        )
         self.high_water_mark_column_name = high_water_mark_column_name
 
 
@@ -3770,7 +3932,13 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration):
         "parameters": {"key": "hnswParameters", "type": "HnswParameters"},
     }
 
-    def __init__(self, *, name: str, parameters: Optional["_models.HnswParameters"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        parameters: Optional["_models.HnswParameters"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name to associate with this particular configuration. Required.
         :paramtype name: str
@@ -3915,7 +4083,9 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.ImageAnalysisSkillLanguage"]] = None,
+        default_language_code: Optional[
+            Union[str, "_models.ImageAnalysisSkillLanguage"]
+        ] = None,
         visual_features: Optional[list[Union[str, "_models.VisualFeature"]]] = None,
         details: Optional[list[Union[str, "_models.ImageDetail"]]] = None,
         **kwargs: Any
@@ -3950,7 +4120,14 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         :keyword details: A string indicating which domain-specific details to return.
         :paramtype details: list[str or ~azure.search.documents.indexes.models.ImageDetail]
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Vision.ImageAnalysisSkill"
         self.default_language_code = default_language_code
         self.visual_features = visual_features
@@ -4052,7 +4229,10 @@ class IndexingParameters(_serialization.Model):
         "batch_size": {"key": "batchSize", "type": "int"},
         "max_failed_items": {"key": "maxFailedItems", "type": "int"},
         "max_failed_items_per_batch": {"key": "maxFailedItemsPerBatch", "type": "int"},
-        "configuration": {"key": "configuration", "type": "IndexingParametersConfiguration"},
+        "configuration": {
+            "key": "configuration",
+            "type": "IndexingParametersConfiguration",
+        },
     }
 
     def __init__(
@@ -4161,22 +4341,43 @@ class IndexingParametersConfiguration(_serialization.Model):
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
         "parsing_mode": {"key": "parsingMode", "type": "str"},
-        "excluded_file_name_extensions": {"key": "excludedFileNameExtensions", "type": "str"},
-        "indexed_file_name_extensions": {"key": "indexedFileNameExtensions", "type": "str"},
-        "fail_on_unsupported_content_type": {"key": "failOnUnsupportedContentType", "type": "bool"},
-        "fail_on_unprocessable_document": {"key": "failOnUnprocessableDocument", "type": "bool"},
+        "excluded_file_name_extensions": {
+            "key": "excludedFileNameExtensions",
+            "type": "str",
+        },
+        "indexed_file_name_extensions": {
+            "key": "indexedFileNameExtensions",
+            "type": "str",
+        },
+        "fail_on_unsupported_content_type": {
+            "key": "failOnUnsupportedContentType",
+            "type": "bool",
+        },
+        "fail_on_unprocessable_document": {
+            "key": "failOnUnprocessableDocument",
+            "type": "bool",
+        },
         "index_storage_metadata_only_for_oversized_documents": {
             "key": "indexStorageMetadataOnlyForOversizedDocuments",
             "type": "bool",
         },
         "delimited_text_headers": {"key": "delimitedTextHeaders", "type": "str"},
         "delimited_text_delimiter": {"key": "delimitedTextDelimiter", "type": "str"},
-        "first_line_contains_headers": {"key": "firstLineContainsHeaders", "type": "bool"},
+        "first_line_contains_headers": {
+            "key": "firstLineContainsHeaders",
+            "type": "bool",
+        },
         "document_root": {"key": "documentRoot", "type": "str"},
         "data_to_extract": {"key": "dataToExtract", "type": "str"},
         "image_action": {"key": "imageAction", "type": "str"},
-        "allow_skillset_to_read_file_data": {"key": "allowSkillsetToReadFileData", "type": "bool"},
-        "pdf_text_rotation_algorithm": {"key": "pdfTextRotationAlgorithm", "type": "str"},
+        "allow_skillset_to_read_file_data": {
+            "key": "allowSkillsetToReadFileData",
+            "type": "bool",
+        },
+        "pdf_text_rotation_algorithm": {
+            "key": "pdfTextRotationAlgorithm",
+            "type": "str",
+        },
         "execution_environment": {"key": "executionEnvironment", "type": "str"},
         "query_timeout": {"key": "queryTimeout", "type": "str"},
     }
@@ -4195,11 +4396,17 @@ class IndexingParametersConfiguration(_serialization.Model):
         delimited_text_delimiter: Optional[str] = None,
         first_line_contains_headers: bool = True,
         document_root: Optional[str] = None,
-        data_to_extract: Union[str, "_models.BlobIndexerDataToExtract"] = "contentAndMetadata",
+        data_to_extract: Union[
+            str, "_models.BlobIndexerDataToExtract"
+        ] = "contentAndMetadata",
         image_action: Union[str, "_models.BlobIndexerImageAction"] = "none",
         allow_skillset_to_read_file_data: bool = False,
-        pdf_text_rotation_algorithm: Union[str, "_models.BlobIndexerPDFTextRotationAlgorithm"] = "none",
-        execution_environment: Union[str, "_models.IndexerExecutionEnvironment"] = "standard",
+        pdf_text_rotation_algorithm: Union[
+            str, "_models.BlobIndexerPDFTextRotationAlgorithm"
+        ] = "none",
+        execution_environment: Union[
+            str, "_models.IndexerExecutionEnvironment"
+        ] = "standard",
         query_timeout: str = "00:05:00",
         **kwargs: Any
     ) -> None:
@@ -4278,7 +4485,9 @@ class IndexingParametersConfiguration(_serialization.Model):
         self.indexed_file_name_extensions = indexed_file_name_extensions
         self.fail_on_unsupported_content_type = fail_on_unsupported_content_type
         self.fail_on_unprocessable_document = fail_on_unprocessable_document
-        self.index_storage_metadata_only_for_oversized_documents = index_storage_metadata_only_for_oversized_documents
+        self.index_storage_metadata_only_for_oversized_documents = (
+            index_storage_metadata_only_for_oversized_documents
+        )
         self.delimited_text_headers = delimited_text_headers
         self.delimited_text_delimiter = delimited_text_delimiter
         self.first_line_contains_headers = first_line_contains_headers
@@ -4312,7 +4521,11 @@ class IndexingSchedule(_serialization.Model):
     }
 
     def __init__(
-        self, *, interval: datetime.timedelta, start_time: Optional[datetime.datetime] = None, **kwargs: Any
+        self,
+        *,
+        interval: datetime.timedelta,
+        start_time: Optional[datetime.datetime] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword interval: The interval of time between indexer executions. Required.
@@ -4409,7 +4622,14 @@ class KeepTokenFilter(TokenFilter):
         "lower_case_keep_words": {"key": "keepWordsCase", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, keep_words: list[str], lower_case_keep_words: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        keep_words: list[str],
+        lower_case_keep_words: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4490,7 +4710,9 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.KeyPhraseExtractionSkillLanguage"]] = None,
+        default_language_code: Optional[
+            Union[str, "_models.KeyPhraseExtractionSkillLanguage"]
+        ] = None,
         max_key_phrase_count: Optional[int] = None,
         model_version: Optional[str] = None,
         **kwargs: Any
@@ -4526,7 +4748,14 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
          specify this value unless absolutely necessary.
         :paramtype model_version: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.KeyPhraseExtractionSkill"
         self.default_language_code = default_language_code
         self.max_key_phrase_count = max_key_phrase_count
@@ -4564,7 +4793,14 @@ class KeywordMarkerTokenFilter(TokenFilter):
         "ignore_case": {"key": "ignoreCase", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, keywords: list[str], ignore_case: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        keywords: list[str],
+        ignore_case: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4650,7 +4886,9 @@ class KeywordTokenizerV2(LexicalTokenizer):
         "max_token_length": {"key": "maxTokenLength", "type": "int"},
     }
 
-    def __init__(self, *, name: str, max_token_length: int = 256, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, max_token_length: int = 256, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
          or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4754,7 +4992,14 @@ class LanguageDetectionSkill(SearchIndexerSkill):
          specify this value unless absolutely necessary.
         :paramtype model_version: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.LanguageDetectionSkill"
         self.default_country_hint = default_country_hint
         self.model_version = model_version
@@ -4793,7 +5038,9 @@ class LengthTokenFilter(TokenFilter):
         "max_length": {"key": "max", "type": "int"},
     }
 
-    def __init__(self, *, name: str, min_length: int = 0, max_length: int = 300, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, min_length: int = 0, max_length: int = 300, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -4842,7 +5089,14 @@ class LimitTokenFilter(TokenFilter):
         "consume_all_tokens": {"key": "consumeAllTokens", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, max_token_count: int = 1, consume_all_tokens: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        max_token_count: int = 1,
+        consume_all_tokens: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -5023,7 +5277,12 @@ class LuceneStandardAnalyzer(LexicalAnalyzer):
     }
 
     def __init__(
-        self, *, name: str, max_token_length: int = 255, stopwords: Optional[list[str]] = None, **kwargs: Any
+        self,
+        *,
+        name: str,
+        max_token_length: int = 255,
+        stopwords: Optional[list[str]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the analyzer. It must only contain letters, digits, spaces, dashes
@@ -5070,7 +5329,9 @@ class LuceneStandardTokenizer(LexicalTokenizer):
         "max_token_length": {"key": "maxTokenLength", "type": "int"},
     }
 
-    def __init__(self, *, name: str, max_token_length: int = 255, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, max_token_length: int = 255, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
          or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5114,7 +5375,9 @@ class LuceneStandardTokenizerV2(LexicalTokenizer):
         "max_token_length": {"key": "maxTokenLength", "type": "int"},
     }
 
-    def __init__(self, *, name: str, max_token_length: int = 255, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, max_token_length: int = 255, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
          or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5172,7 +5435,9 @@ class MagnitudeScoringFunction(ScoringFunction):
         field_name: str,
         boost: float,
         parameters: "_models.MagnitudeScoringParameters",
-        interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
+        interpolation: Optional[
+            Union[str, "_models.ScoringFunctionInterpolation"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5189,7 +5454,9 @@ class MagnitudeScoringFunction(ScoringFunction):
         :keyword parameters: Parameter values for the magnitude scoring function. Required.
         :paramtype parameters: ~azure.search.documents.indexes.models.MagnitudeScoringParameters
         """
-        super().__init__(field_name=field_name, boost=boost, interpolation=interpolation, **kwargs)
+        super().__init__(
+            field_name=field_name, boost=boost, interpolation=interpolation, **kwargs
+        )
         self.type: str = "magnitude"
         self.parameters = parameters
 
@@ -5216,7 +5483,10 @@ class MagnitudeScoringParameters(_serialization.Model):
     _attribute_map = {
         "boosting_range_start": {"key": "boostingRangeStart", "type": "float"},
         "boosting_range_end": {"key": "boostingRangeEnd", "type": "float"},
-        "should_boost_beyond_range_by_constant": {"key": "constantBoostBeyondRange", "type": "bool"},
+        "should_boost_beyond_range_by_constant": {
+            "key": "constantBoostBeyondRange",
+            "type": "bool",
+        },
     }
 
     def __init__(
@@ -5239,7 +5509,9 @@ class MagnitudeScoringParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.boosting_range_start = boosting_range_start
         self.boosting_range_end = boosting_range_end
-        self.should_boost_beyond_range_by_constant = should_boost_beyond_range_by_constant
+        self.should_boost_beyond_range_by_constant = (
+            should_boost_beyond_range_by_constant
+        )
 
 
 class MappingCharFilter(CharFilter):
@@ -5373,7 +5645,14 @@ class MergeSkill(SearchIndexerSkill):
          an empty space.
         :paramtype insert_post_tag: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.MergeSkill"
         self.insert_pre_tag = insert_pre_tag
         self.insert_post_tag = insert_post_tag
@@ -5429,7 +5708,9 @@ class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
         name: str,
         max_token_length: int = 255,
         is_search_tokenizer: bool = False,
-        language: Optional[Union[str, "_models.MicrosoftStemmingTokenizerLanguage"]] = None,
+        language: Optional[
+            Union[str, "_models.MicrosoftStemmingTokenizerLanguage"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5456,7 +5737,9 @@ class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
          ~azure.search.documents.indexes.models.MicrosoftStemmingTokenizerLanguage
         """
         super().__init__(name=name, **kwargs)
-        self.odata_type: str = "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"
+        self.odata_type: str = (
+            "#Microsoft.Azure.Search.MicrosoftLanguageStemmingTokenizer"
+        )
         self.max_token_length = max_token_length
         self.is_search_tokenizer = is_search_tokenizer
         self.language = language
@@ -5573,7 +5856,9 @@ class NGramTokenFilter(TokenFilter):
         "max_gram": {"key": "maxGram", "type": "int"},
     }
 
-    def __init__(self, *, name: str, min_gram: int = 1, max_gram: int = 2, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, min_gram: int = 1, max_gram: int = 2, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -5623,7 +5908,9 @@ class NGramTokenFilterV2(TokenFilter):
         "max_gram": {"key": "maxGram", "type": "int"},
     }
 
-    def __init__(self, *, name: str, min_gram: int = 1, max_gram: int = 2, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, min_gram: int = 1, max_gram: int = 2, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -5826,7 +6113,14 @@ class OcrSkill(SearchIndexerSkill):
          "carriageReturn", "lineFeed", and "carriageReturnLineFeed".
         :paramtype line_ending: str or ~azure.search.documents.indexes.models.OcrLineEnding
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Vision.OcrSkill"
         self.default_language_code = default_language_code
         self.should_detect_orientation = should_detect_orientation
@@ -5853,7 +6147,9 @@ class OutputFieldMappingEntry(_serialization.Model):
         "target_name": {"key": "targetName", "type": "str"},
     }
 
-    def __init__(self, *, name: str, target_name: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, target_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the output defined by the skill. Required.
         :paramtype name: str
@@ -5986,7 +6282,7 @@ class PatternAnalyzer(LexicalAnalyzer):
         *,
         name: str,
         lower_case_terms: bool = True,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         stopwords: Optional[list[str]] = None,
         **kwargs: Any
@@ -6048,7 +6344,14 @@ class PatternCaptureTokenFilter(TokenFilter):
         "preserve_original": {"key": "preserveOriginal", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, patterns: list[str], preserve_original: bool = True, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        patterns: list[str],
+        preserve_original: bool = True,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -6101,7 +6404,9 @@ class PatternReplaceCharFilter(CharFilter):
         "replacement": {"key": "replacement", "type": "str"},
     }
 
-    def __init__(self, *, name: str, pattern: str, replacement: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, pattern: str, replacement: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the char filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -6153,7 +6458,9 @@ class PatternReplaceTokenFilter(TokenFilter):
         "replacement": {"key": "replacement", "type": "str"},
     }
 
-    def __init__(self, *, name: str, pattern: str, replacement: str, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, pattern: str, replacement: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -6211,7 +6518,7 @@ class PatternTokenizer(LexicalTokenizer):
         self,
         *,
         name: str,
-        pattern: str = "\W+",
+        pattern: str = r"\W+",
         flags: Optional[Union[str, "_models.RegexFlags"]] = None,
         group: int = -1,
         **kwargs: Any
@@ -6380,7 +6687,9 @@ class PIIDetectionSkill(SearchIndexerSkill):
         context: Optional[str] = None,
         default_language_code: Optional[str] = None,
         minimum_precision: Optional[float] = None,
-        masking_mode: Optional[Union[str, "_models.PIIDetectionSkillMaskingMode"]] = None,
+        masking_mode: Optional[
+            Union[str, "_models.PIIDetectionSkillMaskingMode"]
+        ] = None,
         model_version: Optional[str] = None,
         pii_categories: Optional[list[str]] = None,
         domain: Optional[str] = None,
@@ -6429,7 +6738,14 @@ class PIIDetectionSkill(SearchIndexerSkill):
          replace. Default is '*'.
         :paramtype mask: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.PIIDetectionSkill"
         self.default_language_code = default_language_code
         self.minimum_precision = minimum_precision
@@ -6451,7 +6767,9 @@ class RequestOptions(_serialization.Model):
         "x_ms_client_request_id": {"key": "x-ms-client-request-id", "type": "str"},
     }
 
-    def __init__(self, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
         :paramtype x_ms_client_request_id: str
@@ -6490,7 +6808,9 @@ class RescoringOptions(_serialization.Model):
         *,
         enable_rescoring: bool = True,
         default_oversampling: Optional[float] = None,
-        rescore_storage_method: Optional[Union[str, "_models.VectorSearchCompressionRescoreStorageMethod"]] = None,
+        rescore_storage_method: Optional[
+            Union[str, "_models.VectorSearchCompressionRescoreStorageMethod"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6535,7 +6855,9 @@ class ResourceCounter(_serialization.Model):
         "quota": {"key": "quota", "type": "int"},
     }
 
-    def __init__(self, *, usage: int, quota: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, usage: int, quota: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword usage: The resource usage amount. Required.
         :paramtype usage: int
@@ -6591,9 +6913,15 @@ class ScalarQuantizationCompression(VectorSearchCompression):
         "kind": {"key": "kind", "type": "str"},
         "rescoring_options": {"key": "rescoringOptions", "type": "RescoringOptions"},
         "truncation_dimension": {"key": "truncationDimension", "type": "int"},
-        "rerank_with_original_vectors": {"key": "rerankWithOriginalVectors", "type": "bool"},
+        "rerank_with_original_vectors": {
+            "key": "rerankWithOriginalVectors",
+            "type": "bool",
+        },
         "default_oversampling": {"key": "defaultOversampling", "type": "float"},
-        "parameters": {"key": "scalarQuantizationParameters", "type": "ScalarQuantizationParameters"},
+        "parameters": {
+            "key": "scalarQuantizationParameters",
+            "type": "ScalarQuantizationParameters",
+        },
     }
 
     def __init__(
@@ -6659,7 +6987,9 @@ class ScalarQuantizationParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        quantized_data_type: Optional[Union[str, "_models.VectorSearchCompressionTarget"]] = None,
+        quantized_data_type: Optional[
+            Union[str, "_models.VectorSearchCompressionTarget"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6707,7 +7037,9 @@ class ScoringProfile(_serialization.Model):
         name: str,
         text_weights: Optional["_models.TextWeights"] = None,
         functions: Optional[list["_models.ScoringFunction"]] = None,
-        function_aggregation: Optional[Union[str, "_models.ScoringFunctionAggregation"]] = None,
+        function_aggregation: Optional[
+            Union[str, "_models.ScoringFunctionAggregation"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6937,7 +7269,9 @@ class SearchField(_serialization.Model):
         normalizer: Optional[Union[str, "_models.LexicalNormalizerName"]] = None,
         vector_search_dimensions: Optional[int] = None,
         vector_search_profile_name: Optional[str] = None,
-        vector_encoding_format: Optional[Union[str, "_models.VectorEncodingFormat"]] = None,
+        vector_encoding_format: Optional[
+            Union[str, "_models.VectorEncodingFormat"]
+        ] = None,
         synonym_maps: Optional[list[str]] = None,
         fields: Optional[list["_models.SearchField"]] = None,
         **kwargs: Any
@@ -7193,7 +7527,10 @@ class SearchIndex(_serialization.Model):
         "token_filters": {"key": "tokenFilters", "type": "[TokenFilter]"},
         "char_filters": {"key": "charFilters", "type": "[CharFilter]"},
         "normalizers": {"key": "normalizers", "type": "[LexicalNormalizer]"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
         "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
         "semantic_search": {"key": "semantic", "type": "SemanticSearch"},
         "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
@@ -7348,10 +7685,16 @@ class SearchIndexer(_serialization.Model):
         "schedule": {"key": "schedule", "type": "IndexingSchedule"},
         "parameters": {"key": "parameters", "type": "IndexingParameters"},
         "field_mappings": {"key": "fieldMappings", "type": "[FieldMapping]"},
-        "output_field_mappings": {"key": "outputFieldMappings", "type": "[FieldMapping]"},
+        "output_field_mappings": {
+            "key": "outputFieldMappings",
+            "type": "[FieldMapping]",
+        },
         "is_disabled": {"key": "disabled", "type": "bool"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
     }
 
     def __init__(
@@ -7449,7 +7792,9 @@ class SearchIndexerDataContainer(_serialization.Model):
         "query": {"key": "query", "type": "str"},
     }
 
-    def __init__(self, *, name: str, query: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, query: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the table or view (for Azure SQL datasource), collection (for
          CosmosDB datasource), container (for Azure Blob and ADLS Gen 2 datasources), Azure Table (for
@@ -7570,10 +7915,19 @@ class SearchIndexerDataSource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "credentials": {"key": "credentials", "type": "DataSourceCredentials"},
         "container": {"key": "container", "type": "SearchIndexerDataContainer"},
-        "data_change_detection_policy": {"key": "dataChangeDetectionPolicy", "type": "DataChangeDetectionPolicy"},
-        "data_deletion_detection_policy": {"key": "dataDeletionDetectionPolicy", "type": "DataDeletionDetectionPolicy"},
+        "data_change_detection_policy": {
+            "key": "dataChangeDetectionPolicy",
+            "type": "DataChangeDetectionPolicy",
+        },
+        "data_deletion_detection_policy": {
+            "key": "dataDeletionDetectionPolicy",
+            "type": "DataDeletionDetectionPolicy",
+        },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
     }
 
     def __init__(
@@ -7584,8 +7938,12 @@ class SearchIndexerDataSource(_serialization.Model):
         credentials: "_models.DataSourceCredentials",
         container: "_models.SearchIndexerDataContainer",
         description: Optional[str] = None,
-        data_change_detection_policy: Optional["_models.DataChangeDetectionPolicy"] = None,
-        data_deletion_detection_policy: Optional["_models.DataDeletionDetectionPolicy"] = None,
+        data_change_detection_policy: Optional[
+            "_models.DataChangeDetectionPolicy"
+        ] = None,
+        data_deletion_detection_policy: Optional[
+            "_models.DataDeletionDetectionPolicy"
+        ] = None,
         e_tag: Optional[str] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         **kwargs: Any
@@ -7745,8 +8103,14 @@ class SearchIndexerIndexProjection(_serialization.Model):
     }
 
     _attribute_map = {
-        "selectors": {"key": "selectors", "type": "[SearchIndexerIndexProjectionSelector]"},
-        "parameters": {"key": "parameters", "type": "SearchIndexerIndexProjectionsParameters"},
+        "selectors": {
+            "key": "selectors",
+            "type": "[SearchIndexerIndexProjectionSelector]",
+        },
+        "parameters": {
+            "key": "parameters",
+            "type": "SearchIndexerIndexProjectionsParameters",
+        },
     }
 
     def __init__(
@@ -7893,7 +8257,10 @@ class SearchIndexerKnowledgeStore(_serialization.Model):
 
     _attribute_map = {
         "storage_connection_string": {"key": "storageConnectionString", "type": "str"},
-        "projections": {"key": "projections", "type": "[SearchIndexerKnowledgeStoreProjection]"},
+        "projections": {
+            "key": "projections",
+            "type": "[SearchIndexerKnowledgeStoreProjection]",
+        },
     }
 
     def __init__(
@@ -7916,7 +8283,9 @@ class SearchIndexerKnowledgeStore(_serialization.Model):
         self.projections = projections
 
 
-class SearchIndexerKnowledgeStoreProjectionSelector(_serialization.Model):  # pylint: disable=name-too-long
+class SearchIndexerKnowledgeStoreProjectionSelector(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """Abstract class to share properties between concrete selectors.
 
     :ivar reference_key_name: Name of reference key to different projection.
@@ -8097,7 +8466,10 @@ class SearchIndexerKnowledgeStoreParameters(_serialization.Model):
 
     _attribute_map = {
         "additional_properties": {"key": "", "type": "{object}"},
-        "synthesize_generated_key_name": {"key": "synthesizeGeneratedKeyName", "type": "bool"},
+        "synthesize_generated_key_name": {
+            "key": "synthesizeGeneratedKeyName",
+            "type": "bool",
+        },
     }
 
     def __init__(
@@ -8135,17 +8507,32 @@ class SearchIndexerKnowledgeStoreProjection(_serialization.Model):
     """
 
     _attribute_map = {
-        "tables": {"key": "tables", "type": "[SearchIndexerKnowledgeStoreTableProjectionSelector]"},
-        "objects": {"key": "objects", "type": "[SearchIndexerKnowledgeStoreObjectProjectionSelector]"},
-        "files": {"key": "files", "type": "[SearchIndexerKnowledgeStoreFileProjectionSelector]"},
+        "tables": {
+            "key": "tables",
+            "type": "[SearchIndexerKnowledgeStoreTableProjectionSelector]",
+        },
+        "objects": {
+            "key": "objects",
+            "type": "[SearchIndexerKnowledgeStoreObjectProjectionSelector]",
+        },
+        "files": {
+            "key": "files",
+            "type": "[SearchIndexerKnowledgeStoreFileProjectionSelector]",
+        },
     }
 
     def __init__(
         self,
         *,
-        tables: Optional[list["_models.SearchIndexerKnowledgeStoreTableProjectionSelector"]] = None,
-        objects: Optional[list["_models.SearchIndexerKnowledgeStoreObjectProjectionSelector"]] = None,
-        files: Optional[list["_models.SearchIndexerKnowledgeStoreFileProjectionSelector"]] = None,
+        tables: Optional[
+            list["_models.SearchIndexerKnowledgeStoreTableProjectionSelector"]
+        ] = None,
+        objects: Optional[
+            list["_models.SearchIndexerKnowledgeStoreObjectProjectionSelector"]
+        ] = None,
+        files: Optional[
+            list["_models.SearchIndexerKnowledgeStoreFileProjectionSelector"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8259,8 +8646,14 @@ class SearchIndexerLimits(_serialization.Model):
 
     _attribute_map = {
         "max_run_time": {"key": "maxRunTime", "type": "duration"},
-        "max_document_extraction_size": {"key": "maxDocumentExtractionSize", "type": "int"},
-        "max_document_content_characters_to_extract": {"key": "maxDocumentContentCharactersToExtract", "type": "int"},
+        "max_document_extraction_size": {
+            "key": "maxDocumentExtractionSize",
+            "type": "int",
+        },
+        "max_document_content_characters_to_extract": {
+            "key": "maxDocumentContentCharactersToExtract",
+            "type": "int",
+        },
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -8313,11 +8706,23 @@ class SearchIndexerSkillset(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "skills": {"key": "skills", "type": "[SearchIndexerSkill]"},
-        "cognitive_services_account": {"key": "cognitiveServices", "type": "CognitiveServicesAccount"},
-        "knowledge_store": {"key": "knowledgeStore", "type": "SearchIndexerKnowledgeStore"},
-        "index_projection": {"key": "indexProjections", "type": "SearchIndexerIndexProjection"},
+        "cognitive_services_account": {
+            "key": "cognitiveServices",
+            "type": "CognitiveServicesAccount",
+        },
+        "knowledge_store": {
+            "key": "knowledgeStore",
+            "type": "SearchIndexerKnowledgeStore",
+        },
+        "index_projection": {
+            "key": "indexProjections",
+            "type": "SearchIndexerIndexProjection",
+        },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
     }
 
     def __init__(
@@ -8406,7 +8811,10 @@ class SearchIndexerStatus(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "last_result": {"key": "lastResult", "type": "IndexerExecutionResult"},
-        "execution_history": {"key": "executionHistory", "type": "[IndexerExecutionResult]"},
+        "execution_history": {
+            "key": "executionHistory",
+            "type": "[IndexerExecutionResult]",
+        },
         "limits": {"key": "limits", "type": "SearchIndexerLimits"},
     }
 
@@ -8501,7 +8909,10 @@ class SearchResourceEncryptionKey(_serialization.Model):
         "key_name": {"key": "keyVaultKeyName", "type": "str"},
         "key_version": {"key": "keyVaultKeyVersion", "type": "str"},
         "vault_uri": {"key": "keyVaultUri", "type": "str"},
-        "access_credentials": {"key": "accessCredentials", "type": "AzureActiveDirectoryApplicationCredentials"},
+        "access_credentials": {
+            "key": "accessCredentials",
+            "type": "AzureActiveDirectoryApplicationCredentials",
+        },
     }
 
     def __init__(
@@ -8510,7 +8921,9 @@ class SearchResourceEncryptionKey(_serialization.Model):
         key_name: str,
         key_version: str,
         vault_uri: str,
-        access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
+        access_credentials: Optional[
+            "_models.AzureActiveDirectoryApplicationCredentials"
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8579,7 +8992,10 @@ class SearchServiceCounters(_serialization.Model):
         "storage_size_counter": {"key": "storageSize", "type": "ResourceCounter"},
         "synonym_map_counter": {"key": "synonymMaps", "type": "ResourceCounter"},
         "skillset_counter": {"key": "skillsetCount", "type": "ResourceCounter"},
-        "vector_index_size_counter": {"key": "vectorIndexSize", "type": "ResourceCounter"},
+        "vector_index_size_counter": {
+            "key": "vectorIndexSize",
+            "type": "ResourceCounter",
+        },
     }
 
     def __init__(
@@ -8646,8 +9062,14 @@ class SearchServiceLimits(_serialization.Model):
 
     _attribute_map = {
         "max_fields_per_index": {"key": "maxFieldsPerIndex", "type": "int"},
-        "max_field_nesting_depth_per_index": {"key": "maxFieldNestingDepthPerIndex", "type": "int"},
-        "max_complex_collection_fields_per_index": {"key": "maxComplexCollectionFieldsPerIndex", "type": "int"},
+        "max_field_nesting_depth_per_index": {
+            "key": "maxFieldNestingDepthPerIndex",
+            "type": "int",
+        },
+        "max_complex_collection_fields_per_index": {
+            "key": "maxComplexCollectionFieldsPerIndex",
+            "type": "int",
+        },
         "max_complex_objects_in_collections_per_document": {
             "key": "maxComplexObjectsInCollectionsPerDocument",
             "type": "int",
@@ -8684,8 +9106,12 @@ class SearchServiceLimits(_serialization.Model):
         super().__init__(**kwargs)
         self.max_fields_per_index = max_fields_per_index
         self.max_field_nesting_depth_per_index = max_field_nesting_depth_per_index
-        self.max_complex_collection_fields_per_index = max_complex_collection_fields_per_index
-        self.max_complex_objects_in_collections_per_document = max_complex_objects_in_collections_per_document
+        self.max_complex_collection_fields_per_index = (
+            max_complex_collection_fields_per_index
+        )
+        self.max_complex_objects_in_collections_per_document = (
+            max_complex_objects_in_collections_per_document
+        )
         self.max_storage_per_index_in_bytes = max_storage_per_index_in_bytes
 
 
@@ -8712,7 +9138,11 @@ class SearchServiceStatistics(_serialization.Model):
     }
 
     def __init__(
-        self, *, counters: "_models.SearchServiceCounters", limits: "_models.SearchServiceLimits", **kwargs: Any
+        self,
+        *,
+        counters: "_models.SearchServiceCounters",
+        limits: "_models.SearchServiceLimits",
+        **kwargs: Any
     ) -> None:
         """
         :keyword counters: Service level resource counters. Required.
@@ -8792,7 +9222,10 @@ class SemanticConfiguration(_serialization.Model):
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "prioritized_fields": {"key": "prioritizedFields", "type": "SemanticPrioritizedFields"},
+        "prioritized_fields": {
+            "key": "prioritizedFields",
+            "type": "SemanticPrioritizedFields",
+        },
         "ranking_order": {"key": "rankingOrder", "type": "str"},
     }
 
@@ -8868,8 +9301,14 @@ class SemanticPrioritizedFields(_serialization.Model):
 
     _attribute_map = {
         "title_field": {"key": "titleField", "type": "SemanticField"},
-        "content_fields": {"key": "prioritizedContentFields", "type": "[SemanticField]"},
-        "keywords_fields": {"key": "prioritizedKeywordsFields", "type": "[SemanticField]"},
+        "content_fields": {
+            "key": "prioritizedContentFields",
+            "type": "[SemanticField]",
+        },
+        "keywords_fields": {
+            "key": "prioritizedKeywordsFields",
+            "type": "[SemanticField]",
+        },
     }
 
     def __init__(
@@ -8989,7 +9428,9 @@ class SentimentSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = None,
+        default_language_code: Optional[
+            Union[str, "_models.SentimentSkillLanguage"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9016,7 +9457,14 @@ class SentimentSkill(SearchIndexerSkill):
         :paramtype default_language_code: str or
          ~azure.search.documents.indexes.models.SentimentSkillLanguage
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.SentimentSkill"
         self.default_language_code = default_language_code
 
@@ -9119,7 +9567,14 @@ class SentimentSkillV3(SearchIndexerSkill):
          specify this value unless absolutely necessary.
         :paramtype model_version: str
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.V3.SentimentSkill"
         self.default_language_code = default_language_code
         self.include_opinion_mining = include_opinion_mining
@@ -9196,7 +9651,14 @@ class ShaperSkill(SearchIndexerSkill):
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Util.ShaperSkill"
 
 
@@ -9245,7 +9707,10 @@ class ShingleTokenFilter(TokenFilter):
         "max_shingle_size": {"key": "maxShingleSize", "type": "int"},
         "min_shingle_size": {"key": "minShingleSize", "type": "int"},
         "output_unigrams": {"key": "outputUnigrams", "type": "bool"},
-        "output_unigrams_if_no_shingles": {"key": "outputUnigramsIfNoShingles", "type": "bool"},
+        "output_unigrams_if_no_shingles": {
+            "key": "outputUnigramsIfNoShingles",
+            "type": "bool",
+        },
         "token_separator": {"key": "tokenSeparator", "type": "str"},
         "filter_token": {"key": "filterToken", "type": "str"},
     }
@@ -9328,7 +9793,11 @@ class SnowballTokenFilter(TokenFilter):
     }
 
     def __init__(
-        self, *, name: str, language: Union[str, "_models.SnowballTokenFilterLanguage"], **kwargs: Any
+        self,
+        *,
+        name: str,
+        language: Union[str, "_models.SnowballTokenFilterLanguage"],
+        **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
@@ -9386,7 +9855,9 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
         :paramtype soft_delete_marker_value: str
         """
         super().__init__(**kwargs)
-        self.odata_type: str = "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"
+        self.odata_type: str = (
+            "#Microsoft.Azure.Search.SoftDeleteColumnDeletionDetectionPolicy"
+        )
         self.soft_delete_column_name = soft_delete_column_name
         self.soft_delete_marker_value = soft_delete_marker_value
 
@@ -9463,7 +9934,9 @@ class SplitSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[Union[str, "_models.SplitSkillLanguage"]] = None,
+        default_language_code: Optional[
+            Union[str, "_models.SplitSkillLanguage"]
+        ] = None,
         text_split_mode: Optional[Union[str, "_models.TextSplitMode"]] = None,
         maximum_page_length: Optional[int] = None,
         page_overlap_length: Optional[int] = None,
@@ -9509,7 +9982,14 @@ class SplitSkill(SearchIndexerSkill):
          needed from each document.
         :paramtype maximum_pages_to_take: int
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.SplitSkill"
         self.default_language_code = default_language_code
         self.text_split_mode = text_split_mode
@@ -9539,7 +10019,9 @@ class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.odata_type: str = "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"
+        self.odata_type: str = (
+            "#Microsoft.Azure.Search.SqlIntegratedChangeTrackingPolicy"
+        )
 
 
 class StemmerOverrideTokenFilter(TokenFilter):
@@ -9623,7 +10105,13 @@ class StemmerTokenFilter(TokenFilter):
         "language": {"key": "language", "type": "str"},
     }
 
-    def __init__(self, *, name: str, language: Union[str, "_models.StemmerTokenFilterLanguage"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        language: Union[str, "_models.StemmerTokenFilterLanguage"],
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -9672,7 +10160,9 @@ class StopAnalyzer(LexicalAnalyzer):
         "stopwords": {"key": "stopwords", "type": "[str]"},
     }
 
-    def __init__(self, *, name: str, stopwords: Optional[list[str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, stopwords: Optional[list[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the analyzer. It must only contain letters, digits, spaces, dashes
          or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -9807,7 +10297,10 @@ class SynonymMap(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "format": {"key": "format", "type": "str"},
         "synonyms": {"key": "synonyms", "type": "str"},
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
 
@@ -9893,7 +10386,13 @@ class SynonymTokenFilter(TokenFilter):
     }
 
     def __init__(
-        self, *, name: str, synonyms: list[str], ignore_case: bool = False, expand: bool = True, **kwargs: Any
+        self,
+        *,
+        name: str,
+        synonyms: list[str],
+        ignore_case: bool = False,
+        expand: bool = True,
+        **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
@@ -9969,7 +10468,9 @@ class TagScoringFunction(ScoringFunction):
         field_name: str,
         boost: float,
         parameters: "_models.TagScoringParameters",
-        interpolation: Optional[Union[str, "_models.ScoringFunctionInterpolation"]] = None,
+        interpolation: Optional[
+            Union[str, "_models.ScoringFunctionInterpolation"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9986,7 +10487,9 @@ class TagScoringFunction(ScoringFunction):
         :keyword parameters: Parameter values for the tag scoring function. Required.
         :paramtype parameters: ~azure.search.documents.indexes.models.TagScoringParameters
         """
-        super().__init__(field_name=field_name, boost=boost, interpolation=interpolation, **kwargs)
+        super().__init__(
+            field_name=field_name, boost=boost, interpolation=interpolation, **kwargs
+        )
         self.type: str = "tag"
         self.parameters = parameters
 
@@ -10101,8 +10604,12 @@ class TextTranslationSkill(SearchIndexerSkill):
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_from_language_code: Optional[Union[str, "_models.TextTranslationSkillLanguage"]] = None,
-        suggested_from: Optional[Union[str, "_models.TextTranslationSkillLanguage"]] = None,
+        default_from_language_code: Optional[
+            Union[str, "_models.TextTranslationSkillLanguage"]
+        ] = None,
+        suggested_from: Optional[
+            Union[str, "_models.TextTranslationSkillLanguage"]
+        ] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10153,7 +10660,14 @@ class TextTranslationSkill(SearchIndexerSkill):
         :paramtype suggested_from: str or
          ~azure.search.documents.indexes.models.TextTranslationSkillLanguage
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Text.TranslationSkill"
         self.default_to_language_code = default_to_language_code
         self.default_from_language_code = default_from_language_code
@@ -10257,7 +10771,9 @@ class UaxUrlEmailTokenizer(LexicalTokenizer):
         "max_token_length": {"key": "maxTokenLength", "type": "int"},
     }
 
-    def __init__(self, *, name: str, max_token_length: int = 255, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, max_token_length: int = 255, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes
          or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -10300,7 +10816,9 @@ class UniqueTokenFilter(TokenFilter):
         "only_on_same_position": {"key": "onlyOnSamePosition", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, only_on_same_position: bool = False, **kwargs: Any) -> None:
+    def __init__(
+        self, *, name: str, only_on_same_position: bool = False, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the token filter. It must only contain letters, digits, spaces,
          dashes or underscores, can only start and end with alphanumeric characters, and is limited to
@@ -10333,7 +10851,10 @@ class VectorSearch(_serialization.Model):
 
     _attribute_map = {
         "profiles": {"key": "profiles", "type": "[VectorSearchProfile]"},
-        "algorithms": {"key": "algorithms", "type": "[VectorSearchAlgorithmConfiguration]"},
+        "algorithms": {
+            "key": "algorithms",
+            "type": "[VectorSearchAlgorithmConfiguration]",
+        },
         "vectorizers": {"key": "vectorizers", "type": "[VectorSearchVectorizer]"},
         "compressions": {"key": "compressions", "type": "[VectorSearchCompression]"},
     }
@@ -10563,7 +11084,14 @@ class WebApiSkill(SearchIndexerSkill):
          If set to "none", the value of this property is cleared.
         :paramtype auth_identity: ~azure.search.documents.indexes.models.SearchIndexerDataIdentity
         """
-        super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            context=context,
+            inputs=inputs,
+            outputs=outputs,
+            **kwargs
+        )
         self.odata_type: str = "#Microsoft.Skills.Custom.WebApiSkill"
         self.uri = uri
         self.http_headers = http_headers
@@ -10600,7 +11128,10 @@ class WebApiVectorizer(VectorSearchVectorizer):
     _attribute_map = {
         "vectorizer_name": {"key": "name", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
-        "web_api_parameters": {"key": "customWebApiParameters", "type": "WebApiVectorizerParameters"},
+        "web_api_parameters": {
+            "key": "customWebApiParameters",
+            "type": "WebApiVectorizerParameters",
+        },
     }
 
     def __init__(

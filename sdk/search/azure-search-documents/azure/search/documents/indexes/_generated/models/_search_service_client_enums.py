@@ -128,14 +128,18 @@ class CustomEntityLookupSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Portuguese"""
 
 
-class DocumentIntelligenceLayoutSkillChunkingUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DocumentIntelligenceLayoutSkillChunkingUnit(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Controls the cardinality of the chunk unit. Default is 'characters'."""
 
     CHARACTERS = "characters"
     """Specifies chunk by characters."""
 
 
-class DocumentIntelligenceLayoutSkillExtractionOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DocumentIntelligenceLayoutSkillExtractionOptions(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Controls the cardinality of the content extracted from the document by the skill."""
 
     IMAGES = "images"
@@ -144,7 +148,9 @@ class DocumentIntelligenceLayoutSkillExtractionOptions(str, Enum, metaclass=Case
     """Specify that location metadata should be extracted from the document."""
 
 
-class DocumentIntelligenceLayoutSkillMarkdownHeaderDepth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DocumentIntelligenceLayoutSkillMarkdownHeaderDepth(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The depth of headers in the markdown output. Default is h6."""
 
     H1 = "h1"
@@ -161,7 +167,9 @@ class DocumentIntelligenceLayoutSkillMarkdownHeaderDepth(str, Enum, metaclass=Ca
     """Header level 6."""
 
 
-class DocumentIntelligenceLayoutSkillOutputFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DocumentIntelligenceLayoutSkillOutputFormat(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Controls the cardinality of the output format. Default is 'markdown'."""
 
     TEXT = "text"
@@ -170,7 +178,9 @@ class DocumentIntelligenceLayoutSkillOutputFormat(str, Enum, metaclass=CaseInsen
     """Specify the format of the output as markdown."""
 
 
-class DocumentIntelligenceLayoutSkillOutputMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DocumentIntelligenceLayoutSkillOutputMode(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Controls the cardinality of the output produced by the skill. Default is 'oneToMany'."""
 
     ONE_TO_MANY = "oneToMany"
@@ -2132,7 +2142,9 @@ class VectorSearchCompressionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     component of a vector using binary values, thereby reducing the overall data size."""
 
 
-class VectorSearchCompressionRescoreStorageMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class VectorSearchCompressionRescoreStorageMethod(
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The storage method for the original full-precision vectors used for rescoring and internal
     index operations.
     """

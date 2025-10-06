@@ -9,7 +9,9 @@ import asyncio
 from .._generated.models import IndexAction
 
 
-def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
+def _flatten_args(
+    args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]
+) -> List[Dict]:
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return cast(List[Dict], args[0])
     return cast(List[Dict], args)
@@ -31,7 +33,9 @@ class IndexDocumentsBatch:
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions))[:1024]
 
-    async def add_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
+    async def add_upload_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]]
+    ) -> List[IndexAction]:
         """Add documents to upload to the Azure search index.
 
         An upload action is similar to an "upsert" where the document will be
@@ -46,7 +50,9 @@ class IndexDocumentsBatch:
         """
         return await self._extend_batch(_flatten_args(documents), "upload")
 
-    async def add_delete_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
+    async def add_delete_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]]
+    ) -> List[IndexAction]:
         """Add documents to delete to the Azure search index.
 
         Delete removes the specified document from the index. Any field you
@@ -66,7 +72,9 @@ class IndexDocumentsBatch:
         """
         return await self._extend_batch(_flatten_args(documents), "delete")
 
-    async def add_merge_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
+    async def add_merge_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]]
+    ) -> List[IndexAction]:
         """Add documents to merge in to existing documents in the Azure search
         index.
 
@@ -83,7 +91,9 @@ class IndexDocumentsBatch:
         """
         return await self._extend_batch(_flatten_args(documents), "merge")
 
-    async def add_merge_or_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
+    async def add_merge_or_upload_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]]
+    ) -> List[IndexAction]:
         """Add documents to merge in to existing documents in the Azure search
         index, or upload if they do not yet exist.
 
@@ -119,7 +129,9 @@ class IndexDocumentsBatch:
             self._actions = []
         return result
 
-    async def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]]) -> None:
+    async def enqueue_actions(
+        self, new_actions: Union[IndexAction, List[IndexAction]]
+    ) -> None:
         """Enqueue a list of index actions to index.
 
         :param new_actions: the list of index actions to enqueue
@@ -132,8 +144,13 @@ class IndexDocumentsBatch:
             async with self._lock:
                 self._actions.extend(new_actions)
 
-    async def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
+    async def _extend_batch(
+        self, documents: List[Dict], action_type: str
+    ) -> List[IndexAction]:
+        new_actions = [
+            IndexAction(additional_properties=document, action_type=action_type)
+            for document in documents
+        ]
         async with self._lock:
             self._actions.extend(new_actions)
         return new_actions

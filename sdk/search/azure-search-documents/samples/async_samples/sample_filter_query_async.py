@@ -46,7 +46,9 @@ async def filter_query():
 
         print("Florida hotels containing 'WiFi', sorted by Rating:")
         async for result in results:
-            print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
+            print(
+                "    Name: {} (rating {})".format(result["hotelName"], result["rating"])
+            )
     # [END filter_query_async]
 
 

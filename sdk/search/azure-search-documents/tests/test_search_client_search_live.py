@@ -51,7 +51,9 @@ class TestSearchClient(AzureRecordedTestCase):
                 order_by="hotelName desc",
             )
         )
-        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
+        )
         expected = {
             "category",
             "hotelName",
@@ -74,7 +76,9 @@ class TestSearchClient(AzureRecordedTestCase):
                 order_by="hotelName desc",
             )
         )
-        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
+        assert [x["hotelName"] for x in results] == sorted(
+            [x["hotelName"] for x in results], reverse=True
+        )
         expected = {
             "category",
             "hotelName",
@@ -110,7 +114,9 @@ class TestSearchClient(AzureRecordedTestCase):
 
     def _test_get_search_facets_result(self, client):
         select = ("hotelName", "category", "description")
-        results = client.search(search_text="WiFi", facets=["category"], select=",".join(select))
+        results = client.search(
+            search_text="WiFi", facets=["category"], select=",".join(select)
+        )
         assert results.get_facets() == {
             "category": [
                 {"value": "Budget", "count": 4},

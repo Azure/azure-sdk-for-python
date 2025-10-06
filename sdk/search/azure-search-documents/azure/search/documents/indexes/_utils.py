@@ -24,7 +24,9 @@ def quote_etag(etag: Optional[str]) -> Optional[str]:
     return '"' + etag + '"'
 
 
-def prep_if_match(etag: Optional[str], match_condition: MatchConditions) -> Optional[str]:
+def prep_if_match(
+    etag: Optional[str], match_condition: MatchConditions
+) -> Optional[str]:
     if match_condition == MatchConditions.IfNotModified:
         if_match = quote_etag(etag) if etag else None
         return if_match
@@ -74,7 +76,9 @@ def normalize_endpoint(endpoint):
         if not endpoint.lower().startswith("http"):
             endpoint = "https://" + endpoint
         elif not endpoint.lower().startswith("https"):
-            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
+            raise ValueError(
+                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
+            )
         return endpoint
     except AttributeError as ex:
         raise ValueError("Endpoint must be a string.") from ex

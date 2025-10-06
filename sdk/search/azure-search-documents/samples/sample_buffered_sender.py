@@ -38,7 +38,9 @@ def sample_batching_client():
         "hotelName": "Azure Inn",
     }
 
-    with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as batch_client:
+    with SearchIndexingBufferedSender(
+        service_endpoint, index_name, AzureKeyCredential(key)
+    ) as batch_client:
         # add upload actions
         batch_client.upload_documents(documents=[DOCUMENT])
         # add merge actions

@@ -51,7 +51,9 @@ async def upload_document():
 
 async def merge_document():
     # [START merge_document_async]
-    result = await search_client.upload_documents(documents=[{"hotelId": "1000", "rating": 4.5}])
+    result = await search_client.upload_documents(
+        documents=[{"hotelId": "1000", "rating": 4.5}]
+    )
 
     print("Merge into new document succeeded: {}".format(result[0].succeeded))
     # [END merge_document_async]

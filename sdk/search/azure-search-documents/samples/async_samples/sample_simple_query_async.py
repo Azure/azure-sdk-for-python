@@ -41,7 +41,9 @@ async def simple_text_query():
 
         print("Hotels containing 'spa' in the name (or other fields):")
         async for result in results:
-            print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
+            print(
+                "    Name: {} (rating {})".format(result["hotelName"], result["rating"])
+            )
     # [END simple_query_async]
 
 

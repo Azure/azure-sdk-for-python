@@ -41,4 +41,6 @@ def test_encryption_key_serialization():
         encryption_key=encryption_key,
     )
     packed_search_indexer = search_indexer._to_generated()
-    assert isinstance(packed_search_indexer.encryption_key, SearchResourceEncryptionKeyGen)
+    assert isinstance(
+        packed_search_indexer.encryption_key, SearchResourceEncryptionKeyGen
+    )

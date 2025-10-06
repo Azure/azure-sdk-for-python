@@ -18,6 +18,7 @@ from ._generated.models import (
     IndexingResult,
     QueryAnswerType,
     QueryCaptionType,
+    QueryDebugMode,
     QueryType,
     SearchMode,
     ScoringStatistics,
@@ -63,7 +64,11 @@ class SearchClient(HeadersMixin):
     _client: SearchIndexClient
 
     def __init__(
-        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = endpoint
@@ -81,7 +86,9 @@ class SearchClient(HeadersMixin):
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
+            authentication_policy = get_authentication_policy(
+                credential, audience=audience
+            )
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -92,7 +99,9 @@ class SearchClient(HeadersMixin):
             )
 
     def __repr__(self) -> str:
-        return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
+        return "<SearchClient [endpoint={}, index={}]>".format(
+            repr(self._endpoint), repr(self._index_name)
+        )[:1024]
 
     def close(self) -> None:
         """Close the session.
@@ -112,7 +121,9 @@ class SearchClient(HeadersMixin):
         return int(self._client.documents.count(**kwargs))
 
     @distributed_trace
-    def get_document(self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any) -> Dict:
+    def get_document(
+        self, key: str, selected_fields: Optional[List[str]] = None, **kwargs: Any
+    ) -> Dict:
         """Retrieve a document from the Azure search index by its key.
 
         :param key: The primary key value for the document to retrieve
@@ -132,7 +143,9 @@ class SearchClient(HeadersMixin):
                 :caption: Get a specific document from the search index.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = self._client.documents.get(key=key, selected_fields=selected_fields, **kwargs)
+        result = self._client.documents.get(
+            key=key, selected_fields=selected_fields, **kwargs
+        )
         return cast(dict, result)
 
     @distributed_trace
@@ -169,6 +182,7 @@ class SearchClient(HeadersMixin):
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
+        debug: Optional[Union[str, QueryDebugMode]] = None,
         **kwargs: Any
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -269,6 +283,9 @@ class SearchClient(HeadersMixin):
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
              vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
+        :keyword debug: Enables a debugging tool that can be used to further explore your reranked
+             results. Known values are: "disabled" and "vector".
+        :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :return: List of search results.
         :rtype:  SearchItemPaged[dict]
 
@@ -303,12 +320,16 @@ class SearchClient(HeadersMixin):
         filter_arg = filter
         search_fields_str = ",".join(search_fields) if search_fields else None
 
-        answers = get_answer_query(query_answer, query_answer_count, query_answer_threshold)
+        answers = get_answer_query(
+            query_answer, query_answer_count, query_answer_threshold
+        )
 
         captions = (
             query_caption
             if not query_caption_highlight_enabled
-            else "{}|highlight-{}".format(query_caption, query_caption_highlight_enabled)
+            else "{}|highlight-{}".format(
+                query_caption, query_caption_highlight_enabled
+            )
         )
 
         semantic_configuration = semantic_configuration_name
@@ -341,6 +362,7 @@ class SearchClient(HeadersMixin):
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
+            debug=debug,
         )
         if isinstance(select, list):
             query.select(select)
@@ -350,7 +372,9 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
-        return SearchItemPaged(self._client, query, kwargs, page_iterator_class=SearchPageIterator)
+        return SearchItemPaged(
+            self._client, query, kwargs, page_iterator_class=SearchPageIterator
+        )
 
     @distributed_trace
     def suggest(
@@ -435,7 +459,9 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(SuggestRequest, query.request)
-        response = self._client.documents.suggest_post(suggest_request=request, **kwargs)
+        response = self._client.documents.suggest_post(
+            suggest_request=request, **kwargs
+        )
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
@@ -514,13 +540,17 @@ class SearchClient(HeadersMixin):
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         request = cast(AutocompleteRequest, query.request)
-        response = self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
+        response = self._client.documents.autocomplete_post(
+            autocomplete_request=request, **kwargs
+        )
         assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
 
     # pylint:disable=client-method-missing-tracing-decorator
-    def upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
+    def upload_documents(
+        self, documents: List[Dict], **kwargs: Any
+    ) -> List[IndexingResult]:
         """Upload documents to the Azure search index.
 
         An upload action is similar to an "upsert" where the document will be
@@ -549,7 +579,9 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     # pylint:disable=client-method-missing-tracing-decorator, delete-operation-wrong-return-type
-    def delete_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
+    def delete_documents(
+        self, documents: List[Dict], **kwargs: Any
+    ) -> List[IndexingResult]:
         """Delete documents from the Azure search index
 
         Delete removes the specified document from the index. Any field you
@@ -583,7 +615,9 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     # pylint:disable=client-method-missing-tracing-decorator
-    def merge_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
+    def merge_documents(
+        self, documents: List[Dict], **kwargs: Any
+    ) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index.
 
         Merge updates an existing document with the specified fields. If the
@@ -613,7 +647,9 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     # pylint:disable=client-method-missing-tracing-decorator
-    def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> List[IndexingResult]:
+    def merge_or_upload_documents(
+        self, documents: List[Dict], **kwargs: Any
+    ) -> List[IndexingResult]:
         """Merge documents in to existing documents in the Azure search index,
         or upload them if they do not yet exist.
 
@@ -634,7 +670,9 @@ class SearchClient(HeadersMixin):
         return cast(List[IndexingResult], results)
 
     @distributed_trace
-    def index_documents(self, batch: IndexDocumentsBatch, **kwargs: Any) -> List[IndexingResult]:
+    def index_documents(
+        self, batch: IndexDocumentsBatch, **kwargs: Any
+    ) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
@@ -646,13 +684,17 @@ class SearchClient(HeadersMixin):
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    def _index_documents_actions(self, actions: List[IndexAction], **kwargs: Any) -> List[IndexingResult]:
+    def _index_documents_actions(
+        self, actions: List[IndexAction], **kwargs: Any
+    ) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = self._client.documents.index(
+                batch=batch, error_map=error_map, **kwargs
+            )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:
             if len(actions) == 1:
@@ -683,7 +725,9 @@ class SearchClient(HeadersMixin):
         self._client.__exit__(*args)
 
     @distributed_trace
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs
+    ) -> HttpResponse:
         """Runs a network request using the client's existing pipeline.
 
         :param request: The network request you want to make.
@@ -693,4 +737,6 @@ class SearchClient(HeadersMixin):
         :rtype: ~azure.core.rest.HttpResponse
         """
         request.headers = self._merge_client_headers(request.headers)
-        return self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
+        return self._client._send_request(  # pylint:disable=protected-access
+            request, stream=stream, **kwargs
+        )

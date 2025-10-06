@@ -9,7 +9,9 @@ from threading import Lock
 from ._generated.models import IndexAction
 
 
-def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
+def _flatten_args(
+    args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]
+) -> List[Dict]:
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
         return cast(List[Dict], args[0])
     return cast(List[Dict], args)
@@ -31,7 +33,9 @@ class IndexDocumentsBatch:
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions))[:1024]
 
-    def add_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]]) -> List[IndexAction]:
+    def add_upload_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]]
+    ) -> List[IndexAction]:
         """Add documents to upload to the Azure search index.
 
         An upload action is similar to an "upsert" where the document will be
@@ -46,7 +50,9 @@ class IndexDocumentsBatch:
         """
         return self._extend_batch(_flatten_args(documents), "upload")
 
-    def add_delete_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_delete_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+    ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to delete to the Azure search index.
 
@@ -67,7 +73,9 @@ class IndexDocumentsBatch:
         """
         return self._extend_batch(_flatten_args(documents), "delete")
 
-    def add_merge_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_merge_actions(
+        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+    ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index.
@@ -113,7 +121,9 @@ class IndexDocumentsBatch:
         """
         return list(self._actions)
 
-    def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:  # pylint: disable=unused-argument
+    def dequeue_actions(
+        self, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> List[IndexAction]:
         """Get the list of currently configured index actions and clear it.
 
         :return: the current actions
@@ -124,7 +134,9 @@ class IndexDocumentsBatch:
             self._actions = []
         return result
 
-    def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
+    def enqueue_actions(
+        self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any
+    ) -> None:
         # pylint: disable=unused-argument
         """Enqueue a list of index actions to index.
 
@@ -138,8 +150,13 @@ class IndexDocumentsBatch:
             with self._lock:
                 self._actions.extend(new_actions)
 
-    def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
+    def _extend_batch(
+        self, documents: List[Dict], action_type: str
+    ) -> List[IndexAction]:
+        new_actions = [
+            IndexAction(additional_properties=document, action_type=action_type)
+            for document in documents
+        ]
         with self._lock:
             self._actions.extend(new_actions)
         return new_actions

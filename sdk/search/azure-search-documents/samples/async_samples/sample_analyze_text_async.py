@@ -35,7 +35,9 @@ async def simple_analyze_text():
 
     client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
-    analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
+    analyze_request = AnalyzeTextOptions(
+        text="One's <two/>", analyzer_name="standard.lucene"
+    )
 
     async with client:
         result = await client.analyze_text(index_name, analyze_request)

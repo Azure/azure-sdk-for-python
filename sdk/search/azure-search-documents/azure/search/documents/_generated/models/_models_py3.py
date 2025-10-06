@@ -407,7 +407,9 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.search.documents.models.ErrorDetail
@@ -439,7 +441,9 @@ class FacetResult(_serialization.Model):
         "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -620,7 +624,9 @@ class QueryAnswerResult(_serialization.Model):
         "highlights": {"key": "highlights", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -663,7 +669,9 @@ class QueryCaptionResult(_serialization.Model):
         "highlights": {"key": "highlights", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -706,7 +714,9 @@ class QueryResultDocumentSubscores(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.text: Optional["_models.TextResult"] = None
-        self.vectors: Optional[list[dict[str, "_models.SingleVectorFieldResult"]]] = None
+        self.vectors: Optional[list[dict[str, "_models.SingleVectorFieldResult"]]] = (
+            None
+        )
         self.document_boost: Optional[float] = None
 
 
@@ -721,7 +731,9 @@ class RequestOptions(_serialization.Model):
         "x_ms_client_request_id": {"key": "x-ms-client-request-id", "type": "str"},
     }
 
-    def __init__(self, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword x_ms_client_request_id: The tracking ID sent with the request to help with debugging.
         :paramtype x_ms_client_request_id: str
@@ -790,11 +802,20 @@ class SearchDocumentsResult(_serialization.Model):
         "coverage": {"key": "@search\\.coverage", "type": "float"},
         "facets": {"key": "@search\\.facets", "type": "{[FacetResult]}"},
         "answers": {"key": "@search\\.answers", "type": "[QueryAnswerResult]"},
-        "next_page_parameters": {"key": "@search\\.nextPageParameters", "type": "SearchRequest"},
+        "next_page_parameters": {
+            "key": "@search\\.nextPageParameters",
+            "type": "SearchRequest",
+        },
         "results": {"key": "value", "type": "[SearchResult]"},
         "next_link": {"key": "@odata\\.nextLink", "type": "str"},
-        "semantic_partial_response_reason": {"key": "@search\\.semanticPartialResponseReason", "type": "str"},
-        "semantic_partial_response_type": {"key": "@search\\.semanticPartialResponseType", "type": "str"},
+        "semantic_partial_response_reason": {
+            "key": "@search\\.semanticPartialResponseReason",
+            "type": "str",
+        },
+        "semantic_partial_response_type": {
+            "key": "@search\\.semanticPartialResponseType",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -807,8 +828,12 @@ class SearchDocumentsResult(_serialization.Model):
         self.next_page_parameters: Optional["_models.SearchRequest"] = None
         self.results: Optional[list["_models.SearchResult"]] = None
         self.next_link: Optional[str] = None
-        self.semantic_partial_response_reason: Optional[Union[str, "_models.SemanticErrorReason"]] = None
-        self.semantic_partial_response_type: Optional[Union[str, "_models.SemanticSearchResultsType"]] = None
+        self.semantic_partial_response_reason: Optional[
+            Union[str, "_models.SemanticErrorReason"]
+        ] = None
+        self.semantic_partial_response_type: Optional[
+            Union[str, "_models.SemanticSearchResultsType"]
+        ] = None
 
 
 class SearchOptions(_serialization.Model):
@@ -865,7 +890,7 @@ class SearchOptions(_serialization.Model):
     :vartype search_mode: str or ~azure.search.documents.models.SearchMode
     :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
-     lower latency. Known values are: "local", "global", and "global".
+     lower latency. Known values are: "local" and "global".
     :vartype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
     :ivar session_id: A value to be used to create a sticky session, which can help to get more
      consistent results. As long as the same sessionId is used, a best-effort attempt will be made
@@ -926,7 +951,10 @@ class SearchOptions(_serialization.Model):
     }
 
     _attribute_map = {
-        "include_total_result_count": {"key": "IncludeTotalResultCount", "type": "bool"},
+        "include_total_result_count": {
+            "key": "IncludeTotalResultCount",
+            "type": "bool",
+        },
         "facets": {"key": "Facets", "type": "[str]"},
         "filter": {"key": "$filter", "type": "str"},
         "highlight_fields": {"key": "HighlightFields", "type": "[str]"},
@@ -946,7 +974,10 @@ class SearchOptions(_serialization.Model):
         "top": {"key": "$top", "type": "int"},
         "semantic_configuration": {"key": "semanticConfiguration", "type": "str"},
         "semantic_error_handling": {"key": "semanticErrorHandling", "type": "str"},
-        "semantic_max_wait_in_milliseconds": {"key": "semanticMaxWaitInMilliseconds", "type": "int"},
+        "semantic_max_wait_in_milliseconds": {
+            "key": "semanticMaxWaitInMilliseconds",
+            "type": "int",
+        },
         "answers": {"key": "answers", "type": "str"},
         "captions": {"key": "captions", "type": "str"},
         "semantic_query": {"key": "semanticQuery", "type": "str"},
@@ -975,7 +1006,9 @@ class SearchOptions(_serialization.Model):
         skip: Optional[int] = None,
         top: Optional[int] = None,
         semantic_configuration: Optional[str] = None,
-        semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = None,
+        semantic_error_handling: Optional[
+            Union[str, "_models.SemanticErrorMode"]
+        ] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
         captions: Optional[Union[str, "_models.QueryCaptionType"]] = None,
@@ -1036,7 +1069,7 @@ class SearchOptions(_serialization.Model):
         :paramtype search_mode: str or ~azure.search.documents.models.SearchMode
         :keyword scoring_statistics: A value that specifies whether we want to calculate scoring
          statistics (such as document frequency) globally for more consistent scoring, or locally, for
-         lower latency. Known values are: "local", "global", and "global".
+         lower latency. Known values are: "local" and "global".
         :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
         :keyword session_id: A value to be used to create a sticky session, which can help to get more
          consistent results. As long as the same sessionId is used, a best-effort attempt will be made
@@ -1160,7 +1193,7 @@ class SearchRequest(_serialization.Model):
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
      lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
      before scoring. Using global scoring statistics can increase latency of search queries. Known
-     values are: "local", "global", and "global".
+     values are: "local" and "global".
     :vartype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
     :ivar session_id: A value to be used to create a sticky session, which can help getting more
      consistent results. As long as the same sessionId is used, a best-effort attempt will be made
@@ -1259,7 +1292,10 @@ class SearchRequest(_serialization.Model):
         "top": {"key": "top", "type": "int"},
         "semantic_configuration": {"key": "semanticConfiguration", "type": "str"},
         "semantic_error_handling": {"key": "semanticErrorHandling", "type": "str"},
-        "semantic_max_wait_in_milliseconds": {"key": "semanticMaxWaitInMilliseconds", "type": "int"},
+        "semantic_max_wait_in_milliseconds": {
+            "key": "semanticMaxWaitInMilliseconds",
+            "type": "int",
+        },
         "semantic_query": {"key": "semanticQuery", "type": "str"},
         "answers": {"key": "answers", "type": "str"},
         "captions": {"key": "captions", "type": "str"},
@@ -1291,7 +1327,9 @@ class SearchRequest(_serialization.Model):
         skip: Optional[int] = None,
         top: Optional[int] = None,
         semantic_configuration: Optional[str] = None,
-        semantic_error_handling: Optional[Union[str, "_models.SemanticErrorMode"]] = None,
+        semantic_error_handling: Optional[
+            Union[str, "_models.SemanticErrorMode"]
+        ] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         semantic_query: Optional[str] = None,
         answers: Optional[Union[str, "_models.QueryAnswerType"]] = None,
@@ -1340,7 +1378,7 @@ class SearchRequest(_serialization.Model):
          statistics (such as document frequency) globally for more consistent scoring, or locally, for
          lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
          before scoring. Using global scoring statistics can increase latency of search queries. Known
-         values are: "local", "global", and "global".
+         values are: "local" and "global".
         :paramtype scoring_statistics: str or ~azure.search.documents.models.ScoringStatistics
         :keyword session_id: A value to be used to create a sticky session, which can help getting more
          consistent results. As long as the same sessionId is used, a best-effort attempt will be made
@@ -1489,13 +1527,21 @@ class SearchResult(_serialization.Model):
         "additional_properties": {"key": "", "type": "{object}"},
         "score": {"key": "@search\\.score", "type": "float"},
         "reranker_score": {"key": "@search\\.rerankerScore", "type": "float"},
-        "reranker_boosted_score": {"key": "@search\\.rerankerBoostedScore", "type": "float"},
+        "reranker_boosted_score": {
+            "key": "@search\\.rerankerBoostedScore",
+            "type": "float",
+        },
         "highlights": {"key": "@search\\.highlights", "type": "{[str]}"},
         "captions": {"key": "@search\\.captions", "type": "[QueryCaptionResult]"},
-        "document_debug_info": {"key": "@search\\.documentDebugInfo", "type": "DocumentDebugInfo"},
+        "document_debug_info": {
+            "key": "@search\\.documentDebugInfo",
+            "type": "DocumentDebugInfo",
+        },
     }
 
-    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1852,7 +1898,9 @@ class SuggestResult(_serialization.Model):
         "text": {"key": "@search\\.text", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1933,7 +1981,9 @@ class VectorQuery(_serialization.Model):
         "weight": {"key": "weight", "type": "float"},
     }
 
-    _subtype_map = {"kind": {"text": "VectorizableTextQuery", "vector": "VectorizedQuery"}}
+    _subtype_map = {
+        "kind": {"text": "VectorizableTextQuery", "vector": "VectorizedQuery"}
+    }
 
     def __init__(
         self,

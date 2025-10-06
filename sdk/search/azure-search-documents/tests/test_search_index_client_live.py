@@ -146,10 +146,14 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_index(
+                index, match_condition=MatchConditions.IfNotModified
+            )
 
     def _test_analyze_text(self, client, index_name):
-        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
+        analyze_request = AnalyzeTextOptions(
+            text="One's <two/>", analyzer_name="standard.lucene"
+        )
         result = client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 

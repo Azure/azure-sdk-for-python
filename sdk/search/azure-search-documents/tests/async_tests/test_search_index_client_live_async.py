@@ -117,7 +117,9 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.delete_index(index, match_condition=MatchConditions.IfNotModified)
+            await client.delete_index(
+                index, match_condition=MatchConditions.IfNotModified
+            )
 
     async def _test_create_or_update_index(self, client):
         name = "hotels-cou"
@@ -177,10 +179,14 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
         index.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.create_or_update_index(index, match_condition=MatchConditions.IfNotModified)
+            await client.create_or_update_index(
+                index, match_condition=MatchConditions.IfNotModified
+            )
 
     async def _test_analyze_text(self, client, index_name):
-        analyze_request = AnalyzeTextOptions(text="One's <two/>", analyzer_name="standard.lucene")
+        analyze_request = AnalyzeTextOptions(
+            text="One's <two/>", analyzer_name="standard.lucene"
+        )
         result = await client.analyze_text(index_name, analyze_request)
         assert len(result.tokens) == 2
 

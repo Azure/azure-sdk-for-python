@@ -46,7 +46,9 @@ async def create_index():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SearchableField(
+            name="description", type=SearchFieldDataType.String, collection=True
+        ),
         ComplexField(
             name="address",
             fields=[
@@ -59,7 +61,12 @@ async def create_index():
 
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles: List[ScoringProfile] = []
-    index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
+    index = SearchIndex(
+        name=name,
+        fields=fields,
+        scoring_profiles=scoring_profiles,
+        cors_options=cors_options,
+    )
 
     result = await client.create_index(index)
     await client.close()
@@ -82,7 +89,9 @@ async def update_index():
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+        SearchableField(
+            name="description", type=SearchFieldDataType.String, collection=True
+        ),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         ComplexField(
             name="address",
@@ -99,7 +108,12 @@ async def update_index():
     scoring_profile = ScoringProfile(name="MyProfile")
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
-    index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
+    index = SearchIndex(
+        name=name,
+        fields=fields,
+        scoring_profiles=scoring_profiles,
+        cors_options=cors_options,
+    )
 
     result = await client.create_or_update_index(index=index)
     await client.close()

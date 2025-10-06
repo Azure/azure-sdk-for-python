@@ -26,7 +26,10 @@ connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexerClient
-from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
+from azure.search.documents.indexes.models import (
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+)
 
 client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
@@ -35,7 +38,10 @@ def create_data_source_connection():
     # [START create_data_source_connection]
     container = SearchIndexerDataContainer(name="searchcontainer")
     data_source_connection = SearchIndexerDataSourceConnection(
-        name="sample-data-source-connection", type="azureblob", connection_string=connection_string, container=container
+        name="sample-data-source-connection",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container,
     )
     result = client.create_data_source_connection(data_source_connection)
     print(result)
@@ -47,7 +53,11 @@ def list_data_source_connections():
     # [START list_data_source_connection]
     result = client.get_data_source_connections()
     names = [ds.name for ds in result]
-    print("Found {} Data Source Connections in the service: {}".format(len(result), ", ".join(names)))
+    print(
+        "Found {} Data Source Connections in the service: {}".format(
+            len(result), ", ".join(names)
+        )
+    )
     # [END list_data_source_connection]
 
 

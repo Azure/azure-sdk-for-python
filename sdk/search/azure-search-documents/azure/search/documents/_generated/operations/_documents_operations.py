@@ -27,17 +27,23 @@ from .._configuration import SearchIndexClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]
+]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_count_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_count_request(
+    *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -48,10 +54,14 @@ def build_count_request(*, x_ms_client_request_id: Optional[str] = None, **kwarg
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_search_get_request(
@@ -88,7 +98,9 @@ def build_search_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -98,35 +110,55 @@ def build_search_get_request(
     if search_text is not None:
         _params["search"] = _SERIALIZER.query("search_text", search_text, "str")
     if include_total_result_count is not None:
-        _params["$count"] = _SERIALIZER.query("include_total_result_count", include_total_result_count, "bool")
+        _params["$count"] = _SERIALIZER.query(
+            "include_total_result_count", include_total_result_count, "bool"
+        )
     if facets is not None:
-        _params["facet"] = [_SERIALIZER.query("facets", q, "str") if q is not None else "" for q in facets]
+        _params["facet"] = [
+            _SERIALIZER.query("facets", q, "str") if q is not None else ""
+            for q in facets
+        ]
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if highlight_fields is not None:
-        _params["highlight"] = _SERIALIZER.query("highlight_fields", highlight_fields, "[str]", div=",")
+        _params["highlight"] = _SERIALIZER.query(
+            "highlight_fields", highlight_fields, "[str]", div=","
+        )
     if highlight_post_tag is not None:
-        _params["highlightPostTag"] = _SERIALIZER.query("highlight_post_tag", highlight_post_tag, "str")
+        _params["highlightPostTag"] = _SERIALIZER.query(
+            "highlight_post_tag", highlight_post_tag, "str"
+        )
     if highlight_pre_tag is not None:
-        _params["highlightPreTag"] = _SERIALIZER.query("highlight_pre_tag", highlight_pre_tag, "str")
+        _params["highlightPreTag"] = _SERIALIZER.query(
+            "highlight_pre_tag", highlight_pre_tag, "str"
+        )
     if minimum_coverage is not None:
-        _params["minimumCoverage"] = _SERIALIZER.query("minimum_coverage", minimum_coverage, "float")
+        _params["minimumCoverage"] = _SERIALIZER.query(
+            "minimum_coverage", minimum_coverage, "float"
+        )
     if order_by is not None:
         _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "[str]", div=",")
     if query_type is not None:
         _params["queryType"] = _SERIALIZER.query("query_type", query_type, "str")
     if scoring_parameters is not None:
         _params["scoringParameter"] = [
-            _SERIALIZER.query("scoring_parameters", q, "str") if q is not None else "" for q in scoring_parameters
+            _SERIALIZER.query("scoring_parameters", q, "str") if q is not None else ""
+            for q in scoring_parameters
         ]
     if scoring_profile is not None:
-        _params["scoringProfile"] = _SERIALIZER.query("scoring_profile", scoring_profile, "str")
+        _params["scoringProfile"] = _SERIALIZER.query(
+            "scoring_profile", scoring_profile, "str"
+        )
     if search_fields is not None:
-        _params["searchFields"] = _SERIALIZER.query("search_fields", search_fields, "[str]", div=",")
+        _params["searchFields"] = _SERIALIZER.query(
+            "search_fields", search_fields, "[str]", div=","
+        )
     if search_mode is not None:
         _params["searchMode"] = _SERIALIZER.query("search_mode", search_mode, "str")
     if scoring_statistics is not None:
-        _params["scoringStatistics"] = _SERIALIZER.query("scoring_statistics", scoring_statistics, "str")
+        _params["scoringStatistics"] = _SERIALIZER.query(
+            "scoring_statistics", scoring_statistics, "str"
+        )
     if session_id is not None:
         _params["sessionId"] = _SERIALIZER.query("session_id", session_id, "str")
     if select is not None:
@@ -137,36 +169,55 @@ def build_search_get_request(
         _params["$top"] = _SERIALIZER.query("top", top, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if semantic_configuration is not None:
-        _params["semanticConfiguration"] = _SERIALIZER.query("semantic_configuration", semantic_configuration, "str")
+        _params["semanticConfiguration"] = _SERIALIZER.query(
+            "semantic_configuration", semantic_configuration, "str"
+        )
     if semantic_error_handling is not None:
-        _params["semanticErrorHandling"] = _SERIALIZER.query("semantic_error_handling", semantic_error_handling, "str")
+        _params["semanticErrorHandling"] = _SERIALIZER.query(
+            "semantic_error_handling", semantic_error_handling, "str"
+        )
     if semantic_max_wait_in_milliseconds is not None:
         _params["semanticMaxWaitInMilliseconds"] = _SERIALIZER.query(
-            "semantic_max_wait_in_milliseconds", semantic_max_wait_in_milliseconds, "int", minimum=700
+            "semantic_max_wait_in_milliseconds",
+            semantic_max_wait_in_milliseconds,
+            "int",
+            minimum=700,
         )
     if answers is not None:
         _params["answers"] = _SERIALIZER.query("answers", answers, "str")
     if captions is not None:
         _params["captions"] = _SERIALIZER.query("captions", captions, "str")
     if semantic_query is not None:
-        _params["semanticQuery"] = _SERIALIZER.query("semantic_query", semantic_query, "str")
+        _params["semanticQuery"] = _SERIALIZER.query(
+            "semantic_query", semantic_query, "str"
+        )
     if debug is not None:
         _params["debug"] = _SERIALIZER.query("debug", debug, "str")
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_search_post_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_search_post_request(
+    *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -177,12 +228,18 @@ def build_search_post_request(*, x_ms_client_request_id: Optional[str] = None, *
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_get_request(
@@ -195,7 +252,9 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,15 +267,21 @@ def build_get_request(
 
     # Construct parameters
     if selected_fields is not None:
-        _params["$select"] = _SERIALIZER.query("selected_fields", selected_fields, "[str]", div=",")
+        _params["$select"] = _SERIALIZER.query(
+            "selected_fields", selected_fields, "[str]", div=","
+        )
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_suggest_get_request(
@@ -238,7 +303,9 @@ def build_suggest_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -246,21 +313,33 @@ def build_suggest_get_request(
 
     # Construct parameters
     _params["search"] = _SERIALIZER.query("search_text", search_text, "str")
-    _params["suggesterName"] = _SERIALIZER.query("suggester_name", suggester_name, "str")
+    _params["suggesterName"] = _SERIALIZER.query(
+        "suggester_name", suggester_name, "str"
+    )
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if use_fuzzy_matching is not None:
-        _params["fuzzy"] = _SERIALIZER.query("use_fuzzy_matching", use_fuzzy_matching, "bool")
+        _params["fuzzy"] = _SERIALIZER.query(
+            "use_fuzzy_matching", use_fuzzy_matching, "bool"
+        )
     if highlight_post_tag is not None:
-        _params["highlightPostTag"] = _SERIALIZER.query("highlight_post_tag", highlight_post_tag, "str")
+        _params["highlightPostTag"] = _SERIALIZER.query(
+            "highlight_post_tag", highlight_post_tag, "str"
+        )
     if highlight_pre_tag is not None:
-        _params["highlightPreTag"] = _SERIALIZER.query("highlight_pre_tag", highlight_pre_tag, "str")
+        _params["highlightPreTag"] = _SERIALIZER.query(
+            "highlight_pre_tag", highlight_pre_tag, "str"
+        )
     if minimum_coverage is not None:
-        _params["minimumCoverage"] = _SERIALIZER.query("minimum_coverage", minimum_coverage, "float")
+        _params["minimumCoverage"] = _SERIALIZER.query(
+            "minimum_coverage", minimum_coverage, "float"
+        )
     if order_by is not None:
         _params["$orderby"] = _SERIALIZER.query("order_by", order_by, "[str]", div=",")
     if search_fields is not None:
-        _params["searchFields"] = _SERIALIZER.query("search_fields", search_fields, "[str]", div=",")
+        _params["searchFields"] = _SERIALIZER.query(
+            "search_fields", search_fields, "[str]", div=","
+        )
     if select is not None:
         _params["$select"] = _SERIALIZER.query("select", select, "[str]", div=",")
     if top is not None:
@@ -269,18 +348,28 @@ def build_suggest_get_request(
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_suggest_post_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_suggest_post_request(
+    *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -291,20 +380,32 @@ def build_suggest_post_request(*, x_ms_client_request_id: Optional[str] = None, 
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_index_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_index_request(
+    *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -315,12 +416,18 @@ def build_index_request(*, x_ms_client_request_id: Optional[str] = None, **kwarg
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 def build_autocomplete_get_request(
@@ -341,7 +448,9 @@ def build_autocomplete_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -350,38 +459,62 @@ def build_autocomplete_get_request(
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     _params["search"] = _SERIALIZER.query("search_text", search_text, "str")
-    _params["suggesterName"] = _SERIALIZER.query("suggester_name", suggester_name, "str")
+    _params["suggesterName"] = _SERIALIZER.query(
+        "suggester_name", suggester_name, "str"
+    )
     if autocomplete_mode is not None:
-        _params["autocompleteMode"] = _SERIALIZER.query("autocomplete_mode", autocomplete_mode, "str")
+        _params["autocompleteMode"] = _SERIALIZER.query(
+            "autocomplete_mode", autocomplete_mode, "str"
+        )
     if filter is not None:
         _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if use_fuzzy_matching is not None:
-        _params["fuzzy"] = _SERIALIZER.query("use_fuzzy_matching", use_fuzzy_matching, "bool")
+        _params["fuzzy"] = _SERIALIZER.query(
+            "use_fuzzy_matching", use_fuzzy_matching, "bool"
+        )
     if highlight_post_tag is not None:
-        _params["highlightPostTag"] = _SERIALIZER.query("highlight_post_tag", highlight_post_tag, "str")
+        _params["highlightPostTag"] = _SERIALIZER.query(
+            "highlight_post_tag", highlight_post_tag, "str"
+        )
     if highlight_pre_tag is not None:
-        _params["highlightPreTag"] = _SERIALIZER.query("highlight_pre_tag", highlight_pre_tag, "str")
+        _params["highlightPreTag"] = _SERIALIZER.query(
+            "highlight_pre_tag", highlight_pre_tag, "str"
+        )
     if minimum_coverage is not None:
-        _params["minimumCoverage"] = _SERIALIZER.query("minimum_coverage", minimum_coverage, "float")
+        _params["minimumCoverage"] = _SERIALIZER.query(
+            "minimum_coverage", minimum_coverage, "float"
+        )
     if search_fields is not None:
-        _params["searchFields"] = _SERIALIZER.query("search_fields", search_fields, "[str]", div=",")
+        _params["searchFields"] = _SERIALIZER.query(
+            "search_fields", search_fields, "[str]", div=","
+        )
     if top is not None:
         _params["$top"] = _SERIALIZER.query("top", top, "int")
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="GET", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
-def build_autocomplete_post_request(*, x_ms_client_request_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
+def build_autocomplete_post_request(
+    *, x_ms_client_request_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop(
+        "api_version", _params.pop("api-version", "2025-09-01")
+    )
+    content_type: Optional[str] = kwargs.pop(
+        "content_type", _headers.pop("Content-Type", None)
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -392,12 +525,18 @@ def build_autocomplete_post_request(*, x_ms_client_request_id: Optional[str] = N
 
     # Construct headers
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
+            "x_ms_client_request_id", x_ms_client_request_id, "str"
+        )
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+        _headers["Content-Type"] = _SERIALIZER.header(
+            "content_type", content_type, "str"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="POST", url=_url, params=_params, headers=_headers, **kwargs
+    )
 
 
 class DocumentsOperations:
@@ -414,13 +553,23 @@ class DocumentsOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: SearchIndexClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: PipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: SearchIndexClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace
-    def count(self, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any) -> int:
+    def count(
+        self, request_options: Optional[_models.RequestOptions] = None, **kwargs: Any
+    ) -> int:
         """Queries the number of documents in the index.
 
         .. seealso::
@@ -443,7 +592,9 @@ class DocumentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
         cls: ClsType[int] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -457,21 +608,31 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("int", pipeline_response.http_response)
@@ -516,7 +677,9 @@ class DocumentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
         cls: ClsType[_models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
         _include_total_result_count = None
@@ -566,7 +729,9 @@ class DocumentsOperations:
             _select = search_options.select
             _semantic_configuration = search_options.semantic_configuration
             _semantic_error_handling = search_options.semantic_error_handling
-            _semantic_max_wait_in_milliseconds = search_options.semantic_max_wait_in_milliseconds
+            _semantic_max_wait_in_milliseconds = (
+                search_options.semantic_max_wait_in_milliseconds
+            )
             _semantic_query = search_options.semantic_query
             _session_id = search_options.session_id
             _skip = search_options.skip
@@ -607,24 +772,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SearchDocumentsResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "SearchDocumentsResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -715,8 +892,12 @@ class DocumentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -740,24 +921,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 206]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SearchDocumentsResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "SearchDocumentsResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -799,7 +992,9 @@ class DocumentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -815,21 +1010,31 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
         deserialized = self._deserialize("{object}", pipeline_response.http_response)
@@ -878,7 +1083,9 @@ class DocumentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
         cls: ClsType[_models.SuggestDocumentsResult] = kwargs.pop("cls", None)
 
         _filter = None
@@ -922,24 +1129,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SuggestDocumentsResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "SuggestDocumentsResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1030,8 +1249,12 @@ class DocumentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.SuggestDocumentsResult] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -1055,24 +1278,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("SuggestDocumentsResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "SuggestDocumentsResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1163,8 +1398,12 @@ class DocumentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.IndexDocumentsResult] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -1188,24 +1427,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 207]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("IndexDocumentsResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "IndexDocumentsResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1250,7 +1501,9 @@ class DocumentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
         cls: ClsType[_models.AutocompleteResult] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -1291,24 +1544,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("AutocompleteResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "AutocompleteResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1399,8 +1664,12 @@ class DocumentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[_models.AutocompleteResult] = kwargs.pop("cls", None)
 
         _x_ms_client_request_id = None
@@ -1424,24 +1693,36 @@ class DocumentsOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "indexName": self._serialize.url("self._config.index_name", self._config.index_name, "str"),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
+            "indexName": self._serialize.url(
+                "self._config.index_name", self._config.index_name, "str"
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("AutocompleteResult", pipeline_response.http_response)
+        deserialized = self._deserialize(
+            "AutocompleteResult", pipeline_response.http_response
+        )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
