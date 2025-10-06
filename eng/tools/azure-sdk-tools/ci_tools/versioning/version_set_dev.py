@@ -108,7 +108,7 @@ def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
             print("{0}: {1} -> {2}".format(target_package.name, target_package.version, new_version))
         except Exception as e:
             print("Could not set dev version for package: {0}".format(target_package.name))
-            print(e)
+            logger.error(str(e))
 
 
 if __name__ == "__main__":
