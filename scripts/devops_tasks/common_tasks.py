@@ -23,8 +23,6 @@ from pkg_resources import parse_version, parse_requirements, Requirement, Workin
 
 # this assumes the presence of "packaging"
 from packaging.specifiers import SpecifierSet
-from packaging.version import Version
-from packaging.version import parse
 
 from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, NO_TESTS_ALLOWED, lambda_filter_azure_pkg, str_to_bool
 from ci_tools.parsing import parse_require, ParsedSetup
@@ -116,23 +114,6 @@ def create_code_coverage_params(parsed_args: Namespace, package_path: str):
     return coverage_args
 
 
-# This function returns if error code 5 is allowed for a given package
-def is_error_code_5_allowed(target_pkg, pkg_name):
-    if (
-        all(
-            map(
-                lambda x: any([pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]),
-                [target_pkg],
-            )
-        )
-        or pkg_name in MANAGEMENT_PACKAGE_IDENTIFIERS
-        or pkg_name in NO_TESTS_ALLOWED
-    ):
-        return True
-    else:
-        return False
-
-
 # This method installs package from a pre-built whl
 def install_package_from_whl(package_whl_path, working_dir, python_sym_link=sys.executable):
     commands = [
@@ -203,10 +184,11 @@ def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
         versions = client.get_ordered_versions(package_name)
 
         if spec:
-            versions = [str(v) for v in versions if str(v) in spec]
+            specifier = SpecifierSet(spec)
+            versions = [str(v) for v in versions if v in specifier]
     except:
         logging.error("Package {} is not found on PyPI".format(package_name))
-    return versions
+    return bool(versions)
 
 
 def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
@@ -225,13 +207,13 @@ def find_packages_missing_on_pypi(path: str) -> Iterable[str]:
         requires = ParsedSetup.from_path(path).requires
 
     # parse pkg name and spec
-    pkg_spec_dict = dict(parse_require(req) for req in requires)
+    pkg_spec_dict = [parse_require(req) for req in requires]
     logging.info("Package requirement: {}".format(pkg_spec_dict))
     # find if version is available on pypi
     missing_packages = [
-        "{0}{1}".format(pkg, pkg_spec_dict[pkg])
-        for pkg in pkg_spec_dict.keys()
-        if not is_required_version_on_pypi(pkg, pkg_spec_dict[pkg])
+        f"{pkg.name}{pkg.specifier}"
+        for pkg in pkg_spec_dict
+        if not is_required_version_on_pypi(pkg.name, str(pkg.specifier))
     ]
     if missing_packages:
         logging.error("Packages not found on PyPI: {}".format(missing_packages))
