@@ -1444,7 +1444,7 @@ class ContainerProxy:
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace_async
-    async def replace_throughput(
+    async def replace_throughput( # pylint: disable=unused-argument
         self,
         throughput: Union[int, ThroughputProperties],
         *,
@@ -1479,7 +1479,7 @@ class ContainerProxy:
         _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
         data = await self.client_connection.ReplaceOffer(offer_link=throughput_properties[0]["_self"],
                                                          offer=throughput_properties[0], **kwargs)
-    
+
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace

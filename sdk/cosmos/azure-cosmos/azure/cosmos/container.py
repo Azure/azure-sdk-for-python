@@ -1625,7 +1625,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
-    def replace_throughput(
+    def replace_throughput( # pylint: disable=unused-argument
         self,
         throughput: Union[int, ThroughputProperties],
         *,
