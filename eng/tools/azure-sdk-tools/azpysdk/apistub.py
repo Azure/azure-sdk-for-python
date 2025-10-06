@@ -110,7 +110,8 @@ class apistub(Check):
             pkg_path, out_token_path = get_package_wheel_path(package_dir, staging_directory)
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
-            cmds = ["apistubgen", "--pkg-path", pkg_path]
+            cmds = [executable, "-m", "apistub", "--pkg-path", pkg_path]
+
             if out_token_path:
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
