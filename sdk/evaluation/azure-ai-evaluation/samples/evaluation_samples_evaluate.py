@@ -576,7 +576,7 @@ class EvaluationEvaluateSamples(object):
         # [END tool_call_quality_evaluator]
 
         # [START task_navigation_efficiency_evaluator]
-        from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
+        from azure.ai.evaluation import (
             TaskNavigationEfficiencyEvaluator,
             TaskNavigationEfficiencyMatchingMode,
         )

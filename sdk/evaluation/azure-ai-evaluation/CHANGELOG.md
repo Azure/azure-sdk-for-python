@@ -1,6 +1,11 @@
 # Release History
 
 
+## 1.13.0 (Unreleased)
+
+### Features Added
+- Added `TaskNavigationEfficiencyEvaluator`
+
 ## 1.12.0 (2025-10-02)
 
 ### Features Added

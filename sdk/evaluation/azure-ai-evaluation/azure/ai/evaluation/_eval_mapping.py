@@ -37,6 +37,7 @@ from azure.ai.evaluation import (
     SexualEvaluator,
     SimilarityEvaluator,
     TaskAdherenceEvaluator,
+    TaskNavigationEfficiencyEvaluator,
     ToolCallAccuracyEvaluator,  # Backward compatibility alias
     ToolCallQualityEvaluator,
     UngroundedAttributesEvaluator,
@@ -68,6 +69,7 @@ EVAL_CLASS_MAP = {
     SelfHarmEvaluator: "self_harm",
     SexualEvaluator: "sexual",
     SimilarityEvaluator: "similarity",
+    TaskNavigationEfficiencyEvaluator: "task_navigation_efficiency",
     TaskAdherenceEvaluator: "task_adherence",
     TaskCompletionEvaluator: "task_completion",
     ToolCallAccuracyEvaluator: "tool_call_quality",  # Backward compatibility
