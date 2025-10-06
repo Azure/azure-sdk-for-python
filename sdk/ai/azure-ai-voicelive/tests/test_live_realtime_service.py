@@ -46,7 +46,7 @@ from azure.ai.voicelive.models import (
     ServerEventResponseOutputItemDone,
     ServerEventType,
     ServerVad,
-    ToolChoiceFunctionObject,
+    ToolChoiceFunctionSelection,
     ToolChoiceLiteral,
     TurnDetection,
 )
@@ -234,7 +234,7 @@ class TestRealtimeService(AzureRecordedTestCase):
             # text-only session
             session = RequestSession(
                 input_audio_noise_reduction=AudioNoiseReduction(type="azure_deep_noise_suppression"),
-                input_audio_echo_cancellation=AudioEchoCancellation()
+                input_audio_echo_cancellation=AudioEchoCancellation(),
             )
             await conn.session.update(session=session)
 
@@ -252,9 +252,15 @@ class TestRealtimeService(AzureRecordedTestCase):
         ("model", "server_sd_conf"),
         [
             pytest.param(
-                "gpt-4o-realtime-preview", {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800}, id="gpt-4o-realtime"
+                "gpt-4o-realtime-preview",
+                {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800},
+                id="gpt-4o-realtime",
             ),
-            pytest.param("gpt-4o", {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800}, id="cascaded-realtime"),
+            pytest.param(
+                "gpt-4o",
+                {"type": "azure_semantic_vad", "speech_duration_assistant_speaking_ms": 800},
+                id="cascaded-realtime",
+            ),
         ],
     )
     async def test_realtime_service_with_turn_detection_long_tts_vad_duration(
@@ -363,8 +369,6 @@ class TestRealtimeService(AzureRecordedTestCase):
         model = "gpt-4o-realtime-preview"
         file = test_data_dir / test_audio_file
         server_sd_conf = {
-            "distinct_ci_phones": 2,
-            "require_vowel": False,
             "remove_filler_words": True,
         }
 
@@ -476,7 +480,7 @@ class TestRealtimeService(AzureRecordedTestCase):
                     },
                 ),
             ]
-            tool_choice = ToolChoiceFunctionObject(name="get_time")
+            tool_choice = ToolChoiceFunctionSelection(name="get_time")
             session = RequestSession(
                 instructions="You are a helpful assistant with tools.",
                 tools=tools,

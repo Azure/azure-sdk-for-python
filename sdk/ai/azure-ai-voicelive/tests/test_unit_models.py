@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from azure.ai.voicelive.models import (
-    AgentConfig,
     AssistantMessageItem,
     AzureCustomVoice,
     AzurePersonalVoice,
@@ -24,29 +23,8 @@ from azure.ai.voicelive.models import (
     SystemMessageItem,
     UserMessageItem,
     ItemParamStatus,
-    OAIVoice,
+    OpenAIVoiceName,
 )
-
-
-class TestAgentConfig:
-    """Test AgentConfig model."""
-
-    def test_create_agent_config(self):
-        """Test creating an agent configuration."""
-        config = AgentConfig(
-            name="Test Agent", agent_id="agent-123", thread_id="thread-456", description="Test description"
-        )
-
-        assert config.name == "Test Agent"
-        assert config.agent_id == "agent-123"
-        assert config.thread_id == "thread-456"
-        assert config.description == "Test description"
-        assert config.type == "agent"
-
-    def test_agent_config_basic_creation(self):
-        """Test basic agent config creation."""
-        config = AgentConfig(name="Basic Agent", agent_id="basic-123", thread_id="thread-123")
-        assert config.name == "Basic Agent"
 
 
 class TestAzureVoiceModels:
@@ -103,10 +81,10 @@ class TestOpenAIVoice:
 
     def test_openai_voice_creation(self):
         """Test creating OpenAI voice model."""
-        voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
 
         assert voice.type == "openai"
-        assert voice.name == OAIVoice.ALLOY
+        assert voice.name == OpenAIVoiceName.ALLOY
 
     def test_openai_voice_with_string(self):
         """Test creating OpenAI voice with string name."""
@@ -234,7 +212,7 @@ class TestRequestSession:
 
     def test_request_session_with_voice(self):
         """Test request session with voice configuration."""
-        voice = OpenAIVoice(name=OAIVoice.ALLOY)
+        voice = OpenAIVoice(name=OpenAIVoiceName.ALLOY)
         session = RequestSession(model="gpt-4o-realtime-preview", voice=voice, instructions="Be helpful and concise")
 
         assert session.voice == voice
@@ -263,18 +241,10 @@ class TestResponseSession:
 
     def test_response_session_with_agent(self):
         """Test response session with agent configuration."""
-        agent = AgentConfig(name="Test Agent", agent_id="agent-123", thread_id="thread-456")
-        session = ResponseSession(model="gpt-4o-realtime-preview", agent=agent, id="session-789")
+        session = ResponseSession(model="gpt-4o-realtime-preview", id="session-789")
 
-        assert session.agent == agent
         assert session.id == "session-789"
         assert session.model == "gpt-4o-realtime-preview"
-
-    def test_response_session_inheritance(self):
-        """Test that ResponseSession inherits from RequestSession."""
-        session = ResponseSession(model="gpt-4o-realtime-preview")
-
-        assert isinstance(session, RequestSession)
 
 
 class TestModelValidation:
@@ -313,13 +283,11 @@ class TestModelSerialization:
 
     def test_complex_model_structure(self):
         """Test complex model with nested objects."""
-        agent = AgentConfig(name="Complex Agent", agent_id="agent-complex", thread_id="thread-complex")
 
         voice = AzurePersonalVoice(name="personal-voice", model=PersonalVoiceModels.PHOENIX_LATEST_NEURAL)
 
-        session = ResponseSession(model="gpt-4o-realtime-preview", agent=agent, voice=voice, id="complex-session")
+        session = ResponseSession(model="gpt-4o-realtime-preview", voice=voice, id="complex-session")
 
         # Verify the nested structure
-        assert session.agent.name == "Complex Agent"
-        assert session.voice.type == AzureVoiceType.AZURE_PERSONAL
+        assert session.voice.name == "personal-voice"
         assert session.voice.model == PersonalVoiceModels.PHOENIX_LATEST_NEURAL

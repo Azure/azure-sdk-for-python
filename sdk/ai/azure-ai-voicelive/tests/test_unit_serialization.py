@@ -12,7 +12,7 @@ from azure.ai.voicelive._utils.serialization import Serializer, SerializationErr
 from azure.ai.voicelive.models import (
     AzureVoiceType,
     MessageRole,
-    OAIVoice,
+    OpenAIVoiceName,
     InputAudioFormat,
     OutputAudioFormat,
     ItemParamStatus,
@@ -91,9 +91,9 @@ class TestSerializerEnums:
         assert result == "assistant"
 
     def test_serialize_oai_voice(self):
-        """Test OAIVoice enum serialization."""
+        """Test OpenAIVoiceName enum serialization."""
         serializer = Serializer()
-        result = serializer.serialize_data(OAIVoice.ALLOY, "str")
+        result = serializer.serialize_data(OpenAIVoiceName.ALLOY, "str")
         assert result == "alloy"
 
     def test_serialize_input_audio_format(self):
@@ -136,7 +136,7 @@ class TestSerializerEnumTypeCasting:
         enums_to_test = [
             (AzureVoiceType.AZURE_CUSTOM, "azure-custom"),
             (MessageRole.USER, "user"),
-            (OAIVoice.SHIMMER, "shimmer"),
+            (OpenAIVoiceName.SHIMMER, "shimmer"),
             (InputAudioFormat.G711_ALAW, "g711_alaw"),
             (ItemParamStatus.COMPLETED, "completed"),
             (Modality.AUDIO, "audio"),
@@ -318,9 +318,9 @@ class TestSerializerIntegration:
         assert message.content[0].type == "text"
 
         # Test that the discriminator enum values are properly set
-        openai_voice = OpenAIVoice(name=OAIVoice.CORAL)
+        openai_voice = OpenAIVoice(name=OpenAIVoiceName.CORAL)
         assert openai_voice.type == "openai"
-        assert openai_voice.name == OAIVoice.CORAL
+        assert openai_voice.name == OpenAIVoiceName.CORAL
 
     def test_serializer_with_real_world_data(self):
         """Test serializer with realistic data structures."""
