@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from azure.ai.voicelive.models import (
+    AgentConfig,
     AssistantMessageItem,
     AzureCustomVoice,
     AzurePersonalVoice,
@@ -26,6 +27,25 @@ from azure.ai.voicelive.models import (
     OpenAIVoiceName,
 )
 
+class TestAgentConfig:
+    """Test AgentConfig model."""
+
+    def test_create_agent_config(self):
+        """Test creating an agent configuration."""
+        config = AgentConfig(
+            name="Test Agent", agent_id="agent-123", thread_id="thread-456", description="Test description"
+        )
+
+        assert config.name == "Test Agent"
+        assert config.agent_id == "agent-123"
+        assert config.thread_id == "thread-456"
+        assert config.description == "Test description"
+        assert config.type == "agent"
+
+    def test_agent_config_basic_creation(self):
+        """Test basic agent config creation."""
+        config = AgentConfig(name="Basic Agent", agent_id="basic-123", thread_id="thread-123")
+        assert config.name == "Basic Agent"
 
 class TestAzureVoiceModels:
     """Test Azure voice model classes."""
