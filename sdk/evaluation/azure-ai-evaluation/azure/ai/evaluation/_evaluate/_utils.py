@@ -486,7 +486,7 @@ class DataLoaderFactory:
         # fallback to JSONL to maintain backward compatibility
         return JSONLDataFileLoader(filename)
 
-async def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, eval_id: str, eval_run_id: str, logger: logging.Logger) -> EvaluationResult:
+async def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, eval_id: Optional[str], eval_run_id: Optional[str], logger: logging.Logger) -> EvaluationResult:
     """
     Convert evaluation results to AOAI evaluation results format.
     

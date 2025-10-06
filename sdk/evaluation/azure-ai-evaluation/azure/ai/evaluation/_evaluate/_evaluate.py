@@ -793,6 +793,8 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
+        eval_id: Optional[str] = kwargs.get("eval_id")
+        eval_run_id: Optional[str] = kwargs.get("eval_run_id")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
                 evaluation_name=evaluation_name,
@@ -806,7 +808,7 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
-            results_converted = _convert_results_to_aoai_evaluation_results(results)
+            results_converted = _convert_results_to_aoai_evaluation_results(results, eval_id, eval_run_id, LOGGER)
             return results_converted
     except Exception as e:
         # Handle multiprocess bootstrap error
