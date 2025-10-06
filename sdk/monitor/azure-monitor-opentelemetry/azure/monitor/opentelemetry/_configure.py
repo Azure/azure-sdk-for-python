@@ -127,12 +127,6 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
         # TODO: This does not add processors. Should this change?
         _setup_live_metrics(configurations)
 
-    # Setup performance counters
-    # TODO: Check whether node uses perf counters when metrics is disabled
-    if not disable_metrics and enable_performance_counters_config:
-        # TODO: This does not add processors. Should this change?
-        enable_performance_counters()
-
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -153,6 +147,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     if SAMPLING_TRACES_PER_SECOND_ARG in configurations:
         traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
         tracer_provider = TracerProvider(
@@ -174,7 +169,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         # TODO: Consider combining
         qsp = _QuickpulseSpanProcessor()
         tracer_provider.add_span_processor(qsp)
-    if configurations.get(ENABLE_PERFORMANCE_COUNTERS_ARG):
+    if enable_performance_counters_config:
         pcsp = _PerformanceCountersSpanProcessor()
         tracer_provider.add_span_processor(pcsp)
     trace_exporter = AzureMonitorTraceExporter(**configurations)
@@ -218,11 +213,12 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         )
 
         resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
+        enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
         logger_provider = LoggerProvider(resource=resource)
         if configurations.get(ENABLE_LIVE_METRICS_ARG):
             qlp = _QuickpulseLogRecordProcessor()
             logger_provider.add_log_record_processor(qlp)
-        if configurations.get(ENABLE_PERFORMANCE_COUNTERS_ARG):
+        if enable_performance_counters_config:
             pclp = _PerformanceCountersLogRecordProcessor()
             logger_provider.add_log_record_processor(pclp)
         log_exporter = AzureMonitorLogExporter(**configurations)
@@ -276,6 +272,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     views: List[View] = configurations[VIEWS_ARG]  # type: ignore
+    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     metric_exporter = AzureMonitorMetricExporter(**configurations)
     reader = PeriodicExportingMetricReader(metric_exporter)
     meter_provider = MeterProvider(
@@ -283,6 +280,8 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
         resource=resource,
         views=views,
     )
+    if enable_performance_counters_config:
+        enable_performance_counters(meter_provider=meter_provider)
     set_meter_provider(meter_provider)
 
 

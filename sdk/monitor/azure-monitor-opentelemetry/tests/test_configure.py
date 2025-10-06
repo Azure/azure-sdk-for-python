@@ -492,6 +492,9 @@ class TestConfigure(unittest.TestCase):
         set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
     @patch(
+        "azure.monitor.opentelemetry._configure.enable_performance_counters",
+    )
+    @patch(
         "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",
     )
     @patch(
@@ -510,6 +513,7 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock,
         metric_exporter_mock,
         reader_mock,
+        mock_enable_performance_counters
     ):
         mp_init_mock = Mock()
         mp_mock.return_value = mp_init_mock
@@ -520,6 +524,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
             "views": [],
         }
@@ -532,7 +537,11 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)
         reader_mock.assert_called_once_with(metric_exp_init_mock)
+        mock_enable_performance_counters.assert_not_called()
 
+    @patch(
+        "azure.monitor.opentelemetry._configure.enable_performance_counters",
+    )
     @patch(
         "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",
     )
@@ -552,6 +561,7 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock,
         metric_exporter_mock,
         reader_mock,
+        mock_enable_performance_counters
     ):
         mp_init_mock = Mock()
         mp_mock.return_value = mp_init_mock
@@ -563,6 +573,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
             "views": [view_mock],
         }
@@ -575,6 +586,55 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)
         reader_mock.assert_called_once_with(metric_exp_init_mock)
+        mock_enable_performance_counters.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry._configure.enable_performance_counters",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.PeriodicExportingMetricReader",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.AzureMonitorMetricExporter",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.set_meter_provider",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.MeterProvider",
+        autospec=True,
+    )
+    def test_setup_metrics_performance_counters(
+        self,
+        mp_mock,
+        set_meter_provider_mock,
+        metric_exporter_mock,
+        reader_mock,
+        mock_enable_performance_counters
+    ):
+        mp_init_mock = Mock()
+        mp_mock.return_value = mp_init_mock
+        metric_exp_init_mock = Mock()
+        metric_exporter_mock.return_value = metric_exp_init_mock
+        reader_init_mock = Mock()
+        reader_mock.return_value = reader_init_mock
+
+        configurations = {
+            "connection_string": "test_cs",
+            "enable_performance_counters": True,
+            "resource": TEST_RESOURCE,
+            "views": [],
+        }
+        _setup_metrics(configurations)
+        mp_mock.assert_called_once_with(
+            metric_readers=[reader_init_mock],
+            resource=TEST_RESOURCE,
+            views=[],
+        )
+        set_meter_provider_mock.assert_called_once_with(mp_init_mock)
+        metric_exporter_mock.assert_called_once_with(**configurations)
+        reader_mock.assert_called_once_with(metric_exp_init_mock)
+        mock_enable_performance_counters.assert_called_once_with(meter_provider=mp_init_mock)
 
     @patch(
         "azure.monitor.opentelemetry._configure.enable_live_metrics",
