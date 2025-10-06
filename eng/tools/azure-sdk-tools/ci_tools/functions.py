@@ -320,7 +320,9 @@ def get_package_from_repo(pkg_name: str, repo_root: Optional[str] = None) -> Opt
     paths = discover_targeted_packages(pkg_name, root_dir, filter_type="Build", include_inactive=True)
 
     if len(paths) >= 2:
-        raise RuntimeError(f"Multiple packages found for {pkg_name} within {root_dir}, please specify a more specific glob.")
+        raise RuntimeError(
+            f"Multiple packages found for {pkg_name} within {root_dir}, please specify a more specific glob."
+        )
 
     if paths and len(paths) == 1:
         return ParsedSetup.from_path(paths[0])

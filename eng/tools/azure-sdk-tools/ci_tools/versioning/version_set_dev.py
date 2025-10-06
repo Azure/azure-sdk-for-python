@@ -110,5 +110,6 @@ def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
             print("Could not set dev version for package: {0}".format(target_package.name))
             print(e)
 
+
 if __name__ == "__main__":
     version_set_dev_main()
