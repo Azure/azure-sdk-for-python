@@ -1248,7 +1248,6 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            # play_sources=[source._to_generated() for source in play_sources] if play_sources else None, # pylint:disable=protected-access
             play_sources=[source._to_generated() for source in play_sources],
             play_to=serialize_identifier(target_participant),
             operation_context=operation_context,

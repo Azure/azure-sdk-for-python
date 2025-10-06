@@ -1239,7 +1239,7 @@ class CallConnectionClient:  # pylint:disable=too-many-public-methods
         """
 
         interrupt_audio_announce_request = InterruptAudioAndAnnounceRequest(
-            play_sources=[source._to_generated() for source in play_sources]
+            play_sources=[source._to_generated() for source in play_sources],
             play_to=serialize_identifier(target_participant),
             operation_context=operation_context,
             kwargs=kwargs,
