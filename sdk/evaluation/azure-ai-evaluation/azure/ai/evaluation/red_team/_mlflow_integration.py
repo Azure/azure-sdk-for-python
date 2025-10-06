@@ -169,6 +169,7 @@ class MLflowIntegration:
         eval_run: EvalRun,
         red_team_info: Dict,
         _skip_evals: bool = False,
+        aoai_summary: Optional["RedTeamRun"] = None,
     ) -> Optional[str]:
         """Log the Red Team Agent results to MLFlow.
 
@@ -180,6 +181,8 @@ class MLflowIntegration:
         :type red_team_info: Dict
         :param _skip_evals: Whether to log only data without evaluation results
         :type _skip_evals: bool
+        :param aoai_summary: Pre-built AOAI-compatible summary (optional, will be built if not provided)
+        :type aoai_summary: Optional[RedTeamRun]
         :return: The URL to the run in Azure AI Studio, if available
         :rtype: Optional[str]
         """
@@ -195,13 +198,17 @@ class MLflowIntegration:
                 results_path = os.path.join(self.scan_output_dir, results_name)
                 self.logger.debug(f"Saving results to scan output directory: {results_path}")
                 with open(results_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    payload = self._build_results_payload(
-                        redteam_result=redteam_result,
-                        eval_run=eval_run,
-                        red_team_info=red_team_info,
-                        include_conversations=True,
-                        scan_name=getattr(eval_run, "display_name", None),
-                    )
+                    # Use provided aoai_summary
+                    if aoai_summary is None:
+                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
+                        raise ValueError("aoai_summary parameter is required but was not provided")
+
+                    payload = dict(aoai_summary)  # Make a copy
+                    # Ensure conversations are included for scan output
+                    if "conversations" not in payload:
+                        payload["conversations"] = (
+                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        )
                     json.dump(payload, f)
 
                 # Save legacy format as instance_results.json
@@ -247,13 +254,14 @@ class MLflowIntegration:
                     "w",
                     encoding=DefaultOpenEncoding.WRITE,
                 ) as f:
-                    payload = self._build_results_payload(
-                        redteam_result=redteam_result,
-                        eval_run=eval_run,
-                        red_team_info=red_team_info,
-                        include_conversations=False,
-                        scan_name=getattr(eval_run, "display_name", None),
-                    )
+                    # Use provided aoai_summary (required)
+                    if aoai_summary is None:
+                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
+                        raise ValueError("aoai_summary parameter is required but was not provided")
+
+                    payload = dict(aoai_summary)  # Make a copy
+                    # Remove conversations for MLFlow artifact
+                    payload.pop("conversations", None)
                     json.dump(payload, f)
 
                 # Also create legacy instance_results.json for compatibility
@@ -297,13 +305,19 @@ class MLflowIntegration:
                 # Use temporary directory as before if no scan output directory exists
                 results_file = Path(tmpdir) / results_name
                 with open(results_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
-                    payload = self._build_results_payload(
-                        redteam_result=redteam_result,
-                        eval_run=eval_run,
-                        red_team_info=red_team_info,
-                        include_conversations=_skip_evals,
-                        scan_name=getattr(eval_run, "display_name", None),
-                    )
+                    # Use provided aoai_summary (required)
+                    if aoai_summary is None:
+                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
+                        raise ValueError("aoai_summary parameter is required but was not provided")
+
+                    payload = dict(aoai_summary)  # Make a copy
+                    # Include conversations only if _skip_evals is True
+                    if _skip_evals and "conversations" not in payload:
+                        payload["conversations"] = (
+                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                        )
+                    elif not _skip_evals:
+                        payload.pop("conversations", None)
                     json.dump(payload, f)
                 self.logger.debug(f"Logged artifact: {results_name}")
 
@@ -386,333 +400,6 @@ class MLflowIntegration:
         self.logger.info("Successfully logged results to AI Foundry")
         return None
 
-    @staticmethod
-    def _compute_result_count(output_items: List[Dict[str, Any]]) -> Dict[str, int]:
-        """Aggregate run-level pass/fail counts from individual output items."""
-
-        total = len(output_items)
-        passed = failed = errored = 0
-
-        for item in output_items:
-            item_status: Optional[bool] = None
-            for result in item.get("results", []):
-                result_properties = result.get("properties", {}) if isinstance(result, dict) else {}
-                attack_success = result_properties.get("attack_success")
-                if attack_success is True:
-                    item_status = False
-                    break
-                if attack_success is False:
-                    item_status = True
-                elif item_status is None and result.get("passed") is not None:
-                    item_status = bool(result.get("passed"))
-
-            if item_status is True:
-                passed += 1
-            elif item_status is False:
-                failed += 1
-            else:
-                errored += 1
-
-        return {
-            "total": total,
-            "passed": passed,
-            "failed": failed,
-            "errored": errored,
-        }
-
-    @staticmethod
-    def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Build aggregated pass/fail counts per testing criteria (risk category)."""
-
-        criteria: Dict[str, Dict[str, int]] = {}
-
-        for item in output_items:
-            for result in item.get("results", []):
-                if not isinstance(result, dict):
-                    continue
-                name = result.get("name")
-                if not name:
-                    continue
-                passed_value = result.get("passed")
-                if passed_value is None:
-                    continue
-
-                bucket = criteria.setdefault(str(name), {"passed": 0, "failed": 0})
-                if passed_value:
-                    bucket["passed"] += 1
-                else:
-                    bucket["failed"] += 1
-
-        return [
-            {
-                "testing_criteria": criteria_name,
-                "passed": counts["passed"],
-                "failed": counts["failed"],
-            }
-            for criteria_name, counts in sorted(criteria.items())
-        ]
-
-    @staticmethod
-    def _build_data_source_section(parameters: Dict[str, Any], red_team_info: Optional[Dict]) -> Dict[str, Any]:
-        """Build the data_source portion of the run payload for red-team scans."""
-
-        attack_strategies: List[str] = []
-        if isinstance(red_team_info, dict):
-            attack_strategies = sorted(str(strategy) for strategy in red_team_info.keys())
-
-        item_generation_params: Dict[str, Any] = {"type": "red_team"}
-        if attack_strategies:
-            item_generation_params["attack_strategies"] = attack_strategies
-
-        # Attempt to infer turns from parameters if available
-        num_turns = parameters.get("max_turns") if isinstance(parameters, dict) else None
-        if isinstance(num_turns, int) and num_turns > 0:
-            item_generation_params["num_turns"] = num_turns
-
-        data_source: Dict[str, Any] = {"type": "azure_ai_red_team", "target": {}}
-        if item_generation_params:
-            data_source["item_generation_params"] = item_generation_params
-
-        return data_source
-
-    def _determine_run_status(
-        self,
-        scan_result: Dict[str, Any],
-        red_team_info: Optional[Dict],
-        output_items: List[Dict[str, Any]],
-    ) -> str:
-        """Determine the run-level status based on red team info status values."""
-
-        # Check if any tasks are still incomplete/failed
-        if isinstance(red_team_info, dict):
-            for risk_data in red_team_info.values():
-                if not isinstance(risk_data, dict):
-                    continue
-                for details in risk_data.values():
-                    if not isinstance(details, dict):
-                        continue
-                    status = details.get("status", "").lower()
-                    if status in ("incomplete", "failed", "timeout"):
-                        return "failed"
-                    elif status in ("running", "pending"):
-                        return "in_progress"
-
-        return "completed"
-
-    def _build_results_payload(
-        self,
-        redteam_result: RedTeamResult,
-        eval_run: Optional[Any] = None,
-        red_team_info: Optional[Dict] = None,
-        include_conversations: bool = False,
-        scan_name: Optional[str] = None,
-    ) -> RedTeamRun:
-        """Assemble the new structure for results.json with eval.run format."""
-
-        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
-        output_items = cast(List[Dict[str, Any]], scan_result.get("output_items") or [])
-        scorecard = cast(Dict[str, Any], scan_result.get("scorecard") or {})
-        parameters = cast(Dict[str, Any], scan_result.get("parameters") or {})
-
-        run_id = self._run_id_override
-        eval_id = self._eval_id_override
-        run_name: Optional[str] = None
-        created_at = self._created_at_override
-
-        if eval_run is not None:
-            run_info = getattr(eval_run, "info", None)
-
-            if run_id is None:
-                candidate_run_id = (
-                    getattr(run_info, "run_id", None)
-                    or getattr(eval_run, "run_id", None)
-                    or getattr(eval_run, "id", None)
-                )
-                if candidate_run_id is not None:
-                    run_id = str(candidate_run_id)
-
-            if eval_id is None:
-                candidate_eval_id = (
-                    getattr(run_info, "experiment_id", None)
-                    or getattr(eval_run, "experiment_id", None)
-                    or getattr(eval_run, "eval_id", None)
-                )
-                if candidate_eval_id is not None:
-                    eval_id = str(candidate_eval_id)
-
-            if run_name is None:
-                candidate_run_name = (
-                    getattr(run_info, "run_name", None)
-                    or getattr(eval_run, "run_name", None)
-                    or getattr(eval_run, "display_name", None)
-                    or getattr(eval_run, "name", None)
-                )
-                if candidate_run_name is not None:
-                    run_name = str(candidate_run_name)
-
-            if created_at is None:
-                raw_created = (
-                    getattr(run_info, "created_time", None)
-                    or getattr(eval_run, "created_at", None)
-                    or getattr(eval_run, "created_time", None)
-                )
-                if isinstance(raw_created, datetime):
-                    created_at = int(raw_created.timestamp())
-                elif isinstance(raw_created, (int, float)):
-                    created_at = int(raw_created)
-                elif isinstance(raw_created, str):
-                    try:
-                        created_at = int(float(raw_created))
-                    except ValueError:
-                        created_at = None
-
-        if run_id is None:
-            run_id = str(uuid.uuid4())
-        if eval_id is None:
-            eval_id = str(uuid.uuid4())
-        if created_at is None:
-            created_at = int(datetime.now().timestamp())
-        if run_name is None:
-            run_name = scan_name or f"redteam-run-{run_id[:8]}"
-
-        result_count = self._compute_result_count(output_items)
-        per_testing_results = self._compute_per_testing_criteria(output_items)
-        data_source = self._build_data_source_section(parameters, red_team_info)
-        status = self._determine_run_status(scan_result, red_team_info, output_items)
-
-        list_wrapper: OutputItemsList = {
-            "object": "list",
-            "data": output_items,
-        }
-
-        run_payload: RedTeamRun = {
-            "object": "eval.run",
-            "id": run_id,
-            "eval_id": eval_id,
-            "created_at": created_at,
-            "status": status,
-            "name": run_name,
-            "report_url": scan_result.get("studio_url") or self.ai_studio_url,
-            "data_source": data_source,
-            "metadata": {},
-            "result_count": result_count,
-            "per_model_usage": [],
-            "per_testing_criteria_results": per_testing_results,
-            "output_items": list_wrapper,
-        }
-
-        if include_conversations:
-            run_payload["conversations"] = redteam_result.attack_details or scan_result.get("attack_details") or []
-
-        return run_payload
-
-    def _build_results_payload(
-        self,
-        redteam_result: RedTeamResult,
-        eval_run: Optional[Any] = None,
-        red_team_info: Optional[Dict] = None,
-        include_conversations: bool = False,
-        scan_name: Optional[str] = None,
-    ) -> RedTeamRun:
-        """Assemble the new structure for results.json with eval.run format."""
-
-        scan_result = cast(Dict[str, Any], redteam_result.scan_result or {})
-        output_items = cast(List[Dict[str, Any]], scan_result.get("output_items") or [])
-        scorecard = cast(Dict[str, Any], scan_result.get("scorecard") or {})
-        parameters = cast(Dict[str, Any], scan_result.get("parameters") or {})
-
-        run_id = self._run_id_override
-        eval_id = self._eval_id_override
-        run_name: Optional[str] = None
-        created_at = self._created_at_override
-
-        if eval_run is not None:
-            run_info = getattr(eval_run, "info", None)
-
-            if run_id is None:
-                candidate_run_id = (
-                    getattr(run_info, "run_id", None)
-                    or getattr(eval_run, "run_id", None)
-                    or getattr(eval_run, "id", None)
-                )
-                if candidate_run_id is not None:
-                    run_id = str(candidate_run_id)
-
-            if eval_id is None:
-                candidate_eval_id = (
-                    getattr(run_info, "experiment_id", None)
-                    or getattr(eval_run, "experiment_id", None)
-                    or getattr(eval_run, "eval_id", None)
-                )
-                if candidate_eval_id is not None:
-                    eval_id = str(candidate_eval_id)
-
-            if run_name is None:
-                candidate_run_name = (
-                    getattr(run_info, "run_name", None)
-                    or getattr(eval_run, "run_name", None)
-                    or getattr(eval_run, "display_name", None)
-                    or getattr(eval_run, "name", None)
-                )
-                if candidate_run_name is not None:
-                    run_name = str(candidate_run_name)
-
-            if created_at is None:
-                raw_created = (
-                    getattr(run_info, "created_time", None)
-                    or getattr(eval_run, "created_at", None)
-                    or getattr(eval_run, "created_time", None)
-                )
-                if isinstance(raw_created, datetime):
-                    created_at = int(raw_created.timestamp())
-                elif isinstance(raw_created, (int, float)):
-                    created_at = int(raw_created)
-                elif isinstance(raw_created, str):
-                    try:
-                        created_at = int(float(raw_created))
-                    except ValueError:
-                        created_at = None
-
-        if run_id is None:
-            run_id = str(uuid.uuid4())
-        if eval_id is None:
-            eval_id = str(uuid.uuid4())
-        if created_at is None:
-            created_at = int(datetime.now().timestamp())
-        if run_name is None:
-            run_name = scan_name or f"redteam-run-{run_id[:8]}"
-
-        result_count = self._compute_result_count(output_items)
-        per_testing_results = self._compute_per_testing_criteria(output_items)
-        data_source = self._build_data_source_section(parameters, red_team_info)
-        status = self._determine_run_status(scan_result, red_team_info, output_items)
-
-        list_wrapper: OutputItemsList = {
-            "object": "list",
-            "data": output_items,
-        }
-
-        run_payload: RedTeamRun = {
-            "object": "eval.run",
-            "id": run_id,
-            "eval_id": eval_id,
-            "created_at": created_at,
-            "status": status,
-            "name": run_name,
-            "report_url": scan_result.get("studio_url") or self.ai_studio_url,
-            "data_source": data_source,
-            "metadata": {},
-            "result_count": result_count,
-            "per_model_usage": [],
-            "per_testing_criteria_results": per_testing_results,
-            "output_items": list_wrapper,
-        }
-
-        if include_conversations:
-            run_payload["conversations"] = redteam_result.attack_details or scan_result.get("attack_details") or []
-
-        return run_payload
-
     def _build_instance_results_payload(
         self,
         redteam_result: RedTeamResult,
@@ -733,8 +420,6 @@ class MLflowIntegration:
             legacy_payload["scorecard"] = {}
         if "parameters" not in legacy_payload:
             legacy_payload["parameters"] = {}
-        if "output_items" not in legacy_payload:
-            legacy_payload["output_items"] = []
         if "attack_details" not in legacy_payload:
             legacy_payload["attack_details"] = redteam_result.attack_details or []
 

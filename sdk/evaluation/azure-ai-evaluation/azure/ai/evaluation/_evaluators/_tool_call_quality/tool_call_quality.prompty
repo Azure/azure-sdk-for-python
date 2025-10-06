@@ -1,6 +1,6 @@
 ---
-name: Tool Call Accuracy
-description: Evaluates Tool Call Accuracy for tool used by agent
+name: Tool Call Quality
+description: Evaluates Tool Call Quality for tool used by agent
 model:
   api: chat
   parameters:
