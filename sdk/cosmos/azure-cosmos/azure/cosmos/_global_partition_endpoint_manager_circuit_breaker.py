@@ -51,7 +51,7 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
         return self.global_partition_endpoint_manager_core.is_circuit_breaker_applicable(request)
 
 
-    def create_pk_range_wrapper(self, request: RequestObject) -> Optional[PartitionKeyRangeWrapper]:
+    def create_pk_range_wrapper(self, request: RequestObject, **kwargs) -> Optional[PartitionKeyRangeWrapper]:
         if HttpHeaders.IntendedCollectionRID in request.headers:
             container_rid = request.headers[HttpHeaders.IntendedCollectionRID]
         else:
@@ -73,12 +73,12 @@ class _GlobalPartitionEndpointManagerForCircuitBreaker(_GlobalEndpointManager):
             # get the partition key range for the given partition key
             epk_range = [partition_key._get_epk_range_for_partition_key(partition_key_value)] # pylint: disable=protected-access
             partition_ranges = (self.client._routing_map_provider # pylint: disable=protected-access
-                                      .get_overlapping_ranges(container_link, epk_range, options))
+                                      .get_overlapping_ranges(container_link, epk_range, options, **kwargs))
             partition_range = Range.PartitionKeyRangeToRange(partition_ranges[0])
         elif HttpHeaders.PartitionKeyRangeID in request.headers:
             pk_range_id = request.headers[HttpHeaders.PartitionKeyRangeID]
             epk_range =(self.client._routing_map_provider # pylint: disable=protected-access
-                    .get_range_by_partition_key_range_id(container_link, pk_range_id, options))
+                    .get_range_by_partition_key_range_id(container_link, pk_range_id, options, **kwargs))
             if not epk_range:
                 self.global_partition_endpoint_manager_core.log_warn_or_debug(
                     "Illegal state: partition key range cache not initialized correctly. "

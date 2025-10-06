@@ -113,10 +113,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 # if refresh is not needed or refresh is already taking place, return
                 if not self.refresh_needed:
                     return
-                try:
-                    self._refresh_endpoint_list_private(database_account, **kwargs)
-                except Exception as e:
-                    raise e
+                self._refresh_endpoint_list_private(database_account, **kwargs)
 
     def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
         if database_account:
