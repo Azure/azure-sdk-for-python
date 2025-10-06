@@ -12,7 +12,7 @@
 - Performance Counters
   ([#43024](https://github.com/Azure/azure-sdk-for-python/pull/43024))
 - Performance Counters: Include Consumer spans
-  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+  ([#43261](https://github.com/Azure/azure-sdk-for-python/pull/43261))
 
 ### Bugs Fixed
 - Fixes issues #42897 - TypeError in _transmit_from_storage: LocalFileBlob.get() returns None
