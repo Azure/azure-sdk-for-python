@@ -31,6 +31,7 @@ REQUIREMENTS:
     - pyaudio (for audio capture and playback)
 """
 
+from __future__ import annotations
 import os
 import sys
 import argparse
@@ -41,7 +42,6 @@ import logging
 import queue
 import signal
 from typing import Union, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -99,6 +99,9 @@ class AudioProcessor:
     - Send thread: Async audio data transmission to VoiceLive
     - Playback thread: PyAudio output stream writing
     """
+    
+    loop: asyncio.AbstractEventLoop
+    
     class AudioPlaybackPacket:
         """Represents a packet that can be sent to the audio playback queue."""
         def __init__(self, seq_num: int, data: Optional[bytes]):
@@ -117,9 +120,8 @@ class AudioProcessor:
 
         # Capture and playback state
         self.input_stream = None
-        self.loop: asyncio.AbstractEventLoop = None  # Store the event loop
 
-        self.playback_queue: queue.Queue[Self.AudioPlaybackPacket] = queue.Queue()
+        self.playback_queue: queue.Queue[AudioProcessor.AudioPlaybackPacket] = queue.Queue()
         self.playback_base = 0
         self.next_seq_num = 0
         self.output_stream: Optional[pyaudio.Stream] = None
