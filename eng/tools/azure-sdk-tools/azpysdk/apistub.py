@@ -16,6 +16,7 @@ from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
 
+
 def get_package_wheel_path(pkg_root: str, out_path: str) -> tuple[str, Optional[str]]:
     # parse setup.py to get package name and version
     pkg_details = ParsedSetup.from_path(pkg_root)
@@ -29,7 +30,8 @@ def get_package_wheel_path(pkg_root: str, out_path: str) -> tuple[str, Optional[
         if not pkg_path:
             raise FileNotFoundError(
                 "No prebuilt wheel found for package {} version {} in directory {}".format(
-                    pkg_details.name, pkg_details.version, prebuilt_dir)
+                    pkg_details.name, pkg_details.version, prebuilt_dir
+                )
             )
         # If the package is a wheel and out_path is given, the token file output path should be the parent directory of the wheel
         if out_path:
@@ -39,13 +41,15 @@ def get_package_wheel_path(pkg_root: str, out_path: str) -> tuple[str, Optional[
     # If the package is not a wheel and out_path is given, the token file output path should be the same as the target package path
     if out_path:
         out_token_path = os.path.join(out_path, os.path.basename(pkg_path))
-    return  pkg_path, out_token_path
+    return pkg_path, out_token_path
+
 
 def get_cross_language_mapping_path(pkg_root):
     mapping_path = os.path.join(pkg_root, "apiview-properties.json")
     if os.path.exists(mapping_path):
         return mapping_path
     return None
+
 
 class apistub(Check):
     def __init__(self) -> None:
@@ -56,7 +60,9 @@ class apistub(Check):
     ) -> None:
         """Register the apistub check. The apistub check generates an API stub of the target package."""
         parents = parent_parsers or []
-        p = subparsers.add_parser("apistub", parents=parents, help="Run the apistub check to generate an API stub for a package")
+        p = subparsers.add_parser(
+            "apistub", parents=parents, help="Run the apistub check to generate an API stub for a package"
+        )
         p.set_defaults(func=self.run)
 
     def run(self, args: argparse.Namespace) -> int:
@@ -90,7 +96,7 @@ class apistub(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install dependencies: {e}")
                 return e.returncode
-            
+
             # debug a pip freeze result
             cmd = get_pip_command(executable) + ["freeze"]
             freeze_result = subprocess.run(
@@ -109,9 +115,9 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
-            
+
             logger.info("Running apistubgen {}.".format(cmds))
-            
+
             try:
                 check_call(cmds, cwd=package_dir)
             except CalledProcessError as e:
