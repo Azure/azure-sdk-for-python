@@ -454,8 +454,9 @@ class TestConfigure(unittest.TestCase):
                 pcsp_mock.assert_not_called()
 
 
+    @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
     @patch("azure.monitor.opentelemetry._configure.getLogger")
-    def test_setup_logging(self, get_logger_mock):
+    def test_setup_logging(self, get_logger_mock, pclp_mock):
         lp_mock = Mock()
         set_logger_provider_mock = Mock()
         log_exporter_mock = Mock()
@@ -479,9 +480,146 @@ class TestConfigure(unittest.TestCase):
         formatter_init_mock = Mock()
         elp_init_mock = Mock()
         elp_mock.return_value = elp_init_mock
+        pclp_init_mock = Mock()
+        pclp_mock.return_value = pclp_init_mock
+        
 
         configurations = {
             "connection_string": "test_cs",
+            "enable_performance_counters": True,
+            "logger_name": "test",
+            "resource": TEST_RESOURCE,
+            "logging_formatter": formatter_init_mock
+        }
+
+        # Patch all the necessary modules and imports
+        with patch.dict('sys.modules', {
+            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
+            'opentelemetry.sdk._logs': Mock(
+                LoggerProvider=lp_mock,
+                LoggingHandler=logging_handler_mock
+            ),
+            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
+            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
+            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
+        }):
+            _setup_logging(configurations)
+
+        # Verify the correct behavior
+        lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
+        set_logger_provider_mock.assert_called_once_with(lp_init_mock)
+        log_exporter_mock.assert_called_once_with(**configurations)
+        blrp_mock.assert_called_once_with(log_exp_init_mock)
+        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
+        lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
+        logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
+        logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
+        get_logger_mock.assert_called_once_with("test")
+        logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
+        elp_mock.assert_called_once_with(lp_init_mock)
+        set_elp_mock.assert_called_once_with(elp_init_mock, False)
+
+    @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
+    @patch("azure.monitor.opentelemetry._configure.isinstance")
+    @patch("azure.monitor.opentelemetry._configure.getLogger")
+    def test_setup_logging_duplicate_logger(self, get_logger_mock, instance_mock, pclp_mock):
+        # Create all the necessary mocks
+        lp_mock = Mock()
+        set_logger_provider_mock = Mock()
+        log_exporter_mock = Mock()
+        blrp_mock = Mock()
+        elp_mock = Mock()
+        set_elp_mock = Mock()
+
+        # Create mock instances
+        lp_init_mock = Mock()
+        lp_mock.return_value = lp_init_mock
+        log_exp_init_mock = Mock()
+        log_exporter_mock.return_value = log_exp_init_mock
+        blrp_init_mock = Mock()
+        blrp_mock.return_value = blrp_init_mock
+        pclp_init_mock = Mock()
+        pclp_mock.return_value = pclp_init_mock
+
+        # Create a mock handler that looks like LoggingHandler
+        logging_handler_init_mock = Mock()
+        
+        # Set up the logger to already have a LoggingHandler
+        logger_mock = Mock()
+        logger_mock.handlers = [logging_handler_init_mock]
+        get_logger_mock.return_value = logger_mock
+        instance_mock.return_value = True
+
+        elp_init_mock = Mock()
+        elp_mock.return_value = elp_init_mock
+        
+        configurations = {
+            "connection_string": "test_cs",
+            "enable_performance_counters": True,
+            "logger_name": "test",
+            "resource": TEST_RESOURCE,
+            "logging_formatter": None,
+        }
+        
+        # Patch all the necessary modules and imports
+        with patch.dict('sys.modules', {
+            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
+            'opentelemetry.sdk._logs': Mock(LoggerProvider=lp_mock),
+            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
+            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
+            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
+            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
+        }):
+            _setup_logging(configurations)
+        
+        # Verify the correct behavior
+        lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
+        set_logger_provider_mock.assert_called_once_with(lp_init_mock)
+        log_exporter_mock.assert_called_once_with(**configurations)
+        blrp_mock.assert_called_once_with(log_exp_init_mock)
+        self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
+        lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
+        get_logger_mock.assert_called_once_with("test")
+        # The logger already has a LoggingHandler, so addHandler should not be called
+        logger_mock.addHandler.assert_not_called()
+        elp_mock.assert_called_once_with(lp_init_mock)
+        set_elp_mock.assert_called_once_with(elp_init_mock, False)
+
+
+    @patch("azure.monitor.opentelemetry._configure._PerformanceCountersLogRecordProcessor")
+    @patch("azure.monitor.opentelemetry._configure.getLogger")
+    def test_setup_logging_disable_performance_counters(self, get_logger_mock, pclp_mock):
+        lp_mock = Mock()
+        set_logger_provider_mock = Mock()
+        log_exporter_mock = Mock()
+        blrp_mock = Mock()
+        logging_handler_mock = Mock()
+        elp_mock = Mock()
+        set_elp_mock = Mock()
+
+        lp_init_mock = Mock()
+        lp_mock.return_value = lp_init_mock
+        log_exp_init_mock = Mock()
+        log_exporter_mock.return_value = log_exp_init_mock
+        blrp_init_mock = Mock()
+        blrp_mock.return_value = blrp_init_mock
+
+        logging_handler_init_mock = Mock()
+        logging_handler_mock.return_value = logging_handler_init_mock
+        logger_mock = Mock()
+        logger_mock.handlers = []
+        get_logger_mock.return_value = logger_mock
+        formatter_init_mock = Mock()
+        elp_init_mock = Mock()
+        elp_mock.return_value = elp_init_mock
+        pclp_init_mock = Mock()
+        pclp_mock.return_value = pclp_init_mock
+        
+
+        configurations = {
+            "connection_string": "test_cs",
+            "enable_performance_counters": False,
             "logger_name": "test",
             "resource": TEST_RESOURCE,
             "logging_formatter": formatter_init_mock
@@ -511,67 +649,6 @@ class TestConfigure(unittest.TestCase):
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
-        elp_mock.assert_called_once_with(lp_init_mock)
-        set_elp_mock.assert_called_once_with(elp_init_mock, False)
-
-    @patch("azure.monitor.opentelemetry._configure.isinstance")
-    @patch("azure.monitor.opentelemetry._configure.getLogger")
-    def test_setup_logging_duplicate_logger(self, get_logger_mock, instance_mock):
-        # Create all the necessary mocks
-        lp_mock = Mock()
-        set_logger_provider_mock = Mock()
-        log_exporter_mock = Mock()
-        blrp_mock = Mock()
-        elp_mock = Mock()
-        set_elp_mock = Mock()
-
-        # Create mock instances
-        lp_init_mock = Mock()
-        lp_mock.return_value = lp_init_mock
-        log_exp_init_mock = Mock()
-        log_exporter_mock.return_value = log_exp_init_mock
-        blrp_init_mock = Mock()
-        blrp_mock.return_value = blrp_init_mock
-
-        # Create a mock handler that looks like LoggingHandler
-        logging_handler_init_mock = Mock()
-        
-        # Set up the logger to already have a LoggingHandler
-        logger_mock = Mock()
-        logger_mock.handlers = [logging_handler_init_mock]
-        get_logger_mock.return_value = logger_mock
-        instance_mock.return_value = True
-
-        elp_init_mock = Mock()
-        elp_mock.return_value = elp_init_mock
-        
-        configurations = {
-            "connection_string": "test_cs",
-            "logger_name": "test",
-            "resource": TEST_RESOURCE,
-            "logging_formatter": None,
-        }
-        
-        # Patch all the necessary modules and imports
-        with patch.dict('sys.modules', {
-            'opentelemetry._logs': Mock(set_logger_provider=set_logger_provider_mock),
-            'opentelemetry.sdk._logs': Mock(LoggerProvider=lp_mock),
-            'opentelemetry.sdk._logs.export': Mock(BatchLogRecordProcessor=blrp_mock),
-            'azure.monitor.opentelemetry.exporter': Mock(AzureMonitorLogExporter=log_exporter_mock),
-            'opentelemetry._events': Mock(_set_event_logger_provider=set_elp_mock),
-            'opentelemetry.sdk._events': Mock(EventLoggerProvider=elp_mock)
-        }):
-            _setup_logging(configurations)
-        
-        # Verify the correct behavior
-        lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
-        set_logger_provider_mock.assert_called_once_with(lp_init_mock)
-        log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock)
-        lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
-        get_logger_mock.assert_called_once_with("test")
-        # The logger already has a LoggingHandler, so addHandler should not be called
-        logger_mock.addHandler.assert_not_called()
         elp_mock.assert_called_once_with(lp_init_mock)
         set_elp_mock.assert_called_once_with(elp_init_mock, False)
 
