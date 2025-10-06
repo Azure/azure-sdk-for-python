@@ -44,7 +44,9 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ArtifactArchitecture,
+    ArtifactManifestOrder,
     ArtifactOperatingSystem,
+    ArtifactTagOrder,
     PostContentSchemaGrantType,
 )
 from ._patch import __all__ as _patch_all
@@ -78,7 +80,9 @@ __all__ = [
     'TagList',
     'TagWriteableProperties',
     'ArtifactArchitecture',
+    'ArtifactManifestOrder',
     'ArtifactOperatingSystem',
+    'ArtifactTagOrder',
     'PostContentSchemaGrantType',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__]) # pyright: ignore

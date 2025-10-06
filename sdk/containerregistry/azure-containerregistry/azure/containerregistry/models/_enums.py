@@ -41,6 +41,19 @@ class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WASM = "wasm"
     """Wasm"""
 
+class ArtifactManifestOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sort options for ordering manifests in a collection.
+    """
+
+    NONE = "none"
+    """Do not provide an orderby value in the request."""
+    LAST_UPDATED_ON_DESCENDING = "timedesc"
+    """Order manifests by LastUpdatedOn field, from most recently updated to least
+    recently updated."""
+    LAST_UPDATED_ON_ASCENDING = "timeasc"
+    """Order manifest by LastUpdatedOn field, from least recently updated to most
+    recently updated."""
+
 class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The artifact platform's operating system.
     """
@@ -73,6 +86,19 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Solaris operating system"""
     WINDOWS = "windows"
     """Windows operating system"""
+
+class ArtifactTagOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sort options for ordering tags in a collection.
+    """
+
+    NONE = "none"
+    """Do not provide an orderby value in the request."""
+    LAST_UPDATED_ON_DESCENDING = "timedesc"
+    """Order tags by LastUpdatedOn field, from most recently updated to least recently
+    updated."""
+    LAST_UPDATED_ON_ASCENDING = "timeasc"
+    """Order tags by LastUpdatedOn field, from least recently updated to most recently
+    updated."""
 
 class PostContentSchemaGrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Can take a value of access_token_refresh_token, or access_token, or

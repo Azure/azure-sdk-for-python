@@ -8,8 +8,39 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from .models import(
+    ArtifactTagProperties,
+    RepositoryWriteableProperties as RepositoryProperties,
+    ArtifactManifestProperties,
+    ArtifactManifestOrder,
+    ArtifactTagOrder,
+    ArtifactArchitecture,
+    ArtifactOperatingSystem,
+)
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+class DigestValidationError(ValueError):
+    """Thrown when a manifest digest validation fails."""
+
+    message: str
+    """Message for caller describing the reason for the failure."""
+
+    def __init__(self, message: str) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+
+
+
+__all__: list[str] = [
+    "ArtifactTagProperties",
+    "RepositoryProperties",
+    "ArtifactManifestProperties",
+    "ArtifactManifestOrder",
+    "ArtifactTagOrder",
+    "ArtifactArchitecture",
+    "ArtifactOperatingSystem",
+    "DigestValidationError",
+]  # Add all objects you want publicly available to users at this package level
 
 def patch_sdk():
     """Do not remove from this file.

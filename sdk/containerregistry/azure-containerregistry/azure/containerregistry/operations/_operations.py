@@ -292,7 +292,7 @@ def build_container_registry_get_tags_request(  # pylint: disable=name-too-long
     *,
     last: Optional[str] = None,
     n: Optional[int] = None,
-    orderby: Optional[str] = None,
+    orderby: Optional[Union[str, _models.ArtifactTagOrder]] = None,
     digest: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -439,7 +439,7 @@ def build_container_registry_get_manifests_request(  # pylint: disable=name-too-
     *,
     last: Optional[str] = None,
     n: Optional[int] = None,
-    orderby: Optional[str] = None,
+    orderby: Optional[Union[str, _models.ArtifactManifestOrder]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1730,7 +1730,7 @@ class ContainerRegistryOperations:
         *,
         last: Optional[str] = None,
         n: Optional[int] = None,
-        orderby: Optional[str] = None,
+        orderby: Optional[Union[str, _models.ArtifactTagOrder]] = None,
         digest: Optional[str] = None,
         **kwargs: Any
     ) -> _models.TagList:
@@ -1743,8 +1743,9 @@ class ContainerRegistryOperations:
         :paramtype last: str
         :keyword n: query parameter for max number of items. Default value is None.
         :paramtype n: int
-        :keyword orderby: orderby query parameter. Default value is None.
-        :paramtype orderby: str
+        :keyword orderby: orderby query parameter. Known values are: "none", "timedesc", and "timeasc".
+         Default value is None.
+        :paramtype orderby: str or ~azure.containerregistry.models.ArtifactTagOrder
         :keyword digest: filter by digest. Default value is None.
         :paramtype digest: str
         :return: TagList. The TagList is compatible with MutableMapping
@@ -2125,7 +2126,7 @@ class ContainerRegistryOperations:
         *,
         last: Optional[str] = None,
         n: Optional[int] = None,
-        orderby: Optional[str] = None,
+        orderby: Optional[Union[str, _models.ArtifactManifestOrder]] = None,
         **kwargs: Any
     ) -> _models.AcrManifests:
         """List manifests of a repository.
@@ -2137,8 +2138,9 @@ class ContainerRegistryOperations:
         :paramtype last: str
         :keyword n: query parameter for max number of items. Default value is None.
         :paramtype n: int
-        :keyword orderby: orderby query parameter. Default value is None.
-        :paramtype orderby: str
+        :keyword orderby: orderby query parameter. Known values are: "none", "timedesc", and "timeasc".
+         Default value is None.
+        :paramtype orderby: str or ~azure.containerregistry.models.ArtifactManifestOrder
         :return: AcrManifests. The AcrManifests is compatible with MutableMapping
         :rtype: ~azure.containerregistry.models.AcrManifests
         :raises ~azure.core.exceptions.HttpResponseError:
