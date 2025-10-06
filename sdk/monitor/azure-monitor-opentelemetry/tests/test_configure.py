@@ -250,6 +250,9 @@ class TestConfigure(unittest.TestCase):
         instrumentation_mock.assert_called_once_with(configurations)
 
     @patch(
+        "azure.monitor.opentelemetry._configure._PerformanceCountersSpanProcessor",
+    )
+    @patch(
         "azure.monitor.opentelemetry._configure.BatchSpanProcessor",
     )
     @patch(
@@ -272,6 +275,7 @@ class TestConfigure(unittest.TestCase):
         set_tracer_provider_mock,
         trace_exporter_mock,
         bsp_mock,
+        pcsp_mock,
     ):
         sampler_init_mock = Mock()
         sampler_mock.return_value = sampler_init_mock
@@ -281,6 +285,8 @@ class TestConfigure(unittest.TestCase):
         trace_exporter_mock.return_value = trace_exp_init_mock
         bsp_init_mock = Mock()
         bsp_mock.return_value = bsp_init_mock
+        pcsp_init_mock = Mock()
+        pcsp_mock.return_value = pcsp_init_mock
         custom_sp = Mock()
 
         settings_mock = Mock()
@@ -288,6 +294,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "enable_performance_counters": True,
             "instrumentation_options": {"azure_sdk": {"enabled": True}},
             "sampling_ratio": 0.5,
             "span_processors": [custom_sp],
@@ -305,10 +312,14 @@ class TestConfigure(unittest.TestCase):
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
                 bsp_mock.assert_called_once_with(trace_exp_init_mock)
-                self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
-                tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
+                self.assertEqual(tp_init_mock.add_span_processor.call_count, 3)
+                tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(pcsp_init_mock), call(bsp_init_mock)])
                 self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+                pcsp_mock.assert_called_once_with()
 
+    @patch(
+        "azure.monitor.opentelemetry._configure._PerformanceCountersSpanProcessor",
+    )
     @patch(
         "azure.monitor.opentelemetry._configure.BatchSpanProcessor",
     )
@@ -332,6 +343,7 @@ class TestConfigure(unittest.TestCase):
         set_tracer_provider_mock,
         trace_exporter_mock,
         bsp_mock,
+        pcsp_mock,
     ):
         sampler_init_mock = Mock()
         sampler_mock.return_value = sampler_init_mock
@@ -341,6 +353,8 @@ class TestConfigure(unittest.TestCase):
         trace_exporter_mock.return_value = trace_exp_init_mock
         bsp_init_mock = Mock()
         bsp_mock.return_value = bsp_init_mock
+        pcsp_init_mock = Mock()
+        pcsp_mock.return_value = pcsp_init_mock
         custom_sp = Mock()
 
         settings_mock = Mock()
@@ -348,6 +362,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "enable_performance_counters": True,
             "instrumentation_options": {"azure_sdk": {"enabled": True}},
             "traces_per_second": 2.0,
             "span_processors": [custom_sp],
@@ -365,9 +380,78 @@ class TestConfigure(unittest.TestCase):
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
                 trace_exporter_mock.assert_called_once_with(**configurations)
                 bsp_mock.assert_called_once_with(trace_exp_init_mock)
+                self.assertEqual(tp_init_mock.add_span_processor.call_count, 3)
+                tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(pcsp_init_mock), call(bsp_init_mock)])
+                self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+                pcsp_mock.assert_called_once_with()
+
+    @patch(
+        "azure.monitor.opentelemetry._configure._PerformanceCountersSpanProcessor",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.BatchSpanProcessor",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.AzureMonitorTraceExporter",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.set_tracer_provider",
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.TracerProvider",
+        autospec=True,
+    )
+    @patch(
+        "azure.monitor.opentelemetry._configure.ApplicationInsightsSampler",
+    )
+    def test_setup_tracing_perf_counters_disabled(
+        self,
+        sampler_mock,
+        tp_mock,
+        set_tracer_provider_mock,
+        trace_exporter_mock,
+        bsp_mock,
+        pcsp_mock,
+    ):
+        sampler_init_mock = Mock()
+        sampler_mock.return_value = sampler_init_mock
+        tp_init_mock = Mock()
+        tp_mock.return_value = tp_init_mock
+        trace_exp_init_mock = Mock()
+        trace_exporter_mock.return_value = trace_exp_init_mock
+        bsp_init_mock = Mock()
+        bsp_mock.return_value = bsp_init_mock
+        pcsp_init_mock = Mock()
+        pcsp_mock.return_value = pcsp_init_mock
+        custom_sp = Mock()
+
+        settings_mock = Mock()
+        opentelemetry_span_mock = Mock()
+
+        configurations = {
+            "connection_string": "test_cs",
+            "enable_performance_counters": False,
+            "instrumentation_options": {"azure_sdk": {"enabled": True}},
+            "sampling_ratio": 0.5,
+            "span_processors": [custom_sp],
+            "resource": TEST_RESOURCE,
+        }
+        with patch("azure.monitor.opentelemetry._configure._is_instrumentation_enabled") as instr_mock:
+            instr_mock.return_value = True
+            with patch.dict('sys.modules', {
+                'azure.core.settings': Mock(settings=settings_mock),
+                'azure.core.tracing.ext.opentelemetry_span': Mock(OpenTelemetrySpan=opentelemetry_span_mock)
+            }):
+                _setup_tracing(configurations)
+                sampler_mock.assert_called_once_with(sampling_ratio=0.5)
+                tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
+                set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
+                trace_exporter_mock.assert_called_once_with(**configurations)
+                bsp_mock.assert_called_once_with(trace_exp_init_mock)
                 self.assertEqual(tp_init_mock.add_span_processor.call_count, 2)
                 tp_init_mock.add_span_processor.assert_has_calls([call(custom_sp), call(bsp_init_mock)])
                 self.assertEqual(settings_mock.tracing_implementation, opentelemetry_span_mock)
+                pcsp_mock.assert_not_called()
 
 
     @patch("azure.monitor.opentelemetry._configure.getLogger")
@@ -524,7 +608,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
-            "enable_performance_counters": False,
+            "enable_performance_counters": True,
             "resource": TEST_RESOURCE,
             "views": [],
         }
@@ -537,7 +621,7 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)
         reader_mock.assert_called_once_with(metric_exp_init_mock)
-        mock_enable_performance_counters.assert_not_called()
+        mock_enable_performance_counters.assert_called_once_with(meter_provider=mp_init_mock)
 
     @patch(
         "azure.monitor.opentelemetry._configure.enable_performance_counters",
@@ -604,7 +688,7 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure.MeterProvider",
         autospec=True,
     )
-    def test_setup_metrics_performance_counters(
+    def test_setup_metrics_perf_counters_disabled(
         self,
         mp_mock,
         set_meter_provider_mock,
@@ -621,7 +705,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
-            "enable_performance_counters": True,
+            "enable_performance_counters": False,
             "resource": TEST_RESOURCE,
             "views": [],
         }
@@ -634,7 +718,7 @@ class TestConfigure(unittest.TestCase):
         set_meter_provider_mock.assert_called_once_with(mp_init_mock)
         metric_exporter_mock.assert_called_once_with(**configurations)
         reader_mock.assert_called_once_with(metric_exp_init_mock)
-        mock_enable_performance_counters.assert_called_once_with(meter_provider=mp_init_mock)
+        mock_enable_performance_counters.assert_not_called()
 
     @patch(
         "azure.monitor.opentelemetry._configure.enable_live_metrics",
