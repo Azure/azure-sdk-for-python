@@ -1650,7 +1650,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.cosmos.ThroughputProperties
         """
         throughput_properties: List[Dict[str, Any]]
-        properties = self._get_properties()
+        properties = self._get_properties(**kwargs)
         link = properties["_self"]
         query_spec = {
             "query": "SELECT * FROM root r WHERE r.resource=@link",

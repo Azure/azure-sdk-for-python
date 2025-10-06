@@ -1352,7 +1352,7 @@ class DatabaseProxy(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec))
+        throughput_properties = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not throughput_properties:
             raise CosmosResourceNotFoundError(
                 status_code=_StatusCodes.NOT_FOUND,
