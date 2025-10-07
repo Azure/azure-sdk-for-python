@@ -59,11 +59,24 @@ class Segment:
             return None
         return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
 
+    def _parse_iso(self, dt_str: str) -> datetime:
+        # Convert 'Z' to '+00:00'
+        dt_str = dt_str.replace("Z", "+00:00")
+        # Trim fractional seconds to 6 digits if too long
+        if "." in dt_str:
+            date_part, frac = dt_str.split(".", 1)
+            if "+" in frac:
+                frac, tz = frac.split("+", 1)
+                dt_str = f"{date_part}.{frac[:6]}+{tz}"
+            else:
+                dt_str = f"{date_part}.{frac[:6]}"
+        return datetime.fromisoformat(dt_str)
+
     def _in_range(self, event_time: Optional[str] = None) -> bool:
         if event_time is None:
             return False
         try:
-            event_datetime = datetime.fromisoformat(event_time.replace("Z", "+00:00"))
+            event_datetime = self._parse_iso(event_time)
         except ValueError:
             return False
         if self.start_time is not None and event_datetime < self.start_time:
