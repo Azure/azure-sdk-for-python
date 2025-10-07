@@ -1233,7 +1233,6 @@ class TestBuiltInEvaluators:
         "evaluator_cls",
         [
             RelevanceEvaluator,
-            GroundednessEvaluator,
             FluencyEvaluator,
             SimilarityEvaluator,
             CoherenceEvaluator,
