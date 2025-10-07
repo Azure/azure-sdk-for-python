@@ -6,7 +6,7 @@
 
 import json
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from math import ceil
 from time import sleep
 
@@ -132,6 +132,19 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         events = list(page1)
 
         assert len(events) != 0
+
+    @ChangeFeedPreparer()
+    @recorded_by_proxy
+    def test_list_changes_with_filter(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        start_time = datetime(2025, 10, 6, 19, 19, 30, tzinfo=timezone.utc)
+        end_time = datetime(2025, 10, 6, 19, 19, 35, 554711, tzinfo=timezone.utc)
+        change_feed = list(cf_client.list_changes(start_time=start_time, end_time=end_time))
+
+        assert len(change_feed) == 5
 
     @ChangeFeedPreparer()
     def test_change_feed_does_not_fail_on_empty_event_stream(self, **kwargs):
