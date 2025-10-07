@@ -48,7 +48,7 @@ class ReadItemsHelperSync:
             partition_key_definition: Dict[str, Any],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: int = 10,
+            max_concurrency: Optional[int] = None,
             **kwargs: Any
     ):
         self.client = client
@@ -81,6 +81,7 @@ class ReadItemsHelperSync:
         if self.executor is not None:
             return self._execute_with_executor(self.executor, query_chunks)
 
+        # Create a new executor; if max_concurrency is None, use ThreadPoolExecutor's default
         with ThreadPoolExecutor(max_workers=self.max_concurrency) as executor:
             return self._execute_with_executor(executor, query_chunks)
 

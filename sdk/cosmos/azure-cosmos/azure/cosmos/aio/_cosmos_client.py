@@ -263,6 +263,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -302,6 +303,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
         **kwargs: Any
@@ -392,11 +394,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
+        response_hook = kwargs.pop("response_hook", None)
 
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers)
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
         return  DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
@@ -408,6 +413,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -443,6 +449,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
         **kwargs: Any
@@ -527,10 +534,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
+        response_hook = kwargs.pop("response_hook", None)
 
         try:
             database_proxy = self.get_database_client(id)
             result = await database_proxy.read(**kwargs)
+            if response_hook:
+                response_hook(self.client_connection.last_response_headers)
             if not return_properties:
                 return database_proxy
             return database_proxy, result
@@ -539,6 +549,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 id,
                 offer_throughput=offer_throughput,
                 return_properties=return_properties,
+                response_hook=response_hook,
                 **kwargs
             )
 

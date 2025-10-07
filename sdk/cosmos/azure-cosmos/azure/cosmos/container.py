@@ -293,7 +293,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             items: Sequence[Tuple[str, _PartitionKeyType]],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
-            max_concurrency: int = 10,
+            max_concurrency: Optional[int] = None,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
             initial_headers: Optional[Dict[str, str]] = None,
@@ -312,7 +312,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
                       If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the
-                      items request. This value is ignored if an executor is provided. Defaults to 10.
+                      items request. This value is ignored if an executor is provided. If not specified,
+                      defaults to Python's ThreadPoolExecutor default of min(32, (os.cpu_count() or 1) + 4).
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.

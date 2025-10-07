@@ -265,12 +265,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
 
     @overload
+    @overload
     def create_database(  # pylint:disable=docstring-missing-param
         self,
         id: str,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -307,9 +307,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database(  # pylint:disable=docstring-missing-param
         self,
         id: str,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -394,10 +393,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning)
 
         id = args[0] if args else kwargs.pop("id")
-        populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
-        offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
-        if len(args) > 3:
-            raise TypeError(f"Unexpected positional arguments: {args[3:]}")
+        if len(args) > 1:
+            raise TypeError(f"Unexpected positional arguments: {args[1:]}")
+        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
+        offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
 
@@ -421,10 +420,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
         self,
         id: str,
-        populate_query_metrics: Optional[bool] = None,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         *,
+        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
         initial_headers: Optional[Dict[str, str]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -455,10 +454,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param
             self,
             id: str,
-            populate_query_metrics: Optional[bool] = None,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             *,
+            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
             initial_headers: Optional[Dict[str, str]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
@@ -534,26 +533,29 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning)
 
         id = args[0] if args else kwargs.pop("id")
-        populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
-        offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
-        if len(args) > 3:
-            raise TypeError(f"Unexpected positional arguments: {args[3:]}")
+        if len(args) > 1:
+            raise TypeError(f"Unexpected positional arguments: {args[1:]}")
+        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
+        offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
+        response_hook = kwargs.pop("response_hook", None)
         try:
             database_proxy = self.get_database_client(id)
             result = database_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
+            if response_hook:
+                response_hook(self.client_connection.last_response_headers)
             if not return_properties:
                 return database_proxy
             return database_proxy, result
         except CosmosResourceNotFoundError:
             return self.create_database(
                 id,
-                populate_query_metrics=populate_query_metrics,
                 offer_throughput=offer_throughput,
                 return_properties=return_properties,
+                response_hook=response_hook,
                 **kwargs
             )
 
