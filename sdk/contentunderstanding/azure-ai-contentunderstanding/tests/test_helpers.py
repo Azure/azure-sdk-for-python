@@ -35,7 +35,7 @@ class PollerType(Enum):
 
 
 def generate_analyzer_id_sync(client, test_name: str) -> str:
-    """Generate a unique analyzer ID with current date, time, and GUID."""
+    """Generate a unique analyzer ID for sync tests. Cleans up existing analyzer if in live mode."""
     analyzer_id = f"python-sdk-analyzer-sync-{test_name}"
     if is_live():
         client.content_analyzers.delete(analyzer_id=analyzer_id)
@@ -43,7 +43,7 @@ def generate_analyzer_id_sync(client, test_name: str) -> str:
 
 
 async def generate_analyzer_id_async(client, test_name: str) -> str:
-    """Generate a unique analyzer ID with current date, time, and GUID."""
+    """Generate a unique analyzer ID for async tests. Cleans up existing analyzer if in live mode."""
     analyzer_id = f"python-sdk-analyzer-async-{test_name}"
     if is_live():
         await client.content_analyzers.delete(analyzer_id=analyzer_id)
@@ -51,7 +51,7 @@ async def generate_analyzer_id_async(client, test_name: str) -> str:
 
 
 def generate_classifier_id_sync(client, test_name: str) -> str:
-    """Generate a unique classifier ID with current date, time, and GUID (sync version)."""
+    """Generate a unique classifier ID for sync tests. Cleans up existing classifier if in live mode."""
     classifier_id = f"python-sdk-classifier-sync-{test_name}"
     if is_live():
         # Ensure to clean up any left-over resources from any failed tests
@@ -60,7 +60,7 @@ def generate_classifier_id_sync(client, test_name: str) -> str:
 
 
 async def generate_classifier_id_async(client, test_name: str) -> str:
-    """Generate a unique classifier ID with current date, time, and GUID (async version)."""
+    """Generate a unique classifier ID for async tests. Cleans up existing classifier if in live mode."""
     classifier_id = f"python-sdk-classifier-async-{test_name}"
     if is_live():
         # Ensure to clean up any left-over resources from any failed tests
