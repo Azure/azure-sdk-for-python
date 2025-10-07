@@ -5,9 +5,9 @@ This package provides a **real-time, speech-to-speech** client for Azure AI Voic
 It opens a WebSocket session to stream microphone audio to the service and receive
 typed server events (including audio) for responsive, interruptible conversations.
 
-> **Status:** Preview. APIs are subject to change.
+> **Status:** General Availability (GA). This is a stable release suitable for production use.
 
-> **Important:** As of version 1.0.0b5, this SDK is **async-only**. The synchronous API has been removed to focus exclusively on async patterns. All examples and samples use `async`/`await` syntax.
+> **Important:** As of version 1.0.0, this SDK is **async-only**. The synchronous API has been removed to focus exclusively on async patterns. All examples and samples use `async`/`await` syntax.
 
 ---
 
@@ -23,6 +23,8 @@ Getting started
 
 ### Install
 
+Install the stable GA version:
+
 ```bash
 # Base install (core client only)
 python -m pip install azure-ai-voicelive
@@ -34,7 +36,7 @@ python -m pip install "azure-ai-voicelive[aiohttp]"
 python -m pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
 ```
 
-The SDK now exclusively provides async-only WebSocket connections using `aiohttp`.
+The SDK provides async-only WebSocket connections using `aiohttp` for optimal performance and reliability.
 
 ### Authenticate
 
