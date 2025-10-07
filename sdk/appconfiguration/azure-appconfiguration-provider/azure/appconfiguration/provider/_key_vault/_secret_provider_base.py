@@ -5,14 +5,8 @@
 # -------------------------------------------------------------------------
 from typing import (
     Mapping,
-    Union,
     Any,
-    Iterator,
-    KeysView,
-    ItemsView,
-    ValuesView,
     TypeVar,
-    overload,
     Optional,
     Dict,
     Tuple,
@@ -28,8 +22,9 @@ _T = TypeVar("_T")
 class _SecretProviderBase:
 
     def __init__(self, **kwargs: Any) -> None:
-        self._secret_cache: Dict[str, Tuple[str, KeyVaultSecretIdentifier]] = {}
-        self._secret_version_cache: Dict[str, Tuple[str, KeyVaultSecretIdentifier]] = {}
+        # [source_id, (KeyVaultSecretIdentifier, key, value)]
+        self._secret_cache: Dict[str, Tuple[KeyVaultSecretIdentifier, str, str]] = {}
+        self._secret_version_cache: Dict[str, Tuple[KeyVaultSecretIdentifier, str, str]] = {}
         self.uses_key_vault = (
             "keyvault_credential" in kwargs
             or ("keyvault_client_configs" in kwargs and len(kwargs.get("keyvault_client_configs", {})) > 0)
@@ -44,9 +39,9 @@ class _SecretProviderBase:
     def _cache_value(self, key: str, keyvault_identifier: KeyVaultSecretIdentifier, secret_value: Any) -> str:
         if secret_value:
             if keyvault_identifier.version:
-                self._secret_version_cache[key] = (secret_value, keyvault_identifier)
+                self._secret_version_cache[keyvault_identifier.source_id] = (keyvault_identifier, key, secret_value)
             else:
-                self._secret_cache[key] = (secret_value, keyvault_identifier)
+                self._secret_cache[keyvault_identifier.source_id] = (keyvault_identifier, key, secret_value)
             return secret_value
 
         raise ValueError("No Secret Client found for Key Vault reference %s" % (keyvault_identifier.vault_url))

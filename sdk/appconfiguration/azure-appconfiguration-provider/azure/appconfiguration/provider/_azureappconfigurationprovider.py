@@ -377,8 +377,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         exception: Optional[Exception] = None
         is_failover_request = False
         try:
-            if self._secret_provider.secret_refresh_timer and self._secret_provider.secret_refresh_timer.needs_refresh():
-                secrets = self._secret_provider.refresh_secrets()
+            if (
+                self._secret_provider.secret_refresh_timer
+                and self._secret_provider.secret_refresh_timer.needs_refresh()
+            ):
+                self._secret_provider.refresh_secrets()
             self._replica_client_manager.refresh_clients()
             self._replica_client_manager.find_active_clients()
             replica_count = self._replica_client_manager.get_client_count() - 1

@@ -4,15 +4,16 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from azure.appconfiguration import SecretReferenceConfigurationSetting
 from azure.appconfiguration.provider._key_vault._secret_provider import SecretProvider
-from azure.keyvault.secrets import SecretClient, KeyVaultSecret
+from azure.keyvault.secrets import SecretClient
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase
 
 TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
+
 TEST_SECRET_ID_VERSION = TEST_SECRET_ID + "/12345"
 
 
@@ -84,9 +85,14 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
 
         # Create a SecretProvider with a mock credential
         secret_provider = SecretProvider(keyvault_credential=Mock())
+        key_vault_identifier, _ = secret_provider.resolve_keyvault_reference_base(config)
 
         # Add to cache
-        secret_provider._secret_cache[TEST_SECRET_ID] = "cached-secret-value"
+        secret_provider._secret_cache[key_vault_identifier.source_id] = (
+            key_vault_identifier,
+            "test-key",
+            "cached-secret-value",
+        )
 
         # This should return the cached value without calling SecretClient
         result = secret_provider.resolve_keyvault_reference(config)
@@ -101,9 +107,14 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
 
         # Create a SecretProvider with a mock credential
         secret_provider = SecretProvider(keyvault_credential=Mock())
+        key_vault_identifier, _ = secret_provider.resolve_keyvault_reference_base(config)
 
         # Add to cache
-        secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION] = "cached-secret-value"
+        secret_provider._secret_version_cache[key_vault_identifier.source_id] = (
+            key_vault_identifier,
+            "test-key",
+            "cached-secret-value",
+        )
 
         # This should return the cached value without calling SecretClient
         result = secret_provider.resolve_keyvault_reference(config)
@@ -150,7 +161,8 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                 self.assertEqual(result, "secret-value")
                 mock_client.get_secret.assert_called_once_with(mock_id_instance.name, version=mock_id_instance.version)
                 # Verify the secret was cached
-                self.assertEqual(secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION], "secret-value")
+                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                self.assertEqual(value, "secret-value")
 
     def test_resolve_keyvault_reference_with_new_client(self):
         """Test resolving a Key Vault reference by creating a new client."""
@@ -195,7 +207,8 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     # Verify the client was cached
                     self.assertEqual(secret_provider._secret_clients[vault_url], mock_client)
                     # Verify the secret was cached
-                    self.assertEqual(secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION], "new-secret-value")
+                    _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                    self.assertEqual(value, "new-secret-value")
 
     def test_resolve_keyvault_reference_with_secret_resolver(self):
         """Test resolving a Key Vault reference using a secret resolver."""
@@ -229,7 +242,8 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                 self.assertEqual(result, "resolved-secret-value")
                 mock_resolver.assert_called_once_with(TEST_SECRET_ID_VERSION)
                 # Verify the secret was cached
-                self.assertEqual(secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION], "resolved-secret-value")
+                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                self.assertEqual(value, "resolved-secret-value")
 
     def test_resolve_keyvault_reference_with_client_and_resolver_fallback(self):
         """Test falling back to a secret resolver if the client fails to get the secret."""
@@ -272,7 +286,8 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                 mock_client.get_secret.assert_called_once_with(mock_id_instance.name, version=mock_id_instance.version)
                 mock_resolver.assert_called_once_with(TEST_SECRET_ID_VERSION)
                 # Verify the secret was cached
-                self.assertEqual(secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION], "fallback-secret-value")
+                _, _, value = secret_provider._secret_version_cache[TEST_SECRET_ID_VERSION]
+                self.assertEqual(value, "fallback-secret-value")
 
     def test_resolve_keyvault_reference_no_client_no_resolver(self):
         """Test that an error is raised when no client or resolver can resolve the reference."""
@@ -373,67 +388,6 @@ class TestSecretProvider(AppConfigTestCase, unittest.TestCase):
                     )
                     # Verify the result
                     self.assertEqual(result, "secret-value")
-
-    def test_mapping_interface(self):
-        """Test that the SecretProvider implements the Mapping interface."""
-        # Create a SecretProvider
-        secret_provider = SecretProvider()
-
-        # Add some items to the cache
-        secret_provider._secret_cache = {"key1": "value1", "key2": "value2", "key3": "value3"}
-
-        # Test __getitem__
-        self.assertEqual(secret_provider["key1"], "value1")
-        self.assertEqual(secret_provider["key2"], "value2")
-        self.assertEqual(secret_provider["key3"], "value3")
-
-        # Test __len__
-        self.assertEqual(len(secret_provider), 3)
-
-        # Test __iter__
-        keys = list(secret_provider)
-        self.assertEqual(sorted(keys), ["key1", "key2", "key3"])
-
-        # Test __contains__
-        self.assertIn("key1", secret_provider)
-        self.assertIn("key2", secret_provider)
-        self.assertIn("key3", secret_provider)
-        self.assertNotIn("key4", secret_provider)
-
-        # Test keys
-        self.assertEqual(set(secret_provider.keys()), {"key1", "key2", "key3"})
-
-        # Test items
-        items = dict(secret_provider.items())
-        self.assertEqual(items, {"key1": "value1", "key2": "value2", "key3": "value3"})
-
-        # Test values
-        values = list(secret_provider.values())
-        # Sort the expected values instead since values may not be comparable
-        self.assertEqual(set(values), {"value1", "value2", "value3"})
-
-        # Test get
-        self.assertEqual(secret_provider.get("key1"), "value1")
-        self.assertEqual(secret_provider.get("key4"), None)
-        self.assertEqual(secret_provider.get("key4", "default"), "default")
-
-    def test_bust_cache(self):
-        """Test that bust_cache clears the secret cache."""
-        # Create a SecretProvider
-        secret_provider = SecretProvider()
-
-        # Add some items to the cache
-        secret_provider._secret_cache = {"key1": "value1", "key2": "value2", "key3": "value3"}
-
-        # Verify the cache has items
-        self.assertEqual(len(secret_provider._secret_cache), 3)
-
-        # Call bust_cache
-        secret_provider.bust_cache()
-
-        # Verify the cache is empty
-        self.assertEqual(len(secret_provider._secret_cache), 0)
-        self.assertEqual(secret_provider._secret_cache, {})
 
     @recorded_by_proxy
     @app_config_decorator_aad

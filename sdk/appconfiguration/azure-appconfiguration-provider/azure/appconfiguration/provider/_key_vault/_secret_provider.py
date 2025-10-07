@@ -24,29 +24,33 @@ class SecretProvider(_SecretProviderBase):
     def resolve_keyvault_reference(self, config: SecretReferenceConfigurationSetting) -> str:
         keyvault_identifier, vault_url = self.resolve_keyvault_reference_base(config)
         if keyvault_identifier.source_id in self._secret_cache:
-            value, _ = self._secret_cache[keyvault_identifier.source_id]
+            _, _, value = self._secret_cache[keyvault_identifier.source_id]
             return value
         if keyvault_identifier.source_id in self._secret_version_cache:
-            value, _ = self._secret_version_cache[keyvault_identifier.source_id]
+            _, _, value = self._secret_version_cache[keyvault_identifier.source_id]
             return value
 
-        return self.__get_secret_value(keyvault_identifier.source_id, keyvault_identifier)
+        return self.__get_secret_value(config.key, keyvault_identifier, vault_url)
 
     def refresh_secrets(self) -> None:
         original_cache = self._secret_cache.copy()
         self._secret_cache.clear()
-        for secret_id, (_, secret_identifier) in original_cache.items():
-            self._secret_cache[secret_id] = self.__get_secret_value(secret_id, secret_identifier), secret_identifier
+        for source_id, (secret_identifier, key, _) in original_cache.items():
+            self._secret_cache[source_id] = (
+                secret_identifier,
+                key,
+                self.__get_secret_value(key, secret_identifier, secret_identifier.vault_url + "/"),
+            )
 
-    def __get_secret_value(self, secret_id: str, secret_identifier: KeyVaultSecretIdentifier) -> str:
-        referenced_client = self._secret_clients.get(secret_identifier.vault_url, None)
+    def __get_secret_value(self, key: str, secret_identifier: KeyVaultSecretIdentifier, vault_url: str) -> str:
+        referenced_client = self._secret_clients.get(vault_url, None)
 
-        vault_config = self._keyvault_client_configs.get(secret_identifier.vault_url, {})
+        vault_config = self._keyvault_client_configs.get(vault_url, {})
         credential = vault_config.pop("credential", self._keyvault_credential)
 
         if referenced_client is None and credential is not None:
-            referenced_client = SecretClient(vault_url=secret_identifier.vault_url, credential=credential, **vault_config)
-            self._secret_clients[secret_identifier.vault_url] = referenced_client
+            referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
+            self._secret_clients[vault_url] = referenced_client
 
         secret_value = None
 
@@ -59,9 +63,9 @@ class SecretProvider(_SecretProviderBase):
                 raise ValueError("Failed to retrieve secret from Key Vault") from e
 
         if self._secret_resolver and secret_value is None:
-            secret_value = self._secret_resolver(secret_id)
+            secret_value = self._secret_resolver(secret_identifier.source_id)
 
-        return self._cache_value(secret_id, secret_identifier, secret_value)
+        return self._cache_value(key, secret_identifier, secret_value)
 
     def close(self) -> None:
         """
