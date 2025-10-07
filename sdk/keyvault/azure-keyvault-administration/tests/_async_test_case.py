@@ -5,8 +5,11 @@
 import os
 
 import pytest
+
+from azure.identity.aio import ManagedIdentityCredential
 from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
-from devtools_testutils import AzureRecordedTestCase
+from azure.keyvault.administration.aio import KeyVaultAccessControlClient, KeyVaultBackupClient, KeyVaultSettingsClient
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 class BaseClientPreparer(AzureRecordedTestCase):
@@ -63,9 +66,8 @@ class KeyVaultBackupClientPreparer(BaseClientPreparer):
         return _preparer
 
     def create_backup_client(self, **kwargs):
-        from azure.keyvault.administration.aio import KeyVaultBackupClient
-
-        credential = self.get_credential(KeyVaultBackupClient, is_async=True)
+        # Use MI if live, and otherwise get a playback-compatible credential
+        credential = ManagedIdentityCredential() if is_live() else self.get_credential(KeyVaultBackupClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultBackupClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
@@ -85,8 +87,6 @@ class KeyVaultBackupClientSasPreparer(BaseClientPreparer):
         return _preparer
 
     def create_backup_client(self, **kwargs):
-        from azure.keyvault.administration.aio import KeyVaultBackupClient
-
         credential = self.get_credential(KeyVaultBackupClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultBackupClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
@@ -104,9 +104,6 @@ class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
         return _preparer
 
     def create_access_control_client(self, **kwargs):
-        from azure.keyvault.administration.aio import \
-            KeyVaultAccessControlClient
-
         credential = self.get_credential(KeyVaultAccessControlClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultAccessControlClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
@@ -124,9 +121,6 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
         return _preparer
 
     def create_access_control_client(self, **kwargs):
-        from azure.keyvault.administration.aio import \
-            KeyVaultSettingsClient
-
         credential = self.get_credential(KeyVaultSettingsClient, is_async=True)
         return self.create_client_from_credential(
             KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
