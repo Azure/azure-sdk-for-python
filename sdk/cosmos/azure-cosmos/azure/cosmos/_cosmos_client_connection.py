@@ -77,7 +77,7 @@ from .partition_key import (
     _Undefined,
     _Empty,
     _PartitionKeyKind,
-    _PartitionKeyType,
+    PartitionKeyType,
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
@@ -1054,7 +1054,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
     def read_items(
             self,
             collection_link: str,
-            items: Sequence[Tuple[str, _PartitionKeyType]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             options: Optional[Mapping[str, Any]] = None,
             *,
             executor: Optional[ThreadPoolExecutor] = None,
@@ -1119,7 +1119,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         database_or_container_link: str,
         query: Optional[Union[str, Dict[str, Any]]],
         options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[_PartitionKeyType] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], Dict[str, Any]], None]] = None,
         **kwargs: Any
     ) -> ItemPaged[Dict[str, Any]]:
@@ -3330,7 +3330,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return __GetBodiesFromQueryResult(result), last_response_headers
 
-    def _GetQueryPlanThroughGateway(self, query: str, resource_link: str, excluded_locations: Optional[str] = None,
+    def _GetQueryPlanThroughGateway(self, query: str, resource_link: str,
+                                    excluded_locations: Optional[Sequence[str]] = None,
                                     **kwargs: Any) -> List[Dict[str, Any]]:
         supported_query_features = (documents._QueryFeature.Aggregate + "," +
                                     documents._QueryFeature.CompositeAggregate + "," +
