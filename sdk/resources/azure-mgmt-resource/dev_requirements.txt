@@ -1,8 +1,4 @@
 -e ../../../eng/tools/azure-sdk-tools
 aiohttp
-azure-mgmt-managementgroups==1.0.0
-azure-mgmt-msi==1.0.0
 azure-identity
-azure-mgmt-resource-deploymentscripts
-azure-mgmt-resource-deploymentstacks
-azure-mgmt-resource-templatespecs
+azure-mgmt-resource==25.0.0b1
