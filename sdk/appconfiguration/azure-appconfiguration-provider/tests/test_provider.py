@@ -352,13 +352,9 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             configuration_mapper=test_mapper,
             trim_prefixes=[".appconfig.featureflag/"],
         )
-
-        assert "Alpha" in client
-        assert client["Alpha"]["enabled"] is False
-        assert ".appconfig.featureflag/Alpha" not in client
-        assert "feature_management" in client
-        assert "feature_flags" in client["feature_management"]
-        assert "Alpha" == client["feature_management"]["feature_flags"][0]["id"]
+        # Feature Flags aren't modified by configuration mappers
+        assert "Alpha" not in client
+        assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
 
 
 def secret_resolver(secret_id):
