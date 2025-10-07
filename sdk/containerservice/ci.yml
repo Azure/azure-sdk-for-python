@@ -35,3 +35,5 @@ extends:
       safeName: azuremgmtcontainerservicefleet
     - name: azure-mgmt-containerservicesafeguards
       safeName: azuremgmtcontainerservicesafeguards
+    - name: azure-mgmt-containerservicenodecustomization
+      safeName: azuremgmtcontainerservicenodecustomization

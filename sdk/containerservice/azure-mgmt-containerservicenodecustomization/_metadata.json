@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-09-02-preview",
+  "commit": "23abd59e01138cb93402a552c733757717cd80cf",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/containerservice/NodeCustomization.Management",
+  "emitterVersion": "0.52.0"
+}
