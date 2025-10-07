@@ -43,6 +43,9 @@ class _Constants:
     # ServiceDocument Resource
     EnableMultipleWritableLocations: Literal["enableMultipleWriteLocations"] = "enableMultipleWriteLocations"
 
+    AAD_DEFAULT_SCOPE: str = "https://cosmos.azure.com/.default"
+    AAD_SCOPE_OVERRIDE: str = "AZURE_COSMOS_AAD_SCOPE_OVERRIDE"
+
     # Error code translations
     ERROR_TRANSLATIONS: Dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",
