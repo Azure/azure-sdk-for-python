@@ -86,7 +86,7 @@ class ErrorTarget(Enum):
     FLUENCY_EVALUATOR = "FluencyEvaluator"
     RETRIEVAL_EVALUATOR = "RetrievalEvaluator"
     TASK_ADHERENCE_EVALUATOR = "TaskAdherenceEvaluator"
-    TASK_COMPLETION_EVALUATOR = "TaskCompletionEvaluator"
+    TASK_COMPLETION_EVALUATOR = "_TaskCompletionEvaluator"
     INDIRECT_ATTACK_EVALUATOR = "IndirectAttackEvaluator"
     INDIRECT_ATTACK_SIMULATOR = "IndirectAttackSimulator"
     ADVERSARIAL_SIMULATOR = "AdversarialSimulator"
