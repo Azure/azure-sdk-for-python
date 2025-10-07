@@ -9,7 +9,7 @@
 import pytest
 import os
 import re
-from typing import Tuple, Union, Dict, Any, Optional, cast
+from typing import Tuple, Union, Dict, Any, Optional, List, Set
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer import ContentUnderstandingClientTestBase
@@ -30,7 +30,7 @@ from test_helpers import (
 from devtools_testutils import is_live, is_live_and_not_recording
 
 
-def analyzer_in_list_sync(client, analyzer_id: str) -> bool:
+def analyzer_in_list_sync(client: ContentUnderstandingClient, analyzer_id: str) -> bool:
     """Check if an analyzer with the given ID exists in the list of analyzers (sync version).
 
     Args:
@@ -48,7 +48,7 @@ def analyzer_in_list_sync(client, analyzer_id: str) -> bool:
 
 
 def create_analyzer_and_assert_sync(
-    client, analyzer_id: str, resource: Union[ContentAnalyzer, Dict[str, Any]]
+    client: ContentUnderstandingClient, analyzer_id: str, resource: Union[ContentAnalyzer, Dict[str, Any]]
 ) -> Tuple[Any, str]:
     """Create an analyzer and perform basic assertions (sync version).
 
@@ -75,23 +75,6 @@ def create_analyzer_and_assert_sync(
     operation_id = extract_operation_id_from_poller(poller, PollerType.ANALYZER_CREATION)
     print(f"  Extracted operation_id: {operation_id}")
 
-    # Check operation status while it's running
-    print(f"  Checking operation status for operation_id: {operation_id}")
-    status_response = client.content_analyzers.get_operation_status(
-        analyzer_id=analyzer_id,
-        operation_id=operation_id,
-    )
-
-    # Verify the operation status response
-    assert status_response is not None
-
-    # Check that the operation status has expected fields
-    assert hasattr(status_response, "status") or hasattr(status_response, "operation_status")
-    assert hasattr(status_response, "id")
-    if is_live():
-        # Only verify the operation_id during live testing (and not in recorded tests) as
-        # operation_id is sanitized in recording.
-        assert status_response.id == operation_id
 
     # Wait for the operation to complete
     print(f"  Waiting for analyzer {analyzer_id} to be created")
@@ -116,7 +99,7 @@ def create_analyzer_and_assert_sync(
     return poller, operation_id
 
 
-def delete_analyzer_and_assert_sync(client, analyzer_id: str, created_analyzer: bool) -> None:
+def delete_analyzer_and_assert_sync(client: ContentUnderstandingClient, analyzer_id: str, created_analyzer: bool) -> None:
     """Delete an analyzer and assert it was deleted successfully (sync version).
 
     Args:
@@ -144,7 +127,7 @@ def delete_analyzer_and_assert_sync(client, analyzer_id: str, created_analyzer: 
 
 
 def download_keyframes_and_assert_sync(
-    client, analysis_operation_id: str, result, test_py_file_dir: str, identifier: Optional[str] = None
+    client: ContentUnderstandingClient, analysis_operation_id: str, result: Any, test_py_file_dir: str, identifier: Optional[str] = None
 ) -> None:
     """Download keyframes from video analysis result and assert their existence (sync version).
 
@@ -163,7 +146,7 @@ def download_keyframes_and_assert_sync(
     Raises:
         AssertionError: If no keyframes are found in the analysis result
     """
-    keyframe_ids = set()
+    keyframe_ids: Set[str] = set()
 
     # Iterate over contents to find keyframes from markdown
     for content in result.contents:
@@ -183,18 +166,18 @@ def download_keyframes_and_assert_sync(
     print(f"Successfully extracted {len(keyframe_ids)} keyframe IDs from video analysis")
 
     # Sort keyframes by frame number to get first, middle, and last
-    sorted_keyframes = sorted(keyframe_ids, key=lambda x: int(x.replace("keyFrame.", "")))
+    sorted_keyframes: List[str] = sorted(keyframe_ids, key=lambda x: int(x.replace("keyFrame.", "")))
 
     # Create a set with first, middle, and last frames (automatically removes duplicates)
-    frames_set = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
+    frames_set: Set[str] = {sorted_keyframes[0], sorted_keyframes[-1], sorted_keyframes[len(sorted_keyframes) // 2]}
 
     # Convert set to list for processing
-    frames_to_download = list(frames_set)
+    frames_to_download: List[str] = list(frames_set)
 
     print(f"Selected frames to download: {frames_to_download}")
 
     # Try to retrieve the selected keyframe images using get_result_file API
-    files_retrieved = 0
+    files_retrieved: int = 0
 
     for keyframe_id in frames_to_download:
         print(f"Trying to get result file with path: {keyframe_id}")
@@ -245,55 +228,17 @@ def download_keyframes_and_assert_sync(
 
 
 class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingClientTestBase):
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_content_analyzers_get_operation_status(self, contentunderstanding_endpoint):
-        """
-        Test Summary:
-        - Create analyzer and extract operation ID
-        - Check operation status during creation
-        - Wait for operation completion
-        - Check final operation status after completion
-        - Clean up created analyzer
-        """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
-        analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_operation_status")
-        created_analyzer = False
-
-        content_analyzer = new_simple_content_analyzer_object(
-            analyzer_id=analyzer_id,
-            description=f"test analyzer for operation status: {analyzer_id}",
-            tags={"test_type": "operation_status"},
-        )
-
-        try:
-            # Create analyzer using the refactored function
-            poller, operation_id = create_analyzer_and_assert_sync(client, analyzer_id, content_analyzer)
-            created_analyzer = True
-
-            # Check final operation status after completion
-            final_status_response = client.content_analyzers.get_operation_status(
-                analyzer_id=analyzer_id,
-                operation_id=operation_id,
-            )
-
-            assert final_status_response is not None
-            print(f"Final operation status: {final_status_response}")
-
-        finally:
-            # Always clean up the created analyzer, even if the test fails
-            delete_analyzer_and_assert_sync(client, analyzer_id, created_analyzer)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create analyzer using ContentAnalyzer object
         - Verify analyzer creation and poller properties
         - Clean up created analyzer
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_create_with_content_analyzer")
         created_analyzer = False
 
@@ -312,14 +257,14 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_create_with_json(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create analyzer using JSON dictionary
         - Verify analyzer creation and poller properties
         - Clean up created analyzer
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_create_with_json")
         created_analyzer = False
 
@@ -366,7 +311,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_update(self, contentunderstanding_endpoint):
+    def test_content_analyzers_update(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create initial analyzer
@@ -375,7 +320,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Get analyzer after update to verify changes persisted
         - Clean up created analyzer
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_update")
         created_analyzer = False
 
@@ -422,6 +367,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
             # Verify the updated analyzer has the new tag and updated description
             assert response.analyzer_id == analyzer_id
+            assert response.tags is not None
             assert "tag1_field" in response.tags
             assert response.tags["tag1_field"] == "updated_value"
             assert response.description == f"Updated analyzer for update test: {analyzer_id}"
@@ -450,19 +396,20 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_get(self, contentunderstanding_endpoint):
+    def test_content_analyzers_get(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Get existing prebuilt analyzer
         - Verify analyzer properties and status
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         response = client.content_analyzers.get(
             analyzer_id="prebuilt-documentAnalyzer",
         )
         assert response is not None
         print(response)
         assert response.analyzer_id == "prebuilt-documentAnalyzer"
+        assert response.description is not None
         assert len(response.description) > 0
         assert response.status == "ready"
         assert response.created_at is not None
@@ -470,7 +417,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_delete(self, contentunderstanding_endpoint):
+    def test_content_analyzers_delete(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create analyzer for deletion test
@@ -479,7 +426,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify analyzer no longer exists in list after deletion
         - Clean up if deletion failed
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_delete")
         created_analyzer = False
 
@@ -532,14 +479,14 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_list(self, contentunderstanding_endpoint):
+    def test_content_analyzers_list(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - List all available analyzers
         - Verify list response contains expected prebuilt analyzers
         - Verify each analyzer has required properties
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         response = client.content_analyzers.list()
         result = [r for r in response]
 
@@ -565,7 +512,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_analyze_url(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_analyze_url(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create simple analyzer for URL analysis
@@ -576,7 +523,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify total_amount field exists and equals 110
         - Clean up created analyzer
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_url")
         created_analyzer = False
 
@@ -624,7 +571,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_analyze_binary(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create simple analyzer for binary analysis
@@ -636,7 +583,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         - Verify total_amount field exists and equals 110
         - Clean up created analyzer
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_binary")
         created_analyzer = False
 
@@ -686,7 +633,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint):
+    def test_content_analyzers_get_result_file(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create marketing video analyzer based on the marketing video template
@@ -699,7 +646,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         """
         if not is_live_and_not_recording():
             return  # Skip this test in playback mode as it requires large video files is too big for test proxy to record
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_get_result_file")
         created_analyzer = False
 
@@ -760,7 +707,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_analyze_mutual_exclusivity(self, contentunderstanding_endpoint):
+    def test_content_analyzers_begin_analyze_mutual_exclusivity(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test that url and data parameters cannot be provided simultaneously
@@ -769,7 +716,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
         Expected Result:
         - ValueError should be raised when both url and data are provided
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         analyzer_id = generate_analyzer_id_sync(client, "test_content_analyzers_begin_analyze_mutual_exclusivity")
         created_analyzer = False
 

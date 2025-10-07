@@ -85,11 +85,6 @@ async def main():
 
             print()
 
-        # Show summary statistics
-        print(f"📊 Summary:")
-        print(f"   Total classifiers: {len(classifiers)}")
-        print(f"   All classifiers are custom classifiers")
-
     # x-ms-original-file: 2025-05-01-preview/ContentClassifiers_List.json
     # Manually close DefaultAzureCredential if it was used
     if isinstance(credential, DefaultAzureCredential):

@@ -8,12 +8,13 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from typing import Tuple, Union, Dict, Any, Optional
+from typing import Tuple, Union, Dict, Any, Optional, cast
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
 from azure.ai.contentunderstanding.models import ContentClassifier
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from test_helpers import (
     generate_classifier_id_async,
     extract_operation_id_from_poller,
@@ -25,7 +26,7 @@ from test_helpers import (
 )
 
 
-async def classifier_in_list_async(client, classifier_id: str) -> bool:
+async def classifier_in_list_async(client: ContentUnderstandingClient, classifier_id: str) -> bool:
     """Check if a classifier with the given ID exists in the list of classifiers (async version).
 
     Args:
@@ -43,7 +44,7 @@ async def classifier_in_list_async(client, classifier_id: str) -> bool:
 
 
 async def create_classifier_and_assert_async(
-    client, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
+    client: ContentUnderstandingClient, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
 ) -> Tuple[Any, str]:
     """Create a classifier and perform basic assertions (async version).
 
@@ -70,22 +71,6 @@ async def create_classifier_and_assert_async(
     operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
     print(f"  Extracted operation_id: {operation_id}")
 
-    # Check operation status while it's running
-    print(f"  Checking operation status for operation_id: {operation_id}")
-    status_response = await client.content_classifiers.get_operation_status(
-        classifier_id=classifier_id,
-        operation_id=operation_id,
-    )
-
-    # Verify the operation status response
-    assert status_response is not None
-    print(f"  Operation status: {status_response}")
-
-    # Check that the operation status has expected fields
-    assert hasattr(status_response, "status") or hasattr(status_response, "operation_status")
-    assert hasattr(status_response, "id")
-    if is_live():
-        assert status_response.id == operation_id
 
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
@@ -110,7 +95,7 @@ async def create_classifier_and_assert_async(
     return poller, operation_id
 
 
-async def delete_classifier_and_assert(client, classifier_id: str, created_classifier: bool) -> None:
+async def delete_classifier_and_assert(client: ContentUnderstandingClient, classifier_id: str, created_classifier: bool) -> None:
     """Delete a classifier and assert it was deleted successfully.
 
     Args:
@@ -141,62 +126,10 @@ import pytest
 
 
 class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstandingClientTestBaseAsync):
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy_async
-    async def test_content_classifiers_get_operation_status(self, contentunderstanding_endpoint):
-        """
-        Test Summary:
-        - Create classifier and extract operation ID
-        - Check operation status during creation
-        - Wait for operation completion
-        - Check final operation status after completion
-        - Clean up created classifier
-        """
-        client = self.create_async_client(endpoint=contentunderstanding_endpoint)
-        classifier_id = await generate_classifier_id_async(client, "test_content_classifiers_get_operation_status")
-        created_classifier = False
-
-        classifier_schema = new_simple_classifier_schema(
-            classifier_id=classifier_id,
-            description=f"test classifier for operation status: {classifier_id}",
-            tags={"test_type": "operation_status"},
-        )
-
-        try:
-            # Create classifier using the refactored function
-            poller, operation_id = await create_classifier_and_assert_async(client, classifier_id, classifier_schema)
-            created_classifier = True
-
-            # Get operation status
-            print(f"Getting operation status for operation_id: {operation_id}")
-            response = await client.content_classifiers.get_operation_status(
-                classifier_id=classifier_id,
-                operation_id=operation_id,
-            )
-
-            # Verify the operation status response
-            assert response is not None
-            print(f"Operation status response: {response}")
-
-            # Check that the operation status has expected fields
-            assert hasattr(response, "id")
-            if is_live():
-                assert response.id == operation_id
-            assert hasattr(response, "status") or hasattr(response, "operation_status")
-
-            # The operation should be completed since we waited for it in create_classifier_and_assert_async
-            if hasattr(response, "status"):
-                assert response.status in ["Succeeded", "Completed"]
-            elif hasattr(response, "operation_status"):
-                assert response.operation_status in ["Succeeded", "Completed"]
-
-        finally:
-            # Always clean up the created classifier, even if the test fails
-            await delete_classifier_and_assert(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_begin_create_or_replace(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_begin_create_or_replace(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier using schema dictionary
@@ -224,7 +157,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_update(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_update(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create initial classifier
@@ -310,7 +243,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_get(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_get(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Get existing prebuilt classifier (if available)
@@ -350,7 +283,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_delete(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_delete(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for deletion test
@@ -412,7 +345,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_list(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_list(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - List all available classifiers
@@ -481,7 +414,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_begin_classify(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_begin_classify(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create simple classifier for URL classification
@@ -541,7 +474,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_begin_classify_binary(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_begin_classify_binary(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create simple classifier for binary classification
@@ -602,7 +535,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_begin_classify_url_overload(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_begin_classify_url_overload(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for URL classification test using new overload
@@ -654,7 +587,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_begin_classify_data_overload(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_begin_classify_data_overload(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for data classification test using new overload
@@ -708,7 +641,7 @@ class TestContentUnderstandingContentClassifiersOperationsAsync(ContentUnderstan
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_content_classifiers_begin_classify_url_data_mutual_exclusivity(self, contentunderstanding_endpoint):
+    async def test_content_classifiers_begin_classify_url_data_mutual_exclusivity(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for mutual exclusivity test

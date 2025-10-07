@@ -10,7 +10,7 @@ import pytest
 import os
 import uuid
 from datetime import datetime
-from typing import Optional, Dict, Any, List, cast
+from typing import Optional, Dict, Any, List, Union, Tuple
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
@@ -24,7 +24,7 @@ import pytest
 class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect_original_body(self, contentunderstanding_endpoint):
+    def test_faces_detect_original_body(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test original body parameter method
@@ -32,11 +32,11 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Detect faces using JSON body
         - Verify detection results
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Load test image
-        test_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+        test_file_dir: str = os.path.dirname(os.path.abspath(__file__))
+        image_path: str = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         with open(image_path, "rb") as image_file:
             image_bytes = image_file.read()
         import base64
@@ -69,17 +69,17 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect_url_keyword(self, contentunderstanding_endpoint):
+    def test_faces_detect_url_keyword(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test original url keyword parameter method
         - Use a URL to detect faces
         - Verify detection results
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Use a test image URL
-        image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
+        image_url: str = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
 
         print(f"Testing original url keyword method with URL: {image_url}")
         response = client.faces.detect(url=image_url, max_detected_faces=10)
@@ -98,7 +98,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect_data_keyword(self, contentunderstanding_endpoint):
+    def test_faces_detect_data_keyword(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test original data keyword parameter method with bytes conversion
@@ -106,11 +106,11 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         - Detect faces using data keyword parameter
         - Verify detection results
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Load test image
-        test_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+        test_file_dir: str = os.path.dirname(os.path.abspath(__file__))
+        image_path: str = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         image_data = read_image_bytes(image_path)  # Returns raw bytes
 
         print(f"Testing data keyword method with image: {image_path}")
@@ -132,17 +132,17 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect_url_positional(self, contentunderstanding_endpoint):
+    def test_faces_detect_url_positional(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test new URL positional overload
         - Use URL as positional argument
         - Verify detection results
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Use a test image URL
-        image_url = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
+        image_url: str = "https://media.githubusercontent.com/media/Azure-Samples/azure-ai-content-understanding-python/refs/heads/main/data/face/family.jpg"
 
         print(f"Testing new URL keyword overload with URL: {image_url}")
         response = client.faces.detect(url=image_url, max_detected_faces=10)  # URL as keyword argument (new overload)
@@ -163,18 +163,18 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect_bytes_positional(self, contentunderstanding_endpoint):
+    def test_faces_detect_bytes_positional(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test new bytes positional overload
         - Load image as bytes and use as positional argument
         - Verify detection results
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Load test image
-        test_file_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+        test_file_dir: str = os.path.dirname(os.path.abspath(__file__))
+        image_path: str = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
         image_data = read_image_bytes(image_path)  # Returns raw bytes
 
         print(f"Testing new bytes keyword overload with image: {image_path}")
@@ -198,17 +198,17 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_compare(self, contentunderstanding_endpoint):
+    def test_faces_compare(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Load two different images of the same person (Bill)
         - Compare faces between the images
         - Verify comparison results show high similarity
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Load two different images of the same person (Bill)
-        test_file_dir = os.path.dirname(os.path.abspath(__file__))
+        test_file_dir: str = os.path.dirname(os.path.abspath(__file__))
         image1_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad1.jpg")
         image2_path = os.path.join(test_file_dir, "test_data", "face", "enrollment_data", "Bill", "Family1-Dad2.jpg")
 
@@ -270,7 +270,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_faces_detect_mutual_exclusivity(self, contentunderstanding_endpoint):
+    def test_faces_detect_mutual_exclusivity(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Test that url and data parameters cannot be provided simultaneously
@@ -279,7 +279,7 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
         Expected Result:
         - ValueError should be raised when both url and data are provided
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
 
         # Test mutual exclusivity validation
         print("Testing mutual exclusivity validation...")
@@ -310,8 +310,8 @@ class TestContentUnderstandingFacesOperations(ContentUnderstandingClientTestBase
 
         # Data only should work (if we have a local file)
         try:
-            test_file_dir = os.path.dirname(os.path.abspath(__file__))
-            image_path = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
+            test_file_dir: str = os.path.dirname(os.path.abspath(__file__))
+            image_path: str = os.path.join(test_file_dir, "test_data", "face", "family.jpg")
             image_data = read_image_bytes(image_path)
 
             response = client.faces.detect(data=image_data)

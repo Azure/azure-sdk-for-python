@@ -7,17 +7,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Union, Tuple
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingPreparer
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync
+from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.contentunderstanding.models import PersonDirectory
 from test_helpers import generate_person_directory_id_async, get_enrollment_data_path
 
 
-async def delete_person_directory_and_assert(client, person_directory_id: str, created_directory: bool) -> None:
+async def delete_person_directory_and_assert(client: ContentUnderstandingClient, person_directory_id: str, created_directory: bool) -> None:
     """Delete a person directory and assert it was deleted successfully.
 
     Args:
@@ -45,7 +46,7 @@ async def delete_person_directory_and_assert(client, person_directory_id: str, c
         raise AssertionError(f"Failed to delete person directory {person_directory_id}: {e}") from e
 
 
-async def person_directory_exists_async(client, person_directory_id: str) -> bool:
+async def person_directory_exists_async(client: ContentUnderstandingClient, person_directory_id: str) -> bool:
     """Check if a person directory with the given ID exists (async version).
 
     Args:
@@ -67,7 +68,7 @@ async def person_directory_exists_async(client, person_directory_id: str) -> boo
 
 
 async def create_person_directory_and_assert_async(
-    client, person_directory_id: str, description: str = "", tags: Optional[Dict[str, str]] = None
+    client: ContentUnderstandingClient, person_directory_id: str, description: str = "", tags: Optional[Dict[str, str]] = None
 ) -> None:
     """Create a person directory and perform basic assertions (async version).
 
@@ -99,7 +100,7 @@ async def create_person_directory_and_assert_async(
 
 
 async def build_person_directory_from_enrollment_data_async(
-    client, person_directory_id: str, enrollment_data_path: Optional[str] = None
+    client: ContentUnderstandingClient, person_directory_id: str, enrollment_data_path: Optional[str] = None
 ) -> Dict[str, str]:
     """Build person directory from enrollment data (async version).
 
@@ -174,7 +175,7 @@ async def build_person_directory_from_enrollment_data_async(
     return person_name_to_id
 
 
-async def identify_persons_in_image_async(client, person_directory_id: str, image_path: str) -> None:
+async def identify_persons_in_image_async(client: ContentUnderstandingClient, person_directory_id: str, image_path: str) -> None:
     """Identify persons in an image using the person directory (async version).
 
     Args:
@@ -226,16 +227,16 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_create(self, contentunderstanding_endpoint):
+    async def test_person_directories_create(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory with description and tags
         - Verify the person directory was created successfully
         - Clean up the created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_create")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create person directory using the helper function
@@ -253,7 +254,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_update(self, contentunderstanding_endpoint):
+    async def test_person_directories_update(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create initial person directory
@@ -262,9 +263,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Get person directory after update to verify changes persisted
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_update")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create the initial person directory
@@ -336,16 +337,16 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_get(self, contentunderstanding_endpoint):
+    async def test_person_directories_get(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory for testing
         - Get the person directory and verify its properties
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_get")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory for testing
@@ -383,7 +384,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_delete(self, contentunderstanding_endpoint):
+    async def test_person_directories_delete(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory for deletion test
@@ -391,9 +392,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Delete the person directory
         - Verify person directory no longer exists after deletion
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_delete")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory for deletion test
@@ -424,14 +425,14 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
             ), f"Deleted person directory with ID '{person_directory_id}' was found"
             print(f"Verified person directory {person_directory_id} is no longer accessible after deletion")
 
-            created_directory = False
+            created_directory: bool = False
         finally:
             # Clean up if the person directory was created but deletion failed
             await delete_person_directory_and_assert(self._client, person_directory_id, created_directory)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_list(self, contentunderstanding_endpoint):
+    async def test_person_directories_list(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a test person directory
@@ -439,9 +440,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the created person directory is in the list
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_list")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a test person directory
@@ -491,7 +492,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_add_person(self, contentunderstanding_endpoint):
+    async def test_person_directories_add_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory
@@ -499,9 +500,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the person was added successfully
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_add_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -547,7 +548,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_update_person(self, contentunderstanding_endpoint):
+    async def test_person_directories_update_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -555,9 +556,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the person was updated successfully
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_update_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -619,16 +620,16 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_get_person(self, contentunderstanding_endpoint):
+    async def test_person_directories_get_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
         - Get the person and verify its properties
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_get_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -673,7 +674,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_delete_person(self, contentunderstanding_endpoint):
+    async def test_person_directories_delete_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -682,9 +683,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the person no longer exists
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_delete_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -737,7 +738,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_list_persons(self, contentunderstanding_endpoint):
+    async def test_person_directories_list_persons(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add multiple persons
@@ -745,9 +746,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify all created persons are in the list
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_list_persons")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -810,7 +811,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_add_face(self, contentunderstanding_endpoint):
+    async def test_person_directories_add_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -818,9 +819,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the face was added successfully
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_add_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -880,7 +881,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_update_face(self, contentunderstanding_endpoint):
+    async def test_person_directories_update_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -889,9 +890,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the face association was updated
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_update_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -968,7 +969,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_get_face(self, contentunderstanding_endpoint):
+    async def test_person_directories_get_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -976,9 +977,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Get the face and verify its properties
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_get_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1037,7 +1038,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_delete_face(self, contentunderstanding_endpoint):
+    async def test_person_directories_delete_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -1047,9 +1048,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the face no longer exists
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_delete_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1115,7 +1116,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_list_faces(self, contentunderstanding_endpoint):
+    async def test_person_directories_list_faces(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -1124,9 +1125,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify all created faces are in the list
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_list_faces")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1197,7 +1198,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_identify_person(self, contentunderstanding_endpoint):
+    async def test_person_directories_identify_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and build it from enrollment data
@@ -1205,9 +1206,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify identification results
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_identify_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1270,7 +1271,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_find_similar_faces(self, contentunderstanding_endpoint):
+    async def test_person_directories_find_similar_faces(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person (Bill) with multiple faces
@@ -1279,11 +1280,11 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify both positive and negative cases with proper assertions
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(
             self._client, "test_person_dir_find_similar_faces"
         )
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1407,7 +1408,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_verify_person(self, contentunderstanding_endpoint):
+    async def test_person_directories_verify_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person with a face
@@ -1415,9 +1416,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Verify the verification results
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_verify_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1479,7 +1480,7 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy_async
-    async def test_person_directories_workflow(self, contentunderstanding_endpoint):
+    async def test_person_directories_workflow(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory
@@ -1491,9 +1492,9 @@ class TestContentUnderstandingPersonDirectoriesOperationsAsync(ContentUnderstand
         - Identify persons in test images
         - Clean up created person directory
         """
-        self._client = self.create_async_client(endpoint=contentunderstanding_endpoint)
+        self._client: ContentUnderstandingClient = self.create_async_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = await generate_person_directory_id_async(self._client, "test_person_dir_workflow")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # 1. Create Person Directory

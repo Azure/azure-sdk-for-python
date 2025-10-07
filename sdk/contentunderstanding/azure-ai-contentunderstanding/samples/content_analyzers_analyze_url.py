@@ -72,38 +72,36 @@ async def main() -> None:
         print("=" * 50)
 
         # Check if this is document content to access document-specific properties
-        if content.kind == MediaContentKind.DOCUMENT:
-            # Type assertion: we know this is DocumentContent for PDF files
-            document_content: DocumentContent = content  # type: ignore
-            print(f"\n📚 Document Information:")
-            print(f"Start page: {document_content.start_page_number}")
-            print(f"End page: {document_content.end_page_number}")
-            print(f"Total pages: {document_content.end_page_number - document_content.start_page_number + 1}")
+        assert content.kind == MediaContentKind.DOCUMENT, "\n📚 Document Information: Not available for this content type"
+        # Type assertion: we know this is DocumentContent for PDF files
+        document_content: DocumentContent = content  # type: ignore
+        print(f"\n📚 Document Information:")
+        print(f"Start page: {document_content.start_page_number}")
+        print(f"End page: {document_content.end_page_number}")
+        print(f"Total pages: {document_content.end_page_number - document_content.start_page_number + 1}")
 
-            # Check for pages
-            if document_content.pages is not None:
-                print(f"\n📄 Pages ({len(document_content.pages)}):")
-                for i, page in enumerate(document_content.pages):
-                    unit = document_content.unit or "units"
-                    print(f"  Page {i + 1}: {page.width} x {page.height} {unit}")
+        # Check for pages
+        if document_content.pages is not None:
+            print(f"\n📄 Pages ({len(document_content.pages)}):")
+            for i, page in enumerate(document_content.pages):
+                unit = document_content.unit or "units"
+                print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
 
-            # The following code shows how to access DocumentContent properties
-            # Check if there are tables in the document
-            if document_content.tables is not None:
-                print(f"\n📊 Tables ({len(document_content.tables)}):")
-                table_counter = 1
-                # Iterate through tables, each table is of type DocumentTable
-                for table in document_content.tables:
-                    # Type: table is DocumentTable
-                    # Get basic table dimensions
-                    row_count: int = table.row_count
-                    col_count: int = table.column_count
-                    print(f"  Table {table_counter}: {row_count} rows x {col_count} columns")
-                    table_counter += 1
-                    # You can use the table object model to get detailed information
-                    # such as cell content, borders, spans, etc. (not shown to keep code concise)
-        else:
-            print("\n📚 Document Information: Not available for this content type")
+        # The following code shows how to access DocumentContent properties
+        # Check if there are tables in the document
+        if document_content.tables is not None:
+            print(f"\n📊 Tables ({len(document_content.tables)}):")
+            table_counter = 1
+            # Iterate through tables, each table is of type DocumentTable
+            for table in document_content.tables:
+                # Type: table is DocumentTable
+                # Get basic table dimensions
+                row_count: int = table.row_count
+                col_count: int = table.column_count
+                print(f"  Table {table_counter}: {row_count} rows x {col_count} columns")
+                table_counter += 1
+                # You can use the table object model to get detailed information
+                # such as cell content, borders, spans, etc. (not shown to keep code concise)
 
         # Uncomment the following line to save the response to a file for object model inspection
         # Note: This saves the object model, not the raw JSON response

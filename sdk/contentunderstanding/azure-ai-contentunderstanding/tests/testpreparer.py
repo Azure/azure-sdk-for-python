@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
+from typing import cast
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
@@ -28,13 +29,13 @@ def get_content_understanding_credential():
 
 class ContentUnderstandingClientTestBase(AzureRecordedTestCase):
 
-    def create_client(self, endpoint):
+    def create_client(self, endpoint: str) -> ContentUnderstandingClient:
         credential = self.get_credential(ContentUnderstandingClient, is_async=False)
-        return self.create_client_from_credential(
+        return cast(ContentUnderstandingClient, self.create_client_from_credential(
             ContentUnderstandingClient,
             credential=credential,
             endpoint=endpoint,
-        )
+        ))
 
 
 ContentUnderstandingPreparer = functools.partial(

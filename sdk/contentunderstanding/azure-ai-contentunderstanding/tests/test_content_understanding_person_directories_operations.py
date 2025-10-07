@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import os
-from typing import Optional, Dict, Any, List, cast
+from typing import Optional, Dict, Any, List, Union, Tuple
 from devtools_testutils import recorded_by_proxy, is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
 from azure.core.exceptions import ResourceNotFoundError
@@ -16,7 +16,7 @@ from azure.ai.contentunderstanding import ContentUnderstandingClient
 from test_helpers import generate_person_directory_id_sync, get_enrollment_data_path
 
 
-def delete_person_directory_and_assert(client, person_directory_id: str, created_directory: bool) -> None:
+def delete_person_directory_and_assert(client: ContentUnderstandingClient, person_directory_id: str, created_directory: bool) -> None:
     """Delete a person directory and assert it was deleted successfully.
 
     Args:
@@ -43,7 +43,7 @@ def delete_person_directory_and_assert(client, person_directory_id: str, created
         print(f"Person directory {person_directory_id} was not created, no cleanup needed")
 
 
-def person_directory_exists(client, person_directory_id: str) -> bool:
+def person_directory_exists(client: ContentUnderstandingClient, person_directory_id: str) -> bool:
     """Check if a person directory with the given ID exists.
 
     Args:
@@ -65,7 +65,7 @@ def person_directory_exists(client, person_directory_id: str) -> bool:
 
 
 def create_person_directory_and_assert(
-    client, person_directory_id: str, description: str = "", tags: Optional[Dict[str, str]] = None
+    client: ContentUnderstandingClient, person_directory_id: str, description: str = "", tags: Optional[Dict[str, str]] = None
 ) -> None:
     """Create a person directory and perform basic assertions.
 
@@ -97,7 +97,7 @@ def create_person_directory_and_assert(
 
 
 def build_person_directory_from_enrollment_data(
-    client, person_directory_id: str, enrollment_data_path: Optional[str] = None
+    client: ContentUnderstandingClient, person_directory_id: str, enrollment_data_path: Optional[str] = None
 ) -> Dict[str, str]:
     """Build person directory from enrollment data.
 
@@ -171,7 +171,7 @@ def build_person_directory_from_enrollment_data(
     return person_name_to_id
 
 
-def identify_persons_in_image(client, person_directory_id: str, image_path: str) -> None:
+def identify_persons_in_image(client: ContentUnderstandingClient, person_directory_id: str, image_path: str) -> None:
     """Identify persons in an image using the person directory.
 
     Args:
@@ -216,16 +216,16 @@ import pytest
 class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingClientTestBase):
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_create(self, contentunderstanding_endpoint):
+    def test_person_directories_create(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory with description and tags
         - Verify the person directory was created successfully
         - Clean up the created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_create")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create person directory using the helper function
@@ -243,7 +243,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_update(self, contentunderstanding_endpoint):
+    def test_person_directories_update(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create initial person directory
@@ -252,9 +252,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Get person directory after update to verify changes persisted
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_update")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create the initial person directory
@@ -326,16 +326,16 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_get(self, contentunderstanding_endpoint):
+    def test_person_directories_get(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory for testing
         - Get the person directory and verify its properties
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_get")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory for testing
@@ -373,7 +373,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_delete(self, contentunderstanding_endpoint):
+    def test_person_directories_delete(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory for deletion test
@@ -381,9 +381,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Delete the person directory
         - Verify person directory no longer exists after deletion
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_delete")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory for deletion test
@@ -414,14 +414,14 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
             ), f"Deleted person directory with ID '{person_directory_id}' was found"
             print(f"Verified person directory {person_directory_id} is no longer accessible after deletion")
 
-            created_directory = False
+            created_directory: bool = False
         finally:
             # Clean up if the person directory was created but deletion failed
             delete_person_directory_and_assert(client, person_directory_id, created_directory)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_list(self, contentunderstanding_endpoint):
+    def test_person_directories_list(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a test person directory
@@ -429,9 +429,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the created person directory is in the list
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_list")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a test person directory
@@ -481,7 +481,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_add_person(self, contentunderstanding_endpoint):
+    def test_person_directories_add_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory
@@ -489,9 +489,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person was added successfully
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_add_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -535,7 +535,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_update_person(self, contentunderstanding_endpoint):
+    def test_person_directories_update_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -543,9 +543,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person was updated successfully
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_update_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -607,16 +607,16 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_get_person(self, contentunderstanding_endpoint):
+    def test_person_directories_get_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
         - Get the person and verify its properties
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_get_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -661,7 +661,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_delete_person(self, contentunderstanding_endpoint):
+    def test_person_directories_delete_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -670,9 +670,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the person no longer exists
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_delete_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -721,7 +721,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_list_persons(self, contentunderstanding_endpoint):
+    def test_person_directories_list_persons(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add multiple persons
@@ -729,9 +729,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify all created persons are in the list
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_list_persons")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -794,7 +794,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_add_face(self, contentunderstanding_endpoint):
+    def test_person_directories_add_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -802,9 +802,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the face was added successfully
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_add_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -862,7 +862,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_update_face(self, contentunderstanding_endpoint):
+    def test_person_directories_update_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -871,9 +871,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the face association was updated
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_update_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -946,7 +946,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_get_face(self, contentunderstanding_endpoint):
+    def test_person_directories_get_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -954,9 +954,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Get the face and verify its properties
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_get_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1013,7 +1013,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_delete_face(self, contentunderstanding_endpoint):
+    def test_person_directories_delete_face(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person
@@ -1023,9 +1023,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the face no longer exists
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_delete_face")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1083,7 +1083,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_find_similar_faces(self, contentunderstanding_endpoint):
+    def test_person_directories_find_similar_faces(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person (Bill) with multiple faces
@@ -1092,9 +1092,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify both positive and negative cases with proper assertions
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_find_similar_faces")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory
@@ -1218,7 +1218,7 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_person_directories_verify_person(self, contentunderstanding_endpoint):
+    def test_person_directories_verify_person(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create a person directory and add a person with a face
@@ -1226,9 +1226,9 @@ class TestContentUnderstandingPersonDirectoriesOperations(ContentUnderstandingCl
         - Verify the verification results
         - Clean up created person directory
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         person_directory_id = generate_person_directory_id_sync(client, "test_person_directories_verify_person")
-        created_directory = False
+        created_directory: bool = False
 
         try:
             # Create a person directory

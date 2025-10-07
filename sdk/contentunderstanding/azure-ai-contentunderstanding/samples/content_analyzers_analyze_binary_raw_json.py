@@ -45,7 +45,7 @@ load_dotenv()
 # 1. Authenticate with Azure AI Content Understanding
 # 2. Read a PDF file from disk
 # 3. Analyze the document using begin_analyze_binary with prebuilt-documentAnalyzer
-# 4. Save the raw JSON response to a file using poller callback
+# 4. Save the raw JSON response to a file using a customized callback in poller parameter
 #
 # IMPORTANT NOTES:
 # - The SDK returns analysis results with an object model, which is easier to navigate and retrieve

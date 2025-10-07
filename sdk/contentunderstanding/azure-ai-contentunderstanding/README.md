@@ -1,5 +1,4 @@
 # Azure AI Content Understanding client library for Python
-<!-- write necessary description of service -->
 
 ## Key concepts
 Content Understanding is a solution that analyzes and comprehends various media content—such as documents, images, audio, and video—transforming it into structured, organized, and searchable data.
@@ -27,73 +26,69 @@ python -m pip install azure-ai-contentunderstanding
 
 - Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure AI Content Understanding instance.
+- An existing Azure AI Content Understanding resource.
 
-## Examples
-
-### Comprehensive API Samples
-
-This SDK includes comprehensive samples that demonstrate API-level usage of all Azure AI Content Understanding capabilities. These samples show you exactly how to call each API endpoint with proper authentication, error handling, and resource management.
-
-## Sample Categories
+## Samples
 
 ### Content Analyzers
 Analyze documents and extract structured information:
 
-- **`content_analyzers_analyze.py`** - Analyze text content for layout and structure
-- **`content_analyzers_analyze_binary.py`** - Analyze binary files (PDFs, images, documents)
-- **`content_analyzers_create_or_replace.py`** - Create or update custom analyzers
-- **`content_analyzers_get_analyzer.py`** - Retrieve analyzer configurations
-- **`content_analyzers_list.py`** - List all available analyzers
-- **`content_analyzers_update.py`** - Update existing analyzers
-- **`content_analyzers_delete_analyzer.py`** - Delete custom analyzers
-- **`content_analyzers_get_operation_status.py`** - Check analysis operation status
-- **`content_analyzers_get_result_file.py`** - Download result files
+- **`content_analyzers_analyze_binary_raw_json.py`** - Extract content from PDF using begin_analyze_binary and save raw JSON response
+- **`content_analyzers_analyze_binary.py`** - Extract content from PDF file, print markdown content and document information
+- **`content_analyzers_analyze_url.py`** - Extract content from public URL using prebuilt-documentAnalyzer
+- **`content_analyzers_analyze_url_prebuilt_invoice.py`** - Extract invoice fields from URL using prebuilt-invoice analyzer
+- **`content_analyzers_create_or_replace.py`** - Create custom analyzer with field schema for extracting company information
+- **`content_analyzers_get_analyzer.py`** - Retrieve analyzer configuration details
+- **`content_analyzers_list.py`** - List all available analyzers with detailed information and summary statistics
+- **`content_analyzers_update.py`** - Update analyzer description and tags
+- **`content_analyzers_delete_analyzer.py`** - Delete custom analyzer
+- **`content_analyzers_get_result_file.py`** - Download result files (keyframe images) from video analysis operations
 
 ### Content Classifiers
 Classify content into categories:
 
-- **`content_classifiers_classify.py`** - Classify text content
-- **`content_classifiers_classify_binary.py`** - Classify binary files
-- **`content_classifiers_create_or_replace.py`** - Create or update classifiers
-- **`content_classifiers_get_classifier.py`** - Retrieve classifier configurations
-- **`content_classifiers_list.py`** - List all available classifiers
-- **`content_classifiers_update.py`** - Update existing classifiers
-- **`content_classifiers_delete_classifier.py`** - Delete custom classifiers
-- **`content_classifiers_get_operation_status.py`** - Check classification operation status
+- **`content_classifiers_classify.py`** - Classify documents from URL and binary data using custom classifier
+- **`content_classifiers_classify_binary.py`** - Classify binary PDF document with categories (Loan, Invoice, Bank Statement)
+- **`content_classifiers_create_or_replace.py`** - Create custom classifier with defined categories and wait for completion
+- **`content_classifiers_get_classifier.py`** - Retrieve classifier details including categories and configuration
+- **`content_classifiers_list.py`** - List all available classifiers with detailed information and summary statistics
+- **`content_classifiers_update.py`** - Update classifier description and tags
+- **`content_classifiers_delete_classifier.py`** - Delete custom classifier
 
 ### Face Recognition & Person Management
 Comprehensive face recognition capabilities:
 
 #### **Directory Management**
-- **`person_directories_create.py`** - Create person directories
-- **`person_directories_get.py`** - Retrieve directory information
-- **`person_directories_list.py`** - List all directories
-- **`person_directories_update.py`** - Update directory properties
-- **`person_directories_delete.py`** - Delete directories
+- **`person_directories_create.py`** - Create person directory with description and tags
+- **`person_directories_get.py`** - Retrieve directory details and display information
+- **`person_directories_list.py`** - List all person directories with detailed information
+- **`person_directories_update.py`** - Update directory with new description and tags
+- **`person_directories_delete.py`** - Delete person directory
 
 #### **Person Management**
-- **`person_directories_add_person.py`** - Add persons to directories
-- **`person_directories_get_person.py`** - Retrieve person information
-- **`person_directories_list_persons.py`** - List all persons in a directory
-- **`person_directories_update_person.py`** - Update person properties
-- **`person_directories_delete_person.py`** - Delete persons
+- **`person_directories_add_person.py`** - Add person to directory with tags
+- **`person_directories_get_person.py`** - Get person details using person ID
+- **`person_directories_list_persons.py`** - List all persons in a directory with details
+- **`person_directories_update_person.py`** - Update person tags and face associations
+- **`person_directories_delete_person.py`** - Delete person from directory
 
 #### **Face Management**
-- **`person_directories_get_face.py`** - Retrieve face information
-- **`person_directories_list_faces.py`** - List all faces in a directory
-- **`person_directories_update_face.py`** - Update face associations
-- **`person_directories_delete_face.py`** - Delete faces
+- **`person_directories_get_face.py`** - Retrieve face details from person directory
+- **`person_directories_list_faces.py`** - List all faces in directory with person associations
+- **`person_directories_update_face.py`** - Update face to reassign to different person
+- **`person_directories_delete_face.py`** - Delete face from person directory
 
 #### **Face Recognition**
-- **`person_directories_find_similar_faces.py`** - Find similar faces (Enhanced Demo)
-- **`faces_detect.py`** - Detect faces in images
+- **`person_directories_find_similar_faces.py`** - Find similar faces with positive and negative test cases
+- **`person_directories_identify_person.py`** - Identify persons in group photo using enrolled faces
+- **`faces_detect.py`** - Detect faces in local image files with bounding boxes
+- **`faces_detect_url.py`** - Detect faces in images from remote URLs
 
 #### **Enhanced Face Similarity Demo**
 `person_directories_find_similar_faces.py` provides a comprehensive demonstration:
 
-- **Test 1 (Positive Case)**: Enrolls Dad1 & Dad2 faces, queries with Dad3 → should find matches
-- **Test 2 (Negative Case)**: Queries with Mom1 (different person) → should find no matches
+- **Test 1 (Positive Case)**: Enrolls Bill's faces (Dad1 & Dad2), queries with Dad3 → finds high-confidence matches
+- **Test 2 (Negative Case)**: Queries with Clare's face (Mom1) → finds no matches
 - **Educational Output**: Clear explanations of expected results and confidence scores
 - **Real-world Scenarios**: Demonstrates both successful and failed face matching
 

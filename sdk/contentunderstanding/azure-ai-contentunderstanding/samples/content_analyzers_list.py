@@ -79,15 +79,6 @@ async def main():
 
             print()
 
-        # Show summary statistics
-        prebuilt_count = sum(1 for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-"))
-        custom_count = len(analyzers) - prebuilt_count
-
-        print(f"📊 Summary:")
-        print(f"   Total analyzers: {len(analyzers)}")
-        print(f"   Prebuilt analyzers: {prebuilt_count}")
-        print(f"   Custom analyzers: {custom_count}")
-
         # Check for specific prebuilt analyzers
         prebuilt_ids = [analyzer.analyzer_id for analyzer in analyzers if analyzer.analyzer_id.startswith("prebuilt-")]
         if "prebuilt-documentAnalyzer" in prebuilt_ids:

@@ -92,7 +92,7 @@ async def main() -> None:
                 print(f"\n📄 Pages ({len(document_content.pages)}):")
                 for i, page in enumerate(document_content.pages):
                     unit = document_content.unit or "units"
-                    print(f"  Page {i + 1}: {page.width} x {page.height} {unit}")
+                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
 
             # The following code shows how to access DocumentContent properties
             # Check if there are tables in the document

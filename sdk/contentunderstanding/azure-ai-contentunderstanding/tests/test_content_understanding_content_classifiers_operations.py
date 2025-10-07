@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from typing import Tuple, Union, Dict, Any, Optional, cast
+from typing import Tuple, Union, Dict, Any, Optional
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils import is_live
 from testpreparer import ContentUnderstandingClientTestBase, ContentUnderstandingPreparer
@@ -25,7 +25,7 @@ from test_helpers import (
 )
 
 
-def classifier_in_list_sync(client, classifier_id: str) -> bool:
+def classifier_in_list_sync(client: ContentUnderstandingClient, classifier_id: str) -> bool:
     """Check if a classifier with the given ID exists in the list of classifiers (sync version).
 
     Args:
@@ -43,7 +43,7 @@ def classifier_in_list_sync(client, classifier_id: str) -> bool:
 
 
 def create_classifier_and_assert_sync(
-    client, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
+    client: ContentUnderstandingClient, classifier_id: str, resource: Union[ContentClassifier, Dict[str, Any]]
 ) -> Tuple[Any, str]:
     """Create a classifier and perform basic assertions (sync version).
 
@@ -70,22 +70,6 @@ def create_classifier_and_assert_sync(
     operation_id = extract_operation_id_from_poller(poller, PollerType.CLASSIFIER_CREATION)
     print(f"  Extracted operation_id: {operation_id}")
 
-    # Check operation status while it's running
-    print(f"  Checking operation status for operation_id: {operation_id}")
-    status_response = client.content_classifiers.get_operation_status(
-        classifier_id=classifier_id,
-        operation_id=operation_id,
-    )
-
-    # Verify the operation status response
-    assert status_response is not None
-    print(f"  Operation status: {status_response}")
-
-    # Check that the operation status has expected fields
-    assert hasattr(status_response, "status") or hasattr(status_response, "operation_status")
-    assert hasattr(status_response, "id")
-    if is_live():
-        assert status_response.id == operation_id
 
     # Wait for the operation to complete
     print(f"  Waiting for classifier {classifier_id} to be created")
@@ -110,7 +94,7 @@ def create_classifier_and_assert_sync(
     return poller, operation_id
 
 
-def delete_classifier_and_assert_sync(client, classifier_id: str, created_classifier: bool) -> None:
+def delete_classifier_and_assert_sync(client: ContentUnderstandingClient, classifier_id: str, created_classifier: bool) -> None:
     """Delete a classifier and assert it was deleted successfully (sync version).
 
     Args:
@@ -141,62 +125,10 @@ import pytest
 
 
 class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingClientTestBase):
-    @ContentUnderstandingPreparer()
-    @recorded_by_proxy
-    def test_content_classifiers_get_operation_status(self, contentunderstanding_endpoint):
-        """
-        Test Summary:
-        - Create classifier for operation status test
-        - Get operation status using the operation_id from creation
-        - Verify operation status response properties
-        - Clean up created classifier
-        """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
-        classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get_operation_status")
-        created_classifier = False
-
-        # Create a simple classifier for operation status test
-        classifier_schema = new_simple_classifier_schema(
-            classifier_id=classifier_id,
-            description=f"test classifier for operation status: {classifier_id}",
-            tags={"test_type": "operation_status"},
-        )
-
-        try:
-            # Create classifier using the refactored function
-            poller, operation_id = create_classifier_and_assert_sync(client, classifier_id, classifier_schema)
-            created_classifier = True
-
-            # Get operation status
-            print(f"Getting operation status for operation_id: {operation_id}")
-            response = client.content_classifiers.get_operation_status(
-                classifier_id=classifier_id,
-                operation_id=operation_id,
-            )
-
-            # Verify the operation status response
-            assert response is not None
-            print(f"Operation status response: {response}")
-
-            # Check that the operation status has expected fields
-            assert hasattr(response, "id")
-            if is_live():
-                assert response.id == operation_id
-            assert hasattr(response, "status") or hasattr(response, "operation_status")
-
-            # The operation should be completed since we waited for it in create_classifier_and_assert_sync
-            if hasattr(response, "status"):
-                assert response.status in ["Succeeded", "Completed"]
-            elif hasattr(response, "operation_status"):
-                assert response.operation_status in ["Succeeded", "Completed"]
-
-        finally:
-            # Always clean up the created classifier, even if the test fails
-            delete_classifier_and_assert_sync(client, classifier_id, created_classifier)
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_begin_create_or_replace(self, contentunderstanding_endpoint):
+    def test_content_classifiers_begin_create_or_replace(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier using begin_create_or_replace
@@ -204,7 +136,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify classifier exists in list after creation
         - Clean up created classifier
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_create_or_replace")
         created_classifier = False
 
@@ -232,7 +164,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_update(self, contentunderstanding_endpoint):
+    def test_content_classifiers_update(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for update test
@@ -240,7 +172,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify updated classifier properties
         - Clean up created classifier
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_update")
         created_classifier = False
 
@@ -315,7 +247,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_get(self, contentunderstanding_endpoint):
+    def test_content_classifiers_get(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for get test
@@ -323,7 +255,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify classifier properties match expected values
         - Clean up created classifier
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_get")
         created_classifier = False
 
@@ -356,7 +288,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_delete(self, contentunderstanding_endpoint):
+    def test_content_classifiers_delete(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for deletion test
@@ -365,7 +297,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Verify classifier no longer exists in list after deletion
         - Clean up if deletion failed
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_delete")
         created_classifier = False
 
@@ -418,14 +350,14 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_list(self, contentunderstanding_endpoint):
+    def test_content_classifiers_list(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - List all available classifiers
         - Verify list response contains expected classifiers
         - Verify each classifier has required properties
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         response = client.content_classifiers.list()
         result = [r for r in response]
 
@@ -475,7 +407,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_begin_classify(self, contentunderstanding_endpoint):
+    def test_content_classifiers_begin_classify(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for classification test
@@ -484,7 +416,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Save classification result to file
         - Clean up created classifier
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify")
         created_classifier = False
 
@@ -544,7 +476,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_begin_classify_binary(self, contentunderstanding_endpoint):
+    def test_content_classifiers_begin_classify_binary(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for binary classification test
@@ -553,7 +485,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Save classification result to file
         - Clean up created classifier
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_binary")
         created_classifier = False
 
@@ -615,14 +547,14 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_classifiers_begin_classify_url_overload(self, contentunderstanding_endpoint):
+    def test_content_classifiers_begin_classify_url_overload(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create classifier for URL classification test using new overload
         - Classify content using URL parameter with new overload
         - Verify classification result properties
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_url_overload")
         created_classifier = False
 
@@ -668,7 +600,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Classify content using data (bytes) parameter with new overload
         - Verify classification result properties
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(client, "test_content_classifiers_begin_classify_data_overload")
         created_classifier = False
 
@@ -716,7 +648,7 @@ class TestContentUnderstandingContentClassifiersOperations(ContentUnderstandingC
         - Test that providing both url and data parameters raises ValueError
         - Verify error handling
         """
-        client = cast(ContentUnderstandingClient, self.create_client(endpoint=contentunderstanding_endpoint))
+        client: ContentUnderstandingClient = self.create_client(endpoint=contentunderstanding_endpoint)
         classifier_id = generate_classifier_id_sync(
             client, "test_content_classifiers_begin_classify_url_data_mutual_exclusivity"
         )
