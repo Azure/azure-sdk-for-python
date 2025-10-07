@@ -33,7 +33,7 @@ from .._constants import (
     BINARY_AGGREGATE_SUFFIX,
     DEFAULT_OAI_EVAL_RUN_NAME,
 )
-from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
+from .._model_configurations import AzureAIProject, EvaluationResult
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
@@ -793,8 +793,7 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
-        eval_id: Optional[str] = kwargs.get("eval_id")
-        eval_run_id: Optional[str] = kwargs.get("eval_run_id")
+        eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
                 evaluation_name=evaluation_name,
@@ -808,7 +807,7 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
-            results_converted = _convert_results_to_aoai_evaluation_results(results, eval_id, eval_run_id, LOGGER)
+            results_converted = _convert_results_to_aoai_evaluation_results(results, eval_meta_data, LOGGER)
             return results_converted
     except Exception as e:
         # Handle multiprocess bootstrap error

@@ -1,0 +1,47 @@
+{
+      "eval_id": "test_eval_group_123",
+      "eval_run_id": "test_run_456",
+      "testing_criteria": [
+        {
+          "type": "label_model",
+          "id": "labelgrader_a4046380-0538-4a8c-81f9-17774e2546bb",
+          "name": "labelgrader",
+          "input": [
+            {
+              "role": "developer",
+              "content": "Classify the sentiment of the following statement as one of 'positive', 'neutral', or 'negative'",
+              "type": null
+            },
+            {
+              "role": "user",
+              "content": "Statement: {{item.query}}",
+              "type": null
+            }
+          ],
+          "labels": [
+            "positive",
+            "neutral",
+            "negative"
+          ],
+          "model": "jamahajagpt4owestus2/gpt-4o",
+          "passing_labels": [
+            "positive",
+            "neutral"
+          ]
+        },
+        {
+          "type": "azure_ai_evaluator",
+          "id": "violence_74e7a2f5-5619-43ab-8002-62e87aa0ad65",
+          "name": "violence",
+          "evaluator_name": "violence",
+          "evaluator_version": "",
+          "initialization_parameters": {
+            "model": "jamahajagpt4owestus2/gpt-4o"
+          },
+          "data_mapping": {
+            "query": "{{item.query}}",
+            "response": "{{item.response}}"
+          }
+        }
+      ]
+    }
