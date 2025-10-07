@@ -28,23 +28,18 @@ from typing import (
     Any,
     Sequence,
     Optional,
-    TYPE_CHECKING, Union, Mapping
+    TYPE_CHECKING,
+    Mapping
 )
 
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
-from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, \
-    NonePartitionKeyValue, _Empty, _Undefined, NullPartitionKeyValue
+from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, PartitionKeyType
 from azure.cosmos import CosmosList
 
 if TYPE_CHECKING:
     from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
-    PartitionKeyType = Union[
-        bool, float, int, str, type[NonePartitionKeyValue], type[NullPartitionKeyValue], _Empty, _Undefined, None,
-        Sequence[Union[bool, float, int, str, type[NonePartitionKeyValue], type[NullPartitionKeyValue],
-        _Empty, _Undefined, None]]
-    ]
 
 class ReadItemsHelperAsync:
     """Helper class for handling read many items operations.
@@ -59,7 +54,7 @@ class ReadItemsHelperAsync:
             self,
             client: 'CosmosClientConnection',
             collection_link: str,
-            items: Sequence[Tuple[str, "PartitionKeyType"]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
             max_concurrency: int = 10,

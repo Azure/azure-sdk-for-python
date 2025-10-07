@@ -14,7 +14,9 @@ class AnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the types of animation data to output."""
 
     BLENDSHAPES = "blendshapes"
+    """Blendshapes output type."""
     VISEME_ID = "viseme_id"
+    """Viseme ID output type."""
 
 
 class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -22,6 +24,17 @@ class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     WORD = "word"
     """Timestamps per word in the output audio."""
+
+
+class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Union of all supported Azure voice types."""
+
+    AZURE_CUSTOM = "azure-custom"
+    """Azure custom voice."""
+    AZURE_STANDARD = "azure-standard"
+    """Azure standard voice."""
+    AZURE_PERSONAL = "azure-personal"
+    """Azure personal voice."""
 
 
 class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,19 +67,37 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUDIO = "audio"
 
 
+class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Threshold level settings for Azure semantic end-of-utterance detection."""
+
+    LOW = "low"
+    """Low sensitivity threshold level."""
+    MEDIUM = "medium"
+    """Medium sensitivity threshold level."""
+    HIGH = "high"
+    """High sensitivity threshold level."""
+    DEFAULT = "default"
+    """Default sensitivity threshold level."""
+
+
 class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of InputAudioFormat."""
+    """Input audio format types supported."""
 
     PCM16 = "pcm16"
+    """16-bit PCM audio format at default sampling rate (24kHz)"""
     G711_ULAW = "g711_ulaw"
+    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
     G711_ALAW = "g711_alaw"
+    """G.711 A-law audio format at 8kHz sampling rate"""
 
 
 class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ItemParamStatus."""
+    """Indicates the processing status of an item or parameter."""
 
     COMPLETED = "completed"
+    """Item or parameter is still being processed."""
     INCOMPLETE = "incomplete"
+    """Item or parameter is not yet complete."""
 
 
 class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -86,29 +117,41 @@ class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Modality."""
+    """Supported modalities for the session."""
 
     TEXT = "text"
+    """Text modality."""
     AUDIO = "audio"
+    """Audio modality."""
     ANIMATION = "animation"
+    """Animation modality."""
     AVATAR = "avatar"
+    """Avatar modality."""
 
 
-class OAIVoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported OpenAI voice names (string enum)."""
 
     ALLOY = "alloy"
+    """Alloy voice."""
     ASH = "ash"
+    """Ash voice."""
     BALLAD = "ballad"
+    """Ballard voice."""
     CORAL = "coral"
+    """Coral voice."""
     ECHO = "echo"
+    """Echo voice."""
     SAGE = "sage"
+    """Sage voice."""
     SHIMMER = "shimmer"
+    """Shimmer voice."""
     VERSE = "verse"
+    """Verse voice."""
 
 
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of OutputAudioFormat."""
+    """Output audio format types supported."""
 
     PCM16 = "pcm16"
     """16-bit PCM audio format at default sampling rate (24kHz)"""
@@ -126,16 +169,22 @@ class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PersonalVoice models."""
 
     DRAGON_LATEST_NEURAL = "DragonLatestNeural"
+    """Use the latest Dragon model."""
     PHOENIX_LATEST_NEURAL = "PhoenixLatestNeural"
+    """Use the latest Phoenix model."""
     PHOENIX_V2_NEURAL = "PhoenixV2Neural"
+    """Use the Phoenix V2 model."""
 
 
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ResponseItemStatus."""
+    """Indicates the processing status of a response item."""
 
     IN_PROGRESS = "in_progress"
+    """Item that is in progress."""
     COMPLETED = "completed"
+    """Item has been fully processed and is complete."""
     INCOMPLETE = "incomplete"
+    """Item has been processed but is incomplete."""
 
 
 class ResponseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -205,3 +254,12 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
+
+
+class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TurnDetectionType."""
+
+    SERVER_VAD = "server_vad"
+    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"

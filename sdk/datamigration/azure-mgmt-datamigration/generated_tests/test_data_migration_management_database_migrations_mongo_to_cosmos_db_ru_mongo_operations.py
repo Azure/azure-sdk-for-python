@@ -25,7 +25,7 @@ class TestDataMigrationManagementDatabaseMigrationsMongoToCosmosDbRUMongoOperati
             resource_group_name=resource_group.name,
             target_resource_name="str",
             migration_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
 
         # please add some check logic here by yourself
@@ -91,7 +91,7 @@ class TestDataMigrationManagementDatabaseMigrationsMongoToCosmosDbRUMongoOperati
                 },
                 "type": "str",
             },
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -104,7 +104,7 @@ class TestDataMigrationManagementDatabaseMigrationsMongoToCosmosDbRUMongoOperati
             resource_group_name=resource_group.name,
             target_resource_name="str",
             migration_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -116,7 +116,7 @@ class TestDataMigrationManagementDatabaseMigrationsMongoToCosmosDbRUMongoOperati
         response = self.client.database_migrations_mongo_to_cosmos_db_ru_mongo.get_for_scope(
             resource_group_name=resource_group.name,
             target_resource_name="str",
-            api_version="2025-03-15-preview",
+            api_version="2025-06-30",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
