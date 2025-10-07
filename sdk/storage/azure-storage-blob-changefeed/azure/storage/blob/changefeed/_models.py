@@ -65,7 +65,7 @@ class Segment:
         try:
             event_datetime = datetime.fromisoformat(event_time.replace("Z", "+00:00"))
         except ValueError:
-            return True
+            return False
         if self.start_time is not None and event_datetime < self.start_time:
             return False
         if self.end_time is not None and event_datetime > self.end_time:
