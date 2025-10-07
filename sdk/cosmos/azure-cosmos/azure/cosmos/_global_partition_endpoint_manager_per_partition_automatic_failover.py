@@ -179,7 +179,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
                                 partition_failover_info.current_region]
                             request.route_to_location(regional_endpoint)
                         else:
-                            if len(self.compute_available_preferred_regions(request)) == len(partition_failover_info.unavailable_regional_endpoints):
+                            if (len(self.compute_available_preferred_regions(request))
+                                    == len(partition_failover_info.unavailable_regional_endpoints)):
                                 # If no other region is available, we invalidate the cache and start once again
                                 # from our main write region in the account configurations
                                 logger.warning("PPAF - All available regions for partition %s are unavailable."

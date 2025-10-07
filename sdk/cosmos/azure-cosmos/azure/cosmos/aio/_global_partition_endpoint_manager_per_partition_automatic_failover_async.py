@@ -178,13 +178,13 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                         available_account_regional_endpoints = self.compute_available_preferred_regions(request)
                         if (partition_failover_info.current_region is not None and
                                 endpoint_region != partition_failover_info.current_region):
-                            print("changed {} region to {} region (current)".format(endpoint_region, partition_failover_info.current_region))
                             # this request has not yet seen there's an available region being used for this partition
                             regional_endpoint = available_account_regional_endpoints[
                                 partition_failover_info.current_region]
                             request.route_to_location(regional_endpoint)
                         else:
-                            if len(self.compute_available_preferred_regions(request)) == len(partition_failover_info.unavailable_regional_endpoints):
+                            if (len(self.compute_available_preferred_regions(request)) ==
+                                    len(partition_failover_info.unavailable_regional_endpoints)):
                                 # If no other region is available, we invalidate the cache and start once again
                                 # from our main write region in the account configurations
                                 logger.warning("All available regions for partition %s are unavailable."
