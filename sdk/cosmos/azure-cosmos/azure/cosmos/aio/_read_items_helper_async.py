@@ -21,7 +21,7 @@
 
 import logging
 import asyncio # pylint: disable=C4763  # Used for Semaphore and gather, not for sleep
-from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Union, Mapping
+from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Mapping
 
 from azure.cosmos import _base, exceptions
 from azure.core.utils import CaseInsensitiveDict

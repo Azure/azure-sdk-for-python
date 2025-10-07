@@ -24,7 +24,7 @@
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-from typing import Any, Mapping, Union, Optional, Type, Sequence, TYPE_CHECKING
+from typing import Any, Mapping, Union, Optional, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async

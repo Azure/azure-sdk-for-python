@@ -228,8 +228,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param partition_key: Partition key for the item to retrieve. If the partition key is set to None, it will try
             to fetch an item with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
@@ -448,8 +447,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             fetch the changes for an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -599,8 +597,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             fetch the changes for an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword start_time: The start time to start processing chang feed items.
             Beginning: Processing the change feed items from the beginning of the change feed.
@@ -718,8 +715,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword partition_key: Partition key at which the query request is targeted. If the partition key is set to
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -955,8 +951,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword partition_key: Partition key at which the query request is targeted. If the partition key is set to
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :paramtype partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -1424,8 +1419,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             it will try to patch an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param patch_operations: The list of patch operations to apply to the item.
         :type patch_operations: list[dict[str, Any]]
         :keyword str filter_predicate: conditional filter to apply to Patch operations.
@@ -1514,8 +1508,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             will try to execute batch on an item with a partition key value of null. To learn more about using partition
             keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1597,8 +1590,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             it will try to delete an item with a partition key value of null. To learn more about using partition keys,
             see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param str pre_trigger_include: trigger id to be used as pre operation trigger.
         :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
@@ -1794,8 +1786,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param partition_key: Specifies the partition key value for the item. If the partition key is set to None,
             it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
@@ -1837,8 +1828,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             it will try to fetch a conflict with a partition key of null. To learn more about using partition keys, see
             `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
         :returns: A CosmosDict representing the retrieved conflict.
@@ -1870,8 +1860,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             try to delete a conflict with a partition key value of null. To learn more about using partition keys, see
             `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
@@ -1907,8 +1896,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param partition_key: Partition key for the items to be deleted. If the partition key is set to None, it will
             try to delete the items with a partition key of null. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
-        :type partition_key: Union[str, int, float, bool, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue],
-            None, Sequence[Union[str, int, float, bool, None]]]
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.

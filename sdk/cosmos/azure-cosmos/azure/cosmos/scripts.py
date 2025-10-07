@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Mapping, Union, Optional, Type, Sequence
+from typing import Any, Mapping, Union, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
