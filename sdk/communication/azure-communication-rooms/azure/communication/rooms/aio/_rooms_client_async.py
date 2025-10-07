@@ -110,7 +110,7 @@ class RoomsClient(object):
             "pstnDialOutEnabled": pstn_dial_out_enabled,
         }
         if participants:
-            create_room_request["participants"] = {
+            create_room_request["participants"] = {  # type: ignore[assignment]
                 p.communication_identifier.raw_id: {"role": p.role} for p in participants
             }
         _SERIALIZER = Serializer()
@@ -194,7 +194,9 @@ class RoomsClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.rooms.CommunicationRoom]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._rooms_service_client.rooms.list(cls=lambda rooms: [CommunicationRoom(r) for r in rooms], **kwargs)
+        return self._rooms_service_client.rooms.list(  # type: ignore[return-value]
+            cls=lambda rooms: [CommunicationRoom(r) for r in rooms], **kwargs
+        )
 
     @distributed_trace_async
     async def add_or_update_participants(self, *, room_id: str, participants: List[RoomParticipant], **kwargs) -> None:
@@ -229,12 +231,14 @@ class RoomsClient(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
-        remove_participants_request = {"participants": {}}
+        remove_participants_request: dict = {"participants": {}}
         for participant in participants:
             try:
-                remove_participants_request["participants"][participant.communication_identifier.raw_id] = None
+                remove_participants_request["participants"][
+                    participant.communication_identifier.raw_id  # type: ignore[union-attr]
+                ] = None
             except AttributeError:
-                remove_participants_request["participants"][participant.raw_id] = None
+                remove_participants_request["participants"][participant.raw_id] = None  # type: ignore[union-attr]
         await self._rooms_service_client.participants.update(
             room_id=room_id, update_participants_request=remove_participants_request, **kwargs
         )
@@ -249,7 +253,7 @@ class RoomsClient(object):
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.rooms.RoomParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return self._rooms_service_client.participants.list(
+        return self._rooms_service_client.participants.list(  # type: ignore[return-value]
             room_id=room_id, cls=lambda objs: [RoomParticipant(x) for x in objs], **kwargs
         )
 
