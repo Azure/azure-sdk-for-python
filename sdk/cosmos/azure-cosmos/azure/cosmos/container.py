@@ -43,7 +43,7 @@ from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
 from .offer import Offer, ThroughputProperties
-from .partition_key import (_build_partition_key_from_properties, _PartitionKeyType,
+from .partition_key import (_build_partition_key_from_properties, PartitionKeyType,
                             _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from .scripts import ScriptsProxy
@@ -57,7 +57,7 @@ __all__ = ("ContainerProxy",)
 
 def _get_epk_range_for_partition_key(
         container_properties: dict[str, Any],
-        partition_key_value: _PartitionKeyType) -> Range:
+        partition_key_value: PartitionKeyType) -> Range:
     partition_key_obj: PartitionKey = _build_partition_key_from_properties(container_properties)
     return partition_key_obj._get_epk_range_for_partition_key(partition_key_value)
 
@@ -137,8 +137,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _set_partition_key(
         self,
-        partition_key: _PartitionKeyType
-    ) -> _PartitionKeyType:
+        partition_key: PartitionKeyType
+    ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(self.is_system_key)
         if partition_key == NullPartitionKeyValue:
@@ -209,7 +209,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         post_trigger_include: Optional[str] = None,
         *,
@@ -242,7 +242,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -290,7 +290,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def read_items(
             self,
-            items: Sequence[Tuple[str, _PartitionKeyType]],
+            items: Sequence[Tuple[str, PartitionKeyType]],
             *,
             executor: Optional[ThreadPoolExecutor] = None,
             max_concurrency: int = 10,
@@ -316,7 +316,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -383,7 +383,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -428,7 +428,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             *,
             max_item_count: Optional[int] = None,
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
-            partition_key: _PartitionKeyType,
+            partition_key: PartitionKeyType,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
@@ -459,7 +459,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -502,7 +502,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -532,7 +532,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -573,7 +573,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -616,7 +616,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -645,7 +645,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         container_properties = self._get_properties_with_options(feed_options)
         if "partition_key" in kwargs:
             partition_key = kwargs.pop("partition_key")
-            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(_PartitionKeyType, partition_key))
+            change_feed_state_context["partitionKey"] = self._set_partition_key(cast(PartitionKeyType, partition_key))
             change_feed_state_context["partitionKeyFeedRange"] = \
                 _get_epk_range_for_partition_key(container_properties, partition_key)
         if "feed_range" in kwargs:
@@ -677,7 +677,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
             parameters: Optional[list[dict[str, object]]] = None,
-            partition_key: _PartitionKeyType,
+            partition_key: PartitionKeyType,
             populate_index_metrics: Optional[bool] = None,
             populate_query_metrics: Optional[bool] = None,
             priority: Optional[Literal["High", "Low"]] = None,
@@ -702,7 +702,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             More than one request is necessary if the query is not scoped to single partition key value.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -789,7 +789,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             More than one request is necessary if the query is not scoped to single partition key value.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -938,7 +938,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             More than one request is necessary if the query is not scoped to single partition key value.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1147,7 +1147,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1243,7 +1243,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1338,7 +1338,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1397,7 +1397,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def patch_item(
         self,
         item: Union[str, dict[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         patch_operations: list[dict[str, Any]],
         *,
         filter_predicate: Optional[str] = None,
@@ -1447,7 +1447,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1496,7 +1496,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1523,7 +1523,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1572,7 +1572,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         populate_query_metrics: Optional[bool] = None,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1613,7 +1613,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1777,7 +1777,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         query: str,
         parameters: Optional[list[dict[str, object]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
-        partition_key: Optional[_PartitionKeyType] = None,
+        partition_key: Optional[PartitionKeyType] = None,
         max_item_count: Optional[int] = None,
         *,
         response_hook: Optional[Callable[[Mapping[str, Any], ItemPaged[dict[str, Any]]], None]] = None,
@@ -1826,7 +1826,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the conflict identified by `conflict`.
@@ -1857,7 +1857,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     def delete_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         **kwargs: Any
     ) -> None:
         """Delete a specified conflict from the container.
@@ -1889,7 +1889,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def delete_all_items_by_partition_key(
         self,
-        partition_key: _PartitionKeyType,
+        partition_key: PartitionKeyType,
         *,
         pre_trigger_include: Optional[str] = None,
         post_trigger_include: Optional[str] = None,
@@ -1913,7 +1913,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -2013,7 +2013,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         return get_latest_session_token(feed_ranges_to_session_tokens, target_feed_range)
 
-    def feed_range_from_partition_key(self, partition_key: _PartitionKeyType) -> dict[str, Any]:
+    def feed_range_from_partition_key(self, partition_key: PartitionKeyType) -> dict[str, Any]:
         """Gets the feed range for a given partition key.
 
         :param partition_key: Partition key value used to derive the feed range. If set to ``None`` a feed range

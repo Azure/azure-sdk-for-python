@@ -101,7 +101,7 @@ class _Infinity:
 
 _SingularPartitionKeyType = Union[None, bool, float, int, str, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue], _Empty, _Undefined] # pylint: disable=line-too-long
 _SequentialPartitionKeyType = Sequence[_SingularPartitionKeyType]
-_PartitionKeyType = Union[_SingularPartitionKeyType, _SequentialPartitionKeyType]
+PartitionKeyType = Union[_SingularPartitionKeyType, _SequentialPartitionKeyType]
 
 class PartitionKey(dict):
     """Key used to partition a container into logical partitions.
@@ -215,7 +215,7 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_partition_key(
             self,
-            pk_value: _PartitionKeyType
+            pk_value: PartitionKeyType
     ) -> _Range:
         if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(
@@ -374,7 +374,7 @@ class PartitionKey(dict):
 
     def _is_prefix_partition_key(
             self,
-            partition_key: _PartitionKeyType) -> bool:  # pylint: disable=line-too-long
+            partition_key: PartitionKeyType) -> bool:  # pylint: disable=line-too-long
         if self.kind != _PartitionKeyKind.MULTI_HASH:
             return False
         ret = ((isinstance(partition_key, Sequence) and

@@ -45,7 +45,7 @@ from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
 from ..exceptions import CosmosHttpResponseError
 from ..offer import ThroughputProperties
-from ..partition_key import (_get_partition_key_from_partition_key_definition, _PartitionKeyType,
+from ..partition_key import (_get_partition_key_from_partition_key_definition, PartitionKeyType,
                              _return_undefined_or_empty_partition_key, NonePartitionKeyValue, NullPartitionKeyValue)
 
 __all__ = ("ContainerProxy",)
@@ -55,8 +55,6 @@ __all__ = ("ContainerProxy",)
 # pylint: disable=too-many-public-methods
 # pylint: disable=docstring-keyword-should-match-keyword-only
 # cspell:ignore rerank reranker reranking
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], None, Type[NonePartitionKeyValue], Type[NullPartitionKeyValue]]  # pylint: disable=line-too-long
 
 
 class ContainerProxy:
@@ -139,8 +137,8 @@ class ContainerProxy:
 
     async def _set_partition_key(
         self,
-        partition_key: _PartitionKeyType
-    ) -> _PartitionKeyType:
+        partition_key: PartitionKeyType
+    ) -> PartitionKeyType:
         if partition_key == NonePartitionKeyValue:
             return _return_undefined_or_empty_partition_key(await self.is_system_key)
         if partition_key == NullPartitionKeyValue:
@@ -149,7 +147,7 @@ class ContainerProxy:
 
     async def _get_epk_range_for_partition_key(
             self,
-            partition_key_value: _PartitionKeyType,
+            partition_key_value: PartitionKeyType,
             feed_options: Optional[dict[str, Any]] = None) -> Range:
         container_properties = await self._get_properties_with_options(feed_options)
         partition_key_definition = container_properties["partitionKey"]
@@ -236,7 +234,7 @@ class ContainerProxy:
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -332,7 +330,7 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -398,7 +396,7 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -457,7 +455,7 @@ class ContainerProxy:
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations.
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations.
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
@@ -526,7 +524,7 @@ class ContainerProxy:
             A value of 0 is the same as not passing a value (default no limit).
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -687,7 +685,7 @@ class ContainerProxy:
             A value of 0 is the same as not passing a value (default no limit).
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -754,7 +752,7 @@ class ContainerProxy:
             More than one request is necessary if the query is not scoped to single partition key value.
         :keyword bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -893,7 +891,7 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -935,7 +933,7 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -965,7 +963,7 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :paramtype priority: Literal["High", "Low"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1007,7 +1005,7 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1047,7 +1045,7 @@ class ContainerProxy:
             ALL_VERSIONS_AND_DELETES: Query all versions and deleted items from either `start_time='Now'`
             or 'continuation' token.
         :paramtype mode: Literal["LatestVersion", "AllVersionsAndDeletes"]
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1138,7 +1136,7 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1271,7 +1269,7 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1365,7 +1363,7 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1446,7 +1444,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1724,7 +1722,7 @@ class ContainerProxy:
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
@@ -1791,7 +1789,7 @@ class ContainerProxy:
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword list[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
+        :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
