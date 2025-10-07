@@ -1642,7 +1642,7 @@ class ContainerProxy:
         conflict: Union[str, Mapping[str, Any]],
         partition_key: PartitionKeyType,
         **kwargs: Any,
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
@@ -1656,8 +1656,8 @@ class ContainerProxy:
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
-        :returns: A dict representing the retrieved conflict.
-        :rtype: Dict[str, Any]
+        :returns: A CosmosDict representing the retrieved conflict.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)

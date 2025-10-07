@@ -1201,7 +1201,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         conflict_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a conflict.
 
         :param str conflict_link:
@@ -1211,7 +1211,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Conflict.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
