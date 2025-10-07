@@ -8,7 +8,7 @@
 import collections
 import copy
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import (
     Any, Dict, Iterator, List, Optional, Union,
     TYPE_CHECKING
@@ -38,16 +38,39 @@ class Segment:
         self, client: Union["ContainerClient", "AsyncContainerClient"],
         segment_path: str,
         page_size: int,
-        segment_cursor: Optional[Dict[str, Any]] = None
+        segment_cursor: Optional[Dict[str, Any]] = None,
+        *,
+        start_time: Optional[datetime] = None,
+        end_time: Optional[datetime] = None
     ) -> None:
         self.client = client
         self.segment_path = segment_path
         self.page_size = page_size
         self.shards: "deque" = collections.deque()
         self.cursor: Dict[str, Any] = {"ShardCursors": {}, "SegmentPath": self.segment_path}
+        self.start_time = self._to_utc(start_time)
+        self.end_time = self._to_utc(end_time)
         self._initialize(segment_cursor=segment_cursor)
         # cursor is in this format:
         # {"segment_path", path, "CurrentShardPath": shard_path, "segment_cursor": ShardCursors dict}
+
+    def _to_utc(self, dt: Optional[datetime] = None) -> Optional[datetime]:
+        if dt is None:
+            return None
+        return dt.replace(tzinfo=timezone.utc) if dt.tzinfo is None else dt.astimezone(timezone.utc)
+
+    def _in_range(self, event_time: Optional[str] = None) -> bool:
+        if event_time is None:
+            return False
+        try:
+            event_datetime = datetime.fromisoformat(event_time.replace("Z", "+00:00"))
+        except ValueError:
+            return True
+        if self.start_time is not None and event_datetime < self.start_time:
+            return False
+        if self.end_time is not None and event_datetime > self.end_time:
+            return False
+        return True
 
     def __iter__(self) -> Self:
         return self
@@ -58,6 +81,8 @@ class Segment:
             shard = self.shards.popleft()
             try:
                 event = next(shard)
+                if not self._in_range(event.get('eventTime')):
+                    continue
                 segment_events.append(event)
                 self.shards.append(shard)
             except StopIteration:
@@ -265,7 +290,8 @@ class ChangeFeed:
         if segment_path:
             if self.end_time and self._is_later_than_end_time(segment_path):
                 return None
-            return Segment(self.client, segment_path, page_size, segment_cursor)
+            return Segment(self.client, segment_path, page_size, segment_cursor,
+                           start_time=self.start_time, end_time=self.end_time)
         return None
 
     def _get_segment_paths(self, start_year=""):
