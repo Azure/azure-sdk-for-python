@@ -1204,7 +1204,7 @@ class ContainerProxy:
          * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
          * **sort** (bool): Whether to sort the results by relevance score in descending order. Default is True.
          * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
-         * **target_paths** (list[str]): If document_type is "json", the list of JSON paths to extract text from for reranking.
+         * **target_paths** (str): If document_type is "json", the list of JSON paths to extract text from for reranking. Comma-separated string.
 
         :type semantic_reranking_options: Optional[Dict[str, Any]]
         :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
