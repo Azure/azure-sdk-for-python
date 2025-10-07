@@ -9,7 +9,6 @@
   ([#43066](https://github.com/Azure/azure-sdk-for-python/pull/43066))
 - OneSettings control plane: Add killswitch + exponential  backoff + sdkstats feature control
   ([#43147](https://github.com/Azure/azure-sdk-for-python/pull/43147))
-
 - Performance Counters
   ([#43024](https://github.com/Azure/azure-sdk-for-python/pull/43024))
 
