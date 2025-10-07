@@ -29,6 +29,7 @@ from typing import Any, Mapping, Union, Optional, Type, Sequence, TYPE_CHECKING
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
@@ -111,14 +112,18 @@ class ScriptsProxy:
         )
 
     @distributed_trace_async
-    async def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> dict[str, Any]:
+    async def get_stored_procedure(
+        self,
+        sproc: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Get the stored procedure identified by `sproc`.
 
         :param sproc: The ID (name) or dict representing the stored procedure to retrieve.
         :type sproc: Union[str, dict[str, Any]]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
-        :returns: A dict representing the retrieved stored procedure.
-        :rtype: dict[str, Any]
+        :returns: A CosmosDict representing the retrieved stored procedure.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
 
@@ -127,15 +132,19 @@ class ScriptsProxy:
         )
 
     @distributed_trace_async
-    async def create_stored_procedure(self, body: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+    async def create_stored_procedure(
+        self,
+        body: dict[str, Any],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Create a new stored procedure in the container.
 
         To replace an existing stored procedure, use the :func:`Container.scripts.replace_stored_procedure` method.
 
         :param dict[str, Any] body: A dict representing the stored procedure to create.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
-        :returns: A dict representing the new stored procedure.
-        :rtype: dict[str, Any]
+        :returns: A CosmosDict representing the new stored procedure.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
 
@@ -149,7 +158,7 @@ class ScriptsProxy:
         sproc: Union[str, Mapping[str, Any]],
         body: dict[str, Any],
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Replace a specified stored procedure in the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -159,8 +168,8 @@ class ScriptsProxy:
         :param dict[str, Any] body: A dict representing the stored procedure to replace.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the stored
             procedure with given id does not exist.
-        :returns: A dict representing the stored procedure after replace went through.
-        :rtype: dict[str, Any]
+        :returns: A CosmosDict representing the stored procedure after replace went through.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
         return await self.client_connection.ReplaceStoredProcedure(
@@ -198,7 +207,7 @@ class ScriptsProxy:
         parameters: Optional[list[dict[str, Any]]] = None,
         enable_script_logging: Optional[bool] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> Any:
         """Execute a specified stored procedure.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -214,7 +223,7 @@ class ScriptsProxy:
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
         :returns: Result of the executed stored procedure for the given parameters.
-        :rtype: dict[str, Any]
+        :rtype: Any
         """
 
         request_options = _build_options(kwargs)

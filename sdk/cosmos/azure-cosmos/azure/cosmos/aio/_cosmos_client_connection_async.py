@@ -506,7 +506,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :return:
             The Database that was created.
-        :rtype: dict
+        :rtype:
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -522,7 +523,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a user.
 
         :param str database_link:
@@ -534,7 +535,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created User.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -558,8 +559,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The Azure Cosmos collection to create.
         :param dict options:
             The request options for the request.
-        :return: The Collection that was created.
-        :rtype: dict
+        :return:
+            The Collection that was created.
+        :rtype:
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -589,7 +592,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Document.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         # Python's default arguments are evaluated once when the function is defined,
@@ -620,7 +623,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a permission for a user.
 
         :param str user_link:
@@ -632,7 +635,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Permission.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -647,7 +650,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         udf: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a user-defined function in a collection.
 
         :param str collection_link:
@@ -658,7 +661,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created UDF.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -674,7 +677,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         trigger: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a trigger in a collection.
 
         :param str collection_link:
@@ -685,7 +688,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Trigger.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -701,7 +704,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         sproc: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Creates a stored procedure in a collection.
 
         :param str collection_link:
@@ -712,7 +715,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Stored Procedure.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -728,7 +731,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         params: Optional[Union[dict[str, Any], list[dict[str, Any]]]],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> Any:
         """Executes a store procedure.
 
         :param str sproc_link:
@@ -740,7 +743,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The Stored Procedure response.
         :rtype:
-            dict
+            Any
 
         """
         if options is None:
@@ -787,7 +790,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The created Azure Cosmos resource.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -820,7 +823,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Upserts a user.
 
         :param str database_link:
@@ -831,7 +834,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :return:
             The upserted User.
-        :rtype: dict
+        :rtype:
+            ~azure.cosmos.CosmosDict[str, Any]
+
         """
         if options is None:
             options = {}
@@ -845,7 +850,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Upserts a permission for a user.
 
         :param str user_link:
@@ -857,7 +862,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted permission.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -884,7 +889,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted Document.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         # Python's default arguments are evaluated once when the function is defined,
@@ -930,7 +935,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The upserted Azure Cosmos resource.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1001,7 +1006,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The request options for the request.
         :return:
             The Database that was read.
-        :rtype: dict
+        :rtype:
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1027,7 +1033,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Collection.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1053,7 +1059,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Document.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1068,7 +1074,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a user.
 
         :param str user_link:
@@ -1079,7 +1085,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read User.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1094,7 +1100,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a permission.
 
         :param str permission_link:
@@ -1105,7 +1111,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read permission.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1120,7 +1126,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         udf_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a user-defined function.
 
         :param str udf_link:
@@ -1131,7 +1137,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read UDF.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1146,7 +1152,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         sproc_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a stored procedure.
 
         :param str sproc_link:
@@ -1157,7 +1163,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Stored Procedure.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
         """
         if options is None:
             options = {}
@@ -1171,7 +1177,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         trigger_link: str,
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Reads a trigger.
 
         :param str trigger_link:
@@ -1182,7 +1188,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The read Trigger.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1238,7 +1244,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The retrieved Azure Cosmos resource.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1296,7 +1302,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         user: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a user and return it.
 
         :param str user_link:
@@ -1307,7 +1313,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new User.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1324,7 +1330,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         permission: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a permission and return it.
 
         :param str permission_link:
@@ -1335,7 +1341,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Permission.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1364,7 +1370,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Collection.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1382,7 +1388,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         udf: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a user-defined function and returns it.
 
         :param str udf_link:
@@ -1393,7 +1399,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new UDF.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1417,7 +1423,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         trigger: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a trigger and returns it.
 
         :param str trigger_link:
@@ -1428,7 +1434,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The replaced Trigger.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1463,7 +1469,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Document.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         base._validate_resource(new_document)
@@ -1502,7 +1508,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Document.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1551,7 +1557,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The replaced Offer.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         base._validate_resource(offer)
@@ -1565,7 +1571,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         sproc: dict[str, Any],
         options: Optional[Mapping[str, Any]] = None,
         **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> CosmosDict:
         """Replaces a stored procedure and returns it.
 
         :param str sproc_link:
@@ -1576,7 +1582,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The replaced Stored Procedure.
         :rtype:
-            dict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         if options is None:
@@ -1616,7 +1622,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :return:
             The new Azure Cosmos resource.
         :rtype:
-            CosmosDict
+            ~azure.cosmos.CosmosDict[str, Any]
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -1713,8 +1719,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the database.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Database.
+
         :rtype:
             None
         """
@@ -1737,10 +1742,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the user entity.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted user.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1762,10 +1766,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the permission.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Permission.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1787,10 +1790,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document collection.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Collection.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1812,10 +1814,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the document.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Document.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1837,8 +1838,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the user-defined function.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted UDF.
+
         :rtype:
             None
         """
@@ -1862,10 +1862,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the trigger.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Trigger.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1887,10 +1886,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the stored procedure.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Stored Procedure.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1912,10 +1910,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             The link to the conflict.
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Conflict.
+
         :rtype:
-            dict
+            None
 
         """
         if options is None:
@@ -1942,10 +1939,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict initial_headers:
         :param dict options:
             The request options for the request.
-        :return:
-            The deleted Azure Cosmos resource.
+
         :rtype:
-            dict
+            None
 
         """
         response_hook = kwargs.pop("response_hook", None)
@@ -3252,6 +3248,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param object partition_resolver:
             An instance of PartitionResolver.
 
+        :rtype:
+            None
+
         """
         if not database_link:
             raise ValueError("database_link is None or empty.")
@@ -3412,8 +3411,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options:
             The request options for the request.
 
-        :return:
-            None
         :rtype:
             None
 
