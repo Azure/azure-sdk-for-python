@@ -28,7 +28,7 @@ python -m pip install azure-ai-contentunderstanding
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Azure AI Content Understanding resource.
 
-## Samples
+## Examples
 
 ### Content Analyzers
 Analyze documents and extract structured information:
@@ -43,6 +43,9 @@ Analyze documents and extract structured information:
 - **`content_analyzers_update.py`** - Update analyzer description and tags
 - **`content_analyzers_delete_analyzer.py`** - Delete custom analyzer
 - **`content_analyzers_get_result_file.py`** - Download result files (keyframe images) from video analysis operations
+
+### Advanced Features
+- **`custom_poller_demo.py`** - Demonstrate custom LROPoller classes with operation ID details and continuation token support
 
 ### Content Classifiers
 Classify content into categories:
