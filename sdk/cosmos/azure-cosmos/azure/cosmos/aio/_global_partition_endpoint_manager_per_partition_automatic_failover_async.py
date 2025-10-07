@@ -51,6 +51,7 @@ class PartitionLevelFailoverInfo:
         :rtype: bool
         """
         with self._lock:
+            print("got lock to move to next location")
             if endpoint_region != self.current_region and self.current_region is not None:
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
@@ -67,6 +68,8 @@ class PartitionLevelFailoverInfo:
                 logger.warning("PPAF - Moving to next available regional endpoint: %s", self.current_region)
                 regional_endpoint = available_account_regional_endpoints[self.current_region]
                 request.route_to_location(regional_endpoint)
+                print(f"routing to {regional_endpoint} from {endpoint_region}")
+                print(f"current unavailable: {str(self.unavailable_regional_endpoints)}")
                 return True
 
             return False
@@ -175,22 +178,25 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                         available_account_regional_endpoints = self.compute_available_preferred_regions(request)
                         if (partition_failover_info.current_region is not None and
                                 endpoint_region != partition_failover_info.current_region):
+                            print("changed {} region to {} region (current)".format(endpoint_region, partition_failover_info.current_region))
                             # this request has not yet seen there's an available region being used for this partition
                             regional_endpoint = available_account_regional_endpoints[
                                 partition_failover_info.current_region]
                             request.route_to_location(regional_endpoint)
                         else:
-                            # If the current region is unavailable, we try to move to the next available region
-                            if not partition_failover_info.try_move_to_next_location(
-                                self.compute_available_preferred_regions(request),
-                                endpoint_region,
-                                request):
-                                logger.warning("All available regions for partition %s are unavailable."
-                                               " Refreshing cache.", pk_range_wrapper)
+                            if len(self.compute_available_preferred_regions(request)) == len(partition_failover_info.unavailable_regional_endpoints):
                                 # If no other region is available, we invalidate the cache and start once again
                                 # from our main write region in the account configurations
+                                logger.warning("All available regions for partition %s are unavailable."
+                                               " Refreshing cache.", pk_range_wrapper)
                                 self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
                                 request.clear_route_to_location()
+                            else:
+                                # If the current region is unavailable, we try to move to the next available region
+                                partition_failover_info.try_move_to_next_location(
+                                    self.compute_available_preferred_regions(request),
+                                    endpoint_region,
+                                    request)
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
                         endpoint_region = self.location_cache.get_location_from_endpoint(

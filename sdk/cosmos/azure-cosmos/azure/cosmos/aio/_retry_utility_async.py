@@ -205,6 +205,9 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     retry_policy.container_rid = cached_container["_rid"]
                     request.headers[retry_policy._intended_headers] = retry_policy.container_rid
             elif e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
+                if args:
+                    # record the failure for circuit breaker tracking
+                    await global_endpoint_manager.record_ppcb_failure(args[0], pk_range_wrapper)
                 retry_policy = service_unavailable_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code >= StatusCodes.INTERNAL_SERVER_ERROR:
                 if args:
