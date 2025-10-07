@@ -11,6 +11,7 @@ import asyncio
 import os
 from datetime import datetime
 import uuid
+from collections.abc import AsyncIterator
 
 from typing import Any
 
@@ -176,14 +177,15 @@ async def main():
                 path=keyframe_id,
             )
 
-            # Handle the response which may be bytes or an async iterator of bytes
-            if isinstance(response, (bytes, bytearray)):
-                image_content = bytes(response)
-            else:
-                chunks: list[bytes] = []
-                async for chunk in response:
-                    chunks.append(chunk)
-                image_content = b"".join(chunks)
+            # Handle the response - it's an async iterator that needs to be collected
+            from collections.abc import AsyncIterator
+            assert isinstance(response, AsyncIterator), f"Expected AsyncIterator, got {type(response)}"
+            
+            # It's an async iterator, collect all bytes efficiently
+            chunks: list[bytes] = []
+            async for chunk in response:
+                chunks.append(chunk)
+            image_content = b"".join(chunks)
 
             print(f"✅ Retrieved image file for {keyframe_id} ({len(image_content)} bytes)")
 

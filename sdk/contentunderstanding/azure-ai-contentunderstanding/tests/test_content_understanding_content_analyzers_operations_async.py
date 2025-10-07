@@ -184,23 +184,25 @@ async def download_keyframes_and_assert_async(
         )
 
         # Handle the response - it's an async iterator that needs to be collected
-        if hasattr(response, "__aiter__"):
-            # It's an async iterator, collect all bytes efficiently
-            chunks = []
-            async for chunk in response:
-                chunks.append(chunk)
-            response = b"".join(chunks)
+        from collections.abc import AsyncIterator
+        assert isinstance(response, AsyncIterator), f"Expected AsyncIterator, got {type(response)}"
+        
+        # It's an async iterator, collect all bytes efficiently
+        chunks = []
+        async for chunk in response:
+            chunks.append(chunk)
+        result_bytes = b"".join(chunks)
 
         # Assert that we successfully get a response and it's valid image data
-        assert response is not None, f"Response for path {keyframe_id} should not be None"
+        assert result_bytes is not None, f"Response for path {keyframe_id} should not be None"
         assert isinstance(
-            response, bytes
-        ), f"Response for {keyframe_id} should be bytes (image data), got {type(response)}"
-        assert len(response) > 0, f"Image file content for {keyframe_id} should not be empty"
+            result_bytes, bytes
+        ), f"Response for {keyframe_id} should be bytes (image data), got {type(result_bytes)}"
+        assert len(result_bytes) > 0, f"Image file content for {keyframe_id} should not be empty"
 
         # Save the image file using the helper function
         saved_file_path = save_keyframe_image_to_file(
-            image_content=response,
+            image_content=result_bytes,
             keyframe_id=keyframe_id,
             test_name="test_content_analyzers_get_result_file",
             test_py_file_dir=test_py_file_dir,
