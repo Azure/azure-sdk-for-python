@@ -72,11 +72,11 @@ class ScriptsProxy:
         if self._is_system_key is None:
             self._is_system_key = self._container.is_system_key
         return self._is_system_key
-    
+
     @is_system_key.setter
     def is_system_key(self, value: bool) -> None:
         self._is_system_key = value
-    
+
     def _get_is_system_key(self, **kwargs) -> bool:
         if self._is_system_key is None:
             self._is_system_key = self._container._get_is_system_key(**kwargs)

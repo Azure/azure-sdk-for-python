@@ -348,9 +348,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs["throughput_bucket"] = throughput_bucket
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options, **kwargs)
-    
-        query_options["enableCrossPartitionQuery"] = True
 
+        query_options["enableCrossPartitionQuery"] = True
         item_tuples = [(item_id, self._set_partition_key(pk, **kwargs)) for item_id, pk in items]
 
         return self.client_connection.read_items(

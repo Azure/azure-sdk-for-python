@@ -1069,6 +1069,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :keyword executor: Optional ThreadPoolExecutor for thread management
         :paramtype executor: Optional[ThreadPoolExecutor]
+        :keyword response_hook: A callable invoked with the response metadata.
+        :paramtype response_hook: Callable[[Mapping[str, Any], List[Dict[str, Any]]], None]
         :return: The list of read items.
         :rtype: CosmosList
         """
@@ -3207,7 +3209,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options.get("partitionKey", None)
             )
             request_params.set_excluded_location_from_options(options)
-            base.set_session_token_header(self, headers, path, request_params, options, partition_key_range_id, **kwargs)
+            base.set_session_token_header(
+                self,
+                headers,
+                path,
+                request_params,
+                options,
+                partition_key_range_id,
+                **kwargs
+            )
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
@@ -3252,7 +3262,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         request_params.set_excluded_location_from_options(options)
         if not is_query_plan:
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"
-            base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id, **kwargs)
+            base.set_session_token_header(
+                self,
+                req_headers,
+                path,
+                request_params,
+                options,
+                partition_key_range_id,
+                **kwargs
+            )
 
         # Check if the over lapping ranges can be populated
         feed_range_epk = None
