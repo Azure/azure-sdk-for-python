@@ -313,7 +313,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                       If not provided, a new executor will be created as needed.
         :keyword int max_concurrency: The maximum number of concurrent operations for the
                       items request. This value is ignored if an executor is provided. If not specified,
-                      defaults to Python's ThreadPoolExecutor default of min(32, (os.cpu_count() or 1) + 4).
+                      the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.

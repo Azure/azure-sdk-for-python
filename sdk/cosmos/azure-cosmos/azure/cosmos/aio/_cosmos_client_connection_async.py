@@ -2279,6 +2279,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: Sequence[Tuple[str, _PartitionKeyType]]
         :param dict options: The request options for the request.
+        :keyword int max_concurrency: The maximum number of concurrent operations for the items request.
+            If not specified, the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :return: The list of read items.
         :rtype: CosmosList
         """
@@ -2292,7 +2294,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             raise ValueError("Could not find partition key definition for collection.")
 
         # Extract and remove max_concurrency from kwargs
-        max_concurrency = kwargs.pop('max_concurrency', 10)
+        max_concurrency = kwargs.pop('max_concurrency', None)
         helper = ReadItemsHelperAsync(
             client=self,
             collection_link=collection_link,

@@ -437,7 +437,7 @@ class ContainerProxy:
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],
             *,
-            max_concurrency: int = 10,
+            max_concurrency: Optional[int] = None,
             consistency_level: Optional[str] = None,
             session_token: Optional[str] = None,
             initial_headers: Optional[Dict[str, str]] = None,
@@ -454,7 +454,8 @@ class ContainerProxy:
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: Sequence[Tuple[str, PartitionKeyType]]
         :keyword int max_concurrency: The maximum number of concurrent operations for the read_items
-            request. Defaults to 10.
+            request. If not specified, the default max_concurrency defined by Python's ThreadPoolExecutor
+            will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
