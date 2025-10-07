@@ -28,6 +28,7 @@ from typing import Any, Dict, List, Mapping, Union, Optional, Callable
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
@@ -49,7 +50,7 @@ class UserProxy:
         client_connection: CosmosClientConnection,
         id: str,
         database_link: str,
-        properties: Optional[Dict[str, Any]] = None
+        properties: Optional[CosmosDict] = None
     ) -> None:
         self.client_connection = client_connection
         self.id = id
@@ -66,19 +67,24 @@ class UserProxy:
             return permission_or_id.permission_link
         return "{}/permissions/{}".format(self.user_link, permission_or_id["id"])
 
-    def _get_properties(self) -> Dict[str, Any]:
+    def _get_properties(
+        self
+    ) -> CosmosDict:
         if self._properties is None:
             self._properties = self.read()
         return self._properties
 
     @distributed_trace
-    def read(self, **kwargs: Any) -> Dict[str, Any]:
+    def read(
+        self,
+        **kwargs: Any
+    ) -> CosmosDict:
         """Read user properties.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dictionary of the retrieved user properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
-        :rtype: dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         self._properties = self.client_connection.ReadUser(
