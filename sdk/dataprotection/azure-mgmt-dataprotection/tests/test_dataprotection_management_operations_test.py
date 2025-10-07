@@ -12,8 +12,7 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 
 AZURE_LOCATION = "eastus"
 
-
-
+@pytest.mark.live_test_only
 class TestDataProtectionManagementOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(DataProtectionMgmtClient)
@@ -21,8 +20,6 @@ class TestDataProtectionManagementOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_list(self, resource_group):
-        response = self.client.data_protection_operations.list(
-            api_version="2024-04-01",
-        )
+        response = self.client.data_protection_operations.list()
         result = [r for r in response]
         assert result

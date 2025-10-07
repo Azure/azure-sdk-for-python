@@ -1,5 +1,17 @@
 # Release History
 
+## 1.1.0b2 (2025-09-29)
+
+### Features Added
+
+  - Model `MongoClusterMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Model `MongoClusterUpdateProperties` added property `encryption`
+
+### Breaking Changes
+
+  - Model `StorageProperties` deleted or renamed its instance variable `iops`
+  - Model `StorageProperties` deleted or renamed its instance variable `throughput`
+
 ## 1.1.0b1 (2025-07-23)
 
 ### Features Added

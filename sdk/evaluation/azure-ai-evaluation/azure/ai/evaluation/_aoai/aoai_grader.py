@@ -118,7 +118,7 @@ class AzureOpenAIGrader:
                 api_key=api_key,  # Default-style access to appease linters.
                 api_version=DEFAULT_AOAI_API_VERSION,  # Force a known working version
                 azure_deployment=model_config.get("azure_deployment", ""),
-                azure_ad_token_provider=self.get_token_provider(self._credential) if not api_key else None,
+                azure_ad_token_provider=self._get_token_provider(self._credential) if not api_key else None,
                 default_headers=default_headers,
             )
         from openai import OpenAI
@@ -132,7 +132,7 @@ class AzureOpenAIGrader:
         )
 
     @staticmethod
-    def get_token_provider(cred: TokenCredential) -> "AzureADTokenProvider":
+    def _get_token_provider(cred: TokenCredential) -> "AzureADTokenProvider":
         """Get the token provider the AzureOpenAI client.
 
         :param TokenCredential cred: The Azure authentication credential.

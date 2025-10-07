@@ -17,8 +17,7 @@ from azure.ai.evaluation._common.utils import (
     reformat_tool_definitions,
 )
 from azure.ai.evaluation._evaluate._utils import (
-    _convert_name_map_into_property_entries,
-    _convert_results_to_aoai_evaluation_results,
+    _convert_results_to_aoai_evaluation_results
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
@@ -858,7 +857,8 @@ class TestUtils(unittest.TestCase):
         
         # Load test data from the JSON file
         parent = pathlib.Path(__file__).parent.resolve()
-        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.json")
+        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
+        test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_uril_convert_eval_meta_data.json")
         
         # Read and parse the JSONL file (contains multiple JSON objects)
         test_rows = []
@@ -868,6 +868,11 @@ class TestUtils(unittest.TestCase):
                 if line:
                     print(line)
                     test_rows.append(json.loads(line))
+
+        eval_metadata = {}
+        # Read and parse the evaluation metadata JSON file
+        with open(test_input_eval_metadata_path, 'r') as f:
+            eval_metadata = json.load(f)
         
         # Create EvaluationResult structure
         test_results = {
@@ -880,18 +885,17 @@ class TestUtils(unittest.TestCase):
         logger = logging.getLogger("test_logger")
         
         # Test the conversion function
-        async def run_test():
-            converted_results = await _convert_results_to_aoai_evaluation_results(
+        def run_test():
+            converted_results = _convert_results_to_aoai_evaluation_results(
                 results=test_results,
-                eval_id="test_eval_group_123",
-                eval_run_id="test_run_456",
+                eval_meta_data=eval_metadata,
                 logger=logger
             )
             return converted_results
         
         # Run the async function
-        converted_results = asyncio.run(run_test())
-        
+        converted_results = run_test()
+
         # Verify the structure
         self.assertIn("metrics", converted_results)
         self.assertIn("rows", converted_results) 
@@ -971,6 +975,7 @@ class TestUtils(unittest.TestCase):
         self.assertIn("failed", result_counts)
         self.assertIn("errored", result_counts)
         
+        print(result_counts)
         # Verify counts are non-negative integers
         for count_type, count_value in result_counts.items():
             self.assertIsInstance(count_value, int)
@@ -979,6 +984,7 @@ class TestUtils(unittest.TestCase):
         # Check per_testing_criteria_results structure
         criteria_results = summary["per_testing_criteria_results"]
         self.assertIsInstance(criteria_results, list)
+        print(criteria_results)
         for criteria_result in criteria_results:
             self.assertIn("testing_criteria", criteria_result)
             self.assertIn("passed", criteria_result)
@@ -999,12 +1005,11 @@ class TestUtils(unittest.TestCase):
         
         # Test with empty results
         empty_results = {"metrics": {}, "rows": [], "studio_url": None}
-        empty_converted = asyncio.run(_convert_results_to_aoai_evaluation_results(
+        empty_converted = _convert_results_to_aoai_evaluation_results(
             results=empty_results,
-            eval_id="empty_eval",
-            eval_run_id="empty_run",
+            eval_meta_data={},
             logger=logger
-        ))
+        )
         
         self.assertEqual(len(empty_converted["rows"]), 0)
         self.assertEqual(len(empty_converted["evaluation_results_list"]), 0)

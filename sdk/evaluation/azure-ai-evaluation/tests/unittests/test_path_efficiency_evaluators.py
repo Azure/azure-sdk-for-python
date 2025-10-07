@@ -293,3 +293,207 @@ class TestPathEfficiencyEvaluator:
 
         with pytest.raises(ValueError):
             evaluator(response=[], ground_truth=[])
+
+    def test_tuple_format_with_parameters_exact_match(self):
+        """Test tuple format with exact parameter matching."""
+        evaluator = PathEfficiencyEvaluator()
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {"query": "weather", "location": "NYC"},
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "format_result",
+                        "arguments": {"format": "json", "style": "brief"},
+                    }
+                ],
+            },
+        ]
+
+        # Ground truth with tuple format: (tool_names, parameters_dict)
+        ground_truth = (
+            ["search", "format_result"],
+            {"search": {"query": "weather", "location": "NYC"}, "format_result": {"format": "json", "style": "brief"}},
+        )
+
+        result = evaluator(response=response, ground_truth=ground_truth)
+
+        # Should have perfect scores since everything matches exactly
+        assert result["path_efficiency_precision_score"] == 1.0
+        assert result["path_efficiency_recall_score"] == 1.0
+        assert result["path_efficiency_f1_score"] == 1.0
+        assert result["path_efficiency_exact_match_result"] == "pass"
+        assert result["path_efficiency_in_order_match_result"] == "pass"
+        assert result["path_efficiency_any_order_match_result"] == "pass"
+
+    def test_tuple_format_with_parameters_mismatch(self):
+        """Test tuple format with parameter mismatches."""
+        evaluator = PathEfficiencyEvaluator()
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {"query": "weather", "location": "LA"},  # Different location
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "format_result",
+                        "arguments": {"format": "xml", "style": "detailed"},  # Different parameters
+                    }
+                ],
+            },
+        ]
+
+        # Ground truth with tuple format
+        ground_truth = (
+            ["search", "format_result"],
+            {"search": {"query": "weather", "location": "NYC"}, "format_result": {"format": "json", "style": "brief"}},
+        )
+
+        result = evaluator(response=response, ground_truth=ground_truth)
+
+        # Should have zero scores since parameters don't match exactly
+        assert result["path_efficiency_precision_score"] == 0.0
+        assert result["path_efficiency_recall_score"] == 0.0
+        assert result["path_efficiency_f1_score"] == 0.0
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "fail"
+        assert result["path_efficiency_any_order_match_result"] == "fail"
+
+    def test_tuple_format_with_parameters_partial_match(self):
+        """Test tuple format with some matching and some non-matching tools."""
+        evaluator = PathEfficiencyEvaluator()
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_1",
+                        "name": "search",
+                        "arguments": {"query": "weather", "location": "NYC"},  # Matches exactly
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_2",
+                        "name": "format_result",
+                        "arguments": {"format": "xml", "style": "detailed"},  # Different parameters
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_3",
+                        "name": "extra_tool",
+                        "arguments": {"param": "value"},  # Extra tool not in ground truth
+                    }
+                ],
+            },
+        ]
+
+        # Ground truth with tuple format
+        ground_truth = (
+            ["search", "format_result"],
+            {"search": {"query": "weather", "location": "NYC"}, "format_result": {"format": "json", "style": "brief"}},
+        )
+
+        result = evaluator(response=response, ground_truth=ground_truth)
+
+        # Only "search" matches (1 out of 3 agent tools, 1 out of 2 ground truth tools)
+        expected_precision = 1.0 / 3.0  # 1 match out of 3 agent tools
+        expected_recall = 1.0 / 2.0  # 1 match out of 2 ground truth tools
+        expected_f1 = 2 * expected_precision * expected_recall / (expected_precision + expected_recall)
+
+        assert result["path_efficiency_precision_score"] == pytest.approx(expected_precision, rel=1e-3)
+        assert result["path_efficiency_recall_score"] == pytest.approx(expected_recall, rel=1e-3)
+        assert result["path_efficiency_f1_score"] == pytest.approx(expected_f1, rel=1e-3)
+        assert result["path_efficiency_exact_match_result"] == "fail"
+        assert result["path_efficiency_in_order_match_result"] == "fail"
+        assert result["path_efficiency_any_order_match_result"] == "fail"
+
+    def test_tuple_format_with_empty_parameters(self):
+        """Test tuple format where some tools have no parameters."""
+        evaluator = PathEfficiencyEvaluator()
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "tool_call_id": "call_1", "name": "ping", "arguments": {}}  # No parameters
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "tool_call_id": "call_2", "name": "log", "arguments": {"message": "success"}}
+                ],
+            },
+        ]
+
+        # Ground truth with tuple format including empty parameters
+        ground_truth = (["ping", "log"], {"ping": {}, "log": {"message": "success"}})  # Empty parameters dict
+
+        result = evaluator(response=response, ground_truth=ground_truth)
+
+        # Should have perfect scores since everything matches exactly
+        assert result["path_efficiency_precision_score"] == 1.0
+        assert result["path_efficiency_recall_score"] == 1.0
+        assert result["path_efficiency_f1_score"] == 1.0
+        assert result["path_efficiency_exact_match_result"] == "pass"
+        assert result["path_efficiency_in_order_match_result"] == "pass"
+        assert result["path_efficiency_any_order_match_result"] == "pass"
+
+    def test_tuple_format_invalid_inputs(self):
+        """Test tuple format with invalid input validation."""
+        evaluator = PathEfficiencyEvaluator()
+
+        response = []  # Empty response for testing validation
+
+        # Test invalid tuple length
+        with pytest.raises(TypeError):
+            evaluator(response=response, ground_truth=("only_one_element",))  # type: ignore
+
+        # Test invalid first element (not a list)
+        with pytest.raises(TypeError):
+            evaluator(response=response, ground_truth=("not_a_list", {}))  # type: ignore
+
+        # Test invalid second element (not a dict)
+        with pytest.raises(TypeError):
+            evaluator(response=response, ground_truth=(["tool"], "not_a_dict"))  # type: ignore
+
+        # Test invalid parameter values (not json serializable)
+        with pytest.raises(TypeError):
+            evaluator(response=response, ground_truth=(["tool"], {"tool": {"key": object}}))  # type: ignore
