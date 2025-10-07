@@ -22,20 +22,18 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence
+from typing import Any, Dict, List, Mapping, Union, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
-from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
+from .partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key, PartitionKeyType
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
 
 class ScriptType:
     StoredProcedure = "sprocs"
@@ -113,14 +111,18 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
+    def get_stored_procedure(
+        self,
+        sproc: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Get the stored procedure identified by `id`.
 
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
         :type sproc: Union[str, Dict[str, Any]]
         :returns: A dict representing the retrieved stored procedure.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -129,7 +131,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def create_stored_procedure(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def create_stored_procedure(
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Create a new stored procedure in the container.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
@@ -137,7 +143,7 @@ class ScriptsProxy:
         :param Dict[str, Any] body: A dict-like object representing the sproc to create.
         :returns: A dict representing the new stored procedure.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -151,7 +157,7 @@ class ScriptsProxy:
         sproc: Union[str, Mapping[str, Any]],
         body: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replace a specified stored procedure in the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -162,7 +168,7 @@ class ScriptsProxy:
         :returns: A dict representing the stored procedure after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the stored
             procedure with given id does not exist.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         return self.client_connection.ReplaceStoredProcedure(
@@ -173,7 +179,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def delete_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
+    def delete_stored_procedure(
+        self,
+        sproc: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> None:
         """Delete a specified stored procedure from the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -197,7 +207,7 @@ class ScriptsProxy:
         params: Optional[List[Dict[str, Any]]] = None,
         enable_script_logging: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Any:
         """Execute a specified stored procedure.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -209,10 +219,10 @@ class ScriptsProxy:
         :param params: List of parameters to be passed to the stored procedure to be executed.
         :type params: List[Dict[str, Any]]
         :param bool enable_script_logging: Enables or disables script logging for the current request.
-        :returns: Result of the executed stored procedure for the given parameters.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exist in the container.
-        :rtype: Dict[str, Any]
+        :returns: Result of the executed stored procedure for the given parameters.
+        :rtype: Any
         """
         request_options = build_options(kwargs)
         if partition_key is not None:
@@ -232,7 +242,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def list_triggers(self, max_item_count: Optional[int] = None, **kwargs: Any) -> ItemPaged[Dict[str, Any]]:
+    def list_triggers(
+        self,
+        max_item_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged[Dict[str, Any]]:
         """List all triggers in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
@@ -276,14 +290,18 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def get_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
+    def get_trigger(
+        self,
+        trigger: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Get a trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
         :type trigger: Union[str, Dict[str, Any]]
         :returns: A dict representing the retrieved trigger.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -292,7 +310,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def create_trigger(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def create_trigger(
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Create a trigger in the container.
 
         To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
@@ -300,7 +322,7 @@ class ScriptsProxy:
         :param Dict[str, Any] body: A dict-like object representing the trigger to create.
         :returns: A dict representing the new trigger.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be created.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         return self.client_connection.CreateTrigger(
@@ -313,7 +335,7 @@ class ScriptsProxy:
         trigger: Union[str, Mapping[str, Any]],
         body: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replace a specified trigger in the container.
 
         If the trigger does not already exist in the container, an exception is raised.
@@ -324,7 +346,7 @@ class ScriptsProxy:
         :returns: A dict representing the trigger after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the trigger
             with given id does not exist.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -336,7 +358,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def delete_trigger(self, trigger: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
+    def delete_trigger(
+        self,
+        trigger: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> None:
         """Delete a specified trigger from the container.
 
         If the trigger does not already exist in the container, an exception is raised.
@@ -401,14 +427,18 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def get_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
+    def get_user_defined_function(
+        self,
+        udf: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
         :type udf: Union[str, Dict[str, Any]]
-        :returns: A dict representing the retrieved user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
-        :rtype: Iterable[Dict[str, Any]]
+        :returns: A dict representing the retrieved user-defined function.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         return self.client_connection.ReadUserDefinedFunction(
@@ -416,15 +446,19 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def create_user_defined_function(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    def create_user_defined_function(
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Create a user-defined function in the container.
 
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
 
         :param Dict[str, Any] body: A dict-like object representing the udf to create.
-        :returns: A dict representing the new user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be created.
-        :rtype: Dict[str, Any]
+        :returns: A dict representing the new user-defined function.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         return self.client_connection.CreateUserDefinedFunction(
@@ -437,7 +471,7 @@ class ScriptsProxy:
         udf: Union[str, Mapping[str, Any]],
         body: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replace a specified user-defined function in the container.
 
         If the UDF does not already exist in the container, an exception is raised.
@@ -445,10 +479,10 @@ class ScriptsProxy:
         :param udf: The ID (name) or dict representing udf to be replaced.
         :type udf: Union[str, Dict[str, Any]]
         :param Dict[str, Any] body: A dict-like object representing the udf to replace.
-        :returns: A dict representing the user-defined function after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the user-defined
             function with the given id does not exist.
-        :rtype: Dict[str, Any]
+        :returns: A dict representing the user-defined function after replace went through.
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = build_options(kwargs)
         return self.client_connection.ReplaceUserDefinedFunction(
@@ -459,7 +493,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace
-    def delete_user_defined_function(self, udf: Union[str, Mapping[str, Any]], **kwargs: Any) -> None:
+    def delete_user_defined_function(
+        self,
+        udf: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> None:
         """Delete a specified user-defined function from the container.
 
         If the UDF does not already exist in the container, an exception is raised.

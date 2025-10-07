@@ -24,23 +24,20 @@
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
-from typing import Any, Dict, List, Mapping, Union, Optional, Type, Sequence, TYPE_CHECKING
+from typing import Any, Dict, List, Mapping, Union, Optional, TYPE_CHECKING
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
+from azure.cosmos import CosmosDict
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
 from ..scripts import ScriptType
-from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key
+from ..partition_key import NonePartitionKeyValue, _return_undefined_or_empty_partition_key, PartitionKeyType
 
 if TYPE_CHECKING:
     from ._container import ContainerProxy
-
-
-PartitionKeyType = Union[str, int, float, bool, Sequence[Union[str, int, float, bool, None]], Type[NonePartitionKeyValue]]  # pylint: disable=line-too-long
-
 
 class ScriptsProxy:
     """An interface to interact with stored procedures.
@@ -115,14 +112,18 @@ class ScriptsProxy:
         )
 
     @distributed_trace_async
-    async def get_stored_procedure(self, sproc: Union[str, Mapping[str, Any]], **kwargs: Any) -> Dict[str, Any]:
+    async def get_stored_procedure(
+        self,
+        sproc: Union[str, Mapping[str, Any]],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Get the stored procedure identified by `sproc`.
 
         :param sproc: The ID (name) or dict representing the stored procedure to retrieve.
         :type sproc: Union[str, Dict[str, Any]]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
         :returns: A dict representing the retrieved stored procedure.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
 
@@ -131,7 +132,11 @@ class ScriptsProxy:
         )
 
     @distributed_trace_async
-    async def create_stored_procedure(self, body: Dict[str, Any], **kwargs: Any) -> Dict[str, Any]:
+    async def create_stored_procedure(
+        self,
+        body: Dict[str, Any],
+        **kwargs: Any
+    ) -> CosmosDict:
         """Create a new stored procedure in the container.
 
         To replace an existing stored procedure, use the :func:`Container.scripts.replace_stored_procedure` method.
@@ -139,7 +144,7 @@ class ScriptsProxy:
         :param Dict[str, Any] body: A dict representing the stored procedure to create.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
         :returns: A dict representing the new stored procedure.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
 
@@ -153,7 +158,7 @@ class ScriptsProxy:
         sproc: Union[str, Mapping[str, Any]],
         body: Dict[str, Any],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> CosmosDict:
         """Replace a specified stored procedure in the container.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -164,7 +169,7 @@ class ScriptsProxy:
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the stored
             procedure with given id does not exist.
         :returns: A dict representing the stored procedure after replace went through.
-        :rtype: Dict[str, Any]
+        :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         request_options = _build_options(kwargs)
         return await self.client_connection.ReplaceStoredProcedure(
@@ -202,7 +207,7 @@ class ScriptsProxy:
         parameters: Optional[List[Dict[str, Any]]] = None,
         enable_script_logging: Optional[bool] = None,
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> Any:
         """Execute a specified stored procedure.
 
         If the stored procedure does not already exist in the container, an exception is raised.
@@ -218,7 +223,7 @@ class ScriptsProxy:
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
         :returns: Result of the executed stored procedure for the given parameters.
-        :rtype: Dict[str, Any]
+        :rtype: Any
         """
 
         request_options = _build_options(kwargs)
