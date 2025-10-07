@@ -1,0 +1,4 @@
+directory: specification/dnsresolver/resource-manager/Microsoft.Network/DnsResolver
+commit: 3ec630fc62ebc03e9adf238cb2fb0b538d93ead4
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
