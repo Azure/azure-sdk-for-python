@@ -87,7 +87,7 @@ def _read_raw_stream(response, chunk_size=1):
         except CoreDecodeError as e:
             raise DecodeError(e, error=e) from e
         except ReadTimeoutError as e:
-            raise ServiceRequestError(e, error=e) from e
+            raise ServiceResponseTimeoutError(e, error=e) from e
     else:
         # Standard file-like object.
         while True:
@@ -204,6 +204,14 @@ class StreamDownloadGenerator:
             _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise HttpResponseError(err, error=err) from err
+        except requests.ConnectionError as err:
+            internal_response.close()
+            if err.args and isinstance(err.args[0], ReadTimeoutError):
+                raise ServiceResponseTimeoutError(err, error=err) from err
+            raise ServiceResponseError(err, error=err) from err
+        except requests.RequestException as err:
+            internal_response.close()
+            raise ServiceResponseError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download.")
             internal_response.close()
@@ -390,6 +398,8 @@ class RequestsTransport(HttpTransport):
             error = ServiceRequestError(err, error=err)
         except ConnectTimeoutError as err:
             error = ServiceRequestTimeoutError(err, error=err)
+        except requests.exceptions.ConnectTimeout as err:
+            error = ServiceRequestTimeoutError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseTimeoutError(err, error=err)
         except requests.exceptions.ConnectionError as err:
@@ -406,7 +416,7 @@ class RequestsTransport(HttpTransport):
                 _LOGGER.warning("Unable to stream download.")
                 error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
-            error = ServiceRequestError(err, error=err)
+            error = ServiceResponseError(err, error=err)
 
         if error:
             raise error
