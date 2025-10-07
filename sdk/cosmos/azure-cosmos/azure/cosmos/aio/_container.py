@@ -1185,8 +1185,8 @@ class ContainerProxy:
     async def semantic_rerank(
         self,
         reranking_context: str,
-        documents: List[str],
-        semantic_reranking_options: Optional[Dict[str, Any]] = None
+        documents: list[str],
+        semantic_reranking_options: Optional[dict[str, Any]] = None
     ) -> CosmosDict:
         """Rerank a list of documents using semantic reranking.
 
@@ -1195,7 +1195,7 @@ class ContainerProxy:
 
         :param str reranking_context: The context or query string to use for reranking the documents.
         :param list[str] documents: A list of documents (as strings) to be reranked.
-        :param semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
+        :param dict[str, Any] semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
 
          Supported options:
 
@@ -1206,7 +1206,7 @@ class ContainerProxy:
          * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
          * **target_paths** (str): If document_type is "json", the list of JSON paths to extract text from for reranking. Comma-separated string.
 
-        :type semantic_reranking_options: Optional[Dict[str, Any]]
+        :type semantic_reranking_options: Optional[dict[str, Any]]
         :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
