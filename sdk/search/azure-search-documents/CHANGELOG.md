@@ -16,11 +16,18 @@
 - Added `azure.search.documents.indexes.AnalyzeTextOptions.normalizer_name`.
 - Added `azure.search.documents.indexes.CustomNormalizer`.
 - Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkill`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillExtractionOptions`.
 - Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingProperties`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillChunkingUnit`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillMarkdownHeaderDepth`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillOutputFormat`.
+- Added `azure.search.documents.indexes.DocumentIntelligenceLayoutSkillOutputMode`.
+- Added `azure.search.documents.indexes.RankingOrder`.
 - Added `azure.search.documents.indexes.RescoringOptions`.
 - Added `azure.search.documents.indexes.SearchField.normalizer_name`.
 - Added `azure.search.documents.indexes.SearchIndex.normalizer`.
 - Added `azure.search.documents.indexes.SearchIndexerKnowledgeStoreParameters`.
+- Added `azure.search.documents.indexes.VectorSearchCompressionRescoreStorageMethod`.
 
 ### Other Changes
 
