@@ -12,6 +12,7 @@ from subprocess import CalledProcessError
 
 from .Check import Check
 from ci_tools.functions import install_into_venv
+from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.variables import discover_repo_root, in_ci, set_envvar_defaults, set_envvar_defaults
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.functions import get_pip_command
@@ -125,6 +126,18 @@ class verifytypes(Check):
             except CalledProcessError as e:
                 logger.error(f"Failed to install pyright: {e}")
                 return e.returncode
+            
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="sdist",
+                pre_download_disabled=False,
+                python_executable=executable,
+            )
 
             if in_ci():
                 if not is_check_enabled(package_dir, "verifytypes") or is_typing_ignored(package_name):
@@ -142,6 +155,14 @@ class verifytypes(Check):
                 "--ignoreexternal",
                 "--outputjson",
             ]
+
+            # debug a pip freeze result
+            cmd = get_pip_command(executable) + ["freeze"]
+            freeze_result = subprocess.run(
+                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+            logger.error(f"Running pip freeze with {cmd}")
+            logger.error(freeze_result.stdout)
 
             # get type completeness score from current code
             score_from_current = get_type_complete_score(commands, check_pytyped=True)
