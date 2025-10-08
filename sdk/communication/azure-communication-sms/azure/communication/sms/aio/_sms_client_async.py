@@ -119,18 +119,17 @@ class SmsClient(object):  # pylint: disable=client-accepts-api-version-keyword
         )
 
         response = await self._sms_service_client.sms.send(
-            request,
+            request.serialize(),
             **kwargs
         )
-
         return [
             SmsSendResult(
-                to=item.to,
-                message_id=item.message_id,
-                http_status_code=item.http_status_code,
-                successful=item.successful,
-                error_message=item.error_message
-            ) for item in response.value
+                to=item["to"],
+                message_id=item["messageId"],
+                http_status_code=item["httpStatusCode"],
+                successful=item["successful"],
+                error_message=item.get("errorMessage")
+            ) for item in response["value"]
         ]
 
     async def __aenter__(self) -> "SmsClient":
