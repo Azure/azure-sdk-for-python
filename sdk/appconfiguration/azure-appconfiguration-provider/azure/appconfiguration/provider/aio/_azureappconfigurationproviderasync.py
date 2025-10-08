@@ -111,7 +111,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype load_balancing_enabled: bool
     :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
     configurations before they are added to the provider.
-    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
     """
 
 
@@ -177,7 +177,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype load_balancing_enabled: bool
     :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
     configurations before they are added to the provider.
-    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
     """
 
 
