@@ -292,5 +292,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert "Alpha" not in client
             assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
 
+
 async def secret_resolver(secret_id):
     return "Resolver Value"
