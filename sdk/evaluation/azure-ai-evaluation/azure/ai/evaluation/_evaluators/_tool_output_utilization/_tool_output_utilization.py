@@ -177,7 +177,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"],
             logger,
-            include_system_messages=False,
+            include_system_messages=True,
             include_tool_messages=True,
         )
         eval_input["response"] = reformat_agent_response(
