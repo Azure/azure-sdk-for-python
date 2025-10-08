@@ -8,7 +8,7 @@ import logging
 import threading
 import os
 
-from typing import Dict, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional
 
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._constants import _Constants as Constants
@@ -32,14 +32,14 @@ class PartitionLevelFailoverInfo:
     Holds information about the partition level regional failover.
     Used to track the partition key range and the regions where it is available.
     """
-    def __init__(self):
-        self.unavailable_regional_endpoints: Dict[str, str] = {}
+    def __init__(self) -> None:
+        self.unavailable_regional_endpoints: dict[str, str] = {}
         self.current_region = None
         self._lock = threading.Lock()
 
     def try_move_to_next_location(
             self,
-            available_account_regional_endpoints: Dict[str, str],
+            available_account_regional_endpoints: dict[str, str],
             endpoint_region: str,
             request: RequestObject) -> bool:
         """
@@ -76,9 +76,9 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
     This internal class implements the logic for partition endpoint management for
     geo-replicated database accounts.
     """
-    def __init__(self, client: "CosmosClientConnection"):
+    def __init__(self, client: "CosmosClientConnection") -> None:
         super(_GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover, self).__init__(client)
-        self.partition_range_to_failover_info: Dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
+        self.partition_range_to_failover_info: dict[PartitionKeyRangeWrapper, PartitionLevelFailoverInfo] = {}
         self.ppaf_thresholds_tracker = _PPAFPartitionThresholdsTracker()
         self._threshold_lock = threading.Lock()
 
@@ -207,7 +207,7 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover(_GlobalPar
     def compute_available_preferred_regions(
             self,
             request: RequestObject
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         """
         Computes the available regional endpoints for the request based on customer-set preferred and excluded regions.
         :param RequestObject request: The request object containing the routing context.

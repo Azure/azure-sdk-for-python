@@ -311,7 +311,7 @@ class _PPAFPartitionThresholdsTracker(object):
     """
 
     def __init__(self) -> None:
-        self.pk_range_wrapper_to_failure_count: Dict[PartitionKeyRangeWrapper, int] = {}
+        self.pk_range_wrapper_to_failure_count: dict[PartitionKeyRangeWrapper, int] = {}
 
     def add_failure(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
         if pk_range_wrapper not in self.pk_range_wrapper_to_failure_count:
