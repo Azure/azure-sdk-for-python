@@ -313,6 +313,5 @@ class TestLocationCache:
         assert write_doc_resolved == default_endpoint
 
 
-
 if __name__ == "__main__":
     unittest.main()
