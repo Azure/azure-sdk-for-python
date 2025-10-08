@@ -312,6 +312,48 @@ class TestLocationCache:
         # The fallback for write is the default_endpoint.
         assert write_doc_resolved == default_endpoint
 
+    def test_resolve_endpoint_unavailable_and_excluded_on_request(self):
+        # Scenario: All preferred read locations are unavailable AND in the excluded list on the request.
+        # Expected: Fallback to the primary write region.
+        lc = refresh_location_cache([location1_name, location4_name], True)
+        db_acc = create_database_account(True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mark all preferred read locations as unavailable
+        lc.mark_endpoint_unavailable_for_read(location1_endpoint, True)
+        lc.mark_endpoint_unavailable_for_read(location4_endpoint, True)
+
+        # Create a read request and set excluded locations
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+        read_doc_request.excluded_locations = [location1_name, location4_name]
+
+        # Resolve the endpoint for the read request
+        read_doc_resolved = lc.resolve_service_endpoint(read_doc_request)
+
+        # All preferred read locations ([loc1, loc4]) are excluded.
+        # The fallback for read is the primary write region, which is loc1.
+        assert read_doc_resolved == location1_endpoint
+
+        # Scenario: All preferred write locations are unavailable AND in the excluded list on the request.
+        # Expected: Fallback to the default endpoint.
+        lc = refresh_location_cache([location1_name, location2_name], True)
+        db_acc = create_database_account(True)
+        lc.perform_on_database_account_read(db_acc)
+
+        # Mark preferred write locations as unavailable
+        lc.mark_endpoint_unavailable_for_write(location1_endpoint, True)
+        lc.mark_endpoint_unavailable_for_write(location2_endpoint, True)
+
+        # Create a write request and set excluded locations
+        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_doc_request.excluded_locations = [location1_name, location2_name]
+
+        # Resolve the endpoint for the write request
+        write_doc_resolved = lc.resolve_service_endpoint(write_doc_request)
+
+        # All preferred write locations ([loc1, loc2]) are excluded.
+        # The fallback for write is the default_endpoint.
+        assert write_doc_resolved == default_endpoint
 
 if __name__ == "__main__":
     unittest.main()

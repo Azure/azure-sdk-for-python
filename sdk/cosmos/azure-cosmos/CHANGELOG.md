@@ -8,7 +8,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug where exclusion list was not honored before falling back to global endpoint for MRW accounts. See[PR 43297](https://github.com/Azure/azure-sdk-for-python/pull/43297)
+* Fixed bug where exclusion list was not honored before falling back to global endpoint for multi-write region accounts. See[PR 43297](https://github.com/Azure/azure-sdk-for-python/pull/43297)
  
 #### Other Changes
 * Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
