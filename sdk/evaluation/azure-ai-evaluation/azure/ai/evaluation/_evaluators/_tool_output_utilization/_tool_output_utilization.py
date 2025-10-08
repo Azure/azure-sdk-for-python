@@ -100,7 +100,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: Union[str, List[dict]],
         response: Union[str, List[dict]],
-        tool_definitions: Optional[Union[dict, List[dict]]] = None,
+        tool_definitions: Union[dict, List[dict]],
     ) -> Dict[str, Union[str, float]]:
         """Evaluate task adherence for a given query, response, and optional tool defintions.
         The query and response can be either a string or a list of messages.
@@ -126,7 +126,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :keyword response: The response being evaluated, either a string or a list of messages (full agent response potentially including tool calls)
         :paramtype response: Union[str, List[dict]]
         :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
-        :paramtype tool_definitions: Optional[Union[dict, List[dict]]]
+        :paramtype tool_definitions: Union[dict, List[dict]]
         :return: A dictionary with the task adherence evaluation results.
         :rtype: Dict[str, Union[str, float]]
         """
@@ -154,7 +154,7 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
-        if "query" not in eval_input and "response" not in eval_input:
+        if ("query" not in eval_input) and ("response" not in eval_input) and ("tool_definitions" not in eval_input):
             raise EvaluationException(
                 message=f"Both query and response must be provided as input to the Task Adherence evaluator.",
                 internal_message=f"Both query and response must be provided as input to the Task Adherence evaluator.",
@@ -162,25 +162,19 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR,
             )
-        if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
-            tool_definitions = eval_input["tool_definitions"]
-            filtered_tool_definitions = filter_to_used_tools(
-                tool_definitions=tool_definitions,
-                msgs_lists=[eval_input["query"], eval_input["response"]],
-                logger=logger,
-            )
-            eval_input["tool_definitions"] = reformat_tool_definitions(filtered_tool_definitions, logger)
+        
+        tool_definitions = eval_input["tool_definitions"]
+        filtered_tool_definitions = filter_to_used_tools(
+            tool_definitions=tool_definitions,
+            msgs_lists=[eval_input["query"], eval_input["response"]],
+            logger=logger,
+        )
+        eval_input["tool_definitions"] = reformat_tool_definitions(filtered_tool_definitions, logger)
 
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"], logger, include_system_messages=False, include_tool_messages=True
         )
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
-
-        # print('-------------')
-        # for k, v in eval_input.items():
-        #     print(f'{k}:\n{v}')
-        #     print('---')
-        # print('-------------')
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
@@ -197,10 +191,10 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         f"LLM output label is not 'pass' or 'fail' (got '{output_label}'), returning NaN for the score."
                     )
 
-            # `faulty_details`, `reason`, `label`
             score = 1.0 if output_label == "pass" else 0.0
             score_result = output_label
             reason = llm_output.get("reason", "")
+            
             faulty_details = llm_output.get("faulty_details", [])
             if faulty_details:
                 reason += " Issues found: " + "; ".join(faulty_details)
@@ -209,8 +203,6 @@ class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_reason": reason,
-                # Uncomment the following line in the next iteration after UI contracts are validated.
-                # f"{self._result_key}_additional_details": llm_output
             }
         if logger:
             logger.warning("LLM output is not a dictionary, returning NaN for the score.")
