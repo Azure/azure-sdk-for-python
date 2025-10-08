@@ -488,7 +488,7 @@ class DataLoaderFactory:
         return JSONLDataFileLoader(filename)
 
 
-def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, eval_id: str, eval_run_id: str, logger: logging.Logger, testing_criteria_name_types: Optional[Dict[str, str]] = None) -> EvaluationResult:
+def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None) -> EvaluationResult:
     """
     Convert evaluation results to AOAI evaluation results format.
     
@@ -513,6 +513,18 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, eval_
         
     created_time = int(time.time())
     converted_rows = []
+    
+    eval_id: Optional[str] = eval_meta_data.get("eval_id")
+    eval_run_id: Optional[str] = eval_meta_data.get("eval_run_id")
+    testing_criterias: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
+
+    testing_criteria_name_types = {}
+    if testing_criterias is not None:
+        for criteria in testing_criterias:
+            criteria_name = criteria.get("name")
+            criteria_type = criteria.get("type")
+            if criteria_name is not None and criteria_type is not None:
+                testing_criteria_name_types[criteria_name] = criteria_type
     
     for row_idx, row in enumerate(results.get("rows", [])):
         # Group outputs by test criteria name
