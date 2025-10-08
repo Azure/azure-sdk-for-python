@@ -492,83 +492,40 @@ def _extract_text_from_content(content):
     return text
 
 
-def _get_conversation_history(query, include_system_messages=False, include_tool_calls=False):
-    all_user_queries = []
-    cur_user_query = []
-    all_agent_responses = []
-    cur_agent_response = []
+def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
+    all_user_queries, all_agent_responses = [], []
+    cur_user_query, cur_agent_response = [], []
     system_message = None
 
-    # Track tool calls and results for grouping with assistant messages
-    tool_results = {}
-
-    # First pass: collect all tool results if include_tool_calls is True
-    if include_tool_calls:
-        for msg in query:
-            if msg.get("role") == "tool" and "tool_call_id" in msg:
-                tool_call_id = msg["tool_call_id"]
-                for content in msg.get("content", []):
-                    if content.get("type") == "tool_result":
-                        result = content.get("tool_result")
-                        tool_results[tool_call_id] = f"[TOOL_RESULT] {result}"
-
-    # Second pass: process messages and build conversation history
     for msg in query:
-        if not "role" in msg:
+        role = msg.get("role")
+        if not role:
             continue
-
-        if include_system_messages and msg["role"] == "system" and "content" in msg:
+        if include_system_messages and role == "system":
             system_message = msg.get("content", "")
 
-        if msg["role"] == "user" and "content" in msg:
-            # Start new user turn, close previous agent response if exists
-            if cur_agent_response != []:
-                all_agent_responses.append(cur_agent_response)
+        elif role == "user" and "content" in msg:
+            if cur_agent_response:
+                formatted_agent_response = _get_agent_response(
+                    cur_agent_response, include_tool_messages=include_tool_messages
+                )
+                all_agent_responses.append([formatted_agent_response])
                 cur_agent_response = []
             text_in_msg = _extract_text_from_content(msg["content"])
             if text_in_msg:
                 cur_user_query.append(text_in_msg)
 
-        if msg["role"] == "assistant" and "content" in msg:
-            # Start new agent response, close previous user query if exists
-            if cur_user_query != []:
+        elif role in ("assistant", "tool"):
+            if cur_user_query:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
+            cur_agent_response.append(msg)
 
-            # Add text content
-            text_in_msg = _extract_text_from_content(msg["content"])
-            if text_in_msg:
-                cur_agent_response.append(text_in_msg)
-
-            # Handle tool calls in assistant messages
-            if include_tool_calls:
-                for content in msg.get("content", []):
-                    if content.get("type") == "tool_call":
-                        # Handle the format from your sample data
-                        tool_call_id = content.get("tool_call_id")
-                        func_name = content.get("name", "")
-                        args = content.get("arguments", {})
-
-                        # Also handle the nested tool_call format
-                        if "tool_call" in content and "function" in content.get("tool_call", {}):
-                            tc = content.get("tool_call", {})
-                            func_name = tc.get("function", {}).get("name", "")
-                            args = tc.get("function", {}).get("arguments", {})
-                            tool_call_id = tc.get("id")
-
-                        args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                        tool_call_text = f"[TOOL_CALL] {func_name}({args_str})"
-                        cur_agent_response.append(tool_call_text)
-
-                        # Immediately add tool result if available
-                        if tool_call_id and tool_call_id in tool_results:
-                            cur_agent_response.append(tool_results[tool_call_id])
-
-    # Close any remaining open queries/responses
-    if cur_user_query != []:
+    if cur_user_query:
         all_user_queries.append(cur_user_query)
-    if cur_agent_response != []:
-        all_agent_responses.append(cur_agent_response)
+    if cur_agent_response:
+        formatted_agent_response = _get_agent_response(cur_agent_response, include_tool_messages=include_tool_messages)
+        all_agent_responses.append([formatted_agent_response])
 
     if len(all_user_queries) != len(all_agent_responses) + 1:
         raise EvaluationException(
@@ -578,8 +535,9 @@ def _get_conversation_history(query, include_system_messages=False, include_tool
             category=ErrorCategory.INVALID_VALUE,
             blame=ErrorBlame.USER_ERROR,
         )
+
     result = {"user_queries": all_user_queries, "agent_responses": all_agent_responses}
-    if include_system_messages:
+    if include_system_messages and system_message:
         result["system_message"] = system_message
     return result
 
@@ -613,11 +571,11 @@ def _pretty_format_conversation_history(conversation_history):
     return formatted_history
 
 
-def reformat_conversation_history(query, logger=None, include_system_messages=False, include_tool_calls=False):
+def reformat_conversation_history(query, logger=None, include_system_messages=False, include_tool_messages=False):
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(
-            query, include_system_messages=include_system_messages, include_tool_calls=include_tool_calls
+            query, include_system_messages=include_system_messages, include_tool_messages=include_tool_messages
         )
         return _pretty_format_conversation_history(conversation_history)
     except:

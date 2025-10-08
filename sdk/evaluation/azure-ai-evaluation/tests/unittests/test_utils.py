@@ -874,7 +874,7 @@ class TestUtils(unittest.TestCase):
         ]
 
         # Test with tool calls included
-        result_with_tools = reformat_conversation_history(conversation, include_tool_calls=True)
+        result_with_tools = reformat_conversation_history(conversation, include_tool_messages=True)
         expected_with_tools = (
             "User turn 1:\n"
             "  What's the weather in Seattle?\n\n"
@@ -922,7 +922,7 @@ class TestUtils(unittest.TestCase):
             {"role": "user", "content": [{"type": "text", "text": "Thanks for checking both cities!"}]},
         ]
 
-        result = reformat_conversation_history(conversation, include_tool_calls=True)
+        result = reformat_conversation_history(conversation, include_tool_messages=True)
         expected = (
             "User turn 1:\n"
             "  Get weather for Seattle and New York\n\n"
