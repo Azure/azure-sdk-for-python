@@ -17,7 +17,7 @@ authors = [
 description = "Microsoft Corporation Azure Ai Voicelive Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -76,6 +76,3 @@ pytyped = ["py.typed"]
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
-
-[tool.azure-sdk-build]
-whl_no_aio = false
