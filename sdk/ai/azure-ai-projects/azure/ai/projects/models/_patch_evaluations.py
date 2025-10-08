@@ -37,7 +37,7 @@ class EvaluatorIds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     QA = "azureai://built-in/evaluators/qa"
     DOCUMENT_RETRIEVAL = "azureai://built-in/evaluators/document_retrieval"
     TASK_ADHERENCE = "azureai://built-in/evaluators/task_adherence"
-    TOOL_CALL_ACCURACY = "azureai://built-in/evaluators/tool_call_accuracy"
+    TOOL_CALL_QUALITY = "azureai://built-in/evaluators/tool_call_quality"
     UNGROUNDED_ATTRIBUTES = "azureai://built-in/evaluators/ungrounded_attributes"
     RESPONSE_COMPLETENESS = "azureai://built-in/evaluators/response_completeness"
     # AOAI Graders
