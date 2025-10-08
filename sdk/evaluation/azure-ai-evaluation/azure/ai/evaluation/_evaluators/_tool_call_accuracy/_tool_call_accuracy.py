@@ -58,14 +58,14 @@ def _get_needed_built_in_definitions(tool_calls: List[Dict]) -> List[Dict]:
 
 
 @experimental
-class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """The Tool Call Quality evaluator assesses how accurately an AI uses tools by examining:
+class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+    """The Tool Call Accuracy evaluator assesses how accurately an AI uses tools by examining:
         - Relevance to the conversation.
         - Parameter correctness according to tool definitions.
         - Parameter value extraction from the conversation.
 
     The evaluator uses a scoring rubric of 1 to 5:
-        - Score 1: The tool calls are irrelevant.
+        - Score 1: The tool calls are irrelevant
         - Score 2: The tool calls are partially relevant, but not enough tools were called or the parameters were not correctly passed.
         - Score 3: The tool calls are relevant, but there were unnecessary, excessive tool calls made.
         - Score 4: The tool calls are relevant, but some tools returned errors and agent retried calling them again and succeeded.
@@ -82,20 +82,20 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START tool_call_quality_evaluator]
-            :end-before: [END tool_call_quality_evaluator]
+            :start-after: [START tool_call_accuracy_evaluator]
+            :end-before: [END tool_call_accuracy_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call a ToolCallQualityEvaluator.
+            :caption: Initialize and call a ToolCallAccuracyEvaluator.
 
     .. admonition:: Example using Azure AI Project URL:
 
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
-            :start-after: [START tool_call_quality_evaluator]
-            :end-before: [END tool_call_quality_evaluator]
+            :start-after: [START tool_call_accuracy_evaluator]
+            :end-before: [END tool_call_accuracy_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call ToolCallQualityEvaluator using Azure AI Project URL in the following format
+            :caption: Initialize and call ToolCallAccuracyEvaluator using Azure AI Project URL in the following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. note::
@@ -105,25 +105,25 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         however, it is recommended to use the new key moving forward as the old key will be deprecated in the future.
     """
 
-    _PROMPTY_FILE = "tool_call_quality.prompty"
-    _RESULT_KEY = "tool_call_quality"
+    _PROMPTY_FILE = "tool_call_accuracy.prompty"
+    _RESULT_KEY = "tool_call_accuracy"
 
-    _MAX_TOOL_CALL_QUALITY_SCORE = 5
-    _MIN_TOOL_CALL_QUALITY_SCORE = 1
-    _DEFAULT_TOOL_CALL_QUALITY_SCORE = 3
+    _MAX_TOOL_CALL_ACCURACY_SCORE = 5
+    _MIN_TOOL_CALL_ACCURACY_SCORE = 1
+    _DEFAULT_TOOL_CALL_ACCURACY_SCORE = 3
 
     _NO_TOOL_CALLS_MESSAGE = "No tool calls found in response or provided tool_calls."
     _NO_TOOL_DEFINITIONS_MESSAGE = "Tool definitions must be provided."
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
-    _INVALID_SCORE_MESSAGE = "Tool call quality score must be between 1 and 5."
+    _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
     _LLM_SCORE_KEY = "tool_calls_success_level"
 
-    id = "azureai://built-in/evaluators/tool_call_quality"
+    id = "azureai://built-in/evaluators/tool_call_accuracy"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     @override
-    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_QUALITY_SCORE, credential=None, **kwargs):
+    def __init__(self, model_config, *, threshold=_DEFAULT_TOOL_CALL_ACCURACY_SCORE, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
@@ -241,11 +241,11 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
                 score,
-                ToolCallQualityEvaluator._MIN_TOOL_CALL_QUALITY_SCORE,
-                ToolCallQualityEvaluator._MAX_TOOL_CALL_QUALITY_SCORE,
+                ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE,
+                ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE,
             ):
                 raise EvaluationException(
-                    message=f"Invalid score value: {score}. Expected a number in range [{ToolCallQualityEvaluator._MIN_TOOL_CALL_QUALITY_SCORE}, {ToolCallQualityEvaluator._MAX_TOOL_CALL_QUALITY_SCORE}].",
+                    message=f"Invalid score value: {score}. Expected a number in range [{ToolCallAccuracyEvaluator._MIN_TOOL_CALL_ACCURACY_SCORE}, {ToolCallAccuracyEvaluator._MAX_TOOL_CALL_ACCURACY_SCORE}].",
                     internal_message="Invalid score value.",
                     category=ErrorCategory.FAILED_EXECUTION,
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -266,10 +266,10 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Tool call quality evaluator returned invalid output.",
+                message="Tool call accuracy evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_CALL_QUALITY_EVALUATOR,
+                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
             )
 
     async def _real_call(self, **kwargs):
@@ -346,14 +346,14 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                                 message=f"Tool definition for {tool_name} not found",
                                 blame=ErrorBlame.USER_ERROR,
                                 category=ErrorCategory.INVALID_VALUE,
-                                target=ErrorTarget.TOOL_CALL_QUALITY_EVALUATOR,
+                                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                             )
                     else:
                         raise EvaluationException(
                             message=f"Tool call missing name: {tool_call}",
                             blame=ErrorBlame.USER_ERROR,
                             category=ErrorCategory.INVALID_VALUE,
-                            target=ErrorTarget.TOOL_CALL_QUALITY_EVALUATOR,
+                            target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                         )
                 else:
                     # Unsupported tool format - only converter format is supported
@@ -361,7 +361,7 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                         message=f"Unsupported tool call format. Only converter format is supported: {tool_call}",
                         blame=ErrorBlame.USER_ERROR,
                         category=ErrorCategory.INVALID_VALUE,
-                        target=ErrorTarget.TOOL_CALL_QUALITY_EVALUATOR,
+                        target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                     )
             else:
                 # Tool call is not a dictionary
@@ -369,7 +369,7 @@ class ToolCallQualityEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     message=f"Tool call is not a dictionary: {tool_call}",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
-                    target=ErrorTarget.TOOL_CALL_QUALITY_EVALUATOR,
+                    target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
                 )
 
         return needed_tool_definitions
