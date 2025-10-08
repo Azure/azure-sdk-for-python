@@ -491,6 +491,7 @@ def _extract_text_from_content(content):
             text.append(msg["text"])
     return text
 
+
 def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
     """Filters the tool definitions to only include those that were actually used in the messages lists."""
     try:
@@ -506,18 +507,19 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
                                 used_tool_names.add(content["tool_call"]["function"])
                             elif "name" in content:
                                 used_tool_names.add(content["name"])
-        
+
         filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
         if any_tools_used and not filtered_tools:
             if logger:
                 logger.warning("No tool definitions matched the tools used in the messages. Returning original list.")
             filtered_tools = tool_definitions
-        
+
         return filtered_tools
     except Exception as e:
         if logger:
             logger.warning(f"Failed to filter tool definitions, returning original list. Error: {e}")
         return tool_definitions
+
 
 def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
     all_user_queries, all_agent_responses = [], []
