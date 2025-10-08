@@ -103,6 +103,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     """
 
 
@@ -166,6 +169,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword load_balancing_enabled: Optional flag to enable or disable the load balancing of replica endpoints. Default
      is False.
     :paramtype load_balancing_enabled: bool
+    :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
+    configurations before they are added to the provider.
+    :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     """
 
 
@@ -318,6 +324,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._secret_clients: Dict[str, SecretClient] = {}
         self._on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._configuration_mapper: Optional[Callable] = kwargs.pop("configuration_mapper", None)
 
     def _attempt_refresh(self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs):
         settings_refreshed = False
@@ -516,6 +523,9 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         configuration_settings_processed = {}
         feature_flags_processed = []
         for settings in configuration_settings:
+            if self._configuration_mapper:
+                # If a map function is provided, use it to process the configuration setting
+                self._configuration_mapper(settings)
             if isinstance(settings, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
                 feature_flag_value = self._process_feature_flag(settings)
