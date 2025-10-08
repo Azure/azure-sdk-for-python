@@ -80,9 +80,11 @@ def evaluate_test_data_conversion_jsonl_file():
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
 
+
 @pytest.fixture
 def evaluate_test_data_for_groundedness():
     return _get_file("evaluate_test_data_for_groundedness.jsonl")
+
 
 @pytest.fixture
 def questions_file():
@@ -485,7 +487,7 @@ class TestEvaluate:
         response_data = row_result_df["inputs.response"][0]
         first_message = response_data[0]
         content_data = first_message["content"][0]
-        
+
         # Now check if "tool_result" is in the keys
         assert "tool_result" not in content_data.keys()
 
