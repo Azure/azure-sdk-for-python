@@ -455,7 +455,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
 
     :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
     :return: The CommunicationIdentifier parsed from the raw_id.
-    :rtype: CommunicationIdentifier
+    :rtype: ~.CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
         return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)
