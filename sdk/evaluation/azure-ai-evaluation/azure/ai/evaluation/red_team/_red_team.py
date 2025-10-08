@@ -907,6 +907,18 @@ class RedTeam:
             target_harms = obj.get("metadata", {}).get("target_harms", [])
             content = ""
             context = ""
+            risk_subtype = None
+            
+            # Extract risk-subtype from target_harms if present
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        # Only store non-empty risk-subtype values
+                        if subtype_value:
+                            risk_subtype = subtype_value
+                            break  # Use the first non-empty risk-subtype found
+            
             if "messages" in obj and len(obj["messages"]) > 0:
 
                 message = obj["messages"][0]
@@ -914,6 +926,9 @@ class RedTeam:
                 context = message.get("context", "")
             if content:
                 obj_data = {"id": obj_id, "content": content, "context": context}
+                # Add risk_subtype to obj_data if it exists
+                if risk_subtype:
+                    obj_data["risk_subtype"] = risk_subtype
                 objectives_by_category[risk_cat_value].append(obj_data)
 
         self.attack_objectives[current_key] = {
