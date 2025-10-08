@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Union, cast, Callable, overload, Literal
+from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal
 import warnings
 
 from azure.core.tracing.decorator import distributed_trace
@@ -50,7 +50,7 @@ CredentialType = Union[
 ]
 
 
-def _parse_connection_str(conn_str: str, credential: Optional[Any]) -> Dict[str, str]:
+def _parse_connection_str(conn_str: str, credential: Optional[Any]) -> dict[str, str]:
     conn_str = conn_str.rstrip(";")
     conn_settings = dict([s.split("=", 1) for s in conn_str.split(";")])
     if 'AccountEndpoint' not in conn_settings:
@@ -80,7 +80,7 @@ def _build_auth(credential: CredentialType) -> CredentialDict:
     return auth
 
 
-def _build_connection_policy(kwargs: Dict[str, Any]) -> ConnectionPolicy:
+def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     # pylint: disable=protected-access
     policy = kwargs.pop('connection_policy', ConnectionPolicy())
 
@@ -162,7 +162,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
-    :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
+    :type credential: Union[str, dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
@@ -213,7 +213,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def __init__(
         self,
         url: str,
-        credential: Union[TokenCredential, str, Dict[str, Any]],
+        credential: Union[TokenCredential, str, dict[str, Any]],
         consistency_level: Optional[str] = None,
         **kwargs
     ) -> None:
@@ -238,7 +238,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def from_connection_string(
         cls,
         conn_str: str,
-        credential: Optional[Union[TokenCredential, str, Dict[str, Any]]] = None,
+        credential: Optional[Union[TokenCredential, str, dict[str, Any]]] = None,
         consistency_level: Optional[str] = None,
         **kwargs
     ) -> 'CosmosClient':
@@ -250,7 +250,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str conn_str: The connection string.
         :param credential: Alternative credentials to use instead of the key
             provided in the connection string.
-        :type credential: Union[str, Dict[str, str]]
+        :type credential: Union[str, dict[str, str]]
         :param str consistency_level:
             Consistency level to use for the session. The default value is None (Account level).
         :returns: A CosmosClient instance representing the new client.
@@ -270,7 +270,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
@@ -281,7 +281,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
@@ -308,7 +308,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
@@ -320,9 +320,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A tuple of `DatabaseProxy` and CosmosDict with the database properties.
@@ -352,10 +351,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
-        :keyword int throughput_bucket: The desired throughput bucket for the client
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database or a tuple of `DatabaseProxy`
@@ -423,7 +421,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         id: str,
         *,
         offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
@@ -440,7 +438,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
@@ -457,7 +455,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             id: str,
             *,
             offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
-            initial_headers: Optional[Dict[str, str]] = None,
+            initial_headers: Optional[dict[str, str]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
@@ -474,7 +472,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
@@ -503,7 +501,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
@@ -585,20 +583,20 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
         *,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """List the databases in a Cosmos DB SQL database account.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[Dict[str, str]]
+        :rtype: Iterable[dict[str, str]]
         """
         session_token = kwargs.get('session_token')
         if session_token is not None:
@@ -627,30 +625,30 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def query_databases(  # pylint:disable=docstring-missing-param
         self,
         query: Optional[str] = None,
-        parameters: Optional[List[Dict[str, Any]]] = None,
+        parameters: Optional[list[dict[str, Any]]] = None,
         enable_cross_partition_query: Optional[bool] = None,
         max_item_count: Optional[int] = None,
         populate_query_metrics: Optional[bool] = None,
         *,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
-    ) -> ItemPaged[Dict[str, Any]]:
+    ) -> ItemPaged[dict[str, Any]]:
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute. If not specified, the method will get all databases.
-        :param List[Dict[str, Any]] parameters: Optional array of parameters to the query.
+        :param list[dict[str, Any]] parameters: Optional array of parameters to the query.
             Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: An Iterable of database properties (dicts).
-        :rtype: Iterable[Dict[str, str]]
+        :rtype: Iterable[dict[str, str]]
         """
         if populate_query_metrics is not None:
             warnings.warn(
@@ -692,7 +690,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         database: Union[str, DatabaseProxy, Mapping[str, Any]],
         populate_query_metrics: Optional[bool] = None,
         *,
-        initial_headers: Optional[Dict[str, str]] = None,
+        initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         **kwargs: Any
@@ -701,8 +699,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
-        :type database: Union[str, Dict[str, str], ~azure.cosmos.DatabaseProxy]
-        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :type database: Union[str, dict[str, str], ~azure.cosmos.DatabaseProxy]
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client

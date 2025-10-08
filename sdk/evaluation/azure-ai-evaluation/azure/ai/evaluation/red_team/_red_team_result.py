@@ -271,7 +271,11 @@ class EvaluationRunOutputItemMessage(TypedDict, total=False):
 
 @experimental
 class RedTeamRunOutputItemResult(TypedDict, total=False):
-    """Flattened evaluation result for a single risk category."""
+    """Flattened evaluation result for a single risk category.
+
+    :param label: String label "pass" or "fail" that aligns with the passed field
+    :type label: Optional[str]
+    """
 
     # Should extend EvaluationRunOutputItemResult
 
@@ -279,11 +283,11 @@ class RedTeamRunOutputItemResult(TypedDict, total=False):
     type: str
     name: str
     passed: Optional[bool]
+    label: Optional[str]
     score: Optional[float]
     metric: Optional[str]
     threshold: Optional[float]
     reason: Optional[str]
-    sample: "RedTeamRunOutputItemSample"
     properties: RedTeamOutputResultProperties
 
 
@@ -376,11 +380,13 @@ class ResultCount(TypedDict):
 
 
 @experimental
-class PerTestingCriteriaResult(TypedDict):
+class PerTestingCriteriaResult(TypedDict, total=False):
     """Result count for a specific testing criteria.
 
     :param testing_criteria: The name of the testing criteria (e.g., risk category)
     :type testing_criteria: str
+    :param attack_strategy: The attack strategy used (optional, for attack strategy summaries)
+    :type attack_strategy: Optional[str]
     :param passed: Number of passed results for this criteria
     :type passed: int
     :param failed: Number of failed results for this criteria
@@ -388,6 +394,7 @@ class PerTestingCriteriaResult(TypedDict):
     """
 
     testing_criteria: str
+    attack_strategy: Optional[str]
     passed: int
     failed: int
 
