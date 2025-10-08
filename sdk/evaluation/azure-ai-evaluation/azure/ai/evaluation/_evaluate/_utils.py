@@ -616,7 +616,8 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
             "created_at": created_time,
             "datasource_item_id": row_idx,
             "datasource_item": {},
-            "results": run_output_results
+            "results": run_output_results,
+            "status": "completed" if len(run_output_results) > 0 else "error"
         }
 
         if top_sample is None or "inputs" not in top_sample:
