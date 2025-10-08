@@ -160,6 +160,8 @@ class verifytypes(Check):
 
             # debug a pip freeze result
             cmd = get_pip_command(executable) + ["freeze"]
+            if (cmd[0] == "uv"):
+                cmd.extend(["--python", executable])
             # TODO DEBUG
             freeze_result = subprocess.run(
                 cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
