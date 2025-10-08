@@ -34,8 +34,8 @@ class PartitionLevelFailoverInfo:
     """
     def __init__(self) -> None:
         self.unavailable_regional_endpoints: dict[str, str] = {}
-        self.current_region = None
         self._lock = threading.Lock()
+        self.current_region: Optional[str] = None
 
     def try_move_to_next_location(
             self,
