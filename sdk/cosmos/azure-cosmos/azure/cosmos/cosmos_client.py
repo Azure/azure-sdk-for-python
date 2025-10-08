@@ -280,7 +280,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -318,7 +318,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -351,7 +351,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param Any args: args
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -392,10 +392,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning)
 
         id = args[0] if args else kwargs.pop("id")
-        if len(args) > 1:
-            raise TypeError(f"Unexpected positional arguments: {args[1:]}")
-        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
-        offer_throughput = kwargs.pop("offer_throughput", None)
+        # Keep positional arguments for populate_query_metrics and offer_throughput for backwards compatibility
+        populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
+        offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
+        if len(args) > 3:
+            raise TypeError(f"Unexpected positional arguments: {args[3:]}")
+
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
 
@@ -437,7 +439,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -471,7 +473,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -500,7 +502,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -532,10 +534,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning)
 
         id = args[0] if args else kwargs.pop("id")
-        if len(args) > 1:
-            raise TypeError(f"Unexpected positional arguments: {args[1:]}")
-        populate_query_metrics = kwargs.pop("populate_query_metrics", None)
-        offer_throughput = kwargs.pop("offer_throughput", None)
+        # Keep positional arguments for populate_query_metrics and offer_throughput for backwards compatibility
+        populate_query_metrics = args[1] if len(args) > 1 else kwargs.pop("populate_query_metrics", None)
+        offer_throughput = args[2] if len(args) > 2 else kwargs.pop("offer_throughput", None)
+        if len(args) > 3:
+            raise TypeError(f"Unexpected positional arguments: {args[3:]}")
+
         return_properties = kwargs.pop("return_properties", False)
         response_hook = kwargs.pop("response_hook", None)
         try:

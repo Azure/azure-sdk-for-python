@@ -273,7 +273,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -312,7 +312,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -346,7 +346,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -426,7 +426,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -461,7 +461,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
@@ -491,7 +491,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :param Any args: args
         :param str id: ID (name) of the database to read or create.
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
-            for this offer.
+            for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client

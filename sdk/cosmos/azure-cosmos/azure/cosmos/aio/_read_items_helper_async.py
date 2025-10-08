@@ -62,7 +62,7 @@ class ReadItemsHelperAsync:
             items: Sequence[Tuple[str, "PartitionKeyType"]],
             options: Optional[Mapping[str, Any]],
             partition_key_definition: Dict[str, Any],
-            max_concurrency: int = 10,
+            max_concurrency: int = 5,
             **kwargs: Any
     ):
         self.client = client
