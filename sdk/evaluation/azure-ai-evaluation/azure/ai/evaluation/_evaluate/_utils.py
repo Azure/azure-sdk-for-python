@@ -511,16 +511,19 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
     :rtype: EvaluationResult
     """
         
+    if eval_meta_data is None:
+        return results
+    
     created_time = int(time.time())
     converted_rows = []
-    
+
     eval_id: Optional[str] = eval_meta_data.get("eval_id")
     eval_run_id: Optional[str] = eval_meta_data.get("eval_run_id")
-    testing_criterias: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
+    testing_criteria_list: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
 
     testing_criteria_name_types = {}
-    if testing_criterias is not None:
-        for criteria in testing_criterias:
+    if testing_criteria_list is not None:
+        for criteria in testing_criteria_list:
             criteria_name = criteria.get("name")
             criteria_type = criteria.get("type")
             if criteria_name is not None and criteria_type is not None:
