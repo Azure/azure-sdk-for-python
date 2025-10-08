@@ -251,7 +251,7 @@ identity_logger = logging.getLogger("azure.identity")
 identity_logger.setLevel(logging.ERROR)
 
 # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
-# turn on non-redacted logs by passing 'logging_enable=True' to the client constructor 
+# turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
 logger = logging.getLogger("azure.core.pipeline.policies.http_logging_policy")
 logger.setLevel(logging.ERROR)
 ```
@@ -277,3 +277,4 @@ additional questions or comments.
 
 <!-- LINKS -->
 [package]: https://pypi.org/project/azure-core/
+
