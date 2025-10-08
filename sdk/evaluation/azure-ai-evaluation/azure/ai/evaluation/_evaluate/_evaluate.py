@@ -814,7 +814,7 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
-            results_converted = _convert_results_to_aoai_evaluation_results(results, eval_meta_data, LOGGER)
+            results_converted = _convert_results_to_aoai_evaluation_results(results, LOGGER, eval_meta_data)
             return results_converted
     except Exception as e:
         # Handle multiprocess bootstrap error

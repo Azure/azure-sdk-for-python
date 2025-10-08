@@ -858,17 +858,21 @@ class TestUtils(unittest.TestCase):
         # Load test data from the JSON file
         parent = pathlib.Path(__file__).parent.resolve()
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
+
+        test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
         test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_uril_convert_eval_meta_data.json")
         
+        # Create logger
+        logger = logging.getLogger("test_logger")
         # Read and parse the JSONL file (contains multiple JSON objects)
         test_rows = []
         with open(test_data_path, 'r') as f:
             for line in f:
                 line = line.strip()
                 if line:
-                    print(line)
+                    logger.info(line)
                     test_rows.append(json.loads(line))
-
+        
         eval_metadata = {}
         # Read and parse the evaluation metadata JSON file
         with open(test_input_eval_metadata_path, 'r') as f:
@@ -881,15 +885,13 @@ class TestUtils(unittest.TestCase):
             "studio_url": "https://test-studio.com"
         }
         
-        # Create logger
-        logger = logging.getLogger("test_logger")
         
         # Test the conversion function
         def run_test():
             converted_results = _convert_results_to_aoai_evaluation_results(
                 results=test_results,
-                eval_meta_data=eval_metadata,
-                logger=logger
+                logger=logger,
+                eval_meta_data=eval_metadata
             )
             return converted_results
         
@@ -975,7 +977,7 @@ class TestUtils(unittest.TestCase):
         self.assertIn("failed", result_counts)
         self.assertIn("errored", result_counts)
         
-        print(result_counts)
+        logger.info(result_counts)
         # Verify counts are non-negative integers
         for count_type, count_value in result_counts.items():
             self.assertIsInstance(count_value, int)
@@ -984,7 +986,7 @@ class TestUtils(unittest.TestCase):
         # Check per_testing_criteria_results structure
         criteria_results = summary["per_testing_criteria_results"]
         self.assertIsInstance(criteria_results, list)
-        print(criteria_results)
+        logger.info(criteria_results)
         for criteria_result in criteria_results:
             self.assertIn("testing_criteria", criteria_result)
             self.assertIn("passed", criteria_result)
@@ -1007,8 +1009,8 @@ class TestUtils(unittest.TestCase):
         empty_results = {"metrics": {}, "rows": [], "studio_url": None}
         empty_converted = _convert_results_to_aoai_evaluation_results(
             results=empty_results,
-            eval_meta_data={},
-            logger=logger
+            logger=logger,
+            eval_meta_data=eval_metadata
         )
         
         self.assertEqual(len(empty_converted["rows"]), 0)
