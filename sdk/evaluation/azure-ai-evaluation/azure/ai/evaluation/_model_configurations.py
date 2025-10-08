@@ -133,3 +133,4 @@ class AppInsightsConfig(TypedDict):
     is_scheduled_run: NotRequired[bool]
     run_id: NotRequired[str]
     dataset_id: NotRequired[str]
+    response_id: NotRequired[str]
