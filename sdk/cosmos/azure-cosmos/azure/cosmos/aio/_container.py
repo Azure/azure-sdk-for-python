@@ -450,7 +450,7 @@ class ContainerProxy:
         :param items: A list of tuples, where each tuple contains an item's ID and partition key.
         :type items: Sequence[Tuple[str, PartitionKeyType]]
         :keyword Optional[int] max_concurrency: Specifies the maximum number of concurrent operations for the
-             `read_items` request. If not provided or set to None, the default value of 5 will be
+             `read_items` request. If not provided or set to None, the internal default value will be
               used when passed to `asyncio.Semaphore`.
         :keyword str consistency_level: The consistency level to use for the request.
         :keyword str session_token: Token for use with Session consistency.
