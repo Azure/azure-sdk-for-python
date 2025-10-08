@@ -11,10 +11,8 @@ from ci_tools.variables import get_log_directory, in_ci
 LOGLEVEL = getattr(logging, os.environ.get("LOGLEVEL", "INFO").upper())
 logger = logging.getLogger("azure-sdk-tools")
 
-def configure_logging(
-    args: argparse.Namespace,
-    fmt: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-) -> None:
+
+def configure_logging(args: argparse.Namespace, fmt: str = "%(asctime)s [%(levelname)s] %(name)s: %(message)s") -> None:
     """
     Configures the shared logger. Should be called **once** at startup.
     """
@@ -90,27 +88,17 @@ def run_logged(cmd: list[str], cwd: str, check: bool, should_stream_to_console: 
     try:
         if should_stream_to_console:
             # Stream live, no capturing
-            return subprocess.run(
-                cmd,
-                cwd=cwd,
-                check=check,
-                text=True,
-                stderr=subprocess.STDOUT
-            )
+            return subprocess.run(cmd, cwd=cwd, check=check, text=True, stderr=subprocess.STDOUT)
         else:
             # Capture merged output but don't print unless there's a failure
             return subprocess.run(
-                cmd,
-                cwd=cwd,
-                check=check,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT
+                cmd, cwd=cwd, check=check, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
     except subprocess.CalledProcessError as e:
         logger.error(f"Command failed: {' '.join(cmd)}")
         if e.stdout:
             logger.error(f"\n{e.stdout.strip()}")
         raise
+
 
 __all__ = ["initialize_logger", "run_logged_to_file", "run_logged"]

@@ -2,7 +2,7 @@
 
 # Release History
 
-## 1.2.0b5 (Unreleased)
+## 1.2.0b5 (2025-09-29)
 
 ### Features Added
 - Added `run_handler` parameter to `runs.create_and_process` allowing to make function tool calls manually or approve mcp tool calls.
