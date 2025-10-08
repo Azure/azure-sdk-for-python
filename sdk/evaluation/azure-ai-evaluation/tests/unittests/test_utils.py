@@ -857,7 +857,6 @@ class TestUtils(unittest.TestCase):
         # Load test data from the JSON file
         parent = pathlib.Path(__file__).parent.resolve()
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
-        test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_uril_convert_eval_meta_data.json")
         
         # Read and parse the JSONL file (contains multiple JSON objects)
         test_rows = []
@@ -868,10 +867,11 @@ class TestUtils(unittest.TestCase):
                     print(line)
                     test_rows.append(json.loads(line))
 
-        eval_metadata = {}
-        # Read and parse the evaluation metadata JSON file
-        with open(test_input_eval_metadata_path, 'r') as f:
-            eval_metadata = json.load(f)
+        testing_criteria_name_types = {
+            "labelgrader": "label_model"
+        }
+        eval_id = "test_eval_group_123"
+        eval_run_id = "test_run_456"
         
         # Create EvaluationResult structure
         test_results = {
@@ -887,8 +887,10 @@ class TestUtils(unittest.TestCase):
         def run_test():
             converted_results = _convert_results_to_aoai_evaluation_results(
                 results=test_results,
-                eval_meta_data=eval_metadata,
-                logger=logger
+                eval_id=eval_id,
+                eval_run_id=eval_run_id,
+                logger=logger,
+                testing_criteria_name_types=testing_criteria_name_types
             )
             return converted_results
         
@@ -1006,8 +1008,10 @@ class TestUtils(unittest.TestCase):
         empty_results = {"metrics": {}, "rows": [], "studio_url": None}
         empty_converted = _convert_results_to_aoai_evaluation_results(
             results=empty_results,
-            eval_meta_data={},
-            logger=logger
+            eval_id=eval_id,
+            eval_run_id=eval_run_id,
+            logger=logger,
+            testing_criteria_name_types={}
         )
         
         self.assertEqual(len(empty_converted["rows"]), 0)

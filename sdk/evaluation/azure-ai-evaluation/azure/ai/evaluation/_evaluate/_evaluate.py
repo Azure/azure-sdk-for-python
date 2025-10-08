@@ -33,7 +33,7 @@ from .._constants import (
     BINARY_AGGREGATE_SUFFIX,
     DEFAULT_OAI_EVAL_RUN_NAME,
 )
-from .._model_configurations import AzureAIProject, EvaluationResult
+from .._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
 from .._user_agent import UserAgentSingleton
 from ._batch_run import (
     EvalRunContext,
@@ -793,7 +793,8 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
-        eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
+        eval_id: Optional[str] = kwargs.get("eval_id")
+        eval_run_id: Optional[str] = kwargs.get("eval_run_id")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
                 evaluation_name=evaluation_name,
@@ -807,7 +808,8 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
-            results_converted = _convert_results_to_aoai_evaluation_results(results, eval_meta_data, LOGGER)
+            testing_criteria_name_types = _get_aoai_critieria_name_types(evaluators)
+            results_converted = _convert_results_to_aoai_evaluation_results(results, eval_id, eval_run_id, LOGGER, testing_criteria_name_types)
             return results_converted
     except Exception as e:
         # Handle multiprocess bootstrap error
@@ -991,6 +993,14 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     return result
 
+def _get_aoai_critieria_name_types(evaluators_and_graders: Dict[str, Union[Callable, AzureOpenAIGrader]]) -> Dict[str, str]:
+    true_evaluators, true_graders = _split_evaluators_and_grader_configs(evaluators_and_graders)
+    aoai_critieria_name_types = {}
+    if true_graders:
+        for name, grader in true_graders.items():
+            if isinstance(grader, AzureOpenAIGrader) and grader._grader_config  is not None and grader._grader_config.name is not None:  # pylint: disable=protected-access
+                aoai_critieria_name_types[grader._grader_config.name] = grader._grader_config.type
+    return aoai_critieria_name_types
 
 def _preprocess_data(
     data: Union[str, os.PathLike],

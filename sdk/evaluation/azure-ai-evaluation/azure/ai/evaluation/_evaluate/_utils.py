@@ -8,7 +8,8 @@ import re
 import tempfile
 from pathlib import Path
 import time
-from typing import Any, Dict, List, NamedTuple, Optional, Union, cast
+from typing import Any, Callable, Dict, List, NamedTuple, Optional, Union, cast
+from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 import uuid
 import base64
 import math
@@ -486,7 +487,8 @@ class DataLoaderFactory:
         # fallback to JSONL to maintain backward compatibility
         return JSONLDataFileLoader(filename)
 
-def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None) -> EvaluationResult:
+
+def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, eval_id: str, eval_run_id: str, logger: logging.Logger, testing_criteria_name_types: Optional[Dict[str, str]] = None) -> EvaluationResult:
     """
     Convert evaluation results to AOAI evaluation results format.
     
@@ -508,18 +510,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
     :return: Converted evaluation results in AOAI format
     :rtype: EvaluationResult
     """
-    eval_id: Optional[str] = eval_meta_data.get("eval_id")
-    eval_run_id: Optional[str] = eval_meta_data.get("eval_run_id")
-    testing_criterias: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
-
-    testing_criteria_name_types = {}
-    if testing_criterias is not None:
-        for criteria in testing_criterias:
-            criteria_name = criteria.get("name")
-            criteria_type = criteria.get("type")
-            if criteria_name is not None and criteria_type is not None:
-                testing_criteria_name_types[criteria_name] = criteria_type
-    
+        
     created_time = int(time.time())
     converted_rows = []
     
@@ -580,7 +571,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
             
             # Create result object for this criteria
             result_obj = {
-                "type": testing_criteria_name_types[criteria_name] if criteria_name in testing_criteria_name_types else None,  # Use criteria name as type
+                "type": testing_criteria_name_types[criteria_name] if testing_criteria_name_types and criteria_name in testing_criteria_name_types else "azure_ai_evaluator",  # Use criteria name as type
                 "name": criteria_name,  # Use criteria name as name
                 "metric": criteria_name  # Use criteria name as metric
             }
@@ -657,9 +648,9 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
     result_counts_stats = {}  # Dictionary to aggregate usage by model
     
     for aoai_result in aoai_results:
-        print(f"\r\nProcessing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
+        logger.info(f"\r\nProcessing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
         if isinstance(aoai_result, dict) and 'results' in aoai_result:
-            print(f"\r\n2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}")
+            logger.info(f"\r\n2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}")
             result_counts["total"] += len(aoai_result['results'])
             for result_item in aoai_result['results']:
                 if isinstance(result_item, dict):
@@ -690,7 +681,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         # Extract usage statistics from aoai_result.sample
         sample_data = None
         if isinstance(aoai_result, dict) and 'sample' in aoai_result:
-            print(f"\r\n 2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, summary count: {len(aoai_result['sample'])}")
+            logger.info(f"\r\n 2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, summary count: {len(aoai_result['sample'])}")
             sample_data = aoai_result['sample']
             
         if sample_data and hasattr(sample_data, 'usage') and sample_data.usage:
@@ -744,10 +735,10 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         })
     
     result_counts_stats_val = []
-    print(f"\r\n Result counts stats: {result_counts_stats}")
+    logger.info(f"\r\n Result counts stats: {result_counts_stats}")
     for criteria_name, stats_val in result_counts_stats.items():
         if isinstance(stats_val, dict):
-            print(f"\r\n  Criteria: {criteria_name}, stats: {stats_val}")
+            logger.info(f"\r\n  Criteria: {criteria_name}, stats: {stats_val}")
             result_counts_stats_val.append({
                 'testing_criteria': criteria_name,
                 'passed': stats_val.get('passed', 0),
