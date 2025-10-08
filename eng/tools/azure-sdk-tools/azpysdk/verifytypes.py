@@ -169,7 +169,7 @@ class verifytypes(Check):
             logger.error(os.getcwd())
 
             # get type completeness score from current code
-            score_from_current = get_type_complete_score(commands, staging_directory, check_pytyped=True)
+            score_from_current = get_type_complete_score(commands, package_dir, check_pytyped=True)
             if score_from_current == -1.0:
                 results.append(1)
                 continue
@@ -187,7 +187,7 @@ class verifytypes(Check):
                 if install_from_main(os.path.abspath(package_dir), executable) > 0:
                     continue
 
-                score_from_main = get_type_complete_score(commands, staging_directory)
+                score_from_main = get_type_complete_score(commands, package_dir)
                 if score_from_main == -1.0:
                     results.append(1)
                     continue
