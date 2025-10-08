@@ -22,7 +22,7 @@ PYRIGHT_VERSION = "1.1.287"
 REPO_ROOT = discover_repo_root()
 
 
-def install_from_main(setup_path: str) -> int:
+def install_from_main(setup_path: str, python_executable: Optional[str] = None) -> int:
     path = pathlib.Path(setup_path)
     subdirectory = path.relative_to(REPO_ROOT)
     cwd = os.getcwd()
@@ -51,7 +51,7 @@ def install_from_main(setup_path: str) -> int:
 
             os.chdir(subdirectory)
 
-            command = get_pip_command() + ["install", ".", "--force-reinstall"]
+            command = get_pip_command(python_executable) + ["install", ".", "--force-reinstall"]
 
             subprocess.check_call(command, stdout=subprocess.DEVNULL)
         finally:
@@ -59,12 +59,13 @@ def install_from_main(setup_path: str) -> int:
         return 0
 
 
-def get_type_complete_score(commands: typing.List[str], check_pytyped: bool = False) -> float:
+def get_type_complete_score(commands: typing.List[str], cwd: str, check_pytyped: bool = False) -> float:
     try:
         response = subprocess.run(
             commands,
             check=True,
             capture_output=True,
+            cwd=cwd
         )
     except subprocess.CalledProcessError as e:
         if e.returncode != 1:
@@ -157,15 +158,18 @@ class verifytypes(Check):
             ]
 
             # debug a pip freeze result
-            cmd = get_pip_command(executable) + ["freeze"]
+            # cmd = get_pip_command(executable) + ["freeze"]
+            # TODO DEBUG
+            cmd = [executable] + ["-m", "pip", "freeze"]
             freeze_result = subprocess.run(
                 cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
             logger.error(f"Running pip freeze with {cmd}")
             logger.error(freeze_result.stdout)
+            logger.error(os.getcwd())
 
             # get type completeness score from current code
-            score_from_current = get_type_complete_score(commands, check_pytyped=True)
+            score_from_current = get_type_complete_score(commands, staging_directory, check_pytyped=True)
             if score_from_current == -1.0:
                 results.append(1)
                 continue
@@ -180,10 +184,10 @@ class verifytypes(Check):
             if in_ci():
                 # get type completeness score from main
                 logger.info("Getting the type completeness score from the code in main...")
-                if install_from_main(os.path.abspath(package_dir)) > 0:
+                if install_from_main(os.path.abspath(package_dir), executable) > 0:
                     continue
 
-                score_from_main = get_type_complete_score(commands)
+                score_from_main = get_type_complete_score(commands, staging_directory)
                 if score_from_main == -1.0:
                     results.append(1)
                     continue
