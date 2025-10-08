@@ -120,11 +120,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
     enable_live_metrics_config = configurations[ENABLE_LIVE_METRICS_ARG]
-    enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
 
     # Setup live metrics
     if enable_live_metrics_config:
-        # TODO: This does not add processors. Should this change?
         _setup_live_metrics(configurations)
 
     # Setup tracing pipeline
@@ -166,7 +164,6 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
         tracer_provider.add_span_processor(span_processor)  # type: ignore
     if configurations.get(ENABLE_LIVE_METRICS_ARG):
-        # TODO: Consider combining
         qsp = _QuickpulseSpanProcessor()
         tracer_provider.add_span_processor(qsp)
     if enable_performance_counters_config:
