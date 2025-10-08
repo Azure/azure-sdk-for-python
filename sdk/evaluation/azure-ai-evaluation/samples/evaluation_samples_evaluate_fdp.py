@@ -563,11 +563,9 @@ class EvaluationEvaluateSamples(object):
             response="The weather in New York is sunny.",
             tool_calls={
                 "type": "tool_call",
-                "tool_call": {
-                    "id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
-                    "type": "function",
-                    "function": {"name": "fetch_weather", "arguments": {"location": "New York"}},
-                },
+                "tool_call_id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
+                "name": "fetch_weather",
+                "arguments": {"location": "New York"},
             },
             tool_definitions={
                 "id": "fetch_weather",
