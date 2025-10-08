@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b43 (2025-10-06)
+## 1.0.0b43 (2025-10-08)
 
 ### Features Added
 - OneSettings control plane: Add live metrics feature control
