@@ -1065,9 +1065,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :param dict options: The request options for the request.
         :keyword executor: Optional ThreadPoolExecutor for thread management
         :paramtype executor: Optional[ThreadPoolExecutor]
-        :keyword int max_concurrency: The maximum number of concurrent operations for the items request.
-            This value is ignored if an executor is provided. If not specified, the default max_concurrency
-            defined by Python's ThreadPoolExecutor will be applied.
         :return: The list of read items.
         :rtype: CosmosList
         """

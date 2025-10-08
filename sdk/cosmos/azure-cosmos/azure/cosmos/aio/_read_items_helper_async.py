@@ -57,7 +57,7 @@ class ReadItemsHelperAsync:
         self.options = dict(options) if options is not None else {}
         self.partition_key_definition = partition_key_definition
         self.kwargs = kwargs
-        self.max_concurrency = max_concurrency
+        self.max_concurrency = max_concurrency if max_concurrency and max_concurrency > 0 else 5
         self.max_items_per_query = 1000
 
     async def read_items(self) -> 'CosmosList':
