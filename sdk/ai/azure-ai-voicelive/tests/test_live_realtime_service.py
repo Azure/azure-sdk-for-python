@@ -162,9 +162,10 @@ async def _collect_audio_trans_outputs(conn, duration_s: float) -> int:
 
 class TestRealtimeService(AzureRecordedTestCase):
 
+    @pytest.mark.live_test_only
     @VoiceLivePreparer()
     @recorded_by_proxy
-    def smoke_test(self, **kwargs):
+    def test_smoke(self, **kwargs):
         voicelive_openai_endpoint = kwargs.pop("voicelive_openai_endpoint")
         voicelive_openai_api_key = kwargs.pop("voicelive_openai_api_key")
         assert voicelive_openai_endpoint
