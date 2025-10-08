@@ -90,7 +90,6 @@ def should_verify_package(package_name):
     return (
         package_name not in EXCLUDED_PACKAGES
         and "nspkg" not in package_name
-        and "-mgmt" not in package_name
     )
 
 

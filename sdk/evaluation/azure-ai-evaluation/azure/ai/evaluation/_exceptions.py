@@ -78,6 +78,7 @@ class ErrorTarget(Enum):
     ECI_EVALUATOR = "ECIEvaluator"
     F1_EVALUATOR = "F1Evaluator"
     GROUNDEDNESS_EVALUATOR = "GroundednessEvaluator"
+    TASK_NAVIGATION_EFFICIENCY_EVALUATOR = "TaskNavigationEfficiencyEvaluator"
     PROTECTED_MATERIAL_EVALUATOR = "ProtectedMaterialEvaluator"
     INTENT_RESOLUTION_EVALUATOR = "IntentResolutionEvaluator"
     RELEVANCE_EVALUATOR = "RelevanceEvaluator"

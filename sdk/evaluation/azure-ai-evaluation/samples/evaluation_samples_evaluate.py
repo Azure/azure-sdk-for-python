@@ -575,11 +575,14 @@ class EvaluationEvaluateSamples(object):
         )
         # [END tool_call_quality_evaluator]
 
-        # [START path_efficiency_evaluator]
-        from azure.ai.evaluation._evaluators._path_efficiency import PathEfficiencyEvaluator
+        # [START task_navigation_efficiency_evaluator]
+        from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
+            TaskNavigationEfficiencyEvaluator,
+            TaskNavigationEfficiencyMatchingMode,
+        )
 
-        path_efficiency_evaluator = PathEfficiencyEvaluator(
-            precision_threshold=0.7, recall_threshold=0.8, f1_score_threshold=0.75
+        task_navigation_efficiency_evaluator = TaskNavigationEfficiencyEvaluator(
+            matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
         )
 
         response = [
@@ -598,7 +601,7 @@ class EvaluationEvaluateSamples(object):
         ]
         ground_truth = ["search", "analyze", "report"]
 
-        path_efficiency_evaluator(response=response, ground_truth=ground_truth)
+        task_navigation_efficiency_evaluator(response=response, ground_truth=ground_truth)
 
         # Also supports tuple format with parameters for exact parameter matching
         response_with_params = [
@@ -611,8 +614,8 @@ class EvaluationEvaluateSamples(object):
         ]
         ground_truth_with_params = (["search"], {"search": {"query": "test"}})
 
-        path_efficiency_evaluator(response=response_with_params, ground_truth=ground_truth_with_params)
-        # [END path_efficiency_evaluator]
+        task_navigation_efficiency_evaluator(response=response_with_params, ground_truth=ground_truth_with_params)
+        # [END task_navigation_efficiency_evaluator]
 
         # [START document_retrieval_evaluator]
         from azure.ai.evaluation import DocumentRetrievalEvaluator
