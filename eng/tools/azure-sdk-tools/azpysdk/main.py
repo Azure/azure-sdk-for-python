@@ -27,6 +27,7 @@ from .ruff import ruff
 from .verifytypes import verifytypes
 from .verify_whl import verify_whl
 from .verify_sdist import verify_sdist
+from .verify_keywords import verify_keywords
 
 from ci_tools.logging import configure_logging, logger
 
@@ -85,7 +86,8 @@ def build_parser() -> argparse.ArgumentParser:
     verifytypes().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
-
+    verify_keywords().register(subparsers, [common])
+    
     return parser
 
 
