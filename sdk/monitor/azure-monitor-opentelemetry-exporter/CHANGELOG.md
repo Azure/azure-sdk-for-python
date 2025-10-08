@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b43 (Unreleased)
+## 1.0.0b43 (2025-10-08)
 
 ### Features Added
 - OneSettings control plane: Add live metrics feature control
@@ -11,8 +11,8 @@
   ([#43147](https://github.com/Azure/azure-sdk-for-python/pull/43147))
 - Performance Counters
   ([#43024](https://github.com/Azure/azure-sdk-for-python/pull/43024))
-
-### Breaking Changes
+- Performance Counters: Include Consumer spans
+  ([#43261](https://github.com/Azure/azure-sdk-for-python/pull/43261))
 
 ### Bugs Fixed
 - Fixes issues #42897 - TypeError in _transmit_from_storage: LocalFileBlob.get() returns None
@@ -25,8 +25,6 @@
   ([#43141](https://github.com/Azure/azure-sdk-for-python/pull/43141))
 - Revert #43060
   ([#43087](https://github.com/Azure/azure-sdk-for-python/pull/43087))
-
-### Other Changes
 
 ## 1.0.0b42 (2025-09-17)
 
