@@ -59,8 +59,7 @@ class bandit(Check):
 
             if in_ci():
                 if not is_check_enabled(package_dir, "bandit"):
-                    logger.error(f"Bandit is disabled for {package_name}. Skipping...")
-                    results.append(1)
+                    logger.warning(f"Bandit is disabled for {package_name}. Skipping...")
                     continue
 
             try:
