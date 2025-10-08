@@ -8,8 +8,7 @@ import re
 import tempfile
 from pathlib import Path
 import time
-from typing import Any, Callable, Dict, List, NamedTuple, Optional, Union, cast
-from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
+from typing import Any, Dict, List, NamedTuple, Optional, Union, cast
 import uuid
 import base64
 import math
@@ -27,7 +26,7 @@ from azure.ai.evaluation._constants import (
     Prefixes,
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult, EvaluatorConfig
+from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._azure._clients import LiteMLClient
@@ -567,7 +566,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
             for metric_key, metric_value in metrics.items():
                 if metric_key.endswith("_score") or metric_key == "score":
                     score = metric_value
-                elif metric_key.endswith("_result") or metric_key == "result" or metric_key=="passed" :
+                elif metric_key.endswith("_result") or metric_key == "result" or metric_key == "passed":
                     label = metric_value
                     passed = True if (str(metric_value).lower() == 'pass' or str(metric_value).lower() == 'true') else False                        
                 elif metric_key.endswith("_reason") or metric_key == "reason":
@@ -617,8 +616,6 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
             "created_at": created_time,
             "datasource_item_id": row_idx,
             "datasource_item": {},
-            "id": f"item_{row_idx}",
-            "datasource_item_id": row_idx,
             "results": run_output_results
         }
 
