@@ -25,7 +25,7 @@ inputs:
 system:
 # Instruction
 ## Goal
-### You are an expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+### You are expert in evaluating the quality of a RESPONSE from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
 - **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
 - **Data**: Your input data include CONTEXT, QUERY, and RESPONSE.
 - **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways.
