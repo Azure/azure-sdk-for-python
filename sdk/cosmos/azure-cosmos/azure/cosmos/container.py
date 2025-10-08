@@ -1698,7 +1698,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
-    def replace_throughput( # pylint: disable=unused-argument
+    def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
         *,
@@ -1730,7 +1730,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
-            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
+            offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], response_hook=response_hook, **kwargs)
 
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
