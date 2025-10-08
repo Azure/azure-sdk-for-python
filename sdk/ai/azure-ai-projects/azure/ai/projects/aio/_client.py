@@ -156,3 +156,38 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
 
     async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
+
+    def as_agent_framework_client(self) -> Any:
+        """Create a new instance of AzureAIAgentClient with the same configuration as the AIProjectClient.
+
+        :return: A new instance of a Agent Framework AzureAIAgentClient.
+        :rtype: agent_framework.azure.AzureAIAgentClient
+
+        :raises ImportError: If the 'agent-framework-azure-ai' package is not installed.
+
+        :example:
+
+            .. code-block:: python
+
+                from azure.ai.projects.aio import AIProjectClient
+                from azure.identity.aio import AzureCliCredential
+
+                async with (
+                    AzureCliCredential() as credential,
+                    AIProjectClient(endpoint="https://your-project-endpoint", credential=credential) as project_client,
+                    project_client.as_agent_framework_client().create_agent(
+                        name="my-agent", instructions="You are a helpful assistant."
+                    ) as agent,
+                ):
+                    print((await agent.run("Hello, how can you assist me today?")).text)
+
+        """
+        try:
+            from agent_framework.azure import AzureAIAgentClient
+        except ImportError:
+            raise ImportError(
+                "To use the AgentFrameworkClient, please install the 'agent-framework-azure-ai' package: "
+                "`pip install agent-framework-azure-ai`"
+            ) from None
+
+        return AzureAIAgentClient(project_client=self)
