@@ -113,15 +113,15 @@ def test_verify_valid_metadata_passes(package_type, scenario_name, scenario_path
 
 
 @pytest.mark.parametrize(
-    "package_type,scenario_name,scenario_path",
+    "package_type,scenario_name,scenario_path,missing_keys",
     [
-        ("wheel", "stable", "pyproject_invalid_metadata_scenario"),
-        ("sdist", "stable", "pyproject_invalid_metadata_scenario"),
-        ("wheel", "beta", "pyproject_beta_invalid_metadata_scenario"),
-        ("sdist", "beta", "pyproject_beta_invalid_metadata_scenario"),
+        ("wheel", "stable", "pyproject_invalid_metadata_scenario", ["homepage", "repository"]),
+        ("sdist", "stable", "pyproject_invalid_metadata_scenario", ["homepage", "repository"]),
+        ("wheel", "beta", "pyproject_beta_invalid_metadata_scenario", ["author_email", "summary"]),
+        ("sdist", "beta", "pyproject_beta_invalid_metadata_scenario", ["author_email", "summary"]),
     ],
 )
-def test_verify_invalid_metadata_fails_with_missing_keys(package_type, scenario_name, scenario_path, caplog):
+def test_verify_invalid_metadata_fails(package_type, scenario_name, scenario_path, missing_keys, caplog):
     """Test that verify_whl/verify_sdist fails for scenarios with invalid metadata and reports missing author_name and homepage."""
     # Get the actual scenario path from globals
     actual_scenario_path = globals()[scenario_path]
@@ -154,22 +154,20 @@ def test_verify_invalid_metadata_fails_with_missing_keys(package_type, scenario_
         # Check that the error log contains information about missing keys
         error_logs = [record.message for record in caplog.records if record.levelname == "ERROR"]
 
-        # Different scenarios have different missing keys
-        if scenario_name == "stable":
-            # Stable scenario is missing author name and homepage
-            expected_missing_keys = ["author", "homepage"]
-        else:  # beta scenario
-            # Beta scenario is missing author email and description
-            expected_missing_keys = ["author_email", "summary"]
+        # Raise error if homepage AND repository not found in current version
+        if "homepage" in missing_keys:
+            assert f"Current metadata must contain at least one of: {missing_keys}" in error_logs
+        # Otherwise, check for missing keys from prior version
+        else:
+            missing_keys_pattern1 = f"Missing keys: {{'{missing_keys[0]}', '{missing_keys[1]}'}}"
+            missing_keys_pattern2 = f"Missing keys: {{'{missing_keys[1]}', '{missing_keys[0]}'}}"
+            has_missing_keys_error = any(
+                missing_keys_pattern1 in msg or missing_keys_pattern2 in msg for msg in error_logs
+            )
 
-        # Check for either order of the missing keys
-        missing_keys_pattern1 = f"Missing keys: {{'{expected_missing_keys[0]}', '{expected_missing_keys[1]}'}}"
-        missing_keys_pattern2 = f"Missing keys: {{'{expected_missing_keys[1]}', '{expected_missing_keys[0]}'}}"
-        has_missing_keys_error = any(missing_keys_pattern1 in msg or missing_keys_pattern2 in msg for msg in error_logs)
-
-        assert (
-            has_missing_keys_error
-        ), f"Expected error log about missing keys '{expected_missing_keys[0]}' and '{expected_missing_keys[1]}' for {scenario_name} scenario, but got: {error_logs}"
+            assert (
+                has_missing_keys_error
+            ), f"Expected error log about Missing keys: '{missing_keys[0]}' and '{missing_keys[1]}' for {scenario_name} scenario, but got: {error_logs}"
 
     finally:
         # Cleanup dist directory

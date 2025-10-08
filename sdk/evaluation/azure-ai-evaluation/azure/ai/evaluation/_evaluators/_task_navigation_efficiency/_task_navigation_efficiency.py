@@ -1,40 +1,73 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import json
+from enum import Enum
 from collections import Counter
+import json
 from typing import Dict, List, Union, Any, Tuple
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 
 
-class PathEfficiencyEvaluator(EvaluatorBase):
+class TaskNavigationEfficiencyMatchingMode(str, Enum):
+    """
+    Enumeration of task navigation efficiency matching mode.
+
+    This enum allows you to specify which single matching technique should be used when evaluating
+    the efficiency of an agent's tool calls sequence against a ground truth path.
+    """
+
+    EXACT_MATCH = "exact_match"
+    """
+    Binary metric indicating whether the agent's tool calls exactly match the ground truth.
+
+    Returns True only if the agent's tool calls sequence is identical to the expected sequence
+    in both order and content (no extra steps, no missing steps, correct order).
+    """
+
+    IN_ORDER_MATCH = "in_order_match"
+    """
+    Binary metric allowing extra steps but requiring correct order of required tool calls.
+    
+    Returns True if all ground truth steps appear in the agent's sequence in the correct
+    order, even if there are additional steps interspersed.
+    """
+
+    ANY_ORDER_MATCH = "any_order_match"
+    """
+    Binary metric allowing both extra steps and different ordering.
+    
+    Returns True if all ground truth steps appear in the agent's sequence with sufficient
+    frequency, regardless of order. Most lenient matching criterion.
+    """
+
+
+class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     """
     Evaluates whether an agent's sequence of actions is efficient and follows optimal decision-making patterns.
 
-    The Path Efficiency Evaluator calculates precision, recall, and F1 scores based on the comparison
-    between the agent's tool usage trajectory and the ground truth expected steps. It also provides
-    three binary match metrics: exact match, in-order match (allows extra steps), and any-order match (allows extra steps and ignores order).
+    The Task Navigation Efficiency Evaluator returns binary matching results between the agent's tool usage trajectory and the ground truth expected steps.
+    It has three matching techniques: exact match, in-order match (allows extra steps), and any-order match (allows extra steps and ignores order).
+    It also returns precision, recall, and F1 scores in properties bag.
 
-    :param precision_threshold: The threshold value to determine if the precision evaluation passes or fails. Default is 0.5.
-    :type precision_threshold: float
-    :param recall_threshold: The threshold value to determine if the recall evaluation passes or fails. Default is 0.5.
-    :type recall_threshold: float
-    :param f1_score_threshold: The threshold value to determine if the F1 score evaluation passes or fails. Default is 0.5.
-    :type f1_score_threshold: float
+    :param matching_mode: The matching mode to use. Default is "exact_match".
+    :type matching_mode: enum[str, TaskNavigationEfficiencyMatchingMode]
 
     .. admonition:: Example:
 
         .. code-block:: python
 
-            from azure.ai.evaluation import PathEfficiencyEvaluator
+            from azure.ai.evaluation import TaskNavigationEfficiencyEvaluator
 
-            path_efficiency_eval = PathEfficiencyEvaluator(
-                precision_threshold=0.7,
-                recall_threshold=0.8,
-                f1_score_threshold=0.75
+            task_navigation_efficiency_eval = TaskNavigationEfficiencyEvaluator(
+                matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
             )
 
             # Example 1: Using simple tool names list
@@ -64,36 +97,39 @@ class PathEfficiencyEvaluator(EvaluatorBase):
             )
     """
 
-    _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD = 0.5
-
-    id = "azureai://built-in/evaluators/path_efficiency"
+    id = "azureai://built-in/evaluators/task_navigation_efficiency"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
+
+    matching_mode: TaskNavigationEfficiencyMatchingMode
+    """The matching mode to use."""
 
     @override
     def __init__(
         self,
         *,
-        precision_threshold: float = _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD,
-        recall_threshold: float = _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD,
-        f1_score_threshold: float = _DEFAULT_PATH_EFFICIENCY_SCORE_THRESHOLD,
+        matching_mode: Union[
+            str, TaskNavigationEfficiencyMatchingMode
+        ] = TaskNavigationEfficiencyMatchingMode.EXACT_MATCH,
     ):
-        self._higher_is_better = True
+        # Type checking for metric parameter
+        if isinstance(matching_mode, str):
+            try:
+                self.matching_mode = TaskNavigationEfficiencyMatchingMode(matching_mode)
+            except ValueError:
+                raise ValueError(
+                    f"matching_mode must be one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]}, got '{matching_mode}'"
+                )
+        elif isinstance(matching_mode, TaskNavigationEfficiencyMatchingMode):
+            self.matching_mode = matching_mode
+        else:
+            raise EvaluationException(
+                f"matching_mode must be a string with one of {[m.value for m in TaskNavigationEfficiencyMatchingMode]} or TaskNavigationEfficiencyMatchingMode enum, got {type(matching_mode)}",
+                internal_message=str(matching_mode),
+                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+            )
+
         super().__init__()
-
-        # Type checking for threshold parameters
-        for name, value in [
-            ("precision_threshold", precision_threshold),
-            ("recall_threshold", recall_threshold),
-            ("f1_score_threshold", f1_score_threshold),
-        ]:
-            if not isinstance(value, float):
-                raise TypeError(f"{name} must be a float, got {type(value)}")
-
-        self._threshold = {
-            "path_efficiency_precision": precision_threshold,
-            "path_efficiency_recall": recall_threshold,
-            "path_efficiency_f1": f1_score_threshold,
-        }
 
     def _prepare_steps_for_comparison(
         self,
@@ -192,14 +228,20 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         # Check if agent has at least as many occurrences of each ground truth step
         return all(agent_counts[step] >= ground_truth_counts[step] for step in ground_truth_counts)
 
+    _TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS = {
+        TaskNavigationEfficiencyMatchingMode.EXACT_MATCH: _calculate_exact_match,
+        TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH: _calculate_in_order_match,
+        TaskNavigationEfficiencyMatchingMode.ANY_ORDER_MATCH: _calculate_any_order_match,
+    }
+
     @override
-    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:
+    async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str, Dict[str, float]]]:
         """Produce a path efficiency evaluation result.
 
         :param eval_input: The input to the evaluation function. Must contain "response" and "ground_truth".
         :type eval_input: Dict
         :return: The evaluation result.
-        :rtype: Dict[str, Union[float, str]]
+        :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
         response = eval_input["response"]
         ground_truth = eval_input["ground_truth"]
@@ -244,12 +286,10 @@ class PathEfficiencyEvaluator(EvaluatorBase):
             ground_truth_names = [name.strip() for name in tool_names_list]
             ground_truth_params_dict = params_dict
             use_parameter_matching = True
-
         elif isinstance(ground_truth, list) and all(isinstance(step, str) for step in ground_truth):
             # List format: just tool names
             ground_truth_names = [step.strip() for step in ground_truth]
             use_parameter_matching = False
-
         else:
             raise TypeError(
                 "ground_truth must be a list of strings or a tuple of (list[str], dict[str, dict[str, str]])"
@@ -267,42 +307,43 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         )
 
         # Calculate precision, recall, and F1 scores
-        metrics = self._calculate_precision_recall_f1_scores(agent_steps, ground_truth_steps)
-
-        # Calculate binary match metrics
-        exact_match = self._calculate_exact_match(agent_steps, ground_truth_steps)
-        in_order_match = self._calculate_in_order_match(agent_steps, ground_truth_steps)
-        any_order_match = self._calculate_any_order_match(agent_steps, ground_truth_steps)
+        additional_properties_metrics = self._calculate_precision_recall_f1_scores(agent_steps, ground_truth_steps)
 
         # Convert metrics to floats, using nan for None or non-convertible values
-        path_efficiency_precision = (
-            float(metrics["precision_score"]) if metrics["precision_score"] is not None else float("nan")
-        )
-        path_efficiency_recall = float(metrics["recall_score"]) if metrics["recall_score"] is not None else float("nan")
-        path_efficiency_f1_score = float(metrics["f1_score"]) if metrics["f1_score"] is not None else float("nan")
+        for metric, score in additional_properties_metrics.items():
+            additional_properties_metrics[metric] = float(score) if score is not None else float("nan")
 
-        return {
-            "path_efficiency_precision_score": path_efficiency_precision,
-            "path_efficiency_recall_score": path_efficiency_recall,
-            "path_efficiency_f1_score": path_efficiency_f1_score,
-            "path_efficiency_exact_match_result": EVALUATION_PASS_FAIL_MAPPING[exact_match],
-            "path_efficiency_in_order_match_result": EVALUATION_PASS_FAIL_MAPPING[in_order_match],
-            "path_efficiency_any_order_match_result": EVALUATION_PASS_FAIL_MAPPING[any_order_match],
-        }
+        if self.matching_mode in self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS:
+            # Calculate binary match metrics
+            match_result = self._TASK_NAVIGATION_EFFICIENCY_MATCHING_MODE_TO_FUNCTIONS[self.matching_mode](
+                self, agent_steps, ground_truth_steps
+            )
+
+            return {
+                "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
+                "properties": additional_properties_metrics,
+            }
+        else:
+            raise EvaluationException(
+                f"Unsupported matching_mode '{self.matching_mode}'",
+                internal_message=str(self.matching_mode),
+                target=ErrorTarget.TASK_NAVIGATION_EFFICIENCY_EVALUATOR,
+                category=ErrorCategory.INVALID_VALUE,
+            )
 
     @overload
     def __call__(  # type: ignore
         self, *, response: Union[str, List[Dict[str, Any]]], ground_truth: List[str]
-    ) -> Dict[str, Union[float, str]]:
+    ) -> Dict[str, Union[float, str, Dict[str, float]]]:
         """
-        Evaluate the path efficiency of an agent's action sequence.
+        Evaluate the task navigation efficiency of an agent's action sequence.
 
         :keyword response: The agent's response containing tool calls.
         :paramtype response: Union[str, List[Dict[str, Any]]]
         :keyword ground_truth: List of expected tool/action steps.
         :paramtype ground_truth: List[str]
-        :return: The path efficiency scores and results.
-        :rtype: Dict[str, Union[float, str]]
+        :return: The task navigation efficiency scores and results.
+        :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
 
     @overload
@@ -311,16 +352,16 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         *,
         response: Union[str, List[Dict[str, Any]]],
         ground_truth: Tuple[List[str], Dict[str, Dict[str, str]]],
-    ) -> Dict[str, Union[float, str]]:
+    ) -> Dict[str, Union[float, str, Dict[str, float]]]:
         """
-        Evaluate the path efficiency of an agent's action sequence with tool parameters.
+        Evaluate the task navigation efficiency of an agent's action sequence with tool parameters.
 
         :keyword response: The agent's response containing tool calls.
         :paramtype response: Union[str, List[Dict[str, Any]]]
         :keyword ground_truth: Tuple of (tool names list, parameters dict) where parameters must match exactly.
         :paramtype ground_truth: Tuple[List[str], Dict[str, Dict[str, str]]]
-        :return: The path efficiency scores and results.
-        :rtype: Dict[str, Union[float, str]]
+        :return: The task navigation efficiency scores and results.
+        :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
 
     @override
@@ -330,13 +371,13 @@ class PathEfficiencyEvaluator(EvaluatorBase):
         **kwargs,
     ):
         """
-        Evaluate path efficiency.
+        Evaluate task navigation efficiency.
 
         :keyword response: The agent's response containing tool calls.
         :paramtype response: Union[str, List[Dict[str, Any]]]
         :keyword ground_truth: List of expected tool/action steps or tuple of (tool names, parameters dict).
         :paramtype ground_truth: Union[List[str], Tuple[List[str], Dict[str, Dict[str, str]]]]
-        :return: The path efficiency scores and results.
-        :rtype: Dict[str, Union[float, str]]
+        :return: The task navigation efficiency scores and results.
+        :rtype: Dict[str, Union[float, str, Dict[str, float]]]
         """
         return super().__call__(*args, **kwargs)

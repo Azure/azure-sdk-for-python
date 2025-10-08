@@ -23,6 +23,8 @@
 Azure Cosmos database service.
 """
 
+# cspell:ignore PPAF
+
 from azure.cosmos.documents import _OperationType
 
 class EndpointDiscoveryRetryPolicy(object):

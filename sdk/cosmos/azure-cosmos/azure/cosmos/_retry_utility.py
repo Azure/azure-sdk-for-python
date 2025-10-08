@@ -142,8 +142,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     not result[0]['Offers'] and request.method == 'POST':
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
-                response = exceptions.InternalException(status_code=StatusCodes.NOT_FOUND,
-                                                        headers={HttpHeaders.SubStatus:
+                response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
+                                                               headers={HttpHeaders.SubStatus:
                                                                      SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND})
                 e_offer = exceptions.CosmosResourceNotFoundError(
                     status_code=StatusCodes.NOT_FOUND,
