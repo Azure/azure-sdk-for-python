@@ -663,8 +663,6 @@ class TestConfigure(unittest.TestCase):
         elp_mock.return_value = elp_init_mock
         pclp_init_mock = Mock()
         pclp_mock.return_value = pclp_init_mock
-        
-
         configurations = {
             "connection_string": "test_cs",
             "enable_performance_counters": False,
