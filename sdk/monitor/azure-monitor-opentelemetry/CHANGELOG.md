@@ -5,7 +5,7 @@
 ### Features Added
 
 - Performance Counters
-  ([#xxxxx](https://github.com/Azure/azure-sdk-for-python/pull/xxxxx))
+  ([#43262](https://github.com/Azure/azure-sdk-for-python/pull/43262))
 
 ### Breaking Changes
 
