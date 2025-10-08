@@ -7,6 +7,7 @@ import asyncio
 import importlib.resources as pkg_resources
 import json
 import os
+import random
 import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union, Tuple
@@ -19,13 +20,10 @@ from azure.ai.evaluation._common.utils import construct_prompty_model_config
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 
 from .._exceptions import ErrorBlame, ErrorCategory, EvaluationException
-from .._user_agent import USER_AGENT
+from .._user_agent import UserAgentSingleton
 from ._conversation.constants import ConversationRole
 from ._helpers import ConversationHistory, Turn
 from ._utils import JsonLineChatProtocol
-
-
-USER_AGENT += " (type=simulator; subtype=Simulator)"
 
 
 @experimental
@@ -52,6 +50,10 @@ class Simulator:
         self.model_config = model_config
         if "api_version" not in self.model_config:
             self.model_config["api_version"] = "2024-06-01"  # type: ignore
+
+    @staticmethod
+    def __user_agent() -> str:
+        return f"{UserAgentSingleton().value} (type=simulator; subtype=Simulator)"
 
     @staticmethod
     def _validate_model_config(model_config: Any):
@@ -103,6 +105,7 @@ class Simulator:
         user_simulator_prompty_options: Dict[str, Any] = {},
         conversation_turns: List[List[Union[str, Dict[str, Any]]]] = [],
         concurrent_async_tasks: int = 5,
+        randomization_seed: Optional[int] = None,
         **kwargs,
     ) -> List[JsonLineChatProtocol]:
         """
@@ -133,6 +136,9 @@ class Simulator:
         :keyword concurrent_async_tasks: The number of asynchronous tasks to run concurrently during the simulation.
             Defaults to 5.
         :paramtype concurrent_async_tasks: int
+        :keyword randomization_seed: The seed used to randomize task/query order. If unset, the system's
+            default seed is used. Defaults to None.
+        :paramtype randomization_seed: Optional[int]
         :return: A list of simulated conversations represented as JsonLineChatProtocol objects.
         :rtype: List[JsonLineChatProtocol]
 
@@ -157,6 +163,13 @@ class Simulator:
                 f"You have specified 'num_queries' < len('tasks') ({num_queries} < {len(tasks)}). "
                 f"Only the first {num_queries} lines of the specified tasks will be simulated."
             )
+
+        # Apply randomization to tasks if seed is provided
+        if randomization_seed is not None and tasks:
+            # Create a local random instance to avoid polluting global state
+            local_random = random.Random(randomization_seed)
+            tasks = tasks.copy()  # Don't modify the original list
+            local_random.shuffle(tasks)
 
         max_conversation_turns *= 2  # account for both user and assistant turns
 
@@ -378,7 +391,7 @@ class Simulator:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
                         default_api_version="2024-06-01",
-                        user_agent=USER_AGENT,
+                        user_agent=self.__user_agent(),
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
@@ -392,7 +405,7 @@ class Simulator:
         prompty_model_config = construct_prompty_model_config(
             model_config=prompty_model_config,  # type: ignore
             default_api_version="2024-06-01",
-            user_agent=USER_AGENT,
+            user_agent=self.__user_agent(),
         )
         return AsyncPrompty.load(
             source=user_simulator_prompty,
@@ -517,7 +530,7 @@ class Simulator:
                     prompty_model_config = construct_prompty_model_config(
                         model_config=prompty_model_config,  # type: ignore
                         default_api_version="2024-06-01",
-                        user_agent=USER_AGENT,
+                        user_agent=self.__user_agent(),
                     )
                     return AsyncPrompty.load(source=prompty_path, model=prompty_model_config)  # type: ignore
             except FileNotFoundError as e:
@@ -531,7 +544,7 @@ class Simulator:
         prompty_model_config = construct_prompty_model_config(
             model_config=prompty_model_config,  # type: ignore
             default_api_version="2024-06-01",
-            user_agent=USER_AGENT,
+            user_agent=self.__user_agent(),
         )
         return AsyncPrompty.load(
             source=query_response_generating_prompty,

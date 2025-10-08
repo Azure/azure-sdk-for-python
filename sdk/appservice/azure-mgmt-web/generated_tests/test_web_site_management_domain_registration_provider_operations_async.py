@@ -23,7 +23,7 @@ class TestWebSiteManagementDomainRegistrationProviderOperationsAsync(AzureMgmtRe
     @recorded_by_proxy_async
     async def test_domain_registration_provider_list_operations(self, resource_group):
         response = self.client.domain_registration_provider.list_operations(
-            api_version="2024-04-01",
+            api_version="2024-11-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

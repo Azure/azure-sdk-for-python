@@ -79,7 +79,7 @@ class BinaryDecoder(object):
         """Read n bytes.
 
         :param int n: Number of bytes to read.
-        :returns: The next n bytes from the input.
+        :return: The next n bytes from the input.
         :rtype: bytes
         """
         assert n >= 0, n

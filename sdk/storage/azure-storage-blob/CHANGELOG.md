@@ -1,11 +1,24 @@
 # Release History
 
-## 12.26.0 (Unreleased)
+## 12.28.0b1 (Unreleased)
 
 ### Features Added
 
+## 12.26.0 (2025-07-16)
+
+### Features Added
+- Stable release of features from 12.26.0b1
+
 ### Bugs Fixed
 - Fixed an issue where `BlobClient`'s `start_copy_from_url` with `incremental_copy=True` results in `TypeError`.
+
+## 12.27.0b1 (2025-06-12)
+
+This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
+
+### Features Added
+- Added support for service version 2025-11-05.
+- Added support for better error handling for copy operations.
 
 ## 12.26.0b1 (2025-05-06)
 

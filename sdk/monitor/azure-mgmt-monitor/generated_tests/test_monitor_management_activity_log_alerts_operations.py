@@ -24,19 +24,28 @@ class TestMonitorManagementActivityLogAlertsOperations(AzureMgmtRecordedTestCase
         response = self.client.activity_log_alerts.create_or_update(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            activity_log_alert={
-                "location": "str",
+            activity_log_alert_rule={
                 "actions": {"actionGroups": [{"actionGroupId": "str", "webhookProperties": {"str": "str"}}]},
-                "condition": {"allOf": [{"equals": "str", "field": "str"}]},
+                "condition": {
+                    "allOf": [
+                        {
+                            "anyOf": [{"containsAny": ["str"], "equals": "str", "field": "str"}],
+                            "containsAny": ["str"],
+                            "equals": "str",
+                            "field": "str",
+                        }
+                    ]
+                },
                 "description": "str",
                 "enabled": True,
                 "id": "str",
+                "location": "global",
                 "name": "str",
                 "scopes": ["str"],
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2017-04-01",
+            api_version="2020-10-01",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +57,7 @@ class TestMonitorManagementActivityLogAlertsOperations(AzureMgmtRecordedTestCase
         response = self.client.activity_log_alerts.get(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            api_version="2017-04-01",
+            api_version="2020-10-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +69,7 @@ class TestMonitorManagementActivityLogAlertsOperations(AzureMgmtRecordedTestCase
         response = self.client.activity_log_alerts.delete(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            api_version="2017-04-01",
+            api_version="2020-10-01",
         )
 
         # please add some check logic here by yourself
@@ -72,8 +81,8 @@ class TestMonitorManagementActivityLogAlertsOperations(AzureMgmtRecordedTestCase
         response = self.client.activity_log_alerts.update(
             resource_group_name=resource_group.name,
             activity_log_alert_name="str",
-            activity_log_alert_patch={"enabled": True, "tags": {"str": "str"}},
-            api_version="2017-04-01",
+            activity_log_alert_rule_patch={"enabled": True, "tags": {"str": "str"}},
+            api_version="2020-10-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +92,7 @@ class TestMonitorManagementActivityLogAlertsOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_activity_log_alerts_list_by_subscription_id(self, resource_group):
         response = self.client.activity_log_alerts.list_by_subscription_id(
-            api_version="2017-04-01",
+            api_version="2020-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -94,7 +103,7 @@ class TestMonitorManagementActivityLogAlertsOperations(AzureMgmtRecordedTestCase
     def test_activity_log_alerts_list_by_resource_group(self, resource_group):
         response = self.client.activity_log_alerts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2017-04-01",
+            api_version="2020-10-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

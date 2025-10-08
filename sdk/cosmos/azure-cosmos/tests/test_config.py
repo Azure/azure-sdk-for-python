@@ -2,23 +2,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import collections
+import logging
 import os
+import random
 import time
 import unittest
 import uuid
 
-from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers
+from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
+from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
+from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
+from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers, _configure_timeout
+from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos.http_constants import StatusCodes, HttpHeaders
+from azure.cosmos.partition_key import (PartitionKey, _PartitionKeyKind, _PartitionKeyVersion, _Undefined,
+                                        NonePartitionKeyValue)
 from azure.cosmos import (ContainerProxy, DatabaseProxy, documents, exceptions,
-                          http_constants, _retry_utility)
-from azure.cosmos.aio import _retry_utility_async
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
+                          http_constants)
 from devtools_testutils.azure_recorded_testcase import get_credential
 from devtools_testutils.helpers import is_live
+from typing import Sequence, Type, Union
 
 try:
     import urllib3
@@ -27,6 +32,8 @@ try:
 except:
     print("no urllib3")
 
+SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
+SLEEP_TIME = 30  # sleep for 30 seconds
 
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
@@ -57,16 +64,28 @@ class TestConfig(object):
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "Python SDK Test Database " + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
 
-    TEST_SINGLE_PARTITION_CONTAINER_ID = "Single Partition Test Container " + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_CONTAINER_ID = "Multi Partition Test Container " + str(uuid.uuid4())
-    TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = "Single Partition With Prefix PK Test Container " + str(uuid.uuid4())
-    TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID = "Multi Partition With Prefix PK Test Container " + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())
+    TEST_SINGLE_PARTITION_PREFIX_PK_CONTAINER_ID = "SinglePartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
+    TEST_MULTI_PARTITION_PREFIX_PK_CONTAINER_ID = "MultiPartitionWithPrefixPKTestContainer-" + str(uuid.uuid4())
 
     TEST_CONTAINER_PARTITION_KEY = "pk"
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
     TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
+
+    # these will be populated by the get_account_info method
+    WRITE_LOCATION = ""
+    # some default value that is needed for emulator tests
+    READ_LOCATION = "West US"
+
+    @classmethod
+    def get_account_info(cls, client: CosmosClient):
+        account_info = client.get_database_account()
+        cls.WRITE_LOCATION = account_info.WritableLocations[0]["name"]
+        if len(account_info.ReadableLocations) > 1:
+            cls.READ_LOCATION = account_info.ReadableLocations[1]["name"]
 
     @classmethod
     def create_database_if_not_exist(cls, client):
@@ -205,7 +224,7 @@ class TestConfig(object):
     def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
         container.replace_throughput(throughput)
-        print("changed offer to 11k")
+        print(f"changed offer to {throughput}")
         print("--------------------------------")
         print("Waiting for split to complete")
         start_time = time.time()
@@ -213,11 +232,11 @@ class TestConfig(object):
         while True:
             offer = container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
+                    raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(60)
+                    time.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")
@@ -226,7 +245,7 @@ class TestConfig(object):
     async def trigger_split_async(container, throughput):
         print("Triggering a split in session token helpers")
         await container.replace_throughput(throughput)
-        print("changed offer to 11k")
+        print(f"changed offer to {throughput}")
         print("--------------------------------")
         print("Waiting for split to complete")
         start_time = time.time()
@@ -234,11 +253,11 @@ class TestConfig(object):
         while True:
             offer = await container.get_throughput()
             if offer.properties['content'].get('isOfferReplacePending', False):
-                if time.time() - start_time > 60 * 25:  # timeout test at 25 minutes
-                    unittest.skip("Partition split didn't complete in time.")
+                if time.time() - start_time > SPLIT_TIMEOUT:  # timeout test at 10 minutes
+                    raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(60)
+                    time.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")
@@ -290,6 +309,32 @@ def get_full_text_policy(path):
         ]
     }
 
+def get_test_item():
+    test_item = {
+        'id': 'Item_' + str(uuid.uuid4()),
+        'test_object': True,
+        'lastName': 'Smith',
+        'attr1': random.randint(0, 10)
+    }
+    return test_item
+
+def pre_split_hook(response):
+    request_headers = response.http_request.headers
+    session_token = request_headers.get('x-ms-session-token')
+    assert len(session_token) <= 20
+    assert session_token.startswith('0')
+    assert session_token.count(':') == 1
+    assert session_token.count(',') == 0
+
+def post_split_hook(response):
+    request_headers = response.http_request.headers
+    session_token = request_headers.get('x-ms-session-token')
+    assert len(session_token) > 30
+    assert len(session_token) < 60 # should only be 0-1 or 0-2, not 0-1-2
+    assert session_token.startswith('0') is False
+    assert session_token.count(':') == 2
+    assert session_token.count(',') == 1
+
 class ResponseHookCaller:
     def __init__(self):
         self.count = 0
@@ -321,6 +366,14 @@ class FakeHttpResponse:
     def body(self):
         return None
 
+def no_token_response_hook(raw_response):
+    request_headers = raw_response.http_request.headers
+    assert request_headers.get(HttpHeaders.SessionToken) is None
+
+def token_response_hook(raw_response):
+    request_headers = raw_response.http_request.headers
+    assert request_headers.get(HttpHeaders.SessionToken) is not None
+
 
 class MockConnectionRetryPolicy(RetryPolicy):
     def __init__(self, resource_type, error=None, **kwargs):
@@ -334,7 +387,10 @@ class MockConnectionRetryPolicy(RetryPolicy):
     def send(self, request):
         self.counter = 0
         absolute_timeout = request.context.options.pop('timeout', None)
-
+        per_request_timeout = request.context.options.pop('connection_timeout', 0)
+        request_params = request.context.options.pop('request_params', None)
+        global_endpoint_manager = request.context.options.pop('global_endpoint_manager', None)
+        retry_error = None
         retry_active = True
         response = None
         retry_settings = self.configure_retries(request.context.options)
@@ -346,26 +402,44 @@ class MockConnectionRetryPolicy(RetryPolicy):
                     self.request_endpoints.append(request.http_request.url)
                     if self.error:
                         raise self.error
+                _configure_timeout(request, absolute_timeout, per_request_timeout)
                 response = self.next.send(request)
                 break
+            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+                # the authentication policy failed such that the client's request can't
+                # succeed--we'll never have a response to it, so propagate the exception
+                raise
+            except exceptions.CosmosClientTimeoutError as timeout_error:
+                timeout_error.inner_exception = retry_error
+                timeout_error.response = response
+                timeout_error.history = retry_settings['history']
+                raise
             except ServiceRequestError as err:
+                retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 # This logic is based on the _retry.py file from azure-core
-                if retry_settings['connect'] > 0:
-                    self.counter += 1
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        self.sleep(retry_settings, request.context.transport)
-                        continue
+                if (not _has_database_account_header(request.http_request.headers)
+                        and not request_params.healthy_tentative_location):
+                    if retry_settings['connect'] > 0:
+                        self.counter += 1
+                        global_endpoint_manager.record_failure(request_params)
+                        retry_active = self.increment(retry_settings, response=request, error=err)
+                        if retry_active:
+                            self.sleep(retry_settings, request.context.transport)
+                            continue
                 raise err
             except ServiceResponseError as err:
+                retry_error = err
                 # Only read operations can be safely retried with ServiceResponseError
-                if not _retry_utility._has_read_retryable_headers(request.http_request.headers):
+                if (not _has_read_retryable_headers(request.http_request.headers) or
+                        _has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
                 # This logic is based on the _retry.py file from azure-core
                 if retry_settings['read'] > 0:
                     self.counter += 1
+                    global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
@@ -375,10 +449,12 @@ class MockConnectionRetryPolicy(RetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
-                if _has_database_account_header(request.http_request.headers):
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
                     self.counter += 1
+                    global_endpoint_manager.record_failure(request_params)
                     retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
@@ -414,9 +490,11 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
         :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: Specified timeout exceeded.
         :raises ~azure.core.exceptions.ClientAuthenticationError: Authentication failed.
         """
+        self.counter = 0
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
-        self.counter = 0
+        request_params = request.context.options.pop('request_params', None)
+        global_endpoint_manager = request.context.options.pop('global_endpoint_manager', None)
         retry_error = None
         retry_active = True
         response = None
@@ -424,15 +502,18 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
         while retry_active:
             start_time = time.time()
             try:
-                # raise the passed in exception for the passed in resource + operation combination
                 if request.http_request.headers.get(
                         http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
                     self.request_endpoints.append(request.http_request.url)
                     if self.error:
                         raise self.error
-                _retry_utility._configure_timeout(request, absolute_timeout, per_request_timeout)
+                _configure_timeout(request, absolute_timeout, per_request_timeout)
                 response = await self.next.send(request)
                 break
+            except ClientAuthenticationError:  # pylint:disable=try-except-raise
+                # the authentication policy failed such that the client's request can't
+                # succeed--we'll never have a response to it, so propagate the exception
+                raise
             except exceptions.CosmosClientTimeoutError as timeout_error:
                 timeout_error.inner_exception = retry_error
                 timeout_error.response = response
@@ -442,40 +523,94 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
-                if retry_settings['connect'] > 0:
-                    self.counter += 1
-                    retry_active = self.increment(retry_settings, response=request, error=err)
-                    if retry_active:
-                        await self.sleep(retry_settings, request.context.transport)
-                        continue
-                raise err
-            except ServiceResponseError as err:
-                retry_error = err
-                # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
-                from aiohttp.client_exceptions import (
-                    ClientConnectionError)  # pylint: disable=networking-import-outside-azure-core-transport
-                if isinstance(err.inner_exception, ClientConnectionError) or _retry_utility_async._has_read_retryable_headers(request.http_request.headers):
-                    # This logic is based on the _retry.py file from azure-core
-                    if retry_settings['read'] > 0:
+                if (not _has_database_account_header(request.http_request.headers)
+                        and not request_params.healthy_tentative_location):
+                    if retry_settings['connect'] > 0:
                         self.counter += 1
+                        await global_endpoint_manager.record_failure(request_params)
                         retry_active = self.increment(retry_settings, response=request, error=err)
                         if retry_active:
                             await self.sleep(retry_settings, request.context.transport)
                             continue
                 raise err
+            except ServiceResponseError as err:
+                retry_error = err
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
+                    raise err
+                # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
+                try:
+                    # pylint: disable=networking-import-outside-azure-core-transport
+                    from aiohttp.client_exceptions import (
+                        ClientConnectionError)
+                    if (isinstance(err.inner_exception, ClientConnectionError)
+                            or _has_read_retryable_headers(request.http_request.headers)):
+                        # This logic is based on the _retry.py file from azure-core
+                        if retry_settings['read'] > 0:
+                            self.counter += 1
+                            await global_endpoint_manager.record_failure(request_params)
+                            retry_active = self.increment(retry_settings, response=request, error=err)
+                            if retry_active:
+                                await self.sleep(retry_settings, request.context.transport)
+                                continue
+                except ImportError:
+                    raise err # pylint: disable=raise-missing-from
+                raise err
             except CosmosHttpResponseError as err:
                 raise err
             except AzureError as err:
                 retry_error = err
-                if _has_database_account_header(request.http_request.headers):
+                if (_has_database_account_header(request.http_request.headers) or
+                        request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
-                    retry_active = self.increment(retry_settings, response=request, error=err)
                     self.counter += 1
+                    retry_active = self.increment(retry_settings, response=request, error=err)
                     if retry_active:
                         await self.sleep(retry_settings, request.context.transport)
                         continue
                 raise err
+            finally:
+                end_time = time.time()
+                if absolute_timeout:
+                    absolute_timeout -= (end_time - start_time)
 
         self.update_context(response.context, retry_settings)
         return response
+
+def hash_partition_key_value(
+        pk_value: Sequence[Union[None, bool, int, float, str, _Undefined, Type[NonePartitionKeyValue]]],
+        kind: str = _PartitionKeyKind.HASH,
+        version: int = _PartitionKeyVersion.V2,
+    ):
+    return PartitionKey._get_hashed_partition_key_string(
+        pk_value=pk_value,
+        kind=kind,
+        version=version,
+    )
+
+def create_range(range_min: str, range_max: str, is_min_inclusive: bool = True, is_max_inclusive: bool = False):
+    if range_max == range_min:
+        range_max += "FF"
+    return Range(
+        range_min=range_min,
+        range_max=range_max,
+        isMinInclusive=is_min_inclusive,
+        isMaxInclusive=is_max_inclusive,
+    )
+
+def create_feed_range_in_dict(feed_range):
+    return FeedRangeInternalEpk(feed_range).to_dict()
+
+
+class MockHandler(logging.Handler):
+
+    def __init__(self):
+        super(MockHandler, self).__init__()
+        self.messages = []
+
+    def reset(self):
+        self.messages = []
+
+    def emit(self, record):
+        self.messages.append(record)

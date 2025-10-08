@@ -11,21 +11,15 @@ from azure.identity import AzureCliCredential, DefaultAzureCredential, ManagedId
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._azure._envs import AzureEnvironmentClient
 
+
 class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
     """Asynchronous token provider for Azure services that supports non-default Azure clouds
     (e.g. Azure China, Azure US Government, etc.)."""
 
-    def __init__(
-        self,
-        *,
-        base_url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, base_url: Optional[str] = None, **kwargs: Any) -> None:
         """Initialize the AsyncAzureTokenProvider."""
         self._credential: Optional[TokenCredential] = None
-        self._env_client: Optional[AzureEnvironmentClient] = AzureEnvironmentClient(
-            base_url=base_url,
-            **kwargs)
+        self._env_client: Optional[AzureEnvironmentClient] = AzureEnvironmentClient(base_url=base_url, **kwargs)
 
     async def close(self) -> None:
         if self._env_client:
@@ -50,14 +44,10 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
                 f"{self.__class__.__name__} could not determine the credential to use.",
                 target=ErrorTarget.UNKNOWN,
                 category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.SYSTEM_ERROR)
+                blame=ErrorBlame.SYSTEM_ERROR,
+            )
 
-        return self._credential.get_token(
-            *scopes,
-            claims=claims,
-            tenant_id=tenant_id,
-            enable_cae=enable_cae,
-            **kwargs)
+        return self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs)
 
     async def __aenter__(self) -> "AsyncAzureTokenProvider":
         self._credential = await self._initialize_async(self._env_client)
@@ -67,7 +57,7 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
         self,
         exc_type: Optional[type] = None,
         exc_value: Optional[BaseException] = None,
-        traceback: Optional[Any] = None
+        traceback: Optional[Any] = None,
     ) -> None:
         await self.close()
 
@@ -80,7 +70,8 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
                 f"{AsyncAzureTokenProvider.__name__} instance has already been closed.",
                 target=ErrorTarget.UNKNOWN,
                 category=ErrorCategory.INVALID_VALUE,
-                blame=ErrorBlame.USER_ERROR)
+                blame=ErrorBlame.USER_ERROR,
+            )
 
         cloud_name: str = await client.get_default_cloud_name_async()
         if cloud_name != client.DEFAULT_AZURE_CLOUD_NAME:
@@ -92,7 +83,8 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
                     f"Failed to get metadata for cloud '{cloud_name}'.",
                     target=ErrorTarget.UNKNOWN,
                     category=ErrorCategory.INVALID_VALUE,
-                    blame=ErrorBlame.USER_ERROR)
+                    blame=ErrorBlame.USER_ERROR,
+                )
 
             authority = metadata.get("active_directory_endpoint")
             return DefaultAzureCredential(authority=authority, exclude_shared_token_cache_credential=True)
@@ -100,6 +92,7 @@ class AsyncAzureTokenProvider(AsyncContextManager["AsyncAzureTokenProvider"]):
             # using Azure on behalf of credentials requires the use of the azure-ai-ml package
             try:
                 from azure.ai.ml.identity import AzureMLOnBehalfOfCredential
+
                 return AzureMLOnBehalfOfCredential()  # type: ignore
             except (ModuleNotFoundError, ImportError):
                 raise EvaluationException(  # pylint: disable=raise-missing-from

@@ -1,5 +1,15 @@
 # Release History
 
+## 5.0.0 (2025-06-17)
+
+### Features Added
+
+  - Model `ConfigurationStore` added property `default_key_value_revision_retention_period_in_seconds`
+  - Model `ConfigurationStoreUpdateParameters` added property `default_key_value_revision_retention_period_in_seconds`
+
+### Breaking Changes
+  - Parameter `key_value_parameters` of method `KeyValuesOperations.create_or_update` is now required
+
 ## 4.0.0 (2024-10-29)
 
 ### Breaking Changes
@@ -34,7 +44,7 @@
 
 ### Other Changes
 
-  - Changed to multiapi package(please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/multiapi.md for more info)
+  - Changed to multiapi package(please refer to https://github.com/Azure/azure-sdk-for-python/blob/20a21f4bee6164eea84eab83eddd272d76ff9839/doc/dev/mgmt/multiapi.md for more info)
 
 ## 2.1.0 (2022-06-08)
 

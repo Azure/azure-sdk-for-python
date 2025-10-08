@@ -419,13 +419,13 @@ class MultiModalConversationBot(ConversationBot):
         contents = []
         for msg in messages:
             if msg.startswith("image_understanding/"):
-                if(isinstance(self.rai_client, RAIClient)):
+                if isinstance(self.rai_client, RAIClient):
                     encoded_image = await self.rai_client.get_image_data(msg)
                 else:
                     response = self.rai_client.red_teams.get_template_parameters_image(path=msg, stream="true")
                     image_data = b"".join(response)
                     encoded_image = base64.b64encode(image_data).decode("utf-8")
-                    
+
                 contents.append(
                     {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{encoded_image}"}},
                 )

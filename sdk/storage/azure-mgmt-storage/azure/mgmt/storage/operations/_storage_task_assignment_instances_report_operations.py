@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+from typing import Any, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -50,7 +50,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: StorageManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -119,7 +119,7 @@ class StorageTaskAssignmentInstancesReportOperations:  # pylint: disable=name-to
         maxpagesize: Optional[int] = None,
         filter: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterable["_models.StorageTaskReportInstance"]:
+    ) -> ItemPaged["_models.StorageTaskReportInstance"]:
         """Fetch the report summary of a single storage task assignment's instances.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

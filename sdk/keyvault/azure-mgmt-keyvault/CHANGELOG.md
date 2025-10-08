@@ -1,5 +1,18 @@
 # Release History
 
+## 12.1.0 (2025-09-22)
+
+### Features Added
+
+  - Model `KeyVaultManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `MHSMNetworkRuleSet` added property `service_tags`
+  - Added model `MHSMServiceTagRule`
+
+## 12.0.0 (2025-07-07)
+
+### Breaking Changes
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
 ## 11.0.0 (2025-03-13)
 
 ### Breaking Changes

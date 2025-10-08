@@ -37,10 +37,16 @@ def main():
         pool_name="pool1",
         volume_name="volume1",
         bucket_name="bucket1",
+        body={
+            "properties": {
+                "permissions": "ReadWrite",
+                "server": {"certificateObject": "<REDACTED>", "fqdn": "fullyqualified.domainname.com"},
+            }
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2025-01-01-preview/examples/Buckets_Update.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2025-07-01-preview/examples/Buckets_Update.json
 if __name__ == "__main__":
     main()

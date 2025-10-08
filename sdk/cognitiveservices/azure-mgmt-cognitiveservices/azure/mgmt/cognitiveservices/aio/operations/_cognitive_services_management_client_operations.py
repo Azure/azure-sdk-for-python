@@ -37,8 +37,8 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class CognitiveServicesManagementClientOperationsMixin(  # pylint: disable=name-too-long
-    ClientMixinABC[AsyncPipelineClient, CognitiveServicesManagementClientConfiguration]
+class _CognitiveServicesManagementClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], CognitiveServicesManagementClientConfiguration]
 ):
 
     @distributed_trace_async

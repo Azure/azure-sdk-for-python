@@ -44,4 +44,9 @@ def basic():
         assert_with_message("date attribute", "Date of publication", attributes["date"])
         assert_with_message("author attribute", "Yours Truly", attributes["author"])
         return Response(status=200)
-    return Response("You have passed in method '{}' that is not 'GET' or 'PUT'".format(request.method), status=400)
+    return Response(
+        "You have passed in method '{}' that is not 'GET' or 'PUT'".format(
+            request.method  # CodeQL [SM01307] test code
+        ),
+        status=400,
+    )

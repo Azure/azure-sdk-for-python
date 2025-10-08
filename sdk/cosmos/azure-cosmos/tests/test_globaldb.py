@@ -54,7 +54,7 @@ def _mock_get_database_account(url_connection=None, **kwargs):
 
 
 def _mock_pipeline_run_function(pipeline_client, request, **kwargs):
-    assert "localhost" in request.url
+    assert "127.0.0.1" in request.url
     return test_config.FakePipelineResponse()
 
 @pytest.mark.cosmosEmulator
@@ -429,7 +429,8 @@ class TestGlobalDB(unittest.TestCase):
             cosmos_client.CosmosClient(self.host, self.masterKey, connection_retry_policy=mock_retry_policy)
             pytest.fail("Exception was not raised")
         except ServiceRequestError:
-            assert mock_retry_policy.counter == 3
+            # Database account calls should not be retried in connection retry policy
+            assert mock_retry_policy.counter == 0
 
     def test_global_db_endpoint_discovery_retry_policy_mock(self):
         client = cosmos_client.CosmosClient(self.host, self.masterKey)

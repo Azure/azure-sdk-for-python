@@ -1,14 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
+
+from openai.types.graders import StringCheckGrader
 from typing_extensions import Literal
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.graders import StringCheckGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
+
 
 @experimental
 class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
@@ -32,18 +35,20 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     :type operation: Literal["eq", "ne", "like", "ilike"]
     :param reference: The reference text. This may include template strings.
     :type reference: str
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 
 
     """
 
-    id = "aoai://string_check"
+    id = "azureai://built-in/evaluators/azure-openai/string_check_grader"
 
     def __init__(
         self,
         *,
-        model_config : Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+        model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
         input: str,
         name: str,
         operation: Literal[
@@ -53,6 +58,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             "ilike",
         ],
         reference: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = StringCheckGrader(
@@ -62,4 +68,4 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             reference=reference,
             type="string_check",
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

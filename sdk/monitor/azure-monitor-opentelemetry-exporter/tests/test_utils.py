@@ -15,12 +15,10 @@ from unittest.mock import patch
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
 TEST_AI_DEVICE_LOCALE = "TEST_AI_DEVICE_LOCALE"
-TEST_OS_VERSION = "TEST_OS_VERSION"
 TEST_SDK_VERSION_PREFIX = "TEST_AZURE_SDK_VERSION_PREFIX"
 TEST_AZURE_MONITOR_CONTEXT = {
     "ai.device.id": TEST_AI_DEVICE_ID,
     "ai.device.locale": TEST_AI_DEVICE_LOCALE,
-    "ai.device.osVersion": TEST_OS_VERSION,
     "ai.device.type": "Other",
     "ai.internal.sdkVersion": "{}py1.2.3:otel4.5.6:ext7.8.9".format(
         TEST_SDK_VERSION_PREFIX,
@@ -35,7 +33,6 @@ TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
-        os.environ.clear()
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
 
     def test_nanoseconds_to_duration(self):
@@ -377,7 +374,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
@@ -387,7 +387,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
@@ -397,7 +400,10 @@ class TestUtils(unittest.TestCase):
 
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
-        {"FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME},
+        {
+            "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
         clear=True,
     )
     @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
@@ -409,6 +415,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -422,6 +429,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -435,6 +443,7 @@ class TestUtils(unittest.TestCase):
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {
             "FUNCTIONS_WORKER_RUNTIME": TEST_WEBSITE_SITE_NAME,
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
             "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
         },
         clear=True,
@@ -577,3 +586,42 @@ class TestUtils(unittest.TestCase):
     def test_is_synthetic_source_other(self):
         properties = {"user_agent.synthetic.type": "user"}
         self.assertFalse(_utils._is_synthetic_source(properties))
+
+    def test_is_synthetic_load_always_on_legacy(self):
+        properties = {"http.user_agent": "Mozilla/5.0 AlwaysOn"}
+        self.assertTrue(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_always_on_new_convention(self):
+        properties = {"user_agent.original": "Azure-Load-Testing/1.0 AlwaysOn"}
+        self.assertTrue(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_always_on_case_sensitive(self):
+        properties = {"http.user_agent": "Mozilla/5.0 alwayson"}
+        self.assertFalse(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_no_user_agent(self):
+        properties = {}
+        self.assertFalse(_utils._is_synthetic_load(properties))
+
+    def test_is_synthetic_load_normal_user_agent(self):
+        properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        self.assertFalse(_utils._is_synthetic_load(properties))
+
+    def test_is_any_synthetic_source_bot(self):
+        properties = {"user_agent.synthetic.type": "bot"}
+        self.assertTrue(_utils._is_any_synthetic_source(properties))
+
+    def test_is_any_synthetic_source_always_on(self):
+        properties = {"http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"}
+        self.assertTrue(_utils._is_any_synthetic_source(properties))
+
+    def test_is_any_synthetic_source_both(self):
+        properties = {
+            "user_agent.synthetic.type": "bot",
+            "http.user_agent": "Azure-Load-Testing/1.0 AlwaysOn"
+        }
+        self.assertTrue(_utils._is_any_synthetic_source(properties))
+
+    def test_is_any_synthetic_source_none(self):
+        properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        self.assertFalse(_utils._is_any_synthetic_source(properties))

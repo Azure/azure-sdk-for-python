@@ -27,7 +27,7 @@ class TestSqlManagementJobStepExecutionsOperations(AzureMgmtRecordedTestCase):
             job_agent_name="str",
             job_name="str",
             job_execution_id="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -43,7 +43,7 @@ class TestSqlManagementJobStepExecutionsOperations(AzureMgmtRecordedTestCase):
             job_name="str",
             job_execution_id="str",
             step_name="str",
-            api_version="2024-05-01-preview",
+            api_version="2020-11-01-preview",
         )
 
         # please add some check logic here by yourself

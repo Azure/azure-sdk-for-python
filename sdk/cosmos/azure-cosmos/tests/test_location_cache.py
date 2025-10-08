@@ -62,17 +62,17 @@ class TestLocationCache:
 
     def test_is_endpoint_unavailable(self):
         lc = refresh_location_cache([], False)
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Read") is False
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "None") is False
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Write") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "None") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is False
         lc.mark_endpoint_unavailable_for_read(location1_endpoint, False)
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Read")
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "None") is False
-        assert lc.is_endpoint_unavailable_internal(location1_endpoint, "Write") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Read")
+        assert lc.is_endpoint_unavailable(location1_endpoint, "None") is False
+        assert lc.is_endpoint_unavailable(location1_endpoint, "Write") is False
         lc.mark_endpoint_unavailable_for_write(location2_endpoint, False)
-        assert lc.is_endpoint_unavailable_internal(location2_endpoint, "Read") is False
-        assert lc.is_endpoint_unavailable_internal(location2_endpoint, "None") is False
-        assert lc.is_endpoint_unavailable_internal(location2_endpoint, "Write")
+        assert lc.is_endpoint_unavailable(location2_endpoint, "Read") is False
+        assert lc.is_endpoint_unavailable(location2_endpoint, "None") is False
+        assert lc.is_endpoint_unavailable(location2_endpoint, "Write")
         location1_info = lc.location_unavailability_info_by_endpoint[location1_endpoint]
         lc.location_unavailability_info_by_endpoint[location1_endpoint] = location1_info
 
@@ -83,8 +83,7 @@ class TestLocationCache:
 
         # check endpoints to health check
         endpoints = lc.endpoints_to_health_check()
-        assert len(endpoints) == 3
-        assert default_endpoint in endpoints
+        assert len(endpoints) == 2
         assert location1_endpoint in endpoints
         assert location4_endpoint in endpoints
 
@@ -95,7 +94,7 @@ class TestLocationCache:
 
         # check read endpoints without preferred locations
         read_regions = lc.get_read_regional_routing_contexts()
-        assert len(read_regions) == 1
+        assert len(read_regions) == 3
         assert read_regions[0].get_primary() == location1_endpoint
 
         # check read endpoints with preferred locations
@@ -107,7 +106,7 @@ class TestLocationCache:
             found_endpoint = False
             endpoint = read_region['databaseAccountEndpoint']
             for region in read_regions:
-                if endpoint in (region.get_primary(), region.get_alternate()):
+                if endpoint == region.get_primary():
                     found_endpoint = True
             assert found_endpoint
 
@@ -118,7 +117,7 @@ class TestLocationCache:
             found_endpoint = False
             endpoint = write_region['databaseAccountEndpoint']
             for region in write_regions:
-                if endpoint in (region.get_primary(), region.get_alternate()):
+                if endpoint == region.get_primary():
                     found_endpoint = True
             assert found_endpoint
 
@@ -126,8 +125,8 @@ class TestLocationCache:
         lc = refresh_location_cache([location1_name, location3_name, location4_name], True)
         db_acc = create_database_account(True)
         lc.perform_on_database_account_read(db_acc)
-        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
+        write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
 
         # resolve both document requests with all regions available
         write_doc_resolved = lc.resolve_service_endpoint(write_doc_request)
@@ -215,9 +214,9 @@ class TestLocationCache:
             location_cache.perform_on_database_account_read(database_account)
 
             # Init requests and set excluded regions on requests
-            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+            write_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
             write_doc_request.excluded_locations = excluded_locations_on_requests
-            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read)
+            read_doc_request = RequestObject(ResourceType.Document, _OperationType.Read, None)
             read_doc_request.excluded_locations = excluded_locations_on_requests
 
             # Test if read endpoints were correctly filtered on client level
@@ -247,7 +246,7 @@ class TestLocationCache:
         options: Mapping[str, Any] = {"excludedLocations": excluded_locations}
 
         expected_excluded_locations = excluded_locations
-        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+        read_doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
         read_doc_request.set_excluded_location_from_options(options)
         actual_excluded_locations = read_doc_request.excluded_locations
         assert actual_excluded_locations == expected_excluded_locations
@@ -262,7 +261,7 @@ class TestLocationCache:
                                   "If you want to remove all excluded locations, try passing an empty list.")
         with pytest.raises(ValueError) as e:
             options: Mapping[str, Any] = {"excludedLocations": None}
-            doc_request = RequestObject(ResourceType.Document, _OperationType.Create)
+            doc_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
             doc_request.set_excluded_location_from_options(options)
         assert str(
             e.value) == expected_error_message

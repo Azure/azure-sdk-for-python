@@ -10,8 +10,6 @@ generate SDK, run live test and create pull request.
 the script could help to generate private package quickly.
 
 ### Usage
-1. copy `auto_private_package` to the place under the same folder with `azure-sdk-for-python`
-2. execute it and follow the hint to input parameter:
 ```
-python auto_private_package.py
+python scripts/auto_release/auto_private_package.py
 ```

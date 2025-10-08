@@ -35,13 +35,17 @@ class TestSaveEval:
         evaluators,
         exceptions=[
             "AIAgentConverter",
+            "SKAgentConverter",
             "RedTeam",
             "RedTeamOutput",
             "AzureOpenAIGrader",
             "AzureOpenAILabelGrader",
+            "AzureOpenAIScoreModelGrader",
             "AzureOpenAIStringCheckGrader",
-            "AzureOpenAITextSimilarityGrader"
-        ])
+            "AzureOpenAITextSimilarityGrader",
+            "AzureOpenAIPythonGrader",
+        ],
+    )
 
     @pytest.mark.parametrize("evaluator", EVALUATORS)
     def test_save_evaluators(self, tmpdir, pf_client, evaluator) -> None:

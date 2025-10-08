@@ -84,7 +84,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
 
         This operation is blocking until all data is downloaded.
 
-        :returns: The query results.
+        :return: The query results.
         :rtype: bytes
         """
         stream = BytesIO()
@@ -100,7 +100,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream.
-        :returns: None
+        :return: None
         """
         for record in self._iter_stream():
             stream.write(record)
@@ -110,7 +110,7 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
 
         Records will be returned line by line.
 
-        :returns: A record generator for the query result.
+        :return: A record generator for the query result.
         :rtype: Iterable[bytes]
         """
         delimiter = self.record_delimiter.encode('utf-8')

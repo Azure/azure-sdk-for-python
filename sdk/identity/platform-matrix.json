@@ -8,7 +8,7 @@
   "include": [
     {
       "Config": {
-        "ubuntu_20.04_3.9_msal": {
+        "ubuntu_24.04_3.9_msal": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",

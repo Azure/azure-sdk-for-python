@@ -33,7 +33,7 @@ from azure.core.pipeline.policies import (
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
-from .models import LocationMode
+from .models import LocationMode, StorageErrorCode
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -72,7 +72,7 @@ def retry_hook(settings, **kwargs):
 # respect the Retry-After header, whether this header is present, and
 # whether the returned status code is on the list of status codes to
 # be retried upon on the presence of the aforementioned header)
-def is_retry(response, mode):
+def is_retry(response, mode):  # pylint: disable=too-many-return-statements
     status = response.http_response.status_code
     if 300 <= status < 500:
         # An exception occurred, but in most cases it was expected. Examples could
@@ -83,6 +83,14 @@ def is_retry(response, mode):
         if status == 408:
             # Response code 408 is a timeout and should be retried.
             return True
+        if status >= 400:
+            error_code = response.http_response.headers.get("x-ms-copy-source-error-code")
+            if error_code in [
+                StorageErrorCode.OPERATION_TIMED_OUT,
+                StorageErrorCode.INTERNAL_ERROR,
+                StorageErrorCode.SERVER_BUSY,
+            ]:
+                return True
         return False
     if status >= 500:
         # Response codes above 500 with the exception of 501 Not Implemented and
@@ -414,7 +422,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param Dict[str, Any] settings: The configurable values pertaining to the next host location.
         :param PipelineRequest request: A pipeline request object.
         """
         if settings["hosts"] and all(settings["hosts"].values()):
@@ -428,6 +436,14 @@ class StorageRetryPolicy(HTTPPolicy):
             request.url = updated.geturl()
 
     def configure_retries(self, request: "PipelineRequest") -> Dict[str, Any]:
+        """
+        Configure the retry settings for the request.
+        
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: A dictionary containing the retry settings.
+        :rtype: Dict[str, Any]
+        """
         body_position = None
         if hasattr(request.http_request.body, "read"):
             try:
@@ -455,12 +471,20 @@ class StorageRetryPolicy(HTTPPolicy):
         Should be calculated by child class.
 
         :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
-        :returns: The backoff time.
+        :return: The backoff time.
         :rtype: float
         """
         return 0
 
     def sleep(self, settings, transport):
+        """Sleep for the backoff time.
+        
+        :param Dict[str, Any] settings: The configurable values pertaining to the sleep operation.
+        :param transport: The transport to use for sleeping.
+        :type transport:
+            ~azure.core.pipeline.transport.AsyncioBaseTransport or
+            ~azure.core.pipeline.transport.BaseTransport
+        """
         backoff = self.get_backoff_time(settings)
         if not backoff or backoff < 0:
             return
@@ -476,11 +500,14 @@ class StorageRetryPolicy(HTTPPolicy):
         """Increment the retry counters.
 
         :param Dict[str, Any] settings: The configurable values pertaining to the increment operation.
-        :param PipelineRequest request: A pipeline request object.
-        :param Optional[PipelineResponse] response: A pipeline response object.
-        :param Optional[AzureError] error: An error encountered during the request, or
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: A pipeline response object.
+        :type response: ~azure.core.pipeline.PipelineResponse or None
+        :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :returns: Whether the retry attempts are exhausted.
+        :type error: ~azure.core.exceptions.AzureError or None
+        :return: Whether the retry attempts are exhausted.
         :rtype: bool
         """
         settings["total"] -= 1
@@ -524,6 +551,13 @@ class StorageRetryPolicy(HTTPPolicy):
         return False
 
     def send(self, request):
+        """Send the request with retry logic.
+        
+        :param request: A pipeline request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: A pipeline response object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
         retries_remaining = True
         response = None
         retry_settings = self.configure_retries(request)
@@ -605,8 +639,8 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
-        :returns:
+        :param Dict[str, Any] settings: The configurable values pertaining to get backoff time.
+        :return:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: float
@@ -657,8 +691,8 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
-        :returns:
+        :param Dict[str, Any] settings: The configurable values pertaining to the backoff time.
+        :return:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: float
@@ -678,6 +712,15 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         super(StorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
     def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+        """Handle the challenge from the service and authorize the request.
+        
+        :param request: The request object.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :param response: The response object.
+        :type response: ~azure.core.pipeline.PipelineResponse        
+        :return: True if the request was authorized, False otherwise.
+        :rtype: bool
+        """
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)

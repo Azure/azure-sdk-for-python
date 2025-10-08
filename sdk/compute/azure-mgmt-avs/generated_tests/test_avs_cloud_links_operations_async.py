@@ -21,11 +21,11 @@ class TestAVSCloudLinksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_cloud_links_list(self, resource_group):
         response = self.client.cloud_links.list(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestAVSCloudLinksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_cloud_links_get(self, resource_group):
         response = await self.client.cloud_links.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             cloud_link_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestAVSCloudLinksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_cloud_links_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.cloud_links.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -68,7 +68,7 @@ class TestAVSCloudLinksOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "type": "str",
                 },
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,13 +77,13 @@ class TestAVSCloudLinksOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_cloud_links_begin_delete(self, resource_group):
         response = await (
             await self.client.cloud_links.begin_delete(
                 resource_group_name=resource_group.name,
                 private_cloud_name="str",
                 cloud_link_name="str",
-                api_version="2023-09-01",
+                api_version="2024-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

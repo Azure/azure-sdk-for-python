@@ -1,10 +1,13 @@
+# pylint: disable=line-too-long,useless-suppression
 import functools
 import datetime
 import asyncio
+import ssl
 
 from azure.healthinsights.radiologyinsights.aio import RadiologyInsightsClient
 from azure.healthinsights.radiologyinsights import models
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.core.pipeline.transport import AioHttpTransport
 
 from devtools_testutils import (
     AzureRecordedTestCase,
@@ -17,6 +20,16 @@ HealthInsightsEnvPreparer = functools.partial(
     "healthinsights",
     healthinsights_endpoint="https://fake_ad_resource.cognitiveservices.azure.com",
 )
+
+
+class TestAioHttpTransport(AioHttpTransport):
+    """Custom transport class to handle self-signed certificates"""
+
+    def _build_ssl_config(self, cert=None, verify=None):
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        return ssl_context
 
 
 class TestRadiologyInsightsClient(AzureRecordedTestCase):
@@ -84,8 +97,13 @@ class TestRadiologyInsightsClient(AzureRecordedTestCase):
 
         data = models.RadiologyInsightsData(patients=[patient1], configuration=configuration)
         jobdata = models.RadiologyInsightsJob(job_data=data)
+
+        # Use a custom transport that handles self-signed certificates
+        transport = TestAioHttpTransport()
         radiology_insights_client = RadiologyInsightsClient(
-            healthinsights_endpoint, AzureRecordedTestCase.get_credential(self, RadiologyInsightsClient, is_async=True)
+            healthinsights_endpoint,
+            AzureRecordedTestCase.get_credential(self, RadiologyInsightsClient, is_async=True),
+            transport=transport,
         )
 
         poller = await radiology_insights_client.begin_infer_radiology_insights(

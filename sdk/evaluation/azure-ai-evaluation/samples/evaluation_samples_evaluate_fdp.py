@@ -10,7 +10,7 @@
 """
 DESCRIPTION:
     These samples demonstrate usage of various classes and methods used to perform evaluation in the azure-ai-evaluation library.
-    
+
 USAGE:
     python evaluation_samples_evaluate_fdp.py
 
@@ -19,15 +19,16 @@ USAGE:
     2) AZURE_OPENAI_API_VERSION
     3) AZURE_OPENAI_DEPLOYMENT
     4) AZURE_AI_PROJECT_URL
-    
+
 DESCRIPTION:
     AZURE_OPENAI_ENDPOINT follows the following format:
     https://<account_name>.services.ai.azure.com
-    
+
     AZURE_AI_PROJECT_URL follows the following format:
     https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
 """
+
 
 class EvaluationEvaluateSamples(object):
     def evaluation_evaluate_classes_methods(self):
@@ -36,20 +37,20 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import evaluate, RelevanceEvaluator, CoherenceEvaluator, IntentResolutionEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
-        
+
         print(os.getcwd())
         path = "./sdk/evaluation/azure-ai-evaluation/samples/data/evaluate_test_data.jsonl"
 
         evaluate(
             data=path,
             evaluators={
-                "coherence"          : CoherenceEvaluator(model_config=model_config),
-                "relevance"          : RelevanceEvaluator(model_config=model_config),
-                "intent_resolution"  : IntentResolutionEvaluator(model_config=model_config),
+                "coherence": CoherenceEvaluator(model_config=model_config),
+                "relevance": RelevanceEvaluator(model_config=model_config),
+                "intent_resolution": IntentResolutionEvaluator(model_config=model_config),
             },
             evaluator_config={
                 "coherence": {
@@ -65,6 +66,13 @@ class EvaluationEvaluateSamples(object):
                         "query": "${data.query}",
                     },
                 },
+            },
+            # Example of using tags for "Foundry Projects"
+            tags={
+                "compliance": "fdp_compliant",
+                "data_classification": "restricted",
+                "governance": "enterprise_policy",
+                "environment": "secure_evaluation",
             },
         )
 
@@ -82,7 +90,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import CoherenceEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -95,12 +103,15 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import CoherenceEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
         intent_resolution_evaluator = IntentResolutionEvaluator(model_config=model_config)
-        intent_resolution_evaluator(query="What is the opening hours of the Eiffel Tower?", response="Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM.")
+        intent_resolution_evaluator(
+            query="What is the opening hours of the Eiffel Tower?",
+            response="Opening hours of the Eiffel Tower are 9:00 AM to 11:00 PM.",
+        )
         # [END intent_resolution_evaluator]
 
         # [START content_safety_evaluator]
@@ -108,7 +119,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import ContentSafetyEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         chat_eval = ContentSafetyEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -124,7 +137,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import HateUnfairnessEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         hate_unfairness_eval = HateUnfairnessEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -139,7 +154,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import SelfHarmEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         self_harm_eval = SelfHarmEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -154,7 +171,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import SexualEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         sexual_eval = SexualEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -169,7 +188,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import ViolenceEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         violence_eval = ViolenceEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -191,7 +212,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import FluencyEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -212,7 +233,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import GroundednessEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -240,7 +261,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import ProtectedMaterialEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         protected_material_eval = ProtectedMaterialEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -258,7 +281,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import QAEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -272,7 +295,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import RelevanceEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -289,7 +312,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import RetrievalEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -327,7 +350,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import SimilarityEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -345,7 +368,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import CompletenessEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -362,35 +385,141 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import TaskAdherenceEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
         task_adherence_evaluator = TaskAdherenceEvaluator(model_config=model_config)
 
-        query = [{'role': 'system', 'content': 'You are a helpful customer service agent.'}, 
-         {'role': 'user', 'content': [{'type': 'text', 'text': 'What is the status of my order #123?'}]}]
+        query = [
+            {"role": "system", "content": "You are a helpful customer service agent."},
+            {"role": "user", "content": [{"type": "text", "text": "What is the status of my order #123?"}]},
+        ]
 
-        response = [{'role': 'assistant', 'content': [{'type': 'tool_call', 'tool_call': {'id': 'tool_001', 'type': 'function', 'function': {'name': 'get_order', 'arguments': {'order_id': '123'}}}}]}, 
-            {'role': 'tool', 'tool_call_id': 'tool_001', 'content': [{'type': 'tool_result', 'tool_result': '{ "order": { "id": "123", "status": "shipped" } }'}]}, 
-            {'role': 'assistant', 'content': [{'type': 'text', 'text': 'Your order #123 has been shipped.'}]}]
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "tool_001",
+                            "type": "function",
+                            "function": {"name": "get_order", "arguments": {"order_id": "123"}},
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "tool_001",
+                "content": [
+                    {"type": "tool_result", "tool_result": '{ "order": { "id": "123", "status": "shipped" } }'}
+                ],
+            },
+            {"role": "assistant", "content": [{"type": "text", "text": "Your order #123 has been shipped."}]},
+        ]
 
-        tool_definitions = [{'name': 'get_order', 'description': 'Get order details.', 'parameters': {'type': 'object', 'properties': {'order_id': {'type': 'string'}}}}]
+        tool_definitions = [
+            {
+                "name": "get_order",
+                "description": "Get order details.",
+                "parameters": {"type": "object", "properties": {"order_id": {"type": "string"}}},
+            }
+        ]
 
-        task_adherence_evaluator(
-            query=query,
-            response=response,
-            tool_definitions=tool_definitions
-        )
+        task_adherence_evaluator(query=query, response=response, tool_definitions=tool_definitions)
         # [END task_adherence_evaluator]
+
+        # [START task_completion_evaluator]
+        import os
+        from azure.ai.evaluation._evaluators._task_completion import TaskCompletionEvaluator
+
+        model_config = {
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
+            "api_key": os.environ.get("AZURE_OPENAI_KEY"),
+            "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
+        }
+
+        task_completion_evaluator = TaskCompletionEvaluator(model_config=model_config)
+
+        query = [
+            {"role": "system", "content": "You are a travel booking assistant. Help users find and book flights."},
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "I need to book a flight from London to Paris for tomorrow"}],
+            },
+        ]
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call": {
+                            "id": "search_001",
+                            "type": "function",
+                            "function": {
+                                "name": "search_flights",
+                                "arguments": {
+                                    "origin": "London",
+                                    "destination": "Paris",
+                                    "departure_date": "2025-08-13",
+                                },
+                            },
+                        },
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "search_001",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": '{"flights": [{"flight_id": "BA309", "price": "£89", "departure": "10:30", "arrival": "13:45"}, {"flight_id": "AF1234", "price": "£95", "departure": "14:20", "arrival": "17:35"}]}',
+                    }
+                ],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": "I found 2 flights from London to Paris for tomorrow:\n\n1. BA309 departing 10:30, arriving 13:45 - £89\n2. AF1234 departing 14:20, arriving 17:35 - £95\n\nWould you like me to book one of these flights for you?",
+                    }
+                ],
+            },
+        ]
+
+        tool_definitions = [
+            {
+                "name": "search_flights",
+                "description": "Search for available flights between two cities.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "origin": {"type": "string", "description": "Departure city"},
+                        "destination": {"type": "string", "description": "Arrival city"},
+                        "departure_date": {"type": "string", "description": "Departure date in YYYY-MM-DD format"},
+                    },
+                },
+            }
+        ]
+
+        task_completion_evaluator(query=query, response=response, tool_definitions=tool_definitions)
+        # [END task_completion_evaluator]
 
         # [START indirect_attack_evaluator]
         import os
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import IndirectAttackEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         indirect_attack_eval = IndirectAttackEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -405,7 +534,9 @@ class EvaluationEvaluateSamples(object):
         from azure.identity import DefaultAzureCredential
         from azure.ai.evaluation import GroundednessProEvaluator
 
-        azure_ai_project = os.environ.get("AZURE_AI_PROJECT_URL") # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
+        azure_ai_project = os.environ.get(
+            "AZURE_AI_PROJECT_URL"
+        )  # https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
         credential = DefaultAzureCredential()
 
         groundedness_pro_eval = GroundednessProEvaluator(azure_ai_project=azure_ai_project, credential=credential)
@@ -421,7 +552,7 @@ class EvaluationEvaluateSamples(object):
         from azure.ai.evaluation import ToolCallAccuracyEvaluator
 
         model_config = {
-            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"), # https://<account_name>.services.ai.azure.com
+            "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
             "api_key": os.environ.get("AZURE_OPENAI_KEY"),
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
@@ -435,13 +566,8 @@ class EvaluationEvaluateSamples(object):
                 "tool_call": {
                     "id": "call_eYtq7fMyHxDWIgeG2s26h0lJ",
                     "type": "function",
-                    "function": {
-                        "name": "fetch_weather",
-                        "arguments": {
-                            "location": "New York"
-                        }
-                    }
-                }
+                    "function": {"name": "fetch_weather", "arguments": {"location": "New York"}},
+                },
             },
             tool_definitions={
                 "id": "fetch_weather",
@@ -449,73 +575,83 @@ class EvaluationEvaluateSamples(object):
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
-                    "properties": {
-                        "location": {
-                            "type": "string",
-                            "description": "The location to fetch weather for."
-                        }
-                    }
-                }
-            }
+                    "properties": {"location": {"type": "string", "description": "The location to fetch weather for."}},
+                },
+            },
         )
         # [END tool_call_accuracy_evaluator]
+
+        # [START task_navigation_efficiency_evaluator]
+        from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
+            TaskNavigationEfficiencyEvaluator,
+            TaskNavigationEfficiencyMatchingMode,
+        )
+
+        task_navigation_efficiency_evaluator = TaskNavigationEfficiencyEvaluator(
+            matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
+        )
+
+        response = [
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_2", "name": "analyze", "arguments": {}}],
+            },
+            {
+                "role": "assistant",
+                "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "report", "arguments": {}}],
+            },
+        ]
+        ground_truth = ["search", "analyze", "report"]
+
+        task_navigation_efficiency_evaluator(response=response, ground_truth=ground_truth)
+
+        # Also supports tuple format with parameters for exact parameter matching
+        response_with_params = [
+            {
+                "role": "assistant",
+                "content": [
+                    {"type": "tool_call", "tool_call_id": "call_1", "name": "search", "arguments": {"query": "test"}}
+                ],
+            },
+        ]
+        ground_truth_with_params = (["search"], {"search": {"query": "test"}})
+
+        task_navigation_efficiency_evaluator(response=response_with_params, ground_truth=ground_truth_with_params)
+        # [END task_navigation_efficiency_evaluator]
 
         # [START document_retrieval_evaluator]
         from azure.ai.evaluation import DocumentRetrievalEvaluator
 
         retrieval_ground_truth = [
-            {
-                "document_id": "1",
-                "query_relevance_judgement": 4
-            },
-            {
-                "document_id": "2",
-                "query_relevance_judgement": 2
-            },
-            {
-                "document_id": "3",
-                "query_relevance_judgement": 3
-            },
-            {
-                "document_id": "4",
-                "query_relevance_judgement": 1
-            },
-            {
-                "document_id": "5",
-                "query_relevance_judgement": 0
-            },
+            {"document_id": "1", "query_relevance_judgement": 4},
+            {"document_id": "2", "query_relevance_judgement": 2},
+            {"document_id": "3", "query_relevance_judgement": 3},
+            {"document_id": "4", "query_relevance_judgement": 1},
+            {"document_id": "5", "query_relevance_judgement": 0},
         ]
 
         retrieved_documents = [
-            {
-                "document_id": "2",
-                "query_relevance_judgement": 45.1
-            },
-            {
-                "document_id": "6",
-                "query_relevance_judgement": 35.8
-            },
-            {
-                "document_id": "3",
-                "query_relevance_judgement": 29.2
-            },
-            {
-                "document_id": "5",
-                "query_relevance_judgement": 25.4
-            },
-            {
-                "document_id": "7",
-                "query_relevance_judgement": 18.8
-            },
+            {"document_id": "2", "query_relevance_judgement": 45.1},
+            {"document_id": "6", "query_relevance_judgement": 35.8},
+            {"document_id": "3", "query_relevance_judgement": 29.2},
+            {"document_id": "5", "query_relevance_judgement": 25.4},
+            {"document_id": "7", "query_relevance_judgement": 18.8},
         ]
 
         document_retrieval_evaluator = DocumentRetrievalEvaluator()
-        document_retrieval_evaluator(retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents)        
+        document_retrieval_evaluator(
+            retrieval_ground_truth=retrieval_ground_truth, retrieved_documents=retrieved_documents
+        )
         # [END document_retrieval_evaluator]
 
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
+
     load_dotenv()
 
     print("Loading samples in evaluation_samples_evaluate_fdp.py")

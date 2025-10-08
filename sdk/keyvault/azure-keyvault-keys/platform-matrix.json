@@ -2,7 +2,7 @@
   "include": [
     {
       "Agent": {
-        "ubuntu-20.04_ManagedHSM": {
+        "ubuntu-24.04_ManagedHSM": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "ArmTemplateParameters": "@{ enableHsm = $true }"

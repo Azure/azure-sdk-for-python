@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -44,7 +44,8 @@ from ...operations._subvolumes_operations import (
 from .._configuration import NetAppManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class SubvolumesOperations:
@@ -69,7 +70,7 @@ class SubvolumesOperations:
     @distributed_trace
     def list_by_volume(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SubvolumeInfo"]:
+    ) -> AsyncItemPaged["_models.SubvolumeInfo"]:
         """List of all the subvolumes.
 
         Returns a list of the subvolumes in the volume.

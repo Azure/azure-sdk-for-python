@@ -7,7 +7,7 @@
   "include": [
     {
       "SplitTestConfig": {
-        "Ubuntu2004_39_split": {
+        "Ubuntu2404_39_split": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",
@@ -15,13 +15,47 @@
           "TestSamples": "false",
           "TestMarkArgument": "cosmosSplit"
         },
-        "Ubuntu2004_313_split": {
+        "Ubuntu2404_313_split": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "TestMarkArgument": "cosmosSplit"
+        }
+      }
+    },
+    {
+      "CircuitBreakerMultiWriteTestConfig": {
+        "Ubuntu2404_313_circuit_breaker": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosCircuitBreaker"
+        }
+      },
+      "ArmConfig": {
+        "MultiMaster": {
+          "ArmTemplateParameters": "@{ enableMultipleWriteLocations = $true; defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
+        }
+      }
+    },
+    {
+      "CircuitBreakerMultiRegionTestConfig": {
+        "Ubuntu2404_39_circuit_breaker": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.9",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false",
+          "TestMarkArgument": "cosmosCircuitBreakerMultiRegion"
+        }
+      },
+      "ArmConfig": {
+        "MultiRegion": {
+          "ArmTemplateParameters": "@{ defaultConsistencyLevel = 'Session'; enableMultipleRegions = $true; circuitBreakerEnabled = 'True' }"
         }
       }
     },
@@ -39,7 +73,7 @@
     },
     {
       "PyPyConfig": {
-        "ubuntu2004_pypy39_query": {
+        "ubuntu2404_pypy39_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "pypy3.9",
@@ -51,7 +85,7 @@
     },
     {
       "CoverageConfig": {
-        "ubuntu2004_39_coverage_query": {
+        "ubuntu2404_39_coverage_query": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.9",

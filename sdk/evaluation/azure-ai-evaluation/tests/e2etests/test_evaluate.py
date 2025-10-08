@@ -5,6 +5,9 @@ import pathlib
 import pandas as pd
 import pytest
 import requests
+from typing import Dict
+from unittest.mock import Mock, patch
+
 from ci_tools.variables import in_ci
 
 from azure.ai.evaluation import (
@@ -12,9 +15,12 @@ from azure.ai.evaluation import (
     FluencyEvaluator,
     evaluate,
 )
+from azure.ai.evaluation import AzureOpenAIModelConfiguration
 from azure.ai.evaluation._common.math import list_mean_nan_safe
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import TokenScope
+from azure.ai.evaluation._user_agent import UserAgentSingleton
+from azure.ai.evaluation._version import VERSION
 
 
 @pytest.fixture
@@ -203,12 +209,12 @@ class TestEvaluate:
             None,
             {"default": {}},
             {"default": {}, "question_ev": {}},
-            {"default": {"column_mapping": {"query": "${target.query}"}}},
+            {"default": {"column_mapping": {"query": "${data.__outputs.query}"}}},
             {"default": {"column_mapping": {"query": "${data.query}"}}},
             {"default": {}, "question_ev": {"column_mapping": {"query": "${data.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"query": "${target.query}"}}},
-            {"default": {}, "question_ev": {"column_mapping": {"another_question": "${target.query}"}}},
-            {"default": {"column_mapping": {"another_question": "${target.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"query": "${data.__outputs.query}"}}},
+            {"default": {}, "question_ev": {"column_mapping": {"another_question": "${data.__outputs.query}"}}},
+            {"default": {"column_mapping": {"another_question": "${data.__outputs.query}"}}},
         ],
     )
     def test_evaluate_another_questions(self, questions_file, evaluation_config, run_from_temp_dir):
@@ -235,7 +241,7 @@ class TestEvaluate:
         if evaluation_config:
             config = evaluation_config.get("question_ev", evaluation_config.get("default", None))
             mapping = config.get("column_mapping", config)
-        if mapping and ("another_question" in mapping or mapping["query"] == "${data.query}"):
+        if mapping and ("another_question" in mapping or mapping.get("query") == "${data.query}"):
             query = "inputs.query"
         expected = list(row_result_df[query].str.len())
         assert expected == list(row_result_df["outputs.question_ev.length"])
@@ -253,7 +259,7 @@ class TestEvaluate:
                     },
                     "answer": {
                         "column_mapping": {
-                            "response": "${target.response}",
+                            "response": "${data.__outputs.response}",
                         }
                     },
                 }
@@ -262,7 +268,7 @@ class TestEvaluate:
                 {
                     "default": {
                         "column_mapping": {
-                            "response": "${target.response}",
+                            "response": "${data.__outputs.response}",
                             "ground_truth": "${data.ground_truth}",
                         }
                     },
@@ -500,3 +506,57 @@ class TestEvaluate:
             == 1
         )
         assert jsonl_result["studio_url"] == csv_result["studio_url"] == None
+
+
+@pytest.mark.usefixtures("recording_injection", "recorded_test")
+class TestUserAgent:
+    """Test suite to validate that the User-Agent header is overridable."""
+
+    @pytest.fixture(scope="session")
+    def user_agent_model_config(self, model_config: AzureOpenAIModelConfiguration) -> AzureOpenAIModelConfiguration:
+
+        if model_config["azure_endpoint"] != "https://Sanitized.api.cognitive.microsoft.com":
+            return model_config
+
+        return AzureOpenAIModelConfiguration(
+            **{**model_config, "azure_endpoint": "https://Sanitized.openai.azure.com/"},
+        )
+
+    @staticmethod
+    def _transparent_mock_method(cls_to_mock, attribute_name: str) -> Mock:
+        """Return a mock that still behaves like the original.
+
+        :param cls_to_mock: The class
+        :param attribute_name: The class' attribute to mock
+        :return: A mock for the attribute
+        :rtype: Mock
+        """
+        # https://stackoverflow.com/a/70886946
+        return patch.object(
+            cls_to_mock, attribute_name, side_effect=getattr(cls_to_mock, attribute_name), autospec=True
+        )
+
+    def test_evaluate_user_agent(self, user_agent_model_config: AzureOpenAIModelConfiguration, data_file: str) -> None:
+        """Validate that user agent can be overriden with evaluate param."""
+        base_user_agent = f"azure-ai-evaluation/{VERSION}"
+        added_useragent = "test/1.0.0"
+
+        expected_user_agent = f"{base_user_agent} {added_useragent}"
+
+        from httpx import AsyncClient, Request
+
+        with self._transparent_mock_method(AsyncClient, "send") as mock:
+            evaluate(
+                data=data_file,
+                evaluators={"fluency": FluencyEvaluator(user_agent_model_config)},
+                user_agent=added_useragent,
+            )
+
+            mock.assert_called()
+
+            for call_args in mock.call_args_list:
+                _, request, *_ = call_args.args
+                request: Request
+
+                # Not checking for strict equality because some evaluators add to the user agent
+                assert expected_user_agent in request.headers["User-Agent"]

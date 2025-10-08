@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -45,7 +45,8 @@ from ...operations._buckets_operations import (
 from .._configuration import NetAppManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class BucketsOperations:
@@ -70,7 +71,7 @@ class BucketsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Bucket"]:
+    ) -> AsyncItemPaged["_models.Bucket"]:
         """Describes all buckets belonging to a volume.
 
         Describes all buckets belonging to a volume. Buckets allow additional services, such as AI
@@ -493,7 +494,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[Union[_models.BucketPatch, IO[bytes]]] = None,
+        body: Union[_models.BucketPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -517,10 +518,7 @@ class BucketsOperations:
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _json = self._serialize.body(body, "BucketPatch")
-            else:
-                _json = None
+            _json = self._serialize.body(body, "BucketPatch")
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
@@ -577,7 +575,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[_models.BucketPatch] = None,
+        body: _models.BucketPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -598,7 +596,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Default value is None.
+         mounted inside the bucket. Required.
         :type body: ~azure.mgmt.netapp.models.BucketPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -617,7 +615,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -638,7 +636,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Default value is None.
+         mounted inside the bucket. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -657,7 +655,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[Union[_models.BucketPatch, IO[bytes]]] = None,
+        body: Union[_models.BucketPatch, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Bucket]:
         """Updates a bucket for a volume.
@@ -676,8 +674,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Is either a BucketPatch type or a IO[bytes] type. Default value is
-         None.
+         mounted inside the bucket. Is either a BucketPatch type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.netapp.models.BucketPatch or IO[bytes]
         :return: An instance of AsyncLROPoller that returns either Bucket or the result of
          cls(response)

@@ -28,15 +28,17 @@ import json
 import uuid
 import re
 import binascii
-from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
+from typing import Any, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import unquote as urllib_unquote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
 
 from . import documents
 from . import http_constants
 from . import _runtime_constants
+from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
@@ -44,7 +46,9 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._request_object import RequestObject
 
+# pylint: disable=protected-access
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -62,9 +66,10 @@ _COMMON_OPTIONS = {
     'query_version': 'queryVersion',
     'priority': 'priorityLevel',
     'no_response': 'responsePayloadOnWriteDisabled',
+    'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': 'excludedLocations'
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -74,7 +79,7 @@ _COMMON_OPTIONS = {
 _VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
-def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
     match_condition = kwargs.pop('match_condition', None)
@@ -99,7 +104,7 @@ def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[
     return if_match, if_none_match
 
 
-def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
@@ -123,7 +128,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         client_id: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Gets HTTP request headers.
 
     :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
@@ -172,37 +177,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("indexingDirective"):
         headers[http_constants.HttpHeaders.IndexingDirective] = options["indexingDirective"]
 
-    consistency_level = None
-
-    # get default client consistency level
-    default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
-
-    # set consistency level. check if set via options, this will override the default
+    # set request consistency level - if session consistency, the client should be setting this on its own
     if options.get("consistencyLevel"):
-        consistency_level = options["consistencyLevel"]
-        # TODO: move this line outside of if-else cause to remove the code duplication
-        headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-    elif default_client_consistency_level is not None:
-        consistency_level = default_client_consistency_level
-        headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
-
-    # figure out if consistency level for this request is session
-    is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
-
-    # set session token if required
-    if is_session_consistency is True and not IsMasterResource(resource_type):
-        # if there is a token set via option, then use it to override default
-        if options.get("sessionToken"):
-            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
-        else:
-            # check if the client's default consistency is session (and request consistency level is same),
-            # then update from session container
-            if default_client_consistency_level == documents.ConsistencyLevel.Session and \
-                    cosmos_client_connection.session:
-                # populate session token from the client's session container
-                headers[http_constants.HttpHeaders.SessionToken] = cosmos_client_connection.session.get_session_token(
-                    path
-                )
+        headers[http_constants.HttpHeaders.ConsistencyLevel] = options["consistencyLevel"]
 
     if options.get("enableScanInQuery"):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = options["enableScanInQuery"]
@@ -289,6 +266,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if client_id is not None:
         headers[http_constants.HttpHeaders.ClientId] = client_id
+    elif cosmos_client_connection and cosmos_client_connection.client_id:
+        headers[http_constants.HttpHeaders.ClientId] = cosmos_client_connection.client_id
 
     if options.get("enableScriptLogging"):
         headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]
@@ -345,8 +324,84 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     return headers
 
+def _is_session_token_request(
+        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+        headers: dict,
+        request_object: "RequestObject") -> bool:
+    consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
+    # Figure out if consistency level for this request is session
+    is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
-def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
+    # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
+    # configured to use multiple write regions. Batch requests are special-cased because they can contain both read and
+    # write operations, and we want to use session consistency for the read operations.
+    return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
+            and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
+                 or request_object.operation_type == "Batch"
+                 or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)))
+
+
+def set_session_token_header(
+        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+        headers: dict,
+        path: str,
+        request_object: "RequestObject",
+        options: Mapping[str, Any],
+        partition_key_range_id: Optional[str] = None) -> None:
+    # set session token if required
+    if _is_session_token_request(cosmos_client_connection, headers, request_object):
+        # if there is a token set via option, then use it to override default
+        if options.get("sessionToken"):
+            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
+        else:
+            # check if the client's default consistency is session (and request consistency level is same),
+            # then update from session container
+            if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
+                    cosmos_client_connection.session:
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
+                # populate session token from the client's session container
+                session_token = (
+                    cosmos_client_connection.session.get_session_token(path,
+                                                                options.get('partitionKey'),
+                                                                cosmos_client_connection._container_properties_cache,
+                                                                cosmos_client_connection._routing_map_provider,
+                                                                partition_key_range_id,
+                                                                options))
+                if session_token != "":
+                    headers[http_constants.HttpHeaders.SessionToken] = session_token
+
+async def set_session_token_header_async(
+        cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
+        headers: dict,
+        path: str,
+        request_object: "RequestObject",
+        options: Mapping[str, Any],
+        partition_key_range_id: Optional[str] = None) -> None:
+    # set session token if required
+    if _is_session_token_request(cosmos_client_connection, headers, request_object):
+        # if there is a token set via option, then use it to override default
+        if options.get("sessionToken"):
+            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
+        else:
+            # check if the client's default consistency is session (and request consistency level is same),
+            # then update from session container
+            if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
+                    cosmos_client_connection.session:
+                # populate session token from the client's session container
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
+                session_token = \
+                    await cosmos_client_connection.session.get_session_token_async(path,
+                                                                options.get('partitionKey'),
+                                                                cosmos_client_connection._container_properties_cache,
+                                                                cosmos_client_connection._routing_map_provider,
+                                                                partition_key_range_id,
+                                                                options)
+                if session_token != "":
+                    headers[http_constants.HttpHeaders.SessionToken] = session_token
+
+def GetResourceIdOrFullNameFromLink(resource_link: str) -> str:
     """Gets resource id or full name from resource link.
 
     :param str resource_link:
@@ -379,7 +434,7 @@ def GetResourceIdOrFullNameFromLink(resource_link: str) -> Optional[str]:
         # request in form
         # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/.
         return str(path_parts[-2])
-    return None
+    raise ValueError("Failed Parsing ResourceID from link: {0}".format(resource_link))
 
 
 def GenerateGuidId() -> str:
@@ -557,19 +612,21 @@ def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str
 
     self_link = TrimBeginningAndEndingSlashes(self_link) + "/"
 
-    index = IndexOfNth(self_link, "/", 4)
+    end_index = IndexOfNth(self_link, "/", 4)
+    start_index = IndexOfNth(self_link, "/", 3)
 
-    if index != -1:
-        collection_id = self_link[0:index]
+    if start_index != -1 and end_index != -1:
+        # parse only the collection rid from the path as it's unique across databases
+        collection_rid = self_link[start_index + 1:end_index]
 
         if "colls" in self_link:
             # this is a collection request
             index_second_slash = IndexOfNth(alt_content_path, "/", 2)
             if index_second_slash == -1:
                 collection_name = alt_content_path + "/colls/" + urllib_quote(resource_id)
-                return collection_id, collection_name
+                return collection_rid, collection_name
             collection_name = alt_content_path
-            return collection_id, collection_name
+            return collection_rid, collection_name
         raise ValueError(
             "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
                 self_link, alt_content_path, resource_id
@@ -655,7 +712,7 @@ def TrimBeginningAndEndingSlashes(path: str) -> str:
 
 
 # Parses the paths into a list of token each representing a property
-def ParsePaths(paths: List[str]) -> List[str]:
+def ParsePaths(paths: list[str]) -> list[str]:
     segmentSeparator = "/"
     tokens = []
     for path in paths:
@@ -734,7 +791,7 @@ def _validate_resource(resource: Mapping[str, Any]) -> None:
 
 
 def _stringify_auto_scale(offer: ThroughputProperties) -> str:
-    auto_scale_params: Optional[Dict[str, Union[None, int, Dict[str, Any]]]] = None
+    auto_scale_params: Optional[dict[str, Union[None, int, dict[str, Any]]]] = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
     auto_scale_params = {"maxThroughput": max_throughput}
@@ -744,7 +801,7 @@ def _stringify_auto_scale(offer: ThroughputProperties) -> str:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
+def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: dict[str, Any]) -> None:
     if isinstance(offer, int):
         request_options["offerThroughput"] = offer
     elif offer is not None:
@@ -763,9 +820,9 @@ def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], r
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
-def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> ThroughputProperties:
+def _deserialize_throughput(throughput: list[dict[str, dict[str, Any]]]) -> ThroughputProperties:
     properties = throughput[0]
-    offer_autopilot: Optional[Dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
+    offer_autopilot: Optional[dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
     if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
         return ThroughputProperties(
             properties=properties,
@@ -785,7 +842,7 @@ def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> Thro
 
 def _replace_throughput(
     throughput: Union[int, ThroughputProperties],
-    new_throughput_properties: Dict[str, Any]
+    new_throughput_properties: dict[str, Any]
 ) -> None:
     if isinstance(throughput, int):
         new_throughput_properties["content"]["offerThroughput"] = throughput
@@ -797,8 +854,8 @@ def _replace_throughput(
                 new_throughput_properties['content']['offerAutopilotSettings']['maxThroughput'] = max_throughput
                 if increment_percent:
                     new_throughput_properties['content']['offerAutopilotSettings']['autoUpgradePolicy']['throughputPolicy']['incrementPercent'] = increment_percent  # pylint: disable=line-too-long
-                if throughput.offer_throughput:
-                    new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
+            if throughput.offer_throughput:
+                new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
         except AttributeError as e:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
@@ -816,15 +873,15 @@ def _internal_resourcetype(resource_type: str) -> str:
     return resource_type
 
 
-def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
+def _populate_batch_headers(current_headers: dict[str, Any]) -> None:
     current_headers[http_constants.HttpHeaders.IsBatchRequest] = True
     current_headers[http_constants.HttpHeaders.IsBatchAtomic] = True
     current_headers[http_constants.HttpHeaders.ShouldBatchContinueOnError] = False
 
 
 def _format_batch_operations(
-    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
-) -> List[Dict[str, Any]]:
+    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]]
+) -> list[dict[str, Any]]:
     final_operations = []
     for index, batch_operation in enumerate(operations):
         try:
@@ -879,8 +936,8 @@ def _format_batch_operations(
     return final_operations
 
 
-def _set_properties_cache(properties: Dict[str, Any]) -> Dict[str, Any]:
+def _build_properties_cache(properties: dict[str, Any], container_link: str) -> dict[str, Any]:
     return {
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
-        "partitionKey": properties.get("partitionKey", None)
+        "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }

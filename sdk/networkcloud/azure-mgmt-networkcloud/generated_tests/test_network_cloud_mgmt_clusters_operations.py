@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_clusters_list_by_subscription(self, resource_group):
         response = self.client.clusters.list_by_subscription(
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
     def test_clusters_list_by_resource_group(self, resource_group):
         response = self.client.clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         )
 
         # please add some check logic here by yourself
@@ -162,6 +162,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                 ],
                 "detailedStatus": "str",
                 "detailedStatusMessage": "str",
+                "etag": "str",
                 "hybridAksExtendedLocation": {"name": "str", "type": "str"},
                 "id": "str",
                 "identity": {
@@ -201,7 +202,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                 "vulnerabilityScanningSettings": {"containerScan": "str"},
                 "workloadResourceIds": ["str"],
             },
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -213,7 +214,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -225,7 +226,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_update(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -238,7 +239,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             cluster_continue_update_version_parameters={"machineGroupTargetingMode": "AlphaByRack"},
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -250,7 +251,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_deploy(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -262,7 +263,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_scan_runtime(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -275,7 +276,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             cluster_update_version_parameters={"targetClusterVersion": "str"},
-            api_version="2024-10-01-preview",
+            api_version="2025-02-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

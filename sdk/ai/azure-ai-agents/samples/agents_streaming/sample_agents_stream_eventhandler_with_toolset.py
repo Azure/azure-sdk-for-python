@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -23,7 +23,7 @@ USAGE:
        the "Models + endpoints" tab in your Azure AI Foundry project.
 """
 
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
     MessageDeltaChunk,
     ListSortOrder,
@@ -38,20 +38,19 @@ from azure.ai.agents.models import FunctionTool, ToolSet
 import os, sys
 from typing import Any
 
-current_path = os.path.dirname(__file__)
-root_path = os.path.abspath(os.path.join(current_path, os.pardir, os.pardir))
-if root_path not in sys.path:
-    sys.path.insert(0, root_path)
+# Add package directory to sys.path to import user_functions
+current_dir = os.path.dirname(os.path.abspath(__file__))
+package_dir = os.path.abspath(os.path.join(current_dir, os.pardir, os.pardir))
+if package_dir not in sys.path:
+    sys.path.insert(0, package_dir)
 from samples.utils.user_functions import user_functions
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
 
-# When using FunctionTool with ToolSet in agent creation, the tool call events are handled inside the create_stream
-# method and functions gets automatically called by default.
 class MyEventHandler(AgentEventHandler):
 
     def on_message_delta(self, delta: "MessageDeltaChunk") -> None:
@@ -79,7 +78,9 @@ class MyEventHandler(AgentEventHandler):
         print(f"Unhandled Event Type: {event_type}, Data: {event_data}")
 
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     # [START create_agent_with_function_tool]
     functions = FunctionTool(user_functions)
     toolset = ToolSet()

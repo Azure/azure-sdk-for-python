@@ -31,7 +31,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     @app_config_decorator
     def test_provider_creation(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             feature_flag_enabled=True,
         )
@@ -47,7 +47,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     def test_provider_trim_prefixes(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         trimmed = {"test."}
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             trim_prefixes=trimmed,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             feature_flag_enabled=True,
@@ -65,7 +65,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     def test_provider_selectors(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
         selects = {SettingSelector(key_filter="message*", label_filter="dev")}
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -81,7 +81,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     ):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
         )
@@ -93,9 +93,9 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     def test_provider_secret_resolver(self, appconfiguration_connection_string):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         client = self.create_client(
-            appconfiguration_connection_string, selects=selects, secret_resolver=secret_resolver
+            connection_string=appconfiguration_connection_string, selects=selects, secret_resolver=secret_resolver
         )
-        assert client["secret"] == "Reslover Value"
+        assert client["secret"] == "Resolver Value"
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -106,7 +106,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         key_vault_options = AzureAppConfigurationKeyVaultOptions()
         client = self.create_client(
-            appconfiguration_connection_string,
+            connection_string=appconfiguration_connection_string,
             selects=selects,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             key_vault_options=key_vault_options,
@@ -120,9 +120,9 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_resolver=secret_resolver)
         client = self.create_client(
-            appconfiguration_connection_string, selects=selects, key_vault_options=key_vault_options
+            connection_string=appconfiguration_connection_string, selects=selects, key_vault_options=key_vault_options
         )
-        assert client["secret"] == "Reslover Value"
+        assert client["secret"] == "Resolver Value"
 
     # method: delay_failure
     @patch("time.sleep", side_effect=sleep)
@@ -235,6 +235,127 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             )
             assert headers["Correlation-Context"] == "RequestType=fake-request,Features=AI+AICC"
 
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_provider_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        selects = {SettingSelector(key_filter="*", tag_filters=["a=b"])}
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            selects=selects,
+            feature_flag_enabled=True,
+            feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
+        assert "tagged_config" in client
+        assert "two_tagged" in client
+        assert "only_second_tag" not in client
+        assert FEATURE_MANAGEMENT_KEY in client
+        assert has_feature_flag(client, "TaggedFeatureFlag")
+        assert "message" not in client
+
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_provider_two_tag_filters(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        selects = {SettingSelector(key_filter="*", tag_filters=["a=b", "second=tag"])}
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            selects=selects,
+            feature_flag_enabled=True,
+            feature_flag_selectors={SettingSelector(key_filter="*", tag_filters=["a=b"])},
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+        )
+        assert "tagged_config" not in client
+        assert "two_tagged" in client
+        assert "only_second_tag" not in client
+        assert FEATURE_MANAGEMENT_KEY in client
+        assert has_feature_flag(client, "TaggedFeatureFlag")
+        assert "message" not in client
+
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_provider_special_chars_tag_filters(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
+        selects = {SettingSelector(key_filter="*", tag_filters=["Special:Tag=Value:With:Colons"])}
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            selects=selects,
+        )
+        assert "tagged_config" not in client
+        assert "two_tagged" not in client
+        assert "only_second_tag" not in client
+        assert "complex_tag" in client
+
+        selects = {SettingSelector(key_filter="*", tag_filters=["Tag@With@At=Value@With@At"])}
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            selects=selects,
+        )
+        assert "tagged_config" not in client
+        assert "two_tagged" not in client
+        assert "only_second_tag" not in client
+        assert "complex_tag" in client
+
+    # method: load
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_configuration_mapper(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+        def test_mapper(setting):
+            if setting.key == "message":
+                setting.value = "mapped"
+
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
+            configuration_mapper=test_mapper,
+        )
+        assert client["message"] == "mapped"
+        assert client["refresh_message"] == "original value"
+
+    # method: load
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_configuration_mapper_with_trimming(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
+        def test_mapper(setting):
+            if setting.key == "message":
+                setting.value = "mapped"
+
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            configuration_mapper=test_mapper,
+            trim_prefixes=["refresh_"],
+        )
+
+        # Because our processing happens after mapping and refresh_message is alphabetically after message the override
+        # value isn't used, as the mapped value is overridden by the first value.
+        assert client["message"] == "original value"
+        assert "refresh_message" not in client
+
+    # method: load
+    @recorded_by_proxy
+    @app_config_decorator
+    def test_configuration_mapper_with_feature_flags(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
+        def test_mapper(setting):
+            if setting.key == ".appconfig.featureflag/Alpha":
+                setting.content_type = "application/json"
+
+        client = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            feature_flag_enabled=True,
+            configuration_mapper=test_mapper,
+            trim_prefixes=[".appconfig.featureflag/"],
+        )
+        # Feature Flags aren't modified by configuration mappers
+        assert "Alpha" not in client
+        assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
+
 
 def secret_resolver(secret_id):
-    return "Reslover Value"
+    return "Resolver Value"

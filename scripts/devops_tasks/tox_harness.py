@@ -11,7 +11,6 @@ from argparse import Namespace
 from common_tasks import (
     run_check_call,
     clean_coverage,
-    is_error_code_5_allowed,
     create_code_coverage_params,
 )
 
@@ -19,9 +18,9 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.scenario.generation import replace_dev_reqs
-from ci_tools.functions import cleanup_directory
+from ci_tools.functions import cleanup_directory, is_error_code_5_allowed
 from ci_tools.parsing import ParsedSetup
-from pkg_resources import parse_requirements, RequirementParseError
+from packaging.requirements import Requirement
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -58,7 +57,7 @@ def compare_req_to_injected_reqs(parsed_req, injected_packages):
 
     return any(parsed_req.name in req for req in injected_packages)
 
-
+# todo: verify this code
 def inject_custom_reqs(file, injected_packages, package_dir):
     req_lines = []
     injected_packages = [p for p in re.split(r"[\s,]", injected_packages) if p]
@@ -69,17 +68,17 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             for line in f:
                 logging.info("Attempting to parse {}".format(line))
                 try:
-                    parsed_req = [req for req in parse_requirements(line)]
+                    parsed_req = Requirement(line.strip())
                 except Exception as e:
                     logging.error(e)
-                    parsed_req = [None]
+                    parsed_req = None
                 req_lines.append((line, parsed_req))
 
         if req_lines:
             all_adjustments = injected_packages + [
                 line_tuple[0].strip()
                 for line_tuple in req_lines
-                if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1][0], injected_packages)
+                if line_tuple[0].strip() and not compare_req_to_injected_reqs(line_tuple[1], injected_packages)
             ]
         else:
             all_adjustments = injected_packages
@@ -302,7 +301,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> No
             if not filtered_tox_environment_set:
                 logging.info(
                     f'All requested tox environments "{parsed_args.tox_env}" for package {package_name} have been excluded as indicated by is_check_enabled().'
-                    + " Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
+                    + " Check file /eng/tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
                 )
 
                 continue

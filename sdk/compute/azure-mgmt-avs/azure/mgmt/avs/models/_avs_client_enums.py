@@ -300,6 +300,33 @@ class HcxEnterpriseSiteStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """is deleted"""
 
 
+class HostKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of host."""
+
+    GENERAL = "General"
+    SPECIALIZED = "Specialized"
+
+
+class HostMaintenance(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for host maintenance."""
+
+    REPLACEMENT = "Replacement"
+    """The host is a replacement host."""
+    UPGRADE = "Upgrade"
+    """The host is for an upgrade, such as an upgrade to ESXi, NSX-T, or other component."""
+
+
+class HostProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """provisioning state of the host."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
 class InternetEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether internet is enabled or disabled."""
 
@@ -441,6 +468,51 @@ class PrivateCloudProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """is updating"""
 
 
+class ProvisionedNetworkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """provisioned network provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+
+
+class ProvisionedNetworkTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of network provisioned."""
+
+    ESX_MANAGEMENT = "esxManagement"
+    """network for ESX management"""
+    ESX_REPLICATION = "esxReplication"
+    """network for ESX replication"""
+    HCX_MANAGEMENT = "hcxManagement"
+    """network for HCX management"""
+    HCX_UPLINK = "hcxUplink"
+    """network for HCX uplink"""
+    VCENTER_MANAGEMENT = "vcenterManagement"
+    """network for vCenter management"""
+    VMOTION = "vmotion"
+    """network for vmotion"""
+    VSAN = "vsan"
+    """network for vsan"""
+
+
+class PureStoragePolicyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Pure Storage Policy Based Management policy provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    DELETING = "Deleting"
+    """is deleting"""
+    UPDATING = "Updating"
+    """is updating"""
+
+
 class QuotaEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """quota enabled."""
 
@@ -455,6 +527,33 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+
+
+class ResourceSkuResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the type of resource the SKU applies to."""
+
+    PRIVATE_CLOUDS = "privateClouds"
+    """The SKU is for a private cloud."""
+    PRIVATE_CLOUDS_CLUSTERS = "privateClouds/clusters"
+    """The SKU is for a private cloud cluster."""
+
+
+class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the reason for SKU restriction."""
+
+    QUOTA_ID = "QuotaId"
+    """The restriction is due to exceeding a quota limitation."""
+    NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
+    """The restriction is not available for this subscription."""
+
+
+class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the kind of SKU restrictions that can exist."""
+
+    LOCATION = "Location"
+    """SKU restricted by location."""
+    ZONE = "Zone"
+    """SKU restricted by availability zone."""
 
 
 class ScriptCmdletAudience(str, Enum, metaclass=CaseInsensitiveEnumMeta):

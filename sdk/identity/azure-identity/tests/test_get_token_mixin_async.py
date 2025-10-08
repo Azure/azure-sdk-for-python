@@ -96,7 +96,7 @@ async def test_cached_token_outside_refresh_window(get_token_method):
     """A credential shouldn't request a new token when it has a cached one with sufficient validity remaining"""
 
     credential = MockCredential(
-        cached_token=AccessTokenInfo(CACHED_TOKEN, int(time.time() + DEFAULT_REFRESH_OFFSET + 1))
+        cached_token=AccessTokenInfo(CACHED_TOKEN, int(time.time() + DEFAULT_REFRESH_OFFSET + 10))
     )
     token = await getattr(credential, get_token_method)(SCOPE)
 

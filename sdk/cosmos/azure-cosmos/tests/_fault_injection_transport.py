@@ -26,7 +26,7 @@ import json
 import logging
 import sys
 from time import sleep
-from typing import Callable, Optional, Any, Dict, List, MutableMapping
+from typing import Callable, Optional, Any, MutableMapping
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.transport._requests_basic import RequestsTransport, RequestsTransportResponse
@@ -38,7 +38,7 @@ import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
-from azure.cosmos.http_constants import ResourceType, HttpHeaders
+from azure.cosmos.http_constants import ResourceType, HttpHeaders, StatusCodes, SubStatusCodes
 
 ERROR_WITH_COUNTER = "error_with_counter"
 
@@ -47,10 +47,10 @@ class FaultInjectionTransport(RequestsTransport):
     logger.setLevel(logging.DEBUG)
 
     def __init__(self, *, session: Optional[Session] = None, loop=None, session_owner: bool = True, **config):
-        self.faults: List[Dict[str, Any]] = []
-        self.requestTransformations: List[Dict[str, Any]]  = []
-        self.responseTransformations: List[Dict[str, Any]] = []
-        self.counters: Dict[str, int] = {
+        self.faults: list[dict[str, Any]] = []
+        self.requestTransformations: list[dict[str, Any]]  = []
+        self.responseTransformations: list[dict[str, Any]] = []
+        self.counters: dict[str, int] = {
             ERROR_WITH_COUNTER: 0
         }
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
@@ -167,6 +167,12 @@ class FaultInjectionTransport(RequestsTransport):
         return is_operation_type
 
     @staticmethod
+    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
+        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
+
+        return is_resource_type
+
+    @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
         is_write_document_operation = documents._OperationType.IsWriteOperation(
             str(r.headers.get(HttpHeaders.ThinClientProxyOperationType)),)
@@ -181,10 +187,26 @@ class FaultInjectionTransport(RequestsTransport):
     @staticmethod
     def error_write_forbidden() -> Exception:
         return CosmosHttpResponseError(
-            status_code=403,
+            status_code=StatusCodes.FORBIDDEN,
             message="Injected error disallowing writes in this region.",
             response=None,
-            sub_status_code=3,
+            sub_status_code=SubStatusCodes.WRITE_FORBIDDEN,
+        )
+
+    @staticmethod
+    def error_request_timeout() -> Exception:
+        return CosmosHttpResponseError(
+            status_code=StatusCodes.REQUEST_TIMEOUT,
+            message="Injected request timeout error.",
+            response=None
+        )
+
+    @staticmethod
+    def error_internal_server_error() -> Exception:
+        return CosmosHttpResponseError(
+            status_code=StatusCodes.INTERNAL_SERVER_ERROR,
+            message="Injected request timeout error.",
+            response=None
         )
 
     @staticmethod
@@ -229,7 +251,7 @@ class FaultInjectionTransport(RequestsTransport):
             first_region_name: str,
             second_region_name: str,
             inner: Callable[[], RequestsTransportResponse],
-            first_region_url: str = None,
+            first_region_url: str = test_config.TestConfig.local_host.replace("localhost", "127.0.0.1"),
             second_region_url: str = test_config.TestConfig.local_host
     ) -> RequestsTransportResponse:
 
@@ -262,7 +284,7 @@ class FaultInjectionTransport(RequestsTransport):
         return response
 
     class MockHttpResponse(RequestsTransportResponse):
-        def __init__(self, request: HttpRequest, status_code: int, content:Optional[Dict[str, Any]]):
+        def __init__(self, request: HttpRequest, status_code: int, content:Optional[dict[str, Any]]):
             self.request: HttpRequest = request
             # This is actually never None, and set by all implementations after the call to
             # __init__ of this class. This class is also a legacy impl, so it's risky to change it
@@ -273,7 +295,7 @@ class FaultInjectionTransport(RequestsTransport):
             self.reason: Optional[str] = None
             self.content_type: Optional[str] = None
             self.block_size: int = 4096  # Default to same as R
-            self.content: Optional[Dict[str, Any]] = None
+            self.content: Optional[dict[str, Any]] = None
             self.json_text: str = ""
             self.bytes: bytes = b""
             if content:

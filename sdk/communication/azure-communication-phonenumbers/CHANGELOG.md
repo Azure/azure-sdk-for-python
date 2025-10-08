@@ -1,12 +1,51 @@
 # Release History
 
+## 1.5.0 (Unreleased)
+- Improved type safety and consistency across all client methods
+
+### Other Changes
+- Replaced `**kwargs` parameters with explicit typed parameters for better IDE support and type checking
+- Enhanced type annotations for Long Running Operation (LRO) methods with proper `Union[bool, "PollingMethod"]` typing
+- Fixed type compatibility issues with optional parameters (e.g., `quantity` in search operations)
+- Added proper type hints for all method parameters while maintaining backward compatibility
+- Fixed pylint and mypy compliance issues
+- Improved code organization and import structure
+
+## 1.4.0 (2025-08-28)
+
+### Features Added
+- GA release of support for mobile number types
+
+## 1.4.0b1 (2025-07-22)
+
+### Features Added
+- Adds support for mobile number types
+  - mobile numbers are location associated phone numbers with SMS capabilities
+- API version `2025-06-01` is the default.
+
+## 1.3.0 (2025-06-20)
+
+### Features Added
+- GA release of the reservations functionality.
+- GA support for automated purchases of phone numbers from countries requiring a do not resell agreement.
+  - For more information, refer to: https://learn.microsoft.com/azure/communication-services/concepts/numbers/sub-eligibility-number-capability
+
+## 1.3.0b1 (2025-05-21)
+
+### Features Added
+- Adds support for the Browse Available Phone Numbers and Reservations APIs.
+  - This adds an alternate way to search and purchase phone numbers that allows customers to select which phone numbers they want to reserve and purchase.
+- Adds support for automated purchases of phone numbers from countries requiring a Do Not Resell agreement.
+  - For more information, refer to: https://learn.microsoft.com/azure/communication-services/concepts/numbers/sub-eligibility-number-capability
+- API version `2025-04-01` is the default.
+
 ## 1.2.0 (2025-02-11)
 
 ### Features Added
 - GA release of Number Insight.
 - API version `2025-02-11` is the default.
 
-## Other changes
+### Other Changes
 - Updated `search_operator_information` method signature to enforce `options` as a keyword-only argument.
 
 ## 1.2.0b2 (2024-03-01)

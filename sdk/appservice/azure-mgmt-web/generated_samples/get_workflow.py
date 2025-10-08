@@ -30,16 +30,15 @@ def main():
         subscription_id="34adfa4f-cedf-4dc0-ba29-b6d1a69ab345",
     )
 
-    response = client.web_apps.get_workflow(
+    response = client.web_apps.get_instance_workflow_slot(
         resource_group_name="testrg123",
         name="testsite2",
+        slot="staging",
         workflow_name="stateful1",
     )
     print(response)
 
 
-# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-04-01/examples/GetWorkflow.json
-if __name__ == "__main__":
-    main()
+# x-ms-original-file: specification/web/resource-manager/Microsoft.Web/stable/2024-11-01/examples/GetWorkflow.json
 if __name__ == "__main__":
     main()

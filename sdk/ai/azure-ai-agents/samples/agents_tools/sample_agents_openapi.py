@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity jsonref
+    pip install azure-ai-projects azure-ai-agents azure-identity jsonref
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -26,15 +26,15 @@ USAGE:
 
 import os
 import jsonref
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import OpenApiTool, OpenApiAnonymousAuthDetails
+from azure.ai.agents.models import ListSortOrder, OpenApiTool, OpenApiAnonymousAuthDetails
 
 weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
 
 countries_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/countries.json"))
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
@@ -58,7 +58,9 @@ openapi_tool.add_definition(
 )
 
 # Create agent with OpenApi tool and process agent run
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
+
     agent = agents_client.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
@@ -114,7 +116,7 @@ with agents_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
             last_text = msg.text_messages[-1]

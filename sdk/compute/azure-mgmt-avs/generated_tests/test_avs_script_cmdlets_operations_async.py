@@ -21,12 +21,12 @@ class TestAVSScriptCmdletsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_script_cmdlets_list(self, resource_group):
         response = self.client.script_cmdlets.list(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             script_package_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,13 +34,13 @@ class TestAVSScriptCmdletsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_script_cmdlets_get(self, resource_group):
         response = await self.client.script_cmdlets.get(
             resource_group_name=resource_group.name,
             private_cloud_name="str",
             script_package_name="str",
             script_cmdlet_name="str",
-            api_version="2023-09-01",
+            api_version="2024-09-01",
         )
 
         # please add some check logic here by yourself

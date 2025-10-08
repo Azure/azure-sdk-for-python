@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,7 +36,8 @@ from .._configuration import NetAppManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +96,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +151,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -208,7 +209,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -266,7 +267,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -321,7 +322,7 @@ def build_generate_credentials_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -379,7 +380,7 @@ class BucketsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: NetAppManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -389,7 +390,7 @@ class BucketsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
-    ) -> Iterable["_models.Bucket"]:
+    ) -> ItemPaged["_models.Bucket"]:
         """Describes all buckets belonging to a volume.
 
         Describes all buckets belonging to a volume. Buckets allow additional services, such as AI
@@ -808,7 +809,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[Union[_models.BucketPatch, IO[bytes]]] = None,
+        body: Union[_models.BucketPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -832,10 +833,7 @@ class BucketsOperations:
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            if body is not None:
-                _json = self._serialize.body(body, "BucketPatch")
-            else:
-                _json = None
+            _json = self._serialize.body(body, "BucketPatch")
 
         _request = build_update_request(
             resource_group_name=resource_group_name,
@@ -892,7 +890,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[_models.BucketPatch] = None,
+        body: _models.BucketPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -913,7 +911,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Default value is None.
+         mounted inside the bucket. Required.
         :type body: ~azure.mgmt.netapp.models.BucketPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -931,7 +929,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[IO[bytes]] = None,
+        body: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -952,7 +950,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Default value is None.
+         mounted inside the bucket. Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -970,7 +968,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Optional[Union[_models.BucketPatch, IO[bytes]]] = None,
+        body: Union[_models.BucketPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Bucket]:
         """Updates a bucket for a volume.
@@ -989,8 +987,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Is either a BucketPatch type or a IO[bytes] type. Default value is
-         None.
+         mounted inside the bucket. Is either a BucketPatch type or a IO[bytes] type. Required.
         :type body: ~azure.mgmt.netapp.models.BucketPatch or IO[bytes]
         :return: An instance of LROPoller that returns either Bucket or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]

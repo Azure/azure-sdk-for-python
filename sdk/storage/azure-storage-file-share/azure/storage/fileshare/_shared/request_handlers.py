@@ -166,7 +166,7 @@ def serialize_batch_body(requests, batch_id):
         a list of sub-request for the batch request
     :param str batch_id:
         to be embedded in batch sub-request delimiter
-    :returns: The body bytes for this batch.
+    :return: The body bytes for this batch.
     :rtype: bytes
     """
 
@@ -202,7 +202,7 @@ def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_da
         Whether to include the starting dashes. Used in the body, but non on defining the delimiter.
     :param bool is_append_dashes:
         Whether to include the ending dashes. Used in the body on the closing delimiter only.
-    :returns: The delimiter, WITHOUT a trailing newline.
+    :return: The delimiter, WITHOUT a trailing newline.
     :rtype: str
     """
 
@@ -228,7 +228,7 @@ def _make_body_from_sub_request(sub_request):
 
     :param ~azure.core.pipeline.transport.HttpRequest sub_request:
        Request to serialize.
-    :returns: The serialized sub-request in bytes
+    :return: The serialized sub-request in bytes
     :rtype: bytes
     """
 

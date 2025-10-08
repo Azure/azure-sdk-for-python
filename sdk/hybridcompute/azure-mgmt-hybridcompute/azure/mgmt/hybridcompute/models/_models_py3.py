@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,10 +10,9 @@
 import datetime
 from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -45,9 +44,9 @@ class AccessRule(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.direction = None
-        self.address_prefixes = None
+        self.name: Optional[str] = None
+        self.direction: Optional[Union[str, "_models.AccessRuleDirection"]] = None
+        self.address_prefixes: Optional[List[str]] = None
 
 
 class AgentConfiguration(_serialization.Model):
@@ -104,14 +103,14 @@ class AgentConfiguration(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.proxy_url = None
-        self.incoming_connections_ports = None
-        self.extensions_allow_list = None
-        self.extensions_block_list = None
-        self.proxy_bypass = None
-        self.extensions_enabled = None
-        self.guest_configuration_enabled = None
-        self.config_mode = None
+        self.proxy_url: Optional[str] = None
+        self.incoming_connections_ports: Optional[List[str]] = None
+        self.extensions_allow_list: Optional[List["_models.ConfigurationExtension"]] = None
+        self.extensions_block_list: Optional[List["_models.ConfigurationExtension"]] = None
+        self.proxy_bypass: Optional[List[str]] = None
+        self.extensions_enabled: Optional[str] = None
+        self.guest_configuration_enabled: Optional[str] = None
+        self.config_mode: Optional[Union[str, "_models.AgentConfigurationMode"]] = None
 
 
 class AgentUpgrade(_serialization.Model):
@@ -173,10 +172,10 @@ class AgentUpgrade(_serialization.Model):
         self.desired_version = desired_version
         self.correlation_id = correlation_id
         self.enable_automatic_upgrade = enable_automatic_upgrade
-        self.last_attempt_desired_version = None
-        self.last_attempt_timestamp = None
-        self.last_attempt_status = None
-        self.last_attempt_message = None
+        self.last_attempt_desired_version: Optional[str] = None
+        self.last_attempt_timestamp: Optional[datetime.datetime] = None
+        self.last_attempt_status: Optional[Union[str, "_models.LastAttemptStatusEnum"]] = None
+        self.last_attempt_message: Optional[str] = None
 
 
 class AgentVersion(_serialization.Model):
@@ -298,15 +297,15 @@ class AvailablePatchCountByClassification(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.security = None
-        self.critical = None
-        self.definition = None
-        self.update_rollup = None
-        self.feature_pack = None
-        self.service_pack = None
-        self.tools = None
-        self.updates = None
-        self.other = None
+        self.security: Optional[int] = None
+        self.critical: Optional[int] = None
+        self.definition: Optional[int] = None
+        self.update_rollup: Optional[int] = None
+        self.feature_pack: Optional[int] = None
+        self.service_pack: Optional[int] = None
+        self.tools: Optional[int] = None
+        self.updates: Optional[int] = None
+        self.other: Optional[int] = None
 
 
 class CloudMetadata(_serialization.Model):
@@ -329,7 +328,7 @@ class CloudMetadata(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
+        self.provider: Optional[str] = None
 
 
 class ConfigurationExtension(_serialization.Model):
@@ -356,8 +355,8 @@ class ConfigurationExtension(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.publisher = None
-        self.type = None
+        self.publisher: Optional[str] = None
+        self.type: Optional[str] = None
 
 
 class ConnectionDetail(_serialization.Model):
@@ -396,11 +395,11 @@ class ConnectionDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.private_ip_address = None
-        self.link_identifier = None
-        self.group_id = None
-        self.member_name = None
+        self.id: Optional[str] = None
+        self.private_ip_address: Optional[str] = None
+        self.link_identifier: Optional[str] = None
+        self.group_id: Optional[str] = None
+        self.member_name: Optional[str] = None
 
 
 class Disk(_serialization.Model):
@@ -494,8 +493,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -534,54 +533,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
-
-
-class ErrorDetailAutoGenerated(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.hybridcompute.models.ErrorDetailAutoGenerated]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.hybridcompute.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[List["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -600,27 +556,6 @@ class ErrorResponse(_serialization.Model):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseAutoGenerated(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.hybridcompute.models.ErrorDetailAutoGenerated
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.hybridcompute.models.ErrorDetailAutoGenerated
         """
         super().__init__(**kwargs)
         self.error = error
@@ -652,6 +587,68 @@ class EsuKey(_serialization.Model):
         super().__init__(**kwargs)
         self.sku = sku
         self.license_status = license_status
+
+
+class ExtensionPublisher(_serialization.Model):
+    """Describes an Extension Publisher.
+
+    :ivar id: The ID of the extension publisher.
+    :vartype id: str
+    :ivar name: The name of the extension publisher.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The ID of the extension publisher.
+        :paramtype id: str
+        :keyword name: The name of the extension publisher.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+
+
+class ExtensionPublisherListResult(_serialization.Model):
+    """The List of Extension Publishers.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of extension publishers.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.ExtensionPublisher]
+    :ivar next_link: The URI to fetch the next page of extension publishers.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ExtensionPublisher]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The URI to fetch the next page of extension publishers.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value: Optional[List["_models.ExtensionPublisher"]] = None
+        self.next_link = next_link
 
 
 class ExtensionsResourceStatus(_serialization.Model):
@@ -727,13 +724,75 @@ class ExtensionTargetProperties(_serialization.Model):
         self.target_version = target_version
 
 
-class ResourceAutoGenerated(_serialization.Model):
+class ExtensionType(_serialization.Model):
+    """Describes an Extension Type.
+
+    :ivar id: The ID of the extension type.
+    :vartype id: str
+    :ivar name: The name of the extension type.
+    :vartype name: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: The ID of the extension type.
+        :paramtype id: str
+        :keyword name: The name of the extension type.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+
+
+class ExtensionTypeListResult(_serialization.Model):
+    """The List of Extension Types.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of extension types.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.ExtensionType]
+    :ivar next_link: The URI to fetch the next page of extension types.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ExtensionType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The URI to fetch the next page of extension types.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value: Optional[List["_models.ExtensionType"]] = None
+        self.next_link = next_link
+
+
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -762,20 +821,20 @@ class ResourceAutoGenerated(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class ProxyResource(ResourceAutoGenerated):
+class ProxyResource(Resource):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -793,8 +852,8 @@ class ExtensionValue(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -835,9 +894,9 @@ class ExtensionValue(ProxyResource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.version = None
-        self.extension_type = None
-        self.publisher = None
+        self.version: Optional[str] = None
+        self.extension_type: Optional[str] = None
+        self.publisher: Optional[str] = None
 
 
 class ExtensionValueListResult(_serialization.Model):
@@ -860,7 +919,253 @@ class ExtensionValueListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.ExtensionValue"]] = None
+
+
+class ExtensionValueListResultV2(_serialization.Model):
+    """The List Extension Metadata response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The list of extension metadata.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.ExtensionValueV2]
+    :ivar next_link: The URI to fetch the next page of extension metadata.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ExtensionValueV2]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The URI to fetch the next page of extension metadata.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value: Optional[List["_models.ExtensionValueV2"]] = None
+        self.next_link = next_link
+
+
+class ExtensionValueProperties(_serialization.Model):
+    """Describes Extension Metadata properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar version: The version of the Extension being received.
+    :vartype version: str
+    :ivar extension_type: The type of the Extension being received.
+    :vartype extension_type: str
+    :ivar publisher: The publisher of the Extension being received.
+    :vartype publisher: str
+    """
+
+    _validation = {
+        "version": {"readonly": True},
+        "extension_type": {"readonly": True},
+        "publisher": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "version", "type": "str"},
+        "extension_type": {"key": "extensionType", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.version: Optional[str] = None
+        self.extension_type: Optional[str] = None
+        self.publisher: Optional[str] = None
+
+
+class ResourceAutoGenerated(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
+class ProxyResourceAutoGenerated(ResourceAutoGenerated):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
+    """
+
+
+class ExtensionValueV2(ProxyResourceAutoGenerated):
+    """Describes an Extension Metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
+    :ivar version: The version of the Extension being received.
+    :vartype version: str
+    :ivar extension_type: The type of the Extension being received.
+    :vartype extension_type: str
+    :ivar publisher: The publisher of the Extension being received.
+    :vartype publisher: str
+    :ivar extension_uris: A list of locations where the extension packages can be found.
+    :vartype extension_uris: list[str]
+    :ivar extension_signature_uri: Location of the signature files for the extension.
+    :vartype extension_signature_uri: str
+    :ivar operating_system: The operating system (Windows, Linux, etc.) this extension supports.
+    :vartype operating_system: str
+    :ivar architecture: Architectures (x64, arms64, etc.) that this extension supports.
+    :vartype architecture: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "version": {"readonly": True},
+        "extension_type": {"readonly": True},
+        "publisher": {"readonly": True},
+        "extension_uris": {"readonly": True},
+        "extension_signature_uri": {"readonly": True},
+        "operating_system": {"readonly": True},
+        "architecture": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "version": {"key": "properties.version", "type": "str"},
+        "extension_type": {"key": "properties.extensionType", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "extension_uris": {"key": "properties.extensionUris", "type": "[str]"},
+        "extension_signature_uri": {"key": "properties.extensionSignatureUri", "type": "str"},
+        "operating_system": {"key": "properties.operatingSystem", "type": "str"},
+        "architecture": {"key": "properties.architecture", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.version: Optional[str] = None
+        self.extension_type: Optional[str] = None
+        self.publisher: Optional[str] = None
+        self.extension_uris: Optional[List[str]] = None
+        self.extension_signature_uri: Optional[str] = None
+        self.operating_system: Optional[str] = None
+        self.architecture: Optional[List[str]] = None
+
+
+class ExtensionValueV2Properties(ExtensionValueProperties):
+    """Describes Extension Metadata properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar version: The version of the Extension being received.
+    :vartype version: str
+    :ivar extension_type: The type of the Extension being received.
+    :vartype extension_type: str
+    :ivar publisher: The publisher of the Extension being received.
+    :vartype publisher: str
+    :ivar extension_uris: A list of locations where the extension packages can be found.
+    :vartype extension_uris: list[str]
+    :ivar extension_signature_uri: Location of the signature files for the extension.
+    :vartype extension_signature_uri: str
+    :ivar operating_system: The operating system (Windows, Linux, etc.) this extension supports.
+    :vartype operating_system: str
+    :ivar architecture: Architectures (x64, arms64, etc.) that this extension supports.
+    :vartype architecture: list[str]
+    """
+
+    _validation = {
+        "version": {"readonly": True},
+        "extension_type": {"readonly": True},
+        "publisher": {"readonly": True},
+        "extension_uris": {"readonly": True},
+        "extension_signature_uri": {"readonly": True},
+        "operating_system": {"readonly": True},
+        "architecture": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "version": {"key": "version", "type": "str"},
+        "extension_type": {"key": "extensionType", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "extension_uris": {"key": "extensionUris", "type": "[str]"},
+        "extension_signature_uri": {"key": "extensionSignatureUri", "type": "str"},
+        "operating_system": {"key": "operatingSystem", "type": "str"},
+        "architecture": {"key": "architecture", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.extension_uris: Optional[List[str]] = None
+        self.extension_signature_uri: Optional[str] = None
+        self.operating_system: Optional[str] = None
+        self.architecture: Optional[List[str]] = None
 
 
 class FirmwareProfile(_serialization.Model):
@@ -887,11 +1192,11 @@ class FirmwareProfile(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.serial_number = None
-        self.type = None
+        self.serial_number: Optional[str] = None
+        self.type: Optional[str] = None
 
 
-class TrackedResourceAutoGenerated(ResourceAutoGenerated):
+class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
@@ -899,8 +1204,8 @@ class TrackedResourceAutoGenerated(ResourceAutoGenerated):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -945,15 +1250,15 @@ class TrackedResourceAutoGenerated(ResourceAutoGenerated):
         self.location = location
 
 
-class Gateway(TrackedResourceAutoGenerated):  # pylint: disable=too-many-instance-attributes
+class Gateway(TrackedResource):
     """Describes an Arc Gateway.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1026,10 +1331,10 @@ class Gateway(TrackedResourceAutoGenerated):  # pylint: disable=too-many-instanc
         :paramtype allowed_features: list[str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
-        self.gateway_id = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.gateway_id: Optional[str] = None
         self.gateway_type = gateway_type
-        self.gateway_endpoint = None
+        self.gateway_endpoint: Optional[str] = None
         self.allowed_features = allowed_features
 
 
@@ -1142,9 +1447,9 @@ class HardwareProfile(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.total_physical_memory_in_bytes = None
-        self.number_of_cpu_sockets = None
-        self.processors = None
+        self.total_physical_memory_in_bytes: Optional[int] = None
+        self.number_of_cpu_sockets: Optional[int] = None
+        self.processors: Optional[List["_models.Processor"]] = None
 
 
 class PrivateLinkScopesResource(_serialization.Model):
@@ -1189,9 +1494,9 @@ class PrivateLinkScopesResource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
@@ -1255,7 +1560,7 @@ class HybridComputePrivateLinkScope(PrivateLinkScopesResource):
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
-        self.system_data = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class HybridComputePrivateLinkScopeListResult(_serialization.Model):
@@ -1342,79 +1647,18 @@ class HybridComputePrivateLinkScopeProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.public_network_access = public_network_access
-        self.provisioning_state = None
-        self.private_link_scope_id = None
-        self.private_endpoint_connections = None
+        self.provisioning_state: Optional[str] = None
+        self.private_link_scope_id: Optional[str] = None
+        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnectionDataModel"]] = None
 
 
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
-class ProxyResourceAutoGenerated(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
-    """
-
-
-class HybridIdentityMetadata(ProxyResourceAutoGenerated):
+class HybridIdentityMetadata(ProxyResource):
     """Defines the HybridIdentityMetadata.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1460,7 +1704,7 @@ class HybridIdentityMetadata(ProxyResourceAutoGenerated):
         super().__init__(**kwargs)
         self.vm_id = vm_id
         self.public_key = public_key
-        self.identity = None
+        self.identity: Optional["_models.Identity"] = None
 
 
 class HybridIdentityMetadataList(_serialization.Model):
@@ -1527,8 +1771,8 @@ class Identity(_serialization.Model):
         :paramtype type: str
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
 
 
@@ -1567,7 +1811,7 @@ class IpAddress(_serialization.Model):
         super().__init__(**kwargs)
         self.address = address
         self.ip_address_version = ip_address_version
-        self.subnet = None
+        self.subnet: Optional["_models.Subnet"] = None
 
 
 class KeyDetails(_serialization.Model):
@@ -1598,9 +1842,9 @@ class KeyDetails(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.public_key = None
-        self.not_after = None
-        self.renew_after = None
+        self.public_key: Optional[str] = None
+        self.not_after: Optional[datetime.datetime] = None
+        self.renew_after: Optional[datetime.datetime] = None
 
 
 class KeyProperties(_serialization.Model):
@@ -1627,62 +1871,8 @@ class KeyProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.client_public_key = None
-        self.candidate_public_key = None
-
-
-class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
+        self.client_public_key: Optional["_models.KeyDetails"] = None
+        self.candidate_public_key: Optional["_models.KeyDetails"] = None
 
 
 class License(TrackedResource):
@@ -1693,7 +1883,7 @@ class License(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1764,7 +1954,7 @@ class License(TrackedResource):
         :paramtype license_details: ~azure.mgmt.hybridcompute.models.LicenseDetails
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.tenant_id = tenant_id
         self.license_type = license_type
         self.license_details = license_details
@@ -1848,12 +2038,12 @@ class LicenseDetails(_serialization.Model):
         self.edition = edition
         self.type = type
         self.processors = processors
-        self.assigned_licenses = None
-        self.immutable_id = None
+        self.assigned_licenses: Optional[int] = None
+        self.immutable_id: Optional[str] = None
         self.volume_license_details = volume_license_details
 
 
-class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class LicenseProfile(TrackedResource):
     """Describes a license profile in a hybrid machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1861,7 +2051,7 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1997,20 +2187,20 @@ class LicenseProfile(TrackedResource):  # pylint: disable=too-many-instance-attr
         :paramtype software_assurance_customer: bool
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.subscription_status = subscription_status
         self.product_type = product_type
-        self.enrollment_date = None
-        self.billing_start_date = None
-        self.disenrollment_date = None
-        self.billing_end_date = None
-        self.error = None
+        self.enrollment_date: Optional[datetime.datetime] = None
+        self.billing_start_date: Optional[datetime.datetime] = None
+        self.disenrollment_date: Optional[datetime.datetime] = None
+        self.billing_end_date: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ErrorDetail"] = None
         self.product_features = product_features
-        self.assigned_license_immutable_id = None
-        self.esu_keys = None
-        self.server_type = None
-        self.esu_eligibility = None
-        self.esu_key_state = None
+        self.assigned_license_immutable_id: Optional[str] = None
+        self.esu_keys: Optional[List["_models.EsuKey"]] = None
+        self.server_type: Optional[Union[str, "_models.EsuServerType"]] = None
+        self.esu_eligibility: Optional[Union[str, "_models.EsuEligibility"]] = None
+        self.esu_key_state: Optional[Union[str, "_models.EsuKeyState"]] = None
         self.assigned_license = assigned_license
         self.software_assurance_customer = software_assurance_customer
 
@@ -2039,8 +2229,8 @@ class LicenseProfileStorageModelEsuProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.assigned_license_immutable_id = None
-        self.esu_keys = None
+        self.assigned_license_immutable_id: Optional[str] = None
+        self.esu_keys: Optional[List["_models.EsuKey"]] = None
 
 
 class LicenseProfileArmEsuPropertiesWithoutAssignedLicense(
@@ -2083,9 +2273,9 @@ class LicenseProfileArmEsuPropertiesWithoutAssignedLicense(
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.server_type = None
-        self.esu_eligibility = None
-        self.esu_key_state = None
+        self.server_type: Optional[Union[str, "_models.EsuServerType"]] = None
+        self.esu_eligibility: Optional[Union[str, "_models.EsuEligibility"]] = None
+        self.esu_key_state: Optional[Union[str, "_models.EsuKeyState"]] = None
 
 
 class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssignedLicense):
@@ -2135,7 +2325,7 @@ class LicenseProfileArmEsuProperties(LicenseProfileArmEsuPropertiesWithoutAssign
         self.assigned_license = assigned_license
 
 
-class LicenseProfileMachineInstanceView(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class LicenseProfileMachineInstanceView(_serialization.Model):
     """License Profile Instance View in Machine Properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2225,16 +2415,16 @@ class LicenseProfileMachineInstanceView(_serialization.Model):  # pylint: disabl
         :paramtype software_assurance_customer: bool
         """
         super().__init__(**kwargs)
-        self.license_status = None
-        self.license_channel = None
+        self.license_status: Optional[Union[str, "_models.LicenseStatus"]] = None
+        self.license_channel: Optional[str] = None
         self.esu_profile = esu_profile
         self.subscription_status = subscription_status
         self.product_type = product_type
-        self.enrollment_date = None
-        self.billing_start_date = None
-        self.disenrollment_date = None
-        self.billing_end_date = None
-        self.error = None
+        self.enrollment_date: Optional[datetime.datetime] = None
+        self.billing_start_date: Optional[datetime.datetime] = None
+        self.disenrollment_date: Optional[datetime.datetime] = None
+        self.billing_end_date: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ErrorDetail"] = None
         self.product_features = product_features
         self.software_assurance_customer = software_assurance_customer
 
@@ -2617,7 +2807,7 @@ class LocationData(_serialization.Model):
         self.country_or_region = country_or_region
 
 
-class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class Machine(TrackedResource):
     """Describes a hybrid machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2625,7 +2815,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -2670,7 +2860,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
-     "Disconnected", and "Error".
+     "Disconnected", "Error", and "AwaitingConnection".
     :vartype status: str or ~azure.mgmt.hybridcompute.models.StatusTypes
     :ivar last_status_change: The time of the last status change.
     :vartype last_status_change: ~datetime.datetime
@@ -2687,6 +2877,12 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar client_public_key: Public Key that the client provides to be used during initial resource
      onboarding.
     :vartype client_public_key: str
+    :ivar identity_key_store: Specifies the identity key store a machine is using. Known values
+     are: "TPM" and "Default".
+    :vartype identity_key_store: str or ~azure.mgmt.hybridcompute.models.IdentityKeyStore
+    :ivar tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
+     the client provides to be used during initial resource onboarding.
+    :vartype tpm_ek_certificate: str
     :ivar os_name: The Operating System running on the hybrid machine.
     :vartype os_name: str
     :ivar os_version: The version of Operating System running on the hybrid machine.
@@ -2713,6 +2909,9 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
      machine is assigned to, if any.
     :vartype parent_cluster_resource_id: str
+    :ivar hardware_resource_id: Specifies the resource ID of the associated hardware device. Only
+     settable by HCI RP.
+    :vartype hardware_resource_id: str
     :ivar mssql_discovered: Specifies whether any MS SQL instance is discovered on the machine.
     :vartype mssql_discovered: str
     :ivar detected_properties: Detected properties from the machine.
@@ -2780,6 +2979,8 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "display_name": {"key": "properties.displayName", "type": "str"},
         "machine_fqdn": {"key": "properties.machineFqdn", "type": "str"},
         "client_public_key": {"key": "properties.clientPublicKey", "type": "str"},
+        "identity_key_store": {"key": "properties.identityKeyStore", "type": "str"},
+        "tpm_ek_certificate": {"key": "properties.tpmEkCertificate", "type": "str"},
         "os_name": {"key": "properties.osName", "type": "str"},
         "os_version": {"key": "properties.osVersion", "type": "str"},
         "os_type": {"key": "properties.osType", "type": "str"},
@@ -2792,6 +2993,7 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "dns_fqdn": {"key": "properties.dnsFqdn", "type": "str"},
         "private_link_scope_resource_id": {"key": "properties.privateLinkScopeResourceId", "type": "str"},
         "parent_cluster_resource_id": {"key": "properties.parentClusterResourceId", "type": "str"},
+        "hardware_resource_id": {"key": "properties.hardwareResourceId", "type": "str"},
         "mssql_discovered": {"key": "properties.mssqlDiscovered", "type": "str"},
         "detected_properties": {"key": "properties.detectedProperties", "type": "{str}"},
         "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
@@ -2812,10 +3014,13 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         license_profile: Optional["_models.LicenseProfileMachineInstanceView"] = None,
         vm_id: Optional[str] = None,
         client_public_key: Optional[str] = None,
+        identity_key_store: Optional[Union[str, "_models.IdentityKeyStore"]] = None,
+        tpm_ek_certificate: Optional[str] = None,
         os_type: Optional[str] = None,
         extensions: Optional[List["_models.MachineExtensionInstanceView"]] = None,
         private_link_scope_resource_id: Optional[str] = None,
         parent_cluster_resource_id: Optional[str] = None,
+        hardware_resource_id: Optional[str] = None,
         mssql_discovered: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -2846,6 +3051,12 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword client_public_key: Public Key that the client provides to be used during initial
          resource onboarding.
         :paramtype client_public_key: str
+        :keyword identity_key_store: Specifies the identity key store a machine is using. Known values
+         are: "TPM" and "Default".
+        :paramtype identity_key_store: str or ~azure.mgmt.hybridcompute.models.IdentityKeyStore
+        :keyword tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM)
+         that the client provides to be used during initial resource onboarding.
+        :paramtype tpm_ek_certificate: str
         :keyword os_type: The type of Operating System (windows/linux).
         :paramtype os_type: str
         :keyword extensions: Machine Extensions information (deprecated field).
@@ -2856,47 +3067,53 @@ class Machine(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
          machine is assigned to, if any.
         :paramtype parent_cluster_resource_id: str
+        :keyword hardware_resource_id: Specifies the resource ID of the associated hardware device.
+         Only settable by HCI RP.
+        :paramtype hardware_resource_id: str
         :keyword mssql_discovered: Specifies whether any MS SQL instance is discovered on the machine.
         :paramtype mssql_discovered: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.resources = None
+        self.resources: Optional[List["_models.MachineExtension"]] = None
         self.identity = identity
         self.kind = kind
         self.location_data = location_data
-        self.agent_configuration = None
+        self.agent_configuration: Optional["_models.AgentConfiguration"] = None
         self.service_statuses = service_statuses
-        self.hardware_profile = None
-        self.storage_profile = None
-        self.firmware_profile = None
+        self.hardware_profile: Optional["_models.HardwareProfile"] = None
+        self.storage_profile: Optional["_models.StorageProfile"] = None
+        self.firmware_profile: Optional["_models.FirmwareProfile"] = None
         self.cloud_metadata = cloud_metadata
         self.agent_upgrade = agent_upgrade
         self.os_profile = os_profile
         self.license_profile = license_profile
-        self.provisioning_state = None
-        self.status = None
-        self.last_status_change = None
-        self.error_details = None
-        self.agent_version = None
+        self.provisioning_state: Optional[str] = None
+        self.status: Optional[Union[str, "_models.StatusTypes"]] = None
+        self.last_status_change: Optional[datetime.datetime] = None
+        self.error_details: Optional[List["_models.ErrorDetail"]] = None
+        self.agent_version: Optional[str] = None
         self.vm_id = vm_id
-        self.display_name = None
-        self.machine_fqdn = None
+        self.display_name: Optional[str] = None
+        self.machine_fqdn: Optional[str] = None
         self.client_public_key = client_public_key
-        self.os_name = None
-        self.os_version = None
+        self.identity_key_store = identity_key_store
+        self.tpm_ek_certificate = tpm_ek_certificate
+        self.os_name: Optional[str] = None
+        self.os_version: Optional[str] = None
         self.os_type = os_type
-        self.vm_uuid = None
+        self.vm_uuid: Optional[str] = None
         self.extensions = extensions
-        self.os_sku = None
-        self.os_edition = None
-        self.domain_name = None
-        self.ad_fqdn = None
-        self.dns_fqdn = None
+        self.os_sku: Optional[str] = None
+        self.os_edition: Optional[str] = None
+        self.domain_name: Optional[str] = None
+        self.ad_fqdn: Optional[str] = None
+        self.dns_fqdn: Optional[str] = None
         self.private_link_scope_resource_id = private_link_scope_resource_id
         self.parent_cluster_resource_id = parent_cluster_resource_id
+        self.hardware_resource_id = hardware_resource_id
         self.mssql_discovered = mssql_discovered
-        self.detected_properties = None
-        self.network_profile = None
+        self.detected_properties: Optional[Dict[str, str]] = None
+        self.network_profile: Optional["_models.NetworkProfile"] = None
 
 
 class MachineAssessPatchesResult(_serialization.Model):
@@ -2978,16 +3195,16 @@ class MachineAssessPatchesResult(_serialization.Model):
          ~azure.mgmt.hybridcompute.models.AvailablePatchCountByClassification
         """
         super().__init__(**kwargs)
-        self.status = None
-        self.assessment_activity_id = None
-        self.reboot_pending = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.assessment_activity_id: Optional[str] = None
+        self.reboot_pending: Optional[bool] = None
         self.available_patch_count_by_classification = available_patch_count_by_classification
-        self.start_date_time = None
-        self.last_modified_date_time = None
-        self.started_by = None
-        self.patch_service_used = None
-        self.os_type = None
-        self.error_details = None
+        self.start_date_time: Optional[datetime.datetime] = None
+        self.last_modified_date_time: Optional[datetime.datetime] = None
+        self.started_by: Optional[Union[str, "_models.PatchOperationStartedBy"]] = None
+        self.patch_service_used: Optional[Union[str, "_models.PatchServiceUsed"]] = None
+        self.os_type: Optional[Union[str, "_models.OsType"]] = None
+        self.error_details: Optional["_models.ErrorDetail"] = None
 
 
 class MachineExtension(TrackedResource):
@@ -2998,7 +3215,7 @@ class MachineExtension(TrackedResource):
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3250,7 +3467,7 @@ class MachineExtensionProperties(_serialization.Model):
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
         self.protected_settings = protected_settings
-        self.provisioning_state = None
+        self.provisioning_state: Optional[str] = None
         self.instance_view = instance_view
 
 
@@ -3463,7 +3680,7 @@ class MachineInstallPatchesParameters(_serialization.Model):
         self.linux_parameters = linux_parameters
 
 
-class MachineInstallPatchesResult(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class MachineInstallPatchesResult(_serialization.Model):
     """The result summary of an installation operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3553,21 +3770,21 @@ class MachineInstallPatchesResult(_serialization.Model):  # pylint: disable=too-
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.status = None
-        self.installation_activity_id = None
-        self.reboot_status = None
-        self.maintenance_window_exceeded = None
-        self.excluded_patch_count = None
-        self.not_selected_patch_count = None
-        self.pending_patch_count = None
-        self.installed_patch_count = None
-        self.failed_patch_count = None
-        self.start_date_time = None
-        self.last_modified_date_time = None
-        self.started_by = None
-        self.patch_service_used = None
-        self.os_type = None
-        self.error_details = None
+        self.status: Optional[Union[str, "_models.PatchOperationStatus"]] = None
+        self.installation_activity_id: Optional[str] = None
+        self.reboot_status: Optional[Union[str, "_models.VMGuestPatchRebootStatus"]] = None
+        self.maintenance_window_exceeded: Optional[bool] = None
+        self.excluded_patch_count: Optional[int] = None
+        self.not_selected_patch_count: Optional[int] = None
+        self.pending_patch_count: Optional[int] = None
+        self.installed_patch_count: Optional[int] = None
+        self.failed_patch_count: Optional[int] = None
+        self.start_date_time: Optional[datetime.datetime] = None
+        self.last_modified_date_time: Optional[datetime.datetime] = None
+        self.started_by: Optional[Union[str, "_models.PatchOperationStartedBy"]] = None
+        self.patch_service_used: Optional[Union[str, "_models.PatchServiceUsed"]] = None
+        self.os_type: Optional[Union[str, "_models.OsType"]] = None
+        self.error_details: Optional["_models.ErrorDetail"] = None
 
 
 class MachineListResult(_serialization.Model):
@@ -3604,7 +3821,7 @@ class MachineListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class MachineRunCommand(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class MachineRunCommand(TrackedResource):
     """Describes a Run Command.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3612,7 +3829,7 @@ class MachineRunCommand(TrackedResource):  # pylint: disable=too-many-instance-a
     All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -3787,8 +4004,8 @@ class MachineRunCommand(TrackedResource):  # pylint: disable=too-many-instance-a
         self.error_blob_uri = error_blob_uri
         self.output_blob_managed_identity = output_blob_managed_identity
         self.error_blob_managed_identity = error_blob_managed_identity
-        self.provisioning_state = None
-        self.instance_view = None
+        self.provisioning_state: Optional[str] = None
+        self.instance_view: Optional["_models.MachineRunCommandInstanceView"] = None
 
 
 class MachineRunCommandInstanceView(_serialization.Model):
@@ -3993,6 +4210,11 @@ class MachineUpdate(ResourceUpdate):
     :ivar private_link_scope_resource_id: The resource id of the private link scope this machine is
      assigned to, if any.
     :vartype private_link_scope_resource_id: str
+    :ivar identity_key_store: Identity key store type of the machine.
+    :vartype identity_key_store: str
+    :ivar tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM) that
+     the client provides to be used during initial resource onboarding.
+    :vartype tpm_ek_certificate: str
     """
 
     _attribute_map = {
@@ -4005,6 +4227,8 @@ class MachineUpdate(ResourceUpdate):
         "agent_upgrade": {"key": "properties.agentUpgrade", "type": "AgentUpgrade"},
         "parent_cluster_resource_id": {"key": "properties.parentClusterResourceId", "type": "str"},
         "private_link_scope_resource_id": {"key": "properties.privateLinkScopeResourceId", "type": "str"},
+        "identity_key_store": {"key": "properties.identityKeyStore", "type": "str"},
+        "tpm_ek_certificate": {"key": "properties.tpmEkCertificate", "type": "str"},
     }
 
     def __init__(
@@ -4019,6 +4243,8 @@ class MachineUpdate(ResourceUpdate):
         agent_upgrade: Optional["_models.AgentUpgrade"] = None,
         parent_cluster_resource_id: Optional[str] = None,
         private_link_scope_resource_id: Optional[str] = None,
+        identity_key_store: Optional[str] = None,
+        tpm_ek_certificate: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4043,6 +4269,11 @@ class MachineUpdate(ResourceUpdate):
         :keyword private_link_scope_resource_id: The resource id of the private link scope this machine
          is assigned to, if any.
         :paramtype private_link_scope_resource_id: str
+        :keyword identity_key_store: Identity key store type of the machine.
+        :paramtype identity_key_store: str
+        :keyword tpm_ek_certificate: Endorsement Key Certificate of the Trusted Platform Module (TPM)
+         that the client provides to be used during initial resource onboarding.
+        :paramtype tpm_ek_certificate: str
         """
         super().__init__(tags=tags, **kwargs)
         self.identity = identity
@@ -4053,15 +4284,17 @@ class MachineUpdate(ResourceUpdate):
         self.agent_upgrade = agent_upgrade
         self.parent_cluster_resource_id = parent_cluster_resource_id
         self.private_link_scope_resource_id = private_link_scope_resource_id
+        self.identity_key_store = identity_key_store
+        self.tpm_ek_certificate = tpm_ek_certificate
 
 
-class NetworkConfiguration(ProxyResourceAutoGenerated):
+class NetworkConfiguration(ProxyResource):
     """NetworkConfiguration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4127,10 +4360,10 @@ class NetworkConfiguration(ProxyResourceAutoGenerated):
         """
         super().__init__(**kwargs)
         self.location = location
-        self.tenant_id = None
+        self.tenant_id: Optional[str] = None
         self.network_configuration_scope_id = network_configuration_scope_id
         self.network_configuration_scope_resource_id = network_configuration_scope_resource_id
-        self.key_properties = None
+        self.key_properties: Optional["_models.KeyProperties"] = None
 
 
 class NetworkInterface(_serialization.Model):
@@ -4227,9 +4460,9 @@ class NetworkSecurityPerimeter(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.perimeter_guid = None
-        self.location = None
+        self.id: Optional[str] = None
+        self.perimeter_guid: Optional[str] = None
+        self.location: Optional[str] = None
 
 
 class NetworkSecurityPerimeterConfiguration(_serialization.Model):
@@ -4299,11 +4532,11 @@ class NetworkSecurityPerimeterConfiguration(_serialization.Model):
         :paramtype profile: ~azure.mgmt.hybridcompute.models.NetworkSecurityPerimeterProfile
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.provisioning_state = None
-        self.provisioning_issues = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.provisioning_state: Optional[str] = None
+        self.provisioning_issues: Optional[List["_models.ProvisioningIssue"]] = None
         self.network_security_perimeter = network_security_perimeter
         self.resource_association = resource_association
         self.profile = profile
@@ -4333,8 +4566,8 @@ class NetworkSecurityPerimeterConfigurationListResult(_serialization.Model):  # 
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.NetworkSecurityPerimeterConfiguration"]] = None
+        self.next_link: Optional[str] = None
 
 
 class NetworkSecurityPerimeterConfigurationReconcileResult(_serialization.Model):  # pylint: disable=name-too-long
@@ -4394,11 +4627,11 @@ class NetworkSecurityPerimeterProfile(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.access_rules_version = None
-        self.access_rules = None
-        self.diagnostic_settings_version = None
-        self.enabled_log_categories = None
+        self.name: Optional[str] = None
+        self.access_rules_version: Optional[int] = None
+        self.access_rules: Optional[List["_models.AccessRule"]] = None
+        self.diagnostic_settings_version: Optional[int] = None
+        self.enabled_log_categories: Optional[List[str]] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -4421,7 +4654,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
+        self.value: Optional[List["_models.OperationValue"]] = None
 
 
 class OperationValue(_serialization.Model):
@@ -4458,10 +4691,10 @@ class OperationValue(_serialization.Model):
         :paramtype display: ~azure.mgmt.hybridcompute.models.OperationValueDisplay
         """
         super().__init__(**kwargs)
-        self.origin = None
-        self.name = None
+        self.origin: Optional[str] = None
+        self.name: Optional[str] = None
         self.display = display
-        self.is_data_action = None
+        self.is_data_action: Optional[bool] = None
 
 
 class OperationValueDisplay(_serialization.Model):
@@ -4496,10 +4729,10 @@ class OperationValueDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.operation = None
-        self.resource = None
-        self.description = None
-        self.provider = None
+        self.operation: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.description: Optional[str] = None
+        self.provider: Optional[str] = None
 
 
 class OSProfile(_serialization.Model):
@@ -4540,7 +4773,7 @@ class OSProfile(_serialization.Model):
         :paramtype linux_configuration: ~azure.mgmt.hybridcompute.models.OSProfileLinuxConfiguration
         """
         super().__init__(**kwargs)
-        self.computer_name = None
+        self.computer_name: Optional[str] = None
         self.windows_configuration = windows_configuration
         self.linux_configuration = linux_configuration
 
@@ -4597,7 +4830,7 @@ class OSProfileLinuxConfiguration(_serialization.Model):
         self.assessment_mode = assessment_mode
         self.patch_mode = patch_mode
         self.enable_hotpatching = enable_hotpatching
-        self.status = None
+        self.status: Optional["_models.PatchSettingsStatus"] = None
 
 
 class OSProfileWindowsConfiguration(_serialization.Model):
@@ -4652,7 +4885,7 @@ class OSProfileWindowsConfiguration(_serialization.Model):
         self.assessment_mode = assessment_mode
         self.patch_mode = patch_mode
         self.enable_hotpatching = enable_hotpatching
-        self.status = None
+        self.status: Optional["_models.PatchSettingsStatus"] = None
 
 
 class PatchSettingsStatus(_serialization.Model):
@@ -4694,16 +4927,16 @@ class PatchSettingsStatus(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.hotpatch_enablement_status = hotpatch_enablement_status
-        self.error = None
+        self.error: Optional["_models.ErrorDetail"] = None
 
 
-class PrivateEndpointConnection(ProxyResourceAutoGenerated):
+class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4779,9 +5012,9 @@ class PrivateEndpointConnectionDataModel(_serialization.Model):
         :paramtype properties: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionProperties
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.properties = properties
 
 
@@ -4809,8 +5042,8 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateEndpointConnectionProperties(_serialization.Model):
@@ -4863,8 +5096,8 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
-        self.group_ids = None
+        self.provisioning_state: Optional[str] = None
+        self.group_ids: Optional[List[str]] = None
 
 
 class PrivateEndpointProperty(_serialization.Model):
@@ -4887,13 +5120,13 @@ class PrivateEndpointProperty(_serialization.Model):
         self.id = id
 
 
-class PrivateLinkResource(ProxyResourceAutoGenerated):
+class PrivateLinkResource(ProxyResource):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -4955,8 +5188,8 @@ class PrivateLinkResourceListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[List["_models.PrivateLinkResource"]] = None
+        self.next_link: Optional[str] = None
 
 
 class PrivateLinkResourceProperties(_serialization.Model):
@@ -4987,9 +5220,9 @@ class PrivateLinkResourceProperties(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.group_id = None
-        self.required_members = None
-        self.required_zone_names = None
+        self.group_id: Optional[str] = None
+        self.required_members: Optional[List[str]] = None
+        self.required_zone_names: Optional[List[str]] = None
 
 
 class PrivateLinkScopeValidationDetails(_serialization.Model):
@@ -5034,7 +5267,7 @@ class PrivateLinkScopeValidationDetails(_serialization.Model):
         :paramtype connection_details: list[~azure.mgmt.hybridcompute.models.ConnectionDetail]
         """
         super().__init__(**kwargs)
-        self.id = None
+        self.id: Optional[str] = None
         self.public_network_access = public_network_access
         self.connection_details = connection_details
 
@@ -5076,7 +5309,7 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint
         super().__init__(**kwargs)
         self.status = status
         self.description = description
-        self.actions_required = None
+        self.actions_required: Optional[str] = None
 
 
 class Processor(_serialization.Model):
@@ -5103,8 +5336,8 @@ class Processor(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.number_of_cores = None
+        self.name: Optional[str] = None
+        self.number_of_cores: Optional[int] = None
 
 
 class ProductFeature(_serialization.Model):
@@ -5166,11 +5399,11 @@ class ProductFeature(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.subscription_status = subscription_status
-        self.enrollment_date = None
-        self.billing_start_date = None
-        self.disenrollment_date = None
-        self.billing_end_date = None
-        self.error = None
+        self.enrollment_date: Optional[datetime.datetime] = None
+        self.billing_start_date: Optional[datetime.datetime] = None
+        self.disenrollment_date: Optional[datetime.datetime] = None
+        self.billing_end_date: Optional[datetime.datetime] = None
+        self.error: Optional["_models.ErrorDetail"] = None
 
 
 class ProductFeatureUpdate(_serialization.Model):
@@ -5252,12 +5485,12 @@ class ProvisioningIssue(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.issue_type = None
-        self.severity = None
-        self.description = None
-        self.suggested_resource_ids = None
-        self.suggested_access_rules = None
+        self.name: Optional[str] = None
+        self.issue_type: Optional[Union[str, "_models.ProvisioningIssueType"]] = None
+        self.severity: Optional[Union[str, "_models.ProvisioningIssueSeverity"]] = None
+        self.description: Optional[str] = None
+        self.suggested_resource_ids: Optional[List[str]] = None
+        self.suggested_access_rules: Optional[List["_models.AccessRule"]] = None
 
 
 class ResourceAssociation(_serialization.Model):
@@ -5284,8 +5517,8 @@ class ResourceAssociation(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name = None
-        self.access_mode = None
+        self.name: Optional[str] = None
+        self.access_mode: Optional[Union[str, "_models.AccessMode"]] = None
 
 
 class RunCommandInputParameter(_serialization.Model):
@@ -5418,13 +5651,13 @@ class ServiceStatuses(_serialization.Model):
         self.guest_configuration_service = guest_configuration_service
 
 
-class Settings(ProxyResourceAutoGenerated):
+class Settings(ProxyResource):
     """Settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -5463,8 +5696,30 @@ class Settings(ProxyResourceAutoGenerated):
         :paramtype gateway_resource_id: str
         """
         super().__init__(**kwargs)
-        self.tenant_id = None
+        self.tenant_id: Optional[str] = None
         self.gateway_resource_id = gateway_resource_id
+
+
+class SetupExtensionRequest(_serialization.Model):
+    """SetupExtensionRequest.
+
+    :ivar extensions: The list of extensions.
+    :vartype extensions: list[~azure.mgmt.hybridcompute.models.MachineExtensionProperties]
+    """
+
+    _attribute_map = {
+        "extensions": {"key": "extensions", "type": "[MachineExtensionProperties]"},
+    }
+
+    def __init__(
+        self, *, extensions: Optional[List["_models.MachineExtensionProperties"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword extensions: The list of extensions.
+        :paramtype extensions: list[~azure.mgmt.hybridcompute.models.MachineExtensionProperties]
+        """
+        super().__init__(**kwargs)
+        self.extensions = extensions
 
 
 class StorageProfile(_serialization.Model):
@@ -5643,6 +5898,16 @@ class WindowsParameters(_serialization.Model):
     :ivar max_patch_publish_date: This is used to install patches that were published on or before
      this given max published date.
     :vartype max_patch_publish_date: ~datetime.datetime
+    :ivar patch_name_masks_to_include: This is used to include patches that match the given patch
+     name masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only
+     supported as input values in the list. Null, empty and only whitespaces strings as inputs
+     values are not supported.
+    :vartype patch_name_masks_to_include: list[str]
+    :ivar patch_name_masks_to_exclude: This is used to exclude patches that match the given patch
+     name masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only
+     supported as input values in the list. Null, empty and only whitespaces strings as inputs
+     values are not supported.
+    :vartype patch_name_masks_to_exclude: list[str]
     """
 
     _attribute_map = {
@@ -5651,6 +5916,8 @@ class WindowsParameters(_serialization.Model):
         "kb_numbers_to_exclude": {"key": "kbNumbersToExclude", "type": "[str]"},
         "exclude_kbs_requiring_reboot": {"key": "excludeKbsRequiringReboot", "type": "bool"},
         "max_patch_publish_date": {"key": "maxPatchPublishDate", "type": "iso-8601"},
+        "patch_name_masks_to_include": {"key": "patchNameMasksToInclude", "type": "[str]"},
+        "patch_name_masks_to_exclude": {"key": "patchNameMasksToExclude", "type": "[str]"},
     }
 
     def __init__(
@@ -5661,6 +5928,8 @@ class WindowsParameters(_serialization.Model):
         kb_numbers_to_exclude: Optional[List[str]] = None,
         exclude_kbs_requiring_reboot: Optional[bool] = None,
         max_patch_publish_date: Optional[datetime.datetime] = None,
+        patch_name_masks_to_include: Optional[List[str]] = None,
+        patch_name_masks_to_exclude: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5678,6 +5947,16 @@ class WindowsParameters(_serialization.Model):
         :keyword max_patch_publish_date: This is used to install patches that were published on or
          before this given max published date.
         :paramtype max_patch_publish_date: ~datetime.datetime
+        :keyword patch_name_masks_to_include: This is used to include patches that match the given
+         patch name masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only
+         supported as input values in the list. Null, empty and only whitespaces strings as inputs
+         values are not supported.
+        :paramtype patch_name_masks_to_include: list[str]
+        :keyword patch_name_masks_to_exclude: This is used to exclude patches that match the given
+         patch name masks. Alphanumeric strings and wildcard expressions consisting of * and ? are only
+         supported as input values in the list. Null, empty and only whitespaces strings as inputs
+         values are not supported.
+        :paramtype patch_name_masks_to_exclude: list[str]
         """
         super().__init__(**kwargs)
         self.classifications_to_include = classifications_to_include
@@ -5685,3 +5964,5 @@ class WindowsParameters(_serialization.Model):
         self.kb_numbers_to_exclude = kb_numbers_to_exclude
         self.exclude_kbs_requiring_reboot = exclude_kbs_requiring_reboot
         self.max_patch_publish_date = max_patch_publish_date
+        self.patch_name_masks_to_include = patch_name_masks_to_include
+        self.patch_name_masks_to_exclude = patch_name_masks_to_exclude

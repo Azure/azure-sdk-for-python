@@ -15,7 +15,7 @@ from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureQueueStorageConfiguration
 from .operations import MessageIdOperations, MessagesOperations, QueueOperations, ServiceOperations
 
@@ -45,6 +45,7 @@ class AzureQueueStorage:  # pylint: disable=client-accepts-api-version-keyword
         self, url: str, base_url: str = "", **kwargs: Any
     ) -> None:
         self._config = AzureQueueStorageConfiguration(url=url, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

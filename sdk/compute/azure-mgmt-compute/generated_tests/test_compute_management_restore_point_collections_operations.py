@@ -20,6 +20,39 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_restore_point_collections_list_all(self, resource_group):
+        response = self.client.restore_point_collections.list_all(
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_restore_point_collections_list(self, resource_group):
+        response = self.client.restore_point_collections.list(
+            resource_group_name=resource_group.name,
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_restore_point_collections_get(self, resource_group):
+        response = self.client.restore_point_collections.get(
+            resource_group_name=resource_group.name,
+            restore_point_collection_name="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_restore_point_collections_create_or_update(self, resource_group):
         response = self.client.restore_point_collections.create_or_update(
             resource_group_name=resource_group.name,
@@ -128,6 +161,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                                 "proxyAgentSettings": {
+                                    "addProxyAgentExtension": bool,
                                     "enabled": bool,
                                     "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                     "keyIncarnationId": 0,
@@ -193,15 +227,31 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             "vmId": "str",
                         },
                         "sourceRestorePoint": {"id": "str"},
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
                         "timeCreated": "2020-02-20 00:00:00",
                         "type": "str",
                     }
                 ],
                 "source": {"id": "str", "location": "str"},
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -314,6 +364,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 "encryptionAtHost": bool,
                                 "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                                 "proxyAgentSettings": {
+                                    "addProxyAgentExtension": bool,
                                     "enabled": bool,
                                     "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                     "keyIncarnationId": 0,
@@ -379,6 +430,14 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                             "vmId": "str",
                         },
                         "sourceRestorePoint": {"id": "str"},
+                        "systemData": {
+                            "createdAt": "2020-02-20 00:00:00",
+                            "createdBy": "str",
+                            "createdByType": "str",
+                            "lastModifiedAt": "2020-02-20 00:00:00",
+                            "lastModifiedBy": "str",
+                            "lastModifiedByType": "str",
+                        },
                         "timeCreated": "2020-02-20 00:00:00",
                         "type": "str",
                     }
@@ -386,7 +445,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                 "source": {"id": "str", "location": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -398,41 +457,8 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
         response = self.client.restore_point_collections.begin_delete(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_restore_point_collections_get(self, resource_group):
-        response = self.client.restore_point_collections.get(
-            resource_group_name=resource_group.name,
-            restore_point_collection_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_restore_point_collections_list(self, resource_group):
-        response = self.client.restore_point_collections.list(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_restore_point_collections_list_all(self, resource_group):
-        response = self.client.restore_point_collections.list_all(
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

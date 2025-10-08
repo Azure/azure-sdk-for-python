@@ -107,8 +107,8 @@ src/build
 
 # [begoldsm] ignore virtual env if it exists.
 adlEnv/
-venv/
-.venv/
+venv*
+.venv*
 code_reports
 
 # Azure Storage test credentials
@@ -171,3 +171,10 @@ component-detection-pip-report.json
 **/.project
 **/.pydevproject
 **/.settings
+.github/prompts/copilot-instructions.md
+
+# No uv lock for now
+uv.lock
+
+# Sphinx generated documentation
+website/

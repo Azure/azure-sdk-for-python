@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity aiohttp
+    pip install azure-ai-projects azure-ai-agents azure-identity aiohttp
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -22,7 +22,7 @@ USAGE:
 """
 
 import os, asyncio
-from azure.ai.agents.aio import AgentsClient
+from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.agents.models import AsyncFunctionTool, AsyncToolSet, ListSortOrder, MessageTextContent
 from utils.user_async_functions import user_async_functions
@@ -30,58 +30,60 @@ from utils.user_async_functions import user_async_functions
 
 async def main() -> None:
 
-    async with DefaultAzureCredential() as creds:
-        async with AgentsClient(
-            endpoint=os.environ["PROJECT_ENDPOINT"],
-            credential=creds,
-        ) as agents_client:
+    project_client = AIProjectClient(
+        endpoint=os.environ["PROJECT_ENDPOINT"],
+        credential=DefaultAzureCredential(),
+    )
 
-            # Initialize agent toolset with user functions and code interpreter
-            # [START create_agent_with_async_function_tool]
-            functions = AsyncFunctionTool(user_async_functions)
+    async with project_client:
+        agents_client = project_client.agents
 
-            toolset = AsyncToolSet()
-            toolset.add(functions)
-            agents_client.enable_auto_function_calls(toolset)
+        # Initialize agent toolset with user functions and code interpreter
+        # [START create_agent_with_async_function_tool]
+        functions = AsyncFunctionTool(user_async_functions)
 
-            agent = await agents_client.create_agent(
-                model=os.environ["MODEL_DEPLOYMENT_NAME"],
-                name="my-agent",
-                instructions="You are a helpful agent",
-                toolset=toolset,
-            )
-            # [END create_agent_with_async_function_tool]
-            print(f"Created agent, ID: {agent.id}")
+        toolset = AsyncToolSet()
+        toolset.add(functions)
+        agents_client.enable_auto_function_calls(toolset)
 
-            # Create thread for communication
-            thread = await agents_client.threads.create()
-            print(f"Created thread, ID: {thread.id}")
+        agent = await agents_client.create_agent(
+            model=os.environ["MODEL_DEPLOYMENT_NAME"],
+            name="my-agent",
+            instructions="You are a helpful agent",
+            toolset=toolset,
+        )
+        # [END create_agent_with_async_function_tool]
+        print(f"Created agent, ID: {agent.id}")
 
-            # Create message to thread
-            message = await agents_client.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content="Hello, send an email with the datetime and weather information in New York?",
-            )
-            print(f"Created message, ID: {message.id}")
+        # Create thread for communication
+        thread = await agents_client.threads.create()
+        print(f"Created thread, ID: {thread.id}")
 
-            # Create and process agent run in thread with tools
-            run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
-            print(f"Run finished with status: {run.status}")
+        # Create message to thread
+        message = await agents_client.messages.create(
+            thread_id=thread.id,
+            role="user",
+            content="Hello, send an email with the datetime and weather information in New York?",
+        )
+        print(f"Created message, ID: {message.id}")
 
-            if run.status == "failed":
-                print(f"Run failed: {run.last_error}")
+        # Create and process agent run in thread with tools
+        run = await agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+        print(f"Run finished with status: {run.status}")
 
-            # Delete the agent when done
-            await agents_client.delete_agent(agent.id)
-            print("Deleted agent")
+        if run.status == "failed":
+            print(f"Run failed: {run.last_error}")
 
-            # Fetch and log all messages
-            messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-            async for msg in messages:
-                last_part = msg.content[-1]
-                if isinstance(last_part, MessageTextContent):
-                    print(f"{msg.role}: {last_part.text.value}")
+        # Delete the agent when done
+        await agents_client.delete_agent(agent.id)
+        print("Deleted agent")
+
+        # Fetch and log all messages
+        messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+        async for msg in messages:
+            last_part = msg.content[-1]
+            if isinstance(last_part, MessageTextContent):
+                print(f"{msg.role}: {last_part.text.value}")
 
 
 if __name__ == "__main__":

@@ -24,7 +24,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperations(AzureMgmtRecordedTe
         response = self.client.container_apps_auth_configs.list_by_container_app(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             container_app_name="str",
             auth_config_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -144,7 +144,12 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperations(AzureMgmtRecordedTe
                     "preserveUrlFragmentsForLogins": bool,
                     "routes": {"logoutEndpoint": "str"},
                     "tokenStore": {
-                        "azureBlobStorage": {"sasUrlSettingName": "str"},
+                        "azureBlobStorage": {
+                            "blobContainerUri": "str",
+                            "clientId": "str",
+                            "managedIdentityResourceId": "str",
+                            "sasUrlSettingName": "str",
+                        },
                         "enabled": bool,
                         "tokenRefreshExtensionHours": 0.0,
                     },
@@ -161,7 +166,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperations(AzureMgmtRecordedTe
                 },
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -174,7 +179,7 @@ class TestContainerAppsAPIContainerAppsAuthConfigsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             container_app_name="str",
             auth_config_name="str",
-            api_version="2025-01-01",
+            api_version="2025-02-02-preview",
         )
 
         # please add some check logic here by yourself

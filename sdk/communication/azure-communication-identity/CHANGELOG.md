@@ -1,5 +1,15 @@
 # Release History
 
+## 1.6.0 (Unreleased)
+
+### Features Added
+
+- Added support for a new communication identifier `TeamsExtensionUserIdentifier`.
+    - New identifier maps rawIds with format `8:acs:{resourceId}_{tenantId}_{userId}`.
+    - With this version, rawId starting with `8:acs` may be either `CommunicationUserIdentifier` or new `TeamsExtensionUserIdentifier`.
+- Added `IsAnonymous` and `AssertedId` properties to the communication identifier `PhoneNumberIdentifier`.
+    - `IsAnonymous` is used for anonymous numbers with rawId equals to `4:anonymous`.
+    - `AssertedId` is used when the same number is used several times in the same call. It contains value after the last underscore `_` character in the phone number. It is null otherwise.
 ## 1.5.1 (Unreleased)
 
 ### Features Added

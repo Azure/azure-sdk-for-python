@@ -20,6 +20,39 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_availability_sets_list_by_subscription(self, resource_group):
+        response = self.client.availability_sets.list_by_subscription(
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_list(self, resource_group):
+        response = self.client.availability_sets.list(
+            resource_group_name=resource_group.name,
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_get(self, resource_group):
+        response = self.client.availability_sets.get(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_availability_sets_create_or_update(self, resource_group):
         response = self.client.availability_sets.create_or_update(
             resource_group_name=resource_group.name,
@@ -32,7 +65,10 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                 "platformUpdateDomainCount": 0,
                 "proximityPlacementGroup": {"id": "str"},
                 "scheduledEventsPolicy": {
-                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
+                    "allInstancesDown": {"automaticallyApprove": bool},
+                    "scheduledEventsAdditionalPublishingTargets": {
+                        "eventGridAndResourceGraph": {"enable": bool, "scheduledEventsApiVersion": "str"}
+                    },
                     "userInitiatedReboot": {"automaticallyApprove": bool},
                     "userInitiatedRedeploy": {"automaticallyApprove": bool},
                 },
@@ -46,6 +82,14 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                         "time": "2020-02-20 00:00:00",
                     }
                 ],
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
                 "virtualMachineScaleSetMigrationInfo": {
@@ -57,7 +101,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                 },
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +118,10 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                 "platformUpdateDomainCount": 0,
                 "proximityPlacementGroup": {"id": "str"},
                 "scheduledEventsPolicy": {
-                    "scheduledEventsAdditionalPublishingTargets": {"eventGridAndResourceGraph": {"enable": bool}},
+                    "allInstancesDown": {"automaticallyApprove": bool},
+                    "scheduledEventsAdditionalPublishingTargets": {
+                        "eventGridAndResourceGraph": {"enable": bool, "scheduledEventsApiVersion": "str"}
+                    },
                     "userInitiatedReboot": {"automaticallyApprove": bool},
                     "userInitiatedRedeploy": {"automaticallyApprove": bool},
                 },
@@ -98,7 +145,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
                 },
                 "virtualMachines": [{"id": "str"}],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -110,65 +157,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.delete(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_availability_sets_get(self, resource_group):
-        response = self.client.availability_sets.get(
-            resource_group_name=resource_group.name,
-            availability_set_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_availability_sets_list_by_subscription(self, resource_group):
-        response = self.client.availability_sets.list_by_subscription(
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_availability_sets_list(self, resource_group):
-        response = self.client.availability_sets.list(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_availability_sets_list_available_sizes(self, resource_group):
-        response = self.client.availability_sets.list_available_sizes(
-            resource_group_name=resource_group.name,
-            availability_set_name="str",
-            api_version="2024-11-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_availability_sets_start_migration_to_virtual_machine_scale_set(self, resource_group):
-        response = self.client.availability_sets.start_migration_to_virtual_machine_scale_set(
-            resource_group_name=resource_group.name,
-            availability_set_name="str",
-            parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -180,7 +169,32 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
         response = self.client.availability_sets.cancel_migration_to_virtual_machine_scale_set(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_begin_convert_to_virtual_machine_scale_set(self, resource_group):
+        response = self.client.availability_sets.begin_convert_to_virtual_machine_scale_set(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            api_version="2025-04-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_availability_sets_start_migration_to_virtual_machine_scale_set(self, resource_group):
+        response = self.client.availability_sets.start_migration_to_virtual_machine_scale_set(
+            resource_group_name=resource_group.name,
+            availability_set_name="str",
+            parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -193,7 +207,7 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             availability_set_name="str",
             parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -201,12 +215,12 @@ class TestComputeManagementAvailabilitySetsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_availability_sets_begin_convert_to_virtual_machine_scale_set(self, resource_group):
-        response = self.client.availability_sets.begin_convert_to_virtual_machine_scale_set(
+    def test_availability_sets_list_available_sizes(self, resource_group):
+        response = self.client.availability_sets.list_available_sizes(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            api_version="2024-11-01",
-        ).result()  # call '.result()' to poll until service return final result
-
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

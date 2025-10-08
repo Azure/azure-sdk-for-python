@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.resource.resources.v2022_09_01 import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
         response = self.client.tags.delete_value(
             tag_name="str",
             tag_value="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
         response = self.client.tags.create_or_update_value(
             tag_name="str",
             tag_value="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
     def test_tags_create_or_update(self, resource_group):
         response = self.client.tags.create_or_update(
             tag_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -58,7 +58,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
     def test_tags_delete(self, resource_group):
         response = self.client.tags.delete(
             tag_name="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -68,7 +68,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_tags_list(self, resource_group):
         response = self.client.tags.list(
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
         response = self.client.tags.begin_create_or_update_at_scope(
             scope="str",
             parameters={"properties": {"tags": {"str": "str"}}, "id": "str", "name": "str", "type": "str"},
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
         response = self.client.tags.begin_update_at_scope(
             scope="str",
             parameters={"operation": "str", "properties": {"tags": {"str": "str"}}},
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -103,7 +103,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
     def test_tags_get_at_scope(self, resource_group):
         response = self.client.tags.get_at_scope(
             scope="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -114,7 +114,7 @@ class TestResourceManagementTagsOperations(AzureMgmtRecordedTestCase):
     def test_tags_begin_delete_at_scope(self, resource_group):
         response = self.client.tags.begin_delete_at_scope(
             scope="str",
-            api_version="2022-09-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

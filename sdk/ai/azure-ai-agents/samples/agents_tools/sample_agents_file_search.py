@@ -13,7 +13,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-agents azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -23,22 +23,26 @@ USAGE:
 """
 
 import os
-from azure.ai.agents import AgentsClient
+from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import (
-    FileSearchTool,
     FilePurpose,
+    FileSearchTool,
     ListSortOrder,
+    RunAdditionalFieldList,
+    RunStepFileSearchToolCall,
+    RunStepToolCallDetails,
 )
 from azure.identity import DefaultAzureCredential
 
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info_1.md"))
 
-agents_client = AgentsClient(
+project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-with agents_client:
+with project_client:
+    agents_client = project_client.agents
 
     # Upload file and create vector store
     # [START upload_file_create_vector_store_and_agent_with_file_search_tool]
@@ -73,7 +77,10 @@ with agents_client:
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+    run = agents_client.runs.create_and_process(
+        thread_id=thread.id,
+        agent_id=agent.id,
+    )
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
@@ -93,11 +100,38 @@ with agents_client:
     print("Deleted agent")
     # [END teardown]
 
+    for run_step in agents_client.run_steps.list(
+        thread_id=thread.id, run_id=run.id, include=[RunAdditionalFieldList.FILE_SEARCH_CONTENTS]
+    ):
+        if isinstance(run_step.step_details, RunStepToolCallDetails):
+            for tool_call in run_step.step_details.tool_calls:
+                if (
+                    isinstance(tool_call, RunStepFileSearchToolCall)
+                    and tool_call.file_search
+                    and tool_call.file_search.results
+                    and tool_call.file_search.results[0].content
+                    and tool_call.file_search.results[0].content[0].text
+                ):
+                    print(
+                        "The search tool has found the next relevant content in "
+                        f"the file {tool_call.file_search.results[0].file_name}:"
+                    )
+                    # Note: technically we may have several search results, however in our example
+                    # we only have one file, so we are taking the only result.
+                    print(tool_call.file_search.results[0].content[0].text)
+                    print("===============================================================")
+
     # Fetch and log all messages
     messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
 
     # Print last messages from the thread
+    file_name = os.path.split(asset_file_path)[-1]
     for msg in messages:
         if msg.text_messages:
-            last_text = msg.text_messages[-1]
-            print(f"{msg.role}: {last_text.text.value}")
+            last_text = msg.text_messages[-1].text.value
+            for annotation in msg.text_messages[-1].text.annotations:
+                citation = (
+                    file_name if annotation.file_citation.file_id == file.id else annotation.file_citation.file_id
+                )
+                last_text = last_text.replace(annotation.text, f" [{citation}]")
+            print(f"{msg.role}: {last_text}")

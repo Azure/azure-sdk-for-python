@@ -7,7 +7,7 @@
 
 import os
 
-from typing import Any, AnyStr, Dict, cast, IO, Iterable, Optional, Union, TYPE_CHECKING
+from typing import Any, AnyStr, Dict, IO, Iterable, Optional, Union, TYPE_CHECKING
 from ._list_blobs_helper import BlobPrefix
 from .._models import BlobType
 from .._shared.policies_async import ExponentialRetry, LinearRetry
@@ -73,14 +73,11 @@ async def upload_blob_to_url(
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
     :keyword str encoding:
         Encoding to use if text is supplied as input. Defaults to UTF-8.
-    :returns: Blob-updated property dict (Etag and last modified)
+    :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict[str, Any]
     """
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return await cast(BlobClient, client).upload_blob(
-            data=data,
-            blob_type=BlobType.BLOCKBLOB,
-            **kwargs)
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
+        return await client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
 # Download data to specified open file-handle.
@@ -92,7 +89,7 @@ async def _download_to_stream(client, handle, **kwargs):
 async def download_blob_from_url(
     blob_url: str,
     output: str,
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
     **kwargs: Any
 ) -> None:
     """Download the contents of a blob to a local file or stream.
@@ -102,7 +99,7 @@ async def download_blob_from_url(
     :param output:
         Where the data should be downloaded to. This could be either a file path to write to,
         or an open IO handle to write to.
-    :type output: str or writable stream
+    :type output: str or IO
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
@@ -139,10 +136,11 @@ async def download_blob_from_url(
         blob. Also note that if enabled, the memory-efficient upload algorithm
         will not be used, because computing the MD5 hash requires buffering
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+    :return: None
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    async with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-async-context-manager
         if hasattr(output, 'write'):
             await _download_to_stream(client, output, **kwargs)
         else:

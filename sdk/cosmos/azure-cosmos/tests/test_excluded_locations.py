@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import logging
+import re
 import unittest
 import uuid
 import test_config
@@ -9,6 +10,9 @@ import pytest
 import time
 
 from azure.cosmos import CosmosClient
+from azure.cosmos.documents import _OperationType as OperationType
+from azure.cosmos.http_constants import ResourceType
+
 
 class MockHandler(logging.Handler):
     def __init__(self):
@@ -44,14 +48,9 @@ TEST_ITEM = {'id': ITEM_ID}
 TEST_ITEM.update(PARTITION_KEY_ITEMS)
 
 L0 = "Default"
-L1 = "West US 3"
-L2 = "West US"
+L1 = test_config.TestConfig.WRITE_LOCATION
+L2 = test_config.TestConfig.READ_LOCATION
 L3 = "East US 2"
-
-# L0 = "Default"
-# L1 = "East US 2"
-# L2 = "East US"
-# L3 = "West US 2"
 
 CLIENT_ONLY_TEST_DATA = [
     # preferred_locations, client_excluded_locations, excluded_locations_request
@@ -123,22 +122,23 @@ def read_item_test_data():
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
+
 def write_item_test_data():
     client_only_output_data = [
-        [L1],   #0
-        [L2],   #1
-        [L0],   #2
-        [L1]    #3
+        [L1],  # 0
+        [L2],  # 1
+        [L0],  # 2
+        [L1],  # 3
     ]
     client_and_request_output_data = [
-        [L2],   #0
-        [L2],   #1
-        [L2],   #2
-        [L0],   #3
-        [L0],   #4
-        [L1],   #5
-        [L1],   #6
-        [L1],   #7
+        [L2],  # 0
+        [L2],  # 1
+        [L2],  # 2
+        [L0],  # 3
+        [L0],  # 4
+        [L1],  # 5
+        [L1],  # 6
+        [L1],  # 7
     ]
     return get_test_data_with_expected_output(client_only_output_data, client_and_request_output_data)
 
@@ -157,7 +157,7 @@ def create_item_with_excluded_locations(container, body, excluded_locations):
     else:
         container.create_item(body=body, excluded_locations=excluded_locations)
 
-def init_container(preferred_locations, client_excluded_locations, multiple_write_locations = True):
+def init_container(preferred_locations, client_excluded_locations, multiple_write_locations=True):
     client = CosmosClient(HOST, KEY,
                           preferred_locations=preferred_locations,
                           excluded_locations=client_excluded_locations,
@@ -168,7 +168,8 @@ def init_container(preferred_locations, client_excluded_locations, multiple_writ
 
     return client, db, container
 
-def verify_endpoint(messages, client, expected_locations, multiple_write_locations = True):
+def verify_endpoint(messages, client, expected_locations, multiple_write_locations=True,
+                    operation_type=None, resource_type=None):
     if not multiple_write_locations:
         expected_locations[-1] = L1
 
@@ -184,6 +185,15 @@ def verify_endpoint(messages, client, expected_locations, multiple_write_locatio
     # get location
     actual_locations = set()
     for req_url in req_urls:
+        # Requests that require session tokens to be set can now potentially have a request made to fetch partition key ranges beforehand.
+        # We only care about the request that is made to the actual item endpoint.
+        if operation_type and resource_type:
+            req_resource_type = re.search(r"'x-ms-thinclient-proxy-resource-type':\s*'([^']+)'", req_url)
+            req_operation_type = re.search(r"'x-ms-thinclient-proxy-operation-type':\s*'([^']+)'", req_url)
+            resource_value = req_resource_type.group(1)
+            operation_value = req_operation_type.group(1)
+            if resource_type != resource_value or operation_type != operation_value:
+                continue
         if req_url.startswith(default_endpoint):
             actual_locations.add(L0)
         else:
@@ -210,6 +220,7 @@ def setup_and_teardown():
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
@@ -355,7 +366,7 @@ class TestExcludedLocations:
             # Single write
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_patch_item(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -380,7 +391,7 @@ class TestExcludedLocations:
             # get location from mock_handler
             verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
 
-    @pytest.mark.parametrize('test_data', write_item_test_data())
+    @pytest.mark.parametrize('test_data', read_and_write_item_test_data())
     def test_execute_item_batch(self, test_data):
         # Init test variables
         preferred_locations, client_excluded_locations, request_excluded_locations, expected_locations = test_data
@@ -423,7 +434,7 @@ class TestExcludedLocations:
             item_id = f'doc2-{str(uuid.uuid4())}'
             body = {'id': item_id}
             body.update(PARTITION_KEY_ITEMS)
-            create_item_with_excluded_locations(container, body, request_excluded_locations)
+            create_item_with_excluded_locations(container, body, None)
             MOCK_HANDLER.reset()
 
             # API call: delete_item
@@ -433,7 +444,8 @@ class TestExcludedLocations:
                 container.delete_item(item_id, PARTITION_KEY_VALUES, excluded_locations=request_excluded_locations)
 
             # Verify endpoint locations
-            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations)
+            verify_endpoint(MOCK_HANDLER.messages, client, expected_locations, multiple_write_locations,
+                            operation_type=OperationType.Delete, resource_type=ResourceType.Document)
 
 if __name__ == "__main__":
     unittest.main()

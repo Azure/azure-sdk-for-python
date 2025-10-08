@@ -55,7 +55,6 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers_async import (
     AsyncStream,
-    MockStorageTransport,
     _build_base_file_share_headers,
     _create_file_share_oauth
 )
@@ -184,7 +183,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             self.get_resource_name("file"),
             bearer_token_string,
             storage_account_name,
-            source_data
+            source_data,
+            self.is_live
         )
 
         # Set up destination blob without data
@@ -218,13 +218,14 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             # Assert
             assert destination_blob_data == source_data
         finally:
-            async with aiohttp.ClientSession() as session:
-                await session.delete(
-                    url=base_url,
-                    headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
-                )
-            await blob_service_client.delete_container(self.source_container_name)
+            if self.is_live:
+                async with aiohttp.ClientSession() as session:
+                    await session.delete(
+                        url=base_url,
+                        headers=_build_base_file_share_headers(bearer_token_string, 0),
+                        params={'restype': 'share'}
+                    )
+                await blob_service_client.delete_container(self.source_container_name)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -3525,58 +3526,4 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         result = await (await blob.download_blob()).readall()
         assert result == data[:length]
 
-    @BlobPreparer()
-    async def test_mock_transport_no_content_validation(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        transport = MockStorageTransport()
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
-            blob_name='test_blob',
-            credential=storage_account_key,
-            transport=transport,
-            retry_total=0
-        )
-
-        content = await blob_client.download_blob()
-        assert content is not None
-
-        props = await blob_client.get_blob_properties()
-        assert props is not None
-
-        data = b"Hello Async World!"
-        stream = AsyncStream(data)
-        resp = await blob_client.upload_blob(stream, overwrite=True)
-        assert resp is not None
-
-        blob_data = await (await blob_client.download_blob()).read()
-        assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
-
-        resp = await blob_client.delete_blob()
-        assert resp is None
-
-    @BlobPreparer()
-    async def test_mock_transport_with_content_validation(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        transport = MockStorageTransport()
-        blob_client = BlobClient(
-            self.account_url(storage_account_name, "blob"),
-            container_name='test_cont',
-            blob_name='test_blob',
-            credential=storage_account_key,
-            transport=transport,
-            retry_total=0
-        )
-
-        data = b"Hello Async World!"
-        stream = AsyncStream(data)
-        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
-        assert resp is not None
-
-        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
-        assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 # ------------------------------------------------------------------------------

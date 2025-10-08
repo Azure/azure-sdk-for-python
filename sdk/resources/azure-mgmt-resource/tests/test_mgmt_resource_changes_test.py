@@ -5,8 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import azure.mgmt.resource
-import azure.mgmt.resource.changes
+from azure.mgmt.resource.resources import ResourceManagementClient
+from azure.mgmt.resource.changes import ChangesClient
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 import pytest
 
@@ -15,8 +15,8 @@ import pytest
 class TestMgmtResourceLinks(AzureMgmtRecordedTestCase):
 
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(azure.mgmt.resource.changes.ChangesClient)
-        self.resource_client = self.create_mgmt_client(azure.mgmt.resource.ResourceManagementClient)
+        self.client = self.create_mgmt_client(ChangesClient)
+        self.resource_client = self.create_mgmt_client(ResourceManagementClient)
 
     @RandomNameResourceGroupPreparer()
     @recorded_by_proxy

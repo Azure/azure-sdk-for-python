@@ -33,8 +33,9 @@ async def process_content(data: Any) -> bytes:
         raise ValueError("Response cannot be None.")
 
     try:
-        await data.response.load_body()
-        return cast(bytes, data.response.body())
+        if hasattr(data.response, "is_stream_consumed") and data.response.is_stream_consumed:
+            return data.response.content
+        return b"".join([d async for d in data])
     except Exception as error:
         raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
@@ -100,7 +101,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         return chunk_data
 
 
-class _AsyncChunkIterator(object):
+class _AsyncChunkIterator:
     """Async iterator for chunks in file download stream."""
 
     def __init__(self, size: int, content: bytes, downloader: Optional[_AsyncChunkDownloader], chunk_size: int) -> None:
@@ -155,7 +156,7 @@ class _AsyncChunkIterator(object):
         return chunk_data
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage."""
 
     name: str

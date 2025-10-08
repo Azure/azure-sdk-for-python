@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,10 +10,10 @@ from collections.abc import MutableMapping
 import datetime
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 import urllib.parse
 
-from azure.core import MatchConditions
+from azure.core import MatchConditions, PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -31,9 +32,10 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._model_base import SdkJSONEncoder, _deserialize
-from .._serialization import Serializer
-from .._vendor import OnlineExperimentationClientMixinABC, prep_if_match, prep_if_none_match
+from .._configuration import OnlineExperimentationClientConfiguration
+from .._utils.model_base import SdkJSONEncoder, _deserialize
+from .._utils.serialization import Serializer
+from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -221,7 +223,9 @@ def build_online_experimentation_list_metrics_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class OnlineExperimentationClientOperationsMixin(OnlineExperimentationClientMixinABC):  # pylint: disable=name-too-long
+class OnlineExperimentationClientOperationsMixin(  # pylint: disable=name-too-long
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], OnlineExperimentationClientConfiguration]
+):
 
     @distributed_trace
     def get_metric(
@@ -764,7 +768,7 @@ class OnlineExperimentationClientOperationsMixin(OnlineExperimentationClientMixi
     @distributed_trace
     def list_metrics(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> Iterable["_models.ExperimentMetric"]:
+    ) -> ItemPaged["_models.ExperimentMetric"]:
         """Lists experiment metrics.
 
         :keyword top: The number of result items to return. Default value is None.

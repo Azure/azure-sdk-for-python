@@ -16,6 +16,7 @@ from azure.keyvault.certificates import (
     ApiVersion,
     CertificateClient,
     CertificateContact,
+    CertificateOperation,
     CertificatePolicyAction,
     CertificatePolicy,
     CertificateProperties,
@@ -30,6 +31,10 @@ from azure.keyvault.certificates import (
     WellKnownIssuerNames,
 )
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
+from azure.keyvault.certificates._generated.models import (
+    CertificateOperation as _CertificateOperation,
+    KeyVaultErrorError,
+)
 from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 import pytest
 
@@ -727,7 +732,7 @@ class TestCertificateClient(KeyVaultTestCase):
     @recorded_by_proxy
     def test_preserve_certificate_order(self, client, **kwargs):
         """
-        Ensure that preserve_certificate_order works with begin_create_certificate and that the property appears in
+        Ensure that preserve_order works with begin_create_certificate and that the property appears in
         models returned by the service.
         """
         cert_name = self.get_resource_name("cert")
@@ -735,10 +740,10 @@ class TestCertificateClient(KeyVaultTestCase):
 
         # create certificate
         certificate = client.begin_create_certificate(
-            certificate_name=cert_name, policy=cert_policy, preserve_certificate_order=True
+            certificate_name=cert_name, policy=cert_policy, preserve_order=True
         ).result()
 
-        assert certificate.properties.preserve_certificate_order is True
+        assert certificate.properties.preserve_order is True
 
     @pytest.mark.parametrize("api_version", only_latest)
     @CertificatesClientPreparer()
@@ -757,6 +762,34 @@ class TestCertificateClient(KeyVaultTestCase):
         with patch.object(client._client._client._pipeline, "run", run):
             with pytest.raises(ResourceExistsError):
                 client.begin_create_certificate("...", CertificatePolicy.get_default())
+
+    @pytest.mark.parametrize("api_version", only_latest)
+    @CertificatesClientPreparer()
+    @recorded_by_proxy
+    def test_unknown_issuer_response(self, client, **kwargs):
+        """When a certificate is created with an unknown issuer, the poller result should be a CertificateOperation"""
+        cert_name = self.get_resource_name("unknownIssuer")
+
+        # create certificate with unknown issuer
+        cert_policy = CertificatePolicy(
+            issuer_name=WellKnownIssuerNames.unknown,
+            subject="CN=*.microsoft.com",
+            san_dns_names=["sdk.azure-int.net"],
+            exportable=True,
+            key_type="RSA",
+            key_size=2048,
+            reuse_key=False,
+            content_type=CertificateContentType.pkcs12,
+            validity_in_months=24,
+        )
+        create_certificate_poller = client.begin_create_certificate(
+            certificate_name=cert_name, policy=cert_policy
+        )
+        result = create_certificate_poller.result()
+        # The operation should indicate that certificate creation is in progress and requires a merge to complete
+        assert isinstance(result, CertificateOperation)
+        assert result.status and result.status.lower() == "inprogress"
+        assert result.status_details and "merge" in result.status_details.lower()
 
 
 def test_policy_expected_errors_for_create_cert():
@@ -805,3 +838,14 @@ def test_thumbprint_hex():
         x509_thumbprint=b"v\xe1\x81\x9f\xad\xf0jU\xefK\x12j.\xf7C\xc2\xba\xe8\xa1Q",
     )
     assert "76E1819FADF06A55EF4B126A2EF743C2BAE8A151" in str(properties)
+
+
+def test_certificate_operation_empty_inner_error():
+    """Ensure a CertificateOperation can be serialized when the generated model has no inner error.
+    See https://github.com/Azure/azure-cli/issues/31764.
+    """
+    error = KeyVaultErrorError(code="500", message="Bad Request", inner_error=None)
+    generated_operation = _CertificateOperation(error=error)
+    operation = CertificateOperation._from_certificate_operation_bundle(generated_operation)
+    assert operation.error
+    assert operation.error.inner_error is None

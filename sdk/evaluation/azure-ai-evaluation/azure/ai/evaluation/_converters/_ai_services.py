@@ -11,7 +11,18 @@ from azure.ai.evaluation._common._experimental import experimental
 from packaging.version import Version
 
 # Constants.
-from ._models import _USER, _AGENT, _TOOL, _TOOL_CALL, _TOOL_CALLS, _FUNCTION, _BUILT_IN_DESCRIPTIONS, _BUILT_IN_PARAMS
+from ._models import (
+    _USER,
+    _AGENT,
+    _TOOL,
+    _TOOL_CALL,
+    _TOOL_CALLS,
+    _FUNCTION,
+    _BUILT_IN_DESCRIPTIONS,
+    _BUILT_IN_PARAMS,
+    _OPENAPI,
+    OpenAPIToolDefinition,
+)
 
 # Message instances.
 from ._models import Message, SystemMessage, UserMessage, AssistantMessage, ToolCall
@@ -93,7 +104,7 @@ class AIAgentConverter:
         return tool_calls_chronological
 
     @staticmethod
-    def _extract_function_tool_definitions(thread_run: object) -> List[ToolDefinition]:
+    def _extract_function_tool_definitions(thread_run: object) -> List[Union[ToolDefinition, OpenAPIToolDefinition]]:
         """
         Extracts tool definitions from a thread run.
 
@@ -121,6 +132,26 @@ class AIAgentConverter:
                         parameters=parameters,
                     )
                 )
+            elif tool.type == _OPENAPI:
+                openapi_tool = tool.openapi
+                tool_definition = OpenAPIToolDefinition(
+                    name=openapi_tool.name,
+                    description=openapi_tool.description,
+                    type=_OPENAPI,
+                    spec=openapi_tool.spec,
+                    auth=openapi_tool.auth.as_dict(),
+                    default_params=openapi_tool.default_params.as_dict() if openapi_tool.default_params else None,
+                    functions=[
+                        ToolDefinition(
+                            name=func.get("name"),
+                            description=func.get("description"),
+                            parameters=func.get("parameters"),
+                            type="function",
+                        )
+                        for func in openapi_tool.get("functions")
+                    ],
+                )
+                final_tools.append(tool_definition)
             else:
                 # Add limited support for built-in tools. Descriptions and parameters
                 # are not published, but we'll include placeholders.
@@ -243,16 +274,30 @@ class AIAgentConverter:
             if len(single_turn.content) < 1:
                 continue
 
-            # Build the content of the text message.
-            content = {
-                "type": "text",
-                "text": single_turn.content[0].text.value,
-            }
+            content_list = []
+            # If content is a list, process all content items.
+            for content_item in single_turn.content:
+                if content_item.type == "text":
+                    content_list.append(
+                        {
+                            "type": "text",
+                            "text": content_item.text.value,
+                        }
+                    )
+                elif content_item.type == "image":
+                    content_list.append(
+                        {
+                            "type": "image",
+                            "image": {
+                                "file_id": content_item.image_file.file_id,
+                            },
+                        }
+                    )
 
             # If we have a user message, then we save it as such and since it's a human message, there is no
             # run_id associated with it.
             if single_turn.role == _USER:
-                final_messages.append(UserMessage(content=[content], createdAt=single_turn.created_at))
+                final_messages.append(UserMessage(content=content_list, createdAt=single_turn.created_at))
                 continue
 
             # In this case, we have an assistant message. Unfortunately, this would only have the user-facing
@@ -261,7 +306,7 @@ class AIAgentConverter:
             if single_turn.role == _AGENT:
                 # We are required to put the run_id in the assistant message.
                 final_messages.append(
-                    AssistantMessage(content=[content], run_id=single_turn.run_id, createdAt=single_turn.created_at)
+                    AssistantMessage(content=content_list, run_id=single_turn.run_id, createdAt=single_turn.created_at)
                 )
                 continue
 
@@ -718,6 +763,7 @@ class AIAgentConverter:
 
         return AIAgentConverter._convert_from_conversation(data, run_id)
 
+
 @experimental
 class AIAgentDataRetriever:
     # Maximum items to fetch in a single AI Services API call (imposed by the service).
@@ -748,6 +794,7 @@ class AIAgentDataRetriever:
     def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
         pass
 
+
 @experimental
 class LegacyAgentDataRetriever(AIAgentDataRetriever):
 
@@ -768,7 +815,8 @@ class LegacyAgentDataRetriever(AIAgentDataRetriever):
         after = None
         while has_more:
             messages = self.project_client.agents.list_messages(
-            thread_id=thread_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc", after=after)
+                thread_id=thread_id, limit=self._AI_SERVICES_API_MAX_LIMIT, order="asc", after=after
+            )
             has_more = messages.has_more
             after = messages.last_id
             if messages.data:
@@ -788,6 +836,7 @@ class LegacyAgentDataRetriever(AIAgentDataRetriever):
                 limit=self._AI_SERVICES_API_MAX_LIMIT,
                 order="asc",
                 after=after,
+                include=["step_details.tool_calls[*].file_search.results[*].content"],
             )
             has_more = run_steps.has_more
             after = run_steps.last_id
@@ -812,6 +861,7 @@ class LegacyAgentDataRetriever(AIAgentDataRetriever):
     def _get_run(self, thread_id: str, run_id: str):
         return self.project_client.agents.get_run(thread_id=thread_id, run_id=run_id)
 
+
 @experimental
 class FDPAgentDataRetriever(AIAgentDataRetriever):
 
@@ -833,12 +883,13 @@ class FDPAgentDataRetriever(AIAgentDataRetriever):
 
     def _list_run_steps_chronological(self, thread_id: str, run_id: str):
 
-        return  self.project_client.agents.run_steps.list(
-                thread_id=thread_id,
-                run_id=run_id,
-                limit=self._AI_SERVICES_API_MAX_LIMIT,
-                order="asc"
-            )
+        return self.project_client.agents.run_steps.list(
+            thread_id=thread_id,
+            run_id=run_id,
+            limit=self._AI_SERVICES_API_MAX_LIMIT,
+            order="asc",
+            include=["step_details.tool_calls[*].file_search.results[*].content"],
+        )
 
     def _list_run_ids_chronological(self, thread_id: str) -> List[str]:
         runs = self.project_client.agents.runs.list(thread_id=thread_id, order="asc")

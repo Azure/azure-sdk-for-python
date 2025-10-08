@@ -34,7 +34,7 @@ from . import _retry_utility_async
 from .._synchronized_request import _request_body_from_data, _replace_url_prefix
 
 
-async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs):
+async def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs): # pylint: disable=too-many-statements
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
@@ -59,6 +59,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     # Every request tries to perform a refresh
     client_timeout = kwargs.get('timeout')
     start_time = time.time()
+    if request_params.healthy_tentative_location:
+        read_timeout = connection_policy.RecoveryReadTimeout
     if request_params.resource_type != http_constants.ResourceType.DatabaseAccount:
         await global_endpoint_manager.refresh_endpoint_list(None, **kwargs)
     else:
@@ -73,7 +75,11 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     if request_params.endpoint_override:
         base_url = request_params.endpoint_override
     else:
-        base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
+        pk_range_wrapper = None
+        if global_endpoint_manager.is_circuit_breaker_applicable(request_params):
+            # Circuit breaker is applicable, so we need to use the endpoint from the request
+            pk_range_wrapper = await global_endpoint_manager.create_pk_range_wrapper(request_params)
+        base_url = global_endpoint_manager.resolve_service_endpoint_for_partition(request_params, pk_range_wrapper)
     if not request.url.startswith(base_url):
         request.url = _replace_url_prefix(request.url, base_url)
 
@@ -101,6 +107,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             read_timeout=read_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
+            request_params=request_params,
+            global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
     else:
@@ -111,6 +119,8 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
             read_timeout=read_timeout,
             # If SSL is disabled, verify = false
             connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
+            request_params=request_params,
+            global_endpoint_manager=global_endpoint_manager,
             **kwargs
         )
 

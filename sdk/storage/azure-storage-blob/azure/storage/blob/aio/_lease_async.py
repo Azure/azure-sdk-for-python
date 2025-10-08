@@ -19,7 +19,7 @@ if TYPE_CHECKING:
     from datetime import datetime
 
 
-class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
+class BlobLeaseClient: # pylint: disable=client-accepts-api-version-keyword
     """Creates a new BlobLeaseClient.
 
     This client provides lease operations on a BlobClient or ContainerClient.
@@ -40,7 +40,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
     """The last modified timestamp of the lease currently being maintained.
     This will be `None` if no lease has yet been acquired or modified."""
 
-    def __init__( # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
         self, client: Union["BlobClient", "ContainerClient"],
         lease_id: Optional[str] = None
     ) -> None:
@@ -107,6 +107,7 @@ class BlobLeaseClient(): # pylint: disable=client-accepts-api-version-keyword
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`__.
+        :return: None
         :rtype: None
         """
         mod_conditions = get_modify_conditions(kwargs)

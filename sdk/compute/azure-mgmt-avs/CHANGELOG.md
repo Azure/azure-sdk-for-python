@@ -1,5 +1,48 @@
 # Release History
 
+## 9.1.0 (2025-06-03)
+
+### Features Added
+
+  - Client `AVSClient` added operation group `skus`
+  - Client `AVSClient` added operation group `hosts`
+  - Client `AVSClient` added operation group `provisioned_networks`
+  - Client `AVSClient` added operation group `pure_storage_policies`
+  - Model `AddonHcxProperties` added property `management_network`
+  - Model `AddonHcxProperties` added property `uplink_network`
+  - Model `Datastore` added property `pure_storage_volume`
+  - Model `PrivateCloud` added property `zones`
+  - Added model `GeneralHostProperties`
+  - Added model `Host`
+  - Added enum `HostKind`
+  - Added model `HostListResult`
+  - Added enum `HostMaintenance`
+  - Added model `HostProperties`
+  - Added enum `HostProvisioningState`
+  - Added model `PagedResourceSku`
+  - Added model `ProvisionedNetwork`
+  - Added model `ProvisionedNetworkListResult`
+  - Added enum `ProvisionedNetworkProvisioningState`
+  - Added enum `ProvisionedNetworkTypes`
+  - Added model `PureStoragePolicy`
+  - Added model `PureStoragePolicyListResult`
+  - Added enum `PureStoragePolicyProvisioningState`
+  - Added model `PureStorageVolume`
+  - Added model `ResourceSku`
+  - Added model `ResourceSkuCapabilities`
+  - Added model `ResourceSkuLocationInfo`
+  - Added enum `ResourceSkuResourceType`
+  - Added model `ResourceSkuRestrictionInfo`
+  - Added model `ResourceSkuRestrictions`
+  - Added enum `ResourceSkuRestrictionsReasonCode`
+  - Added enum `ResourceSkuRestrictionsType`
+  - Added model `ResourceSkuZoneDetails`
+  - Added model `SpecializedHostProperties`
+  - Added operation group `HostsOperations`
+  - Added operation group `ProvisionedNetworksOperations`
+  - Added operation group `PureStoragePoliciesOperations`
+  - Added operation group `SkusOperations`
+
 ## 9.0.0 (2024-09-22)
 
 ### Features Added

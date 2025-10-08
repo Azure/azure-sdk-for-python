@@ -116,8 +116,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -154,8 +152,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -192,8 +188,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ExceptionPolicy. The ExceptionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -205,21 +199,6 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update an exception policy.
 
         :param str exception_policy_id: Id of the exception policy.
-
-        :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
-          policy. Key is the Id of each exception rule.
-        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
-
-        :keyword Optional[str] name: The name of this policy.
-
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
@@ -378,8 +357,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -416,8 +393,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -454,8 +429,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: DistributionPolicy. The DistributionPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -467,26 +440,7 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a distribution policy.
 
         :param str distribution_policy_id: Id of the distribution policy.
-
-        :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
-          will be governed by the offer time to live.
-
-        :keyword mode: Specified distribution mode
-        :paramtype mode: Optional[Union[~azure.communication.jobrouter.models.BestWorkerMode,
-            ~azure.communication.jobrouter.models.LongestIdleMode,
-            ~azure.communication.jobrouter.models.RoundRobinMode]]
-
-        :keyword Optional[str] name: The name of this policy.
-
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-
+        
         :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -649,8 +603,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -687,8 +639,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -725,8 +675,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterQueue. The RouterQueue is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -738,27 +686,6 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a job queue
 
         :param str queue_id: Id of the queue.
-
-        :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
-          how a job is distributed to workers.
-
-        :keyword Optional[str] name: The name of this queue.
-
-        :keyword labels: A set of key/value pairs that are
-          identifying attributes used by the rules engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
-
-        :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
-          job escalation rules.
-
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.models.RouterQueue
@@ -886,8 +813,8 @@ class JobRouterAdministrationClientOperationsMixin(
         :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
         :paramtype fallback_queue_id: Optional[str]
 
-        :keyword queue_selector_attachments: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selector_attachments: Optional[List[Union
+        :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
+        :paramtype queue_selectors: Optional[List[Union
           ~azure.communication.jobrouter.models.StaticQueueSelectorAttachment,
           ~azure.communication.jobrouter.models.ConditionalQueueSelectorAttachment,
           ~azure.communication.jobrouter.models.RuleEngineQueueSelectorAttachment,
@@ -900,8 +827,8 @@ class JobRouterAdministrationClientOperationsMixin(
           ~azure.communication.jobrouter.models.FunctionRouterRule,
           ~azure.communication.jobrouter.models.WebhookRouterRule]]
 
-        :keyword worker_selector_attachments: The worker label selectors to attach to a given job.
-        :paramtype worker_selector_attachments: Optional[List[Union[
+        :keyword worker_selectors: The worker label selectors to attach to a given job.
+        :paramtype worker_selectors: Optional[List[Union[
           ~azure.communication.jobrouter.models.StaticWorkerSelectorAttachment,
           ~azure.communication.jobrouter.models.ConditionalWorkerSelectorAttachment,
           ~azure.communication.jobrouter.models.RuleEngineWorkerSelectorAttachment,
@@ -962,8 +889,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1000,8 +925,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1038,8 +961,6 @@ class JobRouterAdministrationClientOperationsMixin(
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: ClassificationPolicy. The ClassificationPolicy is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1051,42 +972,6 @@ class JobRouterAdministrationClientOperationsMixin(
         """Update a classification policy
 
         :param str classification_policy_id: Id of the classification policy.
-
-        :keyword Optional[str] name: Friendly name of this policy.
-
-        :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
-        :paramtype fallback_queue_id: Optional[str]
-
-        :keyword queue_selector_attachments: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selector_attachments: Optional[List[Union
-          ~azure.communication.jobrouter.models.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.models.ConditionalQueueSelectorAttachment,
-          ~azure.communication.jobrouter.models.RuleEngineQueueSelectorAttachment,
-          ~azure.communication.jobrouter.models.PassThroughQueueSelectorAttachment,
-          ~azure.communication.jobrouter.models.WeightedAllocationQueueSelectorAttachment]]]
-
-        :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.models.StaticRouterRule,
-          ~azure.communication.jobrouter.models.ExpressionRouterRule,
-          ~azure.communication.jobrouter.models.FunctionRouterRule,
-          ~azure.communication.jobrouter.models.WebhookRouterRule]]
-
-        :keyword worker_selector_attachments: The worker label selectors to attach to a given job.
-        :paramtype worker_selector_attachments: Optional[List[Union[
-          ~azure.communication.jobrouter.models.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.models.ConditionalWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.models.RuleEngineWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.models.PassThroughWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.models.WeightedAllocationWorkerSelectorAttachment]]]
-
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
@@ -1193,12 +1078,12 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :param str worker_id: Id of the worker.
 
-        :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
+        :keyword queues: The queue(s) that this worker can receive work from.
+        :paramtype queues: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
-        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
+        :keyword capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
-        :paramtype total_capacity: Optional[int]
+        :paramtype capacity: Optional[int]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -1207,10 +1092,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
         :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
-        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
+        :keyword channels: The channel(s) this worker can handle and their impact on the
          workers capacity.
-        :paramtype channel_configurations: Optional[Dict[str,
-          ~azure.communication.jobrouter.models.ChannelConfiguration]]
+        :paramtype channels: Optional[List[
+          ~azure.communication.jobrouter.models.RouterChannel]]
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
@@ -1291,8 +1176,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1329,8 +1212,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1367,8 +1248,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterWorker. The RouterWorker is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1380,41 +1259,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """Update a router worker.
 
         :param str worker_id: Id of the worker.
-
-        :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
-
-        :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
-         jobs.
-        :paramtype total_capacity: Optional[int]
-
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-         engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
-
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
-
-        :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
-         workers capacity.
-        :paramtype channel_configurations: Optional[Dict[str,
-          ~azure.communication.jobrouter.models.ChannelConfiguration]]
-
-        :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
-        :paramtype available_for_offers: Optional[bool]
-
-        :keyword max_concurrent_offers: If this is set, the worker will only receive up to this many new
-          offers at a time.
-        :paramtype max_concurrent_offers: Optional[int]
-
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.models.RouterWorker
@@ -1669,8 +1513,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1707,8 +1549,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1745,8 +1585,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
         :return: RouterJob. The RouterJob is compatible with MutableMapping
         :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1758,52 +1596,6 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """Update a job.
 
         :param str job_id: Id of the job.
-
-        :keyword channel_reference: Reference to an external parent context, eg. call ID.
-        :paramtype channel_reference: Optional[str]
-
-        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
-        :paramtype channel_id: Optional[str]
-
-        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
-         job.
-        :paramtype classification_policy_id: Optional[str]
-
-        :keyword queue_id: The Id of the Queue that this job is queued to.
-        :paramtype queue_id: Optional[str]
-
-        :keyword priority: The priority of this job.
-        :paramtype priority: Optional[int]
-
-        :keyword disposition_code: Reason code for cancelled or closed jobs.
-        :paramtype disposition_code: Optional[str]
-
-        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
-         a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[
-          ~azure.communication.jobrouter.models.RouterWorkerSelector]]
-
-        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
-         engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
-
-        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
-
-        :keyword notes: Notes attached to a job, sorted by timestamp.
-        :paramtype notes: Optional[Dict[~datetime.datetime, str]]
-
-        :keyword matching_mode: If set, determines how a job will be matched
-        :paramtype matching_mode: Optional[~azure.communication.jobrouter.models.JobMatchingMode]
-
-        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
-         after this time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.models.RouterJob

@@ -64,6 +64,26 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduled backup"""
 
 
+class BucketPatchPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access permissions for the bucket. Either ReadOnly or ReadWrite."""
+
+    READ_ONLY = "ReadOnly"
+    """Read-only access to bucket."""
+    READ_WRITE = "ReadWrite"
+    """Read-write access to bucket."""
+
+
+class BucketPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access permissions for the bucket. Either ReadOnly or ReadWrite. The default is ReadOnly if no
+    value is provided during bucket creation.
+    """
+
+    READ_ONLY = "ReadOnly"
+    """Read-only access to bucket."""
+    READ_WRITE = "ReadWrite"
+    """Read-write access to bucket."""
+
+
 class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource type used for verification."""
 
@@ -282,11 +302,17 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the replication."""
+    """The mirror state property describes the current status of data replication for a resource. It
+    provides insight into whether the data is actively being mirrored, if the replication process
+    has been paused, or if it has yet to be initialized.
+    """
 
     UNINITIALIZED = "Uninitialized"
+    """The mirror state is still uninitialized"""
     MIRRORED = "Mirrored"
+    """The mirror state is mirrored"""
     BROKEN = "Broken"
+    """The mirror state is broken"""
 
 
 class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -298,7 +324,7 @@ class MultiAdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account is MultiAD enabled"""
 
 
-class NetappProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class NetAppProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the resource."""
 
     SUCCEEDED = "Succeeded"
@@ -309,6 +335,8 @@ class NetappProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource creation was canceled."""
     PROVISIONING = "Provisioning"
     """Resource is getting provisioned"""
+    MOVING = "Moving"
+    """Resource is getting moved"""
     UPDATING = "Updating"
     """Resource is updating"""
     DELETING = "Deleting"
@@ -337,18 +365,6 @@ class NetworkSiblingSetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnu
     FAILED = "Failed"
     CANCELED = "Canceled"
     UPDATING = "Updating"
-
-
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the status of the VolumeQuotaRule at the time the operation was called."""
-
-    ACCEPTED = "Accepted"
-    CREATING = "Creating"
-    PATCHING = "Patching"
-    DELETING = "Deleting"
-    MOVING = "Moving"
-    FAILED = "Failed"
-    SUCCEEDED = "Succeeded"
 
 
 class QosType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -382,12 +398,12 @@ class RegionStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMe
 
 
 class RelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the mirror relationship."""
+    """The status of the Volume Replication."""
 
     IDLE = "Idle"
+    """No data is currently being transferred between volumes"""
     TRANSFERRING = "Transferring"
-    FAILED = "Failed"
-    UNKNOWN = "Unknown"
+    """Data is being transferred between volumes"""
 
 
 class ReplicationSchedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):

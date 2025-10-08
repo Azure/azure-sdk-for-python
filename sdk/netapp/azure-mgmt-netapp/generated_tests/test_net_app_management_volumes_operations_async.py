@@ -26,7 +26,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -80,6 +80,8 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                             "endpointType": "str",
                             "externalReplicationSetupInfo": "str",
                             "externalReplicationSetupStatus": "str",
+                            "mirrorState": "str",
+                            "relationshipStatus": "str",
                             "remotePath": {"externalHostName": "str", "serverName": "str", "volumeName": "str"},
                             "remoteVolumeRegion": "str",
                             "remoteVolumeResourceId": "str",
@@ -171,7 +173,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "volumeType": "str",
                     "zones": ["str"],
                 },
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -234,7 +236,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                     "unixPermissions": "str",
                     "usageThreshold": 107374182400,
                 },
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -250,7 +252,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -266,7 +268,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -283,7 +285,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 body={"snapshotId": "str"},
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -299,7 +301,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -315,7 +317,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -331,7 +333,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -348,7 +350,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 body={"username": "str"},
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -364,7 +366,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -380,7 +382,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -397,7 +399,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 body={"sourceVolumeId": "str"},
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -412,7 +414,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -426,7 +428,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
             account_name="str",
             pool_name="str",
             volume_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -441,7 +443,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -457,7 +459,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -474,7 +476,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 body={"remoteVolumeResourceId": "str"},
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -490,7 +492,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -507,7 +509,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 body={"peerIpAddresses": ["str"]},
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -523,7 +525,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -539,7 +541,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -555,7 +557,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -572,7 +574,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 pool_name="str",
                 volume_name="str",
                 body={"newPoolResourceId": "str"},
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -588,7 +590,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -604,7 +606,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -620,7 +622,7 @@ class TestNetAppManagementVolumesOperationsAsync(AzureMgmtRecordedTestCase):
                 account_name="str",
                 pool_name="str",
                 volume_name="str",
-                api_version="2025-01-01-preview",
+                api_version="2025-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

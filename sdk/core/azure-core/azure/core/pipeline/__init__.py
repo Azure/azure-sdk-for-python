@@ -107,18 +107,18 @@ class PipelineContext(Dict[str, Any]):
     def clear(  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         self,
     ) -> None:
-        """Context objects cannot be cleared.
+        """Clears the context objects.
 
-        :raises: TypeError
+        :raises TypeError: If context objects cannot be cleared
         """
         raise TypeError("Context objects cannot be cleared.")
 
     def update(  # pylint: disable=docstring-missing-return, docstring-missing-rtype, docstring-missing-param
         self, *args: Any, **kwargs: Any
     ) -> None:
-        """Context objects cannot be updated.
+        """Updates the context objects.
 
-        :raises: TypeError
+        :raises TypeError: If context objects cannot be updated
         """
         raise TypeError("Context objects cannot be updated.")
 
@@ -135,7 +135,7 @@ class PipelineContext(Dict[str, Any]):
         :type args: str
         :return: The value for this key.
         :rtype: any
-        :raises: ValueError If the key is in the protected list.
+        :raises ValueError: If the key is in the protected list.
         """
         if args and args[0] in self._protected:
             raise ValueError("Context value {} cannot be popped.".format(args[0]))

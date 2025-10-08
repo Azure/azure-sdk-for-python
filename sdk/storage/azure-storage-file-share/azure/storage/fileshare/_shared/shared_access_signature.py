@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=docstring-keyword-should-match-keyword-only
 
 from datetime import date
 
@@ -158,7 +159,7 @@ class SharedAccessSignature(object):
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
         :type sts_hook: Optional[Callable[[str], None]]
-        :returns: The generated SAS token for the account.
+        :return: The generated SAS token for the account.
         :rtype: str
         """
         sas = _SharedAccessHelper()

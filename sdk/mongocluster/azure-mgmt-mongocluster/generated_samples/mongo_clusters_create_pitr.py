@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -36,6 +37,7 @@ def main():
         resource={
             "location": "westus2",
             "properties": {
+                "administrator": {"password": "password", "userName": "mongoAdmin"},
                 "createMode": "PointInTimeRestore",
                 "restoreParameters": {
                     "pointInTimeUTC": "2023-01-13T20:07:35Z",
@@ -47,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-07-01/MongoClusters_CreatePITR.json
+# x-ms-original-file: 2025-08-01-preview/MongoClusters_CreatePITR.json
 if __name__ == "__main__":
     main()

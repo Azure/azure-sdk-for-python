@@ -34,15 +34,15 @@ class BleuScoreEvaluator(EvaluatorBase):
             :language: python
             :dedent: 8
             :caption: Initialize and call an BleuScoreEvaluator using azure.ai.evaluation.AzureAIProject
-        
+
     .. admonition:: Example using Azure AI Project URL:
-                
+
         .. literalinclude:: ../samples/evaluation_samples_evaluate_fdp.py
             :start-after: [START bleu_score_evaluator]
             :end-before: [END bleu_score_evaluator]
             :language: python
             :dedent: 8
-            :caption: Initialize and call an BleuScoreEvaluator using Azure AI Project URL in following format 
+            :caption: Initialize and call an BleuScoreEvaluator using Azure AI Project URL in following format
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
@@ -54,7 +54,7 @@ class BleuScoreEvaluator(EvaluatorBase):
             :caption: Initialize with threshold and call an BleuScoreEvaluator.
     """
 
-    id = "azureml://registries/azureml/models/Bleu-Score-Evaluator/versions/3"
+    id = "azureai://built-in/evaluators/bleu_score"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
     def __init__(self, *, threshold=0.5):

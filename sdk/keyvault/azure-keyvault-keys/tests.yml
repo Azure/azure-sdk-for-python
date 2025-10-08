@@ -4,6 +4,7 @@ extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: keyvault
+      PersistOidcToken: true
       BuildTargetingString: "azure-keyvault-keys"
       JobName: azure_keyvault_keys
       TestTimeoutInMinutes: 240

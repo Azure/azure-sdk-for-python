@@ -122,11 +122,11 @@ def upload_blob_to_url(
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
     :keyword str encoding:
         Encoding to use if text is supplied as input. Defaults to UTF-8.
-    :returns: Blob-updated property dict (Etag and last modified)
+    :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
-        return cast(BlobClient, client).upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-context-manager
+        return client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
 def _download_to_stream(client: BlobClient, handle: IO[bytes], **kwargs: Any) -> None:
@@ -153,7 +153,7 @@ def download_blob_from_url(
     :param output:
         Where the data should be downloaded to. This could be either a file path to write to,
         or an open IO handle to write to.
-    :type output: str or writable stream.
+    :type output: str or IO.
     :param credential:
         The credentials with which to authenticate. This is optional if the
         blob URL already has a SAS token or the blob is public. The value can be a SAS token string,
@@ -190,10 +190,11 @@ def download_blob_from_url(
         blob. Also note that if enabled, the memory-efficient upload algorithm
         will not be used, because computing the MD5 hash requires buffering
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+    :return: None
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential) as client: # pylint: disable=not-context-manager
         if hasattr(output, 'write'):
             _download_to_stream(client, cast(IO[bytes], output), **kwargs)
         else:

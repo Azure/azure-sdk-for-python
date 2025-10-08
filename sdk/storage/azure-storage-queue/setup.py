@@ -45,11 +45,10 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -67,7 +66,7 @@ setup(
             "tests.common",
         ]
     ),
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=["azure-core>=1.30.0", "cryptography>=2.1.4", "typing-extensions>=4.6.0", "isodate>=0.6.1"],
     extras_require={
         "aio": [

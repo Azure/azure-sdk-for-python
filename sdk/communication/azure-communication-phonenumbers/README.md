@@ -22,7 +22,7 @@ pip install azure-communication-phonenumbers
 
 This SDK provides functionality to easily manage `direct offer` and `direct routing` numbers.
 
-The `direct offer` numbers come in two types: Geographic and Toll-Free. Geographic phone plans are phone plans associated with a location, whose phone numbers' area codes are associated with the area code of a geographic location. Toll-Free phone plans are phone plans not associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
+The `direct offer` numbers come in three types: Geographic, Toll-Free and Mobile. Geographic and Mobile phone plans are phone plans associated with a location, whose phone numbers' area codes are associated with the area code of a geographic location. Toll-Free phone plans are phone plans not associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
 They are managed using the `PhoneNumbersClient`
 
 The `direct routing` feature enables connecting your existing telephony infrastructure to ACS.
@@ -77,13 +77,23 @@ sip_routing_client = SipRoutingClient.from_connection_string(connection_str)
 
 #### Phone number types overview
 
-Phone numbers come in two types; Geographic and Toll-Free. Geographic phone numbers are phone numbers associated with a location, whose area codes are associated with the area code of a geographic location. Toll-Free phone numbers are phone numbers with no associated location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888.
+Phone numbers come in three types; Geographic, Toll-Free and Mobile. Toll-Free numbers are not associated with a location. For example, in the US, toll-free numbers can come with area codes such as 800 or 888. Geographic and Mobile phone numbers are phone numbers associated with a location.
+
+Phone number types with the same country are grouped into a phone plan group with that phone number type. For example all Toll-Free phone numbers within the same country are grouped into a phone plan group.
 
 #### Searching and Purchasing and Releasing numbers
 
 Phone numbers can be searched through the search creation API by providing an area code, quantity of phone numbers, application type, phone number type, and capabilities. The provided quantity of phone numbers will be reserved for ten minutes and can be purchased within this time. If the search is not purchased, the phone numbers will become available to others after ten minutes. If the search is purchased, then the phone numbers are acquired for the Azure resources.
 
 Phone numbers can also be released using the release API.
+
+#### Browsing and reserving phone numbers
+
+The Browse and Reservations APIs provide an alternate way to acquire phone numbers via a shopping-cart-like experience. This is achieved by splitting the search operation, which finds and reserves numbers using a single LRO, into two separate synchronous steps, Browse and Reservation. 
+
+The browse operation retrieves a random sample of phone numbers that are available for purchase for a given country, with optional filtering criteria to narrow down results. The returned phone numbers are not reserved for any customer.
+
+Reservations represent a collection of phone numbers that are locked by a specific customer and are awaiting purchase. They have an expiration time of 15 minutes after the last modification or 2 hours from creation time. A reservation can include numbers from different countries, in contrast with the Search operation. Customers can create, retrieve, modify (by adding and removing numbers), delete, and purchase reservations. Purchasing a reservation is an LRO.
 
 ### SIP routing client
 
@@ -114,6 +124,33 @@ Gets the information from the specified phone number
 result = phone_numbers_client.get_purchased_phone_number("<phone number>")
 print(result.country_code)
 print(result.phone_number)
+```
+
+#### Browsing and Reserving Available Phone Numbers
+
+Use the Browse and Reservations API to reserve a phone number
+
+```python
+import uuid
+
+browse_result = await phone_numbers_client.browse_available_phone_numbers(
+    country_code="US",
+    phone_number_type="tollFree"
+)
+number_to_reserve = browse_result.phone_numbers[0]
+
+# The reservation ID needs to be a valid UUID.
+reservation_id = str(uuid.uuid4())
+reservation = await phone_numbers_client.create_or_update_reservation(
+    reservation_id=reservation_id,
+    numbers_to_add=[number_to_reserve]
+)
+
+numbers_with_error = [n for n in reservation.phone_numbers.values() if n.status == "error"]
+if any(numbers_with_error):
+    print("Errors occurred during reservation")
+else:
+    print("Reservation operation completed without errors.")
 ```
 
 ### Long Running Operations
@@ -180,6 +217,32 @@ poller = phone_numbers_client.begin_update_phone_number_capabilities(
     PhoneNumberCapabilityType.INBOUND_OUTBOUND,
     polling = True
 )
+```
+
+#### Purchase Reservation
+
+Given an existing and active reservation, purchase the phone numbers in that reservation.
+
+```python
+reservation_id = "<reservation id>"
+poller = phone_numbers_client.begin_purchase_reservation(
+    reservation_id,
+    polling = True
+)
+```
+
+After the LRO finishes processing, the status of each individual number can be validated by retrieving the reservation.
+
+```python
+reservation_id = "<reservation id>"
+reservation = phone_numbers_client.get_reservation(reservation_id)
+
+numbers_with_error = [
+    n for n in reservation.phone_numbers.values() if n.status == "error"]
+if any(numbers_with_error):
+    print("Errors occurred during purchase")
+else:
+    print("Reservation purchase completed without errors.")
 ```
 
 ### SipRoutingClient

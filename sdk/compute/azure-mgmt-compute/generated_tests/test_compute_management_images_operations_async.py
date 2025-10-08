@@ -21,6 +21,39 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_images_list(self, resource_group):
+        response = self.client.images.list(
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_images_list_by_resource_group(self, resource_group):
+        response = self.client.images.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_images_get(self, resource_group):
+        response = await self.client.images.get(
+            resource_group_name=resource_group.name,
+            image_name="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_images_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.images.begin_create_or_update(
@@ -60,10 +93,18 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
                         },
                         "zoneResilient": bool,
                     },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -109,7 +150,7 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
                     },
                     "tags": {"str": "str"},
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -123,42 +164,9 @@ class TestComputeManagementImagesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.images.begin_delete(
                 resource_group_name=resource_group.name,
                 image_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_images_get(self, resource_group):
-        response = await self.client.images.get(
-            resource_group_name=resource_group.name,
-            image_name="str",
-            api_version="2024-11-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_images_list_by_resource_group(self, resource_group):
-        response = self.client.images.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_images_list(self, resource_group):
-        response = self.client.images.list(
-            api_version="2024-11-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

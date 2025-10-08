@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,12 +40,14 @@ def main():
             "windowsParameters": {
                 "classificationsToInclude": ["Critical", "Security"],
                 "maxPatchPublishDate": "2020-11-19T02:36:43.0539904+00:00",
+                "patchNameMasksToExclude": ["*Windows*"],
+                "patchNameMasksToInclude": ["*SQL*"],
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2024-11-01/examples/virtualMachineExamples/VirtualMachine_InstallPatches.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2025-04-01/examples/virtualMachineExamples/VirtualMachine_InstallPatches.json
 if __name__ == "__main__":
     main()
