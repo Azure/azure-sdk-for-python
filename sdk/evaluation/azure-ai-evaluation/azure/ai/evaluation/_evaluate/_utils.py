@@ -500,13 +500,11 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
     
     :param results: The evaluation results to convert
     :type results: EvaluationResult
-    :param evalGroupId: The evaluation group ID
-    :type evalGroupId: str
-    :param evalRunId: The evaluation run ID
-    :type evalRunId: str
+    :param eval_meta_data: The evaluation metadata, containing eval_id, eval_run_id, and testing_criteria
+    :type eval_meta_data: Dict[str, Any]
     :param logger: Logger instance
     :type logger: logging.Logger
-    :return: Converted evaluation results in AOAI format
+    :return: EvaluationResult with converted evaluation results in AOAI format
     :rtype: EvaluationResult
     """
         
