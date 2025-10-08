@@ -23,7 +23,7 @@
 from io import BytesIO
 import binascii
 import struct
-from typing import Any, Dict, IO, List, Sequence, Type, Union, cast, overload
+from typing import Any, IO, Sequence, Type, Union, cast, overload
 from typing_extensions import Literal
 
 from ._cosmos_integers import _UInt32, _UInt64, _UInt128
@@ -124,7 +124,7 @@ class PartitionKey(dict):
     2. **Hierarchical Partition Key**:
 
        **Parameters**:
-        - `path` (List[str]): A list of paths representing the partition key, supports up to three hierarchical levels.
+        - `path` (list[str]): A list of paths representing the partition key, supports up to three hierarchical levels.
         - `kind` (Literal["MultiHash"], optional): The kind of partition key. Defaults to "MultiHash".
         - `version` (int, optional): The version of the partition key. Defaults to 2.
 
@@ -137,7 +137,7 @@ class PartitionKey(dict):
     """
 
     @overload
-    def __init__(self, path: List[str], *, kind: Literal["MultiHash"] = "MultiHash",
+    def __init__(self, path: list[str], *, kind: Literal["MultiHash"] = "MultiHash",
                  version: int = _PartitionKeyVersion.V2
     ) -> None:
         ...
@@ -173,7 +173,7 @@ class PartitionKey(dict):
         return self["paths"][0]
 
     @path.setter
-    def path(self, value: Union[str, List[str]]) -> None:
+    def path(self, value: Union[str, list[str]]) -> None:
         if isinstance(value, str):
             self["paths"] = [value]
         else:
@@ -521,12 +521,12 @@ def _write_for_binary_encoding(
         binary_writer.write(bytes([_PartitionKeyComponentType.Undefined]))
 
 def _get_partition_key_from_partition_key_definition(
-    partition_key_definition: Union[Dict[str, Any], "PartitionKey"]
+    partition_key_definition: Union[dict[str, Any], "PartitionKey"]
 ) -> "PartitionKey":
     """Internal method to create a PartitionKey instance from a dictionary or PartitionKey object.
 
     :param partition_key_definition: A dictionary or PartitionKey object containing the partition key definition.
-    :type partition_key_definition: Union[Dict[str, Any], PartitionKey]
+    :type partition_key_definition: Union[dict[str, Any], PartitionKey]
     :return: A PartitionKey instance created from the provided definition.
     :rtype: PartitionKey
     """
@@ -535,6 +535,6 @@ def _get_partition_key_from_partition_key_definition(
     version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
     return PartitionKey(path=path, kind=kind, version=version)
 
-def _build_partition_key_from_properties(container_properties: Dict[str, Any]) -> PartitionKey:
+def _build_partition_key_from_properties(container_properties: dict[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]
     return _get_partition_key_from_partition_key_definition(partition_key_definition)
