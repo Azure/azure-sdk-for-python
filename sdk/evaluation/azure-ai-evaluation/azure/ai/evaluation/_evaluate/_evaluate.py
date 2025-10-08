@@ -1007,6 +1007,11 @@ def _create_eval_results_summary(results: List[Dict]) -> Dict:
     return {}
 
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
+)
+
+
 def _log_events_to_app_insights(
     connection_string: str,
     events: List[Dict[str, Any]],
@@ -1045,6 +1050,9 @@ def _log_events_to_app_insights(
             try:
                 # Prepare log record attributes with specific mappings
                 log_attributes = {
+                    # Use the public API for custom events
+                    # The KEY is "microsoft.custom_event.name", the VALUE is the event name
+                    "microsoft.custom_event.name": EVALUATION_EVENT_NAME,
                     # These fields are always present and are already strings
                     "gen_ai.evaluation.name": event_data["metric"],
                     "gen_ai.evaluation.score.value": event_data["score"],
@@ -1084,6 +1092,10 @@ def _log_events_to_app_insights(
                     
                     if "dataset_id" in attributes:
                         log_attributes["gen_ai.evaluation.dataset.id"] = str(attributes["dataset_id"])
+                    if "response_id" in attributes:
+                        log_attributes["gen_ai.response.id"] = str(attributes["response_id"])
+                    if "agent_id" in attributes:
+                        log_attributes["gen_ai.agent.id"] = str(attributes["agent_id"])
                 
                 # Create a LogRecord and emit it
                 log_record = LogRecord(
@@ -1137,6 +1149,10 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
             app_insights_attributes['run_id'] = app_insights_config['run_id']
         if 'dataset_id' in app_insights_config:
             app_insights_attributes['dataset_id'] = app_insights_config['dataset_id']
+        if 'response_id' in app_insights_config:
+            app_insights_attributes['response_id'] = app_insights_config['response_id']
+        if "agent_id" in app_insights_config:
+            app_insights_attributes["agent_id"] = app_insights_config["agent_id"]
         
         _log_events_to_app_insights(
             connection_string=app_insights_config["connection_string"],
@@ -1231,7 +1247,7 @@ def _preprocess_data(
         batch_run_data = input_data_df
     elif client_type == "pf_client":
         batch_run_client = ProxyClient(user_agent=UserAgentSingleton().value)
-        # Ensure the absolute path is passed to pf.run, as relative path doesn't work with
+        # Ensure the absolute path is Re to pf.run, as relative path doesn't work with
         # multiple evaluators. If the path is already absolute, abspath will return the original path.
         batch_run_data = os.path.abspath(data)
     elif client_type == "code_client":

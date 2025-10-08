@@ -2,6 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from ._path_efficiency import PathEfficiencyEvaluator
+from ._task_completion import TaskCompletionEvaluator
 
-__all__ = ["PathEfficiencyEvaluator"]
+__all__ = ["TaskCompletionEvaluator"]
