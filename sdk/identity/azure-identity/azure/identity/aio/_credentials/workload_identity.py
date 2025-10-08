@@ -7,6 +7,7 @@ from typing import Any, Optional
 from .client_assertion import ClientAssertionCredential
 from ..._credentials.workload_identity import TokenFileMixin, WORKLOAD_CONFIG_ERROR
 from ..._constants import EnvironmentVariables
+from ..._internal.http_client_transport import HttpClientTransport
 
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
@@ -30,6 +31,8 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     :keyword str client_id: The client ID of a Microsoft Entra app registration.
     :keyword str token_file_path: The path to a file containing a Kubernetes service account token that authenticates
         the identity.
+    :keyword str use_token_proxy: Whether or not to to read token proxy configuration from environment variables and use
+        a token proxy to acquire tokens. Defaults to False.
 
     .. admonition:: Example:
 
@@ -47,6 +50,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
         token_file_path: Optional[str] = None,
+        use_token_proxy: bool = False,
         **kwargs: Any,
     ) -> None:
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
@@ -72,6 +76,31 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         assert token_file_path is not None
 
         self._token_file_path = token_file_path
+
+        if use_token_proxy:
+            token_proxy_endpoint = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY)
+            if not token_proxy_endpoint:
+                raise ValueError(
+                    "use_token_proxy is True, but no token proxy endpoint was found. "
+                    f"Ensure the {EnvironmentVariables.AZURE_KUBERNETES_TOKEN_PROXY} environment variable is set."
+                )
+
+            sni = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_SNI_NAME)
+            ca_file = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_FILE)
+            ca_data = os.environ.get(EnvironmentVariables.AZURE_KUBERNETES_CA_DATA)
+
+            if ca_file and ca_data:
+                raise ValueError(
+                    "Both AZURE_KUBERNETES_CA_FILE and AZURE_KUBERNETES_CA_DATA are set. Only one should be set"
+                )
+
+            kwargs["transport"] = HttpClientTransport(
+                sni=sni,
+                proxy_endpoint=token_proxy_endpoint,
+                ca_file=ca_file,
+                ca_data=ca_data,
+            )
+
         super().__init__(
             tenant_id=tenant_id,
             client_id=client_id,
