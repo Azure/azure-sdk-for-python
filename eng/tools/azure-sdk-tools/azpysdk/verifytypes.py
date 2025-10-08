@@ -61,6 +61,7 @@ def install_from_main(setup_path: str, python_executable: Optional[str] = None) 
 
 def get_type_complete_score(commands: typing.List[str], cwd: str, check_pytyped: bool = False) -> float:
     try:
+        logger.info(f"Running verifytypes with {commands} in {cwd} &_&") # TODO DEBUG
         response = subprocess.run(
             commands,
             check=True,
@@ -158,9 +159,8 @@ class verifytypes(Check):
             ]
 
             # debug a pip freeze result
-            # cmd = get_pip_command(executable) + ["freeze"]
+            cmd = get_pip_command(executable) + ["freeze"]
             # TODO DEBUG
-            cmd = [executable] + ["-m", "pip", "freeze"]
             freeze_result = subprocess.run(
                 cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
