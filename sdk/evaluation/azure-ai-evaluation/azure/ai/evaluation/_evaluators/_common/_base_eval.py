@@ -5,6 +5,7 @@
 import inspect
 from abc import ABC, abstractmethod
 import json
+import copy
 from typing import (
     Any,
     Callable,
@@ -494,7 +495,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
                         if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
-                            tool_calls.append(content_item)
+                            tool_calls.append(copy.deepcopy(content_item))
 
                 # Extract tool results from tool messages
                 elif message.get("role") == "tool" and message.get("tool_call_id"):

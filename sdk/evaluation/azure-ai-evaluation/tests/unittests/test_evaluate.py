@@ -80,6 +80,9 @@ def evaluate_test_data_conversion_jsonl_file():
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
 
+@pytest.fixture
+def evaluate_test_data_for_groundedness():
+    return _get_file("evaluate_test_data_for_groundedness.jsonl")
 
 @pytest.fixture
 def questions_file():
@@ -460,6 +463,31 @@ class TestEvaluate:
         assert "inputs.response123" in row_result_df.columns
         assert "inputs.query456" in row_result_df.columns
         assert "inputs.context789" in row_result_df.columns
+
+    def test_evaluate_groundedness_tool_result(self, mock_model_config, evaluate_test_data_for_groundedness):
+        # Validates if groundedness evaluator does not add tool_call results to tool call messages
+
+        result = evaluate(
+            data=evaluate_test_data_for_groundedness,
+            evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            fail_on_evaluator_errors=False,
+        )
+
+        # Verify that the test completed without errors related to column mapping format
+        # The test data has the fields with numeric characters, so it should work correctly
+        assert result is not None
+        # Verify we're getting data from the numerically-named fields
+        row_result_df = pd.DataFrame(result["rows"])
+        assert "inputs.response" in row_result_df.columns
+        assert "inputs.query" in row_result_df.columns
+
+        # Break down the assertion for better error handling
+        response_data = row_result_df["inputs.response"][0]
+        first_message = response_data[0]
+        content_data = first_message["content"][0]
+        
+        # Now check if "tool_result" is in the keys
+        assert "tool_result" not in content_data.keys()
 
     def test_renaming_column(self):
         """Test that the columns are renamed correctly."""
