@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "azure-storage-blob"
 authors = [
-    {email = "ascl@microsoft.com"},
+    {name = "Microsoft Corporation", email = "ascl@microsoft.com"},
 ]
 description = "Microsoft Azure Blob Storage Client Library for Python"
 keywords = ["azure", "azure sdk"]
@@ -35,7 +35,7 @@ aio = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
+source = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.storage.blob._version.VERSION"}
