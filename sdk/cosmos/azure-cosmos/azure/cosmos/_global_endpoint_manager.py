@@ -24,7 +24,6 @@ database service.
 """
 
 import threading
-from typing import Tuple
 
 from azure.core.exceptions import AzureError
 

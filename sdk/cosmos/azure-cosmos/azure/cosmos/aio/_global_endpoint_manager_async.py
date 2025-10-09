@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple, Any
+from typing import Any
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
