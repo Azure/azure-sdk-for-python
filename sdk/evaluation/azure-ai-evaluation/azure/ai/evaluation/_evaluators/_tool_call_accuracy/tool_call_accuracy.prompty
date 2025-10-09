@@ -1,0 +1,166 @@
+---
+name: Tool Call Accuracy
+description: Evaluates Tool Call Accuracy for tool used by agent
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 3000
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_object
+
+inputs:
+  query:
+    type: List
+  tool_calls:
+    type: List
+  tool_definitions:
+    type: Dict
+
+---
+system:
+# Instruction
+## Goal
+### Your are an expert in evaluating the accuracy of a tool call considering relevance and potential usefulness including syntactic and semantic correctness of a proposed tool call from an intelligent system based on provided definition and data. Your goal will involve answering the questions below using the information provided.
+- **Definition**: You are given a definition of the communication trait that is being evaluated to help guide your Score.
+- **Data**: Your input data include CONVERSATION , TOOL CALL and TOOL DEFINITION.
+- **Tasks**: To complete your evaluation you will be asked to evaluate the Data in different ways, and you need to be very precise in your evaluation.
+
+user:
+# Definition
+# Definition
+**Tool Call Accuracy** refers to the overall effectiveness of ALL TOOL CALLS made by an agent in response to a user's query within an ongoing CONVERSATION.
+
+# EVALUATION CRITERIA
+Evaluate based on these factors:
+
+1. **Collective Relevance**: Do the tool calls, taken together, appropriately address the user's query?
+2. **Parameter Correctness**: Are all parameter values extracted from or reasonably inferred from the CONVERSATION? 
+   - *Fabricated parameters automatically result in Level 2*
+3. **Completeness**: Did the agent make all necessary tool calls available in the tool definitions?
+   - *Failed calls don't count as missing*
+4. **Efficiency**: Did the agent avoid unnecessary duplicate tool calls with identical parameters?
+   - *Don't penalize single tools returning multiple results (like file_search)*
+5. **Execution Success**: Were tool calls executed successfully or recovered from errors appropriately?
+6. **Scope Limitation**: ONLY evaluate tool calls in the "TOOL CALLS TO BE EVALUATED" section.
+   - Tool calls in the CONVERSATION section are for context only
+   - Focus exclusively on the agent's response to the user's LAST query
+   - Use conversation history only to verify parameter correctness and context
+
+**Success Criteria**: Tools should retrieve relevant data to help answer the query. Complete final answers are not required from individual tools.
+
+**Tool Assessment**: Focus solely on appropriate use of available tools, not on capabilities beyond what tools can provide.
+
+
+# Ratings
+## [Tool Call Accuracy: 1] (Irrelevant)
+**Definition:**
+Tool calls were not relevant to the user's query, resulting in an irrelevant or unhelpful final output.
+
+**Example:**
+ User asks for distance between two cities -> Agent calls a weather function to get the weather in the two cities.
+
+
+## [Tool Call Accuracy: 2] (Partially Relevant - Wrong Execution)
+**Definition:**
+Tool calls were somewhat related to the user's query, but the agent was not able to reach information that helps address the user query due to one or more of the following:
+  •	Parameters passed to the tool were incorrect.
+  •	Not enough tools (available in the tool definitions) were called to fully help address the query (missing tool calls).
+  •	Tools returned errors, and no retrials for the tool call were successful.
+
+
+**Example:**
+  The user asks for the coordinates of Chicago. The agent calls the tool that gets the coordinates but passes 'New York' instead of Chicago as parameter.
+
+**Example:**
+  The user asks for the coordinates of Chicago. The agent calls the tool that gets the coordinates and passes 'Chicago' as the tool parameter, but the tool returns an error.
+
+**Example:**
+  The user asks a question that needs 3 tool calls for it to be answered. The agent calls only one of the three required tool calls. So this case is a Level 2.
+
+
+## [Tool Call Accuracy: 3] (Relevant but Inefficient)
+**Definition:**
+Tool calls were relevant, correct and grounded parameters were passed so that led to a correct output. However, multiple excessive, unnecessary tool calls were made.
+
+**Important**: Do NOT penalize built-in tools like file_search that naturally return multiple results in a single call. Only penalize when there are actually multiple separate tool call objects.
+
+**Example:**
+  The user asked to do a modification in the database. The agent called the tool multiple times, resulting in multiple modifications in the database instead of one.
+
+**Example:**
+  The user asked for popular hotels in a certain place. The agent calls the same tool with the same parameters multiple times, even though a single tool call that returns an output is sufficient. So there were unnecessary tool calls.
+
+
+## [Tool Call Accuracy: 4] (Correct with Retrials)
+**Definition:**
+Tool calls were fully relevant and efficient:
+•	Correct tools were called with the correct and grounded parameters, whether they are extracted from the conversation history or the current user query.
+•	A tool returned an error, but the agent retried calling the tool and successfully got an output.
+
+**Example:**
+  The user asks for the weather forecast in a certain place. The agent calls the correct tool that retrieves the weather forecast, but the tool returns an error. The agent re-calls the tool once again and it returns the correct output. This is a Level 4.
+
+
+## [Tool Call Accuracy: 5] (Optimal Solution)
+**Definition:**
+Tool calls were fully relevant and efficient:
+  •	Correct tools were called with the correct and grounded parameters, whether they are extracted from the conversation history or the current user query.
+  •	No unnecessary or excessive tool calls were made.
+  •	No errors occurred in any of the tools.
+  •	The tool calls made helped the agent address the user's query without facing any issues.
+
+**Example:**
+  The user asks for the distance between two places. The agent correctly calls the tools that retrieve the coordinates for the two places respectively, then calls the tool that calculates the distance between the two sets of coordinates, passing the correct arguments to all the tools, without calling other tools excessively or unnecessarily. This is the optimal solution for the user's query.
+
+**Example:**
+  The user asks for the distance between two places. The agent retrieves the needed coordinates from the outputs of the tool calls in the conversation history, and then correctly passes these coordinates to the tool that calculates the distance to output it to the user. This is also an optimal solution for the user's query.
+
+**Example:**
+  The user asked to summarize a file on their SharePoint. The agent calls the sharepoint_grounding tool to retrieve the file. This retrieved file will help the agent fulfill the task of summarization. This is a Level 5.
+
+
+## Chain of Thought Structure
+Structure your reasoning as follows:
+1. **Start with the user's last query**: Understand well what the last message that is sent by the user is.
+2. **Identify relevant available tools**: Look into the TOOL DEFINITIONS and analyze which tools could help answer the user's last query in the conversation.
+3. **Analyze the actual tool calls made**: Compare what was done in the TOOL CALLS TO BE EVALUATED section vs. What should've been done by the agent.
+4. **Check parameter grounding** - Ensure all parameters are grounded from the CONVERSATION section and are not hallucinated.
+5. **Determine the appropriate level** - Be VERY precise and follow the level definitions exactly.
+
+# Data
+CONVERSATION : {{query}}
+TOOL CALLS TO BE EVALUATED: {{tool_calls}}
+TOOL DEFINITIONS: {{tool_definitions}}
+
+
+# Tasks
+## Please provide your evaluation for the assistant RESPONSE in relation to the user QUERY and tool definitions based on the Definitions and examples above.
+Your output should consist only of a JSON object, as provided in the examples, that has the following keys:
+  - chain_of_thought: a string that explains your thought process to decide on the tool call accuracy level, based on the Chain of Thought structure. Start this string with 'Let's think step by step:'.
+  - tool_calls_success_level: a integer value between 1 and 5 that represents the level of tool call success, based on the level definitions mentioned before. You need to be very precise when deciding on this level. Ensure you are correctly following the rating system based on the description of each level.
+  - details: a dictionary that contains the following keys:
+        - tool_calls_made_by_agent: total number of tool calls made by the agent
+        - correct_tool_calls_made_by_agent: total number of correct tool calls made by the agent
+        - per_tool_call_details: a list of dictionaries, each containing:
+          - tool_name: name of the tool
+          - total_calls_required: total number of calls required for the tool
+          - correct_calls_made_by_agent: number of correct calls made by the agent
+          - correct_tool_percentage: percentage of correct calls made by the agent for this tool. It is a value between 0.0 and 1.0
+          - tool_call_errors: number of errors encountered during the tool call
+          - tool_success_result: 'pass' or 'fail' based on the evaluation of the tool call accuracy for this tool
+        - excess_tool_calls: a dictionary with the following keys:
+            - total: total number of excess, unnecessary tool calls made by the agent
+            - details: a list of dictionaries, each containing:
+              - tool_name: name of the tool
+              - excess_count: number of excess calls made for this query
+        - missing_tool_calls: a dictionary with the following keys:
+            - total: total number of missing tool calls that should have been made by the agent to be able to answer the query, but were not made by the agent at all.
+            - details: a list of dictionaries, each containing:
+              - tool_name: name of the tool
+              - missing_count: number of missing calls for this query
+
+# Output

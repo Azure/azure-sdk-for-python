@@ -201,27 +201,6 @@ class TestBuiltInEvaluators:
         assert result["groundedness"] == result["gpt_groundedness"] == 1
         assert "groundedness_reason" in result
 
-    def test_groundedness_evaluator_no_supported_tools(self, mock_model_config):
-        """Test GroundednessEvaluator when no supported tools are used"""
-        groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
-        groundedness_eval._flow = MagicMock(return_value=quality_response_async_mock())
-
-        result = groundedness_eval(
-            query="What is the capital of Japan?",
-            response=[
-                {"role": "user", "content": "What is the capital of Japan?"},
-                {"role": "assistant", "content": "The capital of Japan is Tokyo."},
-            ],
-            tool_definitions=[
-                {"name": "unsupported_tool", "type": "unsupported", "description": "An unsupported tool"}
-            ],
-        )
-
-        # When no supported tools are used, it should return "not applicable" result
-        assert result["groundedness"] == "not applicable"
-        assert result["groundedness_result"] == "pass"
-        assert "Supported tools for groundedness are" in result["groundedness_reason"]
-
     def test_groundedness_evaluator_with_context(self, mock_model_config):
         """Test GroundednessEvaluator with direct context (traditional use)"""
         groundedness_eval = GroundednessEvaluator(model_config=mock_model_config)
@@ -244,11 +223,10 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             groundedness_eval(
                 query="What is the capital of Japan?",
-                response=[{"role": "assistant", "content": "The capital of Japan is Tokyo."}],
-                # Missing tool_definitions
+                # Missing response
             )
 
         assert (
-            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query', 'response' and 'tool_definitions' are required."
+            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
             in exc_info.value.args[0]
         )
