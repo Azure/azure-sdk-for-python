@@ -50,5 +50,7 @@ class verify_keywords(Check):
                     f"Keyword 'azure sdk' not present in keywords for {package_name}. Before attempting publishing, ensure that package {package_name} has keyword 'azure sdk' present in the keyword array."
                 )
                 results.append(1)
+            else:
+                logger.info(f"Package {package_name} has keyword 'azure sdk' present in the keyword array.")
 
         return max(results) if results else 0
