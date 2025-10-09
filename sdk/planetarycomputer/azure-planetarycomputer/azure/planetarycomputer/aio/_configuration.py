@@ -22,30 +22,26 @@ class PlanetaryComputerClientConfiguration:  # pylint: disable=too-many-instance
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param endpoint: Service host. Required.
+    :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param endpoint: Service host. Default value is
-     "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
-    :type endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-04-30-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2025-04-30-preview")
 
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
-        self.credential = credential
         self.endpoint = endpoint
+        self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://geocatalog.spatio.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "planetarycomputer/{}".format(VERSION))

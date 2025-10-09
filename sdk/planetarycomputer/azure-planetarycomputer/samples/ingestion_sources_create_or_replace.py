@@ -27,10 +27,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.create_or_replace_ingestion_source(
+    response = client.ingestion.create_or_replace_source(
         id="36fcb8da-9b15-49e0-b400-0d2e751e2061",
         ingestion_source={
             "connectionInfo": {

@@ -602,11 +602,11 @@ class PixelSelection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Calculate mean of available pixels"""
     MEDIAN = "median"
     """Calculate median of available pixels"""
-    STDEV = "stdev"
+    STANDARD_DEVIATION = "stdev"
     """Calculate standard deviation of available pixels"""
-    LASTBANDLOW = "lastbandlow"
+    LAST_BAND_LOW = "lastbandlow"
     """Select image with lowest value in the last band"""
-    LASTBANDHIGHT = "lastbandhight"
+    LAST_BAND_HIGH = "lastbandhigh"
     """Select image with highest value in the last band"""
 
 

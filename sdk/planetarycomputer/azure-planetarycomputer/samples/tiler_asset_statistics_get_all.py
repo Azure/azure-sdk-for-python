@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.list_asset_statistics(
+    response = client.tiler.get_asset_statistics(
         collection_id="{{collectionId}}",
         item_id="{{itemId}}",
     )

@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    client.shared_access_signature.revoke_token()
+    client.shared_access_signature_client.revoke_token()
 
 
 # x-ms-original-file: 2025-04-30-preview/Sas_RevokeToken.json

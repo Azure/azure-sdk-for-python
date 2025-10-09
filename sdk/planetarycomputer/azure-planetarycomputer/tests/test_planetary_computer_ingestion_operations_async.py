@@ -15,9 +15,9 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_cancel_ingestion_operation(self, planetarycomputer_endpoint):
+    async def test_ingestion_cancel_operation(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.cancel_ingestion_operation(
+        response = await client.ingestion.cancel_operation(
             operation_id="str",
         )
 
@@ -26,18 +26,18 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_cancel_all_ingestion_operations(self, planetarycomputer_endpoint):
+    async def test_ingestion_cancel_all_operations(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.cancel_all_ingestion_operations()
+        response = await client.ingestion.cancel_all_operations()
 
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion_operation(self, planetarycomputer_endpoint):
+    async def test_ingestion_get_operation(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion_operation(
+        response = await client.ingestion.get_operation(
             operation_id="str",
         )
 
@@ -46,18 +46,18 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_list_ingestion_operations(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_operations(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.list_ingestion_operations()
-
+        response = client.ingestion.list_operations()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_create_ingestion_run(self, planetarycomputer_endpoint):
+    async def test_ingestion_create_run(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.create_ingestion_run(
+        response = await client.ingestion.create_run(
             collection_id="str",
             ingestion_id="str",
         )
@@ -67,9 +67,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion_run(self, planetarycomputer_endpoint):
+    async def test_ingestion_get_run(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion_run(
+        response = await client.ingestion.get_run(
             collection_id="str",
             ingestion_id="str",
             run_id="str",
@@ -80,21 +80,21 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_list_ingestion_runs(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_runs(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.list_ingestion_runs(
+        response = client.ingestion.list_runs(
             collection_id="str",
             ingestion_id="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_create_ingestion(self, planetarycomputer_endpoint):
+    async def test_ingestion_create(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.create_ingestion(
+        response = await client.ingestion.create(
             collection_id="str",
             definition={
                 "creationTime": "2020-02-20 00:00:00",
@@ -113,10 +113,10 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_begin_delete_ingestion(self, planetarycomputer_endpoint):
+    async def test_ingestion_begin_delete(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
         response = await (
-            await client.ingestion.begin_delete_ingestion(
+            await client.ingestion.begin_delete(
                 collection_id="str",
                 ingestion_id="str",
             )
@@ -127,9 +127,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion(self, planetarycomputer_endpoint):
+    async def test_ingestion_get(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion(
+        response = await client.ingestion.get(
             collection_id="str",
             ingestion_id="str",
         )
@@ -139,20 +139,20 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_list_ingestions(self, planetarycomputer_endpoint):
+    async def test_ingestion_lists(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.list_ingestions(
+        response = client.ingestion.lists(
             collection_id="str",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_update_ingestion(self, planetarycomputer_endpoint):
+    async def test_ingestion_update(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.update_ingestion(
+        response = await client.ingestion.update(
             collection_id="str",
             ingestion_id="str",
             definition={
@@ -172,9 +172,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_create_ingestion_source(self, planetarycomputer_endpoint):
+    async def test_ingestion_create_source(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.create_ingestion_source(
+        response = await client.ingestion.create_source(
             ingestion_source={
                 "connectionInfo": {"containerUrl": "str", "objectId": "str"},
                 "created": "2020-02-20 00:00:00",
@@ -188,9 +188,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_create_or_replace_ingestion_source(self, planetarycomputer_endpoint):
+    async def test_ingestion_create_or_replace_source(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.create_or_replace_ingestion_source(
+        response = await client.ingestion.create_or_replace_source(
             id="str",
             ingestion_source={
                 "connectionInfo": {"containerUrl": "str", "objectId": "str"},
@@ -205,9 +205,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_delete_ingestion_source(self, planetarycomputer_endpoint):
+    async def test_ingestion_delete_source(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.delete_ingestion_source(
+        response = await client.ingestion.delete_source(
             id="str",
         )
 
@@ -216,9 +216,9 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_get_ingestion_source(self, planetarycomputer_endpoint):
+    async def test_ingestion_get_source(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.get_ingestion_source(
+        response = await client.ingestion.get_source(
             id="str",
         )
 
@@ -227,10 +227,10 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_ingestion_list_ingestion_sources(self, planetarycomputer_endpoint):
+    async def test_ingestion_list_sources(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.list_ingestion_sources()
-
+        response = client.ingestion.list_sources()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -238,7 +238,7 @@ class TestPlanetaryComputerIngestionOperationsAsync(PlanetaryComputerClientTestB
     @recorded_by_proxy_async
     async def test_ingestion_list_managed_identities(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.ingestion.list_managed_identities()
-
+        response = client.ingestion.list_managed_identities()
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

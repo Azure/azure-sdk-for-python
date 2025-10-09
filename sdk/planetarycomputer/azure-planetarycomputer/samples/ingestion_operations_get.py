@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.get_ingestion_operation(
+    response = client.ingestion.get_operation(
         operation_id="59c757bb-01fc-4196-8036-11e3ee0c08b8",
     )
     print(response)

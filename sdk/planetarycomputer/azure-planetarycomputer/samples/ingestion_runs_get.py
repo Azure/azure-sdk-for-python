@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.get_ingestion_run(
+    response = client.ingestion.get_run(
         collection_id="weather-sample",
         ingestion_id="94659cc0-538e-4688-9d01-8c7f464b885b",
         run_id="23e710f1-d004-4dbc-84b0-259398ef7bab",

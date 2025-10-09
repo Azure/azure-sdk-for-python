@@ -12,12 +12,12 @@ from testpreparer_async import PlanetaryComputerClientTestBaseAsync
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlanetaryComputerSharedAccessSignatureOperationsAsync(PlanetaryComputerClientTestBaseAsync):
+class TestPlanetaryComputerSharedAccessSignatureClientOperationsAsync(PlanetaryComputerClientTestBaseAsync):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_shared_access_signature_get_sign(self, planetarycomputer_endpoint):
+    async def test_shared_access_signature_client_get_sign(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.shared_access_signature.get_sign(
+        response = await client.shared_access_signature_client.get_sign(
             href="str",
         )
 
@@ -26,9 +26,9 @@ class TestPlanetaryComputerSharedAccessSignatureOperationsAsync(PlanetaryCompute
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_shared_access_signature_get_token(self, planetarycomputer_endpoint):
+    async def test_shared_access_signature_client_get_token(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.shared_access_signature.get_token(
+        response = await client.shared_access_signature_client.get_token(
             collection_id="str",
         )
 
@@ -37,9 +37,9 @@ class TestPlanetaryComputerSharedAccessSignatureOperationsAsync(PlanetaryCompute
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_shared_access_signature_revoke_token(self, planetarycomputer_endpoint):
+    async def test_shared_access_signature_client_revoke_token(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.shared_access_signature.revoke_token()
+        response = await client.shared_access_signature_client.revoke_token()
 
         # please add some check logic here by yourself
         # ...

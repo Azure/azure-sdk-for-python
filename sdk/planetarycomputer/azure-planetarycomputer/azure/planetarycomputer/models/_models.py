@@ -72,10 +72,10 @@ class AssetMetadata(_Model):
 class BandStatistics(_Model):
     """Statistical information about a data band.
 
-    :ivar min: Minimum value in the band. Required.
-    :vartype min: float
-    :ivar max: Maximum value in the band. Required.
-    :vartype max: float
+    :ivar minimum: Minimum value in the band. Required.
+    :vartype minimum: float
+    :ivar maximum: Maximum value in the band. Required.
+    :vartype maximum: float
     :ivar mean: Mean value of the band. Required.
     :vartype mean: float
     :ivar count: Count of pixels in the band. Required.
@@ -108,9 +108,9 @@ class BandStatistics(_Model):
     :vartype percentile98: float
     """
 
-    min: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    minimum: float = rest_field(name="min", visibility=["read", "create", "update", "delete", "query"])
     """Minimum value in the band. Required."""
-    max: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    maximum: float = rest_field(name="max", visibility=["read", "create", "update", "delete", "query"])
     """Maximum value in the band. Required."""
     mean: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Mean value of the band. Required."""
@@ -147,8 +147,8 @@ class BandStatistics(_Model):
     def __init__(
         self,
         *,
-        min: float,  # pylint: disable=redefined-builtin
-        max: float,  # pylint: disable=redefined-builtin
+        minimum: float,
+        maximum: float,
         mean: float,
         count: float,
         sum: float,
@@ -481,6 +481,18 @@ class Geometry(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class GetAssetStatisticsOptions(_Model):
+    """Options for getting asset statistics."""
+
+
+class GetTileOptions(_Model):
+    """Options for getting a tile from a dataset."""
+
+
+class GetWmtsCapabilitiesOptions(_Model):
+    """Options for getting WMTS capabilities."""
 
 
 class ImageRequest(_Model):
@@ -1359,175 +1371,6 @@ class OperationStatusHistoryItem(_Model):
         status: Union[str, "_models.OperationStatus"],
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PageIngestion(_Model):
-    """Generic paged response model.
-
-    :ivar value: The items on the page. Required.
-    :vartype value: list[~azure.planetarycomputer.models.Ingestion]
-    :ivar next_link: Link to the next page of results.
-    :vartype next_link: str
-    """
-
-    value: list["_models.Ingestion"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The items on the page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Link to the next page of results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.Ingestion"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PageIngestionRun(_Model):
-    """Generic paged response model.
-
-    :ivar value: The items on the page. Required.
-    :vartype value: list[~azure.planetarycomputer.models.IngestionRun]
-    :ivar next_link: Link to the next page of results.
-    :vartype next_link: str
-    """
-
-    value: list["_models.IngestionRun"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The items on the page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Link to the next page of results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.IngestionRun"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PageIngestionSourceSummary(_Model):
-    """Generic paged response model.
-
-    :ivar value: The items on the page. Required.
-    :vartype value: list[~azure.planetarycomputer.models.IngestionSourceSummary]
-    :ivar next_link: Link to the next page of results.
-    :vartype next_link: str
-    """
-
-    value: list["_models.IngestionSourceSummary"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The items on the page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Link to the next page of results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.IngestionSourceSummary"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PageManagedIdentityMetadata(_Model):
-    """Generic paged response model.
-
-    :ivar value: The items on the page. Required.
-    :vartype value: list[~azure.planetarycomputer.models.ManagedIdentityMetadata]
-    :ivar next_link: Link to the next page of results.
-    :vartype next_link: str
-    """
-
-    value: list["_models.ManagedIdentityMetadata"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The items on the page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Link to the next page of results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.ManagedIdentityMetadata"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class PageOperation(_Model):
-    """Generic paged response model.
-
-    :ivar value: The items on the page. Required.
-    :vartype value: list[~azure.planetarycomputer.models.Operation]
-    :ivar next_link: Link to the next page of results.
-    :vartype next_link: str
-    """
-
-    value: list["_models.Operation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The items on the page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """Link to the next page of results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.Operation"],
-        next_link: Optional[str] = None,
     ) -> None: ...
 
     @overload

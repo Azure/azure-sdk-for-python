@@ -25,18 +25,18 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_get_tile_matrix_list(self, planetarycomputer_endpoint):
+    def test_tiler_list_tile_matrices(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.get_tile_matrix_list()
+        response = client.tiler.list_tile_matrices()
 
         # please add some check logic here by yourself
         # ...
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_tiler_list_asset_statistics(self, planetarycomputer_endpoint):
+    def test_tiler_get_asset_statistics(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.tiler.list_asset_statistics(
+        response = client.tiler.get_asset_statistics(
             collection_id="str",
             item_id="str",
         )

@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    client.ingestion.cancel_all_ingestion_operations()
+    client.ingestion.cancel_all_operations()
 
 
 # x-ms-original-file: 2025-04-30-preview/IngestionOperations_DeleteAll.json

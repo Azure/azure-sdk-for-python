@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.shared_access_signature.get_token(
+    response = client.shared_access_signature_client.get_token(
         collection_id="weather-sample",
     )
     print(response)

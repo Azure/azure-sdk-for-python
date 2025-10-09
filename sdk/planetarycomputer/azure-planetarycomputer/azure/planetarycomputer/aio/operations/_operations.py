@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines,too-many-locals,unused-import,file-needs-copyright-header,import-error,too-many-branches,too-many-statements,no-value-for-parameter
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -10,8 +10,10 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, AsyncIterator, Callable, IO, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
+import urllib.parse
 
 from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -26,6 +28,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -34,27 +37,27 @@ from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, 
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
-    build_ingestion_cancel_all_ingestion_operations_request,
-    build_ingestion_cancel_ingestion_operation_request,
-    build_ingestion_create_ingestion_request,
-    build_ingestion_create_ingestion_run_request,
-    build_ingestion_create_ingestion_source_request,
-    build_ingestion_create_or_replace_ingestion_source_request,
-    build_ingestion_delete_ingestion_request,
-    build_ingestion_delete_ingestion_source_request,
-    build_ingestion_get_ingestion_operation_request,
-    build_ingestion_get_ingestion_request,
-    build_ingestion_get_ingestion_run_request,
-    build_ingestion_get_ingestion_source_request,
-    build_ingestion_list_ingestion_operations_request,
-    build_ingestion_list_ingestion_runs_request,
-    build_ingestion_list_ingestion_sources_request,
-    build_ingestion_list_ingestions_request,
+    build_ingestion_cancel_all_operations_request,
+    build_ingestion_cancel_operation_request,
+    build_ingestion_create_or_replace_source_request,
+    build_ingestion_create_request,
+    build_ingestion_create_run_request,
+    build_ingestion_create_source_request,
+    build_ingestion_delete_request,
+    build_ingestion_delete_source_request,
+    build_ingestion_get_operation_request,
+    build_ingestion_get_request,
+    build_ingestion_get_run_request,
+    build_ingestion_get_source_request,
     build_ingestion_list_managed_identities_request,
-    build_ingestion_update_ingestion_request,
-    build_shared_access_signature_get_sign_request,
-    build_shared_access_signature_get_token_request,
-    build_shared_access_signature_revoke_token_request,
+    build_ingestion_list_operations_request,
+    build_ingestion_list_runs_request,
+    build_ingestion_list_sources_request,
+    build_ingestion_lists_request,
+    build_ingestion_update_request,
+    build_shared_access_signature_client_get_sign_request,
+    build_shared_access_signature_client_get_token_request,
+    build_shared_access_signature_client_revoke_token_request,
     build_stac_add_mosaic_request,
     build_stac_create_collection_asset_request,
     build_stac_create_collection_request,
@@ -83,10 +86,10 @@ from ...operations._operations import (
     build_stac_get_render_option_request,
     build_stac_get_stac_landing_page_request,
     build_stac_get_tile_settings_request,
+    build_stac_list_collection_queryables_request,
     build_stac_list_collections_request,
     build_stac_list_items_request,
     build_stac_list_mosaics_request,
-    build_stac_list_queryables_by_collection_request,
     build_stac_list_queryables_request,
     build_stac_list_render_options_request,
     build_stac_replace_partition_type_request,
@@ -96,6 +99,7 @@ from ...operations._operations import (
     build_tiler_create_static_image_request,
     build_tiler_crop_geo_json_request,
     build_tiler_crop_geo_json_with_dimensions_request,
+    build_tiler_get_asset_statistics_request,
     build_tiler_get_assets_info_request,
     build_tiler_get_class_map_legend_request,
     build_tiler_get_info_geo_json_request,
@@ -115,14 +119,13 @@ from ...operations._operations import (
     build_tiler_get_static_image_request,
     build_tiler_get_tile_json_request,
     build_tiler_get_tile_matrix_definitions_request,
-    build_tiler_get_tile_matrix_list_request,
     build_tiler_get_tile_request,
     build_tiler_get_wmts_capabilities_request,
-    build_tiler_list_asset_statistics_request,
     build_tiler_list_available_assets_request,
     build_tiler_list_bounds_request,
     build_tiler_list_geo_json_statistics_request,
     build_tiler_list_statistics_request,
+    build_tiler_list_tile_matrices_request,
     build_tiler_register_mosaics_search_request,
 )
 from .._configuration import PlanetaryComputerClientConfiguration
@@ -153,7 +156,7 @@ class IngestionOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def cancel_ingestion_operation(self, operation_id: str, **kwargs: Any) -> None:
+    async def cancel_operation(self, operation_id: str, **kwargs: Any) -> None:
         """Cancel a running operation of a geo-catalog collection.
 
         :param operation_id: Operation id. Required.
@@ -175,7 +178,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_cancel_ingestion_operation_request(
+        _request = build_ingestion_cancel_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -201,7 +204,7 @@ class IngestionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def cancel_all_ingestion_operations(self, **kwargs: Any) -> None:
+    async def cancel_all_operations(self, **kwargs: Any) -> None:
         """Cancel all running operations of a geo-catalog collection.
 
         :return: None
@@ -221,7 +224,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_cancel_all_ingestion_operations_request(
+        _request = build_ingestion_cancel_all_operations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -246,7 +249,7 @@ class IngestionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_ingestion_operation(self, operation_id: str, **kwargs: Any) -> _models.Operation:
+    async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.Operation:
         """Get an operation of a geo-catalog collection.
 
         :param operation_id: Operation id. Required.
@@ -268,7 +271,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_operation_request(
+        _request = build_ingestion_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -305,8 +308,8 @@ class IngestionOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_ingestion_operations(
+    @distributed_trace
+    def list_operations(
         self,
         *,
         top: Optional[int] = None,
@@ -314,7 +317,7 @@ class IngestionOperations:
         collection_id: Optional[str] = None,
         status: Optional[Union[str, _models.OperationStatus]] = None,
         **kwargs: Any
-    ) -> _models.PageOperation:
+    ) -> AsyncItemPaged["_models.Operation"]:
         """Get operations of a geo-catalog collection.
 
         :keyword top: The number of items to return. Default value is None.
@@ -326,10 +329,15 @@ class IngestionOperations:
         :keyword status: Operation status used to filter the results. Known values are: "Pending",
          "Running", "Succeeded", "Canceled", "Canceling", and "Failed". Default value is None.
         :paramtype status: str or ~azure.planetarycomputer.models.OperationStatus
-        :return: PageOperation. The PageOperation is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageOperation
+        :return: An iterator like instance of Operation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.planetarycomputer.models.Operation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.Operation]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -338,53 +346,73 @@ class IngestionOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PageOperation] = kwargs.pop("cls", None)
+                _request = build_ingestion_list_operations_request(
+                    top=top,
+                    skip=skip,
+                    collection_id=collection_id,
+                    status=status,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_ingestion_list_ingestion_operations_request(
-            top=top,
-            skip=skip,
-            collection_id=collection_id,
-            status=status,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.Operation], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageOperation, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def create_ingestion_run(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
+    async def create_run(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.IngestionRun:
         """Create a new run of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -408,7 +436,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_create_ingestion_run_request(
+        _request = build_ingestion_create_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -450,9 +478,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_ingestion_run(
-        self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any
-    ) -> _models.IngestionRun:
+    async def get_run(self, collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any) -> _models.IngestionRun:
         """Get a run of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -478,7 +504,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_run_request(
+        _request = build_ingestion_get_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             run_id=run_id,
@@ -517,8 +543,8 @@ class IngestionOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_ingestion_runs(
+    @distributed_trace
+    def list_runs(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -526,7 +552,7 @@ class IngestionOperations:
         top: Optional[int] = None,
         skip: Optional[int] = None,
         **kwargs: Any
-    ) -> _models.PageIngestionRun:
+    ) -> AsyncItemPaged["_models.IngestionRun"]:
         """Get the runs of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -537,10 +563,15 @@ class IngestionOperations:
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: PageIngestionRun. The PageIngestionRun is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestionRun
+        :return: An iterator like instance of IngestionRun
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.planetarycomputer.models.IngestionRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.IngestionRun]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -549,53 +580,73 @@ class IngestionOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PageIngestionRun] = kwargs.pop("cls", None)
+                _request = build_ingestion_list_runs_request(
+                    collection_id=collection_id,
+                    ingestion_id=ingestion_id,
+                    top=top,
+                    skip=skip,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_ingestion_list_ingestion_runs_request(
-            collection_id=collection_id,
-            ingestion_id=ingestion_id,
-            top=top,
-            skip=skip,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.IngestionRun], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageIngestionRun, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def create_ingestion(
+    async def create(
         self,
         collection_id: str,
         definition: _models.Ingestion,
@@ -618,7 +669,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def create_ingestion(
+    async def create(
         self, collection_id: str, definition: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Ingestion:
         """Create a new ingestion.
@@ -636,7 +687,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def create_ingestion(
+    async def create(
         self, collection_id: str, definition: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Ingestion:
         """Create a new ingestion.
@@ -654,7 +705,7 @@ class IngestionOperations:
         """
 
     @distributed_trace_async
-    async def create_ingestion(
+    async def create(
         self, collection_id: str, definition: Union[_models.Ingestion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Ingestion:
         """Create a new ingestion.
@@ -689,7 +740,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_ingestion_request(
+        _request = build_ingestion_create_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -731,9 +782,7 @@ class IngestionOperations:
 
         return deserialized  # type: ignore
 
-    async def _delete_ingestion_initial(
-        self, collection_id: str, ingestion_id: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    async def _delete_initial(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -747,7 +796,7 @@ class IngestionOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_ingestion_request(
+        _request = build_ingestion_delete_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -786,9 +835,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete_ingestion(
-        self, collection_id: str, ingestion_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete an ingestion from a catalog. All runs of the ingestion will be deleted. Ingestion must
         not have any runs in progress or queued.
 
@@ -808,7 +855,7 @@ class IngestionOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._delete_ingestion_initial(
+            raw_result = await self._delete_initial(
                 collection_id=collection_id,
                 ingestion_id=ingestion_id,
                 cls=lambda x, y, z: x,
@@ -846,7 +893,7 @@ class IngestionOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get_ingestion(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.Ingestion:
+    async def get(self, collection_id: str, ingestion_id: str, **kwargs: Any) -> _models.Ingestion:
         """Get the definition of an ingestion.
 
         :param collection_id: Catalog collection id. Required.
@@ -870,7 +917,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_request(
+        _request = build_ingestion_get_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -908,10 +955,10 @@ class IngestionOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_ingestions(
+    @distributed_trace
+    def lists(
         self, collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.PageIngestion:
+    ) -> AsyncItemPaged["_models.Ingestion"]:
         """Get ingestions of a catalog.
 
         :param collection_id: Catalog collection id. Required.
@@ -920,10 +967,15 @@ class IngestionOperations:
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: PageIngestion. The PageIngestion is compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestion
+        :return: An iterator like instance of Ingestion
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.planetarycomputer.models.Ingestion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.Ingestion]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -932,52 +984,72 @@ class IngestionOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PageIngestion] = kwargs.pop("cls", None)
+                _request = build_ingestion_lists_request(
+                    collection_id=collection_id,
+                    top=top,
+                    skip=skip,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_ingestion_list_ingestions_request(
-            collection_id=collection_id,
-            top=top,
-            skip=skip,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.Ingestion], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageIngestion, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def update_ingestion(
+    async def update(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -1003,7 +1075,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def update_ingestion(
+    async def update(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -1029,7 +1101,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def update_ingestion(
+    async def update(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -1055,7 +1127,7 @@ class IngestionOperations:
         """
 
     @distributed_trace_async
-    async def update_ingestion(
+    async def update(
         self,
         collection_id: str,
         ingestion_id: str,
@@ -1096,7 +1168,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_update_ingestion_request(
+        _request = build_ingestion_update_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             content_type=content_type,
@@ -1137,7 +1209,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create_ingestion_source(
+    async def create_source(
         self, ingestion_source: _models.IngestionSource, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
@@ -1153,7 +1225,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def create_ingestion_source(
+    async def create_source(
         self, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
@@ -1169,7 +1241,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def create_ingestion_source(
+    async def create_source(
         self, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
@@ -1185,7 +1257,7 @@ class IngestionOperations:
         """
 
     @distributed_trace_async
-    async def create_ingestion_source(
+    async def create_source(
         self, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.IngestionSource:
         """Create a new ingestion source in a geo-catalog.
@@ -1218,7 +1290,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_ingestion_source_request(
+        _request = build_ingestion_create_source_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1260,7 +1332,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create_or_replace_ingestion_source(
+    async def create_or_replace_source(
         self,
         id: str,
         ingestion_source: _models.IngestionSource,
@@ -1283,7 +1355,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def create_or_replace_ingestion_source(
+    async def create_or_replace_source(
         self, id: str, ingestion_source: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
@@ -1301,7 +1373,7 @@ class IngestionOperations:
         """
 
     @overload
-    async def create_or_replace_ingestion_source(
+    async def create_or_replace_source(
         self, id: str, ingestion_source: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
@@ -1319,7 +1391,7 @@ class IngestionOperations:
         """
 
     @distributed_trace_async
-    async def create_or_replace_ingestion_source(
+    async def create_or_replace_source(
         self, id: str, ingestion_source: Union[_models.IngestionSource, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
@@ -1354,7 +1426,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_or_replace_ingestion_source_request(
+        _request = build_ingestion_create_or_replace_source_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1397,7 +1469,7 @@ class IngestionOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_ingestion_source(self, id: str, **kwargs: Any) -> None:
+    async def delete_source(self, id: str, **kwargs: Any) -> None:
         """Delete an ingestion source from a geo-catalog.
 
         :param id: Ingestion source id. Required.
@@ -1419,7 +1491,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_ingestion_source_request(
+        _request = build_ingestion_delete_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1445,7 +1517,7 @@ class IngestionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def get_ingestion_source(self, id: str, **kwargs: Any) -> _models.IngestionSource:
+    async def get_source(self, id: str, **kwargs: Any) -> _models.IngestionSource:
         """Get an ingestion source in a geo-catalog.
 
         :param id: Ingestion source id. Required.
@@ -1467,7 +1539,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_ingestion_source_request(
+        _request = build_ingestion_get_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1504,21 +1576,26 @@ class IngestionOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list_ingestion_sources(
+    @distributed_trace
+    def list_sources(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> _models.PageIngestionSourceSummary:
+    ) -> AsyncItemPaged["_models.IngestionSourceSummary"]:
         """Get ingestion sources in a geo-catalog.
 
         :keyword top: The number of items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of items to skip. Default value is None.
         :paramtype skip: int
-        :return: PageIngestionSourceSummary. The PageIngestionSourceSummary is compatible with
-         MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageIngestionSourceSummary
+        :return: An iterator like instance of IngestionSourceSummary
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.planetarycomputer.models.IngestionSourceSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.IngestionSourceSummary]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1527,58 +1604,83 @@ class IngestionOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PageIngestionSourceSummary] = kwargs.pop("cls", None)
+                _request = build_ingestion_list_sources_request(
+                    top=top,
+                    skip=skip,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_ingestion_list_ingestion_sources_request(
-            top=top,
-            skip=skip,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.IngestionSourceSummary], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageIngestionSourceSummary, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
 
-    @distributed_trace_async
-    async def list_managed_identities(self, **kwargs: Any) -> _models.PageManagedIdentityMetadata:
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_managed_identities(self, **kwargs: Any) -> AsyncItemPaged["_models.ManagedIdentityMetadata"]:
         """Get all managed identities with access to storage accounts configured for a geo-catalog.
 
-        :return: PageManagedIdentityMetadata. The PageManagedIdentityMetadata is compatible with
-         MutableMapping
-        :rtype: ~azure.planetarycomputer.models.PageManagedIdentityMetadata
+        :return: An iterator like instance of ManagedIdentityMetadata
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.planetarycomputer.models.ManagedIdentityMetadata]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[list[_models.ManagedIdentityMetadata]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1587,46 +1689,66 @@ class IngestionOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.PageManagedIdentityMetadata] = kwargs.pop("cls", None)
+                _request = build_ingestion_list_managed_identities_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_ingestion_list_managed_identities_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(list[_models.ManagedIdentityMetadata], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.PageManagedIdentityMetadata, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class StacOperations:  # pylint: disable=too-many-public-methods
@@ -1655,16 +1777,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Create a new asset in the Collection metadata and write the associated
         file to managed storage.
 
-        Args:
-        request: The incoming request.
-        asset: The Asset object to write, without a valid href to the asset.
-        file: The file to write.
-        collection_id: The ID of the collection to write the asset to.
-        content_type: The content type of the request.
-
-        Returns:
-        A Response object containing the newly created asset.
-
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param body: Multi-part form data. Required.
@@ -1680,16 +1792,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Create a new asset in the Collection metadata and write the associated
         file to managed storage.
-
-        Args:
-        request: The incoming request.
-        asset: The Asset object to write, without a valid href to the asset.
-        file: The file to write.
-        collection_id: The ID of the collection to write the asset to.
-        content_type: The content type of the request.
-
-        Returns:
-        A Response object containing the newly created asset.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -1708,16 +1810,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Create a new asset in the Collection metadata and write the associated
         file to managed storage.
-
-        Args:
-        request: The incoming request.
-        asset: The Asset object to write, without a valid href to the asset.
-        file: The file to write.
-        collection_id: The ID of the collection to write the asset to.
-        content_type: The content type of the request.
-
-        Returns:
-        A Response object containing the newly created asset.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -1792,17 +1884,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Update an existing asset in a given collection.
 
-        Args:
-        request: The incoming request.
-        asset: The Asset object to update.
-        file: The file to update (optional).
-        collection_id: The ID of the collection to update the asset in.
-        asset_id: The ID of the asset to update.
-        content_type: The content type of the request.
-
-        Returns:
-        A Response object containing the updated asset.
-
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
@@ -1822,17 +1903,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Update an existing asset in a given collection.
 
-        Args:
-        request: The incoming request.
-        asset: The Asset object to update.
-        file: The file to update (optional).
-        collection_id: The ID of the collection to update the asset in.
-        asset_id: The ID of the asset to update.
-        content_type: The content type of the request.
-
-        Returns:
-        A Response object containing the updated asset.
-
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :param asset_id: STAC Asset ID. Required.
@@ -1851,17 +1921,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """Update Collection Asset.
 
         Update an existing asset in a given collection.
-
-        Args:
-        request: The incoming request.
-        asset: The Asset object to update.
-        file: The file to update (optional).
-        collection_id: The ID of the collection to update the asset in.
-        asset_id: The ID of the asset to update.
-        content_type: The content type of the request.
-
-        Returns:
-        A Response object containing the updated asset.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -1936,14 +1995,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """Delete Collection Asset.
 
         Delete an asset from a given collection.
-
-        Args:
-        request: The incoming request.
-        collection_id: The ID of the collection to delete the asset from.
-        asset_id: The ID of the asset to delete.
-
-        Returns:
-        A Response object indicating the success of the deletion.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -3077,7 +3128,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacCatalogCollections:
         """Get Collections.
 
-        Endpoint.
+        List all collections in the GeoCatalog instance.
 
         :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
          "false". Default value is None.
@@ -3144,12 +3195,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         """Get Partitiontype.
 
         Get the partitiontype for a GeoCatalog Collection.
-
-        Args:
-        collection_id: the collection id to get the partitiontype for.
-
-        Returns:
-        The partitiontype for the collection.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -3221,13 +3266,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         The default partitioning scheme is "none" which does not partition items.
 
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
-
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
         :param body: Partition type configuration determining how items are partitioned in storage.
@@ -3254,13 +3292,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Ideal partitioning schemes result in partitions of roughly 100k items each.
 
         The default partitioning scheme is "none" which does not partition items.
-
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -3289,13 +3320,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         The default partitioning scheme is "none" which does not partition items.
 
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
-
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
         :param body: Partition type configuration determining how items are partitioned in storage.
@@ -3322,13 +3346,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         Ideal partitioning schemes result in partitions of roughly 100k items each.
 
         The default partitioning scheme is "none" which does not partition items.
-
-        Args:
-        collection_id: the collection id to add the partitiontype to.
-        partitiontype: the partitiontype to add.
-
-        Returns:
-        None.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -3878,13 +3895,6 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Get thumbnail for given collection.
 
-        Args:
-        request: The incoming request.
-        collection_id: The ID of the collection to retrieve assets for.
-
-        Returns:
-        thumbnail image.
-
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
         :return: AsyncIterator[bytes]
@@ -4150,7 +4160,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     async def get_conformance_class(self, **kwargs: Any) -> _models.StacConformanceClasses:
         """Conformance Classes.
 
-        Endpoint.
+        Returns the STAC conformance classes.
 
         :return: StacConformanceClasses. The StacConformanceClasses is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacConformanceClasses
@@ -5153,7 +5163,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     async def get_stac_landing_page(self, **kwargs: Any) -> _models.StacLandingPage:
         """Landing Page.
 
-        Endpoint.
+        Return the STAC landing page.
 
         :return: StacLandingPage. The StacLandingPage is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacLandingPage
@@ -5579,7 +5589,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     async def list_queryables(self, **kwargs: Any) -> dict[str, Any]:
         """Queryables.
 
-        Endpoint.
+        List all queryables in the GeoCatalog instance.
 
         :return: dict mapping str to any
         :rtype: dict[str, any]
@@ -5635,10 +5645,10 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_queryables_by_collection(self, collection_id: str, **kwargs: Any) -> dict[str, Any]:
+    async def list_collection_queryables(self, collection_id: str, **kwargs: Any) -> dict[str, Any]:
         """Collection Queryables.
 
-        Endpoint.
+        List all queryables in a given collection.
 
         :param collection_id: Collection ID. Required.
         :type collection_id: str
@@ -5659,7 +5669,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_queryables_by_collection_request(
+        _request = build_stac_list_collection_queryables_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5702,7 +5712,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacItemCollection:
         """Search.
 
-        Endpoint.
+        STAC search operation.
 
         :param body: Request body. Required.
         :type body: ~azure.planetarycomputer.models.StacSearchParameters
@@ -5720,7 +5730,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacItemCollection:
         """Search.
 
-        Endpoint.
+        STAC search operation.
 
         :param body: Request body. Required.
         :type body: JSON
@@ -5738,7 +5748,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacItemCollection:
         """Search.
 
-        Endpoint.
+        STAC search operation.
 
         :param body: Request body. Required.
         :type body: IO[bytes]
@@ -5756,7 +5766,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacItemCollection:
         """Search.
 
-        Endpoint.
+        STAC search operation.
 
         :param body: Request body. Is one of the following types: StacSearchParameters, JSON, IO[bytes]
          Required.
@@ -5905,7 +5915,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_tile_matrix_list(self, **kwargs: Any) -> list[str]:
+    async def list_tile_matrices(self, **kwargs: Any) -> list[str]:
         """Matrix List.
 
         Return Matrix List.
@@ -5927,7 +5937,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[list[str]] = kwargs.pop("cls", None)
 
-        _request = build_tiler_get_tile_matrix_list_request(
+        _request = build_tiler_list_tile_matrices_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5964,25 +5974,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_asset_statistics(
-        self,
-        collection_id: str,
-        item_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
-        **kwargs: Any
+    async def get_asset_statistics(
+        self, collection_id: str, item_id: str, **kwargs: Any
     ) -> _models.StacAssetStatistics:
         """Asset Statistics.
 
@@ -5992,56 +5985,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
         :return: StacAssetStatistics. The StacAssetStatistics is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacAssetStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6059,23 +6002,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacAssetStatistics] = kwargs.pop("cls", None)
 
-        _request = build_tiler_list_asset_statistics_request(
+        _request = build_tiler_get_asset_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            resampling=resampling,
-            max_size=max_size,
-            categorical=categorical,
-            categories_pixels=categories_pixels,
-            percentiles=percentiles,
-            histogram_bins=histogram_bins,
-            histogram_range=histogram_range,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -9446,24 +9375,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         y: float,
         scale: float,
         format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        subdataset_name: Optional[str] = None,
-        subdataset_bands: Optional[list[str]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Tile Tilematrixsetid As Path.
@@ -9491,79 +9402,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
-        :keyword subdataset_name: The name of a subdataset within the asset. Default value is None.
-        :paramtype subdataset_name: str
-        :keyword subdataset_bands: The index of a subdataset band within the asset. Default value is
-         None.
-        :paramtype subdataset_bands: list[str]
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9590,24 +9428,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             y=y,
             scale=scale,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            subdataset_name=subdataset_name,
-            subdataset_bands=subdataset_bands,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -9650,31 +9470,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_wmts_capabilities(
-        self,
-        collection_id: str,
-        item_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
+        self, collection_id: str, item_id: str, tile_matrix_set_id: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Wmts Tilematrixsetid As Path.
 
@@ -9686,84 +9482,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9785,26 +9503,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -9846,11 +9544,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         """Get ClassMap Legend.
 
         Generate values and color swatches mapping for a given classmap.
-
-        Args:
-        trim_start (int, optional): Number of items to trim
-        from the start of the cmap
-        trim_end (int, optional): Number of items to trim from the end of the cmap.
 
         :param classmap_name: classmap name. Required.
         :type classmap_name: str
@@ -9921,11 +9614,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         """Get Interval Legend.
 
         Generate values and color swatches mapping for a given interval classmap.
-
-        Args:
-        trim_start (int, optional): Number of items to trim from
-        the start of the cmap
-        trim_end (int, optional): Number of items to trim from the end of the cmap.
 
         :param classmap_name: classmap name. Required.
         :type classmap_name: str
@@ -10010,18 +9698,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         If the colormap has non-contiguous values at the beginning or end,
         which aren't desired in the output image, they can be trimmed by specifying
         the number of values to trim.
-
-        Args:
-        cmap_name (string): The name of the registered colormap to generate
-        a legend for
-        height (float, optional): The output height of the legend image
-        width (float, optional): The output width of the legend image
-        trim_start (int, optional): Number of items to trim from
-        the start of the cmap
-        trim_end (int, optional): Number of items to trim from the end of the cmap
-
-        Returns:
-        HTTP response with jpeg encoded image data.
 
         :param color_map_name: The name of the registered colormap to generate a legend for. Required.
         :type color_map_name: str
@@ -10691,7 +10367,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhigh". Default value is None.
         :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
@@ -10919,7 +10595,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
         :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
         :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhight". Default value is None.
+         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhigh". Default value is None.
         :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
         :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
          bands. Default value is None.
@@ -11236,14 +10912,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class SharedAccessSignatureOperations:
+class SharedAccessSignatureClientOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`shared_access_signature` attribute.
+        :attr:`shared_access_signature_client` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -11284,7 +10960,7 @@ class SharedAccessSignatureOperations:
 
         cls: ClsType[_models.SignedLink] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_get_sign_request(
+        _request = build_shared_access_signature_client_get_sign_request(
             href=href,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -11355,7 +11031,7 @@ class SharedAccessSignatureOperations:
 
         cls: ClsType[_models.SharedAccessSignatureToken] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_get_token_request(
+        _request = build_shared_access_signature_client_get_token_request(
             collection_id=collection_id,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -11420,7 +11096,7 @@ class SharedAccessSignatureOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_revoke_token_request(
+        _request = build_shared_access_signature_client_revoke_token_request(
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
             headers=_headers,

@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.create_ingestion(
+    response = client.ingestion.create(
         collection_id="collectionId",
         definition={
             "importType": "StaticCatalog",

@@ -26,11 +26,13 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.list_ingestion_sources()
-    print(response)
+    response = client.ingestion.list_sources()
+    for item in response:
+        print(item)
 
 
 # x-ms-original-file: 2025-04-30-preview/IngestionSources_List.json

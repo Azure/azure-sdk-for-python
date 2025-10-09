@@ -26,10 +26,11 @@ from azure.planetarycomputer import PlanetaryComputerClient
 
 def main():
     client = PlanetaryComputerClient(
+        endpoint="ENDPOINT",
         credential=DefaultAzureCredential(),
     )
 
-    response = client.stac.list_queryables_by_collection(
+    response = client.stac.list_collection_queryables(
         collection_id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
     )
     print(response)

@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import PlanetaryComputerClientConfiguration
-from .operations import IngestionOperations, SharedAccessSignatureOperations, StacOperations, TilerOperations
+from .operations import IngestionOperations, SharedAccessSignatureClientOperations, StacOperations, TilerOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -31,14 +31,13 @@ class PlanetaryComputerClient:
     :vartype stac: azure.planetarycomputer.aio.operations.StacOperations
     :ivar tiler: TilerOperations operations
     :vartype tiler: azure.planetarycomputer.aio.operations.TilerOperations
-    :ivar shared_access_signature: SharedAccessSignatureOperations operations
-    :vartype shared_access_signature:
-     azure.planetarycomputer.aio.operations.SharedAccessSignatureOperations
+    :ivar shared_access_signature_client: SharedAccessSignatureClientOperations operations
+    :vartype shared_access_signature_client:
+     azure.planetarycomputer.aio.operations.SharedAccessSignatureClientOperations
+    :param endpoint: Service host. Required.
+    :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword endpoint: Service host. Default value is
-     "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com".
-    :paramtype endpoint: str
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-04-30-preview". Note that overriding this default value may result in unsupported
      behavior.
@@ -47,15 +46,9 @@ class PlanetaryComputerClient:
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        *,
-        endpoint: str = "https://contoso-catalog.gwhqfdeddydpareu.uksouth.geocatalog.spatio.azure.com",
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
-        self._config = PlanetaryComputerClientConfiguration(credential=credential, endpoint=endpoint, **kwargs)
+        self._config = PlanetaryComputerClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -82,7 +75,7 @@ class PlanetaryComputerClient:
         self.ingestion = IngestionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.stac = StacOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tiler = TilerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_access_signature = SharedAccessSignatureOperations(
+        self.shared_access_signature_client = SharedAccessSignatureClientOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
