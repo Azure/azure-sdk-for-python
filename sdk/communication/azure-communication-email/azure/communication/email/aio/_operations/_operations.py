@@ -28,7 +28,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_email_get_send_result_request, build_email_send_request
+from ..._operations._operations import build_email_send_request
 from ..._utils.utils import ClientMixinABC
 from .._configuration import EmailClientConfiguration
 
@@ -40,90 +40,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class _EmailClientOperationsMixin(
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], EmailClientConfiguration]
 ):
-
-    @distributed_trace_async
-    async def get_send_result(self, operation_id: str, **kwargs: Any) -> JSON:
-        """Gets the status of the email send operation.
-
-        Gets the status of the email send operation.
-
-        :param operation_id: ID of the long running operation (GUID) returned from a previous call to
-         send email. Required.
-        :type operation_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "status": "str",
-                    "error": {
-                        "additionalInfo": [
-                            {
-                                "info": {},
-                                "type": "str"
-                            }
-                        ],
-                        "code": "str",
-                        "details": [
-                            ...
-                        ],
-                        "message": "str",
-                        "target": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
-
-        _request = build_email_get_send_result_request(
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["retry-after"] = self._deserialize("int", response.headers.get("retry-after"))
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
-
-        return cast(JSON, deserialized)  # type: ignore
 
     async def _send_initial(
         self, message: Union[JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any

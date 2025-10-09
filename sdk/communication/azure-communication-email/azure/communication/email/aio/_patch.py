@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
@@ -25,7 +26,7 @@ class EmailClient(EmailClientGenerated):
 
     :param str endpoint: The endpoint url for Azure Communication Service resource.
     :param credential: The credential we use to authenticate against the service.
-    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential or 
+    :paramtype credential: ~azure.core.credentials_async.AsyncTokenCredential or
         ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Azure Communication Email API version.
         Default value is "2025-09-01".
@@ -47,9 +48,9 @@ class EmailClient(EmailClientGenerated):
         super().__init__(
             endpoint=endpoint,
             authentication_policy=authentication_policy,
-            sdk_moniker=f"azure-communication-email/{VERSION}",
+            sdk_moniker=f"communication-email/{VERSION}",
             api_version=self._api_version,
-            **kwargs
+            **kwargs,
         )
 
     @classmethod

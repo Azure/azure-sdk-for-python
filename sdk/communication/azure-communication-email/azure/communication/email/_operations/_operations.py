@@ -39,30 +39,6 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_email_get_send_result_request(operation_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/emails/operations/{operationId}"
-    path_format_arguments = {
-        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_email_send_request(*, operation_id: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -88,90 +64,6 @@ def build_email_send_request(*, operation_id: Optional[str] = None, **kwargs: An
 
 
 class _EmailClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], EmailClientConfiguration]):
-
-    @distributed_trace
-    def get_send_result(self, operation_id: str, **kwargs: Any) -> JSON:
-        """Gets the status of the email send operation.
-
-        Gets the status of the email send operation.
-
-        :param operation_id: ID of the long running operation (GUID) returned from a previous call to
-         send email. Required.
-        :type operation_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "status": "str",
-                    "error": {
-                        "additionalInfo": [
-                            {
-                                "info": {},
-                                "type": "str"
-                            }
-                        ],
-                        "code": "str",
-                        "details": [
-                            ...
-                        ],
-                        "message": "str",
-                        "target": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
-
-        _request = build_email_get_send_result_request(
-            operation_id=operation_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["retry-after"] = self._deserialize("int", response.headers.get("retry-after"))
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
-
-        return cast(JSON, deserialized)  # type: ignore
 
     def _send_initial(
         self, message: Union[JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any

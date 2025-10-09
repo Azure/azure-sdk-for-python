@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
@@ -44,9 +45,9 @@ class EmailClient(EmailClientGenerated):
         super().__init__(
             endpoint=endpoint,
             authentication_policy=authentication_policy,
-            sdk_moniker=f"azure-communication-email/{VERSION}",
+            sdk_moniker=f"communication-email/{VERSION}",
             api_version=self._api_version,
-            **kwargs
+            **kwargs,
         )
 
     @classmethod

@@ -23,7 +23,7 @@ namespace: azure.communication.email
 no-namespace-folders: true
 license-header: MICROSOFT_MIT_NO_VERSION
 enable-xml: true
-clear-output-folder: true
+clear-output-folder: false
 python: true
 v3: true
 no-async: false
@@ -57,4 +57,5 @@ directive:
       if ($["operationId"] && $["operationId"].startsWith("Email_")) {
         $["operationId"] = $["operationId"].replace("Email_", "");
       }
+  - remove-operation: GetSendResult
 ```
