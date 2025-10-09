@@ -29,6 +29,8 @@ class EvaluationMetrics:
     CODE_VULNERABILITY = "code_vulnerability"
     UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
     SENSITIVE_DATA_LEAKAGE = "sensitive_data_leakage"
+    TASK_ADHERENCE = "task_adherence"
+    PROHIBITED_ACTIONS = "prohibited_actions"
 
 
 class _InternalEvaluationMetrics:

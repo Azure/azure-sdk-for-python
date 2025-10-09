@@ -18,6 +18,8 @@ RISK_CATEGORY_METRIC_MAP = {
     _InternalRiskCategory.ECI: _InternalEvaluationMetrics.ECI,
     RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
     RiskCategory.SensitiveDataLeakage: EvaluationMetrics.SENSITIVE_DATA_LEAKAGE,
+    RiskCategory.TaskAdherence: EvaluationMetrics.TASK_ADHERENCE,
+    RiskCategory.ProhibitedActions: EvaluationMetrics.PROHIBITED_ACTIONS,
 }
 
 RISK_CATEGORY_ANNOTATION_TASK_MAP = {
@@ -30,6 +32,8 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
     _InternalRiskCategory.ECI: _InternalAnnotationTasks.ECI,
     RiskCategory.CodeVulnerability: Tasks.CODE_VULNERABILITY,
     RiskCategory.SensitiveDataLeakage: Tasks.SENSITIVE_DATA_LEAKAGE,
+    RiskCategory.TaskAdherence: Tasks.TASK_ADHERENCE,
+    RiskCategory.ProhibitedActions: Tasks.PROHIBITED_ACTIONS,
 }
 
 

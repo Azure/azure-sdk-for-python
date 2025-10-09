@@ -51,6 +51,8 @@ class Tasks:
     CODE_VULNERABILITY = "code vulnerability"
     UNGROUNDED_ATTRIBUTES = "inference sensitive attributes"
     SENSITIVE_DATA_LEAKAGE = "sensitive_data_leakage"
+    TASK_ADHERENCE = "task_adherence"
+    PROHIBITED_ACTIONS = "prohibited_actions"
 
 
 class _InternalAnnotationTasks:
@@ -76,6 +78,8 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CODE_VULNERABILITY = "code_vulnerability"
     UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
     SENSITIVE_DATA_LEAKAGE = "sensitive_data_leakage"
+    TASK_ADHERENCE = "task_adherence"
+    PROHIBITED_ACTIONS = "prohibited_actions"
 
 
 class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
