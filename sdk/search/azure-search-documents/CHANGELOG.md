@@ -1,5 +1,15 @@
 # Release History
 
+## 11.6.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 11.6.0 (2025-10-10)
 
 ### Features Added
