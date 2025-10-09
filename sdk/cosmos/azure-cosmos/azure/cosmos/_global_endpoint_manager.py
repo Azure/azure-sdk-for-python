@@ -130,7 +130,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 # this will perform getDatabaseAccount calls to check endpoint health
                 self._endpoints_health_check(**kwargs)
 
-    def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
+    def _GetDatabaseAccount(self, **kwargs) -> DatabaseAccount:
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
@@ -138,12 +138,12 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         specified, to get the database account.
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account
         and the endpoint that was used for the request.
-        :rtype: tuple of (~azure.cosmos.DatabaseAccount, str)
+        :rtype: ~azure.cosmos.DatabaseAccount
         """
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            return database_account, self.DefaultEndpoint
+            return database_account
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
         # information from any of the preferred locations that the user might have
@@ -156,7 +156,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
-                    return database_account, locational_endpoint
+                    return database_account
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     pass
             raise
@@ -166,39 +166,38 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
 
         Validating if the endpoint is healthy else marking it as unavailable.
         """
-        database_account, attempted_endpoint = self._GetDatabaseAccount(**kwargs)
+        database_account = self._GetDatabaseAccount(**kwargs)
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the regional routing contexts to check
         endpoints = self.location_cache.endpoints_to_health_check()
         success_count = 0
         for endpoint in endpoints:
-            if endpoint != attempted_endpoint:
-                if success_count >= 4:
-                    break
-                # save current dba timeouts
-                previous_dba_read_timeout = self.client.connection_policy.DBAReadTimeout
-                previous_dba_connection_timeout = self.client.connection_policy.DBAConnectionTimeout
-                try:
-                    if (endpoint in
-                            self.location_cache.location_unavailability_info_by_endpoint):
-                        # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
-                        # health check. This helps reduce the time the health check is blocking all requests.
-                        self.client.connection_policy._override_health_check_timeouts(constants._Constants
-                                                                                      .UnavailableEndpointDBATimeouts,
-                                                                                      constants._Constants
-                                                                                      .UnavailableEndpointDBATimeouts)
-                        self.client.health_check(endpoint, **kwargs)
-                    else:
-                        self.client.health_check(endpoint, **kwargs)
-                    success_count += 1
-                    self.location_cache.mark_endpoint_available(endpoint)
-                except (exceptions.CosmosHttpResponseError, AzureError):
-                    self._mark_endpoint_unavailable(endpoint)
+            if success_count >= 4:
+                break
+            # save current dba timeouts
+            previous_dba_read_timeout = self.client.connection_policy.DBAReadTimeout
+            previous_dba_connection_timeout = self.client.connection_policy.DBAConnectionTimeout
+            try:
+                if (endpoint in
+                        self.location_cache.location_unavailability_info_by_endpoint):
+                    # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
+                    # health check. This helps reduce the time the health check is blocking all requests.
+                    self.client.connection_policy._override_health_check_timeouts(constants._Constants
+                                                                                  .UnavailableEndpointDBATimeouts,
+                                                                                  constants._Constants
+                                                                                  .UnavailableEndpointDBATimeouts)
+                    self.client.health_check(endpoint, **kwargs)
+                else:
+                    self.client.health_check(endpoint, **kwargs)
+                success_count += 1
+                self.location_cache.mark_endpoint_available(endpoint)
+            except (exceptions.CosmosHttpResponseError, AzureError):
+                self._mark_endpoint_unavailable(endpoint)
 
-                finally:
-                    # after the health check for that endpoint setting the timeouts back to their original values
-                    self.client.connection_policy._override_health_check_timeouts(previous_dba_read_timeout,
-                                                                                  previous_dba_connection_timeout)
+            finally:
+                # after the health check for that endpoint setting the timeouts back to their original values
+                self.client.connection_policy._override_health_check_timeouts(previous_dba_read_timeout,
+                                                                              previous_dba_connection_timeout)
         self.location_cache.update_location_cache()
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):

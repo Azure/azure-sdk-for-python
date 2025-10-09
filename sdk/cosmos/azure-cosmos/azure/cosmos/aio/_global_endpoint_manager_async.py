@@ -159,19 +159,18 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         Validating if the endpoint is healthy else marking it as unavailable.
         """
         # get the database account from the default endpoint first
-        database_account, attempted_endpoint = await self._GetDatabaseAccount(**kwargs)
+        database_account = await self._GetDatabaseAccount(**kwargs)
         self.location_cache.perform_on_database_account_read(database_account)
         # get all the endpoints to check
         endpoints = self.location_cache.endpoints_to_health_check()
         database_account_checks = []
         for endpoint in endpoints:
-            if endpoint != attempted_endpoint:
-                database_account_checks.append(self._health_check(endpoint, **kwargs))
+            database_account_checks.append(self._health_check(endpoint, **kwargs))
         await asyncio.gather(*database_account_checks)
 
         self.location_cache.update_location_cache()
 
-    async def _GetDatabaseAccount(self, **kwargs) -> Tuple[DatabaseAccount, str]:
+    async def _GetDatabaseAccount(self, **kwargs) -> DatabaseAccount:
         """Gets the database account.
 
         First tries by using the default endpoint, and if that doesn't work,
@@ -179,12 +178,12 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         specified, to get the database account.
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account
         and the endpoint that was used for the request.
-        :rtype: tuple of (~azure.cosmos.DatabaseAccount, str)
+        :rtype: ~azure.cosmos.DatabaseAccount
         """
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
             self._database_account_cache = database_account
-            return database_account, self.DefaultEndpoint
+            return database_account
         # If for any reason(non-globaldb related), we are not able to get the database
         # account from the above call to GetDatabaseAccount, we would try to get this
         # information from any of the preferred locations that the user might have
@@ -197,7 +196,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
-                    return database_account, locational_endpoint
+                    return database_account
                 except (exceptions.CosmosHttpResponseError, AzureError):
                     pass
             raise
