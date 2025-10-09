@@ -6,13 +6,15 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Dict, List, Optional, Union, cast, Any
+from typing import Dict, List, Optional, Union, cast, Any, Protocol, Type, TypeVar, runtime_checkable
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
 
 __all__ = ["NULL", "AzureJSONEncoder", "is_generated_model", "as_attribute_dict", "attribute_list"]
 TZ_UTC = timezone.utc
+
+T = TypeVar("T", bound="Serializable")
 
 
 class _Null:
@@ -27,6 +29,69 @@ NULL = _Null()
 A falsy sentinel object which is supposed to be used to specify attributes
 with no data. This gets serialized to `null` on the wire.
 """
+
+
+@runtime_checkable
+class Serializable(Protocol):
+    """A protocol for objects that can be serialized to and deserialized from a dictionary representation.
+
+    This protocol defines a standard interface for custom models to integrate with the Azure SDK serialization
+    and deserialization mechanisms. By implementing the `to_dict` and `from_dict` methods, a custom type can
+    control how it is converted for REST API calls and reconstituted from API responses.
+
+    Examples:
+
+    .. code-block:: python
+
+        from typing import Dict, Any, Type
+
+        class CustomModel:
+
+            foo: str
+            bar: str
+
+            def __init__(self, *, foo: str, bar: str):
+                self.foo = foo
+                self.bar = bar
+
+            def to_dict(self) -> Dict[str, Any]:
+                return {
+                    "foo": self.foo,
+                    "bar": self.bar
+                }
+
+            @classmethod
+            def from_dict(cls: Type["CustomModel"], data: Dict[str, Any]) -> "CustomModel":
+                return cls(
+                    foo=data["foo"],
+                    bar=data["bar"]
+                )
+    """
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dictionary representation of the object.
+
+        The keys of the dictionary should correspond to the REST API's JSON field names. This method is responsible
+        for mapping the object's attributes to the correct wire format.
+
+        :return: A dictionary representing the object.
+        :rtype: dict[str, any]
+        """
+        ...
+
+    @classmethod
+    def from_dict(cls: Type[T], data: Dict[str, Any]) -> T:
+        """Creates an instance of the class from a dictionary.
+
+        The dictionary keys are expected to be the REST API's JSON field names. This method is responsible for
+        mapping the incoming dictionary to the object's attributes.
+
+        :param data: A dictionary containing the object's data.
+        :type data: dict[str, any]
+        :return: An instance of the class.
+        :rtype: ~T
+        """
+        ...
 
 
 def _timedelta_as_isostr(td: timedelta) -> str:
