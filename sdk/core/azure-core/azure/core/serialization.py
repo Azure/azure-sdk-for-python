@@ -7,7 +7,7 @@
 import base64
 from functools import partial
 from json import JSONEncoder
-from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple
+from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple, TypeVar
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -49,7 +49,9 @@ class TypeHandlerRegistry:
         self._serializer_cache: Dict[Type, Optional[Callable]] = {}
         self._deserializer_cache: Dict[Type, Optional[Callable]] = {}
 
-    def register_serializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
+    def register_serializer(
+        self, condition: Union[Type, Callable[[Any], bool]]
+    ) -> Callable[[Callable[[Any], Dict[str, Any]]], Callable[[Any], Dict[str, Any]]]:
         """Decorator to register a serializer.
 
         The handler function is expected to take a single argument, the object to serialize,
@@ -76,11 +78,11 @@ class TypeHandlerRegistry:
         :param condition: A type or a callable predicate function that takes an object and returns a bool.
         :type condition: Union[Type, Callable[[Any], bool]]
         :return: A decorator that registers the handler function.
-        :rtype: Callable
+        :rtype: Callable[[Callable[[Any], Dict[str, Any]]], Callable[[Any], Dict[str, Any]]]
         :raises TypeError: If the condition is neither a type nor a callable.
         """
 
-        def decorator(handler_func: Callable[[Any], Dict]) -> Callable[[Any], Dict]:
+        def decorator(handler_func: Callable[[Any], Dict[str, Any]]) -> Callable[[Any], Dict[str, Any]]:
             if isinstance(condition, type):
                 self._serializer_types[condition] = handler_func
             elif callable(condition):
@@ -93,7 +95,9 @@ class TypeHandlerRegistry:
 
         return decorator
 
-    def register_deserializer(self, condition: Union[Type, Callable[[Any], bool]]) -> Callable:
+    def register_deserializer(
+        self, condition: Union[Type, Callable[[Any], bool]]
+    ) -> Callable[[Callable[[Type, Dict[str, Any]], Any]], Callable[[Type, Dict[str, Any]], Any]]:
         """Decorator to register a deserializer.
 
         The handler function is expected to take two arguments: the target type and the data dictionary,
@@ -120,7 +124,7 @@ class TypeHandlerRegistry:
         :param condition: A type or a callable predicate function that takes an object and returns a bool.
         :type condition: Union[Type, Callable[[Any], bool]]
         :return: A decorator that registers the handler function.
-        :rtype: Callable
+        :rtype: Callable[[Callable[[Type, Dict[str, Any]], Any]], Callable[[Type, Dict[str, Any]], Any]]
         :raises TypeError: If the condition is neither a type nor a callable.
         """
 
