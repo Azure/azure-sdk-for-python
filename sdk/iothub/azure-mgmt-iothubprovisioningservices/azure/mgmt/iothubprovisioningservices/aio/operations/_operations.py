@@ -64,7 +64,7 @@ from ...operations._operations import (
     build_iot_dps_resource_update_request,
     build_operations_list_request,
 )
-from .._configuration import DevicesClientConfiguration
+from .._configuration import IotDpsClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -78,14 +78,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothubprovisioningservices.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothubprovisioningservices.aio.IotDpsClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotDpsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -180,14 +180,14 @@ class DpsCertificateOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothubprovisioningservices.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothubprovisioningservices.aio.IotDpsClient`'s
         :attr:`dps_certificate` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotDpsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1186,40 +1186,40 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothubprovisioningservices.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothubprovisioningservices.aio.IotDpsClient`'s
         :attr:`iot_dps_resource` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotDpsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def get_operation_result(
         self,
+        operation_id: str,
         resource_group_name: str,
         provisioning_service_name: str,
-        operation_id: str,
         *,
-        asyncinfo: str,
+        asyncinfo: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AsyncOperationResult:
         """Gets the status of a long running operation, such as create, update or delete a provisioning
         service.
 
+        :param operation_id: Operation id corresponding to long running operation. Use this to poll for
+         the status. Required.
+        :type operation_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
-        :param operation_id: Operation id corresponding to long running operation. Use this to poll for
-         the status. Required.
-        :type operation_id: str
         :keyword asyncinfo: Async header used to poll on the status of the operation, obtained while
-         creating the long running operation. Required.
+         creating the long running operation. Default value is None.
         :paramtype asyncinfo: str
         :return: AsyncOperationResult. The AsyncOperationResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothubprovisioningservices.models.AsyncOperationResult
@@ -1239,12 +1239,10 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.AsyncOperationResult] = kwargs.pop("cls", None)
 
         _request = build_iot_dps_resource_get_operation_result_request(
+            operation_id=operation_id,
             resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
-            operation_id=operation_id,
-            subscription_id=self._config.subscription_id,
             asyncinfo=asyncinfo,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1282,15 +1280,15 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, provisioning_service_name: str, **kwargs: Any
+        self, provisioning_service_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.ProvisioningServiceDescription:
         """Get the metadata of the provisioning service without SAS keys.
 
+        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
+        :type provisioning_service_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
-        :type provisioning_service_name: str
         :return: ProvisioningServiceDescription. The ProvisioningServiceDescription is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.iothubprovisioningservices.models.ProvisioningServiceDescription
@@ -1310,10 +1308,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.ProvisioningServiceDescription] = kwargs.pop("cls", None)
 
         _request = build_iot_dps_resource_get_request(
-            resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1841,7 +1837,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, provisioning_service_name: str, **kwargs: Any
+        self, provisioning_service_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1857,10 +1853,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_iot_dps_resource_delete_request(
-            resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )
@@ -1899,15 +1893,15 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, provisioning_service_name: str, **kwargs: Any
+        self, provisioning_service_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the Provisioning Service.
 
+        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
+        :type provisioning_service_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
-        :type provisioning_service_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1921,8 +1915,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
                 provisioning_service_name=provisioning_service_name,
+                resource_group_name=resource_group_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2134,15 +2128,15 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_valid_skus(
-        self, resource_group_name: str, provisioning_service_name: str, **kwargs: Any
+        self, provisioning_service_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.IotDpsSkuDefinition"]:
         """Gets the list of valid SKUs and tiers for a provisioning service.
 
+        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
+        :type provisioning_service_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
-        :type provisioning_service_name: str
         :return: An iterator like instance of IotDpsSkuDefinition
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuDefinition]
@@ -2165,10 +2159,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_iot_dps_resource_list_valid_skus_request(
-                    resource_group_name=resource_group_name,
                     provisioning_service_name=provisioning_service_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -2228,15 +2220,15 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_keys(
-        self, resource_group_name: str, provisioning_service_name: str, **kwargs: Any
+        self, provisioning_service_name: str, resource_group_name: str, **kwargs: Any
     ) -> AsyncItemPaged["_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]:
         """List the primary and secondary keys for a provisioning service.
 
+        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
+        :type provisioning_service_name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
-        :type provisioning_service_name: str
         :return: An iterator like instance of
          SharedAccessSignatureAuthorizationRuleAccessRightsDescription
         :rtype:
@@ -2262,10 +2254,8 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_iot_dps_resource_list_keys_request(
-                    resource_group_name=resource_group_name,
                     provisioning_service_name=provisioning_service_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
+                    resource_group_name=resource_group_name,
                     headers=_headers,
                     params=_params,
                 )
@@ -2328,17 +2318,17 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def list_keys_for_key_name(
-        self, resource_group_name: str, provisioning_service_name: str, key_name: str, **kwargs: Any
+        self, provisioning_service_name: str, key_name: str, resource_group_name: str, **kwargs: Any
     ) -> _models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription:
         """List primary and secondary keys for a specific key name.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
         :param key_name: Logical key name to get key-values for. Required.
         :type key_name: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :return: SharedAccessSignatureAuthorizationRuleAccessRightsDescription. The
          SharedAccessSignatureAuthorizationRuleAccessRightsDescription is compatible with MutableMapping
         :rtype:
@@ -2359,11 +2349,9 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription] = kwargs.pop("cls", None)
 
         _request = build_iot_dps_resource_list_keys_for_key_name_request(
-            resource_group_name=resource_group_name,
             provisioning_service_name=provisioning_service_name,
             key_name=key_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            resource_group_name=resource_group_name,
             headers=_headers,
             params=_params,
         )

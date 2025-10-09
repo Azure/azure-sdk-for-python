@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.iothubprovisioningservices.aio import DevicesClient
+from azure.mgmt.iothubprovisioningservices.aio import IotDpsClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,18 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevicesIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
+class TestIotDpsIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DevicesClient, is_async=True)
+        self.client = self.create_mgmt_client(IotDpsClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_iot_dps_resource_get_operation_result(self, resource_group):
         response = await self.client.iot_dps_resource.get_operation_result(
+            operation_id="str",
             resource_group_name=resource_group.name,
             provisioning_service_name="str",
-            operation_id="str",
-            asyncinfo="str",
         )
 
         # please add some check logic here by yourself
@@ -36,8 +35,8 @@ class TestDevicesIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_iot_dps_resource_get(self, resource_group):
         response = await self.client.iot_dps_resource.get(
-            resource_group_name=resource_group.name,
             provisioning_service_name="str",
+            resource_group_name=resource_group.name,
         )
 
         # please add some check logic here by yourself
@@ -152,8 +151,8 @@ class TestDevicesIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_iot_dps_resource_begin_delete(self, resource_group):
         response = await (
             await self.client.iot_dps_resource.begin_delete(
-                resource_group_name=resource_group.name,
                 provisioning_service_name="str",
+                resource_group_name=resource_group.name,
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -182,8 +181,8 @@ class TestDevicesIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_iot_dps_resource_list_valid_skus(self, resource_group):
         response = self.client.iot_dps_resource.list_valid_skus(
-            resource_group_name=resource_group.name,
             provisioning_service_name="str",
+            resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -193,8 +192,8 @@ class TestDevicesIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_iot_dps_resource_list_keys(self, resource_group):
         response = self.client.iot_dps_resource.list_keys(
-            resource_group_name=resource_group.name,
             provisioning_service_name="str",
+            resource_group_name=resource_group.name,
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -204,9 +203,9 @@ class TestDevicesIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_iot_dps_resource_list_keys_for_key_name(self, resource_group):
         response = await self.client.iot_dps_resource.list_keys_for_key_name(
-            resource_group_name=resource_group.name,
             provisioning_service_name="str",
             key_name="str",
+            resource_group_name=resource_group.name,
         )
 
         # please add some check logic here by yourself

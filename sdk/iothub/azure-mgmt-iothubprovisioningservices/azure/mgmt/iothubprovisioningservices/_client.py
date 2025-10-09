@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import DevicesClientConfiguration
+from ._configuration import IotDpsClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import DpsCertificateOperations, IotDpsResourceOperations, Operations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DevicesClient:
+class IotDpsClient:
     """API for using the Azure IoT Hub Device Provisioning Service features.
 
     :ivar operations: Operations operations
@@ -69,7 +69,7 @@ class DevicesClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = DevicesClientConfiguration(
+        self._config = IotDpsClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

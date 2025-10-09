@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.iothubprovisioningservices import DevicesClient
+from azure.mgmt.iothubprovisioningservices import IotDpsClient
 
 """
 # PREREQUISITES
@@ -25,14 +25,14 @@ from azure.mgmt.iothubprovisioningservices import DevicesClient
 
 
 def main():
-    client = DevicesClient(
+    client = IotDpsClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
     response = client.iot_dps_resource.list_valid_skus(
-        resource_group_name="myResourceGroup",
         provisioning_service_name="myFirstProvisioningService",
+        resource_group_name="myResourceGroup",
     )
     for item in response:
         print(item)
