@@ -655,7 +655,7 @@ class RedTeam:
             
             # If no agent XPIA prompts and we're trying agent, fallback to model
             if (not xpia_prompts or len(xpia_prompts) == 0) and target_type_str == "agent":
-                self.logger.warning("No agent-type XPIA prompts available, falling back to model-type XPIA prompts")
+                self.logger.debug("No agent-type XPIA prompts available, falling back to model-type XPIA prompts")
                 try:
                     xpia_prompts = await self.generated_rai_client.get_attack_objectives(
                         risk_type=None,
@@ -1238,8 +1238,6 @@ class RedTeam:
 
             chat_target = get_chat_target(target)
             self.chat_target = chat_target
-
-            import pdb; pdb.set_trace()
 
             # Execute attacks
             await self._execute_attacks(
