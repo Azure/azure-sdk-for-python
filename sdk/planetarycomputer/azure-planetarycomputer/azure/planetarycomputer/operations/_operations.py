@@ -1576,36 +1576,10 @@ def build_tiler_list_bounds_request(collection_id: str, item_id: str, **kwargs: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_crop_geo_json_request(
-    collection_id: str,
-    item_id: str,
-    format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    coordinate_reference_system: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    height: Optional[int] = None,
-    width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_tiler_crop_geo_json_request(collection_id: str, item_id: str, format: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -1618,84 +1592,21 @@ def build_tiler_crop_geo_json_request(
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if coordinate_reference_system is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if height is not None:
-        _params["height"] = _SERIALIZER.query("height", height, "int")
-    if width is not None:
-        _params["width"] = _SERIALIZER.query("width", width, "int")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
-    width: float,
-    height: float,
-    format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    coordinate_reference_system: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    collection_id: str, item_id: str, width: float, height: float, format: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -1710,75 +1621,21 @@ def build_tiler_crop_geo_json_with_dimensions_request(  # pylint: disable=name-t
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if coordinate_reference_system is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    coordinate_reference_system: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    categorical: Optional[bool] = None,
-    categories_pixels: Optional[list[str]] = None,
-    percentiles: Optional[list[int]] = None,
-    histogram_bins: Optional[str] = None,
-    histogram_range: Optional[str] = None,
-    **kwargs: Any
+    collection_id: str, item_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1790,43 +1647,12 @@ def build_tiler_list_geo_json_statistics_request(  # pylint: disable=name-too-lo
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if coordinate_reference_system is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if categorical is not None:
-        _params["categorical"] = _SERIALIZER.query("categorical", categorical, "bool")
-    if categories_pixels is not None:
-        _params["c"] = _SERIALIZER.query("categories_pixels", categories_pixels, "[str]", div=",")
-    if percentiles is not None:
-        _params["p"] = _SERIALIZER.query("percentiles", percentiles, "[int]", div=",")
-    if histogram_bins is not None:
-        _params["histogram_bins"] = _SERIALIZER.query("histogram_bins", histogram_bins, "str")
-    if histogram_range is not None:
-        _params["histogram_range"] = _SERIALIZER.query("histogram_range", histogram_range, "str")
-
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_info_geo_json_request(
@@ -1888,39 +1714,10 @@ def build_tiler_get_assets_info_request(
 
 
 def build_tiler_get_part_request(
-    collection_id: str,
-    item_id: str,
-    minx: float,
-    miny: float,
-    maxx: float,
-    maxy: float,
-    format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    dst_crs: Optional[str] = None,
-    coordinate_reference_system: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    height: Optional[int] = None,
-    width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    collection_id: str, item_id: str, minx: float, miny: float, maxx: float, maxy: float, format: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -1937,52 +1734,11 @@ def build_tiler_get_part_request(
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if dst_crs is not None:
-        _params["dst-crs"] = _SERIALIZER.query("dst_crs", dst_crs, "str")
-    if coordinate_reference_system is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if height is not None:
-        _params["height"] = _SERIALIZER.query("height", height, "int")
-    if width is not None:
-        _params["width"] = _SERIALIZER.query("width", width, "int")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-long
@@ -1995,30 +1751,10 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     width: float,
     height: float,
     format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    dst_crs: Optional[str] = None,
-    coordinate_reference_system: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -2037,48 +1773,11 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if dst_crs is not None:
-        _params["dst-crs"] = _SERIALIZER.query("dst_crs", dst_crs, "str")
-    if coordinate_reference_system is not None:
-        _params["coord-crs"] = _SERIALIZER.query("coordinate_reference_system", coordinate_reference_system, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_point_request(
@@ -2139,35 +1838,9 @@ def build_tiler_get_point_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_get_preview_request(
-    collection_id: str,
-    item_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    color_formula: Optional[str] = None,
-    dst_crs: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    height: Optional[int] = None,
-    width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_tiler_get_preview_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -2179,83 +1852,18 @@ def build_tiler_get_preview_request(
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if format is not None:
-        _params["format"] = _SERIALIZER.query("format", format, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if dst_crs is not None:
-        _params["dst-crs"] = _SERIALIZER.query("dst_crs", dst_crs, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if height is not None:
-        _params["height"] = _SERIALIZER.query("height", height, "int")
-    if width is not None:
-        _params["width"] = _SERIALIZER.query("width", width, "int")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-long
-    collection_id: str,
-    item_id: str,
-    format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    dst_crs: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    height: Optional[int] = None,
-    width: Optional[int] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    collection_id: str, item_id: str, format: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -2268,50 +1876,11 @@ def build_tiler_get_preview_with_format_request(  # pylint: disable=name-too-lon
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if dst_crs is not None:
-        _params["dst-crs"] = _SERIALIZER.query("dst_crs", dst_crs, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if height is not None:
-        _params["height"] = _SERIALIZER.query("height", height, "int")
-    if width is not None:
-        _params["width"] = _SERIALIZER.query("width", width, "int")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_create_static_image_request(collection_id: str, **kwargs: Any) -> HttpRequest:
@@ -2366,29 +1935,9 @@ def build_tiler_get_static_image_request(collection_id: str, id: str, **kwargs: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_tiler_list_statistics_request(
-    collection_id: str,
-    item_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    max_size: Optional[int] = None,
-    categorical: Optional[bool] = None,
-    categories_pixels: Optional[list[str]] = None,
-    percentiles: Optional[list[int]] = None,
-    histogram_bins: Optional[str] = None,
-    histogram_range: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_tiler_list_statistics_request(collection_id: str, item_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2400,71 +1949,17 @@ def build_tiler_list_statistics_request(
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if max_size is not None:
-        _params["max_size"] = _SERIALIZER.query("max_size", max_size, "int")
-    if categorical is not None:
-        _params["categorical"] = _SERIALIZER.query("categorical", categorical, "bool")
-    if categories_pixels is not None:
-        _params["c"] = _SERIALIZER.query("categories_pixels", categories_pixels, "[str]", div=",")
-    if percentiles is not None:
-        _params["p"] = _SERIALIZER.query("percentiles", percentiles, "[int]", div=",")
-    if histogram_bins is not None:
-        _params["histogram_bins"] = _SERIALIZER.query("histogram_bins", histogram_bins, "str")
-    if histogram_range is not None:
-        _params["histogram_range"] = _SERIALIZER.query("histogram_range", histogram_range, "str")
-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_tile_json_request(
-    collection_id: str,
-    item_id: str,
-    tile_matrix_set_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    collection_id: str, item_id: str, tile_matrix_set_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2477,51 +1972,10 @@ def build_tiler_get_tile_json_request(
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_tile_request(
@@ -2834,41 +2288,10 @@ def build_tiler_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  
 
 
 def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
-    search_id: str,
-    tile_matrix_set_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    scan_limit: Optional[int] = None,
-    items_limit: Optional[int] = None,
-    time_limit: Optional[int] = None,
-    exit_when_full: Optional[bool] = None,
-    skip_covered: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    collection: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    search_id: str, tile_matrix_set_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2880,104 +2303,17 @@ def build_tiler_get_mosaics_tile_json_request(  # pylint: disable=name-too-long
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if scan_limit is not None:
-        _params["scan_limit"] = _SERIALIZER.query("scan_limit", scan_limit, "int")
-    if items_limit is not None:
-        _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
-    if time_limit is not None:
-        _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exit_when_full is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
-    if skip_covered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if pixel_selection is not None:
-        _params["pixel_selection"] = _SERIALIZER.query("pixel_selection", pixel_selection, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_mosaics_tile_request(
-    search_id: str,
-    tile_matrix_set_id: str,
-    z: float,
-    x: float,
-    y: float,
-    scale: float,
-    format: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    scan_limit: Optional[int] = None,
-    items_limit: Optional[int] = None,
-    time_limit: Optional[int] = None,
-    exit_when_full: Optional[bool] = None,
-    skip_covered: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    collection: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    search_id: str, tile_matrix_set_id: str, z: float, x: float, y: float, scale: float, format: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", None)
 
     # Construct URL
@@ -2994,89 +2330,18 @@ def build_tiler_get_mosaics_tile_request(
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if scan_limit is not None:
-        _params["scan_limit"] = _SERIALIZER.query("scan_limit", scan_limit, "int")
-    if items_limit is not None:
-        _params["items_limit"] = _SERIALIZER.query("items_limit", items_limit, "int")
-    if time_limit is not None:
-        _params["time_limit"] = _SERIALIZER.query("time_limit", time_limit, "int")
-    if exit_when_full is not None:
-        _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
-    if skip_covered is not None:
-        _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if collection is not None:
-        _params["collection"] = _SERIALIZER.query("collection", collection, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if pixel_selection is not None:
-        _params["pixel_selection"] = _SERIALIZER.query("pixel_selection", pixel_selection, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     if accept is not None:
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long
-    search_id: str,
-    tile_matrix_set_id: str,
-    *,
-    assets: Optional[list[str]] = None,
-    expression: Optional[str] = None,
-    asset_band_indices: Optional[list[str]] = None,
-    asset_as_band: Optional[bool] = None,
-    no_data: Optional[float] = None,
-    unscale: Optional[bool] = None,
-    algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-    algorithm_params: Optional[str] = None,
-    tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-    tile_scale: Optional[int] = None,
-    min_zoom: Optional[int] = None,
-    max_zoom: Optional[int] = None,
-    buffer: Optional[str] = None,
-    color_formula: Optional[str] = None,
-    resampling: Optional[Union[str, _models.Resampling]] = None,
-    rescale: Optional[list[str]] = None,
-    color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-    color_map: Optional[str] = None,
-    return_mask: Optional[bool] = None,
-    **kwargs: Any
+    search_id: str, tile_matrix_set_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -3088,51 +2353,10 @@ def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-t
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if assets is not None:
-        _params["assets"] = [_SERIALIZER.query("assets", q, "str") if q is not None else "" for q in assets]
-    if expression is not None:
-        _params["expression"] = _SERIALIZER.query("expression", expression, "str")
-    if asset_band_indices is not None:
-        _params["asset_bidx"] = _SERIALIZER.query("asset_band_indices", asset_band_indices, "[str]", div=",")
-    if asset_as_band is not None:
-        _params["asset_as_band"] = _SERIALIZER.query("asset_as_band", asset_as_band, "bool")
-    if no_data is not None:
-        _params["nodata"] = _SERIALIZER.query("no_data", no_data, "float")
-    if unscale is not None:
-        _params["unscale"] = _SERIALIZER.query("unscale", unscale, "bool")
-    if algorithm is not None:
-        _params["algorithm"] = _SERIALIZER.query("algorithm", algorithm, "str")
-    if algorithm_params is not None:
-        _params["algorithm_params"] = _SERIALIZER.query("algorithm_params", algorithm_params, "str")
-    if tile_format is not None:
-        _params["tile_format"] = _SERIALIZER.query("tile_format", tile_format, "str")
-    if tile_scale is not None:
-        _params["tile_scale"] = _SERIALIZER.query("tile_scale", tile_scale, "int")
-    if min_zoom is not None:
-        _params["minzoom"] = _SERIALIZER.query("min_zoom", min_zoom, "int")
-    if max_zoom is not None:
-        _params["maxzoom"] = _SERIALIZER.query("max_zoom", max_zoom, "int")
-    if buffer is not None:
-        _params["buffer"] = _SERIALIZER.query("buffer", buffer, "str")
-    if color_formula is not None:
-        _params["color_formula"] = _SERIALIZER.query("color_formula", color_formula, "str")
-    if resampling is not None:
-        _params["resampling"] = _SERIALIZER.query("resampling", resampling, "str")
-    if rescale is not None:
-        _params["rescale"] = [_SERIALIZER.query("rescale", q, "str") if q is not None else "" for q in rescale]
-    if color_map_name is not None:
-        _params["colormap_name"] = _SERIALIZER.query("color_map_name", color_map_name, "str")
-    if color_map is not None:
-        _params["colormap"] = _SERIALIZER.query("color_map", color_map, "str")
-    if return_mask is not None:
-        _params["return_mask"] = _SERIALIZER.query("return_mask", return_mask, "bool")
-
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_shared_access_signature_client_get_sign_request(  # pylint: disable=name-too-long
@@ -9241,24 +8465,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: _models.StacItem,
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -9275,79 +8481,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type format: str
         :param body: Request GeoJson body. Required.
         :type body: ~azure.planetarycomputer.models.StacItem
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9364,24 +8497,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: JSON,
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -9398,79 +8513,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type format: str
         :param body: Request GeoJson body. Required.
         :type body: JSON
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9487,24 +8529,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: IO[bytes],
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -9521,79 +8545,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type format: str
         :param body: Request GeoJson body. Required.
         :type body: IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9609,25 +8560,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         format: str,
         body: Union[_models.StacItem, JSON, IO[bytes]],
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
@@ -9644,79 +8576,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
          Required.
         :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9746,26 +8605,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             collection_id=collection_id,
             item_id=item_id,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            coordinate_reference_system=coordinate_reference_system,
-            resampling=resampling,
-            max_size=max_size,
-            height=height,
-            width=width,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -9817,22 +8657,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: _models.StacItem,
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -9852,75 +8676,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type format: str
         :param body: Request GeoJson body. Required.
         :type body: ~azure.planetarycomputer.models.StacItem
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9939,22 +8694,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: JSON,
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -9974,75 +8713,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type format: str
         :param body: Request GeoJson body. Required.
         :type body: JSON
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10061,22 +8731,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         format: str,
         body: IO[bytes],
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -10096,75 +8750,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type format: str
         :param body: Request GeoJson body. Required.
         :type body: IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10182,23 +8767,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: float,
         format: str,
         body: Union[_models.StacItem, JSON, IO[bytes]],
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Geojson Crop.
@@ -10218,75 +8786,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
          Required.
         :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10318,24 +8817,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             width=width,
             height=height,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            coordinate_reference_system=coordinate_reference_system,
-            resampling=resampling,
-            max_size=max_size,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -10384,20 +8866,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: _models.StacItemCollection,
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GeoJsonStatisticsForStacItemCollection:
@@ -10411,59 +8879,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param body: Request GeoJson body. Required.
         :type body: ~azure.planetarycomputer.models.StacItemCollection
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10475,27 +8890,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def list_geo_json_statistics(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: JSON,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, collection_id: str, item_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
@@ -10507,59 +8902,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param body: Request GeoJson body. Required.
         :type body: JSON
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10576,20 +8918,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         body: IO[bytes],
         *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GeoJsonStatisticsForStacItemCollection:
@@ -10603,59 +8931,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param body: Request GeoJson body. Required.
         :type body: IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10667,26 +8942,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_geo_json_statistics(
-        self,
-        collection_id: str,
-        item_id: str,
-        body: Union[_models.StacItemCollection, JSON, IO[bytes]],
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
-        **kwargs: Any
+        self, collection_id: str, item_id: str, body: Union[_models.StacItemCollection, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
@@ -10699,59 +8955,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param body: Request GeoJson body. Is one of the following types: StacItemCollection, JSON,
          IO[bytes] Required.
         :type body: ~azure.planetarycomputer.models.StacItemCollection or JSON or IO[bytes]
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
         :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
          compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
@@ -10781,22 +8984,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _request = build_tiler_list_geo_json_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            coordinate_reference_system=coordinate_reference_system,
-            resampling=resampling,
-            max_size=max_size,
-            categorical=categorical,
-            categories_pixels=categories_pixels,
-            percentiles=percentiles,
-            histogram_bins=histogram_bins,
-            histogram_range=histogram_range,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -10982,26 +9170,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         maxx: float,
         maxy: float,
         format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        dst_crs: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Part.
@@ -11022,81 +9190,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type maxy: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
-        :paramtype dst_crs: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11122,26 +9215,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             maxx=maxx,
             maxy=maxy,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            dst_crs=dst_crs,
-            coordinate_reference_system=coordinate_reference_system,
-            resampling=resampling,
-            max_size=max_size,
-            height=height,
-            width=width,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -11194,24 +9267,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         width: float,
         height: float,
         format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        dst_crs: Optional[str] = None,
-        coordinate_reference_system: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Part.
@@ -11236,77 +9291,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
-        :paramtype dst_crs: str
-        :keyword coordinate_reference_system: Coordinate Reference System of the input coords. Default
-         to ``epsg:4326``. Default value is None.
-        :paramtype coordinate_reference_system: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11334,24 +9318,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             width=width,
             height=height,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            dst_crs=dst_crs,
-            coordinate_reference_system=coordinate_reference_system,
-            resampling=resampling,
-            max_size=max_size,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -11508,32 +9474,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_preview(
-        self,
-        collection_id: str,
-        item_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        color_formula: Optional[str] = None,
-        dst_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+    def get_preview(self, collection_id: str, item_id: str, **kwargs: Any) -> Iterator[bytes]:
         """Preview.
 
         Create preview of a dataset.
@@ -11542,81 +9483,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword format: Output format for the tile or image (e.g., png, jpeg, webp). Known values are:
-         "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
-        :paramtype dst_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11637,26 +9503,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _request = build_tiler_get_preview_request(
             collection_id=collection_id,
             item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            format=format,
-            color_formula=color_formula,
-            dst_crs=dst_crs,
-            resampling=resampling,
-            max_size=max_size,
-            height=height,
-            width=width,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -11698,32 +9544,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_preview_with_format(
-        self,
-        collection_id: str,
-        item_id: str,
-        format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        dst_crs: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        height: Optional[int] = None,
-        width: Optional[int] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+    def get_preview_with_format(self, collection_id: str, item_id: str, format: str, **kwargs: Any) -> Iterator[bytes]:
         """Preview.
 
         Create preview of a dataset.
@@ -11734,78 +9555,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword dst_crs: Output Coordinate Reference System. Default value is None.
-        :paramtype dst_crs: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Image output size limit if width and height limits are not set. Default
-         value is None.
-        :paramtype max_size: int
-        :keyword height: Height in pixels for the output image. Default value is None.
-        :paramtype height: int
-        :keyword width: Width in pixels for the output image. Default value is None.
-        :paramtype width: int
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11827,25 +9576,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             collection_id=collection_id,
             item_id=item_id,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            color_formula=color_formula,
-            dst_crs=dst_crs,
-            resampling=resampling,
-            max_size=max_size,
-            height=height,
-            width=width,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -12089,26 +9819,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_statistics(
-        self,
-        collection_id: str,
-        item_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        max_size: Optional[int] = None,
-        categorical: Optional[bool] = None,
-        categories_pixels: Optional[list[str]] = None,
-        percentiles: Optional[list[int]] = None,
-        histogram_bins: Optional[str] = None,
-        histogram_range: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.StatisticsResponse:
+    def list_statistics(self, collection_id: str, item_id: str, **kwargs: Any) -> _models.StatisticsResponse:
         """Statistics.
 
         Merged assets statistics.
@@ -12117,56 +9828,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword max_size: Maximum dimension in pixels for the source data used to calculate
-         statistics. Default value is None.
-        :paramtype max_size: int
-        :keyword categorical: Return statistics for categorical dataset. Default value is None.
-        :paramtype categorical: bool
-        :keyword categories_pixels: List of pixel categorical values for which to report counts.
-         Default value is None.
-        :paramtype categories_pixels: list[str]
-        :keyword percentiles: List of percentile values (default to [2, 98]). Default value is None.
-        :paramtype percentiles: list[int]
-        :keyword histogram_bins: Defines the number of equal-width bins in the given range (10, by
-         default).
-
-         If bins is a sequence (comma ``,`` delimited values), it defines a monotonically
-         increasing array of bin edges, including the rightmost edge, allowing for
-         non-uniform bin widths.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_bins: str
-        :keyword histogram_range: Comma ``,`` delimited range of the bins.
-
-         The lower and upper range of the bins. If not provided, range is simply
-         (a.min(), a.max()).
-
-         Values outside the range are ignored. The first element of the range must be
-         less than or equal to the second.
-         range affects the automatic bin computation as well.
-
-         link: `https://numpy.org/doc/stable/reference/generated/numpy.histogram.html
-         <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
-         None.
-        :paramtype histogram_range: str
         :return: StatisticsResponse. The StatisticsResponse is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StatisticsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12187,20 +9848,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _request = build_tiler_list_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            resampling=resampling,
-            max_size=max_size,
-            categorical=categorical,
-            categories_pixels=categories_pixels,
-            percentiles=percentiles,
-            histogram_bins=histogram_bins,
-            histogram_range=histogram_range,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -12237,31 +9884,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def get_tile_json(
-        self,
-        collection_id: str,
-        item_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
+        self, collection_id: str, item_id: str, tile_matrix_set_id: str, **kwargs: Any
     ) -> _models.TileJsonMetaData:
         """TileJson Tilematrixsetid As Path.
 
@@ -12273,86 +9896,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12374,26 +9917,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             collection_id=collection_id,
             item_id=item_id,
             tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -13330,39 +10853,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaics_tile_json(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.TileJsonMetaData:
+    def get_mosaics_tile_json(self, search_id: str, tile_matrix_set_id: str, **kwargs: Any) -> _models.TileJsonMetaData:
         """TileJson Tilematrixsetid As Path.
 
         Return TileJSON document for a searchId.
@@ -13371,107 +10862,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type search_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword tile_format: Default will be automatically defined if the output image needs a mask
-         (png) or
-         not (jpeg). Known values are: "png", "npy", "tif", "jpeg", "jpg", "jp2", "webp", and "pngraw".
-         Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhigh". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: TileJsonMetaData. The TileJsonMetaData is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.TileJsonMetaData
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13492,33 +10882,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _request = build_tiler_get_mosaics_tile_json_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -13563,29 +10926,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         y: float,
         scale: float,
         format: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        scan_limit: Optional[int] = None,
-        items_limit: Optional[int] = None,
-        time_limit: Optional[int] = None,
-        exit_when_full: Optional[bool] = None,
-        skip_covered: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        collection: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        pixel_selection: Optional[Union[str, _models.PixelSelection]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid As Path.
@@ -13611,95 +10951,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param format: Output format for the tile or image (e.g., png, jpeg, webp) (default: "png").
          Required.
         :type format: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
-         value is None.
-        :paramtype scan_limit: int
-        :keyword items_limit: Return as soon as we have N items per geometry (defaults to 100 in
-         PgSTAC). Default value is None.
-        :paramtype items_limit: int
-        :keyword time_limit: Return after N seconds to avoid long requests (defaults to 5 in PgSTAC).
-         Default value is None.
-        :paramtype time_limit: int
-        :keyword exit_when_full: Return as soon as the geometry is fully covered (defaults to True in
-         PgSTAC). Default value is None.
-        :paramtype exit_when_full: bool
-        :keyword skip_covered: Skip any items that would show up completely under the previous items
-         (defaults
-         to True in PgSTAC). Default value is None.
-        :paramtype skip_covered: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword collection: STAC Collection ID. Default value is None.
-        :paramtype collection: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword pixel_selection: Pixel selection method. Known values are: "first", "highest",
-         "lowest", "mean", "median", "stdev", "lastbandlow", and "lastbandhigh". Default value is None.
-        :paramtype pixel_selection: str or ~azure.planetarycomputer.models.PixelSelection
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13725,29 +10976,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             y=y,
             scale=scale,
             format=format,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            scan_limit=scan_limit,
-            items_limit=items_limit,
-            time_limit=time_limit,
-            exit_when_full=exit_when_full,
-            skip_covered=skip_covered,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            buffer=buffer,
-            color_formula=color_formula,
-            collection=collection,
-            resampling=resampling,
-            pixel_selection=pixel_selection,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -13789,32 +11017,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaics_wmts_capabilities(
-        self,
-        search_id: str,
-        tile_matrix_set_id: str,
-        *,
-        assets: Optional[list[str]] = None,
-        expression: Optional[str] = None,
-        asset_band_indices: Optional[list[str]] = None,
-        asset_as_band: Optional[bool] = None,
-        no_data: Optional[float] = None,
-        unscale: Optional[bool] = None,
-        algorithm: Optional[Union[str, _models.TerrainAlgorithm]] = None,
-        algorithm_params: Optional[str] = None,
-        tile_format: Optional[Union[str, _models.TilerImageFormat]] = None,
-        tile_scale: Optional[int] = None,
-        min_zoom: Optional[int] = None,
-        max_zoom: Optional[int] = None,
-        buffer: Optional[str] = None,
-        color_formula: Optional[str] = None,
-        resampling: Optional[Union[str, _models.Resampling]] = None,
-        rescale: Optional[list[str]] = None,
-        color_map_name: Optional[Union[str, _models.ColorMapNames]] = None,
-        color_map: Optional[str] = None,
-        return_mask: Optional[bool] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+    def get_mosaics_wmts_capabilities(self, search_id: str, tile_matrix_set_id: str, **kwargs: Any) -> Iterator[bytes]:
         """Wmts Tilematrixsetid As Path.
 
         OGC WMTS endpoint.
@@ -13823,84 +11026,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type search_id: str
         :param tile_matrix_set_id: Identifier selecting one of the TileMatrixSetId supported. Required.
         :type tile_matrix_set_id: str
-        :keyword assets: Asset's names. Default value is None.
-        :paramtype assets: list[str]
-        :keyword expression: Band math expression between assets. Default value is None.
-        :paramtype expression: str
-        :keyword asset_band_indices: Per asset band indexes (coma separated indexes). Default value is
-         None.
-        :paramtype asset_band_indices: list[str]
-        :keyword asset_as_band: Asset as Band. Default value is None.
-        :paramtype asset_as_band: bool
-        :keyword no_data: Overwrite internal Nodata value. Default value is None.
-        :paramtype no_data: float
-        :keyword unscale: Apply internal Scale or Offset. Default value is None.
-        :paramtype unscale: bool
-        :keyword algorithm: Terrain algorithm name. Known values are: "hillshade", "contours",
-         "normalizedIndex", "terrarium", and "terrainrgb". Default value is None.
-        :paramtype algorithm: str or ~azure.planetarycomputer.models.TerrainAlgorithm
-        :keyword algorithm_params: Terrain algorithm parameters. Default value is None.
-        :paramtype algorithm_params: str
-        :keyword tile_format: Output image type. Default is png. Known values are: "png", "npy", "tif",
-         "jpeg", "jpg", "jp2", "webp", and "pngraw". Default value is None.
-        :paramtype tile_format: str or ~azure.planetarycomputer.models.TilerImageFormat
-        :keyword tile_scale: Tile scale factor affecting output size. Values > 1 produce larger tiles
-         (e.g., 1=256x256, 2=512x512). Default value is None.
-        :paramtype tile_scale: int
-        :keyword min_zoom: Overwrite default minzoom. Default value is None.
-        :paramtype min_zoom: int
-        :keyword max_zoom: Overwrite default maxzoom. Default value is None.
-        :paramtype max_zoom: int
-        :keyword buffer: Buffer on each side of the given tile. It must be a multiple of ``0.5``.
-         Output
-         **tilesize** will be expanded to ``tilesize + 2 * buffer`` (e.g 0.5 = 257x257,
-         1.0 = 258x258). Default value is None.
-        :paramtype buffer: str
-        :keyword color_formula: rio-color formula (info: `https://github.com/mapbox/rio-color
-         <https://github.com/mapbox/rio-color>`_). Default value is None.
-        :paramtype color_formula: str
-        :keyword resampling: Resampling method. Known values are: "nearest", "bilinear", "cubic",
-         "cubic_spline", "lanczos", "average", "mode", "gauss", and "rms". Default value is None.
-        :paramtype resampling: str or ~azure.planetarycomputer.models.Resampling
-        :keyword rescale: comma (',') delimited Min,Max range. Can set multiple time for multiple
-         bands. Default value is None.
-        :paramtype rescale: list[str]
-        :keyword color_map_name: Colormap name. Known values are: "accent", "accent_r", "afmhot",
-         "afmhot_r", "ai4g-lulc", "alos-fnf", "alos-palsar-mask", "autumn", "autumn_r", "binary",
-         "binary_r", "blues", "blues_r", "bone", "bone_r", "brbg", "brbg_r", "brg", "brg_r", "bugn",
-         "bugn_r", "bupu", "bupu_r", "bwr", "bwr_r", "c-cap", "cfastie", "chesapeake-lc-13",
-         "chesapeake-lc-7", "chesapeake-lu", "chloris-biomass", "cividis", "cividis_r", "cmrmap",
-         "cmrmap_r", "cool", "cool_r", "coolwarm", "coolwarm_r", "copper", "copper_r", "cubehelix",
-         "cubehelix_r", "dark2", "dark2_r", "drcog-lulc", "esa-cci-lc", "esa-worldcover", "flag",
-         "flag_r", "gap-lulc", "gist_earth", "gist_earth_r", "gist_gray", "gist_gray_r", "gist_heat",
-         "gist_heat_r", "gist_ncar", "gist_ncar_r", "gist_rainbow", "gist_rainbow_r", "gist_stern",
-         "gist_stern_r", "gist_yarg", "gist_yarg_r", "gnbu", "gnbu_r", "gnuplot", "gnuplot2",
-         "gnuplot2_r", "gnuplot_r", "gray", "gray_r", "greens", "greens_r", "greys", "greys_r", "hot",
-         "hot_r", "hsv", "hsv_r", "inferno", "inferno_r", "io-bii", "io-lulc", "io-lulc-9-class", "jet",
-         "jet_r", "jrc-change", "jrc-extent", "jrc-occurrence", "jrc-recurrence", "jrc-seasonality",
-         "jrc-transitions", "lidar-classification", "lidar-hag", "lidar-hag-alternative",
-         "lidar-intensity", "lidar-returns", "magma", "magma_r", "modis-10A1", "modis-10A2",
-         "modis-13A1|Q1", "modis-14A1|A2", "modis-15A2H|A3H", "modis-16A3GF-ET", "modis-16A3GF-PET",
-         "modis-17A2H|A2HGF", "modis-17A3HGF", "modis-64A1", "mtbs-severity", "nipy_spectral",
-         "nipy_spectral_r", "nrcan-lulc", "ocean", "ocean_r", "oranges", "oranges_r", "orrd", "orrd_r",
-         "paired", "paired_r", "pastel1", "pastel1_r", "pastel2", "pastel2_r", "pink", "pink_r", "piyg",
-         "piyg_r", "plasma", "plasma_r", "prgn", "prgn_r", "prism", "prism_r", "pubu", "pubu_r",
-         "pubugn", "pubugn_r", "puor", "puor_r", "purd", "purd_r", "purples", "purples_r", "qpe",
-         "rainbow", "rainbow_r", "rdbu", "rdbu_r", "rdgy", "rdgy_r", "rdpu", "rdpu_r", "rdylbu",
-         "rdylbu_r", "rdylgn", "rdylgn_r", "reds", "reds_r", "rplumbo", "schwarzwald", "seismic",
-         "seismic_r", "set1", "set1_r", "set2", "set2_r", "set3", "set3_r", "spectral", "spectral_r",
-         "spring", "spring_r", "summer", "summer_r", "tab10", "tab10_r", "tab20", "tab20_r", "tab20b",
-         "tab20b_r", "tab20c", "tab20c_r", "terrain", "terrain_r", "twilight", "twilight_r",
-         "twilight_shifted", "twilight_shifted_r", "usda-cdl", "usda-cdl-corn", "usda-cdl-cotton",
-         "usda-cdl-soybeans", "usda-cdl-wheat", "usgs-lcmap", "viirs-10a1", "viirs-13a1", "viirs-14a1",
-         "viirs-15a2H", "viridis", "viridis_r", "winter", "winter_r", "wistia", "wistia_r", "ylgn",
-         "ylgn_r", "ylgnbu", "ylgnbu_r", "ylorbr", "ylorbr_r", "ylorrd", and "ylorrd_r". Default value
-         is None.
-        :paramtype color_map_name: str or ~azure.planetarycomputer.models.ColorMapNames
-        :keyword color_map: JSON encoded custom Colormap. Default value is None.
-        :paramtype color_map: str
-        :keyword return_mask: Add mask to the output data. Default value is None.
-        :paramtype return_mask: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13921,26 +11046,6 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _request = build_tiler_get_mosaics_wmts_capabilities_request(
             search_id=search_id,
             tile_matrix_set_id=tile_matrix_set_id,
-            assets=assets,
-            expression=expression,
-            asset_band_indices=asset_band_indices,
-            asset_as_band=asset_as_band,
-            no_data=no_data,
-            unscale=unscale,
-            algorithm=algorithm,
-            algorithm_params=algorithm_params,
-            tile_format=tile_format,
-            tile_scale=tile_scale,
-            min_zoom=min_zoom,
-            max_zoom=max_zoom,
-            buffer=buffer,
-            color_formula=color_formula,
-            resampling=resampling,
-            rescale=rescale,
-            color_map_name=color_map_name,
-            color_map=color_map,
-            return_mask=return_mask,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )

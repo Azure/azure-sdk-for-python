@@ -176,6 +176,10 @@ class BandStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
+class CropGeoJsonOptions(_Model):
+    """Options for cropping GeoJSON."""
+
+
 class DefaultLocation(_Model):
     """Defines a default geographic location for map visualization.
 
@@ -485,6 +489,38 @@ class Geometry(_Model):
 
 class GetAssetStatisticsOptions(_Model):
     """Options for getting asset statistics."""
+
+
+class GetGeoJsonStatisticsOptions(_Model):
+    """Options for getting GeoJSON statistics."""
+
+
+class GetMosaicTileJsonOptions(_Model):
+    """Options for mosaic TileJSON."""
+
+
+class GetMosaicTileOptions(_Model):
+    """Options for mosaic tiles."""
+
+
+class GetMosaicWmtsCapabilitiesOptions(_Model):
+    """Options for mosaic WMTS capabilities."""
+
+
+class GetPartOptions(_Model):
+    """Options for getting parts (cropped to bounding box)."""
+
+
+class GetPreviewOptions(_Model):
+    """Options for getting previews."""
+
+
+class GetStatisticsOptions(_Model):
+    """Options for getting statistics."""
+
+
+class GetTileJsonOptions(_Model):
+    """Options for getting TileJSON."""
 
 
 class GetTileOptions(_Model):
