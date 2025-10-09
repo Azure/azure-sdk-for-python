@@ -642,6 +642,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         # Otherwise, aggregate results.
         return self._aggregate_results(per_turn_results=per_turn_results)
 
+
     # ~~~ METHODS THAT SHOULD NOT BE OVERRIDDEN BY CHILDREN~~~``
 
     @final
