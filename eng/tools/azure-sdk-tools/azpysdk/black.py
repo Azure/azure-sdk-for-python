@@ -76,6 +76,7 @@ class black(Check):
                     stderr=subprocess.PIPE,
                     check=True,
                 )
+                logger.error(run_result)
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
                     if in_ci():
                         logger.info(f"The package {package_name} needs reformat. Run `black` locally to reformat.")
