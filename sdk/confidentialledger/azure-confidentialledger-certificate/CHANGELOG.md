@@ -1,5 +1,5 @@
 # Release History
 
-## 1.0.0b1 (TBD)
+## 1.0.0b1 (2025-10-10)
 
 - Initial version
