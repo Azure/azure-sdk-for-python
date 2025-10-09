@@ -536,7 +536,7 @@ class RedTeam:
                     strategy="tense",
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
-                    target_type=target_type_str,
+                    target=target_type_str,
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -546,7 +546,7 @@ class RedTeam:
                     strategy=None,
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
-                    target_type=target_type_str,
+                    target=target_type_str,
                 )
 
             if isinstance(objectives_response, list):
@@ -583,7 +583,7 @@ class RedTeam:
                             strategy="tense",
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
-                            target_type="model",
+                            target="model",
                         )
                     else:
                         objectives_response = await self.generated_rai_client.get_attack_objectives(
@@ -593,7 +593,7 @@ class RedTeam:
                             strategy=None,
                             language=self.language.value,
                             scan_session_id=self.scan_session_id,
-                            target_type="model",
+                            target="model",
                         )
                     
                     if isinstance(objectives_response, list):
@@ -677,7 +677,7 @@ class RedTeam:
                     strategy=None,
                     language=self.language.value,
                     scan_session_id=self.scan_session_id,
-                    target_type=target_type_str
+                    target=target_type_str
                 )
 
             xpia_prompts = await get_xpia_prompts_with_retry()
@@ -693,7 +693,7 @@ class RedTeam:
                         strategy=None,
                         language=self.language.value,
                         scan_session_id=self.scan_session_id,
-                        target_type="model"
+                        target="model"
                     )
                     if xpia_prompts and len(xpia_prompts) > 0:
                         self.logger.debug(f"Fetched {len(xpia_prompts)} model-type XPIA wrapper prompts as fallback")
