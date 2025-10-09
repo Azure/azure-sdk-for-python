@@ -37,10 +37,10 @@ from .._configuration import StorageMoverMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-List = list
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False

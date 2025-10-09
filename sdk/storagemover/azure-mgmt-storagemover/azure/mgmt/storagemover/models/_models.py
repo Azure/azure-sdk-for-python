@@ -435,7 +435,8 @@ class AzureKeyVaultSmbCredentials(Credentials, discriminator="AzureKeyVaultSmb")
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, type=CredentialType.AZURE_KEY_VAULT_SMB, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.type = CredentialType.AZURE_KEY_VAULT_SMB  # type: ignore
 
 
 class EndpointBaseProperties(_Model):
@@ -532,7 +533,8 @@ class AzureMultiCloudConnectorEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_MULTI_CLOUD_CONNECTOR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_MULTI_CLOUD_CONNECTOR  # type: ignore
 
 
 class EndpointBaseUpdateProperties(_Model):
@@ -609,7 +611,8 @@ class AzureMultiCloudConnectorEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_MULTI_CLOUD_CONNECTOR, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_MULTI_CLOUD_CONNECTOR  # type: ignore
 
 
 class AzureStorageBlobContainerEndpointProperties(
@@ -656,7 +659,8 @@ class AzureStorageBlobContainerEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_BLOB_CONTAINER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_BLOB_CONTAINER  # type: ignore
 
 
 class AzureStorageBlobContainerEndpointUpdateProperties(
@@ -688,7 +692,8 @@ class AzureStorageBlobContainerEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_BLOB_CONTAINER, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_BLOB_CONTAINER  # type: ignore
 
 
 class AzureStorageNfsFileShareEndpointProperties(
@@ -733,7 +738,8 @@ class AzureStorageNfsFileShareEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_NFS_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_NFS_FILE_SHARE  # type: ignore
 
 
 class AzureStorageNfsFileShareEndpointUpdateProperties(
@@ -765,7 +771,8 @@ class AzureStorageNfsFileShareEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_NFS_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_NFS_FILE_SHARE  # type: ignore
 
 
 class AzureStorageSmbFileShareEndpointProperties(
@@ -810,7 +817,8 @@ class AzureStorageSmbFileShareEndpointProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_SMB_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_SMB_FILE_SHARE  # type: ignore
 
 
 class AzureStorageSmbFileShareEndpointUpdateProperties(
@@ -842,7 +850,8 @@ class AzureStorageSmbFileShareEndpointUpdateProperties(
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.AZURE_STORAGE_SMB_FILE_SHARE, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.AZURE_STORAGE_SMB_FILE_SHARE  # type: ignore
 
 
 class Endpoint(ProxyResource):
@@ -1687,7 +1696,8 @@ class NfsMountEndpointProperties(EndpointBaseProperties, discriminator="NfsMount
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.NFS_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.NFS_MOUNT  # type: ignore
 
 
 class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="NfsMount"):
@@ -1717,7 +1727,8 @@ class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.NFS_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.NFS_MOUNT  # type: ignore
 
 
 class Operation(_Model):
@@ -2070,7 +2081,8 @@ class SmbMountEndpointProperties(EndpointBaseProperties, discriminator="SmbMount
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.SMB_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.SMB_MOUNT  # type: ignore
 
 
 class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminator="SmbMount"):
@@ -2108,7 +2120,8 @@ class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties, discriminat
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, endpoint_type=EndpointType.SMB_MOUNT, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.endpoint_type = EndpointType.SMB_MOUNT  # type: ignore
 
 
 class SourceEndpoint(_Model):

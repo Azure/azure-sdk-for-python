@@ -71,10 +71,10 @@ from ...operations._operations import (
 )
 from .._configuration import StorageMoverMgmtClientConfiguration
 
-List = list
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 
 class Operations:
