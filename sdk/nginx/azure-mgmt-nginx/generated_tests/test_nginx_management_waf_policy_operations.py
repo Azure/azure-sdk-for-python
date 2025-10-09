@@ -14,53 +14,53 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestNginxManagementCertificatesOperations(AzureMgmtRecordedTestCase):
+class TestNginxManagementWafPolicyOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(NginxManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_certificates_get(self, resource_group):
-        response = self.client.certificates.get(
-            resource_group_name=resource_group.name,
-            deployment_name="str",
-            certificate_name="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_begin_create_or_update(self, resource_group):
-        response = self.client.certificates.begin_create_or_update(
-            resource_group_name=resource_group.name,
-            deployment_name="str",
-            certificate_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_begin_delete(self, resource_group):
-        response = self.client.certificates.begin_delete(
-            resource_group_name=resource_group.name,
-            deployment_name="str",
-            certificate_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_list(self, resource_group):
-        response = self.client.certificates.list(
+    def test_waf_policy_list(self, resource_group):
+        response = self.client.waf_policy.list(
             resource_group_name=resource_group.name,
             deployment_name="str",
         )
         result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_waf_policy_get(self, resource_group):
+        response = self.client.waf_policy.get(
+            resource_group_name=resource_group.name,
+            deployment_name="str",
+            waf_policy_name="str",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_waf_policy_begin_create(self, resource_group):
+        response = self.client.waf_policy.begin_create(
+            resource_group_name=resource_group.name,
+            deployment_name="str",
+            waf_policy_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_waf_policy_begin_delete(self, resource_group):
+        response = self.client.waf_policy.begin_delete(
+            resource_group_name=resource_group.name,
+            deployment_name="str",
+            waf_policy_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...
