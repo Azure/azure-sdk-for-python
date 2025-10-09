@@ -534,13 +534,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         offer_throughput = kwargs.pop("offer_throughput", None)
         return_properties = kwargs.pop("return_properties", False)
-        response_hook = kwargs.pop("response_hook", None)
 
         try:
             database_proxy = self.get_database_client(id)
             result = await database_proxy.read(**kwargs)
-            if response_hook:
-                response_hook(self.client_connection.last_response_headers)
             if not return_properties:
                 return database_proxy
             return database_proxy, result
@@ -549,7 +546,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 id,
                 offer_throughput=offer_throughput,
                 return_properties=return_properties,
-                response_hook=response_hook,
                 **kwargs
             )
 

@@ -397,7 +397,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             raise TypeError(f"Unexpected positional arguments: {args[3:]}")
 
         return_properties = kwargs.pop("return_properties", False)
-        response_hook = kwargs.pop("response_hook", None)
 
         if populate_query_metrics is not None:
             warnings.warn(
@@ -409,8 +408,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
@@ -539,15 +536,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             raise TypeError(f"Unexpected positional arguments: {args[3:]}")
 
         return_properties = kwargs.pop("return_properties", False)
-        response_hook = kwargs.pop("response_hook", None)
         try:
             database_proxy = self.get_database_client(id)
             result = database_proxy.read(
                 populate_query_metrics=populate_query_metrics,
                 **kwargs
             )
-            if response_hook:
-                response_hook(self.client_connection.last_response_headers)
             if not return_properties:
                 return database_proxy
             return database_proxy, result
@@ -556,7 +550,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 id,
                 offer_throughput=offer_throughput,
                 return_properties=return_properties,
-                response_hook=response_hook,
                 **kwargs
             )
 

@@ -310,7 +310,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :type items: list[Tuple[str, PartitionKeyType]]
         :keyword executor: Optional ThreadPoolExecutor for handling concurrent operations.
                       If not provided, a new executor will be created as needed.
-        :keyword Optional[int] max_concurrency: The maximum number of concurrent operations for the
+        :keyword int max_concurrency: The maximum number of concurrent operations for the
                       items request. This value is ignored if an executor is provided. If not specified,
                       the default max_concurrency defined by Python's ThreadPoolExecutor will be applied.
         :keyword str consistency_level: The consistency level to use for the request.
