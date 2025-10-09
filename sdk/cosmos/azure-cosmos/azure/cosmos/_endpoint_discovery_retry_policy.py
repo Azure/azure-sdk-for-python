@@ -60,17 +60,17 @@ class EndpointDiscoveryRetryPolicy(object):
             return False
 
         if self.failover_retry_count >= self.Max_retry_attempt_count:
-            if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
-                # only refresh the cache if PPAF is enabled once we're out of retries
-                self.global_endpoint_manager.refresh_needed = True
             return False
 
         self.failover_retry_count += 1
 
+        # set the refresh_needed flag to ensure that endpoint list is
+        # refreshed with new writable and readable locations
+        self.global_endpoint_manager.refresh_needed = True
+
         # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
         # and resolve the service endpoint for the partition range - otherwise, continue the default retry logic
         if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
-            #add log
             partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
             location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
                 str(self.request.location_endpoint_to_route))
@@ -79,10 +79,6 @@ class EndpointDiscoveryRetryPolicy(object):
             partition_level_info.unavailable_regional_endpoints[location] = regional_endpoint
             self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
             return True
-
-        # set the refresh_needed flag to ensure that endpoint list is
-        # refreshed with new writable and readable locations
-        self.global_endpoint_manager.refresh_needed = True
 
         if self.request.location_endpoint_to_route:
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
@@ -99,8 +95,7 @@ class EndpointDiscoveryRetryPolicy(object):
         self.request.clear_route_to_location()
 
         # set location-based routing directive based on retry count
-        # simulating single master writes by ensuring usePreferredLocations
-        # is set to false
+        # simulating single master writes by ensuring usePreferredLocations is set to false
         # reasoning being that 403.3 is only expected for write region failover in single writer account
         # and we must rely on account locations as they are the source of truth
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, False)
