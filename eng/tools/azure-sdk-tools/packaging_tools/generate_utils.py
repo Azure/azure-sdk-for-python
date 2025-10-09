@@ -54,9 +54,9 @@ def del_outdated_generated_files(tsp: str):
     service_dir = typespec_python_config.get("service-dir") or content.get("parameters", {}).get("service-dir", {}).get(
         "default", ""
     )
-    package_dir = typespec_python_config.get("package-dir", "")
+    package_dir = typespec_python_config.get("emitter-output-dir", "").split("/")[-1]
     if not service_dir or not package_dir:
-        _LOGGER.info(f"do not find service-dir or package-dir in tspconfig.yaml: {tspconfig}")
+        _LOGGER.info(f"do not find service-dir or emitter-output-dir in tspconfig.yaml: {tspconfig}")
         return
     generated_files_dir = Path(service_dir) / package_dir / package_dir.split("-")[0]
     # remove outdated generated files
@@ -516,6 +516,7 @@ def gen_typespec(
     typespec_python = "@azure-tools/typespec-python"
     # call scirpt to generate sdk
     try:
+        tsp_client = "npx --no --prefix eng/common/tsp-client tsp-client"
         if spec_folder:
             tsp_dir = (Path(spec_folder) / typespec_relative_path).resolve()
             repo_url = rest_repo_url.replace("https://github.com/", "")
@@ -527,15 +528,15 @@ def gen_typespec(
                         content["options"]["@azure-tools/typespec-python"]["api-version"] = api_version
                 with open(tspconfig, "w") as file_out:
                     yaml.dump(content, file_out)
-            cmd = f"tsp-client init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
+            cmd = f"{tsp_client} init --tsp-config {tsp_dir} --local-spec-repo {tsp_dir} --commit {head_sha} --repo {repo_url}"
         else:
             tsp_config_url = f"{rest_repo_url}/blob/{head_sha}/{typespec_relative_path}/tspconfig.yaml"
-            cmd = f"tsp-client init -c {tsp_config_url}"
+            cmd = f"{tsp_client} init -c {tsp_config_url}"
         if run_in_pipeline:
             emitter_name = "@azure-tools/typespec-python"
             if not os.path.exists(f"node_modules/{emitter_name}"):
                 _LOGGER.info("install dependencies only for the first run")
-                check_output("tsp-client install-dependencies", stderr=STDOUT, shell=True)
+                check_output(f"{tsp_client} install-dependencies", stderr=STDOUT, shell=True)
             else:
                 _LOGGER.info(f"skip install since {emitter_name} is already installed")
             cmd += " --skip-install --debug"

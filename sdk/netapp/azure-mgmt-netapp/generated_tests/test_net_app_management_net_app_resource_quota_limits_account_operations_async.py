@@ -25,7 +25,7 @@ class TestNetAppManagementNetAppResourceQuotaLimitsAccountOperationsAsync(AzureM
         response = self.client.net_app_resource_quota_limits_account.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetAppManagementNetAppResourceQuotaLimitsAccountOperationsAsync(AzureM
             resource_group_name=resource_group.name,
             account_name="str",
             quota_limit_name="str",
-            api_version="2025-01-01-preview",
+            api_version="2025-07-01-preview",
         )
 
         # please add some check logic here by yourself

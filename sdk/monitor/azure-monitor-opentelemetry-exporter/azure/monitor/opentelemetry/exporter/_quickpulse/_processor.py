@@ -4,7 +4,7 @@
 from opentelemetry.sdk._logs import LogData, LogRecordProcessor
 from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
 
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import _QuickpulseManager
+from azure.monitor.opentelemetry.exporter._quickpulse._state import get_quickpulse_manager
 
 
 # pylint: disable=protected-access
@@ -14,7 +14,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
         self.call_on_emit = hasattr(super(), 'on_emit')
 
     def on_emit(self, log_data: LogData) -> None:  # type: ignore
-        qpm = _QuickpulseManager()
+        qpm = get_quickpulse_manager()
         if qpm:
             qpm._record_log_record(log_data)
         if self.call_on_emit:
@@ -37,7 +37,7 @@ class _QuickpulseLogRecordProcessor(LogRecordProcessor):
 class _QuickpulseSpanProcessor(SpanProcessor):
 
     def on_end(self, span: ReadableSpan) -> None:
-        qpm = _QuickpulseManager()
+        qpm = get_quickpulse_manager()
         if qpm:
             qpm._record_span(span)
         return super().on_end(span)  # type: ignore
