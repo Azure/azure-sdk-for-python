@@ -143,6 +143,111 @@ def test_send_and_receive_large_body_size(auth_credential_receivers, uamqp_trans
 
 
 @pytest.mark.liveTest
+def test_send_and_receive_very_large_body_size_19mb(auth_credential_receivers, uamqp_transport, timeout_factor, live_eventhub, client_args):
+    """Test sending and receiving 19MB messages to validate frame size modifications"""
+    if sys.platform.startswith("darwin"):
+        pytest.skip("Skipping on OSX - open issue regarding message size")
+    
+    fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
+
+    # Debug: Show what auth_credential_receivers provides
+    print(f">>> auth_credential_receivers contents:")
+    print(f"    fully_qualified_namespace: {fully_qualified_namespace}")
+    print(f"    eventhub_name: {eventhub_name}")
+    print(f"    credential: {credential}")
+    print(f"    receivers count: {len(receivers) if receivers else 'None'}")
+    print(f">>> live_eventhub: {live_eventhub}")
+
+    # Skip for certain cloud environments if needed
+    if not uamqp_transport and "servicebus.windows.net" not in live_eventhub["connection_str"]:
+        pytest.skip("Skipping for pyamqp - testing frame size modifications")
+
+    print(">>> Starting 19MB message test...")
+    
+    print(f">>> fully_qualified_namespace: {fully_qualified_namespace}")
+    print(f">>> eventhub_name: {eventhub_name}")
+    print(f">>> credential type: {type(credential)}")
+    print(f">>> credential callable: {callable(credential)}")
+    
+    # Get the actual credential instance
+    actual_credential = credential()
+    print(f">>> actual_credential type: {type(actual_credential)}")
+    print(f">>> actual_credential: {actual_credential}")
+    
+    # Show uamqp_transport and client_args
+    print(f">>> uamqp_transport: {uamqp_transport}")
+    print(f">>> client_args: {client_args}")
+    
+    client = EventHubProducerClient(
+        fully_qualified_namespace=fully_qualified_namespace,
+        eventhub_name=eventhub_name,
+        credential=actual_credential,
+        uamqp_transport=uamqp_transport,
+        **client_args
+    )
+    
+    with client:
+        # 19MB payload
+        payload_size = 19 * 1024 * 1024  # 19MB
+        payload = "X" * payload_size
+        
+        print(f">>> Testing batch creation with explicit size limit...")
+        try:
+            batch_size_limit = 25 * 1024 * 1024  # 25MB limit for batch
+            batch = client.create_batch(max_size_in_bytes=batch_size_limit)
+            print(f">>> Batch created with {batch_size_limit} byte limit")
+            
+            # adding 19MB message to batch
+            batch.add(EventData(payload))
+            print(f">>> 19MB message added to batch successfully")
+            
+            # Send the batch
+            print(f">>> Sending 19MB message via batch...")
+            client.send_batch(batch)
+            print(f">>> ✅ 19MB batch sent successfully!")
+            
+        except ValueError as ve:
+            print(f">>> Batch approach failed: {ve}")
+            print(f">>> Trying individual message approach...")
+            
+            # Fallback: try sending as individual message
+            client.send_event(EventData(payload))
+            print(f">>> ✅ 19MB individual message sent successfully!")
+        
+        except Exception as e:
+            print(f">>> Failed to send 19MB message: {e}")
+            print(f">>> Error type: {type(e).__name__}")
+            raise  # Re-raise to fail the test
+    
+    # Try to receive the message
+    print(f">>> Attempting to receive 19MB message...")
+    received = []
+    timeout = 30 * timeout_factor  # Longer timeout for large messages
+    
+    for r in receivers:
+        try:
+            messages = r.receive_message_batch(timeout=timeout)
+            received.extend([EventData._from_message(x) for x in messages])
+            if received:
+                break  # Found messages, no need to check other receivers
+        except Exception as e:
+            print(f">>> Warning: Receive attempt failed: {e}")
+    
+    print(f">>> Received {len(received)} messages")
+    
+    # Validate the received message
+    if received:
+        received_payload_size = len(list(received[0].body)[0])
+        print(f">>> Received message size: {received_payload_size} bytes")
+        assert len(received) == 1, f"Expected 1 message, got {len(received)}"
+        assert received_payload_size == payload_size, f"Expected {payload_size} bytes, got {received_payload_size}"
+        print(f">>> ✅ 19MB message test completed successfully!")
+    else:
+        print(f">>> ⚠️ No messages received - may indicate send failure or timeout")
+        pytest.fail("No messages received within timeout period")
+
+
+@pytest.mark.liveTest
 def test_send_amqp_annotated_message(auth_credential_receivers, uamqp_transport, client_args):
     fully_qualified_namespace, eventhub_name, credential, receivers = auth_credential_receivers
     client = EventHubProducerClient(
