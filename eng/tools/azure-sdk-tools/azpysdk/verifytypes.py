@@ -61,12 +61,28 @@ def install_from_main(setup_path: str, python_executable: Optional[str] = None) 
 
 def get_type_complete_score(commands: typing.List[str], cwd: str, check_pytyped: bool = False) -> float:
     try:
-        logger.info(f"Running verifytypes with {commands} in {cwd} &_&") # TODO DEBUG
+        logger.info(f"Running verifytypes with {commands} in {cwd} &_&")
+        # clone environment and set VIRTUAL_ENV to the venv root inferred from the python executable in commands[0]
+        env = os.environ.copy()
+        python_exec = pathlib.Path(commands[0])
+        if python_exec.exists():
+            venv_bin = str(python_exec.parent)
+            venv_root = str(python_exec.parent.parent)
+            env["VIRTUAL_ENV"] = venv_root
+            env["PATH"] = venv_bin + os.pathsep + env.get("PATH", "")
+            env.pop("PYTHONPATH", None)
+            env.pop("PYTHONHOME", None)
+        else:
+            raise RuntimeError(f"Unable to find parent venv for executable {commands[0]}")
+
+        logger.info(f"Using VIRTUAL_ENV={env['VIRTUAL_ENV']} and PATH={env['PATH']}")
+
         response = subprocess.run(
             commands,
             check=True,
             capture_output=True,
-            cwd=cwd
+            cwd=cwd,
+            env=env,
         )
     except subprocess.CalledProcessError as e:
         if e.returncode != 1:
@@ -180,12 +196,12 @@ class verifytypes(Check):
                 results.append(1)
                 continue
 
-            try:
-                subprocess.check_call(commands[:-1])
-            except subprocess.CalledProcessError:
-                logger.warning(
-                    "verifytypes reported issues."
-                )  # we don't fail on verifytypes, only if type completeness score worsens from main
+            # try:
+            #     subprocess.check_call(commands[:-1])
+            # except subprocess.CalledProcessError:
+            #     logger.warning(
+            #         "verifytypes reported issues."
+            #     )  # we don't fail on verifytypes, only if type completeness score worsens from main
 
             if in_ci():
                 # get type completeness score from main

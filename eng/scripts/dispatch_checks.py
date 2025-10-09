@@ -81,7 +81,7 @@ async def run_check(semaphore: asyncio.Semaphore, package: str, check: str, base
         # if we have any output collections to complete, do so now here
 
         # finally, we need to clean up any temp dirs created by --isolate
-        if in_ci():
+        if in_ci() and not os.getenv("SKIP_VENV_CLEANUP"):
             isolate_dir = os.path.join(package, f".venv_{check}")
             try:
                 shutil.rmtree(isolate_dir)
