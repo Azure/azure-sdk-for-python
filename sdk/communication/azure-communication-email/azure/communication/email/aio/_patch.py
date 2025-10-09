@@ -43,7 +43,7 @@ class EmailClient(EmailClientGenerated):
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        authentication_policy = get_authentication_policy(endpoint, credential)
+        authentication_policy = get_authentication_policy(endpoint, credential, decode_url=True, is_async=True)
 
         super().__init__(
             endpoint=endpoint,
