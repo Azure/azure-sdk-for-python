@@ -814,10 +814,6 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
-            _add_aoai_structured_results_to_results(results, LOGGER, eval_meta_data)
-            if app_insights_configuration := kwargs.get("app_insights_configuration"):
-                for result in results["evaluation_results_list"]:
-                    _log_events_to_app_insights(app_insights_configuration, result["results"])
             return results
     except Exception as e:
         # Handle multiprocess bootstrap error
@@ -995,6 +991,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
+    _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
+    if app_insights_configuration := kwargs.get("app_insights_configuration"):
+        emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
 
     if output_path:
         _write_output(output_path, result)
@@ -1144,11 +1143,12 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         if "agent_id" in app_insights_config:
             app_insights_attributes["agent_id"] = app_insights_config["agent_id"]
         
-        _log_events_to_app_insights(
-            connection_string=app_insights_config["connection_string"],
-            events=results,
-            attributes=app_insights_attributes
-        )
+        for result in results:
+            _log_events_to_app_insights(
+                connection_string=app_insights_config["connection_string"],
+                events=result["results"],
+                attributes=app_insights_attributes
+            )
         LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
         
     except Exception as e:
