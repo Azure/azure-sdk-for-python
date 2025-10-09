@@ -1,0 +1,8 @@
+steps:
+  - pwsh: |
+      Write-Host "python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt"
+      python -m pip install -r eng/scripts/docs/py2docfx_requirements.txt
+      # After install py2docfx,
+      Write-Host "Testing the install. Running python -m py2docfx -h to display the help"
+      python -m py2docfx -h
+    displayName: Install py2docfx for package validation

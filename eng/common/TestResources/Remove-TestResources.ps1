@@ -61,6 +61,19 @@ param (
     [Parameter()]
     [switch] $ServicePrincipalAuth,
 
+    # List of CIDR ranges to add to specific resource firewalls, e.g. @(10.100.0.0/16, 10.200.0.0/16)
+    [Parameter()]
+    [ValidateCount(0,399)]
+    [Validatescript({
+        foreach ($range in $PSItem) {
+            if ($range -like '*/31' -or $range -like '*/32') {
+                throw "Firewall IP Ranges cannot contain a /31 or /32 CIDR"
+            }
+        }
+        return $true
+    })]
+    [array] $AllowIpRanges = @(),
+
     [Parameter()]
     [switch] $Force,
 
@@ -68,6 +81,9 @@ param (
     [Parameter(ValueFromRemainingArguments = $true)]
     $RemoveTestResourcesRemainingArguments
 )
+
+. (Join-Path $PSScriptRoot .. scripts Helpers Resource-Helpers.ps1)
+. (Join-Path $PSScriptRoot TestResources-Helpers.ps1)
 
 # By default stop for any error.
 if (!$PSBoundParameters.ContainsKey('ErrorAction')) {
@@ -141,10 +157,6 @@ $context = Get-AzContext
 
 if (!$ResourceGroupName) {
     if ($CI) {
-        if (!$ServiceDirectory) {
-            Write-Warning "ServiceDirectory parameter is empty, nothing to remove"
-            exit 0
-        }
         $envVarName = (BuildServiceDirectoryPrefix (GetServiceLeafDirectoryName $ServiceDirectory)) + "RESOURCE_GROUP"
         $ResourceGroupName = [Environment]::GetEnvironmentVariable($envVarName)
         if (!$ResourceGroupName) {
@@ -205,7 +217,12 @@ if ($wellKnownSubscriptions.ContainsKey($subscriptionName)) {
 Log "Selected subscription '$subscriptionName'"
 
 if ($ServiceDirectory) {
-    $root = [System.IO.Path]::Combine("$PSScriptRoot/../../../sdk", $ServiceDirectory) | Resolve-Path
+    $root = "$PSScriptRoot/../../.."
+    if($ServiceDirectory) {
+      $root = "$root/sdk/$ServiceDirectory"
+    }
+    $root = $root | Resolve-Path
+    
     $preRemovalScript = Join-Path -Path $root -ChildPath "remove-$ResourceType-resources-pre.ps1"
     if (Test-Path $preRemovalScript) {
         Log "Invoking pre resource removal script '$preRemovalScript'"
@@ -219,6 +236,7 @@ if ($ServiceDirectory) {
 
     # Make sure environment files from New-TestResources -OutFile are removed.
     Get-ChildItem -Path $root -Filter "$ResourceType-resources.json.env" -Recurse | Remove-Item -Force:$Force
+    Get-ChildItem -Path $root -Filter ".env" -Recurse -Force | Remove-Item -Force
 }
 
 $verifyDeleteScript = {
@@ -240,6 +258,9 @@ $verifyDeleteScript = {
 
 # Get any resources that can be purged after the resource group is deleted coerced into a collection even if empty.
 $purgeableResources = Get-PurgeableGroupResources $ResourceGroupName
+
+SetResourceNetworkAccessRules -ResourceGroupName $ResourceGroupName -AllowIpRanges $AllowIpRanges -SetFirewall -CI:$CI
+Remove-WormStorageAccounts -GroupPrefix $ResourceGroupName -CI:$CI
 
 Log "Deleting resource group '$ResourceGroupName'"
 if ($Force -and !$purgeableResources) {

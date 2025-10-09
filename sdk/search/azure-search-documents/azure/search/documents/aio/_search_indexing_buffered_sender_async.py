@@ -54,7 +54,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
-        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs: Any
     ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
@@ -72,7 +76,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
+            authentication_policy = get_authentication_policy(
+                credential, audience=audience, is_async=True
+            )
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -117,7 +123,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         return await self._client.close()
 
     @distributed_trace_async
-    async def flush(self, timeout: int = 86400, **kwargs) -> bool:  # pylint:disable=unused-argument
+    async def flush(
+        self, timeout: int = 86400, **kwargs  # pylint:disable=unused-argument
+    ) -> bool:
         """Flush the batch.
         :param int timeout: time out setting. Default is 86400s (one day)
         :return: True if there are errors. Else False
@@ -148,7 +156,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         has_error = False
         if not self._index_key:
             try:
-                credential = cast(Union[AzureKeyCredential, AsyncTokenCredential], self._credential)
+                credential = cast(
+                    Union[AzureKeyCredential, AsyncTokenCredential], self._credential
+                )
                 client = SearchServiceClient(self._endpoint, credential)
                 index_result = await client.get_index(self._index_name)
                 if index_result:
@@ -162,14 +172,17 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self._reset_timer()
 
         try:
-            results = await self._index_documents_actions(actions=actions, timeout=timeout)
+            results = await self._index_documents_actions(
+                actions=actions, timeout=timeout
+            )
             for result in results:
                 try:
                     assert self._index_key is not None  # Hint for mypy
                     action = next(
                         x
                         for x in actions
-                        if x.additional_properties and x.additional_properties.get(self._index_key) == result.key
+                        if x.additional_properties
+                        and x.additional_properties.get(self._index_key) == result.key
                     )
                     if result.succeeded:
                         await self._callback_succeed(action)
@@ -218,7 +231,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._timer = Timer(self._auto_flush_interval, self._process)
 
     @distributed_trace_async
-    async def upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    async def upload_documents(
+        self, documents: List[Dict], **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         """Queue upload documents actions.
         :param documents: A list of documents to upload.
         :type documents: list[dict]
@@ -228,7 +243,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def delete_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    async def delete_documents(
+        self, documents: List[Dict], **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         """Queue delete documents actions
         :param documents: A list of documents to delete.
         :type documents: list[Dict]
@@ -238,7 +255,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def merge_documents(self, documents: List[Dict], **kwargs: Any) -> None:  # pylint: disable=unused-argument
+    async def merge_documents(
+        self, documents: List[Dict], **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         """Queue merge documents actions
         :param documents: A list of documents to merge.
         :type documents: list[dict]
@@ -248,18 +267,24 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def merge_or_upload_documents(self, documents: List[Dict], **kwargs: Any) -> None:
+    async def merge_or_upload_documents(
+        self, documents: List[Dict], **kwargs: Any
+    ) -> None:
         # pylint: disable=unused-argument
         """Queue merge documents or upload documents actions
         :param documents: A list of documents to merge or upload.
         :type documents: list[dict]
         """
-        actions = await self._index_documents_batch.add_merge_or_upload_actions(documents)
+        actions = await self._index_documents_batch.add_merge_or_upload_actions(
+            documents
+        )
         await self._callback_new(actions)
         await self._process_if_needed()
 
     @distributed_trace_async
-    async def index_documents(self, batch: IndexDocumentsBatch, **kwargs: Any) -> List[IndexingResult]:
+    async def index_documents(
+        self, batch: IndexDocumentsBatch, **kwargs: Any
+    ) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
@@ -271,7 +296,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """
         return await self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    async def _index_documents_actions(self, actions: List[IndexAction], **kwargs: Any) -> List[IndexingResult]:
+    async def _index_documents_actions(
+        self, actions: List[IndexAction], **kwargs: Any
+    ) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         timeout = kwargs.pop("timeout", 86400)
@@ -279,7 +306,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = await self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = await self._client.documents.index(
+                batch=batch, error_map=error_map, **kwargs
+            )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
@@ -324,7 +353,14 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not self._index_key:
             await self._callback_fail(action)
             return
-        key = cast(str, action.additional_properties.get(self._index_key) if action.additional_properties else "")
+        key = cast(
+            str,
+            (
+                action.additional_properties.get(self._index_key)
+                if action.additional_properties
+                else ""
+            ),
+        )
         counter = self._retry_counter.get(key)
         if not counter:
             # first time that fails

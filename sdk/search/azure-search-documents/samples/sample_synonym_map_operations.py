@@ -61,7 +61,9 @@ def get_synonym_maps():
     # [START get_synonym_maps]
     result = client.get_synonym_maps()
     names = [x.name for x in result]
-    print("Found {} Synonym Maps in the service: {}".format(len(result), ", ".join(names)))
+    print(
+        "Found {} Synonym Maps in the service: {}".format(len(result), ", ".join(names))
+    )
     # [END get_synonym_maps]
 
 

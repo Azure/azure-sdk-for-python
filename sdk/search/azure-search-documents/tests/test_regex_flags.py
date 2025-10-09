@@ -22,7 +22,9 @@ def test_unpack_search_index():
     pattern_tokenizer = _PatternTokenizer(name="test_tokenizer", flags="CANON_EQ")
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = SearchIndex(name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers)
+    index = SearchIndex(
+        name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers
+    )
     result = SearchIndex._from_generated(index)
     assert isinstance(result.analyzers[0], PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, list)
@@ -33,13 +35,19 @@ def test_unpack_search_index():
 
 
 def test_multi_unpack_search_index():
-    pattern_analyzer = _PatternAnalyzer(name="test_analyzer", flags="CANON_EQ|MULTILINE")
+    pattern_analyzer = _PatternAnalyzer(
+        name="test_analyzer", flags="CANON_EQ|MULTILINE"
+    )
     analyzers = []
     analyzers.append(pattern_analyzer)
-    pattern_tokenizer = _PatternTokenizer(name="test_tokenizer", flags="CANON_EQ|MULTILINE")
+    pattern_tokenizer = _PatternTokenizer(
+        name="test_tokenizer", flags="CANON_EQ|MULTILINE"
+    )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = SearchIndex(name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers)
+    index = SearchIndex(
+        name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers
+    )
     result = SearchIndex._from_generated(index)
     assert isinstance(result.analyzers[0], PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, list)
@@ -55,10 +63,14 @@ def test_unpack_search_index_enum():
     pattern_analyzer = _PatternAnalyzer(name="test_analyzer", flags=RegexFlags.canon_eq)
     analyzers = []
     analyzers.append(pattern_analyzer)
-    pattern_tokenizer = _PatternTokenizer(name="test_tokenizer", flags=RegexFlags.canon_eq)
+    pattern_tokenizer = _PatternTokenizer(
+        name="test_tokenizer", flags=RegexFlags.canon_eq
+    )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = SearchIndex(name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers)
+    index = SearchIndex(
+        name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers
+    )
     result = SearchIndex._from_generated(index)
     assert isinstance(result.analyzers[0], PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, list)
@@ -75,7 +87,9 @@ def test_pack_search_index():
     pattern_tokenizer = PatternTokenizer(name="test_tokenizer", flags=["CANON_EQ"])
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = SearchIndex(name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers)
+    index = SearchIndex(
+        name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers
+    )
     result = index._to_generated()
     assert isinstance(result.analyzers[0], _PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, str)
@@ -86,13 +100,19 @@ def test_pack_search_index():
 
 
 def test_multi_pack_search_index():
-    pattern_analyzer = PatternAnalyzer(name="test_analyzer", flags=["CANON_EQ", "MULTILINE"])
+    pattern_analyzer = PatternAnalyzer(
+        name="test_analyzer", flags=["CANON_EQ", "MULTILINE"]
+    )
     analyzers = []
     analyzers.append(pattern_analyzer)
-    pattern_tokenizer = PatternTokenizer(name="test_analyzer", flags=["CANON_EQ", "MULTILINE"])
+    pattern_tokenizer = PatternTokenizer(
+        name="test_analyzer", flags=["CANON_EQ", "MULTILINE"]
+    )
     tokenizers = []
     tokenizers.append(pattern_tokenizer)
-    index = SearchIndex(name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers)
+    index = SearchIndex(
+        name="test", fields=None, analyzers=analyzers, tokenizers=tokenizers
+    )
     result = index._to_generated()
     assert isinstance(result.analyzers[0], _PatternAnalyzer)
     assert isinstance(result.analyzers[0].flags, str)

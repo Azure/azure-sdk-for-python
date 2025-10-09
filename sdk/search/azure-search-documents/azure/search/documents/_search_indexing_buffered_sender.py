@@ -55,7 +55,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
-        self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
+        self,
+        endpoint: str,
+        index_name: str,
+        credential: Union[AzureKeyCredential, TokenCredential],
+        **kwargs: Any
     ) -> None:
         super(SearchIndexingBufferedSender, self).__init__(
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
@@ -73,7 +77,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
+            authentication_policy = get_authentication_policy(
+                credential, audience=audience
+            )
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -118,7 +124,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         return self._client.close()
 
     @distributed_trace
-    def flush(self, timeout: int = 86400, **kwargs: Any) -> bool:  # pylint:disable=unused-argument
+    def flush(
+        self, timeout: int = 86400, **kwargs: Any  # pylint:disable=unused-argument
+    ) -> bool:
         """Flush the batch.
 
         :param int timeout: time out setting. Default is 86400s (one day)
@@ -148,7 +156,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         has_error = False
         if not self._index_key:
             try:
-                credential = cast(Union[AzureKeyCredential, TokenCredential], self._credential)
+                credential = cast(
+                    Union[AzureKeyCredential, TokenCredential], self._credential
+                )
                 client = SearchServiceClient(self._endpoint, credential)
                 index_result = client.get_index(self._index_name)
                 if index_result:
@@ -169,7 +179,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                     action = next(
                         x
                         for x in actions
-                        if x.additional_properties and x.additional_properties.get(self._index_key) == result.key
+                        if x.additional_properties
+                        and x.additional_properties.get(self._index_key) == result.key
                     )
                     if result.succeeded:
                         self._callback_succeed(action)
@@ -217,7 +228,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             self._timer.start()
 
     @distributed_trace
-    def upload_documents(self, documents: List[Dict], **kwargs) -> None:  # pylint: disable=unused-argument
+    def upload_documents(
+        self, documents: List[Dict], **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         """Queue upload documents actions.
 
         :param documents: A list of documents to upload.
@@ -228,7 +241,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self._process_if_needed()
 
     @distributed_trace
-    def delete_documents(self, documents: List[Dict], **kwargs) -> None:  # pylint: disable=unused-argument
+    def delete_documents(
+        self, documents: List[Dict], **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         """Queue delete documents actions
 
         :param documents: A list of documents to delete.
@@ -239,7 +254,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self._process_if_needed()
 
     @distributed_trace
-    def merge_documents(self, documents: List[Dict], **kwargs) -> None:  # pylint: disable=unused-argument
+    def merge_documents(
+        self, documents: List[Dict], **kwargs  # pylint: disable=unused-argument
+    ) -> None:
         """Queue merge documents actions
 
         :param documents: A list of documents to merge.
@@ -262,7 +279,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         self._process_if_needed()
 
     @distributed_trace
-    def index_documents(self, batch: IndexDocumentsBatch, **kwargs) -> List[IndexingResult]:
+    def index_documents(
+        self, batch: IndexDocumentsBatch, **kwargs
+    ) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
@@ -274,7 +293,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         """
         return self._index_documents_actions(actions=batch.actions, **kwargs)
 
-    def _index_documents_actions(self, actions: List[IndexAction], **kwargs) -> List[IndexingResult]:
+    def _index_documents_actions(
+        self, actions: List[IndexAction], **kwargs
+    ) -> List[IndexingResult]:
         error_map = {413: RequestEntityTooLargeError}
 
         timeout = kwargs.pop("timeout", 86400)
@@ -282,7 +303,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         batch = IndexBatch(actions=actions)
         try:
-            batch_response = self._client.documents.index(batch=batch, error_map=error_map, **kwargs)
+            batch_response = self._client.documents.index(
+                batch=batch, error_map=error_map, **kwargs
+            )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError as ex:
             if len(actions) == 1:
@@ -327,7 +350,14 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not self._index_key:
             self._callback_fail(action)
             return
-        key = cast(str, action.additional_properties.get(self._index_key) if action.additional_properties else "")
+        key = cast(
+            str,
+            (
+                action.additional_properties.get(self._index_key)
+                if action.additional_properties
+                else ""
+            ),
+        )
         counter = self._retry_counter.get(key)
         if not counter:
             # first time that fails

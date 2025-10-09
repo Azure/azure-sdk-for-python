@@ -24,7 +24,9 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
     async def __anext__(self) -> ReturnType:
         if self._page_iterator is None:
             self._page_iterator = self.by_page()
-            self._first_page_iterator_instance = cast(AsyncSearchPageIterator, self._page_iterator)
+            self._first_page_iterator_instance = cast(
+                AsyncSearchPageIterator, self._page_iterator
+            )
             return await self.__anext__()
         if self._page is None:
             # Let it raise StopAsyncIteration
@@ -75,7 +77,9 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: Answers.
         :rtype: list[~azure.search.documents.QueryAnswerResult]
         """
-        return cast(List[QueryAnswerResult], await self._first_iterator_instance().get_answers())
+        return cast(
+            List[QueryAnswerResult], await self._first_iterator_instance().get_answers()
+        )
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -85,7 +89,9 @@ def _ensure_response(f):
     async def wrapper(self, *args, **kw):
         if self._current_page is None:
             self._response = await self._get_next(self.continuation_token)
-            self.continuation_token, self._current_page = await self._extract_data(self._response)
+            self.continuation_token, self._current_page = await self._extract_data(
+                self._response
+            )
         return await f(self, *args, **kw)
 
     return wrapper
@@ -106,14 +112,20 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
-            return await self._client.documents.search_post(search_request=self._initial_query.request, **self._kwargs)
+            return await self._client.documents.search_post(
+                search_request=self._initial_query.request, **self._kwargs
+            )
 
         _next_link, next_page_request = unpack_continuation_token(continuation_token)
 
-        return await self._client.documents.search_post(search_request=next_page_request, **self._kwargs)
+        return await self._client.documents.search_post(
+            search_request=next_page_request, **self._kwargs
+        )
 
     async def _extract_data_cb(self, response):
-        continuation_token = pack_continuation_token(response, api_version=self._api_version)
+        continuation_token = pack_continuation_token(
+            response, api_version=self._api_version
+        )
         results = [convert_search_result(r) for r in response.results]
         return continuation_token, results
 

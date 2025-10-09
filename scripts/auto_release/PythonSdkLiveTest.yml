@@ -19,19 +19,26 @@ variables:
   - group: Azure SDK Auto Release Pipeline Secrets
 
 jobs:
-- job: LiveTestPython38
-  displayName: Live Test Python 3.8
+- job: LiveTestPython
+  displayName: Live Test Python
   timeoutInMinutes: 1500
   strategy:
     maxParallel: 5
   pool:
-    vmImage: 'ubuntu-20.04'
+    name: azsdk-pool
+    vmImage: 'ubuntu-22.04'
+  variables:
+    Codeql.Enabled: false
   steps:
     - task: UsePythonVersion@0
       inputs:
-        versionSpec: '3.8'
+        versionSpec: '3.10'
         addToPath: true
         architecture: 'x64'
+    - task: NodeTool@0
+      displayName: Install Node.js
+      inputs:
+        versionSpec: 22.x
     - bash: |
         python scripts/dev_setup.py -p azure-core
         cd ..
@@ -62,7 +69,6 @@ jobs:
           # install autorest
           sudo npm init -f
           sudo npm install -g autorest --save
-          sudo npm install -g @azure-tools/typespec-client-generator-cli
 
           mkdir temp_folder
 
@@ -91,7 +97,12 @@ jobs:
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
         export TEST_FOLDER=$(TEST_FOLDER)
+        export ISSUE_OWNER=$(ISSUE_OWNER)
 
+        # install tsp-client
+        cd azure-sdk-for-python/eng/common/tsp-client
+        npm ci
+        cd ../../..
+        
         # run
-        cd azure-sdk-for-python
         python $script_path/main.py

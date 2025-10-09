@@ -11,9 +11,12 @@
 
 import argparse
 import os
+import sys
 import logging
 from tox_harness import prep_and_run_tox
 from ci_tools.functions import discover_targeted_packages
+from ci_tools.logging import configure_logging
+
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -25,7 +28,7 @@ dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-This script is the single point for all checks invoked by CI within this repo. It works in two phases. 
+This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `tox` environments for each package identified as in scope.
 
@@ -64,9 +67,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     parser.add_argument(
         "--tenvparallel",
-        default=False,
-        help=("Flag. Enable tox parallel invocation."),
-        action="store_true",
+        default="",
+        dest="tenvparallel",
+        help=("Set tox parallel invocation.")
     )
 
     parser.add_argument(
@@ -113,13 +116,17 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     args = parser.parse_args()
 
+    configure_logging(args)
+
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
-    if args.service:
+    if args.service and args.service != "auto":
         service_dir = os.path.join("sdk", args.service)
         target_dir = os.path.join(root_dir, service_dir)
     else:
         target_dir = root_dir
+
+    logging.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
 
     if args.filter_type == "None":
         args.filter_type = "Build"
@@ -132,7 +139,8 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     if len(targeted_packages) == 0:
-        logging.info("No packages collected. Exit 0.")
+        logging.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
 
+    logging.info(f"Executing prep_and_run_tox with the executable {sys.executable}.")
     prep_and_run_tox(targeted_packages, args)

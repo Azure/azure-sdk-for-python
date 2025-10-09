@@ -11,21 +11,28 @@ import logging
 import os
 import glob
 import shutil
+import tempfile
+import subprocess
 from unicodedata import name
 from xmlrpc.client import Boolean
+from packaging.version import Version
 from tox_helper_tasks import (
     unzip_file_to_directory,
 )
-from verify_whl import cleanup, should_verify_package
-from typing import List, Mapping, Any
+from verify_whl import cleanup, should_verify_package, get_prior_version, verify_prior_version_metadata, get_path_to_zip
+from typing import List, Mapping, Any, Dict, Optional
 
-from ci_tools.parsing import ParsedSetup
+from ci_tools.parsing import ParsedSetup, extract_package_metadata
+from ci_tools.functions import verify_package_classifiers
+from pypi_tools.pypi import retrieve_versions_from_pypi
 
 logging.getLogger().setLevel(logging.INFO)
 
 ALLOWED_ROOT_DIRECTORIES = ["azure", "tests", "samples", "examples"]
 
 EXCLUDED_PYTYPE_PACKAGES = ["azure-keyvault", "azure", "azure-common"]
+
+EXCLUDED_CLASSIFICATION_PACKAGES = []
 
 
 def get_root_directories_in_source(package_dir: str) -> List[str]:
@@ -35,14 +42,13 @@ def get_root_directories_in_source(package_dir: str) -> List[str]:
     source_folders = [d for d in os.listdir(package_dir) if os.path.isdir(d) and d in ALLOWED_ROOT_DIRECTORIES]
     return source_folders
 
-
 def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     """
     Given an unzipped sdist directory, extract which directories are present.
     """
     # find sdist zip file
+    path_to_zip = get_path_to_zip(dist_dir, version, package_type="*.tar.gz")
     # extract sdist and find list of directories in sdist
-    path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.tar.gz".format(version)))[0]
     extract_location = os.path.join(dist_dir, "unzipped")
     # Cleanup any files in unzipped
     cleanup(extract_location)
@@ -51,10 +57,14 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     return sdist_folders
 
 
-def verify_sdist(package_dir: str, dist_dir: str, version: str) -> bool:
+def verify_sdist(package_dir: str, dist_dir: str, parsed_pkg: ParsedSetup) -> bool:
     """
     Compares the root directories in source against root directories present within a sdist.
+    Also verifies metadata compatibility with prior stable version.
     """
+    version = parsed_pkg.version
+    # Extract metadata from zip file to ensure we're checking the built package metadata
+    metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version, package_type="*.tar.gz"))
 
     source_folders = get_root_directories_in_source(package_dir)
     sdist_folders = get_root_directories_in_sdist(dist_dir, version)
@@ -68,8 +78,14 @@ def verify_sdist(package_dir: str, dist_dir: str, version: str) -> bool:
         logging.info("Directories in source: %s", source_folders)
         logging.info("Directories in sdist: %s", sdist_folders)
         return False
-    else:
-        return True
+
+    # Verify metadata compatibility with prior version
+    prior_version = get_prior_version(parsed_pkg.name, version)
+    if prior_version:
+        if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, package_type="*.tar.gz"):
+            return False
+
+    return True
 
 
 def verify_sdist_pytyped(
@@ -138,18 +154,34 @@ if __name__ == "__main__":
     pkg_dir = os.path.abspath(args.target_package)
     pkg_details = ParsedSetup.from_path(pkg_dir)
 
+    error_occurred = False
+
     if should_verify_package(pkg_details.name):
-        logging.info("Verifying sdist for package [%s]", pkg_details.name)
-        if verify_sdist(pkg_dir, args.dist_dir, pkg_details.version):
-            logging.info("Verified sdist for package [%s]", pkg_details.name)
+        logging.info(f"Verifying sdist folders and metadata for package {pkg_details.name}")
+        if verify_sdist(pkg_dir, args.dist_dir, pkg_details):
+            logging.info(f"Verified sdist folders and metadata for package {pkg_details.name}")
         else:
-            logging.info("Failed to verify sdist for package [%s]", pkg_details.name)
-            exit(1)
+            logging.error(f"Failed to verify sdist folders and metadata for package {pkg_details.name}")
+            error_occurred = True
 
     if pkg_details.name not in EXCLUDED_PYTYPE_PACKAGES and "-nspkg" not in pkg_details.name and "-mgmt" not in pkg_details.name:
-        logging.info("Verifying presence of py.typed: [%s]", pkg_details.name)
+        logging.info(f"Verifying presence of py.typed: {pkg_details.name}")
         if verify_sdist_pytyped(pkg_dir, pkg_details.namespace, pkg_details.package_data, pkg_details.include_package_data):
-            logging.info("Py.typed setup.py kwargs are set properly: [%s]", pkg_details.name)
+            logging.info(f"Py.typed setup.py kwargs are set properly: {pkg_details.name}")
         else:
-            logging.info("Verified py.typed [%s]. Check messages above.", pkg_details.name)
-            exit(1)
+            logging.error(f"Py.typed verification failed for package {pkg_details.name}. Check messages above.")
+            error_occurred = True
+
+    if pkg_details.name not in EXCLUDED_CLASSIFICATION_PACKAGES and "-nspkg" not in pkg_details.name:
+        logging.info(f"Verifying package classifiers: {pkg_details.name}")
+
+        status, message = verify_package_classifiers(pkg_details.name, pkg_details.version, pkg_details.classifiers)
+        if status:
+            logging.info(f"Package classifiers are set properly: {pkg_details.name}")
+        else:
+            logging.error(f"{message}")
+            error_occurred = True
+
+    if error_occurred:
+        logging.error(f"{pkg_details.name} failed sdist verification. Check outputs above.")
+        exit(1)

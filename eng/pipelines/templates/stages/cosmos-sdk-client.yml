@@ -23,12 +23,14 @@ extends:
         parameters:
           StartParameters: '/noexplorer /noui /enablepreview /EnableSqlComputeEndpoint /SqlComputePort=9999 /disableratelimiting /partitioncount=50 /consistency=Session'
     MatrixConfigs:
-      - Name: Python_cosmos_emulator
-        Path: sdk/cosmos/cosmos-emulator-matrix.json
-        Selection: all
-        GenerateVMJobs: true
-    Artifacts:
-    - name: azure-cosmos
-      safeName: azurecosmos
-    - name: azure-mgmt-cosmosdb
-      safeName: azuremgmtcosmosdb
+      - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+        - Name: Python_cosmos_emulator
+          Path: sdk/cosmos/cosmos-emulator-public-matrix.json
+          Selection: all
+          GenerateVMJobs: true
+      - ${{ else }}:
+        - Name: Python_cosmos_emulator
+          Path: sdk/cosmos/cosmos-emulator-internal-matrix.json
+          Selection: all
+          GenerateVMJobs: true
+    Artifacts: ${{ parameters.Artifacts }}

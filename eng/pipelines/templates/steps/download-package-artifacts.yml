@@ -1,0 +1,18 @@
+parameters:
+  TargetPath: $(Build.ArtifactStagingDirectory)
+
+steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages_windows'
+        targetPath: ${{ parameters.TargetPath }}
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages_mac'
+        targetPath: ${{ parameters.TargetPath }}
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifactName: 'packages_linux'
+        targetPath: ${{ parameters.TargetPath }}

@@ -35,7 +35,9 @@ def filter_query():
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-    results = search_client.search(search_text="WiFi", facets=["category,count:3", "parkingIncluded"])
+    results = search_client.search(
+        search_text="WiFi", facets=["category,count:3", "parkingIncluded"]
+    )
 
     facets: Dict[str, List[str]] = cast(Dict[str, List[str]], results.get_facets())
 

@@ -11,3 +11,4 @@ variables:
   REPOROOT: $(Build.SourcesDirectory)
   WINDOWS_OUTPUTROOT: $(REPOROOT)\out
   WindowsContainerImage: 'onebranch.azurecr.io/windows/ltsc2019/vse2022:latest'
+  GDN_SUPPRESS_FORKED_BUILD_WARNING: true

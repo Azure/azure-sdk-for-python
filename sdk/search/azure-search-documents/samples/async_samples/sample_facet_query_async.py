@@ -38,9 +38,13 @@ async def filter_query():
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     async with search_client:
-        results = await search_client.search(search_text="WiFi", facets=["category,count:3", "parkingIncluded"])
+        results = await search_client.search(
+            search_text="WiFi", facets=["category,count:3", "parkingIncluded"]
+        )
 
-        facets: Dict[str, List[str]] = cast(Dict[str, List[str]], await results.get_facets())
+        facets: Dict[str, List[str]] = cast(
+            Dict[str, List[str]], await results.get_facets()
+        )
 
         print("Catgory facet counts for hotels:")
         for facet in facets["category"]:

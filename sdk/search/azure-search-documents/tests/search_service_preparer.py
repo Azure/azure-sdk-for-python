@@ -52,7 +52,9 @@ def _load_batch(filename):
 def _clean_up_indexes(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexClient
 
-    client = SearchIndexClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
+    client = SearchIndexClient(
+        endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60
+    )
 
     # wipe the synonym maps which seem to survive the index
     for map in client.get_synonym_maps():
@@ -70,7 +72,9 @@ def _clean_up_indexes(endpoint, api_key):
 def _clean_up_indexers(endpoint, api_key):
     from azure.search.documents.indexes import SearchIndexerClient
 
-    client = SearchIndexerClient(endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60)
+    client = SearchIndexerClient(
+        endpoint, AzureKeyCredential(api_key), retry_backoff_factor=60
+    )
     for indexer in client.get_indexers():
         client.delete_indexer(indexer)
     for datasource in client.get_data_source_connection_names():
@@ -79,7 +83,10 @@ def _clean_up_indexers(endpoint, api_key):
         for skillset in client.get_skillset_names():
             client.delete_skillset(skillset)
     except HttpResponseError as ex:
-        if "skillset related operations are not enabled in this region" in ex.message.lower():
+        if (
+            "skillset related operations are not enabled in this region"
+            in ex.message.lower()
+        ):
             pass
         else:
             raise
@@ -100,7 +107,9 @@ def _set_up_index(service_name, endpoint, api_key, schema, index_batch):
             data=schema,
         )
         if response.status_code != 201:
-            raise AzureTestError("Could not create a search index {}".format(response.status_code))
+            raise AzureTestError(
+                "Could not create a search index {}".format(response.status_code)
+            )
 
     # optionally load data into the index
     if index_batch and schema:
@@ -175,10 +184,14 @@ import datetime
 # TODO: Remove this
 class SearchResourceGroupPreparer(ResourceGroupPreparer):
     def create_resource(self, name, **kwargs):
-        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
+        result = super(SearchResourceGroupPreparer, self).create_resource(
+            name, **kwargs
+        )
         if self.is_live and self._need_creation:
             expiry = datetime.datetime.now() + datetime.timedelta(days=1)
-            resource_group_params = dict(tags={"DeleteAfter": expiry.isoformat()}, location=self.location)
+            resource_group_params = dict(
+                tags={"DeleteAfter": expiry.isoformat()}, location=self.location
+            )
             self.client.resource_groups.create_or_update(name, resource_group_params)
         return result
 
@@ -224,7 +237,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
+        self.endpoint = "https://{}.{}".format(
+            self.service_name, SEARCH_ENDPOINT_SUFFIX
+        )
 
         if not self.is_live:
             return {
@@ -244,7 +259,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         from azure.mgmt.search.models import SearchService, Sku
 
         service_config = SearchService(location="West US", sku=Sku(name="basic"))
-        resource = self.mgmt_client.services.begin_create_or_update(group_name, self.service_name, service_config)
+        resource = self.mgmt_client.services.begin_create_or_update(
+            group_name, self.service_name, service_config
+        )
 
         retries = 4
         for i in range(retries):
@@ -263,7 +280,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             raise AzureTestError("Could not create a search service")
 
-        api_key = self.mgmt_client.admin_keys.get(group_name, self.service_name).primary_key
+        api_key = self.mgmt_client.admin_keys.get(
+            group_name, self.service_name
+        ).primary_key
 
         if self.schema:
             response = requests.post(
@@ -272,7 +291,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
                 data=self.schema,
             )
             if response.status_code != 201:
-                raise AzureTestError("Could not create a search index {}".format(response.status_code))
+                raise AzureTestError(
+                    "Could not create a search index {}".format(response.status_code)
+                )
             self.index_name = schema["name"]
 
         # optionally load data into the index
@@ -282,7 +303,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
             from azure.search.documents._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchClient(self.endpoint, self.index_name, AzureKeyCredential(api_key))
+            index_client = SearchClient(
+                self.endpoint, self.index_name, AzureKeyCredential(api_key)
+            )
             results = index_client.index_documents(batch)
             if not all(result.succeeded for result in results):
                 raise AzureTestError("Document upload to search index failed")
@@ -319,10 +342,14 @@ import datetime
 # TODO: Remove this
 class SearchResourceGroupPreparer(ResourceGroupPreparer):
     def create_resource(self, name, **kwargs):
-        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
+        result = super(SearchResourceGroupPreparer, self).create_resource(
+            name, **kwargs
+        )
         if self.is_live and self._need_creation:
             expiry = datetime.datetime.now() + datetime.timedelta(days=1)
-            resource_group_params = dict(tags={"DeleteAfter": expiry.isoformat()}, location=self.location)
+            resource_group_params = dict(
+                tags={"DeleteAfter": expiry.isoformat()}, location=self.location
+            )
             self.client.resource_groups.create_or_update(name, resource_group_params)
         return result
 
@@ -368,7 +395,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
+        self.endpoint = "https://{}.{}".format(
+            self.service_name, SEARCH_ENDPOINT_SUFFIX
+        )
 
         if not self.is_live:
             return {
@@ -388,7 +417,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         from azure.mgmt.search.models import SearchService, Sku
 
         service_config = SearchService(location="West US", sku=Sku(name="basic"))
-        resource = self.mgmt_client.services.begin_create_or_update(group_name, self.service_name, service_config)
+        resource = self.mgmt_client.services.begin_create_or_update(
+            group_name, self.service_name, service_config
+        )
 
         retries = 4
         for i in range(retries):
@@ -407,7 +438,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             raise AzureTestError("Could not create a search service")
 
-        api_key = self.mgmt_client.admin_keys.get(group_name, self.service_name).primary_key
+        api_key = self.mgmt_client.admin_keys.get(
+            group_name, self.service_name
+        ).primary_key
 
         if self.schema:
             response = requests.post(
@@ -416,7 +449,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
                 data=self.schema,
             )
             if response.status_code != 201:
-                raise AzureTestError("Could not create a search index {}".format(response.status_code))
+                raise AzureTestError(
+                    "Could not create a search index {}".format(response.status_code)
+                )
             self.index_name = schema["name"]
 
         # optionally load data into the index
@@ -426,7 +461,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
             from azure.search.documents._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchClient(self.endpoint, self.index_name, AzureKeyCredential(api_key))
+            index_client = SearchClient(
+                self.endpoint, self.index_name, AzureKeyCredential(api_key)
+            )
             results = index_client.index_documents(batch)
             if not all(result.succeeded for result in results):
                 raise AzureTestError("Document upload to search index failed")
@@ -463,10 +500,14 @@ import datetime
 # TODO: Remove this
 class SearchResourceGroupPreparer(ResourceGroupPreparer):
     def create_resource(self, name, **kwargs):
-        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
+        result = super(SearchResourceGroupPreparer, self).create_resource(
+            name, **kwargs
+        )
         if self.is_live and self._need_creation:
             expiry = datetime.datetime.now() + datetime.timedelta(days=1)
-            resource_group_params = dict(tags={"DeleteAfter": expiry.isoformat()}, location=self.location)
+            resource_group_params = dict(
+                tags={"DeleteAfter": expiry.isoformat()}, location=self.location
+            )
             self.client.resource_groups.create_or_update(name, resource_group_params)
         return result
 
@@ -512,7 +553,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
+        self.endpoint = "https://{}.{}".format(
+            self.service_name, SEARCH_ENDPOINT_SUFFIX
+        )
 
         if not self.is_live:
             return {
@@ -532,7 +575,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         from azure.mgmt.search.models import SearchService, Sku
 
         service_config = SearchService(location="West US", sku=Sku(name="basic"))
-        resource = self.mgmt_client.services.begin_create_or_update(group_name, self.service_name, service_config)
+        resource = self.mgmt_client.services.begin_create_or_update(
+            group_name, self.service_name, service_config
+        )
 
         retries = 4
         for i in range(retries):
@@ -551,7 +596,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             raise AzureTestError("Could not create a search service")
 
-        api_key = self.mgmt_client.admin_keys.get(group_name, self.service_name).primary_key
+        api_key = self.mgmt_client.admin_keys.get(
+            group_name, self.service_name
+        ).primary_key
 
         if self.schema:
             response = requests.post(
@@ -560,7 +607,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
                 data=self.schema,
             )
             if response.status_code != 201:
-                raise AzureTestError("Could not create a search index {}".format(response.status_code))
+                raise AzureTestError(
+                    "Could not create a search index {}".format(response.status_code)
+                )
             self.index_name = schema["name"]
 
         # optionally load data into the index
@@ -570,7 +619,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
             from azure.search.documents._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchClient(self.endpoint, self.index_name, AzureKeyCredential(api_key))
+            index_client = SearchClient(
+                self.endpoint, self.index_name, AzureKeyCredential(api_key)
+            )
             results = index_client.index_documents(batch)
             if not all(result.succeeded for result in results):
                 raise AzureTestError("Document upload to search index failed")
@@ -607,10 +658,14 @@ import datetime
 # TODO: Remove this
 class SearchResourceGroupPreparer(ResourceGroupPreparer):
     def create_resource(self, name, **kwargs):
-        result = super(SearchResourceGroupPreparer, self).create_resource(name, **kwargs)
+        result = super(SearchResourceGroupPreparer, self).create_resource(
+            name, **kwargs
+        )
         if self.is_live and self._need_creation:
             expiry = datetime.datetime.now() + datetime.timedelta(days=1)
-            resource_group_params = dict(tags={"DeleteAfter": expiry.isoformat()}, location=self.location)
+            resource_group_params = dict(
+                tags={"DeleteAfter": expiry.isoformat()}, location=self.location
+            )
             self.client.resource_groups.create_or_update(name, resource_group_params)
         return result
 
@@ -656,7 +711,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             schema = None
         self.service_name = self.create_random_name()
-        self.endpoint = "https://{}.{}".format(self.service_name, SEARCH_ENDPOINT_SUFFIX)
+        self.endpoint = "https://{}.{}".format(
+            self.service_name, SEARCH_ENDPOINT_SUFFIX
+        )
 
         if not self.is_live:
             return {
@@ -676,7 +733,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         from azure.mgmt.search.models import SearchService, Sku
 
         service_config = SearchService(location="West US", sku=Sku(name="basic"))
-        resource = self.mgmt_client.services.begin_create_or_update(group_name, self.service_name, service_config)
+        resource = self.mgmt_client.services.begin_create_or_update(
+            group_name, self.service_name, service_config
+        )
 
         retries = 4
         for i in range(retries):
@@ -695,7 +754,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
         else:
             raise AzureTestError("Could not create a search service")
 
-        api_key = self.mgmt_client.admin_keys.get(group_name, self.service_name).primary_key
+        api_key = self.mgmt_client.admin_keys.get(
+            group_name, self.service_name
+        ).primary_key
 
         if self.schema:
             response = requests.post(
@@ -704,7 +765,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
                 data=self.schema,
             )
             if response.status_code != 201:
-                raise AzureTestError("Could not create a search index {}".format(response.status_code))
+                raise AzureTestError(
+                    "Could not create a search index {}".format(response.status_code)
+                )
             self.index_name = schema["name"]
 
         # optionally load data into the index
@@ -714,7 +777,9 @@ class SearchServicePreparer(AzureMgmtPreparer):
             from azure.search.documents._generated.models import IndexBatch
 
             batch = IndexBatch.deserialize(self.index_batch)
-            index_client = SearchClient(self.endpoint, self.index_name, AzureKeyCredential(api_key))
+            index_client = SearchClient(
+                self.endpoint, self.index_name, AzureKeyCredential(api_key)
+            )
             results = index_client.index_documents(batch)
             if not all(result.succeeded for result in results):
                 raise AzureTestError("Document upload to search index failed")

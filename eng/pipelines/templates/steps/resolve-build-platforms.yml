@@ -1,0 +1,18 @@
+parameters:
+  - name: PackagePropertiesFolder
+    type: string
+    default: ''
+
+steps:
+    # when we merge pipeline v3, this check will change to examining the targeting string $(TargetingString)
+    # as the generate-pr-diff call + resolution will be present in resolve-package-targeting.yml.
+    # until then, we simply check to see if we're targeting storage service directory
+    - pwsh: |
+        $packageProperties = Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json" `
+          | ForEach-Object { $_.Name.Replace(".json", "") }
+
+        if ($packageProperties -contains "azure-storage-extensions") {
+          Write-Host "Targeting storage, enabling extension build."
+          Write-Host "##vso[task.setvariable variable=ENABLE_EXTENSION_BUILD]true"
+        }
+      displayName: Check extension package presence

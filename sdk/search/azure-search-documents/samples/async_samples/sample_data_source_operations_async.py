@@ -26,7 +26,10 @@ key = os.environ["AZURE_SEARCH_API_KEY"]
 connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
 
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.indexes.models import SearchIndexerDataContainer, SearchIndexerDataSourceConnection
+from azure.search.documents.indexes.models import (
+    SearchIndexerDataContainer,
+    SearchIndexerDataSourceConnection,
+)
 from azure.search.documents.indexes.aio import SearchIndexerClient
 
 client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
@@ -50,13 +53,19 @@ async def list_data_source_connections():
     # [START list_data_source_connection_async]
     result = await client.get_data_source_connections()
     names = [x.name for x in result]
-    print("Found {} Data Source Connections in the service: {}".format(len(result), ", ".join(names)))
+    print(
+        "Found {} Data Source Connections in the service: {}".format(
+            len(result), ", ".join(names)
+        )
+    )
     # [END list_data_source_connection_async]
 
 
 async def get_data_source_connection():
     # [START get_data_source_connection_async]
-    result = await client.get_data_source_connection("async-sample-data-source-connection")
+    result = await client.get_data_source_connection(
+        "async-sample-data-source-connection"
+    )
     print("Retrived Data Source Connection 'async-sample-data-source-connection'")
     return result
     # [END get_data_source_connection_async]
@@ -65,7 +74,9 @@ async def get_data_source_connection():
 async def delete_data_source_connection():
     # [START delete_data_source_connection_async]
     await client.delete_data_source_connection("async-sample-data-source-connection")
-    print("Data Source Connection 'async-sample-data-source-connection' successfully deleted")
+    print(
+        "Data Source Connection 'async-sample-data-source-connection' successfully deleted"
+    )
     # [END delete_data_source_connection_async]
 
 

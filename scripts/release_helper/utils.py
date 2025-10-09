@@ -62,7 +62,7 @@ def get_python_release_pipeline(output_folder):
                                       creds=BasicAuthentication(os.getenv('PIPELINE_TOKEN'), ''))
     pipelines = pipeline_client.list_pipelines(project='internal')
     for pipeline in pipelines:
-        if re.findall('^python - \w*$', pipeline.name):
+        if re.findall(r'^python - \w*$', pipeline.name):
             key = pipeline.name.replace('python - ', '')
             if key == output_folder:
                 pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(pipeline.id)
@@ -73,7 +73,7 @@ def get_python_release_pipeline(output_folder):
 
 
 # Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash="", target_date=""):
+def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash="", target_date="", issue_owner=""):
     paramaters = {
         "stages_to_skip": [],
         "resources": {
@@ -110,6 +110,10 @@ def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo
             },
             "TARGET_DATE": {
                 "value": target_date,
+                "isSecret": False
+            },
+            "ISSUE_OWNER": {
+                "value": issue_owner,
                 "isSecret": False
             }
         }

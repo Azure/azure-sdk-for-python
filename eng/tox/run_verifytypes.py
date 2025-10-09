@@ -22,10 +22,10 @@ import tempfile
 from ci_tools.parsing import ParsedSetup
 from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.variables import in_ci
+from ci_tools.functions import get_pip_command
 
 logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-
 
 def install_from_main(setup_path: str) -> None:
     path = pathlib.Path(setup_path)
@@ -51,10 +51,7 @@ def install_from_main(setup_path: str) -> None:
 
             os.chdir(subdirectory)
 
-            command = [
-                sys.executable,
-                "-m",
-                "pip",
+            command = get_pip_command() + [
                 "install",
                 ".",
                 "--force-reinstall"

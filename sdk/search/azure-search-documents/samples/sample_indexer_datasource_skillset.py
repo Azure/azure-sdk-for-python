@@ -60,13 +60,23 @@ def _create_index():
 
     # Here we create an index with listed fields.
     fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, filterable=True, sortable=True, key=True),
+        SimpleField(
+            name="hotelId",
+            type=SearchFieldDataType.String,
+            filterable=True,
+            sortable=True,
+            key=True,
+        ),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
         SimpleField(name="description", type=SearchFieldDataType.String),
         SimpleField(name="descriptionFr", type=SearchFieldDataType.String),
         SimpleField(name="category", type=SearchFieldDataType.String),
-        SimpleField(name="parkingIncluded", type=SearchFieldDataType.Boolean, filterable=True),
-        SimpleField(name="smokingAllowed", type=SearchFieldDataType.Boolean, filterable=True),
+        SimpleField(
+            name="parkingIncluded", type=SearchFieldDataType.Boolean, filterable=True
+        ),
+        SimpleField(
+            name="smokingAllowed", type=SearchFieldDataType.Boolean, filterable=True
+        ),
         SimpleField(name="lastRenovationDate", type=SearchFieldDataType.String),
         SimpleField(name="rating", type=SearchFieldDataType.Int64, sortable=True),
         SimpleField(name="location", type=SearchFieldDataType.GeographyPoint),
@@ -86,7 +96,10 @@ def _create_datasource():
     ds_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
     container = SearchIndexerDataContainer(name="searchcontainer")
     data_source_connection = SearchIndexerDataSourceConnection(
-        name="hotel-datasource", type="azureblob", connection_string=connection_string, container=container
+        name="hotel-datasource",
+        type="azureblob",
+        connection_string=connection_string,
+        container=container,
     )
     data_source = ds_client.create_data_source_connection(data_source_connection)
     return data_source
@@ -98,7 +111,9 @@ def _create_skillset():
     output = OutputFieldMappingEntry(name="dateTimes", target_name="RenovatedDate")
     s = EntityRecognitionSkill(name="merge-skill", inputs=[inp], outputs=[output])
 
-    skillset = SearchIndexerSkillset(name="hotel-data-skill", skills=[s], description="example skillset")
+    skillset = SearchIndexerSkillset(
+        name="hotel-data-skill", skills=[s], description="example skillset"
+    )
     result = client.create_skillset(skillset)
     return result
 

@@ -14,7 +14,9 @@ class HeadersMixin:
             return {"Accept": self._ODATA_ACCEPT}  # type: ignore
         return {"api-key": self._credential.key, "Accept": self._ODATA_ACCEPT}  # type: ignore
 
-    def _merge_client_headers(self, headers: Optional[MutableMapping[str, str]]) -> MutableMapping[str, str]:
+    def _merge_client_headers(
+        self, headers: Optional[MutableMapping[str, str]]
+    ) -> MutableMapping[str, str]:
         headers = headers or {}
         combined = self._headers
         combined.update(headers)

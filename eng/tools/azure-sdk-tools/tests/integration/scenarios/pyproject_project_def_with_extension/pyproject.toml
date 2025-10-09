@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]  # Requires 61.0.0 for dynamic version
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-keyvault-keys"
+authors = [
+    {name = "Microsoft Corporation", email = "azurekeyvault@microsoft.com"}
+    ]
+description = "Microsoft Azure Key Vault Keys Client Library for Python"
+requires-python = ">=3.8"
+license = {text = "MIT License"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License"
+    ]
+dependencies = [
+    "azure-common~=1.1",
+    "azure-core<2.0.0,>=1.24.0",
+    "cryptography>=2.1.4",
+    "isodate>=0.6.1",
+    "typing-extensions>=4.0.1"
+    ]
+dynamic = ["version"]
+readme = "README.md"
+
+[tool.setuptools]
+ext-modules = [{ name = "crc64", sources = ["crc64/crc64module.c"], py_limited_api = true }]
+ext-package = "azure.keyvault.keys"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys"
+
+[tool.setuptools.dynamic]
+version = {attr = "azure.keyvault.keys.__version__"}
+
+# include-package-data bit defaults to TRUE if using python -m build to assemble package
+[tool.setuptools.package-data]
+"py.typed" = ["py.typed"]
+
+[tool.setuptools.packages.find]
+exclude = ["samples", "tests", "azure", "azure.keyvault"]
+
+[tool.azure-sdk-build]
+pyright = false
+type_check_samples = false

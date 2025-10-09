@@ -12,7 +12,11 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from .._generated.models import SearchIndexerStatus
-from ..models import SearchIndexer, SearchIndexerSkillset, SearchIndexerDataSourceConnection
+from ..models import (
+    SearchIndexer,
+    SearchIndexerSkillset,
+    SearchIndexerDataSourceConnection,
+)
 from .._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -39,7 +43,12 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     _ODATA_ACCEPT: str = "application/json;odata.metadata=minimal"
     _client: _SearchServiceClient
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        **kwargs
+    ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)  # type: str
         self._credential = credential
@@ -47,11 +56,16 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = _SearchServiceClient(
-                endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
+                endpoint=endpoint,
+                sdk_moniker=SDK_MONIKER,
+                api_version=self._api_version,
+                **kwargs
             )
         else:
             self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
+            authentication_policy = get_authentication_policy(
+                credential, audience=audience, is_async=True
+            )
             self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
@@ -75,7 +89,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return await self._client.close()
 
     @distributed_trace_async
-    async def create_indexer(self, indexer: SearchIndexer, **kwargs: Any) -> SearchIndexer:
+    async def create_indexer(
+        self, indexer: SearchIndexer, **kwargs: Any
+    ) -> SearchIndexer:
         """Creates a new SearchIndexer.
 
         :param indexer: The definition of the indexer to create.
@@ -95,7 +111,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexers.create(patched_indexer, **kwargs)
-        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
+        return cast(
+            SearchIndexer,
+            SearchIndexer._from_generated(result),  # pylint:disable=protected-access
+        )
 
     @distributed_trace_async
     async def create_or_update_indexer(
@@ -120,9 +139,16 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         name = indexer.name
         patched_indexer = indexer._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexers.create_or_update(
-            indexer_name=name, indexer=patched_indexer, prefer="return=representation", error_map=error_map, **kwargs
+            indexer_name=name,
+            indexer=patched_indexer,
+            prefer="return=representation",
+            error_map=error_map,
+            **kwargs
         )
-        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
+        return cast(
+            SearchIndexer,
+            SearchIndexer._from_generated(result),  # pylint:disable=protected-access
+        )
 
     @distributed_trace_async
     async def get_indexer(self, name: str, **kwargs: Any) -> SearchIndexer:
@@ -144,10 +170,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexers.get(name, **kwargs)
-        return cast(SearchIndexer, SearchIndexer._from_generated(result))  # pylint:disable=protected-access
+        return cast(
+            SearchIndexer,
+            SearchIndexer._from_generated(result),  # pylint:disable=protected-access
+        )
 
     @distributed_trace_async
-    async def get_indexers(self, *, select: Optional[List[str]] = None, **kwargs) -> Sequence[SearchIndexer]:
+    async def get_indexers(
+        self, *, select: Optional[List[str]] = None, **kwargs
+    ) -> Sequence[SearchIndexer]:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
@@ -172,7 +203,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = await self._client.indexers.list(**kwargs)
         assert result.indexers is not None  # Hint for mypy
         # pylint:disable=protected-access
-        return [cast(SearchIndexer, SearchIndexer._from_generated(index)) for index in result.indexers]
+        return [
+            cast(SearchIndexer, SearchIndexer._from_generated(index))
+            for index in result.indexers
+        ]
 
     @distributed_trace_async
     async def get_indexer_names(self, **kwargs) -> Sequence[str]:
@@ -304,7 +338,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
         result = await self._client.data_sources.create(packed_data_source, **kwargs)
-        return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
+        return cast(
+            SearchIndexerDataSourceConnection,
+            SearchIndexerDataSourceConnection._from_generated(result),
+        )
 
     @distributed_trace_async
     async def create_or_update_data_source_connection(
@@ -338,7 +375,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             error_map=error_map,
             **kwargs
         )
-        return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
+        return cast(
+            SearchIndexerDataSourceConnection,
+            SearchIndexerDataSourceConnection._from_generated(result),
+        )
 
     @distributed_trace_async
     async def delete_data_source_connection(
@@ -376,7 +416,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             name = data_source_connection.name  # type: ignore
         except AttributeError:
             name = data_source_connection
-        await self._client.data_sources.delete(data_source_name=name, error_map=error_map, **kwargs)
+        await self._client.data_sources.delete(
+            data_source_name=name, error_map=error_map, **kwargs
+        )
 
     @distributed_trace_async
     async def get_data_source_connection(
@@ -405,10 +447,15 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             kwargs["select"] = ",".join(select)
         result = await self._client.data_sources.get(name, **kwargs)
         # pylint:disable=protected-access
-        return cast(SearchIndexerDataSourceConnection, SearchIndexerDataSourceConnection._from_generated(result))
+        return cast(
+            SearchIndexerDataSourceConnection,
+            SearchIndexerDataSourceConnection._from_generated(result),
+        )
 
     @distributed_trace_async
-    async def get_data_source_connections(self, **kwargs: Any) -> Sequence[SearchIndexerDataSourceConnection]:
+    async def get_data_source_connections(
+        self, **kwargs: Any
+    ) -> Sequence[SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
         :return: List of all the data source connections.
@@ -427,7 +474,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         result = await self._client.data_sources.list(**kwargs)
         assert result.data_sources is not None  # Hint for mypy
         # pylint:disable=protected-access
-        return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
+        return [
+            SearchIndexerDataSourceConnection._from_generated(x)
+            for x in result.data_sources
+        ]
 
     @distributed_trace_async
     async def get_data_source_connection_names(self, **kwargs) -> Sequence[str]:
@@ -443,7 +493,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         return [x.name for x in result.data_sources]
 
     @distributed_trace_async
-    async def get_skillsets(self, *, select: Optional[List[str]] = None, **kwargs) -> List[SearchIndexerSkillset]:
+    async def get_skillsets(
+        self, *, select: Optional[List[str]] = None, **kwargs
+    ) -> List[SearchIndexerSkillset]:
         # pylint:disable=protected-access
         """List the SearchIndexerSkillsets in an Azure Search service.
 
@@ -460,7 +512,10 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             kwargs["select"] = ",".join(select)
         result = await self._client.skillsets.list(**kwargs)
         assert result.skillsets is not None  # Hint for mypy
-        return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
+        return [
+            SearchIndexerSkillset._from_generated(skillset)
+            for skillset in result.skillsets
+        ]
 
     @distributed_trace_async
     async def get_skillset_names(self, **kwargs) -> List[str]:
@@ -489,7 +544,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.skillsets.get(name, **kwargs)
         # pylint:disable=protected-access
-        return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
+        return cast(
+            SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result)
+        )
 
     @distributed_trace_async
     async def delete_skillset(
@@ -518,7 +575,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         await self._client.skillsets.delete(name, error_map=error_map, **kwargs)
 
     @distributed_trace_async
-    async def create_skillset(self, skillset: SearchIndexerSkillset, **kwargs: Any) -> SearchIndexerSkillset:
+    async def create_skillset(
+        self, skillset: SearchIndexerSkillset, **kwargs: Any
+    ) -> SearchIndexerSkillset:
         # pylint:disable=protected-access
         """Create a new SearchIndexerSkillset in an Azure Search service
 
@@ -528,9 +587,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        skillset_gen = (
+            skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        )
         result = await self._client.skillsets.create(skillset_gen, **kwargs)
-        return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
+        return cast(
+            SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result)
+        )
 
     @distributed_trace_async
     async def create_or_update_skillset(
@@ -555,7 +618,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
-        skillset_gen = skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        skillset_gen = (
+            skillset._to_generated() if hasattr(skillset, "_to_generated") else skillset
+        )
 
         result = await self._client.skillsets.create_or_update(
             skillset_name=skillset.name,
@@ -564,4 +629,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             error_map=error_map,
             **kwargs
         )
-        return cast(SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result))
+        return cast(
+            SearchIndexerSkillset, SearchIndexerSkillset._from_generated(result)
+        )

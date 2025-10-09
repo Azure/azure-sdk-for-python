@@ -1,0 +1,1 @@
+The `pyproject.toml` and `setup.py` files in this folder are used to verify successful azure-sdk build configuration from a parsed configuration file.

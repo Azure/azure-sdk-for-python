@@ -39,11 +39,15 @@ async def sample_batching_client():
         "hotelName": "Azure Inn",
     }
 
-    async with SearchIndexingBufferedSender(service_endpoint, index_name, AzureKeyCredential(key)) as batch_client:
+    async with SearchIndexingBufferedSender(
+        service_endpoint, index_name, AzureKeyCredential(key)
+    ) as batch_client:
         # add upload actions
         await batch_client.upload_documents(documents=[DOCUMENT])
         # add merge actions
-        await batch_client.merge_documents(documents=[{"hotelId": "1000", "rating": 4.5}])
+        await batch_client.merge_documents(
+            documents=[{"hotelId": "1000", "rating": 4.5}]
+        )
         # add delete actions
         await batch_client.delete_documents(documents=[{"hotelId": "1000"}])
 

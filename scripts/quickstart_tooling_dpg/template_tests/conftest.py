@@ -9,7 +9,7 @@ import pytest
 
 from devtools_testutils import test_proxy, add_general_string_sanitizer
 
-# For more info about add_sanitizers, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#register-sanitizers
+# For more info about add_sanitizers, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#sanitize-secrets
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_id = os.environ.get("{{ test_prefix | upper }}_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")

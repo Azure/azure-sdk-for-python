@@ -1,0 +1,11 @@
+steps:
+  - script: |
+      if [[ "$AGENT_OS" == "Linux" ]]; then
+        sudo apt-get update
+        sudo apt-get install -y portaudio19-dev libasound2-dev
+      elif [[ "$AGENT_OS" == "Darwin" ]]; then
+        brew update
+        brew install portaudio
+      fi
+    displayName: Install portaudio dependencies if necessary
+    condition: and(succeeded(), ne(variables['InstallPortAudio'], ''), or(eq(variables['Agent.OS'], 'Linux'), eq(variables['Agent.OS'], 'Darwin')))

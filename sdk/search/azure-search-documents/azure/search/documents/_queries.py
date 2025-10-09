@@ -9,7 +9,9 @@ from ._generated.models import AutocompleteRequest, SearchRequest, SuggestReques
 
 class _QueryBase:
 
-    _request_type: Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]] = cast(
+    _request_type: Union[
+        Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]
+    ] = cast(
         Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]],
         None,
     )
@@ -18,7 +20,9 @@ class _QueryBase:
         self._request = self._request_type(**kwargs)  # pylint:disable=not-callable
 
     def __repr__(self) -> str:
-        return "<{} [{}]>".format(self.__class__.__name__, self._request.search_text)[:1024]
+        return "<{} [{}]>".format(self.__class__.__name__, self._request.search_text)[
+            :1024
+        ]
 
     def filter(self, expression: str) -> None:
         """Add a `filter` expression for the search results.
