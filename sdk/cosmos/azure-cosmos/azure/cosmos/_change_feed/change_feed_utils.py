@@ -24,7 +24,7 @@
 
 import warnings
 from datetime import datetime
-from typing import Any, Dict, Tuple
+from typing import Any, Tuple
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
@@ -32,7 +32,7 @@ CHANGE_FEED_MODES = ["LatestVersion", "AllVersionsAndDeletes"]
 
 def add_args_to_kwargs(
         args: Tuple[Any, ...],
-        kwargs: Dict[str, Any]
+        kwargs: dict[str, Any]
     ) -> None:
     """Add positional arguments(args) to keyword argument dictionary(kwargs).
     Since 'query_items_change_feed' method only allows the following 4 positional arguments in the exact order
@@ -75,7 +75,7 @@ def add_args_to_kwargs(
             kwargs[key] = value
 
 def validate_kwargs(
-        keyword_arguments: Dict[str, Any]
+        keyword_arguments: dict[str, Any]
     ) -> None:
     """Validate keyword arguments for change_feed API.
     The values of keyword arguments must match the expected type and conditions. If the conditions do not match,

@@ -616,8 +616,8 @@ class _PerformanceCountersManager(metaclass=Singleton):
             global _REQUESTS_COUNT
             # pylint: disable=global-statement
             global _EXCEPTIONS_COUNT
-            # Requests only
-            if span.kind != SpanKind.SERVER:
+            # Requests and Consumer only
+            if span.kind not in (SpanKind.SERVER, SpanKind.CONSUMER):
                 return
             _REQUESTS_COUNT += 1
             duration_ms = 0

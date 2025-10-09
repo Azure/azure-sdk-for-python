@@ -1,0 +1,4 @@
+directory: specification/confidentialledger/data-plane/ConfidentialLedgerIdentity
+commit: e82ffadf9c017299199a75b01ea9c91ffbe292a8
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
