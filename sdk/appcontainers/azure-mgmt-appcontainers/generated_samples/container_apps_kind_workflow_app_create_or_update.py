@@ -16,7 +16,7 @@ from azure.mgmt.appcontainers import ContainerAppsAPIClient
     pip install azure-identity
     pip install azure-mgmt-appcontainers
 # USAGE
-    python container_apps_kind_create_or_update.py
+    python container_apps_kind_workflow_app_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -41,7 +41,7 @@ def main():
             "properties": {
                 "configuration": {
                     "activeRevisionsMode": "Single",
-                    "ingress": {"allowInsecure": True, "external": True, "targetPort": 80},
+                    "ingress": {"allowInsecure": False, "external": True, "targetPort": 443},
                 },
                 "managedEnvironmentId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/testmanagedenv3",
                 "template": {
@@ -60,6 +60,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ContainerApps_Kind_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ContainerApps_Kind_WorkflowApp_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

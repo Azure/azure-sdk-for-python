@@ -24,7 +24,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
         response = self.client.managed_environment_private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
             resource_group_name=resource_group.name,
             environment_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -67,7 +67,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
                 },
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -80,7 +80,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateEndpointConnectionsOperations
             resource_group_name=resource_group.name,
             environment_name="str",
             private_endpoint_connection_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

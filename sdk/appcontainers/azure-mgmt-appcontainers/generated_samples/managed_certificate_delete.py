@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ManagedCertificate_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ManagedCertificate_Delete.json
 if __name__ == "__main__":
     main()

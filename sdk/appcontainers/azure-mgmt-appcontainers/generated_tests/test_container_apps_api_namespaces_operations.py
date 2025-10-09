@@ -25,7 +25,7 @@ class TestContainerAppsAPINamespacesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             environment_name="str",
             check_name_availability_request={"name": "str", "type": "str"},
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
