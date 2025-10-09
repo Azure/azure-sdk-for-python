@@ -8,6 +8,8 @@ from ci_tools.logging import logger
 
 from .Check import Check
 
+KEYWORD = "azure sdk"
+
 
 class verify_keywords(Check):
     def __init__(self) -> None:
@@ -45,12 +47,12 @@ class verify_keywords(Check):
                     logger.info(f"Package {package_name} opts-out of keyword verification check.")
                     continue
 
-            if "azure sdk" not in parsed.keywords:
+            if KEYWORD not in parsed.keywords:
                 logger.error(
-                    f"Keyword 'azure sdk' not present in keywords for {package_name}. Before attempting publishing, ensure that package {package_name} has keyword 'azure sdk' present in the keyword array."
+                    f"Keyword '{KEYWORD}' not present in keywords for {package_name}. Before attempting publishing, ensure that package {package_name} has keyword '{KEYWORD}' present in the keyword array."
                 )
                 results.append(1)
             else:
-                logger.info(f"Package {package_name} has keyword 'azure sdk' present in the keyword array.")
+                logger.info(f"Package {package_name} has keyword '{KEYWORD}' present in the keyword array.")
 
         return max(results) if results else 0

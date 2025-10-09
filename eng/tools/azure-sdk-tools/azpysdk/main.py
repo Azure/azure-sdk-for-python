@@ -87,7 +87,7 @@ def build_parser() -> argparse.ArgumentParser:
     verify_sdist().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
     verify_keywords().register(subparsers, [common])
-    
+
     return parser
 
 
