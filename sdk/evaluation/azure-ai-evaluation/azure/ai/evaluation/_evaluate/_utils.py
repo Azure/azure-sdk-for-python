@@ -487,7 +487,7 @@ class DataLoaderFactory:
         return JSONLDataFileLoader(filename)
 
 
-def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None) -> EvaluationResult:
+def _add_aoai_structured_results_to_results(results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None) -> None:
     """
     Convert evaluation results to AOAI evaluation results format.
     
@@ -509,7 +509,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
     """
         
     if eval_meta_data is None:
-        return results
+        return
     
     created_time = int(time.time())
     converted_rows = []
@@ -633,8 +633,6 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
     evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
     results["evaluation_summary"] = evaluation_summary
     logger.info(f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
-
-    return results
 
 
 def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:

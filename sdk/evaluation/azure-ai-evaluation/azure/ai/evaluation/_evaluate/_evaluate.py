@@ -56,7 +56,7 @@ from ._utils import (
     _write_output,
     DataLoaderFactory,
     _log_metrics_and_instance_results_onedp,
-    _convert_results_to_aoai_evaluation_results
+    _add_aoai_structured_results_to_results
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -814,8 +814,11 @@ def evaluate(
                 tags=tags,
                 **kwargs,
             )
-            results_converted = _convert_results_to_aoai_evaluation_results(results, LOGGER, eval_meta_data)
-            return results_converted
+            _add_aoai_structured_results_to_results(results, LOGGER, eval_meta_data)
+            if app_insights_configuration := kwargs.get("app_insights_configuration"):
+                for result in results["evaluation_results_list"]:
+                    _log_events_to_app_insights(app_insights_configuration, result["results"])
+            return results
     except Exception as e:
         # Handle multiprocess bootstrap error
         bootstrap_error = (
@@ -997,19 +1000,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
         _write_output(output_path, result)
 
     return result
-
-
-def _convert_eval_results_df_to_aoai_result(results_df: pd.DataFrame) -> List[Dict]:
-    return [{}]
-
-
-def _create_eval_results_summary(results: List[Dict]) -> Dict:
-    return {}
-
-
-from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
-)
 
 
 def _log_events_to_app_insights(
