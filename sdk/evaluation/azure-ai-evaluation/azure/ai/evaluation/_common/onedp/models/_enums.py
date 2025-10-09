@@ -149,11 +149,105 @@ class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """URI folder."""
 
 
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Days of the week for recurrence schedule."""
+
+    SUNDAY = "Sunday"
+    """Sunday."""
+    MONDAY = "Monday"
+    """Monday."""
+    TUESDAY = "Tuesday"
+    """Tuesday."""
+    WEDNESDAY = "Wednesday"
+    """Wednesday."""
+    THURSDAY = "Thursday"
+    """Thursday."""
+    FRIDAY = "Friday"
+    """Friday."""
+    SATURDAY = "Saturday"
+    """Saturday."""
+
+
 class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DeploymentType."""
 
     MODEL_DEPLOYMENT = "ModelDeployment"
     """Model deployment"""
+
+
+class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed types of evaluation targets."""
+
+    MODEL_RESPONSE_GENERATION = "modelResponseGeneration"
+    """Evaluation target that uses a model for response generation."""
+
+
+class EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation taxonomy input."""
+
+    AGENT = "agent"
+    """Agent"""
+    POLICY = "policy"
+    """Policy."""
+
+
+class EvaluatorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The category of the evaluator."""
+
+    QUALITY = "quality"
+    """Quality"""
+    SAFETY = "safety"
+    """Risk & Safety"""
+    AGENTS = "agents"
+    """Agents"""
+
+
+class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of evaluator definition."""
+
+    PROMPT = "prompt"
+    """Prompt-based definition"""
+    CODE = "code"
+    """Code-based definition"""
+    PROMPT_AND_CODE = "prompt_and_code"
+    """Prompt & Code Based definition"""
+    SERVICE = "service"
+    """Service-based evaluator"""
+    OPENAI_GRADERS = "openai_graders"
+    """OpenAI graders"""
+
+
+class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of the metric indicating whether a higher value is better, a lower value is
+    better, or neutral.
+    """
+
+    INCREASE = "increase"
+    """It indicates a higher value is better for this metric"""
+    DECREASE = "decrease"
+    """It indicates a lower value is better for this metric"""
+    NEUTRAL = "neutral"
+    """It indicates no preference for this metric direction"""
+
+
+class EvaluatorMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the evaluator."""
+
+    ORDINAL = "ordinal"
+    """Ordinal metric representing categories that can be ordered or ranked."""
+    CONTINUOUS = "continuous"
+    """Continuous metric representing values in a continuous range."""
+    BOOLEAN = "boolean"
+    """Boolean metric representing true/false values"""
+
+
+class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the evaluator."""
+
+    BUILT_IN = "builtin"
+    """Built-in evaluator (Microsoft provided)"""
+    CUSTOM = "custom"
+    """Custom evaluator"""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -167,15 +261,30 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Managed Azure Search"""
 
 
-class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """List View Type Definition."""
+class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The request of the insights."""
 
-    ACTIVE_ONLY = "ActiveOnly"
-    """List only active items."""
-    ARCHIVED_ONLY = "ArchivedOnly"
-    """List only archived items."""
-    ALL = "All"
-    """List all items."""
+    EVALUATION_RUN_CLUSTER_INSIGHT = "EvaluationRunClusterInsight"
+    """Insights on an Evaluation run result."""
+    AGENT_CLUSTER_INSIGHT = "AgentClusterInsight"
+    """Cluster Insight on an Agent."""
+    EVALUATION_COMPARISON = "EvaluationComparison"
+    """Evaluation Comparison."""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
 
 
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -183,21 +292,21 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     """No pending upload."""
-    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
-    """Temporary Blob Reference is the only supported type."""
+    BLOB_REFERENCE = "BlobReference"
+    """Blob Reference is the only supported type."""
 
 
-class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of Evaluation result."""
+class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recurrence type."""
 
-    BENCHMARK = "Benchmark"
-    """Benchmark result"""
-    EVALUATION = "Evaluation"
-    """Evaluations Result"""
-    REDTEAM = "Redteam"
-    """Red Team Result"""
-    SIMULATION = "Simulation"
-    """Simulation Result"""
+    HOURLY = "Hourly"
+    """Hourly recurrence pattern."""
+    DAILY = "Daily"
+    """Daily recurrence pattern."""
+    WEEKLY = "Weekly"
+    """Weekly recurrence pattern."""
+    MONTHLY = "Monthly"
+    """Monthly recurrence pattern."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -219,6 +328,37 @@ class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents content with ungrounded attributes."""
 
 
+class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of sample used in the analysis."""
+
+    EVALUATION_RESULT_SAMPLE = "EvaluationResultSample"
+    """A sample from the evaluation result."""
+
+
+class ScheduleProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Schedule provisioning status."""
+
+    CREATING = "Creating"
+    """Represents the creation status of the schedule."""
+    UPDATING = "Updating"
+    """Represents the updating status of the schedule."""
+    DELETING = "Deleting"
+    """Represents the deleting status of the schedule."""
+    SUCCEEDED = "Succeeded"
+    """Represents the succeeded status of the schedule."""
+    FAILED = "Failed"
+    """Represents the failed status of the schedule."""
+
+
+class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the task."""
+
+    EVALUATION = "Evaluation"
+    """Evaluation task."""
+    INSIGHT = "Insight"
+    """Insight task."""
+
+
 class SimulationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Simulation type."""
 
@@ -228,3 +368,36 @@ class SimulationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom persona simulation type."""
     HARM_TURN_GENERATOR = "HarmTurnGenerator"
     """Harm turn generator simulation type."""
+
+
+class TargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target type."""
+
+    AZURE_AI_AGENT = "AzureAIAgent"
+    """Azure AI Agent Target"""
+
+
+class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Treatment Effect Type."""
+
+    TOO_FEW_SAMPLES = "TooFewSamples"
+    """Not enough samples to determine treatment effect."""
+    INCONCLUSIVE = "Inconclusive"
+    """No significant difference between treatment and baseline."""
+    CHANGED = "Changed"
+    """Indicates the metric changed with statistical significance, but the direction is neutral."""
+    IMPROVED = "Improved"
+    """Indicates the treatment significantly improved the metric compared to baseline."""
+    DEGRADED = "Degraded"
+    """Indicates the treatment significantly degraded the metric compared to baseline."""
+
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the trigger."""
+
+    CRON = "Cron"
+    """Cron based trigger."""
+    RECURRENCE = "Recurrence"
+    """Recurrence based trigger."""
+    ONE_TIME = "OneTime"
+    """One-time trigger."""
