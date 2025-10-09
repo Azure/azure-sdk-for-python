@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `TypeHandlerRegistry` to `azure.core.serialization` to allow developers to register custom serializers and deserializers for specific types or conditions.  #43051
+
 ### Breaking Changes
 
 ### Bugs Fixed
