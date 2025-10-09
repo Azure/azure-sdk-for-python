@@ -208,7 +208,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         return super().__call__(*args, **kwargs)
 
-    def has_context(self, eval_input: dict) -> bool:
+    def _has_context(self, eval_input: dict) -> bool:
         """
         Return True if eval_input contains a non-empty 'context' field.
         Treats None, empty strings, empty lists, and lists of empty strings as no context.
@@ -229,7 +229,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if "query" not in eval_input:
             return await super()._do_eval(eval_input)
 
-        contains_context = self.has_context(eval_input)
+        contains_context = self._has_context(eval_input)
 
         simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
         simplified_response = simplify_messages(eval_input["response"], drop_tool_calls=False)
