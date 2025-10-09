@@ -156,6 +156,7 @@ def _get_answers_from_text_prepare_options(
 
 class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
+    # pylint: disable=arguments-renamed
     def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:

@@ -26,6 +26,7 @@ from ..._operations._patch import _get_answers_from_text_prepare_options, _get_a
 
 class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
+    # pylint: disable=arguments-renamed
     async def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
