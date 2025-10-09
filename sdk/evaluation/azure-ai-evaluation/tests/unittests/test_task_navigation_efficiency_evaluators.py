@@ -1,6 +1,6 @@
 import pytest
 from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
-    TaskNavigationEfficiencyEvaluator,
+    _TaskNavigationEfficiencyEvaluator,
     TaskNavigationEfficiencyMatchingMode,
 )
 
@@ -9,7 +9,7 @@ from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
 class TestTaskNavigationEfficiencyEvaluator:
     def test_exact_match_scenario(self):
         """Test when agent steps exactly match ground truth."""
-        evaluator = TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
 
         response = [
             {
@@ -36,7 +36,7 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_in_order_match_with_extra_steps(self):
         """Test when agent has extra steps but maintains order."""
-        evaluator = TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH)
 
         response = [
             {
@@ -66,7 +66,7 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_any_order_match(self):
         """Test when agent has all steps but in wrong order."""
-        evaluator = TaskNavigationEfficiencyEvaluator(
+        evaluator = _TaskNavigationEfficiencyEvaluator(
             matching_mode=TaskNavigationEfficiencyMatchingMode.ANY_ORDER_MATCH
         )
 
@@ -94,10 +94,10 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_exact_match_failure(self):
         """Test when exact match fails but other matches succeed."""
-        exact_evaluator = TaskNavigationEfficiencyEvaluator(
+        exact_evaluator = _TaskNavigationEfficiencyEvaluator(
             matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
         )
-        in_order_evaluator = TaskNavigationEfficiencyEvaluator(
+        in_order_evaluator = _TaskNavigationEfficiencyEvaluator(
             matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
         )
 
@@ -125,7 +125,7 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_invalid_ground_truth(self):
         """Test with invalid ground truth steps."""
-        evaluator = TaskNavigationEfficiencyEvaluator()
+        evaluator = _TaskNavigationEfficiencyEvaluator()
 
         with pytest.raises(TypeError):
             evaluator(response=[], ground_truth="not_a_list")  # type: ignore
@@ -135,7 +135,7 @@ class TestTaskNavigationEfficiencyEvaluator:
 
     def test_tuple_format_with_parameters(self):
         """Test tuple format with exact parameter matching."""
-        evaluator = TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
+        evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
 
         response = [
             {
@@ -166,19 +166,19 @@ class TestTaskNavigationEfficiencyEvaluator:
     def test_matching_mode_validation(self):
         """Test validation of matching_mode parameter."""
         # Test valid string mode
-        evaluator1 = TaskNavigationEfficiencyEvaluator(matching_mode="exact_match")
+        evaluator1 = _TaskNavigationEfficiencyEvaluator(matching_mode="exact_match")
         assert evaluator1.matching_mode == TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
 
         # Test valid enum mode
-        evaluator2 = TaskNavigationEfficiencyEvaluator(
+        evaluator2 = _TaskNavigationEfficiencyEvaluator(
             matching_mode=TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
         )
         assert evaluator2.matching_mode == TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
 
         # Test invalid string mode
         with pytest.raises(ValueError):
-            TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
+            _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
 
         # Test invalid type for mode
         with pytest.raises(Exception):  # EvaluationException
-            TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
+            _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore

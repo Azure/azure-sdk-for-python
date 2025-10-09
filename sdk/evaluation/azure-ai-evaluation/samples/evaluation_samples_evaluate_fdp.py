@@ -583,11 +583,11 @@ class EvaluationEvaluateSamples(object):
 
         # [START task_navigation_efficiency_evaluator]
         from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
-            TaskNavigationEfficiencyEvaluator,
+            _TaskNavigationEfficiencyEvaluator,
             TaskNavigationEfficiencyMatchingMode,
         )
 
-        task_navigation_efficiency_evaluator = TaskNavigationEfficiencyEvaluator(
+        task_navigation_efficiency_evaluator = _TaskNavigationEfficiencyEvaluator(
             matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
         )
 

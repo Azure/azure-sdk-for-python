@@ -9,6 +9,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
+from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -49,7 +50,8 @@ class TaskNavigationEfficiencyMatchingMode(str, Enum):
     """
 
 
-class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
+@experimental
+class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
     """
     Evaluates whether an agent's sequence of actions is efficient and follows optimal decision-making patterns.
 
@@ -64,9 +66,9 @@ class TaskNavigationEfficiencyEvaluator(EvaluatorBase):
 
         .. code-block:: python
 
-            from azure.ai.evaluation import TaskNavigationEfficiencyEvaluator
+            from azure.ai.evaluation._task_navigation_efficiency import _TaskNavigationEfficiencyEvaluator
 
-            task_navigation_efficiency_eval = TaskNavigationEfficiencyEvaluator(
+            task_navigation_efficiency_eval = _TaskNavigationEfficiencyEvaluator(
                 matching_mode=TaskNavigationEfficiencyMatchingMode.EXACT_MATCH
             )
 
