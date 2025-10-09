@@ -10,7 +10,7 @@ import traceback
 import asyncio
 import re
 from typing import Dict, Optional, Any, Tuple, List
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
     GeneratedRAIClient,
 )
@@ -63,7 +63,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
-        evaluation_result = await evaluate_with_rai_service_sync(
+        evaluation_result = await evaluate_with_rai_service(
             thing_to_eval_qr,
             metric_name=metric_name,
             project_scope=self.azure_ai_project,

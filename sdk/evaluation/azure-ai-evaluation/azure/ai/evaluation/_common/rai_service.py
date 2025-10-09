@@ -221,127 +221,6 @@ def generate_payload(normalized_user_text: str, metric: str, annotation_task: st
     )
 
 
-def generate_payload_sync(data: dict, metric: str, annotation_task: str) -> Dict:
-    """Generate the payload for the synchronous annotation request using evaluationMessagesFormat
-
-    This generates a payload following the new schema required by the /sync_evals:run endpoint,
-    which uses evaluationMessagesFormat with dataSource and evaluators structure.
-
-    :param data: The data to evaluate containing query, response, context, and tool_calls.
-    :type data: dict
-    :param metric: The evaluation metric to use.
-    :type metric: str
-    :param annotation_task: The annotation task to be passed to service
-    :type annotation_task: str
-    :return: The payload for the synchronous annotation request.
-    :rtype: Dict
-    """
-    # Map metrics to evaluator IDs
-    metric_to_evaluator = {
-        EvaluationMetrics.HATE_FAIRNESS: "azureai://built-in/evaluators/hate_unfairness",
-        EvaluationMetrics.HATE_UNFAIRNESS: "azureai://built-in/evaluators/hate_unfairness",
-        EvaluationMetrics.VIOLENCE: "azureai://built-in/evaluators/violence",
-        EvaluationMetrics.SELF_HARM: "azureai://built-in/evaluators/self_harm",
-        EvaluationMetrics.SEXUAL: "azureai://built-in/evaluators/sexual",
-        EvaluationMetrics.XPIA: "azureai://built-in/evaluators/sensitive_information_leak",
-        EvaluationMetrics.SENSITIVE_DATA_LEAKAGE: "azureai://built-in/evaluators/sensitive_information_leak",
-    }
-
-    # Get query and response from data
-    query_text = data.get("query", "")
-    response_text = data.get("response", "")
-    context_text = data.get("context", "")
-    tool_calls = data.get("tool_calls", [])
-
-    # Build query messages
-    query_messages = [
-        {
-            "role": "user",
-            "content": [
-                {
-                    "type": "text",
-                    "text": query_text
-                }
-            ]
-        }
-    ]
-
-    # Build response messages
-    response_messages = [
-        {
-            "role": "assistant",
-            "content": [
-                {
-                    "type": "text",
-                    "text": response_text
-                }
-            ]
-        }
-    ]
-
-    # Build tools array from tool_calls if present
-    tools = []
-    if tool_calls:
-        for tool_call in tool_calls:
-            if isinstance(tool_call, dict):
-                tool_entry = {
-                    "type": "function",
-                    "function": {
-                        "name": tool_call.get("name", ""),
-                        "description": tool_call.get("description", "")
-                    }
-                }
-                if "id" in tool_call:
-                    tool_entry["call_id"] = tool_call["id"]
-                if "output" in tool_call:
-                    tool_entry["output"] = tool_call["output"]
-                tools.append(tool_entry)
-
-    # Build data source
-    data_source = {
-        "type": "inlineData",
-        "data": {
-            "dataFormat": "evaluationMessagesFormat",
-            "query": query_messages,
-            "response": response_messages,
-            "context": context_text,
-            "tools": tools
-        }
-    }
-
-    # Build evaluator configuration
-    evaluator_id = metric_to_evaluator.get(metric, f"azureai://built-in/evaluators/{metric}")
-    
-    # Determine data mapping based on whether we have context and tools
-    data_mapping = {
-        "query": "${data.query}",
-        "response": "${data.response}"
-    }
-    
-    # Add context if present and needed (e.g., for XPIA/sensitive data leakage)
-    if context_text or metric == EvaluationMetrics.XPIA or metric == EvaluationMetrics.SENSITIVE_DATA_LEAKAGE:
-        data_mapping["context"] = "${data.context}"
-    
-    # Add tools if present and needed (e.g., for XPIA/sensitive data leakage)
-    if tools or metric == EvaluationMetrics.XPIA or metric == EvaluationMetrics.SENSITIVE_DATA_LEAKAGE:
-        data_mapping["tools"] = "${data.tools}"
-
-    evaluators = [
-        {
-            "id": evaluator_id,
-            "dataMapping": data_mapping
-        }
-    ]
-
-    # Build final payload
-    payload = {
-        "dataSource": data_source,
-        "evaluators": evaluators
-    }
-
-    return payload
-
-
 async def submit_request(
     data: dict, metric: str, rai_svc_url: str, token: str, annotation_task: str, evaluator_name: str
 ) -> str:
@@ -510,7 +389,6 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         EvaluationMetrics.XPIA,
         EvaluationMetrics.CODE_VULNERABILITY,
         EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-        EvaluationMetrics.SENSITIVE_DATA_LEAKAGE,
     }:
         result = {}
         if not batch_response or len(batch_response[0]) == 0:
@@ -545,7 +423,7 @@ def parse_response(  # pylint: disable=too-many-branches,too-many-statements
         result[metric_display_name + "_label"] = parsed_response["label"] if "label" in parsed_response else math.nan
         result[metric_display_name + "_reason"] = parsed_response["reasoning"] if "reasoning" in parsed_response else ""
 
-        if metric_name == EvaluationMetrics.XPIA or metric_name == EvaluationMetrics.SENSITIVE_DATA_LEAKAGE:
+        if metric_name == EvaluationMetrics.XPIA:
             # Add "manipulated_content", "intrusion" and "information_gathering" to the result
             # if present else set them to math.nan
             result[metric_display_name + "_manipulated_content"] = (
@@ -811,88 +689,6 @@ async def evaluate_with_rai_service(
         # Submit annotation request and fetch result
         operation_id = await submit_request(data, metric_name, rai_svc_url, token, annotation_task, evaluator_name)
         annotation_response = cast(List[Dict], await fetch_result(operation_id, rai_svc_url, credential, token))
-        result = parse_response(annotation_response, metric_name, metric_display_name)
-
-        return result
-
-
-async def evaluate_with_rai_service_sync(
-    data: dict,
-    metric_name: str,
-    project_scope: Union[str, AzureAIProject],
-    credential: TokenCredential,
-    annotation_task: str = Tasks.CONTENT_HARM,
-    metric_display_name=None,
-    evaluator_name=None,
-    scan_session_id: Optional[str] = None,
-) -> Dict[str, Union[str, float]]:
-    """Evaluate the content safety of the response using Responsible AI service synchronous endpoint
-
-    This method calls the synchronous /sync_evals:run endpoint which returns results immediately
-    without requiring polling, unlike the asynchronous evaluate_with_rai_service method.
-
-    :param data: The data to evaluate.
-    :type data: dict
-    :param metric_name: The evaluation metric to use.
-    :type metric_name: str
-    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint
-        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
-    :type project_scope: Union[str, AzureAIProject]
-    :param credential: The Azure authentication credential.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :param annotation_task: The annotation task to use.
-    :type annotation_task: str
-    :param metric_display_name: The display name of metric to use.
-    :type metric_display_name: str
-    :param evaluator_name: The evaluator name to use.
-    :type evaluator_name: str
-    :param scan_session_id: The scan session ID to use for the evaluation.
-    :type scan_session_id: Optional[str]
-    :return: The parsed annotation result.
-    :rtype: Dict[str, Union[str, float]]
-    """
-    if is_onedp_project(project_scope):
-        # For OneDP projects, use the synchronous endpoint
-        client = AIProjectClient(
-            endpoint=project_scope,
-            credential=credential,
-            user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
-        )
-        token = await fetch_or_reuse_token(credential=credential, workspace=COG_SRV_WORKSPACE)
-        # await ensure_service_availability_onedp(client, token, annotation_task) #TODO: this doesn't work yet for sensitive data leakage
-        
-        # Prepare payload using the new sync format
-        payload = generate_payload_sync(data, metric_name, annotation_task=annotation_task)
-        headers = get_common_headers(token, evaluator_name)
-        if scan_session_id:
-            headers["x-ms-client-request-id"] = scan_session_id
-        # Call synchronous endpoint directly
-        response = client.evaluations.submit_annotation_sync(payload, headers=headers) # TODO: need to add this once we have the generated typespec
-        annotation_response = cast(List[Dict], json.loads(response))
-        result = parse_response(annotation_response, metric_name, metric_display_name)
-        return result
-    else:
-        # Get RAI service URL from discovery service and check service availability
-        token = await fetch_or_reuse_token(credential)
-        rai_svc_url = await get_rai_svc_url(project_scope, token)
-        # await ensure_service_availability(rai_svc_url, token, annotation_task) #TODO: this doesn't work yet for sensitive data leakage
-
-        # Prepare payload using the new sync format
-        payload = generate_payload_sync(data, metric_name, annotation_task=annotation_task)
-
-        # Call synchronous endpoint: /sync_evals:run?api-version=2025-10-15-preview
-        url = rai_svc_url + "/sync_evals:run?api-version=2025-10-15-preview"
-        headers = get_common_headers(token, evaluator_name)
-        if scan_session_id:
-            headers["x-ms-client-request-id"] = scan_session_id
-        async with get_async_http_client() as client:
-            http_response = await client.post(url, json=payload, headers=headers)
-
-        if http_response.status_code != 200:
-            print("Fail evaluating '%s' with error message: %s" % (payload.get("dataSource", {}).get("data", {}).get("query", []), http_response.text()))
-            http_response.raise_for_status()
-        
-        annotation_response = cast(List[Dict], http_response.json())
         result = parse_response(annotation_response, metric_name, metric_display_name)
 
         return result
