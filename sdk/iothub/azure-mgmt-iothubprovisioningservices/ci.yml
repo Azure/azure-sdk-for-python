@@ -9,8 +9,6 @@ trigger:
     - restapi*
   paths:
     include:
-    - sdk/iothub/
-    exclude:
     - sdk/iothub/azure-mgmt-iothubprovisioningservices/
 
 pr:
@@ -23,19 +21,13 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/iothub/
-    exclude:
     - sdk/iothub/azure-mgmt-iothubprovisioningservices/
 
 extends:
-  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  template: ../../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: iothub
+    ServiceDirectory: iothub/azure-mgmt-iothubprovisioningservices
     TestProxy: true
     Artifacts:
-    - name: azure-mgmt-iothub
-      safeName: azuremgmtiothub
-    - name: azure-mgmt-iotcentral
-      safeName: azuremgmtiotcentral
-    - name: azure-iot-deviceprovisioning
-      safeName: azureiotdeviceprovisioning
+    - name: azure-mgmt-iothubprovisioningservices
+      safeName: azuremgmtiothubprovisioningservices

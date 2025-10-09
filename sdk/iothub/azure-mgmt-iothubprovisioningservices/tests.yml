@@ -4,13 +4,11 @@ trigger:
   branches:
     include:
     - main
+    - feature/*
     - hotfix/*
     - release/*
-    - restapi*
   paths:
     include:
-    - sdk/iothub/
-    exclude:
     - sdk/iothub/azure-mgmt-iothubprovisioningservices/
 
 pr:
@@ -20,22 +18,13 @@ pr:
     - feature/*
     - hotfix/*
     - release/*
-    - restapi*
   paths:
     include:
-    - sdk/iothub/
-    exclude:
     - sdk/iothub/azure-mgmt-iothubprovisioningservices/
 
 extends:
-  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
+  template: ../../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
   parameters:
-    ServiceDirectory: iothub
+    ServiceDirectory: iothub/azure-mgmt-iothubprovisioningservices
     TestProxy: true
-    Artifacts:
-    - name: azure-mgmt-iothub
-      safeName: azuremgmtiothub
-    - name: azure-mgmt-iotcentral
-      safeName: azuremgmtiotcentral
-    - name: azure-iot-deviceprovisioning
-      safeName: azureiotdeviceprovisioning
+    PackageName: azure-mgmt-iothubprovisioningservices
