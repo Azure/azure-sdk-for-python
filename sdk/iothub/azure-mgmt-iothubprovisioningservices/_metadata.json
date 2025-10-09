@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-02-01-preview",
+  "commit": "67715ca7931f4d43d77ad1d931106f6629a0dfa3",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/deviceprovisioningservices/resource-manager/Microsoft.Devices/DeviceProvisioningServices",
+  "emitterVersion": "0.52.0"
+}
