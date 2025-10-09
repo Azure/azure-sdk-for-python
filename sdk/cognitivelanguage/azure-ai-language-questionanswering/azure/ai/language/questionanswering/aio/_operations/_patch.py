@@ -97,7 +97,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
         """
 
     # pylint ignore b/c with overloads we need to doc ALL the params in the impl for them to show up in docs
-    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword
+    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword,arguments-renamed
     @distributed_trace_async
     async def get_answers(self, *args, **kwargs) -> AnswersResult:  # type: ignore
         """Answers the specified question using your knowledge base.
@@ -186,6 +186,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-renamed
     @distributed_trace_async
     async def get_answers_from_text(self, *args, **kwargs) -> AnswersFromTextResult:  # type: ignore
         """Answers the specified question using the provided text in the body.

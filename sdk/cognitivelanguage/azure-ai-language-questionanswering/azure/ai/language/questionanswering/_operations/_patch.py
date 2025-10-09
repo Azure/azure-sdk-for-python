@@ -227,7 +227,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
         """
 
     # pylint ignore b/c with overloads we need to doc ALL the params in the impl for them to show up in docs
-    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword
+    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword,arguments-renamed
     @distributed_trace
     def get_answers(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
@@ -317,6 +317,7 @@ class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsM
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-renamed
     @distributed_trace
     def get_answers_from_text(  # pyright: ignore[reportIncompatibleMethodOverride]
         self,
