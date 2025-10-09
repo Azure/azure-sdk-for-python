@@ -1204,7 +1204,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         provisioning_service_name: str,
         *,
-        asyncinfo: Optional[str] = None,
+        asyncinfo: str,
         **kwargs: Any
     ) -> _models.AsyncOperationResult:
         """Gets the status of a long running operation, such as create, update or delete a provisioning
@@ -1219,7 +1219,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
         :keyword asyncinfo: Async header used to poll on the status of the operation, obtained while
-         creating the long running operation. Default value is None.
+         creating the long running operation. Required.
         :paramtype asyncinfo: str
         :return: AsyncOperationResult. The AsyncOperationResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothubprovisioningservices.models.AsyncOperationResult

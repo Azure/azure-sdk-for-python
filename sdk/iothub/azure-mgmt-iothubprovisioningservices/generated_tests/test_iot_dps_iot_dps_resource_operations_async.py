@@ -26,6 +26,7 @@ class TestIotDpsIotDpsResourceOperationsAsync(AzureMgmtRecordedTestCase):
             operation_id="str",
             resource_group_name=resource_group.name,
             provisioning_service_name="str",
+            asyncinfo="str",
         )
 
         # please add some check logic here by yourself

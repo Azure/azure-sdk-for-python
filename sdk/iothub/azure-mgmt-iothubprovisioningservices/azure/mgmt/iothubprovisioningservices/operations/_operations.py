@@ -400,12 +400,7 @@ def build_dps_certificate_verify_certificate_request(  # pylint: disable=name-to
 
 
 def build_iot_dps_resource_get_operation_result_request(  # pylint: disable=name-too-long
-    operation_id: str,
-    resource_group_name: str,
-    provisioning_service_name: str,
-    *,
-    asyncinfo: Optional[str] = None,
-    **kwargs: Any
+    operation_id: str, resource_group_name: str, provisioning_service_name: str, *, asyncinfo: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -423,8 +418,7 @@ def build_iot_dps_resource_get_operation_result_request(  # pylint: disable=name
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if asyncinfo is not None:
-        _params["asyncinfo"] = _SERIALIZER.query("asyncinfo", asyncinfo, "str")
+    _params["asyncinfo"] = _SERIALIZER.query("asyncinfo", asyncinfo, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -2004,7 +1998,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         provisioning_service_name: str,
         *,
-        asyncinfo: Optional[str] = None,
+        asyncinfo: str,
         **kwargs: Any
     ) -> _models.AsyncOperationResult:
         """Gets the status of a long running operation, such as create, update or delete a provisioning
@@ -2019,7 +2013,7 @@ class IotDpsResourceOperations:  # pylint: disable=too-many-public-methods
         :param provisioning_service_name: Name of the provisioning service to retrieve. Required.
         :type provisioning_service_name: str
         :keyword asyncinfo: Async header used to poll on the status of the operation, obtained while
-         creating the long running operation. Default value is None.
+         creating the long running operation. Required.
         :paramtype asyncinfo: str
         :return: AsyncOperationResult. The AsyncOperationResult is compatible with MutableMapping
         :rtype: ~azure.mgmt.iothubprovisioningservices.models.AsyncOperationResult
