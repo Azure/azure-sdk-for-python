@@ -15,12 +15,6 @@
         }
       },
       "EmulatorConfig": {
-        "Emulator Tests Python 3.9 Standard": {
-            "PythonVersion": "3.9",
-            "CoverageArg": "--disablecov",
-            "TestSamples": "false",
-            "Run.ToxCustomEnvs": "whl,sdist"
-        },
         "Emulator Tests Python 3.10 Standard": {
             "PythonVersion": "3.10",
             "CoverageArg": "--disablecov",
@@ -66,12 +60,6 @@
         },
         "Emulator Tests Python 3.13 Dependency Checks": {
             "PythonVersion": "3.13",
-            "CoverageArg": "--disablecov",
-            "TestSamples": "false",
-            "Run.ToxCustomEnvs": "mindependency"
-        },
-        "Emulator Tests Python 3.14 Dependency Checks": {
-            "PythonVersion": "3.14",
             "CoverageArg": "--disablecov",
             "TestSamples": "false",
             "Run.ToxCustomEnvs": "mindependency"
