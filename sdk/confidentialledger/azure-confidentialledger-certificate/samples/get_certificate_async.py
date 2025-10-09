@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -66,6 +67,7 @@ async def main():
             "See samples for the azure-confidentialledger package for details:"
             "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/confidentialledger/azure-confidentialledger/samples"
         )
+
 
 if __name__ == "__main__":
     asyncio.run(main())
