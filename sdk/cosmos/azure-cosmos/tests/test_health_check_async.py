@@ -54,11 +54,11 @@ class TestHealthCheckAsync:
     async def test_health_check_success_startup_async(self, setup):
         # checks at startup that we perform a health check on all the necessary endpoints
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
+        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._health_check
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS))
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
+        _cosmos_client_connection_async.CosmosClientConnection._health_check = mock_get_database_account_check
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
@@ -66,7 +66,7 @@ class TestHealthCheckAsync:
             await client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection_async.CosmosClientConnection._health_check = self.original_getDatabaseAccountCheck
         expected_regional_routing_context = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
@@ -134,14 +134,14 @@ class TestHealthCheckAsync:
     async def test_health_check_success_async(self, setup):
         # checks the background health check works as expected when all endpoints healthy
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
+        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._health_check
         self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
         setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
         mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS))
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
+        _cosmos_client_connection_async.CosmosClientConnection._health_check = mock_get_database_account_check
         async def mock_execute_function(function, *args, **kwargs):
             if args:
                 args[4].url = args[4].url.replace('-eastus', '').replace('-westus', '')
@@ -158,7 +158,7 @@ class TestHealthCheckAsync:
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection_async.CosmosClientConnection._health_check = self.original_getDatabaseAccountCheck
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
             _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
         expected_regional_routing_contexts = []
@@ -179,11 +179,11 @@ class TestHealthCheckAsync:
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS))
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
+        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._health_check
         self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
         mock_get_database_account_check = self.MockGetDatabaseAccountCheckError()
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
+        _cosmos_client_connection_async.CosmosClientConnection._health_check = mock_get_database_account_check
         setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
         async def mock_execute_function(function, *args, **kwargs):
             if args:
@@ -209,7 +209,7 @@ class TestHealthCheckAsync:
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
-            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection_async.CosmosClientConnection._health_check = self.original_getDatabaseAccountCheck
             _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
 
         num_unavailable_endpoints = len(REGIONS)

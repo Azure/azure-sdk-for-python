@@ -461,7 +461,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
         return database_account
 
-    async def _GetDatabaseAccountCheck(
+    async def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
@@ -474,13 +474,14 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if url_connection is None:
             url_connection = self.url_connection
+        url_connection = url_connection + "/probe"
 
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
                                   documents._OperationType.Read, {},
-                                  client_id=self.client_id)  # path  # id  # type
+                                  client_id=self.client_id)
 
-        request_params = _request_object.RequestObject(http_constants.ResourceType.DatabaseAccount,
+        request_params = _request_object.RequestObject(http_constants.ResourceType.Probe,
                                                        documents._OperationType.Read,
                                                        headers,
                                                        endpoint_override=url_connection)

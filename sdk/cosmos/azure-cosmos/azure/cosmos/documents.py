@@ -368,7 +368,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.ResponsePayloadOnWriteDisabled: bool = False
         self.RetryNonIdempotentWrites: bool = False
 
-    def _override_dba_timeouts(
+    def _override_health_check_timeouts(
             self,
             connection_timeout: Optional[int] = None,
             read_timeout: Optional[int] = None

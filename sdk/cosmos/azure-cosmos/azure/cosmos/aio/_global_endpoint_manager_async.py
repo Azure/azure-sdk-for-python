@@ -146,9 +146,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._endpoints_health_check(**kwargs)
                     self.startup = False
 
-    async def _database_account_check(self, endpoint: str, **kwargs: Dict[str, Any]):
+    async def _health_check(self, endpoint: str, **kwargs: Dict[str, Any]):
         try:
-            await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
+            await self.client.health_check(endpoint, **kwargs)
             self.location_cache.mark_endpoint_available(endpoint)
         except (exceptions.CosmosHttpResponseError, AzureError):
             self._mark_endpoint_unavailable(endpoint)
@@ -166,7 +166,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         database_account_checks = []
         for endpoint in endpoints:
             if endpoint != attempted_endpoint:
-                database_account_checks.append(self._database_account_check(endpoint, **kwargs))
+                database_account_checks.append(self._health_check(endpoint, **kwargs))
         await asyncio.gather(*database_account_checks)
 
         self.location_cache.update_location_cache()
@@ -197,10 +197,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 try:
                     database_account = await self._GetDatabaseAccountStub(locational_endpoint, **kwargs)
                     self._database_account_cache = database_account
-                    self.location_cache.mark_endpoint_available(locational_endpoint)
                     return database_account, locational_endpoint
                 except (exceptions.CosmosHttpResponseError, AzureError):
-                    self._mark_endpoint_unavailable(locational_endpoint)
+                    pass
             raise
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):

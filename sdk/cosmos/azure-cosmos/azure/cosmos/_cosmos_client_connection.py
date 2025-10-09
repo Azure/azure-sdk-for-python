@@ -2690,7 +2690,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             response_hook(last_response_headers, result)
         return database_account
 
-    def _GetDatabaseAccountCheck(
+    def health_check(
             self,
             url_connection: Optional[str] = None,
             **kwargs: Any
@@ -2703,10 +2703,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if url_connection is None:
             url_connection = self.url_connection
+        url_connection = url_connection + "/probe"
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
                                   documents._OperationType.Read,{}, client_id=self.client_id)
-        request_params = RequestObject(http_constants.ResourceType.DatabaseAccount,
+        request_params = RequestObject(http_constants.ResourceType.Probe,
                                        documents._OperationType.Read,
                                        headers,
                                        endpoint_override=url_connection)
