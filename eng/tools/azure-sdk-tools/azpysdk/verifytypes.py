@@ -117,98 +117,96 @@ class verifytypes(Check):
         logger.info(f"The invoking python is {sys.executable}.")
         logger.info(f"The current working directory is {os.getcwd()}.")
 
-        return 0
+        for parsed in targeted:
+            package_dir = parsed.folder
+            package_name = parsed.name
+            module = parsed.namespace
+            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            logger.info(f"Processing {package_name} for verifytypes check")
 
-        # for parsed in targeted:
-        #     package_dir = parsed.folder
-        #     package_name = parsed.name
-        #     module = parsed.namespace
-        #     executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
-        #     logger.info(f"Processing {package_name} for verifytypes check")
+            self.install_dev_reqs(executable, args, package_dir)
 
-        #     self.install_dev_reqs(executable, args, package_dir)
+            # install pyright
+            try:
+                install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
+            except CalledProcessError as e:
+                logger.error(f"Failed to install pyright: {e}")
+                return e.returncode
 
-        #     # install pyright
-        #     try:
-        #         install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
-        #     except CalledProcessError as e:
-        #         logger.error(f"Failed to install pyright: {e}")
-        #         return e.returncode
+            create_package_and_install(
+                distribution_directory=staging_directory,
+                target_setup=package_dir,
+                skip_install=False,
+                cache_dir=None,
+                work_dir=staging_directory,
+                force_create=False,
+                package_type="sdist",
+                pre_download_disabled=False,
+                python_executable=executable,
+            )
 
-        #     create_package_and_install(
-        #         distribution_directory=staging_directory,
-        #         target_setup=package_dir,
-        #         skip_install=False,
-        #         cache_dir=None,
-        #         work_dir=staging_directory,
-        #         force_create=False,
-        #         package_type="sdist",
-        #         pre_download_disabled=False,
-        #         python_executable=executable,
-        #     )
+            if in_ci():
+                if not is_check_enabled(package_dir, "verifytypes") or is_typing_ignored(package_name):
+                    logger.info(
+                        f"{package_name} opts-out of verifytypes check. See https://aka.ms/python/typing-guide for information."
+                    )
+                    continue
 
-        #     if in_ci():
-        #         if not is_check_enabled(package_dir, "verifytypes") or is_typing_ignored(package_name):
-        #             logger.info(
-        #                 f"{package_name} opts-out of verifytypes check. See https://aka.ms/python/typing-guide for information."
-        #             )
-        #             continue
+            commands = [
+                executable,
+                "-m",
+                "pyright",
+                "--verifytypes",
+                module,
+                "--ignoreexternal",
+                "--outputjson",
+            ]
 
-        #     commands = [
-        #         executable,
-        #         "-m",
-        #         "pyright",
-        #         "--verifytypes",
-        #         module,
-        #         "--ignoreexternal",
-        #         "--outputjson",
-        #     ]
+            # debug a pip freeze result
+            cmd = get_pip_command(executable) + ["freeze"]
+            if (cmd[0] == "uv"):
+                cmd.extend(["--python", executable])
+            # TODO DEBUG
+            freeze_result = subprocess.run(
+                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+            logger.info(f"Running pip freeze with {cmd}")
+            logger.info(freeze_result.stdout)
+            logger.info(os.getcwd())
 
-        #     # debug a pip freeze result
-        #     cmd = get_pip_command(executable) + ["freeze"]
-        #     if (cmd[0] == "uv"):
-        #         cmd.extend(["--python", executable])
-        #     # TODO DEBUG
-        #     freeze_result = subprocess.run(
-        #         cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        #     )
-        #     logger.error(f"Running pip freeze with {cmd}")
-        #     logger.error(freeze_result.stdout)
-        #     logger.error(os.getcwd())
+            # get type completeness score from current code
+            score_from_current = get_type_complete_score(commands, package_dir, check_pytyped=True)
+            if score_from_current == -1.0:
+                results.append(1)
+                continue
 
-        #     # get type completeness score from current code
-        #     score_from_current = get_type_complete_score(commands, package_dir, check_pytyped=True)
-        #     if score_from_current == -1.0:
-        #         results.append(1)
-        #         continue
+            try:
+                subprocess.check_call(commands[:-1])
+            except subprocess.CalledProcessError:
+                logger.warning(
+                    "verifytypes reported issues."
+                )  # we don't fail on verifytypes, only if type completeness score worsens from main
 
-        #     try:
-        #         subprocess.check_call(commands[:-1])
-        #     except subprocess.CalledProcessError:
-        #         logger.warning(
-        #             "verifytypes reported issues."
-        #         )  # we don't fail on verifytypes, only if type completeness score worsens from main
+            if in_ci():
+                # get type completeness score from main
+                logger.info("Getting the type completeness score from the code in main...")
+                if install_from_main(os.path.abspath(package_dir), executable) > 0:
+                    continue
 
-        #     if in_ci():
-        #         # get type completeness score from main
-        #         logger.info("Getting the type completeness score from the code in main...")
-        #         if install_from_main(os.path.abspath(package_dir), executable) > 0:
-        #             continue
+                score_from_main = get_type_complete_score(commands, package_dir)
+                if score_from_main == -1.0:
+                    results.append(1)
+                    continue
 
-        #         score_from_main = get_type_complete_score(commands, package_dir)
-        #         if score_from_main == -1.0:
-        #             results.append(1)
-        #             continue
-
-        #         score_from_main_rounded = round(score_from_main * 100, 1)
-        #         score_from_current_rounded = round(score_from_current * 100, 1)
-        #         logger.info("\n-----Type completeness score comparison-----\n")
-        #         logger.info(f"Score in main: {score_from_main_rounded}%")
-        #         # Give a 5% buffer for type completeness score to decrease
-        #         if score_from_current_rounded < score_from_main_rounded - 5:
-        #             logger.error(
-        #                 f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
-        #                 f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
-        #             )
-        #             results.append(1)
-        # return max(results) if results else 0
+                score_from_main_rounded = round(score_from_main * 100, 1)
+                score_from_current_rounded = round(score_from_current * 100, 1)
+                logger.info("\n-----Type completeness score comparison-----\n")
+                logger.info(f"Score in main: {score_from_main_rounded}%")
+                # Give a 5% buffer for type completeness score to decrease
+                if score_from_current_rounded < score_from_main_rounded - 5:
+                    logger.error(
+                        f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
+                        f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
+                    )
+                    results.append(1)
+        return max(results) if results else 0
