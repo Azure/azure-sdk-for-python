@@ -7,7 +7,7 @@
 import base64
 from functools import partial
 from json import JSONEncoder
-from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple, TypeVar
+from typing import Dict, List, Optional, Union, cast, Any, Type, Callable, Tuple
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
