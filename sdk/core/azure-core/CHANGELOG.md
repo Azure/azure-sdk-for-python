@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `TypeHandlerRegistry` to `azure.core.serialization` to allow developers to register custom serializers and deserializers for specific types or conditions.  #43051
+- Added `retry_jitter_factor` parameter to `RetryPolicy` and `AsyncRetryPolicy` to introduce randomized jitter in retry backoff delays. This helps avoid the situation where many clients or processes simultaneously retry a failed request and overwhelm a service. The jitter factor defaults to 0.2 (20% jitter) and can be set to 0 to disable jitter entirely.
 
 ### Breaking Changes
 
@@ -16,6 +17,7 @@
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
 - Removed `six` as a dependency since it was unused.
+- In `RetryPolicy` and `AsyncRetryPolicy`, the first retry is no longer immediate when using exponential backoff. Instead, the first retry will now respect the configured backoff time and jitter factor. This change ensures a more consistent and controlled retry behavior, especially in scenarios where jitter is applied.
 
 ## 1.35.1 (2025-09-11)
 
