@@ -272,7 +272,7 @@ def write_pyrit_outputs_to_file(
 
     conversations = [
         [
-            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""), item.labels.get("tool_calls", []))
+            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""), item.labels.get("tool_calls", []), item.labels.get("risk_sub_type"))
             for item in group
         ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
@@ -295,16 +295,17 @@ def write_pyrit_outputs_to_file(
                     if conversation[0][0].role == "system":
                         # Skip system messages in the output
                         continue
-                    json_lines += (
-                        json.dumps(
-                            {
-                                "conversation": {
-                                    "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
-                                }
-                            }
-                        )
-                        + "\n"
-                    )
+                    conv_dict = {
+                        "conversation": {
+                            "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
+                        }
+                    }
+                    # Add risk_sub_type if present (check first message for the label)
+                    if conversation and len(conversation) > 0 and len(conversation[0]) > 3:
+                        risk_sub_type = conversation[0][3]
+                        if risk_sub_type:
+                            conv_dict["risk_sub_type"] = risk_sub_type
+                    json_lines += json.dumps(conv_dict) + "\n"
                 with Path(output_path).open("w") as f:
                     f.writelines(json_lines)
                 logger.debug(
@@ -326,16 +327,17 @@ def write_pyrit_outputs_to_file(
             if conversation[0][0].role == "system":
                 # Skip system messages in the output
                 continue
-            json_lines += (
-                json.dumps(
-                    {
-                        "conversation": {
-                            "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
-                        }
-                    }
-                )
-                + "\n"
-            )
+            conv_dict = {
+                "conversation": {
+                    "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
+                }
+            }
+            # Add risk_sub_type if present (check first message for the label)
+            if conversation and len(conversation) > 0 and len(conversation[0]) > 3:
+                risk_sub_type = conversation[0][3]
+                if risk_sub_type:
+                    conv_dict["risk_sub_type"] = risk_sub_type
+            json_lines += json.dumps(conv_dict) + "\n"
         with Path(output_path).open("w") as f:
             f.writelines(json_lines)
         logger.debug(f"Successfully wrote {len(conversations)} conversations to {output_path}")

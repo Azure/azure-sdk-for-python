@@ -260,6 +260,9 @@ class RedTeam:
 
         # keep track of prompt content to context mapping for evaluation
         self.prompt_to_context = {}
+        
+        # keep track of prompt content to risk_sub_type mapping for evaluation
+        self.prompt_to_risk_subtype = {}
 
         # Initialize PyRIT
         initialize_pyrit(memory_db_type=DUCK_DB)
@@ -329,6 +332,7 @@ class RedTeam:
             one_dp_project=self._one_dp_project,
             retry_config=retry_config,
             scan_output_dir=self.scan_output_dir,
+            red_team=self,
         )
 
         # Initialize evaluation processor
@@ -827,6 +831,16 @@ class RedTeam:
         """Extract content from selected objectives and build prompt-to-context mapping."""
         selected_prompts = []
         for obj in selected_objectives:
+            risk_subtype = None
+            # Extract risk-subtype from target_harms if present
+            target_harms = obj.get("metadata", {}).get("target_harms", [])
+            if target_harms and isinstance(target_harms, list):
+                for harm in target_harms:
+                    if isinstance(harm, dict) and "risk-subtype" in harm:
+                        subtype_value = harm.get("risk-subtype")
+                        if subtype_value:
+                            risk_subtype = subtype_value
+                            break
             if "messages" in obj and len(obj["messages"]) > 0:
                 message = obj["messages"][0]
                 if isinstance(message, dict) and "content" in message:
@@ -877,6 +891,10 @@ class RedTeam:
                             self.logger.debug(f"Appended {len(context_texts)} context source(s) to attack content (total context length={len(combined_context)})")
                     
                     selected_prompts.append(content)
+                    
+                    # Store risk_subtype mapping if it exists
+                    if risk_subtype:
+                        self.prompt_to_risk_subtype[content] = risk_subtype
                     
                     # Always store contexts if they exist (whether or not they have agent fields)
                     if contexts:
@@ -1220,6 +1238,8 @@ class RedTeam:
 
             chat_target = get_chat_target(target)
             self.chat_target = chat_target
+
+            import pdb; pdb.set_trace()
 
             # Execute attacks
             await self._execute_attacks(

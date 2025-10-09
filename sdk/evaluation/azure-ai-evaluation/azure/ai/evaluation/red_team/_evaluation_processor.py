@@ -79,6 +79,7 @@ class EvaluationProcessor:
         strategy_name: str,
         risk_category: RiskCategory,
         idx: int,
+        risk_sub_type: Optional[str] = None,
     ) -> Dict:
         """Evaluate a single conversation using the specified metric and risk category.
 
@@ -92,6 +93,8 @@ class EvaluationProcessor:
         :type risk_category: RiskCategory
         :param idx: Index of the conversation for tracking purposes
         :type idx: int
+        :param risk_sub_type: Optional risk sub type for the evaluation
+        :type risk_sub_type: Optional[str]
         :return: Dictionary containing evaluation results
         :rtype: Dict
         """
@@ -118,6 +121,11 @@ class EvaluationProcessor:
             if tool_calls and any(tool_calls):
                 query_response["tool_calls"] = [call for sublist in tool_calls for call in sublist if call]
 
+            # Add risk_sub_type to query_response if it exists
+            if risk_sub_type:
+                query_response["risk_sub_type"] = risk_sub_type
+
+            import pdb; pdb.set_trace()
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")
 
@@ -310,6 +318,7 @@ class EvaluationProcessor:
                     strategy_name=strategy_name,
                     risk_category=risk_category,
                     idx=idx,
+                    risk_sub_type=conversation.get("risk_sub_type"),
                 )
                 for idx, conversation in enumerate(conversations)
             ]

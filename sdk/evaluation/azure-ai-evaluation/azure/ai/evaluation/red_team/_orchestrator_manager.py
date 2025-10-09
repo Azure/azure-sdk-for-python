@@ -96,6 +96,7 @@ class OrchestratorManager:
         one_dp_project,
         retry_config,
         scan_output_dir=None,
+        red_team=None,
     ):
         """Initialize the orchestrator manager.
 
@@ -106,6 +107,7 @@ class OrchestratorManager:
         :param one_dp_project: Whether this is a OneDP project
         :param retry_config: Retry configuration for network errors
         :param scan_output_dir: Directory for scan outputs
+        :param red_team: Reference to RedTeam instance for accessing prompt mappings
         """
         self.logger = logger
         self.generated_rai_client = generated_rai_client
@@ -114,6 +116,7 @@ class OrchestratorManager:
         self._one_dp_project = one_dp_project
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
+        self.red_team = red_team
 
     def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
         """Calculate appropriate timeout based on orchestrator type.
@@ -270,6 +273,9 @@ class OrchestratorManager:
                 # Build context_dict to pass via memory labels
                 context_dict = {"contexts": contexts}
                 
+                # Get risk_sub_type for this prompt if it exists
+                risk_sub_type = self.red_team.prompt_to_risk_subtype.get(prompt) if self.red_team and hasattr(self.red_team, 'prompt_to_risk_subtype') else None
+                
                 # Determine how to handle the prompt based on target type and context fields
                 if isinstance(chat_target, _CallbackChatTarget):
                     # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
@@ -303,14 +309,17 @@ class OrchestratorManager:
                         self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
                     )
                     async def send_prompt_with_retry():
+                        memory_labels = {
+                            "risk_strategy_path": output_path,
+                            "batch": prompt_idx + 1,
+                            "context": context_dict,
+                        }
+                        if risk_sub_type:
+                            memory_labels["risk_sub_type"] = risk_sub_type
                         return await asyncio.wait_for(
                             orchestrator.send_prompts_async(
                                 prompt_list=[processed_prompt],
-                                memory_labels={
-                                    "risk_strategy_path": output_path,
-                                    "batch": prompt_idx + 1,
-                                    "context": context_dict,
-                                },
+                                memory_labels=memory_labels,
                             ),
                             timeout=calculated_timeout,
                         )
