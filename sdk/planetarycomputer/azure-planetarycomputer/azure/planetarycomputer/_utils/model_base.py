@@ -1,5 +1,5 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
-# coding=utf-8
+# pylint: disable=line-too-long,useless-suppression,too-many-lines,import-error,no-value-for-parameter,file-needs-copyright-header
+# # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
