@@ -408,7 +408,36 @@ class RedTeam:
 
         # Check if custom attack seed prompts are provided in the generator
         if attack_objective_generator.custom_attack_seed_prompts and attack_objective_generator.validated_prompts:
-            return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
+            # Check if this specific risk category has custom objectives
+            custom_objectives = attack_objective_generator.valid_prompts_by_category.get(risk_cat_value, [])
+            
+            if custom_objectives:
+                # Use custom objectives for this risk category
+                return await self._get_custom_attack_objectives(risk_cat_value, num_objectives, strategy, current_key)
+            else:
+                # No custom objectives for this risk category, but risk_categories was specified
+                # Fetch from service if this risk category is in the requested list
+                if self.attack_objective_generator.risk_categories and risk_category in self.attack_objective_generator.risk_categories:
+                    self.logger.info(
+                        f"No custom objectives found for risk category {risk_cat_value}, fetching from service"
+                    )
+                    return await self._get_rai_attack_objectives(
+                        risk_category,
+                        risk_cat_value,
+                        application_scenario,
+                        strategy,
+                        baseline_objectives_exist,
+                        baseline_key,
+                        current_key,
+                        num_objectives,
+                        is_agent_target,
+                    )
+                else:
+                    # Risk category not in requested list, return empty
+                    self.logger.warning(
+                        f"No custom objectives found for risk category {risk_cat_value} and it's not in the requested risk categories"
+                    )
+                    return []
         else:
             return await self._get_rai_attack_objectives(
                 risk_category,
