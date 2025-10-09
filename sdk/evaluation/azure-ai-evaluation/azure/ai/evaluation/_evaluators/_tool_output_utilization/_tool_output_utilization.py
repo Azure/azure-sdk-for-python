@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 @experimental
-class toolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
+class ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """The Tool Output Utilization Evaluator assesses how effectively an AI agent utilizes the outputs from tools and whether it accurately incorporates this information into its responses.
 
     Scoring is based on two levels:
@@ -151,11 +151,7 @@ class toolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
-        if (
-            ("query" not in eval_input)
-            and ("response" not in eval_input)
-            and ("tool_definitions" not in eval_input)
-        ):
+        if ("query" not in eval_input) and ("response" not in eval_input) and ("tool_definitions" not in eval_input):
             raise EvaluationException(
                 message="Query, response, and tool_definitions are required inputs to the Tool Output Utilization evaluator.",
                 internal_message="Query, response, and tool_definitions are required inputs to the Tool Output Utilization evaluator.",
@@ -170,9 +166,7 @@ class toolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             msgs_lists=[eval_input["query"], eval_input["response"]],
             logger=logger,
         )
-        eval_input["tool_definitions"] = reformat_tool_definitions(
-            filtered_tool_definitions, logger
-        )
+        eval_input["tool_definitions"] = reformat_tool_definitions(filtered_tool_definitions, logger)
 
         eval_input["query"] = reformat_conversation_history(
             eval_input["query"],
@@ -180,18 +174,14 @@ class toolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             include_system_messages=True,
             include_tool_messages=True,
         )
-        eval_input["response"] = reformat_agent_response(
-            eval_input["response"], logger, include_tool_messages=True
-        )
+        eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
         llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         if isinstance(llm_output, dict):
             output_label = llm_output.get("label", None)
             if output_label is None:
                 if logger:
-                    logger.warning(
-                        "LLM output does not contain 'label' key, returning NaN for the score."
-                    )
+                    logger.warning("LLM output does not contain 'label' key, returning NaN for the score.")
                 output_label = "fail"
 
             output_label = output_label.lower()
@@ -215,7 +205,5 @@ class toolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_reason": reason,
             }
         if logger:
-            logger.warning(
-                "LLM output is not a dictionary, returning NaN for the score."
-            )
+            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
         return {self._result_key: math.nan}
