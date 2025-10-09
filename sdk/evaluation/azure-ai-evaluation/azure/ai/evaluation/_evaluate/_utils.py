@@ -487,7 +487,9 @@ class DataLoaderFactory:
         return JSONLDataFileLoader(filename)
 
 
-def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None) -> EvaluationResult:
+def _convert_results_to_aoai_evaluation_results(
+        results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None
+) -> EvaluationResult:
     """
     Convert evaluation results to AOAI evaluation results format.
     
@@ -507,10 +509,10 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
     :return: EvaluationResult with converted evaluation results in AOAI format
     :rtype: EvaluationResult
     """
-        
+
     if eval_meta_data is None:
         return results
-    
+
     created_time = int(time.time())
     converted_rows = []
 
@@ -525,7 +527,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
             criteria_type = criteria.get("type")
             if criteria_name is not None and criteria_type is not None:
                 testing_criteria_name_types[criteria_name] = criteria_type
-    
+
     for row_idx, row in enumerate(results.get("rows", [])):
         # Group outputs by test criteria name
         criteria_groups = {}
@@ -538,10 +540,10 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
                 if len(parts) >= 3:
                     criteria_name = parts[1]
                     metric_name = parts[2]
-                    
+
                     if criteria_name not in criteria_groups:
                         criteria_groups[criteria_name] = {}
-                    
+
                     criteria_groups[criteria_name][metric_name] = value
             elif key.startswith("inputs."):
                 input_key = key.replace('inputs.', '')
@@ -550,7 +552,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
 
         # Convert each criteria group to RunOutputItem result
         run_output_results = []
-        
+
         for criteria_name, metrics in criteria_groups.items():
             # Extract metrics for this criteria
             score = None
@@ -559,14 +561,14 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
             threshold = None
             passed = None
             sample = None
-            
+
             # Find score - look for various score patterns
             for metric_key, metric_value in metrics.items():
                 if metric_key.endswith("_score") or metric_key == "score":
                     score = metric_value
                 elif metric_key.endswith("_result") or metric_key == "result" or metric_key == "passed":
                     label = metric_value
-                    passed = True if (str(metric_value).lower() == 'pass' or str(metric_value).lower() == 'true') else False                        
+                    passed = True if (str(metric_value).lower() == 'pass' or str(metric_value).lower() == 'true') else False
                 elif metric_key.endswith("_reason") or metric_key == "reason":
                     reason = metric_value
                 elif metric_key.endswith("_threshold") or metric_key == "threshold":
@@ -577,17 +579,17 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
                     # If no score found yet and this doesn't match other patterns, use as score
                     if score is None:
                         score = metric_value
-            
+
             # Determine passed status
             passed = True if (str(label).lower() == 'pass' or str(label).lower() == 'true') else False  
-            
+
             # Create result object for this criteria
             result_obj = {
                 "type": testing_criteria_name_types[criteria_name] if testing_criteria_name_types and criteria_name in testing_criteria_name_types else "azure_ai_evaluator",  # Use criteria name as type
                 "name": criteria_name,  # Use criteria name as name
                 "metric": criteria_name  # Use criteria name as metric
             }
-            
+
             # Add optional fields if they exist
             if score is not None:
                 result_obj["score"] = score
@@ -604,7 +606,7 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
                 top_sample = sample  # Save top sample for the row
 
             run_output_results.append(result_obj)
-        
+
         # Create RunOutputItem structure
         run_output_item = {
             "object": "eval.run.output_item",
@@ -620,15 +622,15 @@ def _convert_results_to_aoai_evaluation_results(results: EvaluationResult, logge
 
         if top_sample is None or "inputs" not in top_sample:
             top_sample["inputs"] = input_groups
-        
+
         run_output_item["sample"] = top_sample
-        
+
         converted_rows.append(run_output_item)
 
     # Create converted results maintaining the same structure
     results["evaluation_results_list"] = converted_rows
     logger.info(f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
-    
+
     # Calculate summary statistics
     evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
     results["evaluation_summary"] = evaluation_summary
@@ -653,11 +655,11 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         "failed": 0,
         "passed": 0
     }
-    
+
     # Count results by status and calculate per model usage
     model_usage_stats = {}  # Dictionary to aggregate usage by model
     result_counts_stats = {}  # Dictionary to aggregate usage by model
-    
+
     for aoai_result in aoai_results:
         logger.info(f"\r\nProcessing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
         if isinstance(aoai_result, dict) and 'results' in aoai_result:
@@ -694,7 +696,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         if isinstance(aoai_result, dict) and 'sample' in aoai_result:
             logger.info(f"\r\n 2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, summary count: {len(aoai_result['sample'])}")
             sample_data = aoai_result['sample']
-            
+
         if sample_data and hasattr(sample_data, 'usage') and sample_data.usage:
             usage_data = sample_data.usage
             model_name = sample_data.model if hasattr(sample_data, 'model') and sample_data.model else 'unknown'
@@ -732,7 +734,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats['prompt_tokens'] += usage_data.get('prompt_tokens', 0)
                 model_stats['completion_tokens'] += usage_data.get('completion_tokens', 0)
                 model_stats['cached_tokens'] += usage_data.get('cached_tokens', 0)
-    
+
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
     for model_name, stats in model_usage_stats.items():
@@ -744,7 +746,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             'completion_tokens': stats['completion_tokens'],
             'cached_tokens': stats['cached_tokens']
         })
-    
+
     result_counts_stats_val = []
     logger.info(f"\r\n Result counts stats: {result_counts_stats}")
     for criteria_name, stats_val in result_counts_stats.items():
@@ -755,7 +757,7 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 'passed': stats_val.get('passed', 0),
                 'failed': stats_val.get('failed', 0)
             })
-    
+
     return {
         "result_counts": result_counts,
         "per_model_usage": per_model_usage,
