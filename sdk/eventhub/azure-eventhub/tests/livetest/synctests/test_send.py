@@ -204,7 +204,7 @@ def test_send_and_receive_very_large_body_size_19mb(auth_credential_receivers, u
             # Send the batch
             print(f">>> Sending 19MB message via batch...")
             client.send_batch(batch)
-            print(f">>> ✅ 19MB batch sent successfully!")
+            print(f">>> 19MB batch sent successfully!")
             
         except ValueError as ve:
             print(f">>> Batch approach failed: {ve}")
@@ -212,7 +212,7 @@ def test_send_and_receive_very_large_body_size_19mb(auth_credential_receivers, u
             
             # Fallback: try sending as individual message
             client.send_event(EventData(payload))
-            print(f">>> ✅ 19MB individual message sent successfully!")
+            print(f">>> 19MB individual message sent successfully!")
         
         except Exception as e:
             print(f">>> Failed to send 19MB message: {e}")
@@ -241,9 +241,9 @@ def test_send_and_receive_very_large_body_size_19mb(auth_credential_receivers, u
         print(f">>> Received message size: {received_payload_size} bytes")
         assert len(received) == 1, f"Expected 1 message, got {len(received)}"
         assert received_payload_size == payload_size, f"Expected {payload_size} bytes, got {received_payload_size}"
-        print(f">>> ✅ 19MB message test completed successfully!")
+        print(f">>> 19MB message test completed successfully!")
     else:
-        print(f">>> ⚠️ No messages received - may indicate send failure or timeout")
+        print(f">>> No messages received - may indicate send failure or timeout")
         pytest.fail("No messages received within timeout period")
 
 
