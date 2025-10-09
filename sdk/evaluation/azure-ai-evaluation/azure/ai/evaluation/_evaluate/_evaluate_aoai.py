@@ -11,10 +11,11 @@ from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, T
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
+from ._metrics_utils import compute_pass_fail_statistics
 
 # import aoai_mapping
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
+from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING, ROW_ID_COLUMN
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 from azure.ai.evaluation._common._experimental import experimental
 
@@ -39,6 +40,7 @@ class OAIEvalRunCreationInfo(TypedDict, total=True):
     eval_group_id: str
     eval_run_id: str
     grader_name_map: Dict[str, str]
+    row_ids: List[str]
     # Total number of expected rows in the original dataset. Used to
     # re-align AOAI grader results to guard against silent row drops
     # causing horizontal concatenation misalignment.
@@ -173,11 +175,14 @@ def _begin_single_aoai_evaluation(
         + " Results will be retrieved after normal evaluation is complete..."
     )
 
+    row_ids = data[ROW_ID_COLUMN].astype(str).tolist() if ROW_ID_COLUMN in data.columns else []
+
     return OAIEvalRunCreationInfo(
         client=client,
         eval_group_id=eval_group_info.id,
         eval_run_id=eval_run_id,
         grader_name_map=grader_name_map,
+        row_ids=row_ids,
         expected_rows=len(data),
     )
 
@@ -248,11 +253,13 @@ def _get_single_run_results(
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.AOAI_GRADER,
         )
+    expected_rows = run_info.get("expected_rows", None)
     for criteria_result in run_results.per_testing_criteria_results:
         grader_name = run_info["grader_name_map"][criteria_result.testing_criteria]
-        passed = criteria_result.passed
-        failed = criteria_result.failed
-        ratio = passed / (passed + failed) if (passed + failed) else 0.0
+        passed = getattr(criteria_result, "passed", 0) or 0
+        failed = getattr(criteria_result, "failed", 0) or 0
+        total_for_rate = expected_rows if expected_rows is not None else (passed + failed)
+        ratio = passed / total_for_rate if total_for_rate else 0.0
         formatted_column_name = f"{grader_name}.pass_rate"
         run_metrics[formatted_column_name] = ratio
 
@@ -280,10 +287,13 @@ def _get_single_run_results(
         else:
             break
 
-    listed_results: Dict[str, List[Any]] = {"index": []}
+    listed_results: Dict[str, List[Any]] = {"index": [], ROW_ID_COLUMN: []}
     # Raw data has no order guarantees; capture datasource_item_id per row for ordering.
     for row_result in all_results:
         listed_results["index"].append(row_result.datasource_item_id)
+        datasource_item = getattr(row_result, "datasource_item", {}) or {}
+        row_identifier = datasource_item.get(ROW_ID_COLUMN, row_result.datasource_item_id)
+        listed_results[ROW_ID_COLUMN].append(str(row_identifier))
         for single_grader_row_result in row_result.results:
             if isinstance(single_grader_row_result, dict):
                 result_dict = single_grader_row_result
@@ -338,6 +348,7 @@ def _get_single_run_results(
                 listed_results[col_name] = listed_results[col_name][:num_rows]
 
     output_df = pd.DataFrame(listed_results)
+    output_df[ROW_ID_COLUMN] = output_df[ROW_ID_COLUMN].astype(str)
 
     # If the 'index' column is missing for any reason, synthesize it from the current RangeIndex.
     if "index" not in output_df.columns:
@@ -351,23 +362,21 @@ def _get_single_run_results(
     output_df["__azure_ai_evaluation_index"] = output_df["index"]
 
     # Preserve original ids as index, then pad to expected length
-    output_df.set_index("index", inplace=True)
+    output_df.set_index(ROW_ID_COLUMN, inplace=True, drop=False)
 
-    expected = run_info.get("expected_rows", None)
-    if expected is not None:
+    expected_row_ids = [str(rid) for rid in run_info.get("row_ids", [])]
+    if expected_row_ids:
         pre_len = len(output_df)
-        # Assumes original datasource_item_id space is 0..expected-1
-        output_df = output_df.reindex(range(expected))
-        if pre_len != expected:
-            missing_rows = expected - pre_len
+        output_df = output_df.reindex(expected_row_ids)
+        if pre_len != len(expected_row_ids):
+            missing_rows = len(expected_row_ids) - pre_len
             LOGGER.warning(
                 "AOAI grader run %s returned %d/%d rows; %d missing row(s) padded with NaN for alignment.",
                 run_info["eval_run_id"],
                 pre_len,
-                expected,
+                len(expected_row_ids),
                 missing_rows,
             )
-            # Add a per-grader 'row_missing' boolean for padded rows
             grader_user_names: Set[str] = set()
             for col in output_df.columns:
                 if col.startswith("outputs."):
@@ -381,13 +390,36 @@ def _get_single_run_results(
                     if col_name not in output_df:
                         output_df[col_name] = False
                     output_df.loc[missing_index_mask, col_name] = True
+        output_df[ROW_ID_COLUMN] = output_df.index
+    else:
+        expected = run_info.get("expected_rows", None)
+        if expected is not None and len(output_df) != expected:
+            LOGGER.warning(
+                "AOAI grader run %s returned %d/%d rows; unable to align without row ids.",
+                run_info["eval_run_id"],
+                len(output_df),
+                expected,
+            )
+        output_df[ROW_ID_COLUMN] = output_df.index
 
     # Drop the temporary helper column before returning (no public surface change)
     if "__azure_ai_evaluation_index" in output_df.columns:
         output_df.drop(columns=["__azure_ai_evaluation_index"], inplace=True, errors="ignore")
 
-    # Reset to RangeIndex so downstream concatenation aligns on position
-    output_df.reset_index(drop=True, inplace=True)
+    # Preserve row-id index so concatenation with local evaluator results stays aligned
+    if output_df.index.name != ROW_ID_COLUMN:
+        output_df.set_index(ROW_ID_COLUMN, inplace=True, drop=False)
+
+    output_columns = [col for col in output_df.columns if col.startswith("outputs.")]
+    outputs_only_df = output_df[output_columns] if output_columns else pd.DataFrame(index=output_df.index)
+    evaluator_names = list(run_info["grader_name_map"].values())
+    pass_rates, binary_metrics, result_counts = compute_pass_fail_statistics(outputs_only_df, evaluator_names)
+
+    for key, value in pass_rates.items():
+        run_metrics.setdefault(key, value)
+    run_metrics.update(binary_metrics)
+    run_metrics.update(result_counts)
+
     return output_df, run_metrics
 
 
@@ -460,17 +492,16 @@ def _get_graders_and_column_mappings(
     Split them into sub-lists and sub-dictionaries that each correspond to a single evaluation run
     that must be performed to evaluate the entire dataset.
 
-    Currently this function is fairly naive; it always splits the data if there are multiple
-    graders present and any of them have a unique column mapping.
+    Graders are grouped by their resolved column mapping so that graders sharing the same mapping
+    run together. Separate runs are only created when graders require distinct mappings.
 
     This odd separate of data is necessary because our system allows for different evaluators
     to have different dataset columns mapped to the same input name for each evaluator, while
     the OAI API can't. So, if if there's a possibility that such a conflict might arise,
     we need to split the incoming data up.
 
-    Currently splits each grader into its own eval group/run to ensure they each use
-    their own credentials later on. Planned fast follow is to group things by
-    matching credentials later.
+    Runs are still separated when graders require distinct mappings (or in future, distinct
+    credentials). Planned fast follow is to group things by matching credentials later.
 
     :param graders: The graders to use for the evaluation. Should be a dictionary of string to AOAIGrader.
     :type graders: Dict[str, AoaiGrader]
@@ -481,15 +512,33 @@ def _get_graders_and_column_mappings(
     :rtype: List[Tuple[Dict[str, AoaiGrader], Optional[Dict[str, str]]]]
     """
 
+    if not graders:
+        return []
+
     if column_mappings is None:
-        return [({name: grader}, None) for name, grader in graders.items()]
-    default_mapping = column_mappings.get("default", None)
-    if default_mapping is None:
-        default_mapping = {}
-    return [
-        ({name: grader}, None if column_mappings is None else column_mappings.get(name, default_mapping))
-        for name, grader in graders.items()
-    ]
+        return [(graders, None)]
+
+    default_mapping = column_mappings.get("default") or {}
+
+    grouped_graders: Dict[Tuple[Tuple[str, str], ...], Dict[str, AzureOpenAIGrader]] = {}
+    grouped_mappings: Dict[Tuple[Tuple[str, str], ...], Optional[Dict[str, str]]] = {}
+    insertion_order: List[Tuple[Tuple[str, str], ...]] = []
+
+    for name, grader in graders.items():
+        mapping = column_mappings.get(name)
+        if mapping is None:
+            mapping = default_mapping
+
+        mapping_key: Tuple[Tuple[str, str], ...] = tuple(sorted(mapping.items())) if mapping else tuple()
+
+        if mapping_key not in grouped_graders:
+            grouped_graders[mapping_key] = {}
+            grouped_mappings[mapping_key] = mapping
+            insertion_order.append(mapping_key)
+
+        grouped_graders[mapping_key][name] = grader
+
+    return [(grouped_graders[key], grouped_mappings[key]) for key in insertion_order]
 
 
 def _build_schema_tree_from_paths(
