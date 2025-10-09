@@ -611,7 +611,6 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
         if logger:
             logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
-            print(e)
         return query
 
 
