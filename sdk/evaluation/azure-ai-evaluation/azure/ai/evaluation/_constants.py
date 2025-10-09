@@ -28,6 +28,7 @@ class EvaluationMetrics:
     XPIA = "xpia"
     CODE_VULNERABILITY = "code_vulnerability"
     UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
+    SENSITIVE_DATA_LEAKAGE = "sensitive_data_leakage"
 
 
 class _InternalEvaluationMetrics:
