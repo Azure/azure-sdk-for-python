@@ -30,7 +30,7 @@ from ._evaluators._similarity import SimilarityEvaluator
 from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._ungrounded_attributes import UngroundedAttributesEvaluator
-from ._evaluators._tool_call_quality import ToolCallQualityEvaluator
+from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
 from ._model_configurations import (
     AzureAIProject,
@@ -130,8 +130,7 @@ __all__ = [
     "EvaluationResult",
     "CodeVulnerabilityEvaluator",
     "UngroundedAttributesEvaluator",
-    "ToolCallQualityEvaluator",
-    "ToolCallAccuracyEvaluator",  # Backward compatibility alias
+    "ToolCallAccuracyEvaluator",
     "AzureOpenAIGrader",
     "AzureOpenAILabelGrader",
     "AzureOpenAIStringCheckGrader",
@@ -141,9 +140,6 @@ __all__ = [
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])
-
-# Backward compatibility alias
-ToolCallAccuracyEvaluator = ToolCallQualityEvaluator
 
 
 def __getattr__(name):

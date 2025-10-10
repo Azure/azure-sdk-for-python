@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `TypeHandlerRegistry` to `azure.core.serialization` to allow developers to register custom serializers and deserializers for specific types or conditions.  #43051
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -13,6 +15,7 @@
 ### Other Changes
 
 - Updated `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` to set the `enable_cae` parameter to `True` by default. This change enables Continuous Access Evaluation (CAE) for all token requests made through these policies.  #42941
+- Removed `six` as a dependency since it was unused.
 
 ## 1.35.1 (2025-09-11)
 
