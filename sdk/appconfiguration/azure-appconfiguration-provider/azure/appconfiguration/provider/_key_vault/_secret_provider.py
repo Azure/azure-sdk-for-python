@@ -32,15 +32,21 @@ class SecretProvider(_SecretProviderBase):
 
         return self.__get_secret_value(config.key, keyvault_identifier, vault_url)
 
-    def refresh_secrets(self) -> None:
-        original_cache = self._secret_cache.copy()
-        self._secret_cache.clear()
-        for source_id, (secret_identifier, key, _) in original_cache.items():
-            self._secret_cache[source_id] = (
-                secret_identifier,
-                key,
-                self.__get_secret_value(key, secret_identifier, secret_identifier.vault_url + "/"),
-            )
+    def refresh_secrets(self) -> Dict[str, Any]:
+        secrets = {}
+        if self.secret_refresh_timer:
+            original_cache = self._secret_cache.copy()
+            self._secret_cache.clear()
+            for source_id, (secret_identifier, key, _) in original_cache.items():
+                value = self.__get_secret_value(key, secret_identifier, secret_identifier.vault_url + "/")
+                self._secret_cache[source_id] = (
+                    secret_identifier,
+                    key,
+                    value,
+                )
+                secrets[key] = value
+            self.secret_refresh_timer.reset()
+        return secrets
 
     def __get_secret_value(self, key: str, secret_identifier: KeyVaultSecretIdentifier, vault_url: str) -> str:
         referenced_client = self._secret_clients.get(vault_url, None)
