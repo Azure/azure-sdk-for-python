@@ -34,8 +34,7 @@ from ._azure_clouds import AzureClouds
 from ._enum_meta import CaseInsensitiveEnumMeta
 from ._pipeline_client_async import AsyncPipelineClient
 
-__all__ = [
-    "PipelineClient",
+__all__ = ['PipelineClient',
     "MatchConditions",
     "CaseInsensitiveEnumMeta",
     "AsyncPipelineClient",
