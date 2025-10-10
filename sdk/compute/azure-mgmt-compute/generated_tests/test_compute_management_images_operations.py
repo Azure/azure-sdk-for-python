@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
+from azure.mgmt.compute import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -22,7 +22,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_images_list(self, resource_group):
         response = self.client.images.list(
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
     def test_images_list_by_resource_group(self, resource_group):
         response = self.client.images.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.images.get(
             resource_group_name=resource_group.name,
             image_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -158,7 +158,7 @@ class TestComputeManagementImagesOperations(AzureMgmtRecordedTestCase):
         response = self.client.images.begin_delete(
             resource_group_name=resource_group.name,
             image_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -13,6 +13,9 @@ from ..._credentials.vscode import VisualStudioCodeCredential as SyncVSCodeCrede
 class VisualStudioCodeCredential(AsyncContextManager):
     """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Resources' extension.
 
+    This currently only works in Windows/WSL environments and requires the 'azure-identity-broker'
+    package to be installed.
+
     :keyword str tenant_id: A Microsoft Entra tenant ID. Defaults to the tenant specified in the authentication
         record file used by the Azure Resources extension.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"

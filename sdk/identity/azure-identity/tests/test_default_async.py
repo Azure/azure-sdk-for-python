@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
+from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
     AzurePowerShellCredential,
@@ -261,7 +262,11 @@ async def test_default_credential_shared_cache_use():
 def test_managed_identity_client_id():
     """the credential should accept a user-assigned managed identity's client ID by kwarg or environment variable"""
 
-    expected_args = {"client_id": "the-client", "_exclude_workload_identity_credential": False}
+    expected_args = {
+        "client_id": "the-client",
+        "_exclude_workload_identity_credential": False,
+        "_enable_imds_probe": True,
+    }
 
     with patch(DefaultAzureCredential.__module__ + ".ManagedIdentityCredential") as mock_credential:
         DefaultAzureCredential(managed_identity_client_id=expected_args["client_id"])
@@ -344,3 +349,78 @@ def test_validate_cloud_shell_credential_in_dac():
         DefaultAzureCredential(identity_config={"client_id": "foo"})
         DefaultAzureCredential(identity_config={"object_id": "foo"})
         DefaultAzureCredential(identity_config={"resource_id": "foo"})
+
+
+@pytest.mark.asyncio
+async def test_failed_dac_credential_error_reporting():
+    """Test that AsyncFailedDACCredential properly reports initialization errors in async context"""
+    from azure.identity.aio._credentials.default import AsyncFailedDACCredential
+
+    credential_name = "WorkloadIdentityCredential"
+    error_message = "Failed to initialize: missing required environment variable AZURE_FEDERATED_TOKEN_FILE"
+
+    failed_credential = AsyncFailedDACCredential(credential_name, error_message)
+
+    # Test get_token raises CredentialUnavailableError with the original error
+    with pytest.raises(CredentialUnavailableError) as exc_info:
+        await failed_credential.get_token("https://management.azure.com/.default")
+
+    assert str(exc_info.value) == error_message
+
+    # Test get_token_info raises CredentialUnavailableError with the original error
+    with pytest.raises(CredentialUnavailableError) as exc_info:
+        await failed_credential.get_token_info("https://management.azure.com/.default")
+
+    assert str(exc_info.value) == error_message
+
+    # Test context manager support
+    async with failed_credential:
+        pass  # Should not raise during context entry/exit
+
+    # Test close method
+    await failed_credential.close()  # Should not raise
+
+
+@pytest.mark.asyncio
+async def test_failed_dac_credential_in_chain():
+    """Test that AsyncFailedDACCredential errors are properly reported when DefaultAzureCredential fails in async context"""
+    from azure.identity.aio._credentials.default import AsyncFailedDACCredential
+
+    # Create a mock successful credential to ensure the chain doesn't fail immediately
+    successful_credential = Mock(
+        spec_set=["get_token", "get_token_info"],
+        get_token=Mock(return_value=get_completed_future(AccessToken("***", 42))),
+        get_token_info=Mock(return_value=get_completed_future(AccessTokenInfo("***", 42))),
+    )
+
+    # Create a DefaultAzureCredential and replace its credentials with a failed credential and successful one
+    credential = DefaultAzureCredential()
+    failed_cred = AsyncFailedDACCredential("WorkloadIdentityCredential", "initialization error")
+    credential.credentials = (failed_cred, successful_credential)
+
+    # The chain should succeed using the successful credential
+    token = await credential.get_token("https://management.azure.com/.default")
+    assert token.token == "***"
+    assert token.expires_on == 42
+
+    # Test with only failed credentials to ensure error propagation
+    credential_all_failed = DefaultAzureCredential()
+    failed_cred1 = AsyncFailedDACCredential("WorkloadIdentityCredential", "workload identity error")
+    failed_cred2 = AsyncFailedDACCredential("TestCredential", "test credential error")
+    credential_all_failed.credentials = (failed_cred1, failed_cred2)
+
+    # Should raise an error that includes both credential errors
+    with pytest.raises(ClientAuthenticationError) as exc_info:
+        await credential_all_failed.get_token("https://management.azure.com/.default")
+
+    # The error should mention the failed credentials
+    error_str = str(exc_info.value)
+    assert "workload identity error" in error_str or "test credential error" in error_str
+
+
+@pytest.mark.asyncio
+async def test_require_envvar_raises_error_when_envvar_missing():
+    with patch.dict("os.environ", {}, clear=True):
+        with pytest.raises(ValueError) as exc_info:
+            DefaultAzureCredential(require_envvar=True)
+        assert "AZURE_TOKEN_CREDENTIALS" in str(exc_info.value)

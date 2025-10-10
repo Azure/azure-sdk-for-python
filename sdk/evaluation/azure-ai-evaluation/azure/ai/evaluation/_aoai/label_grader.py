@@ -1,11 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union, List
+from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
 from openai.types.graders import LabelModelGrader
+
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
 
@@ -37,6 +39,8 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
     :type name: str
     :param passing_labels: The labels that indicate a passing result. Must be a subset of labels.
     :type passing_labels: List[str]
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
 
@@ -54,6 +58,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
         model: str,
         name: str,
         passing_labels: List[str],
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = LabelModelGrader(
@@ -64,4 +69,4 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
             passing_labels=passing_labels,
             type="label_model",
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

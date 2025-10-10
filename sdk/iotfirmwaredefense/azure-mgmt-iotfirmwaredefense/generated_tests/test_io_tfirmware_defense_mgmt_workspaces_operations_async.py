@@ -75,11 +75,13 @@ class TestIoTFirmwareDefenseMgmtWorkspacesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workspaces_delete(self, resource_group):
-        response = await self.client.workspaces.delete(
-            resource_group_name=resource_group.name,
-            workspace_name="str",
-        )
+    async def test_workspaces_begin_delete(self, resource_group):
+        response = await (
+            await self.client.workspaces.begin_delete(
+                resource_group_name=resource_group.name,
+                workspace_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

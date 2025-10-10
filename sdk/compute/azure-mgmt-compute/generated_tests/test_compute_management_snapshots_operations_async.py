@@ -21,37 +21,127 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_snapshots_list(self, resource_group):
+        response = self.client.snapshots.list(
+            api_version="2025-01-02",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_list_by_resource_group(self, resource_group):
+        response = self.client.snapshots.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2025-01-02",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_get(self, resource_group):
+        response = await self.client.snapshots.get(
+            resource_group_name=resource_group.name,
+            snapshot_name="str",
+            api_version="2025-01-02",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_snapshots_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.snapshots.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
                 snapshot={
                     "location": "str",
-                    "accountType": "str",
+                    "completionPercent": 0.0,
+                    "copyCompletionError": {"errorCode": "str", "errorMessage": "str"},
                     "creationData": {
                         "createOption": "str",
-                        "imageReference": {"id": "str", "lun": 0},
+                        "elasticSanResourceId": "str",
+                        "galleryImageReference": {
+                            "communityGalleryImageId": "str",
+                            "id": "str",
+                            "lun": 0,
+                            "sharedGalleryImageId": "str",
+                        },
+                        "imageReference": {
+                            "communityGalleryImageId": "str",
+                            "id": "str",
+                            "lun": 0,
+                            "sharedGalleryImageId": "str",
+                        },
+                        "instantAccessDurationMinutes": 0,
+                        "logicalSectorSize": 0,
+                        "performancePlus": bool,
+                        "provisionedBandwidthCopySpeed": "str",
+                        "securityDataUri": "str",
+                        "securityMetadataUri": "str",
                         "sourceResourceId": "str",
+                        "sourceUniqueId": "str",
                         "sourceUri": "str",
                         "storageAccountId": "str",
+                        "uploadSizeBytes": 0,
                     },
+                    "dataAccessAuthMode": "str",
+                    "diskAccessId": "str",
+                    "diskSizeBytes": 0,
                     "diskSizeGB": 0,
-                    "encryptionSettings": {
-                        "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                    "diskState": "str",
+                    "encryption": {"diskEncryptionSetId": "str", "type": "str"},
+                    "encryptionSettingsCollection": {
                         "enabled": bool,
-                        "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
+                        "encryptionSettings": [
+                            {
+                                "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                                "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
+                            }
+                        ],
+                        "encryptionSettingsVersion": "str",
                     },
+                    "extendedLocation": {"name": "str", "type": "str"},
+                    "hyperVGeneration": "str",
                     "id": "str",
+                    "incremental": bool,
+                    "incrementalSnapshotFamilyId": "str",
+                    "managedBy": "str",
                     "name": "str",
+                    "networkAccessPolicy": "str",
                     "osType": "str",
-                    "ownerId": "str",
                     "provisioningState": "str",
+                    "publicNetworkAccess": "str",
+                    "purchasePlan": {"name": "str", "product": "str", "publisher": "str", "promotionCode": "str"},
+                    "securityProfile": {"secureVMDiskEncryptionSetId": "str", "securityType": "str"},
+                    "sku": {"name": "str", "tier": "str"},
+                    "snapshotAccessState": "str",
+                    "supportedCapabilities": {
+                        "acceleratedNetwork": bool,
+                        "architecture": "str",
+                        "diskControllerTypes": "str",
+                        "supportedSecurityOption": "str",
+                    },
+                    "supportsHibernation": bool,
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "tags": {"str": "str"},
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
+                    "uniqueId": "str",
                 },
-                api_version="2016-04-30-preview",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -60,30 +150,41 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_snapshots_begin_update(self, resource_group):
         response = await (
             await self.client.snapshots.begin_update(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
                 snapshot={
-                    "accountType": "str",
-                    "creationData": {
-                        "createOption": "str",
-                        "imageReference": {"id": "str", "lun": 0},
-                        "sourceResourceId": "str",
-                        "sourceUri": "str",
-                        "storageAccountId": "str",
-                    },
+                    "dataAccessAuthMode": "str",
+                    "diskAccessId": "str",
                     "diskSizeGB": 0,
-                    "encryptionSettings": {
-                        "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                    "encryption": {"diskEncryptionSetId": "str", "type": "str"},
+                    "encryptionSettingsCollection": {
                         "enabled": bool,
-                        "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
+                        "encryptionSettings": [
+                            {
+                                "diskEncryptionKey": {"secretUrl": "str", "sourceVault": {"id": "str"}},
+                                "keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}},
+                            }
+                        ],
+                        "encryptionSettingsVersion": "str",
                     },
+                    "networkAccessPolicy": "str",
                     "osType": "str",
+                    "publicNetworkAccess": "str",
+                    "sku": {"name": "str", "tier": "str"},
+                    "snapshotAccessState": "str",
+                    "supportedCapabilities": {
+                        "acceleratedNetwork": bool,
+                        "architecture": "str",
+                        "diskControllerTypes": "str",
+                        "supportedSecurityOption": "str",
+                    },
+                    "supportsHibernation": bool,
                     "tags": {"str": "str"},
                 },
-                api_version="2016-04-30-preview",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -92,24 +193,12 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
-        response = await self.client.snapshots.get(
-            resource_group_name=resource_group.name,
-            snapshot_name="str",
-            api_version="2016-04-30-preview",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_snapshots_begin_delete(self, resource_group):
         response = await (
             await self.client.snapshots.begin_delete(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                api_version="2016-04-30-preview",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,34 +207,18 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
-        response = self.client.snapshots.list_by_resource_group(
-            resource_group_name=resource_group.name,
-            api_version="2016-04-30-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_list(self, resource_group):
-        response = self.client.snapshots.list(
-            api_version="2016-04-30-preview",
-        )
-        result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_begin_grant_access(self, resource_group):
+    async def test_snapshots_begin_grant_access(self, resource_group):
         response = await (
             await self.client.snapshots.begin_grant_access(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                grant_access_data={"access": "str", "durationInSeconds": 0},
-                api_version="2016-04-30-preview",
+                grant_access_data={
+                    "access": "str",
+                    "durationInSeconds": 0,
+                    "fileFormat": "str",
+                    "getSecureVMGuestStateSAS": bool,
+                },
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -154,12 +227,12 @@ class TestComputeManagementSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_revoke_access(self, resource_group):
+    async def test_snapshots_begin_revoke_access(self, resource_group):
         response = await (
             await self.client.snapshots.begin_revoke_access(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                api_version="2016-04-30-preview",
+                api_version="2025-01-02",
             )
         ).result()  # call '.result()' to poll until service return final result
 

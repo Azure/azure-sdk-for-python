@@ -6,7 +6,14 @@ import logging
 import os
 from typing import List, Any, Optional, cast
 
-from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions, SupportsTokenInfo, TokenCredential
+from azure.core.credentials import (
+    AccessToken,
+    AccessTokenInfo,
+    TokenRequestOptions,
+    SupportsTokenInfo,
+    TokenCredential,
+)
+from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.utils import get_default_authority, normalize_authority, within_dac, process_credential_exclusions
 from .azure_powershell import AzurePowerShellCredential
@@ -22,6 +29,32 @@ from .vscode import VisualStudioCodeCredential
 from .workload_identity import WorkloadIdentityCredential
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class FailedDACCredential:
+    """This acts as a substitute for a credential that has failed to initialize in the DAC chain.
+
+    This allows instantiation errors to be reported in ChainTokenCredential if all token requests fail.
+    """
+
+    def __init__(self, credential_name: str, error: str) -> None:
+        self._error = error
+        self._credential_name = credential_name
+
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        raise CredentialUnavailableError(self._error)
+
+    def get_token_info(self, *scopes, options: Optional[TokenRequestOptions] = None, **kwargs: Any) -> AccessTokenInfo:
+        raise CredentialUnavailableError(self._error)
+
+    def __enter__(self) -> "FailedDACCredential":
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        pass
+
+    def close(self) -> None:
+        pass
 
 
 class DefaultAzureCredential(ChainedTokenCredential):
@@ -93,6 +126,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         record file used by the Azure Resources extension.
     :keyword int process_timeout: The timeout in seconds to use for developer credentials that run
         subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
+    :keyword bool require_envvar: If **True**, require that the AZURE_TOKEN_CREDENTIALS environment variable be set
+        to a value denoting the credential type or credential group to use. If unset or empty, DefaultAzureCredential
+        will raise a `ValueError`. Defaults to **False**.
 
     .. admonition:: Example:
 
@@ -135,6 +171,13 @@ class DefaultAzureCredential(ChainedTokenCredential):
         )
 
         process_timeout = kwargs.pop("process_timeout", 10)
+        require_envvar = kwargs.pop("require_envvar", False)
+        token_credentials_env = os.environ.get(EnvironmentVariables.AZURE_TOKEN_CREDENTIALS, "").strip().lower()
+        if require_envvar and not token_credentials_env:
+            raise ValueError(
+                "AZURE_TOKEN_CREDENTIALS environment variable is required but is not set or is empty. "
+                "Set it to 'dev', 'prod', or a specific credential name."
+            )
 
         # Define credential configuration mapping
         credential_config = {
@@ -216,33 +259,32 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, _within_dac=True, **kwargs))
         if not exclude_workload_identity_credential:
-            if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
-                client_id = workload_identity_client_id
+            try:
                 credentials.append(
                     WorkloadIdentityCredential(
-                        client_id=cast(str, client_id),
+                        client_id=cast(str, workload_identity_client_id),
                         tenant_id=workload_identity_tenant_id,
-                        token_file_path=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                        token_file_path=os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE),
                         **kwargs,
                     )
                 )
+            except ValueError as ex:
+                credentials.append(FailedDACCredential("WorkloadIdentityCredential", error=str(ex)))
         if not exclude_managed_identity_credential:
             credentials.append(
                 ManagedIdentityCredential(
                     client_id=managed_identity_client_id,
                     _exclude_workload_identity_credential=exclude_workload_identity_credential,
+                    _enable_imds_probe=token_credentials_env != "managedidentitycredential",
                     **kwargs,
                 )
             )
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
-            try:
-                # username and/or tenant_id are only required when the cache contains tokens for multiple identities
-                shared_cache = SharedTokenCacheCredential(
-                    username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
-                )
-                credentials.append(shared_cache)
-            except Exception as ex:  # pylint:disable=broad-except
-                _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
+            # username and/or tenant_id are only required when the cache contains tokens for multiple identities
+            shared_cache = SharedTokenCacheCredential(
+                username=shared_cache_username, tenant_id=shared_cache_tenant_id, authority=authority, **kwargs
+            )
+            credentials.append(shared_cache)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(tenant_id=vscode_tenant_id))
         if not exclude_cli_credential:
@@ -298,8 +340,10 @@ class DefaultAzureCredential(ChainedTokenCredential):
             )
             return token
         within_dac.set(True)
-        token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
-        within_dac.set(False)
+        try:
+            token = super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+        finally:
+            within_dac.set(False)
         return token
 
     def get_token_info(self, *scopes: str, options: Optional[TokenRequestOptions] = None) -> AccessTokenInfo:
@@ -327,6 +371,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             return token_info
 
         within_dac.set(True)
-        token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
-        within_dac.set(False)
+        try:
+            token_info = cast(SupportsTokenInfo, super()).get_token_info(*scopes, options=options)
+        finally:
+            within_dac.set(False)
         return token_info

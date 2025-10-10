@@ -26,7 +26,7 @@ class TestDataBoxEdgeManagementContainersOperationsAsync(AzureMgmtRecordedTestCa
             device_name="str",
             storage_account_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestDataBoxEdgeManagementContainersOperationsAsync(AzureMgmtRecordedTestCa
             storage_account_name="str",
             container_name="str",
             resource_group_name=resource_group.name,
-            api_version="2019-08-01",
+            api_version="2021-02-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -67,9 +67,17 @@ class TestDataBoxEdgeManagementContainersOperationsAsync(AzureMgmtRecordedTestCa
                         "lastCompletedRefreshJobTimeInUTC": "2020-02-20 00:00:00",
                         "lastJob": "str",
                     },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "type": "str",
                 },
-                api_version="2019-08-01",
+                api_version="2021-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -85,7 +93,7 @@ class TestDataBoxEdgeManagementContainersOperationsAsync(AzureMgmtRecordedTestCa
                 storage_account_name="str",
                 container_name="str",
                 resource_group_name=resource_group.name,
-                api_version="2019-08-01",
+                api_version="2021-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +109,7 @@ class TestDataBoxEdgeManagementContainersOperationsAsync(AzureMgmtRecordedTestCa
                 storage_account_name="str",
                 container_name="str",
                 resource_group_name=resource_group.name,
-                api_version="2019-08-01",
+                api_version="2021-02-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

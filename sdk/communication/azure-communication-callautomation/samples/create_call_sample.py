@@ -12,7 +12,7 @@ sys.path.append("..")
 
 class CallAutomationCreateCallSample(object):
 
-    connection_string = os.getenv("COMMUNICATION_CONNECTION_STRING")
+    connection_string = os.environ["COMMUNICATION_CONNECTION_STRING"]
 
     def create_call_to_single(self):
         callautomation_client = CallAutomationClient.from_connection_string(self.connection_string)

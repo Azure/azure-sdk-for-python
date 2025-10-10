@@ -57,6 +57,13 @@ class BaselineSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HIGH = "High"
 
 
+class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the diagnostic settings category."""
+
+    METRICS = "Metrics"
+    LOGS = "Logs"
+
+
 class ComparisonOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the operator that is used to compare the metric data and the threshold."""
 
@@ -94,6 +101,24 @@ class CriterionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
 
 
+class DataSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Datasource kind."""
+
+    PERFORMANCE_COUNTER = "PerformanceCounter"
+    ETW_PROVIDERS = "ETWProviders"
+    WINDOWS_EVENT_LOGS = "WindowsEventLogs"
+
+
+class DataStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of VM Insights data from the resource. When reported as ``present`` the data array
+    will contain information about the data containers to which data for the specified resource is
+    being routed.
+    """
+
+    PRESENT = "present"
+    NOT_PRESENT = "notPresent"
+
+
 class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operator for dimension values."""
 
@@ -127,6 +152,13 @@ class EventLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WARNING = "Warning"
     INFORMATIONAL = "Informational"
     VERBOSE = "Verbose"
+
+
+class GuestDiagnosticSettingsOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operating system type for the configuration."""
+
+    WINDOWS = "Windows"
+    LINUX = "Linux"
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -467,6 +499,16 @@ class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     )
 
 
+class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
+    or subscription, is considered onboarded if at least one resource under it is onboarded.
+    """
+
+    ONBOARDED = "onboarded"
+    NOT_ONBOARDED = "notOnboarded"
+    UNKNOWN = "unknown"
+
+
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the criteria operator."""
 
@@ -589,6 +631,14 @@ class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERCENT_CHANGE_COUNT = "PercentChangeCount"
     EXACT_COUNT = "ExactCount"
     SERVICE_ALLOWED_NEXT_VALUE = "ServiceAllowedNextValue"
+
+
+class SinkConfigurationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SinkConfigurationKind."""
+
+    EVENT_HUB = "EventHub"
+    APPLICATION_INSIGHTS = "ApplicationInsights"
+    LOG_ANALYTICS = "LogAnalytics"
 
 
 class TimeAggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
