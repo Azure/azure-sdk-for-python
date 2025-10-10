@@ -351,7 +351,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription
 [pypi_package]: https://pypi.org/project/azure-ai-speech-transcription/
-[api_reference]: https://learn.microsoft.com/python/api/overview/azure/ai-speech-transcription-readme
+[api_reference]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/azure/ai/speech/transcription
 [product_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [azure_sub]: https://azure.microsoft.com/free/
 [speech_resource]: https://learn.microsoft.com/azure/ai-services/speech-service/overview
