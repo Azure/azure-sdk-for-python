@@ -88,10 +88,10 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: int) -> None:
         if self.resource_type == ResourceType.Document:
             if request_options and request_options.get(Constants.Kwargs.RETRY_WRITE):
-                # If request retry write is True, set the option
+                # If request retry write is > 0, set the option
                 self.retry_write = request_options[Constants.Kwargs.RETRY_WRITE]
             elif client_retry_write and self.operation_type != _OperationType.Patch:
-                # If it is not a patch operation and the client config is set, set the retry write to True
+                # If it is not a patch operation and the client config is set, set the retry write to the client value
                 self.retry_write = client_retry_write
             else:
                 self.retry_write = 0
