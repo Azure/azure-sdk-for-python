@@ -47,7 +47,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.excluded_locations_circuit_breaker: list[str] = []
         self.healthy_tentative_location: Optional[str] = None
         self.pk_val = pk_val
-        self.retry_write: bool = False
+        self.retry_write: int = 0
 
     def route_to_location_with_preferred_location_flag(  # pylint: disable=name-too-long
         self,
@@ -85,7 +85,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         if self._can_set_excluded_location(options):
             self.excluded_locations = options['excludedLocations']
 
-    def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: bool) -> None:
+    def set_retry_write(self, request_options: Mapping[str, Any], client_retry_write: int) -> None:
         if self.resource_type == ResourceType.Document:
             if request_options and request_options.get(Constants.Kwargs.RETRY_WRITE):
                 # If request retry write is True, set the option

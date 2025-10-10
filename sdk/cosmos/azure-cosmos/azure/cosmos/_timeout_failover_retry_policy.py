@@ -70,4 +70,4 @@ class _TimeoutFailoverRetryPolicy(object):
     def is_operation_retryable(self):
         if _OperationType.IsReadOnlyOperation(self.request.operation_type):
             return True
-        return self.request.retry_write
+        return self.request.retry_write > 0
