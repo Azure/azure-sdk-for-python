@@ -115,7 +115,7 @@ For more extensive examples including speaker diarization, multi-language detect
 
 ### Transcribe an audio file
 
-<!-- SNIPPET:sample_transcribe_audio_file.transcribe_audio_file -->
+<!-- SNIPPET:sample_transcribe_audio_file.transcribe_audio_file-->
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -133,7 +133,8 @@ client = TranscriptionClient(
 )
 
 # Path to your audio file
-audio_file_path = "path/to/your/audio.wav"
+import pathlib
+audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
 
 # Open and read the audio file
 with open(audio_file_path, "rb") as audio_file:
@@ -167,7 +168,7 @@ with open(audio_file_path, "rb") as audio_file:
 
 ### Transcribe from a URL
 
-<!-- SNIPPET:sample_transcribe_from_url.transcribe_from_url -->
+<!-- SNIPPET:sample_transcribe_from_url.transcribe_from_url-->
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -215,7 +216,7 @@ if result.duration_milliseconds:
 
 The library also provides an async client for asynchronous operations:
 
-<!-- SNIPPET:sample_transcribe_audio_file_async.transcribe_audio_file_async -->
+<!-- SNIPPET:sample_transcribe_audio_file_async.transcribe_audio_file_async-->
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -232,7 +233,8 @@ async with TranscriptionClient(
     credential=AzureKeyCredential(api_key)
 ) as client:
     # Path to your audio file
-    audio_file_path = "path/to/your/audio.wav"
+    import pathlib
+    audio_file_path = pathlib.Path(__file__).parent.parent / "assets" / "audio.wav"
 
     # Open and read the audio file
     with open(audio_file_path, "rb") as audio_file:
@@ -349,7 +351,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription
 [pypi_package]: https://pypi.org/project/azure-ai-speech-transcription/
-[api_reference]: https://learn.microsoft.com/python/api/overview/azure/ai-speech-transcription-readme
+[api_reference]: https://aka.ms/azsdk/python/speech-transcription/docs
 [product_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [azure_sub]: https://azure.microsoft.com/free/
 [speech_resource]: https://learn.microsoft.com/azure/ai-services/speech-service/overview
@@ -359,7 +361,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [transcription_client]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/azure/ai/speech/transcription/_client.py
 [azure_core_exceptions]: https://aka.ms/azsdk/python/core/docs#module-azure.core.exceptions
 [python_logging]: https://docs.python.org/3/library/logging.html
-[rest_api]: https://learn.microsoft.com/rest/api/speechtotext/
+[rest_api]: https://learn.microsoft.com/azure/ai-services/speech-service/rest-speech-to-text
 [samples_directory]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples
 [azure_sdk_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/samples
 [speech_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/

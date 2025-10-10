@@ -22,6 +22,7 @@
     "*.avro",
     "*.tgz",
     "*.pfx",
+    "*.wav",
     "sdk/**/azure-mgmt**/**",
     "sdk/**/ci.yml",
     "sdk/**/azure-cognitiveservices**",
