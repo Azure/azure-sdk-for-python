@@ -351,7 +351,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription
 [pypi_package]: https://pypi.org/project/azure-ai-speech-transcription/
-[api_reference]: https://aka.ms/azsdk/python/speech-transcription/docs
+[api_reference]: https://learn.microsoft.com/python/api/overview/azure/ai-speech-transcription-readme
 [product_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [azure_sub]: https://azure.microsoft.com/free/
 [speech_resource]: https://learn.microsoft.com/azure/ai-services/speech-service/overview
@@ -363,7 +363,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python_logging]: https://docs.python.org/3/library/logging.html
 [rest_api]: https://learn.microsoft.com/azure/ai-services/speech-service/rest-speech-to-text
 [samples_directory]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples
-[azure_sdk_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/samples
+[azure_sdk_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription/samples
 [speech_docs]: https://learn.microsoft.com/azure/ai-services/speech-service/
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

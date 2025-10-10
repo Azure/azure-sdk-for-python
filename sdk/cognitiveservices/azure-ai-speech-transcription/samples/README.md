@@ -85,4 +85,6 @@ python async_samples/sample_transcribe_audio_file_async.py
 - [Azure AI Speech Transcription documentation](https://learn.microsoft.com/azure/ai-services/speech-service/)
 - [Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitiveservices/azure-ai-speech-transcription)
 - [Package (PyPI)](https://pypi.org/project/azure-ai-speech-transcription/)
-- [API reference documentation](https://aka.ms/azsdk/python/speech-transcription/docs)
+## Additional Resources
+
+- [API reference documentation](https://learn.microsoft.com/python/api/overview/azure/ai-speech-transcription-readme)
