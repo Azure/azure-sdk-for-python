@@ -530,7 +530,8 @@
     "pyaudio",
     "PyAudio",
 	"libasound",
-    "ingraph"
+    "ingraph",
+    "diarization"
   ],
   "overrides": [
     {

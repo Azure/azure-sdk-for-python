@@ -1,0 +1,17 @@
+{
+    "CrossLanguagePackageId": "Azure.Ai.Speech.Transcription",
+    "CrossLanguageDefinitionId": {
+        "azure.ai.speech.transcription.models.ChannelCombinedPhrases": "Azure.Ai.Speech.Transcription.ChannelCombinedPhrases",
+        "azure.ai.speech.transcription.models.EnhancedModeProperties": "Azure.Ai.Speech.Transcription.EnhancedModeProperties",
+        "azure.ai.speech.transcription.models.PhraseListProperties": "Azure.Ai.Speech.Transcription.PhraseListProperties",
+        "azure.ai.speech.transcription.models.TranscribedPhrase": "Azure.Ai.Speech.Transcription.TranscribedPhrase",
+        "azure.ai.speech.transcription.models.TranscribedWord": "Azure.Ai.Speech.Transcription.TranscribedWord",
+        "azure.ai.speech.transcription.models.TranscribeRequestContent": "Azure.Ai.Speech.Transcription.TranscribeRequestContent",
+        "azure.ai.speech.transcription.models.TranscriptionDiarizationOptions": "Azure.Ai.Speech.Transcription.TranscriptionDiarizationOptions",
+        "azure.ai.speech.transcription.models.TranscriptionOptions": "Azure.Ai.Speech.Transcription.TranscriptionOptions",
+        "azure.ai.speech.transcription.models.TranscriptionResult": "Azure.Ai.Speech.Transcription.TranscriptionResult",
+        "azure.ai.speech.transcription.models.ProfanityFilterMode": "Azure.Ai.Speech.Transcription.ProfanityFilterMode",
+        "azure.ai.speech.transcription.TranscriptionClient.transcribe": "Azure.Ai.Speech.Transcription.transcribe",
+        "azure.ai.speech.transcription.aio.TranscriptionClient.transcribe": "Azure.Ai.Speech.Transcription.transcribe"
+    }
+}
