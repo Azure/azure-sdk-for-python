@@ -135,10 +135,11 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
         await cleanup_method([custom_setup, setup])
 
     async def test_stat_reset_async(self):
+        status_code = 500
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             CosmosHttpResponseError(
-                status_code=503,
+                status_code=status_code,
                 message="Some injected error.")
         ))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = \
@@ -167,7 +168,7 @@ class TestPerPartitionCircuitBreakerSmMrrAsync:
                                                   PK_VALUE,
                                                   expected_uri)
                 except CosmosHttpResponseError as e:
-                    assert e.status_code == 503
+                    assert e.status_code == status_code
             validate_unhealthy_partitions(global_endpoint_manager, 0)
             validate_stats(global_endpoint_manager, 0,  2, 2, 0, 0, 0)
             await asyncio.sleep(25)
