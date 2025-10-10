@@ -1252,13 +1252,13 @@ class ClusterMonitoringPolicy(_Model):
     :ivar health_check_retry_timeout: The amount of time to retry health evaluation when the
      application or cluster is unhealthy before the upgrade rolls back. The timeout can be in either
      hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype health_check_retry_timeout: str
+    :vartype health_check_retry_timeout: ~datetime.timedelta
     :ivar upgrade_timeout: The amount of time the overall upgrade has to complete before the
      upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype upgrade_timeout: str
+    :vartype upgrade_timeout: ~datetime.timedelta
     :ivar upgrade_domain_timeout: The amount of time each upgrade domain has to complete before the
      upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
-    :vartype upgrade_domain_timeout: str
+    :vartype upgrade_domain_timeout: ~datetime.timedelta
     """
 
     health_check_wait_duration: datetime.timedelta = rest_field(
@@ -1272,16 +1272,18 @@ class ClusterMonitoringPolicy(_Model):
     """The amount of time that the application or cluster must remain healthy before the upgrade
      proceeds to the next upgrade domain. The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms
      format. Required."""
-    health_check_retry_timeout: str = rest_field(
+    health_check_retry_timeout: datetime.timedelta = rest_field(
         name="healthCheckRetryTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time to retry health evaluation when the application or cluster is unhealthy
      before the upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms
      format. Required."""
-    upgrade_timeout: str = rest_field(name="upgradeTimeout", visibility=["read", "create", "update", "delete", "query"])
+    upgrade_timeout: datetime.timedelta = rest_field(
+        name="upgradeTimeout", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The amount of time the overall upgrade has to complete before the upgrade rolls back. The
      timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required."""
-    upgrade_domain_timeout: str = rest_field(
+    upgrade_domain_timeout: datetime.timedelta = rest_field(
         name="upgradeDomainTimeout", visibility=["read", "create", "update", "delete", "query"]
     )
     """The amount of time each upgrade domain has to complete before the upgrade rolls back. The
@@ -1293,9 +1295,9 @@ class ClusterMonitoringPolicy(_Model):
         *,
         health_check_wait_duration: datetime.timedelta,
         health_check_stable_duration: datetime.timedelta,
-        health_check_retry_timeout: str,
-        upgrade_timeout: str,
-        upgrade_domain_timeout: str,
+        health_check_retry_timeout: datetime.timedelta,
+        upgrade_timeout: datetime.timedelta,
+        upgrade_domain_timeout: datetime.timedelta,
     ) -> None: ...
 
     @overload
@@ -2378,6 +2380,7 @@ class ManagedCluster(TrackedResource):
         "auto_generated_domain_name_label_scope",
         "allocated_outbound_ports",
         "vm_image",
+        "enable_outbound_only_node_types",
     ]
 
     @overload
@@ -2625,6 +2628,10 @@ class ManagedClusterProperties(_Model):
      Service Fabric component packages to be used for the cluster. Allowed values are: 'Windows'.
      The default value is 'Windows'.
     :vartype vm_image: str
+    :ivar enable_outbound_only_node_types: Enable the creation of node types with only outbound
+     traffic enabled. If set, a separate load balancer backend pool will be created for node types
+     with inbound traffic enabled. Can only be set at the time of cluster creation.
+    :vartype enable_outbound_only_node_types: bool
     """
 
     dns_name: str = rest_field(name="dnsName", visibility=["read", "create", "update", "delete", "query"])
@@ -2809,6 +2816,12 @@ class ManagedClusterProperties(_Model):
     """The VM image the node types are configured with. This property controls the Service Fabric
      component packages to be used for the cluster. Allowed values are: 'Windows'. The default value
      is 'Windows'."""
+    enable_outbound_only_node_types: Optional[bool] = rest_field(
+        name="enableOutboundOnlyNodeTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable the creation of node types with only outbound traffic enabled. If set, a separate load
+     balancer backend pool will be created for node types with inbound traffic enabled. Can only be
+     set at the time of cluster creation."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -2851,6 +2864,7 @@ class ManagedClusterProperties(_Model):
         ] = None,
         allocated_outbound_ports: Optional[int] = None,
         vm_image: Optional[str] = None,
+        enable_outbound_only_node_types: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -3343,6 +3357,7 @@ class NodeType(ProxyResource):
         "computer_name_prefix",
         "vm_applications",
         "zone_balance",
+        "is_outbound_only",
     ]
 
     @overload
@@ -3733,6 +3748,9 @@ class NodeTypeProperties(_Model):
     :ivar zone_balance: Setting this to true allows stateless node types to scale out without equal
      distribution across zones.
     :vartype zone_balance: bool
+    :ivar is_outbound_only: Specifies the node type should be configured for only outbound traffic
+     and not inbound traffic.
+    :vartype is_outbound_only: bool
     """
 
     is_primary: bool = rest_field(name="isPrimary", visibility=["read", "create", "update", "delete", "query"])
@@ -3987,6 +4005,10 @@ class NodeTypeProperties(_Model):
     )
     """Setting this to true allows stateless node types to scale out without equal distribution across
      zones."""
+    is_outbound_only: Optional[bool] = rest_field(
+        name="isOutboundOnly", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the node type should be configured for only outbound traffic and not inbound traffic."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -4045,6 +4067,7 @@ class NodeTypeProperties(_Model):
         computer_name_prefix: Optional[str] = None,
         vm_applications: Optional[List["_models.VmApplication"]] = None,
         zone_balance: Optional[bool] = None,
+        is_outbound_only: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4512,12 +4535,19 @@ class ServiceEndpoint(_Model):
     :vartype service: str
     :ivar locations: A list of locations.
     :vartype locations: list[str]
+    :ivar network_identifier: Specifies the resource id of the service endpoint to be used in the
+     cluster.
+    :vartype network_identifier: str
     """
 
     service: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the endpoint service. Required."""
     locations: Optional[List[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of locations."""
+    network_identifier: Optional[str] = rest_field(
+        name="networkIdentifier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the resource id of the service endpoint to be used in the cluster."""
 
     @overload
     def __init__(
@@ -4525,6 +4555,7 @@ class ServiceEndpoint(_Model):
         *,
         service: str,
         locations: Optional[List[str]] = None,
+        network_identifier: Optional[str] = None,
     ) -> None: ...
 
     @overload

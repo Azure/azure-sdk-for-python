@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2023-07-03/examples/galleryExamples/GalleryImage_Create.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/GalleryRP/stable/2024-03-03/examples/galleryExamples/GalleryImage_Create.json
 if __name__ == "__main__":
     main()

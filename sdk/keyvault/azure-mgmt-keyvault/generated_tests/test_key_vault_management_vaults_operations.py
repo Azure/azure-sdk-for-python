@@ -76,7 +76,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
         response = self.client.vaults.delete(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -147,7 +147,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
         response = self.client.vaults.get(
             resource_group_name=resource_group.name,
             vault_name="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -181,7 +181,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -192,7 +192,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
     def test_vaults_list_by_resource_group(self, resource_group):
         response = self.client.vaults.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -202,7 +202,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_vaults_list_by_subscription(self, resource_group):
         response = self.client.vaults.list_by_subscription(
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -212,7 +212,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_vaults_list_deleted(self, resource_group):
         response = self.client.vaults.list_deleted(
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -224,7 +224,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
         response = self.client.vaults.get_deleted(
             vault_name="str",
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -236,7 +236,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
         response = self.client.vaults.begin_purge_deleted(
             vault_name="str",
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -258,7 +258,7 @@ class TestKeyVaultManagementVaultsOperations(AzureMgmtRecordedTestCase):
     def test_vaults_check_name_availability(self, resource_group):
         response = self.client.vaults.check_name_availability(
             vault_name={"name": "str", "type": "Microsoft.KeyVault/vaults"},
-            api_version="2024-11-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

@@ -21,7 +21,7 @@
 
 """Represents a request object.
 """
-from typing import Optional, Mapping, Any, Dict, List
+from typing import Optional, Mapping, Any
 from .documents import _OperationType
 from .http_constants import ResourceType
 from ._constants import _Constants as Constants
@@ -31,7 +31,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             self,
             resource_type: str,
             operation_type: str,
-            headers: Dict[str, Any],
+            headers: dict[str, Any],
             pk_val: Optional[Any] = None,
             endpoint_override: Optional[str] = None,
     ) -> None:
@@ -43,9 +43,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.use_preferred_locations: Optional[bool] = None
         self.location_index_to_route: Optional[int] = None
         self.location_endpoint_to_route: Optional[str] = None
-        self.last_routed_location_endpoint_within_region: Optional[str] = None
-        self.excluded_locations: Optional[List[str]] = None
-        self.excluded_locations_circuit_breaker: List[str] = []
+        self.excluded_locations: Optional[list[str]] = None
+        self.excluded_locations_circuit_breaker: list[str] = []
         self.healthy_tentative_location: Optional[str] = None
         self.pk_val = pk_val
         self.retry_write: bool = False
@@ -95,5 +94,5 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
                 # If it is not a patch operation and the client config is set, set the retry write to True
                 self.retry_write = client_retry_write
 
-    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: List[str]) -> None: # pylint: disable=name-too-long
+    def set_excluded_locations_from_circuit_breaker(self, excluded_locations: list[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations

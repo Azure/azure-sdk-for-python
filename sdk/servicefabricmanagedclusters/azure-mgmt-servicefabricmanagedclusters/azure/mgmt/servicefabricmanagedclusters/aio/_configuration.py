@@ -31,7 +31,7 @@ class ServiceFabricManagedClustersManagementClientConfiguration:  # pylint: disa
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-03-01-preview". Note that overriding this default value may result in unsupported
+     "2025-06-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -43,7 +43,7 @@ class ServiceFabricManagedClustersManagementClientConfiguration:  # pylint: disa
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-03-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-06-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

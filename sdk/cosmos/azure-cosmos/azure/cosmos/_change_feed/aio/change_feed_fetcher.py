@@ -25,7 +25,7 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Callable, Tuple, Awaitable, cast
+from typing import Any, Callable, Tuple, Awaitable, cast
 
 from azure.cosmos import http_constants, exceptions
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromType
@@ -38,7 +38,7 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 class ChangeFeedFetcher(ABC):
 
     @abstractmethod
-    async def fetch_next_block(self) -> List[Dict[str, Any]]:
+    async def fetch_next_block(self) -> list[dict[str, Any]]:
         pass
 
 class ChangeFeedFetcherV1(ChangeFeedFetcher):
@@ -51,8 +51,8 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
             self,
             client,
             resource_link: str,
-            feed_options: Dict[str, Any],
-            fetch_function: Callable[[Dict[str, Any]], Awaitable[Tuple[List[Dict[str, Any]], Dict[str, Any]]]]
+            feed_options: dict[str, Any],
+            fetch_function: Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]]
     ) -> None:
 
         self._client = client
@@ -66,7 +66,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
         self._resource_link = resource_link
         self._fetch_function = fetch_function
 
-    async def fetch_next_block(self) -> List[Dict[str, Any]]:
+    async def fetch_next_block(self) -> list[dict[str, Any]]:
         """Returns a block of results.
 
         :return: List of results.
@@ -77,7 +77,7 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
 
         return await _retry_utility_async.ExecuteAsync(self._client, self._client._global_endpoint_manager, callback)
 
-    async def fetch_change_feed_items(self) -> List[Dict[str, Any]]:
+    async def fetch_change_feed_items(self) -> list[dict[str, Any]]:
         self._feed_options["changeFeedState"] = self._change_feed_state
 
         self._change_feed_state.populate_feed_options(self._feed_options)
@@ -112,8 +112,8 @@ class ChangeFeedFetcherV2(object):
             self,
             client,
             resource_link: str,
-            feed_options: Dict[str, Any],
-            fetch_function: Callable[[Dict[str, Any]], Awaitable[Tuple[List[Dict[str, Any]], Dict[str, Any]]]]
+            feed_options: dict[str, Any],
+            fetch_function: Callable[[dict[str, Any]], Awaitable[Tuple[list[dict[str, Any]], dict[str, Any]]]]
     ) -> None:
 
         self._client = client
@@ -127,7 +127,7 @@ class ChangeFeedFetcherV2(object):
         self._resource_link = resource_link
         self._fetch_function = fetch_function
 
-    async def fetch_next_block(self) -> List[Dict[str, Any]]:
+    async def fetch_next_block(self) -> list[dict[str, Any]]:
         """Returns a block of results.
 
         :return: List of results.
@@ -155,7 +155,7 @@ class ChangeFeedFetcherV2(object):
 
         return await self.fetch_next_block()
 
-    async def fetch_change_feed_items(self) -> List[Dict[str, Any]]:
+    async def fetch_change_feed_items(self) -> list[dict[str, Any]]:
         self._feed_options["changeFeedState"] = self._change_feed_state
 
         self._change_feed_state.populate_feed_options(self._feed_options)

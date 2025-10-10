@@ -67,13 +67,14 @@ from azure.ai.voicelive.models import (
     AudioEchoCancellation,
     AzureStandardVoice,
     Modality,
-    AudioFormat,
+    InputAudioFormat,
+    OutputAudioFormat,
     FunctionTool,
     FunctionCallItem,
     FunctionCallOutputItem,
     ItemType,
     ToolChoiceLiteral,
-    AudioInputTranscriptionSettings,
+    AudioInputTranscriptionOptions,
     ResponseFunctionCallItem,
     ServerEventConversationItemCreated,
     ServerEventResponseFunctionCallArgumentsDone,
@@ -465,13 +466,13 @@ class AsyncFunctionCallingClient:
             modalities=[Modality.TEXT, Modality.AUDIO],
             instructions=self.instructions,
             voice=voice_config,
-            input_audio_format=AudioFormat.PCM16,
-            output_audio_format=AudioFormat.PCM16,
+            input_audio_format=InputAudioFormat.PCM16,
+            output_audio_format=OutputAudioFormat.PCM16,
             input_audio_echo_cancellation=AudioEchoCancellation(),
             turn_detection=turn_detection_config,
             tools=function_tools,
             tool_choice=ToolChoiceLiteral.AUTO,  # Let the model decide when to call functions
-            input_audio_transcription=AudioInputTranscriptionSettings(model="whisper-1"),
+            input_audio_transcription=AudioInputTranscriptionOptions(model="whisper-1"),
         )
 
         # Send session configuration asynchronously
