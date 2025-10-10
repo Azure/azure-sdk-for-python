@@ -523,7 +523,7 @@ def _convert_results_to_aoai_evaluation_results(
     eval_run_id: Optional[str] = eval_meta_data.get("eval_run_id")
     testing_criteria_list: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
 
-    testing_criteria_name_types = {}
+    testing_criteria_name_types: Optional[Dict[str, str]] = {}
     if testing_criteria_list is not None:
         for criteria in testing_criteria_list:
             criteria_name = criteria.get("name")
@@ -591,30 +591,33 @@ def _convert_results_to_aoai_evaluation_results(
                 "metric": criteria_name  # Use criteria name as metric
             }
             # Add optional fields if they exist
-            if score is not None:
-                result_obj["score"] = score
-            if label is not None:
-                result_obj["label"] = label
-            if reason is not None:
-                result_obj["reason"] = reason
-            if threshold is not None:
-                result_obj["threshold"] = threshold
-            if passed is not None:
-                result_obj["passed"] = passed
+            #if score is not None:
+            result_obj["score"] = score
+            #if label is not None:
+            result_obj["label"] = label
+            #if reason is not None:
+            result_obj["reason"] = reason
+            #if threshold is not None:
+            result_obj["threshold"] = threshold
+            #if passed is not None:
+            result_obj["passed"] = passed
             
             if sample is not None:
                 result_obj["sample"] = sample
                 top_sample.append(sample)  # Save top sample for the row
-            elif criteria_name in eval_run_summary and "error_code" in eval_run_summary[criteria_name]:
+            elif (eval_run_summary and criteria_name in eval_run_summary 
+                  and isinstance(eval_run_summary[criteria_name], dict) 
+                  and "error_code" in eval_run_summary[criteria_name]):
                 error_info = {
                     "code": eval_run_summary[criteria_name].get("error_code", None),
                     "message": eval_run_summary[criteria_name].get("error_message", None),
-                }
+                } if eval_run_summary[criteria_name].get("error_code", None) is not None else None
                 sample = {
                     "error": error_info
-                }
+                } if error_info is not None else None
                 result_obj["sample"] = sample
-                top_sample.append(sample)
+                if sample is not None:
+                    top_sample.append(sample)
 
             run_output_results.append(result_obj)
 
@@ -666,9 +669,9 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
     result_counts_stats = {}  # Dictionary to aggregate usage by model
 
     for aoai_result in aoai_results:
-        logger.info(f"\r\nProcessing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
+        logger.info(f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
         if isinstance(aoai_result, dict) and 'results' in aoai_result:
-            logger.info(f"\r\n2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}")
+            logger.info(f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}")
             result_counts["total"] += len(aoai_result['results'])
             for result_item in aoai_result['results']:
                 if isinstance(result_item, dict):
@@ -697,39 +700,22 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             result_counts["errored"] += 1
 
         # Extract usage statistics from aoai_result.sample
-        sample_data = None
+        sample_data_list = None
         if isinstance(aoai_result, dict) and 'sample' in aoai_result:
-            logger.info(f"\r\n 2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, summary count: {len(aoai_result['sample'])}")
-            sample_data = aoai_result['sample']
-        if sample_data and hasattr(sample_data, 'usage') and sample_data.usage:
-            usage_data = sample_data.usage
-            model_name = sample_data.model if hasattr(sample_data, 'model') and sample_data.model else 'unknown'
-            if model_name not in model_usage_stats:
-                model_usage_stats[model_name] = {
-                    'invocation_count': 0,
-                    'total_tokens': 0,
-                    'prompt_tokens': 0,
-                    'completion_tokens': 0,
-                    'cached_tokens': 0
-                }
-            # Aggregate usage statistics
-            model_stats = model_usage_stats[model_name]
-            model_stats['invocation_count'] += 1
-            model_stats['total_tokens'] += usage_data.total_tokens if hasattr(usage_data, 'total_tokens') and usage_data.total_tokens else 0
-            model_stats['prompt_tokens'] += usage_data.prompt_tokens if hasattr(usage_data, 'prompt_tokens') and usage_data.prompt_tokens else 0
-            model_stats['completion_tokens'] += usage_data.completion_tokens if hasattr(usage_data, 'completion_tokens') and usage_data.completion_tokens else 0
-            model_stats['cached_tokens'] += usage_data.cached_tokens if hasattr(usage_data, 'cached_tokens') and usage_data.cached_tokens else 0
-        elif sample_data and isinstance(sample_data, dict) and 'usage' in sample_data:
-            usage_data = sample_data['usage']
-            model_name = sample_data.get('model', 'unknown')
-            if model_name not in model_usage_stats:
-                model_usage_stats[model_name] = {
-                    'invocation_count': 0,
-                    'total_tokens': 0,
-                    'prompt_tokens': 0,
-                    'completion_tokens': 0,
-                    'cached_tokens': 0
-                }
+            sample_data_list = aoai_result['sample']
+
+        for sample_data in sample_data_list:
+            if sample_data and isinstance(sample_data, dict) and 'usage' in sample_data:
+                usage_data = sample_data['usage']
+                model_name = sample_data.get('model', 'unknown')
+                if model_name not in model_usage_stats:
+                    model_usage_stats[model_name] = {
+                        'invocation_count': 0,
+                        'total_tokens': 0,
+                        'prompt_tokens': 0,
+                        'completion_tokens': 0,
+                        'cached_tokens': 0
+                    }
             # Aggregate usage statistics
             model_stats = model_usage_stats[model_name]
             model_stats['invocation_count'] += 1
