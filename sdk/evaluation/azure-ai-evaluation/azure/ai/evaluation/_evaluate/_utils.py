@@ -675,9 +675,9 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
     result_counts_stats = {}  # Dictionary to aggregate usage by model
 
     for aoai_result in aoai_results:
-        logger.info(f"\r\nProcessing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
+        logger.info(f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, row keys: {aoai_result.keys() if hasattr(aoai_result, 'keys') else 'N/A'}")
         if isinstance(aoai_result, dict) and 'results' in aoai_result:
-            logger.info(f"\r\n2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}")
+            logger.info(f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}")
             result_counts["total"] += len(aoai_result['results'])
             for result_item in aoai_result['results']:
                 if isinstance(result_item, dict):
@@ -706,40 +706,22 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             result_counts["errored"] += 1
 
         # Extract usage statistics from aoai_result.sample
-        sample_data = None
+        sample_data_list = None
         if isinstance(aoai_result, dict) and 'sample' in aoai_result:
-            logger.info(f"\r\n 2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, summary count: {len(aoai_result['sample'])}")
-            sample_data = aoai_result['sample']
+            sample_data_list = aoai_result['sample']
 
-        if sample_data and hasattr(sample_data, 'usage') and sample_data.usage:
-            usage_data = sample_data.usage
-            model_name = sample_data.model if hasattr(sample_data, 'model') and sample_data.model else 'unknown'
-            if model_name not in model_usage_stats:
-                model_usage_stats[model_name] = {
-                    'invocation_count': 0,
-                    'total_tokens': 0,
-                    'prompt_tokens': 0,
-                    'completion_tokens': 0,
-                    'cached_tokens': 0
-                }
-            # Aggregate usage statistics
-            model_stats = model_usage_stats[model_name]
-            model_stats['invocation_count'] += 1
-            model_stats['total_tokens'] += usage_data.total_tokens if hasattr(usage_data, 'total_tokens') and usage_data.total_tokens else 0
-            model_stats['prompt_tokens'] += usage_data.prompt_tokens if hasattr(usage_data, 'prompt_tokens') and usage_data.prompt_tokens else 0
-            model_stats['completion_tokens'] += usage_data.completion_tokens if hasattr(usage_data, 'completion_tokens') and usage_data.completion_tokens else 0
-            model_stats['cached_tokens'] += usage_data.cached_tokens if hasattr(usage_data, 'cached_tokens') and usage_data.cached_tokens else 0
-        elif sample_data and isinstance(sample_data, dict) and 'usage' in sample_data:
-            usage_data = sample_data['usage']
-            model_name = sample_data.get('model', 'unknown')
-            if model_name not in model_usage_stats:
-                model_usage_stats[model_name] = {
-                    'invocation_count': 0,
-                    'total_tokens': 0,
-                    'prompt_tokens': 0,
-                    'completion_tokens': 0,
-                    'cached_tokens': 0
-                }
+        for sample_data in sample_data_list:
+            if sample_data and isinstance(sample_data, dict) and 'usage' in sample_data:
+                usage_data = sample_data['usage']
+                model_name = sample_data.get('model', 'unknown')
+                if model_name not in model_usage_stats:
+                    model_usage_stats[model_name] = {
+                        'invocation_count': 0,
+                        'total_tokens': 0,
+                        'prompt_tokens': 0,
+                        'completion_tokens': 0,
+                        'cached_tokens': 0
+                    }
             # Aggregate usage statistics
             model_stats = model_usage_stats[model_name]
             model_stats['invocation_count'] += 1
