@@ -4832,7 +4832,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         Every feature in a dataset belongs to a collection. A dataset may
         consist of multiple feature collections. A feature collection is often a
-        collection of features of a similar type, based on a common schema.").
+        collection of features of a similar type, based on a common schema.
 
         :param collection_id: Catalog collection id. Required.
         :type collection_id: str
