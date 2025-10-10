@@ -248,7 +248,7 @@ class ContainerProxy:
             client-level options.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
         :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
@@ -1131,7 +1131,7 @@ class ContainerProxy:
             client-level options.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1263,7 +1263,7 @@ class ContainerProxy:
             client-level options.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1356,7 +1356,7 @@ class ContainerProxy:
             client-level options.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1444,7 +1444,7 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client

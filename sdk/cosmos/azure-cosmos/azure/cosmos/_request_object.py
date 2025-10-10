@@ -93,6 +93,8 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
             elif client_retry_write and self.operation_type != _OperationType.Patch:
                 # If it is not a patch operation and the client config is set, set the retry write to True
                 self.retry_write = client_retry_write
+            else:
+                self.retry_write = 0
 
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: list[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations

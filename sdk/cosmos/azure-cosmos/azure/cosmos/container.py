@@ -1140,7 +1140,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             kwargs or when also not specified there from client-level kwargs.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1236,7 +1236,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             when also not specified there from client-level kwargs.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1331,7 +1331,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             when also not specified there from client-level kwargs.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1439,7 +1439,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             when also not specified there from client-level kwargs.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1603,7 +1603,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
