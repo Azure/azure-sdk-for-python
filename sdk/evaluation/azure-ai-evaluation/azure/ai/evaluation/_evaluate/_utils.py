@@ -488,7 +488,10 @@ class DataLoaderFactory:
 
 
 def _convert_results_to_aoai_evaluation_results(
-        results: EvaluationResult, logger: logging.Logger, eval_meta_data: Optional[Dict[str, Any]] = None
+        results: EvaluationResult, 
+        logger: logging.Logger, 
+        eval_meta_data: Optional[Dict[str, Any]] = None,
+        eval_run_summary: Optional[Dict[str, Any]] = None
 ) -> EvaluationResult:
     """
     Convert evaluation results to AOAI evaluation results format.
@@ -530,9 +533,9 @@ def _convert_results_to_aoai_evaluation_results(
 
     for row_idx, row in enumerate(results.get("rows", [])):
         # Group outputs by test criteria name
-        criteria_groups = {}
+        criteria_groups = {criteria: {} for criteria in testing_criteria_name_types.keys()}
         input_groups = {}
-        top_sample = {}
+        top_sample = []
         for key, value in row.items():
             if key.startswith("outputs."):
                 # Parse key: outputs.<test-criteria-name>.<metric>
@@ -601,9 +604,20 @@ def _convert_results_to_aoai_evaluation_results(
                 result_obj["threshold"] = threshold
             if passed is not None:
                 result_obj["passed"] = passed
+            
             if sample is not None:
                 result_obj["sample"] = sample
-                top_sample = sample  # Save top sample for the row
+                top_sample.append(sample)  # Save top sample for the row
+            elif criteria_name in eval_run_summary and "error_code" in eval_run_summary[criteria_name]:
+                error_info = {
+                    "code": eval_run_summary[criteria_name].get("error_code", None),
+                    "message": eval_run_summary[criteria_name].get("error_message", None),
+                }
+                sample = {
+                    "error": error_info
+                }
+                result_obj["sample"] = sample
+                top_sample.append(sample)
 
             run_output_results.append(result_obj)
 
@@ -615,13 +629,10 @@ def _convert_results_to_aoai_evaluation_results(
             "eval_id": eval_id,
             "created_at": created_time,
             "datasource_item_id": row_idx,
-            "datasource_item": {},
+            "datasource_item": input_groups,
             "results": run_output_results,
             "status": "completed" if len(run_output_results) > 0 else "error"
         }
-
-        if top_sample is None or "inputs" not in top_sample:
-            top_sample["inputs"] = input_groups
 
         run_output_item["sample"] = top_sample
 
