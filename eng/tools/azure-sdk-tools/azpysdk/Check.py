@@ -5,6 +5,7 @@ import traceback
 import sys
 import shutil
 import tempfile
+import pathlib
 
 from typing import Sequence, Optional, List, Any, Tuple
 import subprocess
@@ -84,11 +85,27 @@ class Check(abc.ABC):
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
 
-    def run_venv_command(self, executable: str, command: Sequence[str], cwd: str, check = False) -> subprocess.CompletedProcess[str]:
-        """Run a command in the given virtual environment. Prepends path with the virtual environment's Python executable. Collects the output. If check is True, raise CalledProcessError on failure."""
+    def run_venv_command(self, executable: str, command: Sequence[str], cwd: str, check: bool = False) -> subprocess.CompletedProcess[str]:
+        """Run a command in the given virtual environment.
+          - Prepends path with the virtual environment's python executable (if one exists)
+          - Collects the output.
+          - If check is True, raise CalledProcessError on failure."""
 
         if (command[0].endswith("python") or command[0].endswith("python.exe")):
-            raise ValueError("The command should not include the python executable, it is provided by the 'executable' argument")
+            raise ValueError("The command array should not include the python executable, it is provided by the 'executable' argument")
+
+        env = os.environ.copy()
+
+        python_exec = pathlib.Path(executable)
+        if python_exec.exists():
+            venv_bin = str(python_exec.parent)
+            venv_root = str(python_exec.parent.parent)
+            env["VIRTUAL_ENV"] = venv_root
+            env["PATH"] = venv_bin + os.pathsep + env.get("PATH", "")
+            env.pop("PYTHONPATH", None)
+            env.pop("PYTHONHOME", None)
+        else:
+            raise RuntimeError(f"Unable to find parent venv for executable {executable}")
 
         # it will be on the users to handle their check logic
         result = subprocess.run(
@@ -155,7 +172,7 @@ class Check(abc.ABC):
         try:
             logger.info(f"Installing dev requirements for {package_dir}")
             install_into_venv(executable, requirements, package_dir)
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             logger.error("Failed to install dev requirements:", e)
             raise e
         finally:
