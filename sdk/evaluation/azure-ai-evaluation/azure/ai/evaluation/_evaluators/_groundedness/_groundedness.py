@@ -202,7 +202,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
 
         if kwargs.get("query", None):
-            self._ensure_query_prompty_loaded()
+            self._ensure_query_prompty_loaded() 
 
         return super().__call__(*args, **kwargs)
 
