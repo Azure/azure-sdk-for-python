@@ -30,6 +30,8 @@ extends:
     ServiceDirectory: confidentialledger
     TestProxy: true
     Artifacts:
+    - name: azure-confidentialledger
+      safeName: azureconfidentialledger
     - name: azure-confidentialledger-certificate
       safeName: azureconfidentialledgercertificate
     - name: azure-mgmt-confidentialledger
