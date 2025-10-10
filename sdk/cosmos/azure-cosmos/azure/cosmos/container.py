@@ -706,7 +706,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :param bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
