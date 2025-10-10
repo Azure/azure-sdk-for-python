@@ -5,9 +5,11 @@
 # --------------------------------------------------------------------------
 from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable, cast
 from typing_extensions import Self
-from .._generated._utils import serialization as _serialization
+import json
+from azure.core.exceptions import DeserializationError
+from ..._generated._utils.model_base import Model
 from ._edm import Collection, ComplexType, String
-from .._generated.models import (
+from ..._generated.indexes.models import (
     SearchField as _SearchField,
     SearchIndex as _SearchIndex,
     PatternTokenizer as _PatternTokenizer,
@@ -39,7 +41,7 @@ from ._models import (
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
 
-class SearchField(_serialization.Model):
+class SearchField(Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a field in an index definition, which describes the name, data type, and search behavior of a field.
 
@@ -266,7 +268,7 @@ class SearchField(_serialization.Model):
 
     @classmethod
     def _from_generated(cls, search_field) -> Optional[Self]:
-        if not search_field:
+        if search_field is None:
             return None
         # pylint:disable=protected-access
         fields = (
@@ -301,66 +303,54 @@ class SearchField(_serialization.Model):
             vector_encoding_format=search_field.vector_encoding_format,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(self, **kwargs: Any) -> str:
+        # pylint: disable=unused-argument
         """Return the JSON that would be sent to server from this model.
 
-        :param bool keep_readonly: If you want to serialize the readonly attributes
-        :returns: A dict JSON compatible object
-        :rtype: dict
+        :returns: A dict JSON compatible string
+        :rtype: str
         """
-        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+        return json.dumps(self._to_generated().as_dict())  # type: ignore
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
+    def deserialize(cls, data: Any, **kwargs) -> Optional[Self]:  # type: ignore
+        # pylint: disable=unused-argument
         """Parse a str using the RestAPI syntax and return a SearchField instance.
-
-        :param str data: A str using RestAPI structure. JSON by default.
-        :param str content_type: JSON by default, set application/xml if XML.
+        
+        :param str data: A JSON str using RestAPI structure.
         :returns: A SearchField instance
         :raises DeserializationError: if something went wrong
         """
-        return cls._from_generated(_SearchField.deserialize(data, content_type=content_type))
+        try:
+            obj_dict = json.loads(data)
+            obj = _SearchField(obj_dict)
+            return cls._from_generated(obj)
+        except json.JSONDecodeError as err:
+            raise DeserializationError("Failed to deserialize data.") from err
 
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
-        **kwargs: Any
-    ) -> MutableMapping[str, Any]:
+    def as_dict(self, **kwargs: Any) -> Dict[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
-        :param bool keep_readonly: If you want to serialize the readonly attributes
-        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(  # type: ignore
-            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )
+        return self._to_generated().as_dict(**kwargs)  # type: ignore
+
 
     @classmethod
-    def from_dict(  # type: ignore
-        cls,
-        data: Any,
-        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        content_type: Optional[str] = None,
-    ) -> Optional[Self]:
-        """Parse a dict using given key extractor return a model.
-
-        By default consider key
-        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
-        and last_rest_key_case_insensitive_extractor)
+    def from_dict(cls, data: Any, **kwargs: Any) -> Optional[Self]:  # type: ignore
+        """Parse a dict return a model.
 
         :param dict data: A dict using RestAPI structure
-        :param Callable key_extractors: A callable that will extract a key from a dict
-        :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchField instance
         :rtype: SearchField
         :raises DeserializationError: if something went wrong
         """
-        return cls._from_generated(
-            _SearchField.from_dict(data, content_type=content_type, key_extractors=key_extractors)
-        )
+        try:
+            obj = _SearchField(data)
+            return cls._from_generated(obj)
+        except json.JSONDecodeError as err:
+            raise DeserializationError("Failed to deserialize data.") from err
 
 
 def SimpleField(
@@ -613,7 +603,7 @@ def ComplexField(
     return SearchField(**result)
 
 
-class SearchIndex(_serialization.Model):
+class SearchIndex(Model):
     # pylint: disable=too-many-instance-attributes
     """Represents a search index definition, which describes the fields and search behavior of an index.
 
@@ -694,7 +684,7 @@ class SearchIndex(_serialization.Model):
         e_tag: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(**kwargs)
+        super().__init__()
         self.name = name
         self.fields = fields
         self.description = description
@@ -754,7 +744,7 @@ class SearchIndex(_serialization.Model):
 
     @classmethod
     def _from_generated(cls, search_index) -> Optional[Self]:
-        if not search_index:
+        if search_index is None:
             return None
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
@@ -802,67 +792,58 @@ class SearchIndex(_serialization.Model):
             permission_filter_option=search_index.permission_filter_option,
         )
 
-    def serialize(self, keep_readonly: bool = False, **kwargs: Any) -> MutableMapping[str, Any]:
+    def serialize(self, **kwargs: Any) -> str:
+        # pylint: disable=unused-argument
         """Return the JSON that would be sent to server from this model.
 
         :param bool keep_readonly: If you want to serialize the readonly attributes
-        :returns: A dict JSON compatible object
-        :rtype: dict
+        :returns: A dict JSON compatible string
+        :rtype: str
         """
-        return self._to_generated().serialize(keep_readonly=keep_readonly, **kwargs)
+        return json.dumps(self._to_generated().as_dict())
 
     @classmethod
-    def deserialize(cls, data: Any, content_type: Optional[str] = None) -> Optional[Self]:  # type: ignore
+    def deserialize(cls, data: Any, **kwargs) -> Optional[Self]:  # type: ignore
+        # pylint: disable=unused-argument
         """Parse a str using the RestAPI syntax and return a SearchIndex instance.
 
-        :param str data: A str using RestAPI structure. JSON by default.
-        :param str content_type: JSON by default, set application/xml if XML.
+        :param str data: A JSON str using RestAPI structure.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
         :raises DeserializationError: if something went wrong
         """
-        return cls._from_generated(_SearchIndex.deserialize(data, content_type=content_type))
+        try:
+            obj_dict = json.loads(data)
+            obj = _SearchIndex(obj_dict)
+            return cls._from_generated(obj)
+        except json.JSONDecodeError as err:
+            raise DeserializationError("Failed to deserialize data.") from err
 
-    def as_dict(
-        self,
-        keep_readonly: bool = True,
-        key_transformer: Callable[[str, Dict[str, Any], Any], Any] = _serialization.attribute_transformer,
-        **kwargs: Any
-    ) -> MutableMapping[str, Any]:
+    def as_dict(self, **kwargs: Any) -> Dict[str, Any]:
         """Return a dict that can be serialized using json.dump.
 
-        :param bool keep_readonly: If you want to serialize the readonly attributes
-        :param Callable key_transformer: A callable that will transform the key of the dict
         :returns: A dict JSON compatible object
         :rtype: dict
         """
-        return self._to_generated().as_dict(  # type: ignore
-            keep_readonly=keep_readonly, key_transformer=key_transformer, **kwargs
-        )
+        return self._to_generated().as_dict(**kwargs)  # type: ignore
 
     @classmethod
     def from_dict(  # type: ignore
         cls,
         data: Any,
-        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        content_type: Optional[str] = None,
     ) -> Optional[Self]:
-        """Parse a dict using given key extractor return a model.
-
-        By default consider key
-        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
-        and last_rest_key_case_insensitive_extractor)
+        """Parse a dict return a model.
 
         :param dict data: A dict using RestAPI structure
-        :param Callable key_extractors: A callable that will extract a key from a dict
-        :param str content_type: JSON by default, set application/xml if XML.
         :returns: A SearchIndex instance
         :rtype: SearchIndex
         :raises DeserializationError: if something went wrong
         """
-        return cls._from_generated(
-            _SearchIndex.from_dict(data, content_type=content_type, key_extractors=key_extractors)
-        )
+        try:
+            obj = _SearchIndex(data)
+            return cls._from_generated(obj)
+        except json.JSONDecodeError as err:
+            raise DeserializationError("Failed to deserialize data.") from err
 
 
 def pack_search_field(search_field: SearchField) -> _SearchField:

@@ -81,6 +81,7 @@ class SearchClient(HeadersMixin):
             self._aad = False
             self._client = SearchIndexClient(
                 endpoint=endpoint,
+                credential=credential,
                 index_name=index_name,
                 sdk_moniker=SDK_MONIKER,
                 api_version=self._api_version,
@@ -91,6 +92,7 @@ class SearchClient(HeadersMixin):
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = SearchIndexClient(
                 endpoint=endpoint,
+                credential=credential,
                 index_name=index_name,
                 authentication_policy=authentication_policy,
                 sdk_moniker=SDK_MONIKER,

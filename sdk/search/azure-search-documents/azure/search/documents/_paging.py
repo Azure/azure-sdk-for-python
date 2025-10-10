@@ -15,7 +15,7 @@ from ._api_versions import DEFAULT_VERSION
 
 
 def convert_search_result(result):
-    ret = result.additional_properties
+    ret = result
     ret["@search.score"] = result.score
     ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights

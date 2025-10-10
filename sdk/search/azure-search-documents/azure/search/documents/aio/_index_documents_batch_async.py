@@ -133,7 +133,15 @@ class IndexDocumentsBatch:
                 self._actions.extend(new_actions)
 
     async def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
-        new_actions = [IndexAction(additional_properties=document, action_type=action_type) for document in documents]
+        new_actions: List[IndexAction] = []
+        for document in documents:
+            index_action = IndexAction(action_type=action_type)
+            if isinstance(document, dict):
+                for key, value in document.items():
+                    index_action[key] = value
+            else:
+                index_action[""] = document
+            new_actions.append(index_action)
         async with self._lock:
             self._actions.extend(new_actions)
         return new_actions
