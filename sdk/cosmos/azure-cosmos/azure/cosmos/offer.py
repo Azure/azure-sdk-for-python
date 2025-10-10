@@ -21,9 +21,10 @@
 """
 
 
-from typing import Optional, Any, Mapping
+from typing import Optional, Any, Mapping, TYPE_CHECKING
 
-from ._cosmos_responses import CosmosDict
+if TYPE_CHECKING:
+    from ._cosmos_responses import CosmosDict
 
 
 class ThroughputProperties:
