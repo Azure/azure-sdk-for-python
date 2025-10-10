@@ -20,11 +20,11 @@ def parse_connection_string(connection_string: str) -> Tuple[str, str, str]:
     for segment in segments:
         segment = segment.strip()
         if segment.startswith("Endpoint"):
-            endpoint = str(segment[17:])
+            endpoint = str(segment[len("Endpoint="):])
         elif segment.startswith("Id"):
-            id_ = str(segment[3:])
+            id_ = str(segment[len("Id="):])
         elif segment.startswith("Secret"):
-            secret = str(segment[7:])
+            secret = str(segment[len("Secret="):])
         else:
             raise ValueError("Invalid connection string.")
 
