@@ -204,11 +204,6 @@ class MLflowIntegration:
                         raise ValueError("aoai_summary parameter is required but was not provided")
 
                     payload = dict(aoai_summary)  # Make a copy
-                    # Ensure conversations are included for scan output
-                    if "conversations" not in payload:
-                        payload["conversations"] = (
-                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
-                        )
                     json.dump(payload, f)
 
                 # Save legacy format as instance_results.json

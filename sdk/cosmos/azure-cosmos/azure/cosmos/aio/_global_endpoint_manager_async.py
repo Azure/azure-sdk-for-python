@@ -25,7 +25,7 @@ database service.
 
 import asyncio # pylint: disable=do-not-import-asyncio
 import logging
-from typing import Tuple, Dict, Any
+from typing import Tuple, Any
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import DatabaseAccount
@@ -146,7 +146,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     await self._endpoints_health_check(**kwargs)
                     self.startup = False
 
-    async def _database_account_check(self, endpoint: str, **kwargs: Dict[str, Any]):
+    async def _database_account_check(self, endpoint: str, **kwargs: dict[str, Any]):
         try:
             await self.client._GetDatabaseAccountCheck(endpoint, **kwargs)
             self.location_cache.mark_endpoint_available(endpoint)
