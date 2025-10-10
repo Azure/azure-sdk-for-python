@@ -56,7 +56,7 @@ from ._utils import (
     _write_output,
     DataLoaderFactory,
     _log_metrics_and_instance_results_onedp,
-    _add_aoai_structured_results_to_results
+    _convert_results_to_aoai_evaluation_results
 )
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
@@ -909,6 +909,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     results_df = pd.DataFrame()
     metrics: Dict[str, float] = {}
     eval_run_info_list: List[OAIEvalRunCreationInfo] = []
+    eval_run_summary_dict = {}
 
     # Start OAI eval runs if any graders are present.
     need_oai_run = len(graders) > 0
@@ -943,6 +944,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
             got_local_results = True
             # TODO figure out how to update this printing to include OAI results?
             _print_summary(per_evaluator_results)
+            eval_run_summary_dict = {name: result["run_summary"] for name, result in per_evaluator_results.items()}
+            LOGGER.info(f"run_summary: \r\n{json.dumps(eval_run_summary_dict, indent=4)}")
         except EvaluationException as e:
             if need_get_oai_results:
                 # If there are OAI graders, we only print a warning on local failures.
@@ -990,13 +993,15 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
-    _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
+    # _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
+
+    eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
+    _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_meta_data, eval_run_summary_dict)
     if app_insights_configuration := kwargs.get("app_insights_configuration"):
         emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
 
     if output_path:
         _write_output(output_path, result)
-
     return result
 
 
