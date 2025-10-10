@@ -23,10 +23,8 @@ class ServiceResponseRetryPolicy(object):
         if self.request:
             if self.request.retry_write > 0:
                 # If the request is a write operation, we set the maximum retry count to be the number of
-                # write regional routing contexts available in the global endpoint manager.
-                # This ensures that we retry the write operation across all available regions.
-                # We also ensure that we retry at least once, hence the max is set to 2 by default.
-                self.max_write_retry_count = max(self.request.retry_write, 2)
+                # write retries provided by the customer.
+                self.max_write_retry_count = self.request.retry_write
             self.location_endpoint = (self.global_endpoint_manager
                                       .resolve_service_endpoint_for_partition(self.request, pk_range_wrapper))
         self.logger = logging.getLogger('azure.cosmos.ServiceResponseRetryPolicy')
