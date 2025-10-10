@@ -7,7 +7,6 @@ import os
 import base64
 from devtools_testutils import test_proxy, is_live
 
-from devtools_testutils.helpers import locate_assets
 from pathlib import Path
 
 
@@ -21,13 +20,6 @@ def pytest_runtest_setup(item):
     if is_playback_test_marked:
         if is_live():
             pytest.skip("playback test only")
-
-
-@pytest.fixture
-def test_data_dir() -> Path:
-    base = Path(locate_assets(current_test_file=Path(__file__)))  # ensure Path
-    full = base / "python" / "sdk" / "ai" / "azure-ai-voicelive" / "tests" / "data"
-    return full
 
 
 @pytest.fixture(scope="session", autouse=True)
