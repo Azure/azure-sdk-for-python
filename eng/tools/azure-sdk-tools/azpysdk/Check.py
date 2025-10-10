@@ -62,7 +62,7 @@ class Check(abc.ABC):
             else:
                 shutil.rmtree(venv_location, ignore_errors=True)
 
-            check_call(venv_cmd + [venv_location])
+            subprocess.check_call(venv_cmd + [venv_location])
 
             # TODO: we should reuse part of build_whl_for_req to integrate with PREBUILT_WHL_DIR so that we don't have to fresh build for each
             # venv
