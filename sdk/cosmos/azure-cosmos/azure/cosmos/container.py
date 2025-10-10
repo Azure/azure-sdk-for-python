@@ -972,21 +972,21 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def semantic_rerank(
         self,
-        reranking_context: str,
+        *,
+        context: str,
         documents: list[str],
-        semantic_reranking_options: Optional[dict[str, Any]] = None
+        options: Optional[dict[str, Any]] = None
     ) -> CosmosDict:
-        """Rerank a list of documents using semantic reranking.
+        """ **provisional** Rerank a list of documents using semantic reranking.
 
         This method uses a semantic reranker to score and reorder the provided documents
         based on their relevance to the given reranking context.
 
-        :param str reranking_context: The context or query string to use for reranking the documents.
-        :param list[str] documents: A list of documents (as strings) to be reranked.
-        :param dict[str, Any] semantic_reranking_options: Optional dictionary of additional options to customize the semantic reranking process.
+        :keyword str context: The reranking context or query string to use for reranking the documents.
+        :keyword list[str] documents: A list of documents (as strings) to be reranked.
+        :keyword dict[str, Any] options: Optional dictionary of additional request options to customize the semantic reranking process.
 
          Supported options:
-
          * **return_documents** (bool): Whether to return the document text in the response. If False, only scores and indices are returned. Default is True.
          * **top_k** (int): Maximum number of documents to return in the reranked results. If not specified, all documents are returned.
          * **batch_size** (int): Number of documents to process in each batch. Used for optimizing performance with large document sets.
@@ -994,7 +994,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
          * **document_type** (str): Type of documents being reranked. Supported values are "string" and "json".
          * **target_paths** (str): If document_type is "json", the list of JSON paths to extract text from for reranking. Comma-separated string.
 
-        :type semantic_reranking_options: Optional[dict[str, Any]]
         :returns: A CosmosDict containing the reranking results. The structure typically includes results list with reranked documents and their relevance scores. Each result contains index, relevance_score, and optionally document.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the semantic reranking operation fails.
@@ -1008,9 +1007,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
 
         result = inference_service.rerank(
-            reranking_context=reranking_context,
+            reranking_context=context,
             documents=documents,
-            semantic_reranking_options=semantic_reranking_options
+            semantic_reranking_options=options
         )
 
         return result
@@ -1030,7 +1029,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1058,9 +1057,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip
             sending response payloads. When not specified explicitly here, the default value will be determined from
             kwargs or when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1127,7 +1126,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1154,9 +1153,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1221,7 +1220,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         initial_headers: Optional[dict[str, str]] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1249,9 +1248,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1323,7 +1322,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         no_response: Optional[bool] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
         **kwargs: Any
@@ -1357,9 +1356,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword bool no_response: Indicates whether service should be instructed to skip sending
             response payloads. When not specified explicitly here, the default value will be determined from kwargs or
             when also not specified there from client-level kwargs.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
@@ -1495,7 +1494,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         priority: Optional[Literal["High", "Low"]] = None,
-        retry_write: Optional[bool] = None,
+        retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
         response_hook: Optional[Callable[[Mapping[str, str], None], None]] = None,
         **kwargs: Any
@@ -1521,9 +1520,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
-        :keyword bool retry_write: Indicates whether the SDK should automatically retry this write operation, even if
+        :keyword int retry_write: Indicates how many times the SDK should automatically retry this write operation, even if
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-            tolerate such risks or has logic to safely detect and handle duplicate operations.
+            tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
