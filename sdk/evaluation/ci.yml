@@ -34,8 +34,6 @@ extends:
         Path: sdk/evaluation/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
-    MatrixFilters:
-      - PythonVersion=^(?!(3\.13|3\.8))
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation
