@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 from datetime import datetime
 from enum import Enum
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, TYPE_CHECKING
 
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _LONG_PING_INTERVAL_SECONDS,
@@ -18,6 +18,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
     FilterConjunctionGroupInfo,
     TelemetryType,
 )
+
+if TYPE_CHECKING:
+    from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
 
 
 class _QuickpulseState(Enum):
@@ -41,6 +44,24 @@ _QUICKPULSE_ETAG = ""
 _QUICKPULSE_DERIVED_METRIC_INFOS: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
 _QUICKPULSE_PROJECTION_MAP: Dict[str, Tuple[AggregationType, float, int]] = {}
 _QUICKPULSE_DOC_STREAM_INFOS: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
+
+
+# Global singleton instance for easy access throughout the codebase
+_quickpulse_manager = None
+
+def get_quickpulse_manager() -> "_QuickpulseManager":
+    """Get the global Quickpulse Manager singleton instance.
+
+    This provides a single access point to the manager and handles lazy initialization.
+
+    :return: The singleton Quickpulse Manager instance
+    :rtype: _QuickpulseManager
+    """
+    global _quickpulse_manager  # pylint: disable=global-statement
+    if _quickpulse_manager is None:
+        from azure.monitor.opentelemetry.exporter._quickpulse._manager import _QuickpulseManager
+        _quickpulse_manager = _QuickpulseManager()
+    return _quickpulse_manager
 
 
 def _set_global_quickpulse_state(state: _QuickpulseState) -> None:

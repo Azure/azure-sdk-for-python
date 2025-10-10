@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 #
@@ -37,21 +38,23 @@ LOG = logging.getLogger()
 # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT, WEBPUBSUB_CONNECTION_STRING
 try:
     endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
-    connection_string = os.environ['WEBPUBSUB_CONNECTION_STRING']
+    connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example")
+    LOG.error(
+        "Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example"
+    )
     exit()
 
 # Build a client through AAD
-client_aad = WebPubSubServiceClient(endpoint=endpoint, hub='hub', credential=DefaultAzureCredential())
+client_aad = WebPubSubServiceClient(endpoint=endpoint, hub="hub", credential=DefaultAzureCredential())
 
 # Build authentication token
 token_aad = client_aad.get_client_access_token()
-print('token by AAD: {}'.format(token_aad))
+print("token by AAD: {}".format(token_aad))
 
 # Build a client through connection string
-client_key = WebPubSubServiceClient.from_connection_string(connection_string, hub='hub')
+client_key = WebPubSubServiceClient.from_connection_string(connection_string, hub="hub")
 
 # Build authentication token
 token_key = client_key.get_client_access_token()
-print('token by access key: {}'.format(token_key))
+print("token by access key: {}".format(token_key))

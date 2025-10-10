@@ -101,7 +101,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
         return chunk_data
 
 
-class _AsyncChunkIterator(object):
+class _AsyncChunkIterator:
     """Async iterator for chunks in file download stream."""
 
     def __init__(self, size: int, content: bytes, downloader: Optional[_AsyncChunkDownloader], chunk_size: int) -> None:
@@ -156,7 +156,7 @@ class _AsyncChunkIterator(object):
         return chunk_data
 
 
-class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
+class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage."""
 
     name: str

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
+from azure.mgmt.compute import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperations(AzureMgmtRecor
         response = self.client.virtual_machine_images_edge_zone.list_publishers(
             location="str",
             edge_zone="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperations(AzureMgmtRecor
             location="str",
             edge_zone="str",
             publisher_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperations(AzureMgmtRecor
             edge_zone="str",
             publisher_name="str",
             offer="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperations(AzureMgmtRecor
             publisher_name="str",
             offer="str",
             skus="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestComputeManagementVirtualMachineImagesEdgeZoneOperations(AzureMgmtRecor
             offer="str",
             skus="str",
             version="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
+from azure.mgmt.compute.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -26,7 +26,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -137,6 +137,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                             "encryptionAtHost": bool,
                             "encryptionIdentity": {"userAssignedIdentityResourceId": "str"},
                             "proxyAgentSettings": {
+                                "addProxyAgentExtension": bool,
                                 "enabled": bool,
                                 "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
                                 "keyIncarnationId": 0,
@@ -213,7 +214,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                     "timeCreated": "2020-02-20 00:00:00",
                     "type": "str",
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -228,7 +229,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                 resource_group_name=resource_group.name,
                 restore_point_collection_name="str",
                 restore_point_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

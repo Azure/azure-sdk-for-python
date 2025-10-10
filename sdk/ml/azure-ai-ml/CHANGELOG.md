@@ -11,6 +11,11 @@
   - `ml_client.deployment_templates.get()`
 
 ### Bugs Fixed
+- Fix for registry resource group passed to OnlineEndpointOperations when model is in registry in different resource group compared to workspace.
+- Set defaults for min_instances, max_instances, idle_time_before_scale_down in AmlCompute
+
+### Other Changes
+- v2 component types are now case insensitive
 
 ## 1.28.1 (2025-07-08)
 
