@@ -492,7 +492,7 @@ def _convert_results_to_aoai_evaluation_results(
         logger: logging.Logger, 
         eval_meta_data: Optional[Dict[str, Any]] = None,
         eval_run_summary: Optional[Dict[str, Any]] = None
-) -> EvaluationResult:
+) -> None:
     """
     Convert evaluation results to AOAI evaluation results format.
     
@@ -512,10 +512,10 @@ def _convert_results_to_aoai_evaluation_results(
     :return: EvaluationResult with converted evaluation results in AOAI format
     :rtype: EvaluationResult
     """
-
+        
     if eval_meta_data is None:
-        return results
-
+        return
+    
     created_time = int(time.time())
     converted_rows = []
 
@@ -555,7 +555,6 @@ def _convert_results_to_aoai_evaluation_results(
 
         # Convert each criteria group to RunOutputItem result
         run_output_results = []
-
         for criteria_name, metrics in criteria_groups.items():
             # Extract metrics for this criteria
             score = None
@@ -564,7 +563,6 @@ def _convert_results_to_aoai_evaluation_results(
             threshold = None
             passed = None
             sample = None
-
             # Find score - look for various score patterns
             for metric_key, metric_value in metrics.items():
                 if metric_key.endswith("_score") or metric_key == "score":
@@ -592,7 +590,6 @@ def _convert_results_to_aoai_evaluation_results(
                 "name": criteria_name,  # Use criteria name as name
                 "metric": criteria_name  # Use criteria name as metric
             }
-
             # Add optional fields if they exist
             if score is not None:
                 result_obj["score"] = score
@@ -641,13 +638,10 @@ def _convert_results_to_aoai_evaluation_results(
     # Create converted results maintaining the same structure
     results["evaluation_results_list"] = converted_rows
     logger.info(f"Converted {len(converted_rows)} rows to AOAI evaluation format, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
-
     # Calculate summary statistics
     evaluation_summary = _calculate_aoai_evaluation_summary(converted_rows, logger)
     results["evaluation_summary"] = evaluation_summary
     logger.info(f"Summary statistics calculated for {len(converted_rows)} rows, eval_id: {eval_id}, eval_run_id: {eval_run_id}")
-
-    return results
 
 
 def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logger) -> Dict[str, Any]:
@@ -707,7 +701,6 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
         if isinstance(aoai_result, dict) and 'sample' in aoai_result:
             logger.info(f"\r\n 2 Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, summary count: {len(aoai_result['sample'])}")
             sample_data = aoai_result['sample']
-
         if sample_data and hasattr(sample_data, 'usage') and sample_data.usage:
             usage_data = sample_data.usage
             model_name = sample_data.model if hasattr(sample_data, 'model') and sample_data.model else 'unknown'
@@ -745,7 +738,6 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 model_stats['prompt_tokens'] += usage_data.get('prompt_tokens', 0)
                 model_stats['completion_tokens'] += usage_data.get('completion_tokens', 0)
                 model_stats['cached_tokens'] += usage_data.get('cached_tokens', 0)
-
     # Convert model usage stats to list format matching EvaluationRunPerModelUsage
     per_model_usage = []
     for model_name, stats in model_usage_stats.items():
@@ -757,7 +749,6 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
             'completion_tokens': stats['completion_tokens'],
             'cached_tokens': stats['cached_tokens']
         })
-
     result_counts_stats_val = []
     logger.info(f"\r\n Result counts stats: {result_counts_stats}")
     for criteria_name, stats_val in result_counts_stats.items():
@@ -768,7 +759,6 @@ def _calculate_aoai_evaluation_summary(aoai_results: list, logger: logging.Logge
                 'passed': stats_val.get('passed', 0),
                 'failed': stats_val.get('failed', 0)
             })
-
     return {
         "result_counts": result_counts,
         "per_model_usage": per_model_usage,

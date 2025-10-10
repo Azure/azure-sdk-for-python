@@ -800,6 +800,7 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
+        eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
                 evaluation_name=evaluation_name,
@@ -993,26 +994,16 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
 
     result_df_dict = results_df.to_dict("records")
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
+    # _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
+
+    eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
+    _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_meta_data, eval_run_summary_dict)
+    if app_insights_configuration := kwargs.get("app_insights_configuration"):
+        emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
 
     if output_path:
         _write_output(output_path, result)
-
-    eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
-    results_converted = _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_meta_data, eval_run_summary_dict)
-    return results_converted
-
-
-def _convert_eval_results_df_to_aoai_result(results_df: pd.DataFrame) -> List[Dict]:
-    return [{}]
-
-
-def _create_eval_results_summary(results: List[Dict]) -> Dict:
-    return {}
-
-
-from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
-)
+    return result
 
 
 def _log_events_to_app_insights(
@@ -1157,11 +1148,12 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         if "agent_id" in app_insights_config:
             app_insights_attributes["agent_id"] = app_insights_config["agent_id"]
         
-        _log_events_to_app_insights(
-            connection_string=app_insights_config["connection_string"],
-            events=results,
-            attributes=app_insights_attributes
-        )
+        for result in results:
+            _log_events_to_app_insights(
+                connection_string=app_insights_config["connection_string"],
+                events=result["results"],
+                attributes=app_insights_attributes
+            )
         LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
         
     except Exception as e:
