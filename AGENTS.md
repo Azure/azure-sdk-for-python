@@ -18,8 +18,8 @@ This file describes how AI agents (e.g., GitHub Copilot, MCP servers, or LLM-bas
 
 **Key Documentation**:
 - [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html)
-- [Contributing Guide](CONTRIBUTING.md)
-- [Developer Documentation](doc/dev/)
+- [Contributing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md)
+- [Developer Documentation](https://github.com/Azure/azure-sdk-for-python/tree/main/doc/dev)
 
 ## Repository Structure
 
@@ -116,8 +116,8 @@ tox -e mypy -c eng/tox/tox.ini --root .
 **Fixing Issues**:
 - Reference official guidelines:
   - [Pylint Guidelines](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
-  - [MyPy Type Checking Guide](doc/dev/static_type_checking_cheat_sheet.md)
-  - [Tox Usage Guide](doc/dev/tests.md#tox)
+  - [MyPy Type Checking Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
+  - [Tox Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
 - Make minimal changes that address specific warnings
 - Avoid adding new dependencies or large refactoring
 - Rerun validation after each fix
@@ -230,19 +230,19 @@ source .venv/bin/activate  # Linux/macOS
 
 ## Cross-References
 
-**Detailed Copilot Instructions**: See [`.github/copilot-instructions.md`](.github/copilot-instructions.md) for:
+**Detailed Copilot Instructions**: See [`.github/copilot-instructions.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/copilot-instructions.md) for:
 - Complete TypeSpec SDK generation workflow
 - Detailed validation steps and commands
 - Pylint and MyPy fixing guidelines
 - SDK health status interpretation
 - SDK release procedures
 
-**Developer Documentation**: See [`doc/dev/`](doc/dev/) for:
-- [TypeSpec Generation Guide](doc/dev/ai/typespec_generation.md)
-- [Testing Guide](doc/dev/tests.md)
-- [Tox Usage](doc/dev/tests.md#tox)
-- [Pylint Checking](doc/dev/pylint_checking.md)
-- [Type Checking Cheat Sheet](doc/dev/static_type_checking_cheat_sheet.md)
+**Developer Documentation**: See [`doc/dev/`](https://github.com/Azure/azure-sdk-for-python/tree/main/doc/dev) for:
+- [TypeSpec Generation Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/ai/typespec_generation.md)
+- [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
+- [Tox Usage](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Pylint Checking](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
+- [Type Checking Cheat Sheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 ## Example Prompts
 
