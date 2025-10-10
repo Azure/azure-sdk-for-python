@@ -60,7 +60,7 @@ class black(Check):
             config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
 
             if in_ci():
-                if not is_check_enabled(package_dir, "black", False):
+                if not is_check_enabled(package_dir, "black", default=False):
                     logger.info(f"Package {package_name} opts-out of black check.")
                     continue
             try:
