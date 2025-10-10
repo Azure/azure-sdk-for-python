@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.shared_access_signature_client.get_token(
+    response = client.shared_access_signature.get_token(
         collection_id="weather-sample",
     )
     print(response)

@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import PlanetaryComputerClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import IngestionOperations, SharedAccessSignatureClientOperations, StacOperations, TilerOperations
+from .operations import IngestionOperations, SharedAccessSignatureOperations, StacOperations, TilerOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -31,9 +31,9 @@ class PlanetaryComputerClient:
     :vartype stac: azure.planetarycomputer.operations.StacOperations
     :ivar tiler: TilerOperations operations
     :vartype tiler: azure.planetarycomputer.operations.TilerOperations
-    :ivar shared_access_signature_client: SharedAccessSignatureClientOperations operations
-    :vartype shared_access_signature_client:
-     azure.planetarycomputer.operations.SharedAccessSignatureClientOperations
+    :ivar shared_access_signature: SharedAccessSignatureOperations operations
+    :vartype shared_access_signature:
+     azure.planetarycomputer.operations.SharedAccessSignatureOperations
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
@@ -75,7 +75,7 @@ class PlanetaryComputerClient:
         self.ingestion = IngestionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.stac = StacOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tiler = TilerOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.shared_access_signature_client = SharedAccessSignatureClientOperations(
+        self.shared_access_signature = SharedAccessSignatureOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

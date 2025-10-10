@@ -55,9 +55,9 @@ from ...operations._operations import (
     build_ingestion_list_sources_request,
     build_ingestion_lists_request,
     build_ingestion_update_request,
-    build_shared_access_signature_client_get_sign_request,
-    build_shared_access_signature_client_get_token_request,
-    build_shared_access_signature_client_revoke_token_request,
+    build_shared_access_signature_get_sign_request,
+    build_shared_access_signature_get_token_request,
+    build_shared_access_signature_revoke_token_request,
     build_stac_add_mosaic_request,
     build_stac_create_collection_asset_request,
     build_stac_create_collection_request,
@@ -8799,14 +8799,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class SharedAccessSignatureClientOperations:
+class SharedAccessSignatureOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`shared_access_signature_client` attribute.
+        :attr:`shared_access_signature` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -8847,7 +8847,7 @@ class SharedAccessSignatureClientOperations:
 
         cls: ClsType[_models.SignedLink] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_client_get_sign_request(
+        _request = build_shared_access_signature_get_sign_request(
             href=href,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -8918,7 +8918,7 @@ class SharedAccessSignatureClientOperations:
 
         cls: ClsType[_models.SharedAccessSignatureToken] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_client_get_token_request(
+        _request = build_shared_access_signature_get_token_request(
             collection_id=collection_id,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -8983,7 +8983,7 @@ class SharedAccessSignatureClientOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_client_revoke_token_request(
+        _request = build_shared_access_signature_revoke_token_request(
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
             headers=_headers,

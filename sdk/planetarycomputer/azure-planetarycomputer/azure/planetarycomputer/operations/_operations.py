@@ -2359,7 +2359,7 @@ def build_tiler_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-def build_shared_access_signature_client_get_sign_request(  # pylint: disable=name-too-long
+def build_shared_access_signature_get_sign_request(  # pylint: disable=name-too-long
     *, href: str, duration_in_minutes: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2383,7 +2383,7 @@ def build_shared_access_signature_client_get_sign_request(  # pylint: disable=na
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_shared_access_signature_client_get_token_request(  # pylint: disable=name-too-long
+def build_shared_access_signature_get_token_request(  # pylint: disable=name-too-long
     collection_id: str, *, duration_in_minutes: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2411,7 +2411,7 @@ def build_shared_access_signature_client_get_token_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_shared_access_signature_client_revoke_token_request(  # pylint: disable=name-too-long
+def build_shared_access_signature_revoke_token_request(  # pylint: disable=name-too-long
     *, duration_in_minutes: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -11081,14 +11081,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class SharedAccessSignatureClientOperations:
+class SharedAccessSignatureOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
-        :attr:`shared_access_signature_client` attribute.
+        :attr:`shared_access_signature` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -11127,7 +11127,7 @@ class SharedAccessSignatureClientOperations:
 
         cls: ClsType[_models.SignedLink] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_client_get_sign_request(
+        _request = build_shared_access_signature_get_sign_request(
             href=href,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -11198,7 +11198,7 @@ class SharedAccessSignatureClientOperations:
 
         cls: ClsType[_models.SharedAccessSignatureToken] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_client_get_token_request(
+        _request = build_shared_access_signature_get_token_request(
             collection_id=collection_id,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -11265,7 +11265,7 @@ class SharedAccessSignatureClientOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_shared_access_signature_client_revoke_token_request(
+        _request = build_shared_access_signature_revoke_token_request(
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
             headers=_headers,

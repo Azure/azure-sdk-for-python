@@ -285,11 +285,11 @@
         "azure.planetarycomputer.aio.operations.TilerOperations.get_mosaics_tile": "Customizations.Tiler.getMosaicsTile",
         "azure.planetarycomputer.operations.TilerOperations.get_mosaics_wmts_capabilities": "Customizations.Tiler.getMosaicsWmtsCapabilities",
         "azure.planetarycomputer.aio.operations.TilerOperations.get_mosaics_wmts_capabilities": "Customizations.Tiler.getMosaicsWmtsCapabilities",
-        "azure.planetarycomputer.operations.SharedAccessSignatureClientOperations.get_sign": "Customizations.SharedAccessSignatureClient.getSign",
-        "azure.planetarycomputer.aio.operations.SharedAccessSignatureClientOperations.get_sign": "Customizations.SharedAccessSignatureClient.getSign",
-        "azure.planetarycomputer.operations.SharedAccessSignatureClientOperations.get_token": "Customizations.SharedAccessSignatureClient.getToken",
-        "azure.planetarycomputer.aio.operations.SharedAccessSignatureClientOperations.get_token": "Customizations.SharedAccessSignatureClient.getToken",
-        "azure.planetarycomputer.operations.SharedAccessSignatureClientOperations.revoke_token": "Customizations.SharedAccessSignatureClient.revokeToken",
-        "azure.planetarycomputer.aio.operations.SharedAccessSignatureClientOperations.revoke_token": "Customizations.SharedAccessSignatureClient.revokeToken"
+        "azure.planetarycomputer.operations.SharedAccessSignatureOperations.get_sign": "Customizations.SharedAccessSignature.getSign",
+        "azure.planetarycomputer.aio.operations.SharedAccessSignatureOperations.get_sign": "Customizations.SharedAccessSignature.getSign",
+        "azure.planetarycomputer.operations.SharedAccessSignatureOperations.get_token": "Customizations.SharedAccessSignature.getToken",
+        "azure.planetarycomputer.aio.operations.SharedAccessSignatureOperations.get_token": "Customizations.SharedAccessSignature.getToken",
+        "azure.planetarycomputer.operations.SharedAccessSignatureOperations.revoke_token": "Customizations.SharedAccessSignature.revokeToken",
+        "azure.planetarycomputer.aio.operations.SharedAccessSignatureOperations.revoke_token": "Customizations.SharedAccessSignature.revokeToken"
     }
 }

@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.shared_access_signature_client.get_sign(
+    response = client.shared_access_signature.get_sign(
         href="https://contoso.com",
     )
     print(response)

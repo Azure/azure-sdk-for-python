@@ -11,12 +11,12 @@ from testpreparer import PlanetaryComputerClientTestBase, PlanetaryComputerPrepa
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestPlanetaryComputerSharedAccessSignatureClientOperations(PlanetaryComputerClientTestBase):
+class TestPlanetaryComputerSharedAccessSignatureOperations(PlanetaryComputerClientTestBase):
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_shared_access_signature_client_get_sign(self, planetarycomputer_endpoint):
+    def test_shared_access_signature_get_sign(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.shared_access_signature_client.get_sign(
+        response = client.shared_access_signature.get_sign(
             href="str",
         )
 
@@ -25,9 +25,9 @@ class TestPlanetaryComputerSharedAccessSignatureClientOperations(PlanetaryComput
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_shared_access_signature_client_get_token(self, planetarycomputer_endpoint):
+    def test_shared_access_signature_get_token(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.shared_access_signature_client.get_token(
+        response = client.shared_access_signature.get_token(
             collection_id="str",
         )
 
@@ -36,9 +36,9 @@ class TestPlanetaryComputerSharedAccessSignatureClientOperations(PlanetaryComput
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
-    def test_shared_access_signature_client_revoke_token(self, planetarycomputer_endpoint):
+    def test_shared_access_signature_revoke_token(self, planetarycomputer_endpoint):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        response = client.shared_access_signature_client.revoke_token()
+        response = client.shared_access_signature.revoke_token()
 
         # please add some check logic here by yourself
         # ...
