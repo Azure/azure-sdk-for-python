@@ -21,9 +21,9 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_managed_cluster_snapshots_list(self, resource_group):
         response = self.client.managed_cluster_snapshots.list(
-            api_version="2022-02-02-preview",
+            api_version="2025-08-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_managed_cluster_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.managed_cluster_snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2022-02-02-preview",
+            api_version="2025-08-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_managed_cluster_snapshots_get(self, resource_group):
         response = await self.client.managed_cluster_snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2022-02-02-preview",
+            api_version="2025-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_managed_cluster_snapshots_create_or_update(self, resource_group):
         response = await self.client.managed_cluster_snapshots.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
@@ -68,7 +68,8 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
                     "networkProfile": {
                         "loadBalancerSku": "str",
                         "networkMode": "str",
-                        "networkPlugin": "kubenet",
+                        "networkPlugin": "str",
+                        "networkPluginMode": "str",
                         "networkPolicy": "str",
                     },
                     "sku": {"name": "str", "tier": "str"},
@@ -86,7 +87,7 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2022-02-02-preview",
+            api_version="2025-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,12 +95,12 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update_tags(self, resource_group):
+    async def test_managed_cluster_snapshots_update_tags(self, resource_group):
         response = await self.client.managed_cluster_snapshots.update_tags(
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2022-02-02-preview",
+            api_version="2025-08-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -107,11 +108,11 @@ class TestContainerServiceManagedClusterSnapshotsOperationsAsync(AzureMgmtRecord
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_managed_cluster_snapshots_delete(self, resource_group):
         response = await self.client.managed_cluster_snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2022-02-02-preview",
+            api_version="2025-08-02-preview",
         )
 
         # please add some check logic here by yourself
