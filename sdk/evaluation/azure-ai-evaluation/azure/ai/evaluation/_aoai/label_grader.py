@@ -48,6 +48,7 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
     """
 
     id = "azureai://built-in/evaluators/azure-openai/label_grader"
+    _type = "label_model"
 
     def __init__(
         self,
@@ -67,6 +68,6 @@ class AzureOpenAILabelGrader(AzureOpenAIGrader):
             model=model,
             name=name,
             passing_labels=passing_labels,
-            type="label_model",
+            type=AzureOpenAILabelGrader._type,
         )
         super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)
