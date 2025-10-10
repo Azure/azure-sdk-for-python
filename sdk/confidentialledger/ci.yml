@@ -31,6 +31,6 @@ extends:
     TestProxy: true
     Artifacts:
     - name: azure-confidentialledger-certificate
-      safeName: azureconfidentialledger-certificate
+      safeName: azureconfidentialledgercertificate
     - name: azure-mgmt-confidentialledger
       safeName: azuremgmtconfidentialledger
