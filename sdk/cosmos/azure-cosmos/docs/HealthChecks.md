@@ -45,7 +45,7 @@ The Cosmos DB gateway responds with a JSON object (the DatabaseAccount resource)
     }
   ],
   "enableMultipleWriteLocations": False,
-  // ... other properties
+  # ... other properties
 }
 ```
 
@@ -69,10 +69,11 @@ It verifies the health of the primary DNS entry and the global gateway, which is
 A failure to connect to the global endpoint can signal a different problem (like a DNS issue or a global service impairment) than a regional outage. 
 ### Retry on Failure
 The getDatabaseAccount call has a built-in retry policy for transient failures.
-Transient Errors: These include `timeouts, connection errors, and certain HTTP status codes (e.g., 5xx ServiceUnavailable, 408 RequestTimeout)`.
+Transient Errors: These include `timeouts, connection errors, and certain HTTP status codes (e.g., HTTP 5xx (such as ServiceUnavailable), HTTP 408 RequestTimeout)`.
 Retry Logic: By default, the SDK will retry the call up to `3 times` with a `100ms` delay between attempts. If all retries against a specific endpoint (global or regional) fail, the SDK marks that regional endpoint as unavailable in the LocationCache.
 Configuration: The number of retries and the delay are configurable via environment variables.
-Example: If a client has two preferred regions, the SDK will issue 3 getDatabaseAccount calls every 5 minutes (1 for the global endpoint + 2 for the preferred regions). If those regions are experiencing transient issues, the retry logic could result in up to 9 total attempts (3 endpoints × 3 retries) within that 5-minute window.
+Example: If a client has two preferred regions, the SDK will issue 3 getDatabaseAccount calls every 5 minutes (1 for the global endpoint plus 2 for the preferred regions).
+If those endpoints are experiencing transient issues, the retry logic could result in up to 9 total attempts (3 endpoints × 3 retries) within that 5-minute window.
 ### Dedicated Health Probes
 The current dual responsibility of the getDatabaseAccount call is being refactored. A future update will introduce a dedicated health check probe.
 After the Change: The getDatabaseAccount call will no longer be used to determine endpoint health or to mark regions as unavailable.
