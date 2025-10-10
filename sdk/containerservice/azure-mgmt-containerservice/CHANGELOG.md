@@ -1,5 +1,19 @@
 # Release History
 
+## 40.0.0 (2025-10-10)
+
+### Features Added
+
+  - Model `ContainerServiceClient` added parameter `cloud_setting` in method `__init__`
+  - Model `AdvancedNetworkingSecurity` added property `advanced_network_policies`
+  - Model `AgentPoolSecurityProfile` added property `ssh_access`
+  - Added enum `AdvancedNetworkPolicies`
+  - Added enum `AgentPoolSSHAccess`
+
+### Breaking Changes
+
+  - Deleted or renamed model `CloudErrorBody`
+
 ## 39.1.0 (2025-08-20)
 
 ### Features Added

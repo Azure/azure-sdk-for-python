@@ -28,6 +28,7 @@ from .verifytypes import verifytypes
 from .verify_whl import verify_whl
 from .verify_sdist import verify_sdist
 from .bandit import bandit
+from .verify_keywords import verify_keywords
 
 from ci_tools.logging import configure_logging, logger
 
@@ -87,6 +88,7 @@ def build_parser() -> argparse.ArgumentParser:
     verify_sdist().register(subparsers, [common])
     verify_whl().register(subparsers, [common])
     bandit().register(subparsers, [common])
+    verify_keywords().register(subparsers, [common])
 
     return parser
 
