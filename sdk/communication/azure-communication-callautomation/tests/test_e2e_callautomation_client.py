@@ -7,6 +7,7 @@ from datetime import timedelta
 import time
 import pytest
 
+from azure.communication.callautomation._generated.models._enums import RecordingState
 from azure.communication.callautomation._models import ChannelAffinity, ServerCallLocator
 from devtools_testutils import recorded_by_proxy
 
@@ -253,7 +254,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
             raise ValueError("Start recording is failed")
         
         stop_recording = call_automation_client.stop_recording(recording_id= recording_id)
-        time.sleep(3)
+        time.sleep(5)
 
         recording_responce = call_automation_client.get_recording_response(recording_id= recording_id)
         if recording_responce.recording_duration_ms is None:

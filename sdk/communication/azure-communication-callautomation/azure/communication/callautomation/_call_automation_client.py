@@ -118,7 +118,11 @@ class CallAutomationClient:
                 custom_url,
                 cast(AzureKeyCredential, credential),
                 api_version=api_version or DEFAULT_VERSION,
-                authentication_policy=get_call_automation_auth_policy(custom_url, cast(AzureKeyCredential, credential), acs_url=endpoint),
+                authentication_policy=get_call_automation_auth_policy(
+                    custom_url,
+                    cast(AzureKeyCredential, credential),
+                    acs_url=endpoint
+                    ),
                 sdk_moniker=SDK_MONIKER,
                 **kwargs,
             )

@@ -693,8 +693,8 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
             transcription = TranscriptionSubscription(
                 id=call_connection_properties_generated.transcription_subscription.id,
                 state=call_connection_properties_generated.transcription_subscription.state,
-                subscribed_result_types=call_connection_properties_generated.transcription_subscription.subscribed_result_types,  # pylint:disable=line-too-long                
-            )
+                subscribed_result_types=call_connection_properties_generated.transcription_subscription.subscribed_result_types,  # pylint:disable=line-too-long
+                )
         return cls(
             call_connection_id=call_connection_properties_generated.call_connection_id,
             server_call_id=call_connection_properties_generated.server_call_id,
