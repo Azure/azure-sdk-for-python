@@ -800,7 +800,6 @@ def evaluate(
     """
     try:
         user_agent: Optional[str] = kwargs.get("user_agent")
-        eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
                 evaluation_name=evaluation_name,
