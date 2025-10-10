@@ -258,24 +258,27 @@ class OrchestratorManager:
 
                 # Get context for this prompt
                 context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
-                
+
                 # context_data is always a dict with a 'contexts' list
                 # Each item in contexts is a dict with 'content' key
                 # context_type and tool_name can be present per-context
                 contexts = context_data.get("contexts", [])
-                
+
                 # Check if any context has agent-specific fields (context_type, tool_name)
                 has_agent_fields = any(
-                    isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
-                    for ctx in contexts
+                    isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
                 )
-                
+
                 # Build context_dict to pass via memory labels
                 context_dict = {"contexts": contexts}
-                
+
                 # Get risk_sub_type for this prompt if it exists
-                risk_sub_type = self.red_team.prompt_to_risk_subtype.get(prompt) if self.red_team and hasattr(self.red_team, 'prompt_to_risk_subtype') else None
-                
+                risk_sub_type = (
+                    self.red_team.prompt_to_risk_subtype.get(prompt)
+                    if self.red_team and hasattr(self.red_team, "prompt_to_risk_subtype")
+                    else None
+                )
+
                 # Determine how to handle the prompt based on target type and context fields
                 if isinstance(chat_target, _CallbackChatTarget):
                     # CallbackChatTarget: Always pass contexts via context_dict, embed in prompt content
@@ -283,19 +286,29 @@ class OrchestratorManager:
                         # For contexts without agent fields, the prompt already has context embedded
                         # (done in _extract_objective_content), so just use it as-is
                         processed_prompt = prompt
-                        self.logger.debug(f"CallbackChatTarget: Prompt has embedded context, passing {len(contexts)} context source(s) in context_dict")
+                        self.logger.debug(
+                            f"CallbackChatTarget: Prompt has embedded context, passing {len(contexts)} context source(s) in context_dict"
+                        )
                     else:
                         # Agent fields present - prompt is clean, contexts have structure
                         processed_prompt = prompt
-                        tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
-                        self.logger.debug(f"CallbackChatTarget: Passing {len(contexts)} structured context(s) with agent fields, tool_names={tool_names}")
+                        tool_names = [
+                            ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                        ]
+                        self.logger.debug(
+                            f"CallbackChatTarget: Passing {len(contexts)} structured context(s) with agent fields, tool_names={tool_names}"
+                        )
                 else:
                     # Non-CallbackChatTarget: Embed contexts in the actual PyRIT message
                     if has_agent_fields:
                         # Agent target with structured context - don't embed in prompt
                         processed_prompt = prompt
-                        tool_names = [ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx]
-                        self.logger.debug(f"Non-CallbackChatTarget with agent fields: {len(contexts)} context source(s), tool_names={tool_names}")
+                        tool_names = [
+                            ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                        ]
+                        self.logger.debug(
+                            f"Non-CallbackChatTarget with agent fields: {len(contexts)} context source(s), tool_names={tool_names}"
+                        )
                     elif contexts:
                         # Model target without agent fields - embed context in prompt
                         # Note: The prompt already has context embedded from _extract_objective_content

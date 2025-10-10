@@ -168,7 +168,7 @@ def list_mean_nan_safe(data_list: List[Any]) -> float:
 
 def format_content_by_modality(content: str, modality: str) -> str:
     """Format content based on the specified modality, returning one random format.
-    
+
     :param content: The content to format
     :type content: str
     :param modality: The modality type (html, markdown, footnote, code, text)
@@ -178,50 +178,50 @@ def format_content_by_modality(content: str, modality: str) -> str:
     """
     import html
     import random
-    
+
     def format_as_html(text):
         html_text = html.escape(text)
         return [
             f"<p>{html_text}</p>",
             f'<div style="display:none">{html_text}</div>',
             f'<span style="display:none">{html_text}</span>',
-            f'<div hidden>{html_text}</div>',
-            f'<meta content="{html_text}">'
+            f"<div hidden>{html_text}</div>",
+            f'<meta content="{html_text}">',
         ]
-    
+
     def format_as_markdown(text):
-        markdown_text = text.replace('\n', '  \n')  # Convert newlines to Markdown line breaks
+        markdown_text = text.replace("\n", "  \n")  # Convert newlines to Markdown line breaks
         return [
-            f"\n**{markdown_text}**\n",             # Bold
-            f"\n*{markdown_text}*\n",               # Italic
-            f"\n`{markdown_text}`\n",               # Inline code
-            f"\n```{markdown_text}```\n",           # Code block
-            f"\n[Link]({markdown_text})\n"          # Link
+            f"\n**{markdown_text}**\n",  # Bold
+            f"\n*{markdown_text}*\n",  # Italic
+            f"\n`{markdown_text}`\n",  # Inline code
+            f"\n```{markdown_text}```\n",  # Code block
+            f"\n[Link]({markdown_text})\n",  # Link
         ]
-    
+
     def format_as_footnote(text):
-        footnote_text = text.replace('\n', ' ')
+        footnote_text = text.replace("\n", " ")
         return [
-            f"[^{footnote_text}]",                              # Footnote reference
-            f"\n[1] {footnote_text}\n",                         # Footnote reference with number
-            f"<sup>{footnote_text}</sup>",                      # Superscript
-            f'<span class="footnote">{footnote_text}</span>',   # Custom footnote span
-            f'<div class="footnote">{footnote_text}</div>'      # Custom footnote div
+            f"[^{footnote_text}]",  # Footnote reference
+            f"\n[1] {footnote_text}\n",  # Footnote reference with number
+            f"<sup>{footnote_text}</sup>",  # Superscript
+            f'<span class="footnote">{footnote_text}</span>',  # Custom footnote span
+            f'<div class="footnote">{footnote_text}</div>',  # Custom footnote div
         ]
-    
+
     def format_as_code(text):
-        code_text = text.replace('\n', ' ')
+        code_text = text.replace("\n", " ")
         return [
-            f"`{code_text}`",                               # Inline code
-            f"```\n{code_text}\n```",                       # Code block
-            f'"""\n{code_text}\n"""',                 # Code block
-            f"# {code_text}",                               # Inline comment
-            f'def function():\n    print("{code_text}")'  # Function call
+            f"`{code_text}`",  # Inline code
+            f"```\n{code_text}\n```",  # Code block
+            f'"""\n{code_text}\n"""',  # Code block
+            f"# {code_text}",  # Inline comment
+            f'def function():\n    print("{code_text}")',  # Function call
         ]
-    
+
     def format_as_text(text):
         return [f"<document>{text}</document>"]  # Return text in document tags
-    
+
     # Mapping of modality types to formatting functions
     modality_formatters = {
         "html": format_as_html,
@@ -230,7 +230,7 @@ def format_content_by_modality(content: str, modality: str) -> str:
         "code": format_as_code,
         "text": format_as_text,
     }
-    
+
     # Get formatter based on modality type
     if modality and modality.lower() in modality_formatters:
         formatter = modality_formatters[modality.lower()]
@@ -272,7 +272,12 @@ def write_pyrit_outputs_to_file(
 
     conversations = [
         [
-            (item.to_chat_message(), prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""), item.labels.get("tool_calls", []), item.labels.get("risk_sub_type"))
+            (
+                item.to_chat_message(),
+                prompt_to_context.get(item.original_value, "") or item.labels.get("context", ""),
+                item.labels.get("tool_calls", []),
+                item.labels.get("risk_sub_type"),
+            )
             for item in group
         ]
         for conv_id, group in itertools.groupby(prompts_request_pieces, key=lambda x: x.conversation_id)
@@ -297,7 +302,9 @@ def write_pyrit_outputs_to_file(
                         continue
                     conv_dict = {
                         "conversation": {
-                            "messages": [message_to_dict(message[0], message[1], message[2]) for message in conversation]
+                            "messages": [
+                                message_to_dict(message[0], message[1], message[2]) for message in conversation
+                            ]
                         }
                     }
                     # Add risk_sub_type if present (check first message for the label)
