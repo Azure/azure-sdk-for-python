@@ -7,7 +7,7 @@ import shutil
 import tempfile
 
 from typing import Sequence, Optional, List, Any, Tuple
-from subprocess import CalledProcessError, check_call
+import subprocess
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages, get_venv_call, install_into_venv, get_venv_python
@@ -83,6 +83,24 @@ class Check(abc.ABC):
         staging_directory = os.path.join(venv_location, ".staging")
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
+
+    def run_venv_command(self, executable: str, command: Sequence[str], cwd: str, check = False) -> subprocess.CompletedProcess[str]:
+        """Run a command in the given virtual environment. Prepends path with the virtual environment's Python executable. Collects the output. If check is True, raise CalledProcessError on failure."""
+
+        if (command[0].endswith("python") or command[0].endswith("python.exe")):
+            raise ValueError("The command should not include the python executable, it is provided by the 'executable' argument")
+
+        # it will be on the users to handle their check logic
+        result = subprocess.run(
+            [executable, *command],
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=check
+        )
+
+        return result
 
     def get_targeted_directories(self, args: argparse.Namespace) -> List[ParsedSetup]:
         """
