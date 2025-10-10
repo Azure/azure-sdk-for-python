@@ -11,36 +11,47 @@
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import ClientEventType, ContentPartType, ItemType, ServerEventType, ToolType
+from ._enums import (
+    AzureVoiceType,
+    ClientEventType,
+    ContentPartType,
+    ItemType,
+    MessageRole,
+    ResponseStatus,
+    ServerEventType,
+    ToolType,
+    TurnDetectionType,
+)
 
 if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
 class AgentConfig(_Model):
-    """AgentConfig.
+    """Configuration for the agent.
 
-    :ivar type: Required. Default value is "agent".
+    :ivar type: The type of agent to use. Required. Default value is "agent".
     :vartype type: str
-    :ivar name: Required.
+    :ivar name: The name of the agent. Required.
     :vartype name: str
-    :ivar description:
+    :ivar description: Optional description of the agent.
     :vartype description: str
-    :ivar agent_id: Required.
+    :ivar agent_id: The ID of the agent. Required.
     :vartype agent_id: str
-    :ivar thread_id: Required.
+    :ivar thread_id: The ID of the conversation thread. Required.
     :vartype thread_id: str
     """
 
     type: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is \"agent\"."""
+    """The type of agent to use. Required. Default value is \"agent\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The name of the agent. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of the agent."""
     agent_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The ID of the agent. Required."""
     thread_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The ID of the conversation thread. Required."""
 
     @overload
     def __init__(
@@ -65,15 +76,12 @@ class AgentConfig(_Model):
 
 
 class Animation(_Model):
-    """Configuration for animation outputs including blendshapes, visemes, and emotion metadata.
+    """Configuration for animation outputs including blendshapes and visemes metadata.
 
     :ivar model_name: The name of the animation model to use.
     :vartype model_name: str
     :ivar outputs: Set of output data types requested from the animation system.
     :vartype outputs: list[str or ~azure.ai.voicelive.models.AnimationOutputType]
-    :ivar emotion_detection_interval_ms: Interval for emotion detection in milliseconds. If not
-     set, emotion detection is disabled.
-    :vartype emotion_detection_interval_ms: int
     """
 
     model_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -82,10 +90,6 @@ class Animation(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Set of output data types requested from the animation system."""
-    emotion_detection_interval_ms: Optional[int] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Interval for emotion detection in milliseconds. If not set, emotion detection is disabled."""
 
     @overload
     def __init__(
@@ -93,7 +97,6 @@ class Animation(_Model):
         *,
         model_name: Optional[str] = None,
         outputs: Optional[list[Union[str, "_models.AnimationOutputType"]]] = None,
-        emotion_detection_interval_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -144,36 +147,44 @@ class ConversationRequestItem(_Model):
 
 
 class MessageItem(ConversationRequestItem, discriminator="message"):
-    """MessageItem.
+    """A message item within a conversation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AssistantMessageItem, SystemMessageItem, UserMessageItem
 
     :ivar id:
     :vartype id: str
-    :ivar type: Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar role: Required. Default value is None.
-    :vartype role: str
-    :ivar status: Known values are: "completed" and "incomplete".
+    :ivar role: The role of the message origionator. Required. Known values are: "system", "user",
+     and "assistant".
+    :vartype role: str or ~azure.ai.voicelive.models.MessageRole
+    :ivar content: The content parts of the message. Required.
+    :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
+    :ivar status: Processing status of the message item. Known values are: "completed" and
+     "incomplete".
     :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
     """
 
     __mapping__: dict[str, _Model] = {}
     type: Literal[ItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """The type of the item; must be 'message' for message items. Required."""
     role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is None."""
+    """The role of the message origionator. Required. Known values are: \"system\", \"user\", and
+     \"assistant\"."""
+    content: list["_models.MessageContentPart"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The content parts of the message. Required."""
     status: Optional[Union[str, "_models.ItemParamStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"completed\" and \"incomplete\"."""
+    """Processing status of the message item. Known values are: \"completed\" and \"incomplete\"."""
 
     @overload
     def __init__(
         self,
         *,
         role: str,
+        content: list["_models.MessageContentPart"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
     ) -> None: ...
@@ -191,33 +202,30 @@ class MessageItem(ConversationRequestItem, discriminator="message"):
 
 
 class AssistantMessageItem(MessageItem, discriminator="assistant"):
-    """AssistantMessageItem.
+    """An assistant message item within a conversation.
 
     :ivar id:
     :vartype id: str
-    :ivar type: Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar status: Known values are: "completed" and "incomplete".
+    :ivar content: The content parts of the message. Required.
+    :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
+    :ivar status: Processing status of the message item. Known values are: "completed" and
+     "incomplete".
     :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
-    :ivar role: Required. Default value is "assistant".
-    :vartype role: str
-    :ivar content: Required.
-    :vartype content: list[~azure.ai.voicelive.models.OutputTextContentPart]
+    :ivar role: Required.
+    :vartype role: str or ~azure.ai.voicelive.models.ASSISTANT
     """
 
     __mapping__: dict[str, _Model] = {}
-    role: Literal["assistant"] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"assistant\"."""
-    content: list["_models.OutputTextContentPart"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    role: Literal[MessageRole.ASSISTANT] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        content: list["_models.OutputTextContentPart"],
+        content: list["_models.MessageContentPart"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
     ) -> None: ...
@@ -231,7 +239,7 @@ class AssistantMessageItem(MessageItem, discriminator="assistant"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.role = "assistant"  # type: ignore
+        self.role = MessageRole.ASSISTANT  # type: ignore
 
 
 class AudioEchoCancellation(_Model):
@@ -251,16 +259,16 @@ class AudioEchoCancellation(_Model):
         self.type: Literal["server_echo_cancellation"] = "server_echo_cancellation"
 
 
-class AudioInputTranscriptionSettings(_Model):
+class AudioInputTranscriptionOptions(_Model):
     """Configuration for input audio transcription.
 
     :ivar model: The transcription model to use. Supported values:
      'whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe',
-     'azure-fast-transcription', 'azure-speech'. Required. Is one of the following types:
-     Literal["whisper-1"], Literal["gpt-4o-transcribe"], Literal["gpt-4o-mini-transcribe"],
-     Literal["azure-fast-transcription"], Literal["azure-speech"], str
+     'azure-speech'. Required. Is one of the following types: Literal["whisper-1"],
+     Literal["gpt-4o-transcribe"], Literal["gpt-4o-mini-transcribe"], Literal["azure-speech"], str
     :vartype model: str
-    :ivar language: Optional BCP-47 language code (e.g., 'en-US').
+    :ivar language: Optional language code in BCP-47 (e.g., 'en-US'), or ISO-639-1 (e.g., 'en'), or
+     multi languages with auto detection, (e.g., 'en,zh').
     :vartype language: str
     :ivar custom_speech: Optional configuration for custom speech models.
     :vartype custom_speech: dict[str, str]
@@ -272,17 +280,17 @@ class AudioInputTranscriptionSettings(_Model):
         Literal["whisper-1"],
         Literal["gpt-4o-transcribe"],
         Literal["gpt-4o-mini-transcribe"],
-        Literal["azure-fast-transcription"],
         Literal["azure-speech"],
         str,
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The transcription model to use. Supported values:
      'whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe',
-     'azure-fast-transcription', 'azure-speech'. Required. Is one of the following types:
-     Literal[\"whisper-1\"], Literal[\"gpt-4o-transcribe\"], Literal[\"gpt-4o-mini-transcribe\"],
-     Literal[\"azure-fast-transcription\"], Literal[\"azure-speech\"], str"""
+     'azure-speech'. Required. Is one of the following types: Literal[\"whisper-1\"],
+     Literal[\"gpt-4o-transcribe\"], Literal[\"gpt-4o-mini-transcribe\"], Literal[\"azure-speech\"],
+     str"""
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional BCP-47 language code (e.g., 'en-US')."""
+    """Optional language code in BCP-47 (e.g., 'en-US'), or ISO-639-1 (e.g., 'en'), or multi languages
+     with auto detection, (e.g., 'en,zh')."""
     custom_speech: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional configuration for custom speech models."""
     phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -296,7 +304,6 @@ class AudioInputTranscriptionSettings(_Model):
             Literal["whisper-1"],
             Literal["gpt-4o-transcribe"],
             Literal["gpt-4o-mini-transcribe"],
-            Literal["azure-fast-transcription"],
             Literal["azure-speech"],
             str,
         ],
@@ -319,19 +326,33 @@ class AudioInputTranscriptionSettings(_Model):
 class AudioNoiseReduction(_Model):
     """Configuration for input audio noise reduction.
 
-    :ivar type: The type of noise reduction model. Required. Default value is
-     "azure_deep_noise_suppression".
+    :ivar type: The type of noise reduction model. Required. Is one of the following types:
+     Literal["azure_deep_noise_suppression"], Literal["near_field"], Literal["far_field"], str
     :vartype type: str
     """
 
-    type: Literal["azure_deep_noise_suppression"] = rest_field(
+    type: Union[Literal["azure_deep_noise_suppression"], Literal["near_field"], Literal["far_field"], str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of noise reduction model. Required. Default value is \"azure_deep_noise_suppression\"."""
+    """The type of noise reduction model. Required. Is one of the following types:
+     Literal[\"azure_deep_noise_suppression\"], Literal[\"near_field\"], Literal[\"far_field\"], str"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[Literal["azure_deep_noise_suppression"], Literal["near_field"], Literal["far_field"], str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["azure_deep_noise_suppression"] = "azure_deep_noise_suppression"
 
 
 class AvatarConfig(_Model):
@@ -388,15 +409,17 @@ class AzureVoice(_Model):
     """Base for Azure voice configurations.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureCustomVoice, AzurePersonalVoice, AzurePlatformVoice, AzureStandardVoice
+    AzureCustomVoice, AzurePersonalVoice, AzureStandardVoice
 
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar type: The type of the Azure voice. Required. Known values are: "azure-custom",
+     "azure-standard", and "azure-personal".
+    :vartype type: str or ~azure.ai.voicelive.models.AzureVoiceType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is None."""
+    """The type of the Azure voice. Required. Known values are: \"azure-custom\", \"azure-standard\",
+     and \"azure-personal\"."""
 
     @overload
     def __init__(
@@ -417,10 +440,10 @@ class AzureVoice(_Model):
 
 
 class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
-    """Azure custom voice configuration (preferred).
+    """Azure custom voice configuration.
 
-    :ivar type: Required. Default value is "azure-custom".
-    :vartype type: str
+    :ivar type: Required. Azure custom voice.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_CUSTOM
     :ivar name: Voice name cannot be empty. Required.
     :vartype name: str
     :ivar endpoint_id: Endpoint ID cannot be empty. Required.
@@ -443,8 +466,8 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
     :vartype volume: str
     """
 
-    type: Literal["azure-custom"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure-custom\"."""
+    type: Literal[AzureVoiceType.AZURE_CUSTOM] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Azure custom voice."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Voice name cannot be empty. Required."""
     endpoint_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -484,157 +507,41 @@ class AzureCustomVoice(AzureVoice, discriminator="azure-custom"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure-custom"  # type: ignore
-
-
-class TurnDetection(_Model):
-    """Top-level union for turn detection configuration.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureSemanticVad, AzureSemanticVadEn, AzureMultilingualSemanticVad, NoTurnDetection,
-    AzureSemanticVadServer, ServerVad
-
-    :ivar type: Required. Is one of the following types: Literal["none"], Literal["server_vad"],
-     Literal["azure_semantic_vad"], Literal["azure_semantic_vad_en"], Literal["server_sd"],
-     Literal["azure_semantic_vad_multilingual"]
-    :vartype type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Is one of the following types: Literal[\"none\"], Literal[\"server_vad\"],
-     Literal[\"azure_semantic_vad\"], Literal[\"azure_semantic_vad_en\"], Literal[\"server_sd\"],
-     Literal[\"azure_semantic_vad_multilingual\"]"""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AzureMultilingualSemanticVad(TurnDetection, discriminator="azure_semantic_vad_multilingual"):
-    """Server Speech Detection (Azure semantic VAD).
-
-    :ivar type: Required. Default value is "azure_semantic_vad_multilingual".
-    :vartype type: str
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar prefix_padding_ms:
-    :vartype prefix_padding_ms: int
-    :ivar silence_duration_ms:
-    :vartype silence_duration_ms: int
-    :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
-    :ivar neg_threshold:
-    :vartype neg_threshold: float
-    :ivar speech_duration_ms:
-    :vartype speech_duration_ms: int
-    :ivar window_size:
-    :vartype window_size: int
-    :ivar distinct_ci_phones:
-    :vartype distinct_ci_phones: int
-    :ivar require_vowel:
-    :vartype require_vowel: bool
-    :ivar remove_filler_words:
-    :vartype remove_filler_words: bool
-    :ivar languages:
-    :vartype languages: list[str]
-    :ivar auto_truncate:
-    :vartype auto_truncate: bool
-    """
-
-    type: Literal["azure_semantic_vad_multilingual"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad_multilingual\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
-    @overload
-    def __init__(
-        self,
-        *,
-        threshold: Optional[float] = None,
-        prefix_padding_ms: Optional[int] = None,
-        silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
-        neg_threshold: Optional[float] = None,
-        speech_duration_ms: Optional[int] = None,
-        window_size: Optional[int] = None,
-        distinct_ci_phones: Optional[int] = None,
-        require_vowel: Optional[bool] = None,
-        remove_filler_words: Optional[bool] = None,
-        languages: Optional[list[str]] = None,
-        auto_truncate: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "azure_semantic_vad_multilingual"  # type: ignore
+        self.type = AzureVoiceType.AZURE_CUSTOM  # type: ignore
 
 
 class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
     """Azure personal voice configuration.
 
-    :ivar type: Required. Default value is "azure-personal".
-    :vartype type: str
+    :ivar type: Required. Azure personal voice.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_PERSONAL
     :ivar name: Voice name cannot be empty. Required.
     :vartype name: str
     :ivar temperature: Temperature must be between 0.0 and 1.0.
     :vartype temperature: float
-    :ivar model: Underlying neural model to use for personal voice. Required. Is one of the
-     following types: Literal["DragonLatestNeural"], Literal["PhoenixLatestNeural"],
-     Literal["PhoenixV2Neural"]
-    :vartype model: str
+    :ivar model: Underlying neural model to use for personal voice. Required. Known values are:
+     "DragonLatestNeural", "PhoenixLatestNeural", and "PhoenixV2Neural".
+    :vartype model: str or ~azure.ai.voicelive.models.PersonalVoiceModels
     """
 
-    type: Literal["azure-personal"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure-personal\"."""
+    type: Literal[AzureVoiceType.AZURE_PERSONAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Azure personal voice."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Voice name cannot be empty. Required."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Temperature must be between 0.0 and 1.0."""
-    model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"] = rest_field(
+    model: Union[str, "_models.PersonalVoiceModels"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Underlying neural model to use for personal voice. Required. Is one of the following types:
-     Literal[\"DragonLatestNeural\"], Literal[\"PhoenixLatestNeural\"], Literal[\"PhoenixV2Neural\"]"""
+    """Underlying neural model to use for personal voice. Required. Known values are:
+     \"DragonLatestNeural\", \"PhoenixLatestNeural\", and \"PhoenixV2Neural\"."""
 
     @overload
     def __init__(
         self,
         *,
         name: str,
-        model: Literal["DragonLatestNeural", "PhoenixLatestNeural", "PhoenixV2Neural"],
+        model: Union[str, "_models.PersonalVoiceModels"],
         temperature: Optional[float] = None,
     ) -> None: ...
 
@@ -647,90 +554,24 @@ class AzurePersonalVoice(AzureVoice, discriminator="azure-personal"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure-personal"  # type: ignore
+        self.type = AzureVoiceType.AZURE_PERSONAL  # type: ignore
 
 
-class AzurePlatformVoice(AzureVoice, discriminator="azure-platform"):
-    """Azure platform voice configuration (variant of standard).
-
-    :ivar type: Required. Default value is "azure-platform".
-    :vartype type: str
-    :ivar name: Voice name cannot be empty. Required.
-    :vartype name: str
-    :ivar temperature: Temperature must be between 0.0 and 1.0.
-    :vartype temperature: float
-    :ivar custom_lexicon_url:
-    :vartype custom_lexicon_url: str
-    :ivar prefer_locales:
-    :vartype prefer_locales: list[str]
-    :ivar locale:
-    :vartype locale: str
-    :ivar style:
-    :vartype style: str
-    :ivar pitch:
-    :vartype pitch: str
-    :ivar rate:
-    :vartype rate: str
-    :ivar volume:
-    :vartype volume: str
-    """
-
-    type: Literal["azure-platform"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure-platform\"."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Voice name cannot be empty. Required."""
-    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Temperature must be between 0.0 and 1.0."""
-    custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    prefer_locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    style: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    pitch: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    rate: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    volume: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        temperature: Optional[float] = None,
-        custom_lexicon_url: Optional[str] = None,
-        prefer_locales: Optional[list[str]] = None,
-        locale: Optional[str] = None,
-        style: Optional[str] = None,
-        pitch: Optional[str] = None,
-        rate: Optional[str] = None,
-        volume: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "azure-platform"  # type: ignore
-
-
-class EOUDetection(_Model):
+class EouDetection(_Model):
     """Top-level union for end-of-utterance (EOU) semantic detection configuration.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AzureSemanticDetection, AzureSemanticDetectionEn, AzureSemanticDetectionMultilingual
 
     :ivar model: Required. Is one of the following types: Literal["semantic_detection_v1"],
-     Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"]
+     Literal["semantic_detection_v1_en"], Literal["semantic_detection_v1_multilingual"], str
     :vartype model: str
     """
 
     __mapping__: dict[str, _Model] = {}
     model: str = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])
     """Required. Is one of the following types: Literal[\"semantic_detection_v1\"],
-     Literal[\"semantic_detection_v1_en\"], Literal[\"semantic_detection_v1_multilingual\"]"""
+     Literal[\"semantic_detection_v1_en\"], Literal[\"semantic_detection_v1_multilingual\"], str"""
 
     @overload
     def __init__(
@@ -750,48 +591,35 @@ class EOUDetection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"):
+class AzureSemanticDetection(EouDetection, discriminator="semantic_detection_v1"):
     """Azure semantic end-of-utterance detection (default).
 
     :ivar model: Required. Default value is "semantic_detection_v1".
     :vartype model: str
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar timeout:
-    :vartype timeout: float
-    :ivar secondary_threshold:
-    :vartype secondary_threshold: float
-    :ivar secondary_timeout:
-    :vartype secondary_timeout: float
-    :ivar disable_rules:
-    :vartype disable_rules: bool
-    :ivar sr_boost:
-    :vartype sr_boost: float
-    :ivar extra_imend_check:
-    :vartype extra_imend_check: bool
+    :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
+     ``low``, ``medium``, ``high``, or ``default``. Known values are: "low", "medium", "high", and
+     "default".
+    :vartype threshold_level: str or ~azure.ai.voicelive.models.EouThresholdLevel
+    :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
+    :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    secondary_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    secondary_timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    disable_rules: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    sr_boost: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    extra_imend_check: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
+     ``high``, or ``default``. Known values are: \"low\", \"medium\", \"high\", and \"default\"."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
     @overload
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
-        timeout: Optional[float] = None,
-        secondary_threshold: Optional[float] = None,
-        secondary_timeout: Optional[float] = None,
-        disable_rules: Optional[bool] = None,
-        sr_boost: Optional[float] = None,
-        extra_imend_check: Optional[bool] = None,
+        threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = None,
+        timeout_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -806,48 +634,35 @@ class AzureSemanticDetection(EOUDetection, discriminator="semantic_detection_v1"
         self.model = "semantic_detection_v1"  # type: ignore
 
 
-class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v1_en"):
+class AzureSemanticDetectionEn(EouDetection, discriminator="semantic_detection_v1_en"):
     """Azure semantic end-of-utterance detection (English-optimized).
 
     :ivar model: Required. Default value is "semantic_detection_v1_en".
     :vartype model: str
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar timeout:
-    :vartype timeout: float
-    :ivar secondary_threshold:
-    :vartype secondary_threshold: float
-    :ivar secondary_timeout:
-    :vartype secondary_timeout: float
-    :ivar disable_rules:
-    :vartype disable_rules: bool
-    :ivar sr_boost:
-    :vartype sr_boost: float
-    :ivar extra_imend_check:
-    :vartype extra_imend_check: bool
+    :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
+     ``low``, ``medium``, ``high``, or ``default``. Known values are: "low", "medium", "high", and
+     "default".
+    :vartype threshold_level: str or ~azure.ai.voicelive.models.EouThresholdLevel
+    :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
+    :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1_en"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1_en\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    secondary_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    secondary_timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    disable_rules: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    sr_boost: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    extra_imend_check: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
+     ``high``, or ``default``. Known values are: \"low\", \"medium\", \"high\", and \"default\"."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
     @overload
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
-        timeout: Optional[float] = None,
-        secondary_threshold: Optional[float] = None,
-        secondary_timeout: Optional[float] = None,
-        disable_rules: Optional[bool] = None,
-        sr_boost: Optional[float] = None,
-        extra_imend_check: Optional[bool] = None,
+        threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = None,
+        timeout_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -862,48 +677,35 @@ class AzureSemanticDetectionEn(EOUDetection, discriminator="semantic_detection_v
         self.model = "semantic_detection_v1_en"  # type: ignore
 
 
-class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_detection_v1_multilingual"):
+class AzureSemanticDetectionMultilingual(EouDetection, discriminator="semantic_detection_v1_multilingual"):
     """Azure semantic end-of-utterance detection (multilingual).
 
     :ivar model: Required. Default value is "semantic_detection_v1_multilingual".
     :vartype model: str
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar timeout:
-    :vartype timeout: float
-    :ivar secondary_threshold:
-    :vartype secondary_threshold: float
-    :ivar secondary_timeout:
-    :vartype secondary_timeout: float
-    :ivar disable_rules:
-    :vartype disable_rules: bool
-    :ivar sr_boost:
-    :vartype sr_boost: float
-    :ivar extra_imend_check:
-    :vartype extra_imend_check: bool
+    :ivar threshold_level: Threshold level setting. Recommended instead of ``threshold``. One of
+     ``low``, ``medium``, ``high``, or ``default``. Known values are: "low", "medium", "high", and
+     "default".
+    :vartype threshold_level: str or ~azure.ai.voicelive.models.EouThresholdLevel
+    :ivar timeout_ms: Timeout in milliseconds. Recommended instead of ``timeout``.
+    :vartype timeout_ms: int
     """
 
     model: Literal["semantic_detection_v1_multilingual"] = rest_discriminator(name="model", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. Default value is \"semantic_detection_v1_multilingual\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    secondary_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    secondary_timeout: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    disable_rules: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    sr_boost: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    extra_imend_check: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Threshold level setting. Recommended instead of ``threshold``. One of ``low``, ``medium``,
+     ``high``, or ``default``. Known values are: \"low\", \"medium\", \"high\", and \"default\"."""
+    timeout_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Timeout in milliseconds. Recommended instead of ``timeout``."""
 
     @overload
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
-        timeout: Optional[float] = None,
-        secondary_threshold: Optional[float] = None,
-        secondary_timeout: Optional[float] = None,
-        disable_rules: Optional[bool] = None,
-        sr_boost: Optional[float] = None,
-        extra_imend_check: Optional[bool] = None,
+        threshold_level: Optional[Union[str, "_models.EouThresholdLevel"]] = None,
+        timeout_ms: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -918,70 +720,27 @@ class AzureSemanticDetectionMultilingual(EOUDetection, discriminator="semantic_d
         self.model = "semantic_detection_v1_multilingual"  # type: ignore
 
 
-class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
-    """Server Speech Detection (Azure semantic VAD, default variant).
+class TurnDetection(_Model):
+    """Top-level union for turn detection configuration.
 
-    :ivar type: Required. Default value is "azure_semantic_vad".
-    :vartype type: str
-    :ivar threshold:
-    :vartype threshold: float
-    :ivar prefix_padding_ms:
-    :vartype prefix_padding_ms: int
-    :ivar silence_duration_ms:
-    :vartype silence_duration_ms: int
-    :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
-    :ivar neg_threshold:
-    :vartype neg_threshold: float
-    :ivar speech_duration_ms:
-    :vartype speech_duration_ms: int
-    :ivar window_size:
-    :vartype window_size: int
-    :ivar distinct_ci_phones:
-    :vartype distinct_ci_phones: int
-    :ivar require_vowel:
-    :vartype require_vowel: bool
-    :ivar remove_filler_words:
-    :vartype remove_filler_words: bool
-    :ivar languages:
-    :vartype languages: list[str]
-    :ivar auto_truncate:
-    :vartype auto_truncate: bool
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureSemanticVad, AzureSemanticVadEn, AzureSemanticVadMultilingual, ServerVad
+
+    :ivar type: Required. Known values are: "server_vad", "azure_semantic_vad",
+     "azure_semantic_vad_en", and "azure_semantic_vad_multilingual".
+    :vartype type: str or ~azure.ai.voicelive.models.TurnDetectionType
     """
 
-    type: Literal["azure_semantic_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad\"."""
-    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"server_vad\", \"azure_semantic_vad\", \"azure_semantic_vad_en\",
+     and \"azure_semantic_vad_multilingual\"."""
 
     @overload
     def __init__(
         self,
         *,
-        threshold: Optional[float] = None,
-        prefix_padding_ms: Optional[int] = None,
-        silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
-        neg_threshold: Optional[float] = None,
-        speech_duration_ms: Optional[int] = None,
-        window_size: Optional[int] = None,
-        distinct_ci_phones: Optional[int] = None,
-        require_vowel: Optional[bool] = None,
-        remove_filler_words: Optional[bool] = None,
-        languages: Optional[list[str]] = None,
-        auto_truncate: Optional[bool] = None,
+        type: str,
     ) -> None: ...
 
     @overload
@@ -993,14 +752,83 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure_semantic_vad"  # type: ignore
+
+
+class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
+    """Server Speech Detection (Azure semantic VAD, default variant).
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD
+    :ivar threshold:
+    :vartype threshold: float
+    :ivar prefix_padding_ms:
+    :vartype prefix_padding_ms: int
+    :ivar silence_duration_ms:
+    :vartype silence_duration_ms: int
+    :ivar end_of_utterance_detection:
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
+    :ivar speech_duration_ms:
+    :vartype speech_duration_ms: int
+    :ivar remove_filler_words:
+    :vartype remove_filler_words: bool
+    :ivar languages:
+    :vartype languages: list[str]
+    :ivar auto_truncate:
+    :vartype auto_truncate: bool
+    :ivar create_response:
+    :vartype create_response: bool
+    :ivar interrupt_response:
+    :vartype interrupt_response: bool
+    """
+
+    type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    create_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interrupt_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+
+    @overload
+    def __init__(
+        self,
+        *,
+        threshold: Optional[float] = None,
+        prefix_padding_ms: Optional[int] = None,
+        silence_duration_ms: Optional[int] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
+        speech_duration_ms: Optional[int] = None,
+        remove_filler_words: Optional[bool] = None,
+        languages: Optional[list[str]] = None,
+        auto_truncate: Optional[bool] = None,
+        create_response: Optional[bool] = None,
+        interrupt_response: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TurnDetectionType.AZURE_SEMANTIC_VAD  # type: ignore
 
 
 class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     """Server Speech Detection (Azure semantic VAD, English-only).
 
-    :ivar type: Required. Default value is "azure_semantic_vad_en".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD_EN
     :ivar threshold:
     :vartype threshold: float
     :ivar prefix_padding_ms:
@@ -1008,41 +836,32 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
-    :ivar neg_threshold:
-    :vartype neg_threshold: float
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar speech_duration_ms:
     :vartype speech_duration_ms: int
-    :ivar window_size:
-    :vartype window_size: int
-    :ivar distinct_ci_phones:
-    :vartype distinct_ci_phones: int
-    :ivar require_vowel:
-    :vartype require_vowel: bool
     :ivar remove_filler_words:
     :vartype remove_filler_words: bool
-    :ivar languages:
-    :vartype languages: list[str]
     :ivar auto_truncate:
     :vartype auto_truncate: bool
+    :ivar create_response:
+    :vartype create_response: bool
+    :ivar interrupt_response:
+    :vartype interrupt_response: bool
     """
 
-    type: Literal["azure_semantic_vad_en"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure_semantic_vad_en\"."""
+    type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD_EN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    create_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interrupt_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -1051,15 +870,12 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
-        neg_threshold: Optional[float] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         speech_duration_ms: Optional[int] = None,
-        window_size: Optional[int] = None,
-        distinct_ci_phones: Optional[int] = None,
-        require_vowel: Optional[bool] = None,
         remove_filler_words: Optional[bool] = None,
-        languages: Optional[list[str]] = None,
         auto_truncate: Optional[bool] = None,
+        create_response: Optional[bool] = None,
+        interrupt_response: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1071,14 +887,14 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure_semantic_vad_en"  # type: ignore
+        self.type = TurnDetectionType.AZURE_SEMANTIC_VAD_EN  # type: ignore
 
 
-class AzureSemanticVadServer(TurnDetection, discriminator="server_sd"):
-    """Server Speech Detection (legacy ``server_sd`` alias).
+class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_vad_multilingual"):
+    """Server Speech Detection (Azure semantic VAD).
 
-    :ivar type: Required. Default value is "server_sd".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD_MULTILINGUAL
     :ivar threshold:
     :vartype threshold: float
     :ivar prefix_padding_ms:
@@ -1086,41 +902,35 @@ class AzureSemanticVadServer(TurnDetection, discriminator="server_sd"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
-    :ivar neg_threshold:
-    :vartype neg_threshold: float
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar speech_duration_ms:
     :vartype speech_duration_ms: int
-    :ivar window_size:
-    :vartype window_size: int
-    :ivar distinct_ci_phones:
-    :vartype distinct_ci_phones: int
-    :ivar require_vowel:
-    :vartype require_vowel: bool
     :ivar remove_filler_words:
     :vartype remove_filler_words: bool
     :ivar languages:
     :vartype languages: list[str]
     :ivar auto_truncate:
     :vartype auto_truncate: bool
+    :ivar create_response:
+    :vartype create_response: bool
+    :ivar interrupt_response:
+    :vartype interrupt_response: bool
     """
 
-    type: Literal["server_sd"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"server_sd\"."""
+    type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    neg_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     speech_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    window_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    distinct_ci_phones: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    require_vowel: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     remove_filler_words: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     languages: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    create_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interrupt_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -1129,15 +939,13 @@ class AzureSemanticVadServer(TurnDetection, discriminator="server_sd"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
-        neg_threshold: Optional[float] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         speech_duration_ms: Optional[int] = None,
-        window_size: Optional[int] = None,
-        distinct_ci_phones: Optional[int] = None,
-        require_vowel: Optional[bool] = None,
         remove_filler_words: Optional[bool] = None,
         languages: Optional[list[str]] = None,
         auto_truncate: Optional[bool] = None,
+        create_response: Optional[bool] = None,
+        interrupt_response: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -1149,14 +957,14 @@ class AzureSemanticVadServer(TurnDetection, discriminator="server_sd"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "server_sd"  # type: ignore
+        self.type = TurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL  # type: ignore
 
 
 class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     """Azure standard voice configuration.
 
-    :ivar type: Required. Default value is "azure-standard".
-    :vartype type: str
+    :ivar type: Required. Azure standard voice.
+    :vartype type: str or ~azure.ai.voicelive.models.AZURE_STANDARD
     :ivar name: Voice name cannot be empty. Required.
     :vartype name: str
     :ivar temperature: Temperature must be between 0.0 and 1.0.
@@ -1177,8 +985,8 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
     :vartype volume: str
     """
 
-    type: Literal["azure-standard"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"azure-standard\"."""
+    type: Literal[AzureVoiceType.AZURE_STANDARD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Azure standard voice."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Voice name cannot be empty. Required."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1215,7 +1023,42 @@ class AzureStandardVoice(AzureVoice, discriminator="azure-standard"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "azure-standard"  # type: ignore
+        self.type = AzureVoiceType.AZURE_STANDARD  # type: ignore
+
+
+class Background(_Model):
+    """Defines a video background, either a solid color or an image URL (mutually exclusive).
+
+    :ivar color: Background color in hex format (e.g., ``#00FF00FF``). Cannot be set if
+     ``image_url`` is provided.
+    :vartype color: str
+    :ivar image_url: Background image URL. Cannot be set if ``color`` is provided.
+    :vartype image_url: str
+    """
+
+    color: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Background color in hex format (e.g., ``#00FF00FF``). Cannot be set if ``image_url`` is
+     provided."""
+    image_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Background image URL. Cannot be set if ``color`` is provided."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        color: Optional[str] = None,
+        image_url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class CachedTokenDetails(_Model):
@@ -1308,7 +1151,6 @@ class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation
     calls, and function call responses. This event can be used both to populate a
     "history" of the conversation and to add new items mid-stream, but has the
     current limitation that it cannot populate assistant audio messages.
-
     If successful, the server will respond with a ``conversation.item.created``
     event, otherwise an ``error`` event will be sent.
 
@@ -1445,10 +1287,8 @@ class ClientEventConversationItemTruncate(ClientEvent, discriminator="conversati
     interrupts to truncate audio that has already been sent to the client but not
     yet played. This will synchronize the server's understanding of the audio with
     the client's playback.
-
     Truncating audio will delete the server-side text transcript to ensure there
     is not text in the context that hasn't been heard by the user.
-
     If successful, the server will respond with a ``conversation.item.truncated``
     event.
 
@@ -1586,7 +1426,6 @@ class ClientEventInputAudioBufferCommit(ClientEvent, discriminator="input_audio_
     if the input audio buffer is empty. When in Server VAD mode, the client does
     not need to send this event, the server will commit the audio buffer
     automatically.
-
     Committing the input audio buffer will trigger input audio transcription
     (if enabled in session configuration), but it will not create a response
     from the model. The server will respond with an ``input_audio_buffer.committed``
@@ -1844,15 +1683,12 @@ class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
     """This event instructs the server to create a Response, which means triggering
     model inference. When in Server VAD mode, the server will create Responses
     automatically.
-
     A Response will include at least one Item, and may have two, in which case
     the second will be a function call. These Items will be appended to the
     conversation history.
-
     The server will respond with a ``response.created`` event, events for Items
     and content created, and finally a ``response.done`` event to indicate the
     Response is complete.
-
     The ``response.create`` event includes inference configuration like
     ``instructions``, and ``temperature``. These fields will override the Session's
     configuration for this Response only.
@@ -1900,7 +1736,8 @@ class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
 
 class ClientEventSessionAvatarConnect(ClientEvent, discriminator="session.avatar.connect"):
     """Sent when the client connects and provides its SDP (Session Description Protocol)
-      for avatar-related media negotiation.
+
+    for avatar-related media negotiation.
 
     :ivar event_id:
     :vartype event_id: str
@@ -1941,7 +1778,6 @@ class ClientEventSessionUpdate(ClientEvent, discriminator="session.update"):
     except for ``voice``. However, note that once a session has been
     initialized with a particular ``model``, it can’t be changed to
     another model using ``session.update``.
-
     When the server receives a ``session.update``, it will respond
     with a ``session.updated`` event showing the full, effective configuration.
     Only the fields that are present are updated. To clear a field like
@@ -1981,7 +1817,7 @@ class ClientEventSessionUpdate(ClientEvent, discriminator="session.update"):
 
 
 class ContentPart(_Model):
-    """ContentPart.
+    """Base for any content part; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ResponseAudioContentPart, RequestAudioContentPart, RequestTextContentPart,
@@ -2013,26 +1849,25 @@ class ContentPart(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EmotionCandidate(_Model):
-    """EmotionCandidate.
+class ConversationItemBase(_Model):
+    """The item to add to the conversation."""
 
-    :ivar emotion: Required.
-    :vartype emotion: str
-    :ivar confidence: Required.
-    :vartype confidence: float
+
+class ErrorResponse(_Model):
+    """Standard error response envelope.
+
+    :ivar error: Error object returned in case of API failure. Required.
+    :vartype error: ~azure.ai.voicelive.models.VoiceLiveErrorDetails
     """
 
-    emotion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    confidence: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    error: "_models.VoiceLiveErrorDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Error object returned in case of API failure. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        emotion: str,
-        confidence: float,
+        error: "_models.VoiceLiveErrorDetails",
     ) -> None: ...
 
     @overload
@@ -2047,7 +1882,7 @@ class EmotionCandidate(_Model):
 
 
 class FunctionCallItem(ConversationRequestItem, discriminator="function_call"):
-    """FunctionCallItem.
+    """A function call item within a conversation.
 
     :ivar id:
     :vartype id: str
@@ -2100,7 +1935,7 @@ class FunctionCallItem(ConversationRequestItem, discriminator="function_call"):
 
 
 class FunctionCallOutputItem(ConversationRequestItem, discriminator="function_call_output"):
-    """FunctionCallOutputItem.
+    """A function call output item within a conversation.
 
     :ivar id:
     :vartype id: str
@@ -2258,54 +2093,21 @@ class IceServer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputAudio(_Model):
-    """Configuration for client audio input. Used to specify the audio model and optional phrase list.
-
-    :ivar model: The name of the model to use for input audio (currently only 'azure-standard' is
-     supported). Required. Default value is "azure-standard".
-    :vartype model: str
-    :ivar phrase_list: Optional list of phrases to bias the speech recognition engine.
-    :vartype phrase_list: list[str]
-    """
-
-    model: Literal["azure-standard"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the model to use for input audio (currently only 'azure-standard' is supported).
-     Required. Default value is \"azure-standard\"."""
-    phrase_list: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional list of phrases to bias the speech recognition engine."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        phrase_list: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.model: Literal["azure-standard"] = "azure-standard"
-
-
-class UserContentPart(_Model):
-    """UserContentPart.
+class MessageContentPart(_Model):
+    """Base for any message content part; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    InputAudioContentPart, InputTextContentPart
+    InputAudioContentPart, InputTextContentPart, OutputTextContentPart
 
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar type: The type of the content part. Required. Known values are: "input_text",
+     "input_audio", "text", and "audio".
+    :vartype type: str or ~azure.ai.voicelive.models.ContentPartType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is None."""
+    """The type of the content part. Required. Known values are: \"input_text\", \"input_audio\",
+     \"text\", and \"audio\"."""
 
     @overload
     def __init__(
@@ -2325,19 +2127,19 @@ class UserContentPart(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputAudioContentPart(UserContentPart, discriminator="input_audio"):
-    """InputAudioContentPart.
+class InputAudioContentPart(MessageContentPart, discriminator="input_audio"):
+    """Input audio content part.
 
-    :ivar type: Required. Default value is "input_audio".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO
     :ivar audio: Required.
     :vartype audio: str
     :ivar transcript:
     :vartype transcript: str
     """
 
-    type: Literal["input_audio"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"input_audio\"."""
+    type: Literal[ContentPartType.INPUT_AUDIO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2359,20 +2161,20 @@ class InputAudioContentPart(UserContentPart, discriminator="input_audio"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "input_audio"  # type: ignore
+        self.type = ContentPartType.INPUT_AUDIO  # type: ignore
 
 
-class InputTextContentPart(UserContentPart, discriminator="input_text"):
-    """InputTextContentPart.
+class InputTextContentPart(MessageContentPart, discriminator="input_text"):
+    """Input text content part.
 
-    :ivar type: Required. Default value is "input_text".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT
     :ivar text: Required.
     :vartype text: str
     """
 
-    type: Literal["input_text"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"input_text\"."""
+    type: Literal[ContentPartType.INPUT_TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -2392,7 +2194,7 @@ class InputTextContentPart(UserContentPart, discriminator="input_text"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "input_text"  # type: ignore
+        self.type = ContentPartType.INPUT_TEXT  # type: ignore
 
 
 class InputTokenDetails(_Model):
@@ -2440,39 +2242,6 @@ class InputTokenDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LLMVoice(_Model):
-    """Voice configuration for LLM (Large Language Model) voices.
-
-    :ivar type: Required. Default value is "llm".
-    :vartype type: str
-    :ivar name: Required. "cosyvoice"
-    :vartype name: str or ~azure.ai.voicelive.models.Phi4mmVoice
-    """
-
-    type: Literal["llm"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is \"llm\"."""
-    name: Union[str, "_models.Phi4mmVoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. \"cosyvoice\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Union[str, "_models.Phi4mmVoice"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["llm"] = "llm"
-
-
 class LogProbProperties(_Model):
     """A single log probability entry for a token.
 
@@ -2511,57 +2280,30 @@ class LogProbProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NoTurnDetection(TurnDetection, discriminator="none"):
-    """Disables turn detection.
-
-    :ivar type: Required. Default value is "none".
-    :vartype type: str
-    """
-
-    type: Literal["none"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"none\"."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = "none"  # type: ignore
-
-
 class OpenAIVoice(_Model):
     """OpenAI voice configuration with explicit type field.
 
     This provides a unified interface for OpenAI voices, complementing the
-    existing string-based OAIVoice for backward compatibility.
+    existing string-based OpenAIVoiceName for backward compatibility.
 
-    :ivar type: Required. Default value is "openai".
+    :ivar type: The type of the voice. Required. Default value is "openai".
     :vartype type: str
-    :ivar name: Required. Known values are: "alloy", "ash", "ballad", "coral", "echo", "sage",
-     "shimmer", and "verse".
-    :vartype name: str or ~azure.ai.voicelive.models.OAIVoice
+    :ivar name: The name of the OpenAI voice. Required. Known values are: "alloy", "ash", "ballad",
+     "coral", "echo", "sage", "shimmer", and "verse".
+    :vartype name: str or ~azure.ai.voicelive.models.OpenAIVoiceName
     """
 
     type: Literal["openai"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is \"openai\"."""
-    name: Union[str, "_models.OAIVoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"alloy\", \"ash\", \"ballad\", \"coral\", \"echo\", \"sage\",
-     \"shimmer\", and \"verse\"."""
+    """The type of the voice. Required. Default value is \"openai\"."""
+    name: Union[str, "_models.OpenAIVoiceName"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the OpenAI voice. Required. Known values are: \"alloy\", \"ash\", \"ballad\",
+     \"coral\", \"echo\", \"sage\", \"shimmer\", and \"verse\"."""
 
     @overload
     def __init__(
         self,
         *,
-        name: Union[str, "_models.OAIVoice"],
+        name: Union[str, "_models.OpenAIVoiceName"],
     ) -> None: ...
 
     @overload
@@ -2576,19 +2318,19 @@ class OpenAIVoice(_Model):
         self.type: Literal["openai"] = "openai"
 
 
-class OutputTextContentPart(_Model):
+class OutputTextContentPart(MessageContentPart, discriminator="text"):
     """Output text content part.
 
-    :ivar type: Required. Default value is "text".
-    :vartype type: str
-    :ivar text: Required.
+    :ivar type: The type of the content part. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.TEXT
+    :ivar text: The text content. Required.
     :vartype text: str
     """
 
-    type: Literal["text"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is \"text\"."""
+    type: Literal[ContentPartType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the content part. Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The text content. Required."""
 
     @overload
     def __init__(
@@ -2606,7 +2348,7 @@ class OutputTextContentPart(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type: Literal["text"] = "text"
+        self.type = ContentPartType.TEXT  # type: ignore
 
 
 class OutputTokenDetails(_Model):
@@ -2643,7 +2385,7 @@ class OutputTokenDetails(_Model):
 
 
 class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
-    """RequestAudioContentPart.
+    """An audio content part for a request.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO
@@ -2675,100 +2417,127 @@ class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
 
 
 class RequestSession(_Model):
-    """RequestSession.
+    """Base for session configuration shared between request and response.
 
-    :ivar model:
+    :ivar model: The model for the session.
     :vartype model: str
-    :ivar modalities:
+    :ivar modalities: The modalities to be used in the session.
     :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
-    :ivar animation:
+    :ivar animation: The animation configuration for the session.
     :vartype animation: ~azure.ai.voicelive.models.Animation
-    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], OpenAIVoice,
-     AzureVoice, Union[str, "_models.Phi4mmVoice"], LLMVoice
-    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
-     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
-    :ivar instructions:
+    :ivar voice: The voice configuration for the session. Is one of the following types: Union[str,
+     "_models.OpenAIVoiceName"], OpenAIVoice, AzureVoice
+    :vartype voice: str or ~azure.ai.voicelive.models.OpenAIVoiceName or
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice
+    :ivar instructions: Optional instructions to guide the model's behavior throughout the session.
     :vartype instructions: str
-    :ivar input_audio:
-    :vartype input_audio: ~azure.ai.voicelive.models.InputAudio
-    :ivar input_audio_sampling_rate:
+    :ivar input_audio_sampling_rate: Input audio sampling rate in Hz. Available values:
+
+
+
+     * For pcm16: 8000, 16000, 24000
+
+     * For g711_alaw/g711_ulaw: 8000.
     :vartype input_audio_sampling_rate: int
-    :ivar input_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
-    :vartype input_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
-    :ivar output_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
-    :vartype output_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
-    :ivar turn_detection:
+    :ivar input_audio_format: Input audio format. Default is 'pcm16'. Known values are: "pcm16",
+     "g711_ulaw", and "g711_alaw".
+    :vartype input_audio_format: str or ~azure.ai.voicelive.models.InputAudioFormat
+    :ivar output_audio_format: Output audio format. Default is 'pcm16'. Known values are: "pcm16",
+     "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and "g711_alaw".
+    :vartype output_audio_format: str or ~azure.ai.voicelive.models.OutputAudioFormat
+    :ivar turn_detection: Type of turn detection to use.
     :vartype turn_detection: ~azure.ai.voicelive.models.TurnDetection
-    :ivar input_audio_noise_reduction:
+    :ivar input_audio_noise_reduction: Configuration for input audio noise reduction.
     :vartype input_audio_noise_reduction: ~azure.ai.voicelive.models.AudioNoiseReduction
-    :ivar input_audio_echo_cancellation:
+    :ivar input_audio_echo_cancellation: Configuration for echo cancellation during server-side
+     audio processing.
     :vartype input_audio_echo_cancellation: ~azure.ai.voicelive.models.AudioEchoCancellation
-    :ivar avatar:
+    :ivar avatar: Configuration for avatar streaming and behavior during the session.
     :vartype avatar: ~azure.ai.voicelive.models.AvatarConfig
-    :ivar input_audio_transcription:
-    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionSettings
-    :ivar output_audio_timestamp_types:
+    :ivar input_audio_transcription: Configuration for input audio transcription.
+    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionOptions
+    :ivar output_audio_timestamp_types: Types of timestamps to include in audio response content.
     :vartype output_audio_timestamp_types: list[str or
      ~azure.ai.voicelive.models.AudioTimestampType]
-    :ivar tools:
+    :ivar tools: Configuration for tools to be used during the session, if applicable.
     :vartype tools: list[~azure.ai.voicelive.models.Tool]
-    :ivar tool_choice: Is either a Union[str, "_models.ToolChoiceLiteral"] type or a
-     ToolChoiceObject type.
+    :ivar tool_choice: Specifies which tools the model is allowed to call during the session. Is
+     either a Union[str, "_models.ToolChoiceLiteral"] type or a ToolChoiceSelection type.
     :vartype tool_choice: str or ~azure.ai.voicelive.models.ToolChoiceLiteral or
-     ~azure.ai.voicelive.models.ToolChoiceObject
-    :ivar temperature:
+     ~azure.ai.voicelive.models.ToolChoiceSelection
+    :ivar temperature: Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is
+     0.7.
     :vartype temperature: float
-    :ivar max_response_output_tokens: Is either a int type or a Literal["inf"] type.
+    :ivar max_response_output_tokens: Maximum number of tokens to generate in the response. Default
+     is unlimited. Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
-    :ivar agent:
-    :vartype agent: ~azure.ai.voicelive.models.AgentConfig
     """
 
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model for the session."""
     modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """The modalities to be used in the session."""
     animation: Optional["_models.Animation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The animation configuration for the session."""
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Is one of the following types: Union[str, \"_models.OAIVoice\"], OpenAIVoice, AzureVoice,
-     Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
+    """The voice configuration for the session. Is one of the following types: Union[str,
+     \"_models.OpenAIVoiceName\"], OpenAIVoice, AzureVoice"""
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    input_audio: Optional["_models.InputAudio"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional instructions to guide the model's behavior throughout the session."""
     input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    input_audio_format: Optional[Union[str, "_models.AudioFormat"]] = rest_field(
+    """Input audio sampling rate in Hz. Available values:
+     
+     
+     
+     * For pcm16: 8000, 16000, 24000
+     
+     * For g711_alaw/g711_ulaw: 8000."""
+    input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
-    output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = rest_field(
+    """Input audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"g711_ulaw\", and
+     \"g711_alaw\"."""
+    output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
+    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16-8000hz\",
+     \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     turn_detection: Optional["_models.TurnDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Type of turn detection to use."""
     input_audio_noise_reduction: Optional["_models.AudioNoiseReduction"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Configuration for input audio noise reduction."""
     input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Configuration for echo cancellation during server-side audio processing."""
     avatar: Optional["_models.AvatarConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = rest_field(
+    """Configuration for avatar streaming and behavior during the session."""
+    input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Configuration for input audio transcription."""
     output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Types of timestamps to include in audio response content."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Configuration for tools to be used during the session, if applicable."""
     tool_choice: Optional["_types.ToolChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Is either a Union[str, \"_models.ToolChoiceLiteral\"] type or a ToolChoiceObject type."""
+    """Specifies which tools the model is allowed to call during the session. Is either a Union[str,
+     \"_models.ToolChoiceLiteral\"] type or a ToolChoiceSelection type."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is 0.7."""
     max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Is either a int type or a Literal[\"inf\"] type."""
-    agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of tokens to generate in the response. Default is unlimited. Is either a int
+     type or a Literal[\"inf\"] type."""
 
     @overload
     def __init__(
@@ -2779,21 +2548,19 @@ class RequestSession(_Model):
         animation: Optional["_models.Animation"] = None,
         voice: Optional["_types.Voice"] = None,
         instructions: Optional[str] = None,
-        input_audio: Optional["_models.InputAudio"] = None,
         input_audio_sampling_rate: Optional[int] = None,
-        input_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
-        output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
+        input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = None,
+        output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = None,
         turn_detection: Optional["_models.TurnDetection"] = None,
         input_audio_noise_reduction: Optional["_models.AudioNoiseReduction"] = None,
         input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = None,
         avatar: Optional["_models.AvatarConfig"] = None,
-        input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = None,
+        input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = None,
         output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-        agent: Optional["_models.AgentConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -2808,7 +2575,7 @@ class RequestSession(_Model):
 
 
 class RequestTextContentPart(ContentPart, discriminator="input_text"):
-    """RequestTextContentPart.
+    """A text content part for a request.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT
@@ -2848,6 +2615,7 @@ class Response(_Model):
      "realtime.response".
     :vartype object: str
     :ivar status: The final status of the response.
+
      One of: ``completed``, ``cancelled``, ``failed``, ``incomplete``, or ``in_progress``. Known
      values are: "completed", "cancelled", "failed", "incomplete", and "in_progress".
     :vartype status: str or ~azure.ai.voicelive.models.ResponseStatus
@@ -2859,7 +2627,7 @@ class Response(_Model):
      VoiceLive API session will maintain a conversation context and append new
      Items to the Conversation, thus output from previous turns (text and
      audio tokens) will become the input for later turns.
-    :vartype usage: ~azure.ai.voicelive.models.Usage
+    :vartype usage: ~azure.ai.voicelive.models.TokenUsage
     :ivar conversation_id: Which conversation the response is added to, determined by the
      ``conversation``
      field in the ``response.create`` event. If ``auto``, the response will be added to
@@ -2870,19 +2638,18 @@ class Response(_Model):
      the ``conversation_id`` will be an id like ``conv_1234``.
     :vartype conversation_id: str
     :ivar voice: supported voice identifiers and configurations. Is one of the following types:
-     Union[str, "_models.OAIVoice"], OpenAIVoice, AzureVoice, Union[str, "_models.Phi4mmVoice"],
-     LLMVoice
-    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
-     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
+     Union[str, "_models.OpenAIVoiceName"], OpenAIVoice, AzureVoice
+    :vartype voice: str or ~azure.ai.voicelive.models.OpenAIVoiceName or
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice
     :ivar modalities: The set of modalities the model used to respond. If there are multiple
      modalities,
      the model will pick one, for example if ``modalities`` is ``["text", "audio"]``, the model
      could be responding in either text or audio.
-    :vartype modalities: list[str]
+    :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
-     ``g711_alaw``. Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
-    :vartype output_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
+     ``g711_alaw``. Known values are: "pcm16", "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and
+     "g711_alaw".
+    :vartype output_audio_format: str or ~azure.ai.voicelive.models.OutputAudioFormat
     :ivar temperature: Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8.
     :vartype temperature: float
     :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
@@ -2901,6 +2668,7 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The final status of the response.
+     
      One of: ``completed``, ``cancelled``, ``failed``, ``incomplete``, or ``in_progress``. Known
      values are: \"completed\", \"cancelled\", \"failed\", \"incomplete\", and \"in_progress\"."""
     status_details: Optional["_models.ResponseStatusDetails"] = rest_field(
@@ -2911,7 +2679,7 @@ class Response(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of output items generated by the response."""
-    usage: Optional["_models.Usage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: Optional["_models.TokenUsage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Usage statistics for the Response, this will correspond to billing. A
      VoiceLive API session will maintain a conversation context and append new
      Items to the Conversation, thus output from previous turns (text and
@@ -2926,18 +2694,18 @@ class Response(_Model):
      the ``conversation_id`` will be an id like ``conv_1234``."""
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """supported voice identifiers and configurations. Is one of the following types: Union[str,
-     \"_models.OAIVoice\"], OpenAIVoice, AzureVoice, Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
-    modalities: Optional[list[Literal["text", "audio"]]] = rest_field(
+     \"_models.OpenAIVoiceName\"], OpenAIVoice, AzureVoice"""
+    modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The set of modalities the model used to respond. If there are multiple modalities,
      the model will pick one, for example if ``modalities`` is ``[\"text\", \"audio\"]``, the model
      could be responding in either text or audio."""
-    output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = rest_field(
+    output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or ``g711_alaw``. Known
-     values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
+     values are: \"pcm16\", \"pcm16-8000hz\", \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8."""
     max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
@@ -2956,11 +2724,11 @@ class Response(_Model):
         status: Optional[Union[str, "_models.ResponseStatus"]] = None,
         status_details: Optional["_models.ResponseStatusDetails"] = None,
         output: Optional[list["_models.ResponseItem"]] = None,
-        usage: Optional["_models.Usage"] = None,
+        usage: Optional["_models.TokenUsage"] = None,
         conversation_id: Optional[str] = None,
         voice: Optional["_types.Voice"] = None,
-        modalities: Optional[list[Literal["text", "audio"]]] = None,
-        output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
+        modalities: Optional[list[Union[str, "_models.Modality"]]] = None,
+        output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = None,
         temperature: Optional[float] = None,
         max_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
     ) -> None: ...
@@ -2977,7 +2745,7 @@ class Response(_Model):
 
 
 class ResponseAudioContentPart(ContentPart, discriminator="audio"):
-    """ResponseAudioContentPart.
+    """An audio content part for a response.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.voicelive.models.AUDIO
@@ -3014,13 +2782,15 @@ class ResponseStatusDetails(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ResponseCancelledDetails, ResponseFailedDetails, ResponseIncompleteDetails
 
-    :ivar type: Required. Default value is None.
-    :vartype type: str
+    :ivar type: Required. Known values are: "completed", "cancelled", "failed", "incomplete", and
+     "in_progress".
+    :vartype type: str or ~azure.ai.voicelive.models.ResponseStatus
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is None."""
+    """Required. Known values are: \"completed\", \"cancelled\", \"failed\", \"incomplete\", and
+     \"in_progress\"."""
 
     @overload
     def __init__(
@@ -3043,25 +2813,26 @@ class ResponseStatusDetails(_Model):
 class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled"):
     """Details for a cancelled response.
 
-    :ivar type: Required. Default value is "cancelled".
-    :vartype type: str
-    :ivar reason: Required. Is either a Literal["turn_detected"] type or a
-     Literal["client_cancelled"] type.
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.CANCELLED
+    :ivar reason: Required. Is one of the following types: Literal["turn_detected"],
+     Literal["client_cancelled"], str
     :vartype reason: str
     """
 
-    type: Literal["cancelled"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"cancelled\"."""
-    reason: Literal["turn_detected", "client_cancelled"] = rest_field(
+    type: Literal[ResponseStatus.CANCELLED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    reason: Union[Literal["turn_detected"], Literal["client_cancelled"], str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required. Is either a Literal[\"turn_detected\"] type or a Literal[\"client_cancelled\"] type."""
+    """Required. Is one of the following types: Literal[\"turn_detected\"],
+     Literal[\"client_cancelled\"], str"""
 
     @overload
     def __init__(
         self,
         *,
-        reason: Literal["turn_detected", "client_cancelled"],
+        reason: Union[Literal["turn_detected"], Literal["client_cancelled"], str],
     ) -> None: ...
 
     @overload
@@ -3073,7 +2844,7 @@ class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled")
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "cancelled"  # type: ignore
+        self.type = ResponseStatus.CANCELLED  # type: ignore
 
 
 class ResponseCreateParams(_Model):
@@ -3107,14 +2878,13 @@ class ResponseCreateParams(_Model):
      start of the session.
     :vartype instructions: str
     :ivar voice: supported voice identifiers and configurations. Is one of the following types:
-     Union[str, "_models.OAIVoice"], OpenAIVoice, AzureVoice, Union[str, "_models.Phi4mmVoice"],
-     LLMVoice
-    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
-     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
+     Union[str, "_models.OpenAIVoiceName"], OpenAIVoice, AzureVoice
+    :vartype voice: str or ~azure.ai.voicelive.models.OpenAIVoiceName or
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
-     ``g711_alaw``. Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
-    :vartype output_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
+     ``g711_alaw``. Known values are: "pcm16", "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and
+     "g711_alaw".
+    :vartype output_audio_format: str or ~azure.ai.voicelive.models.OutputAudioFormat
     :ivar tools: Tools (functions) available to the model.
     :vartype tools: list[~azure.ai.voicelive.models.Tool]
     :ivar tool_choice: How the model chooses tools. Options are ``auto``, ``none``, ``required``,
@@ -3163,12 +2933,12 @@ class ResponseCreateParams(_Model):
      start of the session."""
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """supported voice identifiers and configurations. Is one of the following types: Union[str,
-     \"_models.OAIVoice\"], OpenAIVoice, AzureVoice, Union[str, \"_models.Phi4mmVoice\"], LLMVoice"""
-    output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = rest_field(
+     \"_models.OpenAIVoiceName\"], OpenAIVoice, AzureVoice"""
+    output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or ``g711_alaw``. Known
-     values are: \"pcm16\", \"g711_ulaw\", and \"g711_alaw\"."""
+     values are: \"pcm16\", \"pcm16-8000hz\", \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tools (functions) available to the model."""
     tool_choice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3196,7 +2966,7 @@ class ResponseCreateParams(_Model):
         modalities: Optional[list[Union[str, "_models.Modality"]]] = None,
         instructions: Optional[str] = None,
         voice: Optional["_types.Voice"] = None,
-        output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
+        output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional[str] = None,
         temperature: Optional[float] = None,
@@ -3217,14 +2987,14 @@ class ResponseCreateParams(_Model):
 class ResponseFailedDetails(ResponseStatusDetails, discriminator="failed"):
     """Details for a failed response.
 
-    :ivar type: Required. Default value is "failed".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.FAILED
     :ivar error: Required.
     :vartype error: any
     """
 
-    type: Literal["failed"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"failed\"."""
+    type: Literal[ResponseStatus.FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     error: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -3244,11 +3014,11 @@ class ResponseFailedDetails(ResponseStatusDetails, discriminator="failed"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "failed"  # type: ignore
+        self.type = ResponseStatus.FAILED  # type: ignore
 
 
 class ResponseItem(_Model):
-    """ResponseItem.
+    """Base for any response item; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ResponseFunctionCallItem, ResponseFunctionCallOutputItem, ResponseMessageItem
@@ -3289,7 +3059,7 @@ class ResponseItem(_Model):
 
 
 class ResponseFunctionCallItem(ResponseItem, discriminator="function_call"):
-    """ResponseFunctionCallItem.
+    """A function call item within a conversation.
 
     :ivar id:
     :vartype id: str
@@ -3345,7 +3115,7 @@ class ResponseFunctionCallItem(ResponseItem, discriminator="function_call"):
 
 
 class ResponseFunctionCallOutputItem(ResponseItem, discriminator="function_call_output"):
-    """ResponseFunctionCallOutputItem.
+    """A function call output item within a conversation.
 
     :ivar id:
     :vartype id: str
@@ -3391,26 +3161,26 @@ class ResponseFunctionCallOutputItem(ResponseItem, discriminator="function_call_
 class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete"):
     """Details for an incomplete response.
 
-    :ivar type: Required. Default value is "incomplete".
-    :vartype type: str
-    :ivar reason: Required. Is either a Literal["max_output_tokens"] type or a
-     Literal["content_filter"] type.
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.INCOMPLETE
+    :ivar reason: Required. Is one of the following types: Literal["max_output_tokens"],
+     Literal["content_filter"], str
     :vartype reason: str
     """
 
-    type: Literal["incomplete"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"incomplete\"."""
-    reason: Literal["max_output_tokens", "content_filter"] = rest_field(
+    type: Literal[ResponseStatus.INCOMPLETE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    reason: Union[Literal["max_output_tokens"], Literal["content_filter"], str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Required. Is either a Literal[\"max_output_tokens\"] type or a Literal[\"content_filter\"]
-     type."""
+    """Required. Is one of the following types: Literal[\"max_output_tokens\"],
+     Literal[\"content_filter\"], str"""
 
     @overload
     def __init__(
         self,
         *,
-        reason: Literal["max_output_tokens", "content_filter"],
+        reason: Union[Literal["max_output_tokens"], Literal["content_filter"], str],
     ) -> None: ...
 
     @overload
@@ -3422,11 +3192,11 @@ class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "incomplete"  # type: ignore
+        self.type = ResponseStatus.INCOMPLETE  # type: ignore
 
 
 class ResponseMessageItem(ResponseItem, discriminator="message"):
-    """ResponseMessageItem.
+    """Base type for message item within a conversation.
 
     :ivar id:
     :vartype id: str
@@ -3476,60 +3246,132 @@ class ResponseMessageItem(ResponseItem, discriminator="message"):
         self.type = ItemType.MESSAGE  # type: ignore
 
 
-class ResponseSession(RequestSession):
-    """ResponseSession.
+class ResponseSession(_Model):
+    """Base for session configuration in the response.
 
-    :ivar model:
+    :ivar model: The model for the session.
     :vartype model: str
-    :ivar modalities:
+    :ivar modalities: The modalities to be used in the session.
     :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
-    :ivar animation:
+    :ivar animation: The animation configuration for the session.
     :vartype animation: ~azure.ai.voicelive.models.Animation
-    :ivar voice: Is one of the following types: Union[str, "_models.OAIVoice"], OpenAIVoice,
-     AzureVoice, Union[str, "_models.Phi4mmVoice"], LLMVoice
-    :vartype voice: str or ~azure.ai.voicelive.models.OAIVoice or
-     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice or str or
-     ~azure.ai.voicelive.models.Phi4mmVoice or ~azure.ai.voicelive.models.LLMVoice
-    :ivar instructions:
+    :ivar voice: The voice configuration for the session. Is one of the following types: Union[str,
+     "_models.OpenAIVoiceName"], OpenAIVoice, AzureVoice
+    :vartype voice: str or ~azure.ai.voicelive.models.OpenAIVoiceName or
+     ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice
+    :ivar instructions: Optional instructions to guide the model's behavior throughout the session.
     :vartype instructions: str
-    :ivar input_audio:
-    :vartype input_audio: ~azure.ai.voicelive.models.InputAudio
-    :ivar input_audio_sampling_rate:
+    :ivar input_audio_sampling_rate: Input audio sampling rate in Hz. Available values:
+
+
+
+     * For pcm16: 8000, 16000, 24000
+
+     * For g711_alaw/g711_ulaw: 8000.
     :vartype input_audio_sampling_rate: int
-    :ivar input_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
-    :vartype input_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
-    :ivar output_audio_format: Known values are: "pcm16", "g711_ulaw", and "g711_alaw".
-    :vartype output_audio_format: str or ~azure.ai.voicelive.models.AudioFormat
-    :ivar turn_detection:
+    :ivar input_audio_format: Input audio format. Default is 'pcm16'. Known values are: "pcm16",
+     "g711_ulaw", and "g711_alaw".
+    :vartype input_audio_format: str or ~azure.ai.voicelive.models.InputAudioFormat
+    :ivar output_audio_format: Output audio format. Default is 'pcm16'. Known values are: "pcm16",
+     "pcm16-8000hz", "pcm16-16000hz", "g711_ulaw", and "g711_alaw".
+    :vartype output_audio_format: str or ~azure.ai.voicelive.models.OutputAudioFormat
+    :ivar turn_detection: Type of turn detection to use.
     :vartype turn_detection: ~azure.ai.voicelive.models.TurnDetection
-    :ivar input_audio_noise_reduction:
+    :ivar input_audio_noise_reduction: Configuration for input audio noise reduction.
     :vartype input_audio_noise_reduction: ~azure.ai.voicelive.models.AudioNoiseReduction
-    :ivar input_audio_echo_cancellation:
+    :ivar input_audio_echo_cancellation: Configuration for echo cancellation during server-side
+     audio processing.
     :vartype input_audio_echo_cancellation: ~azure.ai.voicelive.models.AudioEchoCancellation
-    :ivar avatar:
+    :ivar avatar: Configuration for avatar streaming and behavior during the session.
     :vartype avatar: ~azure.ai.voicelive.models.AvatarConfig
-    :ivar input_audio_transcription:
-    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionSettings
-    :ivar output_audio_timestamp_types:
+    :ivar input_audio_transcription: Configuration for input audio transcription.
+    :vartype input_audio_transcription: ~azure.ai.voicelive.models.AudioInputTranscriptionOptions
+    :ivar output_audio_timestamp_types: Types of timestamps to include in audio response content.
     :vartype output_audio_timestamp_types: list[str or
      ~azure.ai.voicelive.models.AudioTimestampType]
-    :ivar tools:
+    :ivar tools: Configuration for tools to be used during the session, if applicable.
     :vartype tools: list[~azure.ai.voicelive.models.Tool]
-    :ivar tool_choice: Is either a Union[str, "_models.ToolChoiceLiteral"] type or a
-     ToolChoiceObject type.
+    :ivar tool_choice: Specifies which tools the model is allowed to call during the session. Is
+     either a Union[str, "_models.ToolChoiceLiteral"] type or a ToolChoiceSelection type.
     :vartype tool_choice: str or ~azure.ai.voicelive.models.ToolChoiceLiteral or
-     ~azure.ai.voicelive.models.ToolChoiceObject
-    :ivar temperature:
+     ~azure.ai.voicelive.models.ToolChoiceSelection
+    :ivar temperature: Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is
+     0.7.
     :vartype temperature: float
-    :ivar max_response_output_tokens: Is either a int type or a Literal["inf"] type.
+    :ivar max_response_output_tokens: Maximum number of tokens to generate in the response. Default
+     is unlimited. Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
-    :ivar agent:
-    :vartype agent: ~azure.ai.voicelive.models.AgentConfig
-    :ivar id:
+    :ivar id: The unique identifier for the session.
     :vartype id: str
     """
 
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model for the session."""
+    modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The modalities to be used in the session."""
+    animation: Optional["_models.Animation"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The animation configuration for the session."""
+    voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The voice configuration for the session. Is one of the following types: Union[str,
+     \"_models.OpenAIVoiceName\"], OpenAIVoice, AzureVoice"""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional instructions to guide the model's behavior throughout the session."""
+    input_audio_sampling_rate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Input audio sampling rate in Hz. Available values:
+     
+     
+     
+     * For pcm16: 8000, 16000, 24000
+     
+     * For g711_alaw/g711_ulaw: 8000."""
+    input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Input audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"g711_ulaw\", and
+     \"g711_alaw\"."""
+    output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Output audio format. Default is 'pcm16'. Known values are: \"pcm16\", \"pcm16-8000hz\",
+     \"pcm16-16000hz\", \"g711_ulaw\", and \"g711_alaw\"."""
+    turn_detection: Optional["_models.TurnDetection"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of turn detection to use."""
+    input_audio_noise_reduction: Optional["_models.AudioNoiseReduction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for input audio noise reduction."""
+    input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for echo cancellation during server-side audio processing."""
+    avatar: Optional["_models.AvatarConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Configuration for avatar streaming and behavior during the session."""
+    input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for input audio transcription."""
+    output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Types of timestamps to include in audio response content."""
+    tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Configuration for tools to be used during the session, if applicable."""
+    tool_choice: Optional["_types.ToolChoice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies which tools the model is allowed to call during the session. Is either a Union[str,
+     \"_models.ToolChoiceLiteral\"] type or a ToolChoiceSelection type."""
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Controls the randomness of the model's output. Range: 0.0 to 1.0. Default is 0.7."""
+    max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of tokens to generate in the response. Default is unlimited. Is either a int
+     type or a Literal[\"inf\"] type."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier for the session."""
 
     @overload
     def __init__(
@@ -3540,21 +3382,19 @@ class ResponseSession(RequestSession):
         animation: Optional["_models.Animation"] = None,
         voice: Optional["_types.Voice"] = None,
         instructions: Optional[str] = None,
-        input_audio: Optional["_models.InputAudio"] = None,
         input_audio_sampling_rate: Optional[int] = None,
-        input_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
-        output_audio_format: Optional[Union[str, "_models.AudioFormat"]] = None,
+        input_audio_format: Optional[Union[str, "_models.InputAudioFormat"]] = None,
+        output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = None,
         turn_detection: Optional["_models.TurnDetection"] = None,
         input_audio_noise_reduction: Optional["_models.AudioNoiseReduction"] = None,
         input_audio_echo_cancellation: Optional["_models.AudioEchoCancellation"] = None,
         avatar: Optional["_models.AvatarConfig"] = None,
-        input_audio_transcription: Optional["_models.AudioInputTranscriptionSettings"] = None,
+        input_audio_transcription: Optional["_models.AudioInputTranscriptionOptions"] = None,
         output_audio_timestamp_types: Optional[list[Union[str, "_models.AudioTimestampType"]]] = None,
         tools: Optional[list["_models.Tool"]] = None,
         tool_choice: Optional["_types.ToolChoice"] = None,
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
-        agent: Optional["_models.AgentConfig"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
 
@@ -3570,7 +3410,7 @@ class ResponseSession(RequestSession):
 
 
 class ResponseTextContentPart(ContentPart, discriminator="text"):
-    """ResponseTextContentPart.
+    """A text content part for a response.
 
     :ivar type: Required.
     :vartype type: str or ~azure.ai.voicelive.models.TEXT
@@ -3618,10 +3458,10 @@ class ServerEvent(_Model):
     ServerEventResponseAudioTimestampDone, ServerEventResponseAudioTranscriptDelta,
     ServerEventResponseAudioTranscriptDone, ServerEventResponseContentPartAdded,
     ServerEventResponseContentPartDone, ServerEventResponseCreated, ServerEventResponseDone,
-    ServerEventResponseEmotionHypothesis, ServerEventResponseFunctionCallArgumentsDelta,
-    ServerEventResponseFunctionCallArgumentsDone, ServerEventResponseOutputItemAdded,
-    ServerEventResponseOutputItemDone, ServerEventResponseTextDelta, ServerEventResponseTextDone,
-    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated
+    ServerEventResponseFunctionCallArgumentsDelta, ServerEventResponseFunctionCallArgumentsDone,
+    ServerEventResponseOutputItemAdded, ServerEventResponseOutputItemDone,
+    ServerEventResponseTextDelta, ServerEventResponseTextDone, ServerEventSessionAvatarConnecting,
+    ServerEventSessionCreated, ServerEventSessionUpdated
 
     :ivar type: The type of event. Required. Known values are: "error",
      "session.avatar.connecting", "session.created", "session.updated",
@@ -3635,10 +3475,10 @@ class ServerEvent(_Model):
      "response.content_part.added", "response.content_part.done", "response.text.delta",
      "response.text.done", "response.audio_transcript.delta", "response.audio_transcript.done",
      "response.audio.delta", "response.audio.done", "response.animation_blendshapes.delta",
-     "response.animation_blendshapes.done", "response.emotion_hypothesis",
-     "response.audio_timestamp.delta", "response.audio_timestamp.done",
-     "response.animation_viseme.delta", "response.animation_viseme.done",
-     "response.function_call_arguments.delta", and "response.function_call_arguments.done".
+     "response.animation_blendshapes.done", "response.audio_timestamp.delta",
+     "response.audio_timestamp.done", "response.animation_viseme.delta",
+     "response.animation_viseme.done", "response.function_call_arguments.delta", and
+     "response.function_call_arguments.done".
     :vartype type: str or ~azure.ai.voicelive.models.ServerEventType
     :ivar event_id:
     :vartype event_id: str
@@ -3659,10 +3499,10 @@ class ServerEvent(_Model):
      \"response.content_part.done\", \"response.text.delta\", \"response.text.done\",
      \"response.audio_transcript.delta\", \"response.audio_transcript.done\",
      \"response.audio.delta\", \"response.audio.done\", \"response.animation_blendshapes.delta\",
-     \"response.animation_blendshapes.done\", \"response.emotion_hypothesis\",
-     \"response.audio_timestamp.delta\", \"response.audio_timestamp.done\",
-     \"response.animation_viseme.delta\", \"response.animation_viseme.done\",
-     \"response.function_call_arguments.delta\", and \"response.function_call_arguments.done\"."""
+     \"response.animation_blendshapes.done\", \"response.audio_timestamp.delta\",
+     \"response.audio_timestamp.done\", \"response.animation_viseme.delta\",
+     \"response.animation_viseme.done\", \"response.function_call_arguments.delta\", and
+     \"response.function_call_arguments.done\"."""
     event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -3788,7 +3628,6 @@ class ServerEventConversationItemInputAudioTranscriptionCompleted(
     committed by the client or server (in ``server_vad`` mode). Transcription runs
     asynchronously with Response creation, so this event may come before or after
     the Response events.
-
     VoiceLive API models accept audio natively, and thus input transcription is a
     separate process run on a separate ASR (Automatic Speech Recognition) model.
     The transcript may diverge somewhat from the model's interpretation, and
@@ -3989,7 +3828,6 @@ class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversat
     """Returned when an earlier assistant audio message item is truncated by the
     client with a ``conversation.item.truncate`` event. This event is used to
     synchronize the server's understanding of the audio with the client's playback.
-
     This action will truncate the audio and remove the server-side text transcript
     to ensure there is no text in the context that hasn't been heard by the user.
 
@@ -4204,7 +4042,6 @@ class ServerEventInputAudioBufferSpeechStarted(ServerEvent, discriminator="input
     detected in the audio buffer. This can happen any time audio is added to the
     buffer (unless speech is already detected). The client may want to use this
     event to interrupt audio playback or provide visual feedback to the user.
-
     The client should expect to receive a ``input_audio_buffer.speech_stopped`` event
     when speech stops. The ``item_id`` property is the ID of the user message item
     that will be created when speech stops and will also be included in the
@@ -5060,68 +4897,6 @@ class ServerEventResponseDone(ServerEvent, discriminator="response.done"):
         self.type = ServerEventType.RESPONSE_DONE  # type: ignore
 
 
-class ServerEventResponseEmotionHypothesis(ServerEvent, discriminator="response.emotion_hypothesis"):
-    """Represents an emotion hypothesis detected from response audio with multiple candidates.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_EMOTION_HYPOTHESIS
-    :ivar emotion: Required.
-    :vartype emotion: str
-    :ivar candidates: Required.
-    :vartype candidates: list[~azure.ai.voicelive.models._models.EmotionCandidate]
-    :ivar audio_offset_ms: Required.
-    :vartype audio_offset_ms: int
-    :ivar audio_duration_ms: Required.
-    :vartype audio_duration_ms: int
-    :ivar response_id:
-    :vartype response_id: str
-    :ivar item_id: Required.
-    :vartype item_id: str
-    """
-
-    type: Literal[ServerEventType.RESPONSE_EMOTION_HYPOTHESIS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    emotion: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    candidates: list["_models._models.EmotionCandidate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required."""
-    audio_offset_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    audio_duration_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        emotion: str,
-        candidates: list["_models._models.EmotionCandidate"],
-        audio_offset_ms: int,
-        audio_duration_ms: int,
-        item_id: str,
-        event_id: Optional[str] = None,
-        response_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.RESPONSE_EMOTION_HYPOTHESIS  # type: ignore
-
-
 class ServerEventResponseFunctionCallArgumentsDelta(
     ServerEvent, discriminator="response.function_call_arguments.delta"
 ):  # pylint: disable=name-too-long
@@ -5563,8 +5338,8 @@ class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
 class ServerVad(TurnDetection, discriminator="server_vad"):
     """Base model for VAD-based turn detection.
 
-    :ivar type: Required. Default value is "server_vad".
-    :vartype type: str
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.SERVER_VAD
     :ivar threshold:
     :vartype threshold: float
     :ivar prefix_padding_ms:
@@ -5572,20 +5347,26 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     :ivar silence_duration_ms:
     :vartype silence_duration_ms: int
     :ivar end_of_utterance_detection:
-    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EOUDetection
+    :vartype end_of_utterance_detection: ~azure.ai.voicelive.models.EouDetection
     :ivar auto_truncate:
     :vartype auto_truncate: bool
+    :ivar create_response:
+    :vartype create_response: bool
+    :ivar interrupt_response:
+    :vartype interrupt_response: bool
     """
 
-    type: Literal["server_vad"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"server_vad\"."""
+    type: Literal[TurnDetectionType.SERVER_VAD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    end_of_utterance_detection: Optional["_models.EOUDetection"] = rest_field(
+    end_of_utterance_detection: Optional["_models.EouDetection"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     auto_truncate: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    create_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    interrupt_response: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
     def __init__(
@@ -5594,8 +5375,10 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
         threshold: Optional[float] = None,
         prefix_padding_ms: Optional[int] = None,
         silence_duration_ms: Optional[int] = None,
-        end_of_utterance_detection: Optional["_models.EOUDetection"] = None,
+        end_of_utterance_detection: Optional["_models.EouDetection"] = None,
         auto_truncate: Optional[bool] = None,
+        create_response: Optional[bool] = None,
+        interrupt_response: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5607,37 +5390,38 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = "server_vad"  # type: ignore
+        self.type = TurnDetectionType.SERVER_VAD  # type: ignore
+
+
+class SessionBase(_Model):
+    """VoiceLive session object configuration."""
 
 
 class SystemMessageItem(MessageItem, discriminator="system"):
-    """SystemMessageItem.
+    """A system message item within a conversation.
 
     :ivar id:
     :vartype id: str
-    :ivar type: Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar status: Known values are: "completed" and "incomplete".
+    :ivar content: The content parts of the message. Required.
+    :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
+    :ivar status: Processing status of the message item. Known values are: "completed" and
+     "incomplete".
     :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
-    :ivar role: Required. Default value is "system".
-    :vartype role: str
-    :ivar content: Required.
-    :vartype content: list[~azure.ai.voicelive.models.InputTextContentPart]
+    :ivar role: Required.
+    :vartype role: str or ~azure.ai.voicelive.models.SYSTEM
     """
 
     __mapping__: dict[str, _Model] = {}
-    role: Literal["system"] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"system\"."""
-    content: list["_models.InputTextContentPart"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    role: Literal[MessageRole.SYSTEM] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        content: list["_models.InputTextContentPart"],
+        content: list["_models.MessageContentPart"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
     ) -> None: ...
@@ -5651,105 +5435,10 @@ class SystemMessageItem(MessageItem, discriminator="system"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.role = "system"  # type: ignore
+        self.role = MessageRole.SYSTEM  # type: ignore
 
 
-class ToolChoiceObject(_Model):
-    """A base representation for a voicelive tool_choice selecting a named tool.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ToolChoiceFunctionObject
-
-    :ivar type: Required. "function"
-    :vartype type: str or ~azure.ai.voicelive.models.ToolType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. \"function\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ToolChoiceFunctionObject(ToolChoiceObject, discriminator="function"):
-    """The representation of a voicelive tool_choice selecting a named function tool.
-
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION
-    :ivar function: Required.
-    :vartype function: ~azure.ai.voicelive.models.ToolChoiceFunctionObjectFunction
-    """
-
-    type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    function: "_models.ToolChoiceFunctionObjectFunction" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        function: "_models.ToolChoiceFunctionObjectFunction",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.FUNCTION  # type: ignore
-
-
-class ToolChoiceFunctionObjectFunction(_Model):
-    """ToolChoiceFunctionObjectFunction.
-
-    :ivar name: Required.
-    :vartype name: str
-    """
-
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Usage(_Model):
+class TokenUsage(_Model):
     """Overall usage statistics for a response.
 
     :ivar total_tokens: Total number of tokens (input + output). Required.
@@ -5801,32 +5490,96 @@ class Usage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserMessageItem(MessageItem, discriminator="user"):
-    """UserMessageItem.
+class ToolChoiceSelection(_Model):
+    """A base representation for a voicelive tool_choice selecting a named tool.
 
-    :ivar id:
-    :vartype id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
-    :ivar status: Known values are: "completed" and "incomplete".
-    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
-    :ivar role: Required. Default value is "user".
-    :vartype role: str
-    :ivar content: Required.
-    :vartype content: list[~azure.ai.voicelive.models.UserContentPart]
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ToolChoiceFunctionSelection
+
+    :ivar type: Required. "function"
+    :vartype type: str or ~azure.ai.voicelive.models.ToolType
     """
 
     __mapping__: dict[str, _Model] = {}
-    role: Literal["user"] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"user\"."""
-    content: list["_models.UserContentPart"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. \"function\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ToolChoiceFunctionSelection(ToolChoiceSelection, discriminator="function"):
+    """The representation of a voicelive tool_choice selecting a named function tool.
+
+    :ivar type: Required.
+    :vartype type: str or ~azure.ai.voicelive.models.FUNCTION
+    :ivar name: Required.
+    :vartype name: str
+    """
+
+    type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        content: list["_models.UserContentPart"],
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.FUNCTION  # type: ignore
+
+
+class UserMessageItem(MessageItem, discriminator="user"):
+    """A user message item within a conversation.
+
+    :ivar id:
+    :vartype id: str
+    :ivar type: The type of the item; must be 'message' for message items. Required.
+    :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
+    :ivar content: The content parts of the message. Required.
+    :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
+    :ivar status: Processing status of the message item. Known values are: "completed" and
+     "incomplete".
+    :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
+    :ivar role: Required.
+    :vartype role: str or ~azure.ai.voicelive.models.USER
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    role: Literal[MessageRole.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        content: list["_models.MessageContentPart"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         status: Optional[Union[str, "_models.ItemParamStatus"]] = None,
     ) -> None: ...
@@ -5840,7 +5593,7 @@ class UserMessageItem(MessageItem, discriminator="user"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.role = "user"  # type: ignore
+        self.role = MessageRole.USER  # type: ignore
 
 
 class VideoCrop(_Model):
@@ -5891,6 +5644,12 @@ class VideoParams(_Model):
     :vartype crop: ~azure.ai.voicelive.models.VideoCrop
     :ivar resolution: Optional resolution settings for the video stream.
     :vartype resolution: ~azure.ai.voicelive.models.VideoResolution
+    :ivar background: Optional background settings for the video. Allows specifying either a solid
+     color or an image URL.
+    :vartype background: ~azure.ai.voicelive.models.Background
+    :ivar gop_size: Group of Pictures (GOP) size for video encoding. Controls the interval between
+     keyframes, affecting compression efficiency and seeking performance.
+    :vartype gop_size: int
     """
 
     bitrate: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5903,6 +5662,12 @@ class VideoParams(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional resolution settings for the video stream."""
+    background: Optional["_models.Background"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional background settings for the video. Allows specifying either a solid color or an image
+     URL."""
+    gop_size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Group of Pictures (GOP) size for video encoding. Controls the interval between keyframes,
+     affecting compression efficiency and seeking performance."""
 
     @overload
     def __init__(
@@ -5912,6 +5677,8 @@ class VideoParams(_Model):
         codec: Optional[Literal["h264"]] = None,
         crop: Optional["_models.VideoCrop"] = None,
         resolution: Optional["_models.VideoResolution"] = None,
+        background: Optional["_models.Background"] = None,
+        gop_size: Optional[int] = None,
     ) -> None: ...
 
     @overload

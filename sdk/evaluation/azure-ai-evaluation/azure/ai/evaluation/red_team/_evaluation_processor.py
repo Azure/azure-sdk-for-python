@@ -105,7 +105,9 @@ class EvaluationProcessor:
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
         context = [msg["context"] for msg in messages if msg.get("role") == "user"]
-        tool_calls = [msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")]
+        tool_calls = [
+            msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
+        ]
 
         if assistant_messages:
             # Create query-response pair with empty query and all assistant messages
