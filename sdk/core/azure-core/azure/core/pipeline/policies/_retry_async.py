@@ -69,7 +69,12 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHT
      Retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
+    :keyword float retry_jitter_factor: The factor to use to calculate the jitter. For example, if the backoff is
+     1 second with a jitter factor of 0.2, the actual backoff delay used will be a random float between 0.8 and 1.2.
+     If set to 0, no jitter will be applied. Default value is 0.2.
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :keyword RetryMode retry_mode: Fixed or exponential delay between attempts, default is exponential.
+    :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
 
     .. admonition:: Example:
 
