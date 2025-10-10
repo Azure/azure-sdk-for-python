@@ -523,7 +523,7 @@ def _convert_results_to_aoai_evaluation_results(
     eval_run_id: Optional[str] = eval_meta_data.get("eval_run_id")
     testing_criteria_list: Optional[List[Dict[str, Any]]] = eval_meta_data.get("testing_criteria")
 
-    testing_criteria_name_types = {}
+    testing_criteria_name_types: Optional[Dict[str, str]] = {}
     if testing_criteria_list is not None:
         for criteria in testing_criteria_list:
             criteria_name = criteria.get("name")
@@ -594,30 +594,33 @@ def _convert_results_to_aoai_evaluation_results(
             }
 
             # Add optional fields if they exist
-            if score is not None:
-                result_obj["score"] = score
-            if label is not None:
-                result_obj["label"] = label
-            if reason is not None:
-                result_obj["reason"] = reason
-            if threshold is not None:
-                result_obj["threshold"] = threshold
-            if passed is not None:
-                result_obj["passed"] = passed
+            #if score is not None:
+            result_obj["score"] = score
+            #if label is not None:
+            result_obj["label"] = label
+            #if reason is not None:
+            result_obj["reason"] = reason
+            #if threshold is not None:
+            result_obj["threshold"] = threshold
+            #if passed is not None:
+            result_obj["passed"] = passed
             
             if sample is not None:
                 result_obj["sample"] = sample
                 top_sample.append(sample)  # Save top sample for the row
-            elif criteria_name in eval_run_summary and "error_code" in eval_run_summary[criteria_name]:
+            elif (eval_run_summary and criteria_name in eval_run_summary 
+                  and isinstance(eval_run_summary[criteria_name], dict) 
+                  and "error_code" in eval_run_summary[criteria_name]):
                 error_info = {
                     "code": eval_run_summary[criteria_name].get("error_code", None),
                     "message": eval_run_summary[criteria_name].get("error_message", None),
-                }
+                } if eval_run_summary[criteria_name].get("error_code", None) is not None else None
                 sample = {
                     "error": error_info
-                }
+                } if error_info is not None else None
                 result_obj["sample"] = sample
-                top_sample.append(sample)
+                if sample is not None:
+                    top_sample.append(sample)
 
             run_output_results.append(result_obj)
 

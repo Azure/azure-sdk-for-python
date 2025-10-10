@@ -859,7 +859,7 @@ class TestUtils(unittest.TestCase):
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
 
         test_data_path = os.path.join(parent, "data", "evaluation_util_convert_old_output_test.jsonl")
-        test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_uril_convert_eval_meta_data.json")
+        test_input_eval_metadata_path = os.path.join(parent, "data", "evaluation_util_convert_eval_meta_data.json")
         
         # Create logger
         logger = logging.getLogger("test_logger")
@@ -887,15 +887,15 @@ class TestUtils(unittest.TestCase):
         
         # Test the conversion function
         def run_test():
-            converted_results = _convert_results_to_aoai_evaluation_results(
+            _convert_results_to_aoai_evaluation_results(
                 results=test_results,
                 logger=logger,
                 eval_meta_data=eval_metadata
             )
-            return converted_results
         
         # Run the async function
-        converted_results = run_test()
+        run_test()
+        converted_results = test_results
 
         # Verify the structure
         self.assertIn("metrics", converted_results)
@@ -957,11 +957,6 @@ class TestUtils(unittest.TestCase):
                 self.assertIn("type", result)
                 self.assertIn("name", result)
                 self.assertIn("metric", result)
-                # Optional fields that might be present
-                optional_fields = ["score", "label", "reason", "threshold", "passed", "sample"]
-                for field in optional_fields:
-                    if field in result:
-                        self.assertIsNotNone(result[field])
         
         # Verify evaluation summary structure
         summary = converted_results["evaluation_summary"]
@@ -1006,11 +1001,12 @@ class TestUtils(unittest.TestCase):
         
         # Test with empty results
         empty_results = {"metrics": {}, "rows": [], "studio_url": None}
-        empty_converted = _convert_results_to_aoai_evaluation_results(
+        _convert_results_to_aoai_evaluation_results(
             results=empty_results,
             logger=logger,
             eval_meta_data=eval_metadata
         )
+        empty_converted = empty_results
         
         self.assertEqual(len(empty_converted["rows"]), 0)
         self.assertEqual(len(empty_converted["evaluation_results_list"]), 0)
