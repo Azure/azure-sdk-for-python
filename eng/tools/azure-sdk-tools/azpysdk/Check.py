@@ -85,15 +85,19 @@ class Check(abc.ABC):
         os.makedirs(staging_directory, exist_ok=True)
         return executable, staging_directory
 
-    def run_venv_command(self, executable: str, command: Sequence[str], cwd: str, check: bool = False) -> subprocess.CompletedProcess[str]:
+    def run_venv_command(
+        self, executable: str, command: Sequence[str], cwd: str, check: bool = False
+    ) -> subprocess.CompletedProcess[str]:
         """Run a command in the given virtual environment.
-          - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
-          - Uses the provided Python executable to run the command.
-          - Collects the output.
-          - If check is True, raise CalledProcessError on failure."""
+        - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
+        - Uses the provided Python executable to run the command.
+        - Collects the output.
+        - If check is True, raise CalledProcessError on failure."""
 
-        if (command[0].endswith("python") or command[0].endswith("python.exe")):
-            raise ValueError("The command array should not include the python executable, it is provided by the 'executable' argument")
+        if command[0].endswith("python") or command[0].endswith("python.exe"):
+            raise ValueError(
+                "The command array should not include the python executable, it is provided by the 'executable' argument"
+            )
 
         env = os.environ.copy()
 
@@ -110,12 +114,7 @@ class Check(abc.ABC):
 
         # it will be on the user's to handle their check logic
         result = subprocess.run(
-            [executable, *command],
-            cwd=cwd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=check
+            [executable, *command], cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=check
         )
 
         return result
