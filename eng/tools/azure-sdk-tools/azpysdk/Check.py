@@ -87,7 +87,8 @@ class Check(abc.ABC):
 
     def run_venv_command(self, executable: str, command: Sequence[str], cwd: str, check: bool = False) -> subprocess.CompletedProcess[str]:
         """Run a command in the given virtual environment.
-          - Prepends path with the virtual environment's python executable (if one exists)
+          - Prepends the virtual environment's bin directory to the PATH environment variable (if one exists)
+          - Uses the provided Python executable to run the command.
           - Collects the output.
           - If check is True, raise CalledProcessError on failure."""
 
