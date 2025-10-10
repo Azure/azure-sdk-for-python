@@ -6,6 +6,11 @@ extends:
       ServiceDirectory: ai
       TestResourceDirectories:
       - ai/azure-ai-voicelive
+      MatrixConfigs:
+        - Name: ai_ci_matrix
+          Path: sdk/ai/platform-matrix.json
+          Selection: sparse
+          GenerateVMJobs: true
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_TEST_USE_CLI_AUTH: 'true'
