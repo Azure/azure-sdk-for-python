@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where non-HTTPS endpoints would not function correctly.
+
 ### Other Changes
 
 ## 1.7.1 (2024-08-22)
