@@ -22,10 +22,13 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos
 database service.
 """
-
+import logging
+import os
 import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Callable, Any
 
-from azure.core.exceptions import AzureError
+from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
 from . import _constants as constants
 from . import exceptions
@@ -36,7 +39,7 @@ from ._utils import current_time_millis
 
 
 # pylint: disable=protected-access
-
+logger = logging.getLogger("azure.cosmos._GlobalEndpointManager")
 
 class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attributes
     """
@@ -48,7 +51,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.client = client
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
-        self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
             self.DefaultEndpoint,
             client.connection_policy
@@ -57,9 +59,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-
-    def get_refresh_time_interval_in_ms_stub(self):
-        return constants._Constants.DefaultEndpointsRefreshTime
+        self.startup = True
+        self._refresh_thread = None
+        self._refresh_thread_lock = threading.Lock()
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -105,7 +107,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             self.mark_endpoint_unavailable_for_write(endpoint, False)
 
     def refresh_endpoint_list(self, database_account, **kwargs):
-        if current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+        if current_time_millis() - self.last_refresh_time > int(os.getenv(
+                constants._Constants.AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS,
+                constants._Constants.DefaultEndpointsRefreshTime
+            )):
             self.refresh_needed = True
         if self.refresh_needed:
             with self.refresh_lock:
@@ -118,7 +123,11 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     raise e
 
     def _refresh_endpoint_list_private(self, database_account=None, **kwargs):
-        if database_account:
+        # 1. If explicit database_account provided and not during startup, just update cache (no health check now)
+        # 2. Else if refresh criteria met:
+        #    a. If not startup -> spawn background thread to do full database account + health checks
+        #    b. If startup -> get database account synchronously, then spawn background health checks, then mark startup False
+        if database_account and not self.startup:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
             self.last_refresh_time = current_time_millis()
@@ -126,8 +135,27 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             if self.location_cache.should_refresh_endpoints() or self.refresh_needed:
                 self.refresh_needed = False
                 self.last_refresh_time = current_time_millis()
-                # this will perform getDatabaseAccount calls to check endpoint health
-                self._endpoints_health_check(**kwargs)
+                if not self.startup:
+                    # background full refresh (database account + health checks)
+                    self._start_background_refresh(self._refresh_database_account_and_health, kwargs)
+                else:
+                    self._start_background_refresh(self._endpoints_health_check, kwargs)
+                    self.startup = False
+
+    def _start_background_refresh(self, target: Callable[..., None], kwargs: dict[str, Any]):
+        """Starts a daemon thread to run the given target if one is not already active."""
+        with self._refresh_thread_lock:
+            if not (self._refresh_thread and self._refresh_thread.is_alive()):
+                def runner():
+                    try:
+                        target(**kwargs)
+                    except Exception as exception:
+                        # background failures should not crash main thread
+                        # Intentionally swallow to avoid affecting foreground; logging could be added.
+                        logger.error("Health check task failed: %s", exception, exc_info=True)
+                t = threading.Thread(target=runner, name="cosmos-endpoint-refresh", daemon=True)
+                self._refresh_thread = t
+                t.start()
 
     def _GetDatabaseAccount(self, **kwargs) -> DatabaseAccount:
         """Gets the database account.
@@ -161,43 +189,30 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
             raise
 
     def _endpoints_health_check(self, **kwargs):
-        """Gets the database account for each endpoint.
+        """Performs concurrent health probes for each endpoint (background-safe)."""
+        endpoints = self.location_cache.endpoints_to_health_check()
 
-        Validating if the endpoint is healthy else marking it as unavailable.
-        """
+        def probe(endpoint: str):
+            try:
+                self.client.health_check(endpoint, **kwargs)
+                self.location_cache.mark_endpoint_available(endpoint)
+            except (exceptions.CosmosHttpResponseError, AzureError) as exception:
+                if isinstance(exception, (ServiceRequestError, ServiceResponseError)):
+                    self._mark_endpoint_unavailable(endpoint)
+
+        max_workers = min(len(endpoints), constants._Constants.MaxHealthCheckThreadPoolSize)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = [executor.submit(probe, ep) for ep in endpoints]
+            for f in as_completed(futures):
+                # propagate unexpected exceptions (should be none besides those swallowed in probe)
+                _ = f.result()
+        # After all probes, update cache once
+        self.location_cache.update_location_cache()
+
+    def _refresh_database_account_and_health(self, **kwargs):
         database_account = self._GetDatabaseAccount(**kwargs)
         self.location_cache.perform_on_database_account_read(database_account)
-        # get all the regional routing contexts to check
-        endpoints = self.location_cache.endpoints_to_health_check()
-        success_count = 0
-        for endpoint in endpoints:
-            if success_count >= 4:
-                break
-            # save current dba timeouts
-            previous_dba_read_timeout = self.client.connection_policy.DBAReadTimeout
-            previous_dba_connection_timeout = self.client.connection_policy.DBAConnectionTimeout
-            try:
-                if (endpoint in
-                        self.location_cache.location_unavailability_info_by_endpoint):
-                    # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
-                    # health check. This helps reduce the time the health check is blocking all requests.
-                    self.client.connection_policy._override_health_check_timeouts(constants._Constants
-                                                                                  .UnavailableEndpointDBATimeouts,
-                                                                                  constants._Constants
-                                                                                  .UnavailableEndpointDBATimeouts)
-                    self.client.health_check(endpoint, **kwargs)
-                else:
-                    self.client.health_check(endpoint, **kwargs)
-                success_count += 1
-                self.location_cache.mark_endpoint_available(endpoint)
-            except (exceptions.CosmosHttpResponseError, AzureError):
-                self._mark_endpoint_unavailable(endpoint)
-
-            finally:
-                # after the health check for that endpoint setting the timeouts back to their original values
-                self.client.connection_policy._override_health_check_timeouts(previous_dba_read_timeout,
-                                                                              previous_dba_connection_timeout)
-        self.location_cache.update_location_cache()
+        self._endpoints_health_check(**kwargs)
 
     def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client.
@@ -207,21 +222,4 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
-        if endpoint in self.location_cache.location_unavailability_info_by_endpoint:
-            previous_dba_read_timeout = self.client.connection_policy.DBAReadTimeout
-            previous_dba_connection_timeout = self.client.connection_policy.DBAConnectionTimeout
-            try:
-                # if the endpoint is unavailable, we need to lower the timeouts to be more aggressive in the
-                # health check. This helps reduce the time the health check is blocking all requests.
-                self.client.connection_policy._override_health_check_timeouts(constants._Constants
-                                                                              .UnavailableEndpointDBATimeouts,
-                                                                              constants._Constants
-                                                                              .UnavailableEndpointDBATimeouts)
-                database_account = self.client.GetDatabaseAccount(endpoint, **kwargs)
-            finally:
-                # after the health check for that endpoint setting the timeouts back to their original values
-                self.client.connection_policy._override_health_check_timeouts(previous_dba_read_timeout,
-                                                                              previous_dba_connection_timeout)
-        else:
-            database_account = self.client.GetDatabaseAccount(endpoint, **kwargs)
-        return database_account
+        return self.client.GetDatabaseAccount(endpoint, **kwargs)

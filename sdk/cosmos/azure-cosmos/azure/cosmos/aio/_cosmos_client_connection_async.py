@@ -472,19 +472,20 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """Checks if able to connect to the endpoint.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint being probed
         """
         if url_connection is None:
             url_connection = self.url_connection
-        url_connection = url_connection + "/probe"
-
+        # Append probe path without creating double slashes; if URL already ends with '/', just add 'probe'.
+        if url_connection.endswith('/'):
+            url_connection = url_connection + 'probe'
+        else:
+            url_connection = url_connection + '/probe'
         initial_headers = dict(self.default_headers)
-        headers = base.GetHeaders(self, initial_headers, "get", "", "", "",
-                                  documents._OperationType.Read, {},
+        headers = base.GetHeaders(self, initial_headers, "get", "", "",
+                                  http_constants.ResourceType.Probe, documents._OperationType.Read, {},
                                   client_id=self.client_id)
 
         request_params = _request_object.RequestObject(http_constants.ResourceType.Probe,
@@ -2256,8 +2257,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
-
-
 
     async def read_items(
             self,

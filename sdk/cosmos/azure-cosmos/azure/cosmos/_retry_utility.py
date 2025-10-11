@@ -30,7 +30,7 @@ from azure.core.exceptions import AzureError, ClientAuthenticationError, Service
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import RetryPolicy
 
-from . import _container_recreate_retry_policy, _database_account_retry_policy
+from . import _container_recreate_retry_policy, _health_check_retry_policy
 from . import _default_retry_policy
 from . import _endpoint_discovery_retry_policy
 from . import _gone_retry_policy
@@ -71,7 +71,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
-    database_account_retry_policy = _database_account_retry_policy.DatabaseAccountRetryPolicy(
+    health_check_retry_policy = _health_check_retry_policy.HealthCheckRetryPolicy(
         client.connection_policy
     )
     resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(
@@ -162,7 +162,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 # update session token for relevant operations
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
-                retry_policy = database_account_retry_policy
+                raise e
+            elif request and _has_health_check_header(request.headers):
+                retry_policy = health_check_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
@@ -234,8 +236,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                     raise exceptions.CosmosClientTimeoutError()
 
         except ServiceRequestError as e:
-            if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+            if request and _has_health_check_header(request.headers):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:
@@ -243,8 +245,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:
-            if request and _has_database_account_header(request.headers):
-                if not database_account_retry_policy.ShouldRetry(e):
+            if request and _has_health_check_header(request.headers):
+                if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
                 if args:
@@ -262,6 +264,17 @@ def ExecuteFunction(function, *args, **kwargs):
 
 def _has_read_retryable_headers(request_headers):
     if _OperationType.IsReadOnlyOperation(request_headers.get(HttpHeaders.ThinClientProxyOperationType)):
+        return True
+    return False
+
+def _has_health_check_or_dba_header(request_headers):
+    if (request_headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.Probe
+            or request_headers.get(HttpHeaders.ThinClientProxyOperationType) == ResourceType.DatabaseAccount):
+        return True
+    return False
+
+def _has_health_check_header(request_headers):
+    if request_headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.Probe:
         return True
     return False
 
@@ -362,7 +375,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 # This logic is based on the _retry.py file from azure-core
-                if (not _has_database_account_header(request.http_request.headers)
+                if (not _has_health_check_or_dba_header(request.http_request.headers)
                         and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
                         retry_active = self.increment(retry_settings, response=request, error=err)
@@ -374,7 +387,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 retry_error = err
                 # Only read operations can be safely retried with ServiceResponseError
                 if (not _has_read_retryable_headers(request.http_request.headers) or
-                        _has_database_account_header(request.http_request.headers) or
+                        _has_health_check_or_dba_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
                 # This logic is based on the _retry.py file from azure-core
@@ -391,7 +404,7 @@ class ConnectionRetryPolicy(RetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
+                if (_has_health_check_or_dba_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:

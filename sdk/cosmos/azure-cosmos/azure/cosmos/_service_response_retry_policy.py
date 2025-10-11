@@ -9,6 +9,8 @@ only do cross regional retries for read operations.
 
 import logging
 from azure.cosmos.documents import _OperationType
+from azure.cosmos.http_constants import ResourceType
+
 
 class ServiceResponseRetryPolicy(object):
 
@@ -40,6 +42,12 @@ class ServiceResponseRetryPolicy(object):
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
+
+        if self.request:
+            # For database account calls, we loop through preferred locations
+            # in global endpoint manager
+            if self.request.resource_type == ResourceType.DatabaseAccount:
+                return False
 
         # Check if the next retry about to be done is safe
         if ((self.failover_retry_count + 1) >= self.total_retries and

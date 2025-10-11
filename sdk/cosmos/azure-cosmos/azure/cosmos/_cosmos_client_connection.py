@@ -2696,18 +2696,21 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection: Optional[str] = None,
             **kwargs: Any
     ):
-        """Gets database account info.
+        """ Send a request to check that can connect to the endpoint.
 
-        :param str url_connection: the endpoint used to get the database account
-        :return: The Database Account.
-        :rtype: documents.DatabaseAccount
+        :param str url_connection: the endpoint that will be probed
         """
         if url_connection is None:
             url_connection = self.url_connection
-        url_connection = url_connection + "/probe"
+        # Append probe path without creating double slashes; if URL already ends with '/', just add 'probe'.
+        if url_connection.endswith('/'):
+            url_connection = url_connection + 'probe'
+        else:
+            url_connection = url_connection + '/probe'
 
-        headers = base.GetHeaders(self, self.default_headers, "get", "", "", "",
-                                  documents._OperationType.Read,{}, client_id=self.client_id)
+        headers = base.GetHeaders(self, self.default_headers, "get", "", "",
+                                  http_constants.ResourceType.Probe, documents._OperationType.Read,{},
+                                  client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.Probe,
                                        documents._OperationType.Read,
                                        headers,

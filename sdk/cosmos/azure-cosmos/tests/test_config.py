@@ -12,7 +12,8 @@ import uuid
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy, RetryPolicy
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
-from azure.cosmos._retry_utility import _has_database_account_header, _has_read_retryable_headers, _configure_timeout
+from azure.cosmos._retry_utility import _has_health_check_header, _has_read_retryable_headers, _configure_timeout, \
+    _has_health_check_or_dba_header
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -419,7 +420,7 @@ class MockConnectionRetryPolicy(RetryPolicy):
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
                 # This logic is based on the _retry.py file from azure-core
-                if (not _has_database_account_header(request.http_request.headers)
+                if (not _has_health_check_or_dba_header(request.http_request.headers)
                         and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
                         self.counter += 1
@@ -433,7 +434,7 @@ class MockConnectionRetryPolicy(RetryPolicy):
                 retry_error = err
                 # Only read operations can be safely retried with ServiceResponseError
                 if (not _has_read_retryable_headers(request.http_request.headers) or
-                        _has_database_account_header(request.http_request.headers) or
+                        _has_health_check_or_dba_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
                 # This logic is based on the _retry.py file from azure-core
@@ -449,7 +450,7 @@ class MockConnectionRetryPolicy(RetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
+                if (_has_health_check_or_dba_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
@@ -523,7 +524,7 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 retry_error = err
                 # the request ran into a socket timeout or failed to establish a new connection
                 # since request wasn't sent, raise exception immediately to be dealt with in client retry policies
-                if (not _has_database_account_header(request.http_request.headers)
+                if (not _has_health_check_header(request.http_request.headers)
                         and not request_params.healthy_tentative_location):
                     if retry_settings['connect'] > 0:
                         self.counter += 1
@@ -535,7 +536,7 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 raise err
             except ServiceResponseError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
+                if (_has_health_check_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
                 # Since this is ClientConnectionError, it is safe to be retried on both read and write requests
@@ -560,7 +561,7 @@ class MockConnectionRetryPolicyAsync(AsyncRetryPolicy):
                 raise err
             except AzureError as err:
                 retry_error = err
-                if (_has_database_account_header(request.http_request.headers) or
+                if (_has_health_check_header(request.http_request.headers) or
                         request_params.healthy_tentative_location):
                     raise err
                 if _has_read_retryable_headers(request.http_request.headers) and retry_settings['read'] > 0:
