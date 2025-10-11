@@ -63,7 +63,6 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     def _test_get_index_statistics(self, client, index_name):
         result = client.get_index_statistics(index_name)
-        keys = set(result.keys())
         assert result.document_count is not None
         assert result.storage_size is not None
         assert result.vector_index_size is not None

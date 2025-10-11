@@ -129,7 +129,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
 
         # prepare data source connection
         data_source_connection.e_tag = etag  # reset to the original data source connection
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ValueError):
             client.delete_data_source_connection(
                 data_source_connection.name,
                 match_condition=MatchConditions.IfNotModified,
