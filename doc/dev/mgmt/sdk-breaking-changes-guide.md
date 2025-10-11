@@ -1,6 +1,6 @@
 # Azure Python SDK Breaking Changes Review and Resolution Guide for TypeSpec Migration
 
-The Azure Python SDK generally prohibits breaking changes unless they result from service behavior modifications. This guide helps you identify, review, and resolve breaking changes that may occur in new SDK versions due to migrating of service specifications from Swagger to TypeSpec. For service's TypeSpec specification update scenario, refer this [doc](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/sdk-breaking-changes-guide.md).
+The Azure Python SDK generally prohibits breaking changes unless they result from service behavior modifications. This guide helps you identify, review, and resolve breaking changes that may occur in new SDK versions due to migrating of service specifications from Swagger to TypeSpec.
 
 Breaking changes can be resolved by:
 
@@ -46,9 +46,10 @@ Paired removal and addition entries showing naming changes from words to numbers
 Find the type definition by examining the names from the addition entries in the changelog (pattern: `Enum '<type name>' added member xxx`):
 
 ```tsp
-enum Minute {
-  Minute0 = "0",
-  Minute30 = "30"
+union Minute {
+  int32,
+  `0`: 0,
+  `30`: 30,
 }
 ```
 
@@ -156,7 +157,7 @@ namespace Microsoft.Devices;
 
 **Resolution**:
 
-Update it to the correct client name using `@@clientLocation`:
+Update it to the correct client name using `@@clientName`:
 
 ```tsp
 @@clientName(Microsoft.Devices, "IotDpsClient", "python");
@@ -188,23 +189,15 @@ interface ProvisioningServiceDescriptions {
 Override the operation by a customized one with a manually designed order of parameters:
 
 ```tsp
-op IotDpsResourceGetCustomized(
-  @path
-  provider: "Microsoft.ThisWillBeReplaced",
+op VaultsGetDeletedCustomized(
+  @path provider: "Microsoft.ThisWillBeReplaced",
+  @query("api-version") apiVersion: string,
+  @path subscriptionId: uuid,
+  @path vault_name: string,
+  @path location: azureLocation,
+): DeletedVault;
 
-  ...Azure.ResourceManager.CommonTypes.ApiVersionParameter,
-  ...Azure.ResourceManager.CommonTypes.SubscriptionIdParameter,
-
-  @path
-  provisioningServiceName: string,
-
-  ...Azure.ResourceManager.CommonTypes.ResourceGroupNameParameter,
-): ProvisioningServiceDescription;
-
-@@override(ProvisioningServiceDescriptions.get,
-  IotDpsResourceGetCustomized,
-  "python"
-);
+@@override(DeletedVaults.getDeleted, VaultsGetDeletedCustomized, "python");
 ```
 
 ## 6. Removal of Unreferenced Models
@@ -256,5 +249,25 @@ Removal of parameter `if_match` and addition of `etag/match_condition` for the s
 **Reason**: Header signatures `if_match/if_none_match` is replaced by `etag/match_condition` by the new operation design.
 
 **Impact**: Replace `if_match="<specific etag>"` with `etag="<specific etag>", match_condition=MatchConditions.IfNotModified`.
+
+**Resolution**: Accept these breaking changes.
+
+## 9. Removal of multi-level flattened properties
+
+**Changelog Pattern**:
+
+Removal of multiple parameters and addition of parameters `properties` entries for the same model:
+
+```md
+- Model `VaultExtendedInfoResource` added property `properties`
+- Model `VaultExtendedInfoResource` deleted or renamed its instance variable `integrity_key`
+- Model `VaultExtendedInfoResource` deleted or renamed its instance variable `encryption_key`
+- Model `VaultExtendedInfoResource` deleted or renamed its instance variable `encryption_key_thumbprint`
+- Model `VaultExtendedInfoResource` deleted or renamed its instance variable `algorithm`
+```
+
+**Reason**: Typespec no longer supports multi-level flattening and will always preserve the actual REST API hierarchy.
+
+**Impact**: Users can only get the property following the actual model structure which matches the REST API documentation.
 
 **Resolution**: Accept these breaking changes.
