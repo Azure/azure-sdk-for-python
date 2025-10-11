@@ -609,6 +609,7 @@ class PatternAnalyzer(LexicalAnalyzer):
     :ivar stopwords: A list of stopwords.
     :vartype stopwords: list[str]
     """
+
     def __init__(self, **kwargs):
         lower_case_terms = kwargs.pop("lower_case_terms", True)
         pattern = kwargs.pop("pattern", r"\W+")

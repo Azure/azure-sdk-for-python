@@ -303,9 +303,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.indexes.analyze(
-            index_name=index_name,
-            request=analyze_request._to_generated(),  # pylint:disable=protected-access
-            **kwargs
+            index_name=index_name, request=analyze_request._to_generated(), **kwargs  # pylint:disable=protected-access
         )
         return result
 
@@ -413,7 +411,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         except AttributeError:
             name = synonym_map
             etag = None
-        await self._client.synonym_maps.delete(synonym_map_name=name, match_condition=match_condition, etag=etag, **kwargs)
+        await self._client.synonym_maps.delete(
+            synonym_map_name=name, match_condition=match_condition, etag=etag, **kwargs
+        )
 
     @distributed_trace_async
     async def create_synonym_map(self, synonym_map: SynonymMap, **kwargs: Any) -> SynonymMap:
@@ -626,7 +626,12 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.aliases.create_or_update(
-            alias_name=alias.name, alias=alias, match_condition=match_condition, prefer="return=representation", etag=alias.e_tag, **kwargs
+            alias_name=alias.name,
+            alias=alias,
+            match_condition=match_condition,
+            prefer="return=representation",
+            etag=alias.e_tag,
+            **kwargs
         )
         return cast(SearchAlias, result)
 
@@ -666,7 +671,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         except AttributeError:
             agent_name = agent
             etag = None
-        await self._client.knowledge_agents.delete(agent_name=agent_name, match_condition=match_condition, etag=etag, **kwargs)
+        await self._client.knowledge_agents.delete(
+            agent_name=agent_name, match_condition=match_condition, etag=etag, **kwargs
+        )
 
     @distributed_trace_async
     async def create_agent(self, agent: KnowledgeAgent, **kwargs: Any) -> KnowledgeAgent:
@@ -706,7 +713,12 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = await self._client.knowledge_agents.create_or_update(
-            agent_name=agent.name, knowledge_agent=agent, match_condition=match_condition, prefer="return=representation", etag=agent.e_tag, **kwargs
+            agent_name=agent.name,
+            knowledge_agent=agent,
+            match_condition=match_condition,
+            prefer="return=representation",
+            etag=agent.e_tag,
+            **kwargs
         )
         return result
 
@@ -759,7 +771,9 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         except AttributeError:
             source_name = knowledge_source
             etag = None
-        await self._client.knowledge_sources.delete(source_name=source_name, match_condition=match_condition, etag=etag, **kwargs)
+        await self._client.knowledge_sources.delete(
+            source_name=source_name, match_condition=match_condition, etag=etag, **kwargs
+        )
 
     @distributed_trace_async
     async def create_knowledge_source(self, knowledge_source: KnowledgeSource, **kwargs: Any) -> KnowledgeSource:

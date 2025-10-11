@@ -316,7 +316,7 @@ class SearchField(Model):
     def deserialize(cls, data: Any, **kwargs) -> Optional[Self]:  # type: ignore
         # pylint: disable=unused-argument
         """Parse a str using the RestAPI syntax and return a SearchField instance.
-        
+
         :param str data: A JSON str using RestAPI structure.
         :returns: A SearchField instance
         :raises DeserializationError: if something went wrong
@@ -335,7 +335,6 @@ class SearchField(Model):
         :rtype: dict
         """
         return self._to_generated().as_dict(**kwargs)  # type: ignore
-
 
     @classmethod
     def from_dict(cls, data: Any, **kwargs: Any) -> Optional[Self]:  # type: ignore

@@ -612,7 +612,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             raise ValueError("A model must be passed to use access conditions")
         try:
             name = skillset.name  # type: ignore
-            etag = skillset.e_tag  # type: ignore            
+            etag = skillset.e_tag  # type: ignore
         except AttributeError:
             name = skillset
             etag = None

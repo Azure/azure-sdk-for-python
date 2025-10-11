@@ -403,7 +403,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :return: The created SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))        
+        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         name = data_source_connection.name
         # pylint:disable=protected-access
         packed_data_source = data_source_connection._to_generated()
@@ -453,7 +453,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         except AttributeError:
             name = data_source_connection
             etag = None
-        await self._client.data_sources.delete(data_source_name=name, etag=etag, match_condition=match_condition, **kwargs)
+        await self._client.data_sources.delete(
+            data_source_name=name, etag=etag, match_condition=match_condition, **kwargs
+        )
 
     @distributed_trace_async
     async def get_data_source_connection(
