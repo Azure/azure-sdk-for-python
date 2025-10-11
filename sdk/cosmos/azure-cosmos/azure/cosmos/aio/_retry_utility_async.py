@@ -162,7 +162,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
                 raise e
-            elif request and _has_health_check_header(request.headers):
+            if request and _has_health_check_header(request.headers):
                 retry_policy = health_check_retry_policy
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in \
                     [SubStatusCodes.DATABASE_ACCOUNT_NOT_FOUND, SubStatusCodes.WRITE_FORBIDDEN]:
@@ -235,8 +235,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
 
         except ServiceRequestError as e:
             if request and _has_health_check_header(request.headers):
-                    if not health_check_retry_policy.ShouldRetry(e):
-                        raise e
+                if not health_check_retry_policy.ShouldRetry(e):
+                    raise e
             else:
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 

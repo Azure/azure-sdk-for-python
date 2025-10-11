@@ -61,7 +61,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self._database_account_cache = None
         self.startup = True
         self._refresh_thread = None
-        self._refresh_thread_lock = threading.Lock()
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -109,7 +108,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
     def refresh_endpoint_list(self, database_account, **kwargs):
         if current_time_millis() - self.last_refresh_time > int(os.getenv(
                 constants._Constants.AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS,
-                constants._Constants.DefaultEndpointsRefreshTime
+                str(constants._Constants.DefaultEndpointsRefreshTime)
             )):
             self.refresh_needed = True
         if self.refresh_needed:
@@ -126,7 +125,8 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         # 1. If explicit database_account provided and not during startup, just update cache (no health check now)
         # 2. Else if refresh criteria met:
         #    a. If not startup -> spawn background thread to do full database account + health checks
-        #    b. If startup -> get database account synchronously, then spawn background health checks, then mark startup False
+        #    b. If startup -> get database account synchronously, then spawn background health checks,
+        #    then mark startup False
         if database_account and not self.startup:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
@@ -139,23 +139,27 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # background full refresh (database account + health checks)
                     self._start_background_refresh(self._refresh_database_account_and_health, kwargs)
                 else:
+                    database_account = self._GetDatabaseAccount(**kwargs)
+                    self.location_cache.perform_on_database_account_read(database_account)
                     self._start_background_refresh(self._endpoints_health_check, kwargs)
                     self.startup = False
 
     def _start_background_refresh(self, target: Callable[..., None], kwargs: dict[str, Any]):
-        """Starts a daemon thread to run the given target if one is not already active."""
-        with self._refresh_thread_lock:
-            if not (self._refresh_thread and self._refresh_thread.is_alive()):
-                def runner():
-                    try:
-                        target(**kwargs)
-                    except Exception as exception:
-                        # background failures should not crash main thread
-                        # Intentionally swallow to avoid affecting foreground; logging could be added.
-                        logger.error("Health check task failed: %s", exception, exc_info=True)
-                t = threading.Thread(target=runner, name="cosmos-endpoint-refresh", daemon=True)
-                self._refresh_thread = t
-                t.start()
+        """Starts a daemon thread to run the given target if one is not already active.
+        :param Callable target: The function to run in the background thread.
+        :param dict kwargs: The keyword arguments to pass to the target function.
+        """
+        if not (self._refresh_thread and self._refresh_thread.is_alive()):
+            def runner():
+                try:
+                    target(**kwargs)
+                except Exception as exception: #pylint: disable=broad-exception-caught
+                    # background failures should not crash main thread
+                    # Intentionally swallow to avoid affecting foreground; logging could be added.
+                    logger.error("Health check task failed: %s", exception, exc_info=True)
+            t = threading.Thread(target=runner, name="cosmos-endpoint-refresh", daemon=True)
+            self._refresh_thread = t
+            t.start()
 
     def _GetDatabaseAccount(self, **kwargs) -> DatabaseAccount:
         """Gets the database account.

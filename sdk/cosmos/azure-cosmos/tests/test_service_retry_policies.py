@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 import unittest
 import uuid
+from time import sleep
 
 import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError

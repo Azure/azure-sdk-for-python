@@ -163,7 +163,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 client._UpdateSessionIfRequired(request.headers, {}, e.headers)
             if request and _has_database_account_header(request.headers):
                 raise e
-            elif request and _has_health_check_header(request.headers):
+            if request and _has_health_check_header(request.headers):
                 retry_policy = health_check_retry_policy
             # Re-assign retry policy based on error code
             elif e.status_code == StatusCodes.FORBIDDEN and e.sub_status in\
@@ -240,8 +240,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if not health_check_retry_policy.ShouldRetry(e):
                     raise e
             else:
-                if args:
-                    global_endpoint_manager.record_failure(args[0])
                 _handle_service_request_retries(client, service_request_retry_policy, e, *args)
 
         except ServiceResponseError as e:

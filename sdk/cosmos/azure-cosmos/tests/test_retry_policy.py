@@ -577,6 +577,39 @@ class TestRetryPolicy(unittest.TestCase):
             finally:
                 _retry_utility.ExecuteFunction = self.original_execute_function
 
+    def test_dba_timing_configurable(self):
+        self.original_execute_function = _retry_utility.ExecuteFunction
+        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
+        _retry_utility.ExecuteFunction = mock_execute
+        os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"] = "10" # 10 ms
+
+        try:
+            client = cosmos_client.CosmosClient(self.host, self.masterKey)
+            database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+            container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+            sleep(1)
+            container.create_item({'id': str(uuid.uuid4()), })
+
+            # multiple database account calls should be made
+            assert mock_execute.counter > 2
+
+        finally:
+            _retry_utility.ExecuteFunction= self.original_execute_function
+            del os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"]
+
+    class MockExecuteFunctionDBA(object):
+        def __init__(self, org_func):
+            self.org_func = org_func
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            # The second argument to the internal _request function is the RequestObject.
+            request_object = args[1]
+            if (request_object.operation_type == documents._OperationType.Read and
+                    request_object.resource_type == ResourceType.DatabaseAccount):
+                self.counter += 1
+            return self.org_func(func, *args, **kwargs)
+
     class MockExecuteFunctionHealthCheckServiceResponseError(object):
         def __init__(self, org_func):
             self.org_func = org_func

@@ -637,6 +637,27 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
             finally:
                 _retry_utility.ExecuteFunctionAsync = self.original_execute_function
 
+    async def test_dba_timing_configurable_async(self):
+        self.original_execute_function = _retry_utility.ExecuteFunctionAsync
+        mock_execute = self.MockExecuteFunctionDBA(self.original_execute_function)
+        _retry_utility.ExecuteFunctionAsync = mock_execute
+        os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"] = "10" # 10 ms
+
+        try:
+            async with CosmosClient(self.host, self.masterKey) as client:
+                database = client.get_database_client(test_config.TestConfig.TEST_DATABASE_ID)
+                container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
+                await asyncio.sleep(1)
+                container.create_item({'id': str(uuid.uuid4()), })
+
+            # multiple database account calls should be made
+            print(mock_execute.counter)
+            assert mock_execute.counter > 2
+
+        finally:
+            _retry_utility.ExecuteFunctionAsync = self.original_execute_function
+            del os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"]
+
     class MockExecuteFunctionHealthCheckServiceRequestError(object):
         def __init__(self, org_func):
             self.org_func = org_func
@@ -651,7 +672,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 self.counter += 1
                 raise ServiceRequestError("mocked service request error")
             return await self.org_func(func, *args, **kwargs)
-
 
     class MockExecuteFunctionDBAError(object):
         def __init__(self, org_func, error):
@@ -668,6 +688,18 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 raise self.error
             return await self.org_func(func, *args, **kwargs)
 
+    class MockExecuteFunctionDBA(object):
+        def __init__(self, org_func):
+            self.org_func = org_func
+            self.counter = 0
+
+        async def __call__(self, func, *args, **kwargs):
+            # The second argument to the internal _request function is the RequestObject.
+            request_object = args[1]
+            if (request_object.operation_type == documents._OperationType.Read and
+                    request_object.resource_type == ResourceType.DatabaseAccount):
+                self.counter += 1
+            return await self.org_func(func, *args, **kwargs)
 
     async def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})

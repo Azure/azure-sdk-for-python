@@ -51,7 +51,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.client = client
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
-        self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
         self.location_cache = LocationCache(
             self.DefaultEndpoint,
             client.connection_policy
@@ -62,13 +61,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
         self._database_account_cache = None
-
-    def get_refresh_time_interval_in_ms_stub(self):
-        refresh_interval = int(os.getenv(
-            constants._Constants.AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS,
-            constants._Constants.DefaultEndpointsRefreshTime
-        ))
-        return refresh_interval
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -120,10 +112,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 await self.refresh_task
                 self.refresh_task = None
             except (Exception, asyncio.CancelledError) as exception: #pylint: disable=broad-exception-caught
-                logger.exception("Health check task failed: %s", exception) #pylint: disable=do-not-use-logging-exception
+                logger.error("Health check task failed: %s", exception, exc_info=True)
         if current_time_millis() - self.last_refresh_time > int(os.getenv(
                 constants._Constants.AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS,
-                constants._Constants.DefaultEndpointsRefreshTime
+                str(constants._Constants.DefaultEndpointsRefreshTime)
         )):
             self.refresh_needed = True
         if self.refresh_needed:

@@ -19,7 +19,7 @@ from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosm
     _retry_utility_async
 
 COLLECTION = "created_collection"
-REGION_1 = "aast US"
+REGION_1 = "East US"
 REGION_2 = "West US"
 REGIONS = [REGION_1, REGION_2]
 
@@ -182,8 +182,8 @@ class TestHealthCheckAsync:
         self.original_health_check = _cosmos_client_connection_async.CosmosClientConnection.health_check
         self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
         self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
-        mock_get_database_account_check = self.MockHealthCheckError()
-        _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_get_database_account_check
+        mock_health_check_error = self.MockHealthCheckError()
+        _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_health_check_error
         setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
         async def mock_execute_function(function, *args, **kwargs):
             if args:
