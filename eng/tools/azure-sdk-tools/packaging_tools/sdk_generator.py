@@ -368,7 +368,7 @@ def main(generate_input, generate_output):
                 changelog_generation_start_time = time.time()
                 try:
                     if data.get("enableChangelog", True):
-                        md_output = execute_func_with_timeout(change_log_func)
+                        md_output = execute_func_with_timeout(change_log_func, timeout=3600)
                     else:
                         md_output = "skip changelog generation"
                 except multiprocessing.TimeoutError:

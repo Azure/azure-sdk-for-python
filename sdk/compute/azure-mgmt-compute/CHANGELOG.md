@@ -1,5 +1,631 @@
 # Release History
 
+## 38.0.0 (2025-10-11)
+
+### Features Added
+
+  - Model `AvailabilitySetUpdate` added property `properties`
+  - Model `CapacityReservationGroupUpdate` added property `properties`
+  - Model `CapacityReservationUpdate` added property `properties`
+  - Model `CommunityGallery` added property `identifier`
+  - Model `CommunityGalleryImageVersion` added property `identifier`
+  - Model `DedicatedHostGroupUpdate` added property `properties`
+  - Model `DedicatedHostUpdate` added property `properties`
+  - Model `DiskEncryptionSet` added property `properties`
+  - Model `GalleryApplicationUpdate` added property `properties`
+  - Model `GalleryApplicationVersionUpdate` added property `properties`
+  - Model `GalleryImageUpdate` added property `properties`
+  - Model `GalleryImageVersionUpdate` added property `properties`
+  - Model `GalleryInVMAccessControlProfileVersion` added property `properties`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` added property `properties`
+  - Model `GalleryUpdate` added property `properties`
+  - Model `ImageUpdate` added property `properties`
+  - Enum `NetworkApiVersion` added member `ENUM_2020_11_01`
+  - Enum `NetworkApiVersion` added member `ENUM_2022_11_01`
+  - Model `PirCommunityGalleryResource` added property `identifier`
+  - Model `PirSharedGalleryResource` added property `identifier`
+  - Model `ResourceSkuRestrictions` added property `values_property`
+  - Model `RestorePointCollectionUpdate` added property `properties`
+  - Model `SharedGallery` added property `identifier`
+  - Model `SharedGalleryImageVersion` added property `identifier`
+  - Model `SshPublicKeyUpdateResource` added property `properties`
+  - Model `Usage` added property `unit`
+  - Model `UserArtifactManage` added property `update_property`
+  - Model `VirtualMachineRunCommandUpdate` added property `properties`
+  - Model `VirtualMachineScaleSetExtension` added property `vm_type`
+  - Model `VirtualMachineScaleSetExtensionUpdate` added property `properties`
+  - Model `VirtualMachineScaleSetVMExtension` added property `properties`
+  - Model `VirtualMachineScaleSetVMExtension` added property `vm_type`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` added property `properties`
+  - Model `VirtualMachineUpdate` added property `properties`
+  - Added model `ApproveRollingUpgradeParameterBody`
+  - Added model `CloudError`
+  - Added model `CommunityGalleryIdentifier`
+  - Added model `ConvertToVirtualMachineScaleSetParameterBody`
+  - Added model `DeallocateParameterBody`
+  - Added model `EncryptionSetProperties`
+  - Added model `GenerateKeyPairParameterBody`
+  - Added model `MigrateToVmScaleSetParameterBody`
+  - Added model `OkResponse`
+  - Added enum `PassNames`
+  - Added model `PerformMaintenanceParameterBody`
+  - Added model `PowerOffParameterBody`
+  - Added model `RedeployParameterBody`
+  - Added model `ReimageAllParameterBody`
+  - Added model `ReimageParameterBody`
+  - Added model `ReimageParameterBody1`
+  - Added model `ReimageParameterBody2`
+  - Added model `RestartParameterBody`
+  - Added model `SharedGalleryIdentifier`
+  - Added model `StartParameterBody`
+  - Model `GalleriesOperations` added method `begin_gallery_sharing_profile_update`
+  - Model `GalleriesOperations` added method `list_by_artifact_name`
+  - Model `VirtualMachineScaleSetsOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `VirtualMachineScaleSetsOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `VirtualMachineScaleSetsOperations` added parameter `etag` in method `begin_update`
+  - Model `VirtualMachineScaleSetsOperations` added parameter `match_condition` in method `begin_update`
+  - Model `VirtualMachineScaleSetsOperations` added method `begin_cancel`
+  - Model `VirtualMachineScaleSetsOperations` added method `begin_start_extension_upgrade`
+  - Model `VirtualMachineScaleSetsOperations` added method `begin_start_os_upgrade`
+  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_update`
+  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_update`
+  - Added model `DiskRestorePointsOperations`
+  - Added model `LogAnalyticsOperationGroupOperations`
+  - Added model `PrivateEndpointConnectionsOperations`
+  - Added model `RollingUpgradeStatusInfosOperations`
+  - Added model `SshPublicKeyResourcesOperations`
+  - Added model `UsageOperationGroupOperations`
+  - Added model `VirtualMachineImagesEdgeZoneOperationGroupOperations`
+  - Added model `VirtualMachineImagesOperationGroupOperations`
+  - Added model `VirtualMachineRunCommandsOperationGroupOperations`
+  - Added model `VirtualMachineScaleSetVMSOperations`
+  - Added model `VirtualMachineScaleSetsOperationGroupOperations`
+  - Added model `VirtualMachineSizesOperationGroupOperations`
+  - Added model `VirtualMachinesOperationGroupOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client `ComputeManagementClient`
+  - Method `VirtualMachineExtensionsOperations.list` changed from `asynchronous` to `synchronous`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.list` changed from `asynchronous` to `synchronous`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `platform_update_domain_count`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `platform_fault_domain_count`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `virtual_machines`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `proximity_placement_group`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `statuses`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `scheduled_events_policy`
+  - Model `AvailabilitySetUpdate` deleted or renamed its instance variable `virtual_machine_scale_set_migration_info`
+  - Model `CapacityReservationGroupUpdate` deleted or renamed its instance variable `capacity_reservations`
+  - Model `CapacityReservationGroupUpdate` deleted or renamed its instance variable `virtual_machines_associated`
+  - Model `CapacityReservationGroupUpdate` deleted or renamed its instance variable `instance_view`
+  - Model `CapacityReservationGroupUpdate` deleted or renamed its instance variable `sharing_profile`
+  - Model `CapacityReservationGroupUpdate` deleted or renamed its instance variable `reservation_type`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `reservation_id`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `platform_fault_domain_count`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `virtual_machines_associated`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `provisioning_time`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `instance_view`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `time_created`
+  - Model `CapacityReservationUpdate` deleted or renamed its instance variable `schedule_profile`
+  - Model `DedicatedHostGroupUpdate` deleted or renamed its instance variable `platform_fault_domain_count`
+  - Model `DedicatedHostGroupUpdate` deleted or renamed its instance variable `hosts`
+  - Model `DedicatedHostGroupUpdate` deleted or renamed its instance variable `instance_view`
+  - Model `DedicatedHostGroupUpdate` deleted or renamed its instance variable `support_automatic_placement`
+  - Model `DedicatedHostGroupUpdate` deleted or renamed its instance variable `additional_capabilities`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `platform_fault_domain`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `auto_replace_on_failure`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `host_id`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `virtual_machines`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `license_type`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `provisioning_time`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `instance_view`
+  - Model `DedicatedHostUpdate` deleted or renamed its instance variable `time_created`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `encryption_type`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `active_key`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `previous_keys`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `provisioning_state`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `rotation_to_latest_key_version_enabled`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `last_key_rotation_timestamp`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `auto_key_rotation_error`
+  - Model `DiskEncryptionSet` deleted or renamed its instance variable `federated_client_id`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `description`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `eula`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `privacy_statement_uri`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `release_note_uri`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `end_of_life_date`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `supported_os_type`
+  - Model `GalleryApplicationUpdate` deleted or renamed its instance variable `custom_actions`
+  - Model `GalleryApplicationVersionUpdate` deleted or renamed its instance variable `publishing_profile`
+  - Model `GalleryApplicationVersionUpdate` deleted or renamed its instance variable `safety_profile`
+  - Model `GalleryApplicationVersionUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `GalleryApplicationVersionUpdate` deleted or renamed its instance variable `replication_status`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `description`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `eula`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `privacy_statement_uri`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `release_note_uri`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `os_type`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `os_state`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `hyper_v_generation`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `end_of_life_date`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `identifier`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `recommended`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `disallowed`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `purchase_plan`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `features`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `architecture`
+  - Model `GalleryImageUpdate` deleted or renamed its instance variable `allow_update_image`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `publishing_profile`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `storage_profile`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `safety_profile`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `replication_status`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `security_profile`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `restore`
+  - Model `GalleryImageVersionUpdate` deleted or renamed its instance variable `validations_profile`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `target_locations`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `exclude_from_latest`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `published_date`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `provisioning_state`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `replication_status`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `mode`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `default_access`
+  - Model `GalleryInVMAccessControlProfileVersion` deleted or renamed its instance variable `rules`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `target_locations`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `exclude_from_latest`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `published_date`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `replication_status`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `mode`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `default_access`
+  - Model `GalleryInVMAccessControlProfileVersionUpdate` deleted or renamed its instance variable `rules`
+  - Model `GalleryUpdate` deleted or renamed its instance variable `description`
+  - Model `GalleryUpdate` deleted or renamed its instance variable `identifier`
+  - Model `GalleryUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `GalleryUpdate` deleted or renamed its instance variable `sharing_profile`
+  - Model `GalleryUpdate` deleted or renamed its instance variable `soft_delete_policy`
+  - Model `GalleryUpdate` deleted or renamed its instance variable `sharing_status`
+  - Model `ImageUpdate` deleted or renamed its instance variable `source_virtual_machine`
+  - Model `ImageUpdate` deleted or renamed its instance variable `storage_profile`
+  - Model `ImageUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `ImageUpdate` deleted or renamed its instance variable `hyper_v_generation`
+  - Deleted or renamed enum value `NetworkApiVersion.TWO_THOUSAND_TWENTY11_01`
+  - Deleted or renamed enum value `NetworkApiVersion.TWO_THOUSAND_TWENTY_TWO11_01`
+  - Model `PirCommunityGalleryResource` deleted or renamed its instance variable `unique_id`
+  - Model `PirSharedGalleryResource` deleted or renamed its instance variable `unique_id`
+  - Model `ResourceSkuRestrictions` deleted or renamed its instance variable `values`
+  - Model `RestorePointCollectionUpdate` deleted or renamed its instance variable `source`
+  - Model `RestorePointCollectionUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `RestorePointCollectionUpdate` deleted or renamed its instance variable `restore_point_collection_id`
+  - Model `RestorePointCollectionUpdate` deleted or renamed its instance variable `restore_points`
+  - Model `SshPublicKeyUpdateResource` deleted or renamed its instance variable `public_key`
+  - Model `UserArtifactManage` deleted or renamed its instance variable `update`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `source`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `parameters`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `protected_parameters`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `async_execution`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `run_as_user`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `run_as_password`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `timeout_in_seconds`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `output_blob_uri`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `error_blob_uri`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `output_blob_managed_identity`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `error_blob_managed_identity`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `instance_view`
+  - Model `VirtualMachineRunCommandUpdate` deleted or renamed its instance variable `treat_failure_as_deployment_failure`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `force_update_tag`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `publisher`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `type_properties_type`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `type_handler_version`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `auto_upgrade_minor_version`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `enable_automatic_upgrade`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `settings`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `protected_settings`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `provision_after_extensions`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `suppress_failures`
+  - Model `VirtualMachineScaleSetExtensionUpdate` deleted or renamed its instance variable `protected_settings_from_key_vault`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `type`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `force_update_tag`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `publisher`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `type_properties_type`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `type_handler_version`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `auto_upgrade_minor_version`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `enable_automatic_upgrade`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `settings`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `protected_settings`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `instance_view`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `suppress_failures`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `protected_settings_from_key_vault`
+  - Model `VirtualMachineScaleSetVMExtension` deleted or renamed its instance variable `provision_after_extensions`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `force_update_tag`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `publisher`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `type_properties_type`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `type_handler_version`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `auto_upgrade_minor_version`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `enable_automatic_upgrade`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `settings`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `protected_settings`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `suppress_failures`
+  - Model `VirtualMachineScaleSetVMExtensionUpdate` deleted or renamed its instance variable `protected_settings_from_key_vault`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `hardware_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `scheduled_events_policy`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `storage_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `additional_capabilities`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `os_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `network_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `security_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `diagnostics_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `availability_set`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `virtual_machine_scale_set`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `proximity_placement_group`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `priority`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `eviction_policy`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `billing_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `host`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `host_group`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `instance_view`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `license_type`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `vm_id`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `extensions_time_budget`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `platform_fault_domain`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `scheduled_events_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `user_data`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `capacity_reservation`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `application_profile`
+  - Model `VirtualMachineUpdate` deleted or renamed its instance variable `time_created`
+  - Deleted or renamed model `AvailabilitySetSkuTypes`
+  - Deleted or renamed model `CloudService`
+  - Deleted or renamed model `CloudServiceExtensionProfile`
+  - Deleted or renamed model `CloudServiceExtensionProperties`
+  - Deleted or renamed model `CloudServiceInstanceView`
+  - Deleted or renamed model `CloudServiceNetworkProfile`
+  - Deleted or renamed model `CloudServiceOsProfile`
+  - Deleted or renamed model `CloudServiceProperties`
+  - Deleted or renamed model `CloudServiceRole`
+  - Deleted or renamed model `CloudServiceRoleProfile`
+  - Deleted or renamed model `CloudServiceRoleProfileProperties`
+  - Deleted or renamed model `CloudServiceRoleProperties`
+  - Deleted or renamed model `CloudServiceRoleSku`
+  - Deleted or renamed model `CloudServiceSlotType`
+  - Deleted or renamed model `CloudServiceUpdate`
+  - Deleted or renamed model `CloudServiceUpgradeMode`
+  - Deleted or renamed model `CloudServiceVaultAndSecretReference`
+  - Deleted or renamed model `CloudServiceVaultCertificate`
+  - Deleted or renamed model `CloudServiceVaultSecretGroup`
+  - Deleted or renamed model `CommunityGalleryImageList`
+  - Deleted or renamed model `CommunityGalleryImageVersionList`
+  - Deleted or renamed model `DiskAccessList`
+  - Deleted or renamed model `DiskEncryptionSetList`
+  - Deleted or renamed model `DiskList`
+  - Deleted or renamed model `DiskRestorePointList`
+  - Deleted or renamed model `Extension`
+  - Deleted or renamed model `GalleryApplicationList`
+  - Deleted or renamed model `GalleryApplicationVersionList`
+  - Deleted or renamed model `GalleryImageList`
+  - Deleted or renamed model `GalleryImageVersionList`
+  - Deleted or renamed model `GalleryInVMAccessControlProfileList`
+  - Deleted or renamed model `GalleryInVMAccessControlProfileVersionList`
+  - Deleted or renamed model `GalleryList`
+  - Deleted or renamed model `GallerySoftDeletedResourceList`
+  - Deleted or renamed model `InstanceSku`
+  - Deleted or renamed model `InstanceViewStatusesSummary`
+  - Deleted or renamed model `ListUsagesResult`
+  - Deleted or renamed model `LoadBalancerConfiguration`
+  - Deleted or renamed model `LoadBalancerConfigurationProperties`
+  - Deleted or renamed model `LoadBalancerFrontendIpConfiguration`
+  - Deleted or renamed model `LoadBalancerFrontendIpConfigurationProperties`
+  - Deleted or renamed model `LogAnalyticsOperationResult`
+  - Deleted or renamed model `LogAnalyticsOutput`
+  - Deleted or renamed model `OSFamily`
+  - Deleted or renamed model `OSFamilyProperties`
+  - Deleted or renamed model `OSVersion`
+  - Deleted or renamed model `OSVersionProperties`
+  - Deleted or renamed model `OSVersionPropertiesBase`
+  - Deleted or renamed model `ResourceInstanceViewStatus`
+  - Deleted or renamed model `ResourceSkusResult`
+  - Deleted or renamed model `ResourceUriList`
+  - Deleted or renamed model `ResourceWithOptionalLocation`
+  - Deleted or renamed model `RoleInstance`
+  - Deleted or renamed model `RoleInstanceNetworkProfile`
+  - Deleted or renamed model `RoleInstanceProperties`
+  - Deleted or renamed model `RoleInstanceView`
+  - Deleted or renamed model `RoleInstances`
+  - Deleted or renamed model `SharedGalleryImageList`
+  - Deleted or renamed model `SharedGalleryImageVersionList`
+  - Deleted or renamed model `SharedGalleryList`
+  - Deleted or renamed model `SnapshotList`
+  - Deleted or renamed model `StatusCodeCount`
+  - Deleted or renamed model `UpdateDomain`
+  - Deleted or renamed model `VirtualMachineScaleSetListOSUpgradeHistory`
+  - Deleted or renamed model `VirtualMachineScaleSetListSkusResult`
+  - Deleted or renamed model `VirtualMachineScaleSetListWithLinkResult`
+  - Method `AvailabilitySetsOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `AvailabilitySetsOperations.create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `AvailabilitySetsOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `AvailabilitySetsOperations.start_migration_to_virtual_machine_scale_set` inserted a `positional_or_keyword` parameter `body`
+  - Method `AvailabilitySetsOperations.start_migration_to_virtual_machine_scale_set` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `AvailabilitySetsOperations.update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `AvailabilitySetsOperations.update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `AvailabilitySetsOperations.validate_migration_to_virtual_machine_scale_set` inserted a `positional_or_keyword` parameter `body`
+  - Method `AvailabilitySetsOperations.validate_migration_to_virtual_machine_scale_set` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `CapacityReservationGroupsOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `CapacityReservationGroupsOperations.create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `CapacityReservationGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.list_by_subscription` changed its parameter `resource_ids_only` from `positional_or_keyword` to `keyword_only`
+  - Method `CapacityReservationGroupsOperations.update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `CapacityReservationGroupsOperations.update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `CapacityReservationsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `CapacityReservationsOperations.begin_create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `CapacityReservationsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `CapacityReservationsOperations.begin_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `CapacityReservationsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DedicatedHostGroupsOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `DedicatedHostGroupsOperations.create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `DedicatedHostGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DedicatedHostGroupsOperations.update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `DedicatedHostGroupsOperations.update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `DedicatedHostsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `DedicatedHostsOperations.begin_create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `DedicatedHostsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `DedicatedHostsOperations.begin_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `DedicatedHostsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `DiskAccessesOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `DiskAccessesOperations.begin_create_or_update` deleted or renamed its parameter `disk_access` of kind `positional_or_keyword`
+  - Method `DiskAccessesOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `DiskAccessesOperations.begin_update` deleted or renamed its parameter `disk_access` of kind `positional_or_keyword`
+  - Deleted or renamed method `DiskAccessesOperations.begin_delete_a_private_endpoint_connection`
+  - Deleted or renamed method `DiskAccessesOperations.begin_update_a_private_endpoint_connection`
+  - Deleted or renamed method `DiskAccessesOperations.get_a_private_endpoint_connection`
+  - Deleted or renamed method `DiskAccessesOperations.list_private_endpoint_connections`
+  - Method `DiskEncryptionSetsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `DiskEncryptionSetsOperations.begin_create_or_update` deleted or renamed its parameter `disk_encryption_set` of kind `positional_or_keyword`
+  - Method `DiskEncryptionSetsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `DiskEncryptionSetsOperations.begin_update` deleted or renamed its parameter `disk_encryption_set` of kind `positional_or_keyword`
+  - Method `DisksOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `DisksOperations.begin_create_or_update` deleted or renamed its parameter `disk` of kind `positional_or_keyword`
+  - Method `DisksOperations.begin_grant_access` inserted a `positional_or_keyword` parameter `body`
+  - Method `DisksOperations.begin_grant_access` deleted or renamed its parameter `grant_access_data` of kind `positional_or_keyword`
+  - Method `DisksOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `DisksOperations.begin_update` deleted or renamed its parameter `disk` of kind `positional_or_keyword`
+  - Method `GalleriesOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleriesOperations.begin_create_or_update` deleted or renamed its parameter `gallery` of kind `positional_or_keyword`
+  - Method `GalleriesOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleriesOperations.begin_update` deleted or renamed its parameter `gallery` of kind `positional_or_keyword`
+  - Method `GalleriesOperations.get` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleriesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleryApplicationVersionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleryApplicationVersionsOperations.begin_create_or_update` deleted or renamed its parameter `gallery_application_version` of kind `positional_or_keyword`
+  - Method `GalleryApplicationVersionsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleryApplicationVersionsOperations.begin_update` deleted or renamed its parameter `gallery_application_version` of kind `positional_or_keyword`
+  - Method `GalleryApplicationVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleryApplicationsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleryApplicationsOperations.begin_create_or_update` deleted or renamed its parameter `gallery_application` of kind `positional_or_keyword`
+  - Method `GalleryApplicationsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleryApplicationsOperations.begin_update` deleted or renamed its parameter `gallery_application` of kind `positional_or_keyword`
+  - Method `GalleryImageVersionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleryImageVersionsOperations.begin_create_or_update` deleted or renamed its parameter `gallery_image_version` of kind `positional_or_keyword`
+  - Method `GalleryImageVersionsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleryImageVersionsOperations.begin_update` deleted or renamed its parameter `gallery_image_version` of kind `positional_or_keyword`
+  - Method `GalleryImageVersionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `GalleryImagesOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleryImagesOperations.begin_create_or_update` deleted or renamed its parameter `gallery_image` of kind `positional_or_keyword`
+  - Method `GalleryImagesOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleryImagesOperations.begin_update` deleted or renamed its parameter `gallery_image` of kind `positional_or_keyword`
+  - Method `GalleryInVMAccessControlProfileVersionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleryInVMAccessControlProfileVersionsOperations.begin_create_or_update` deleted or renamed its parameter `gallery_in_vm_access_control_profile_version` of kind `positional_or_keyword`
+  - Method `GalleryInVMAccessControlProfileVersionsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleryInVMAccessControlProfileVersionsOperations.begin_update` deleted or renamed its parameter `gallery_in_vm_access_control_profile_version` of kind `positional_or_keyword`
+  - Method `GalleryInVMAccessControlProfilesOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `GalleryInVMAccessControlProfilesOperations.begin_create_or_update` deleted or renamed its parameter `gallery_in_vm_access_control_profile` of kind `positional_or_keyword`
+  - Method `GalleryInVMAccessControlProfilesOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `GalleryInVMAccessControlProfilesOperations.begin_update` deleted or renamed its parameter `gallery_in_vm_access_control_profile` of kind `positional_or_keyword`
+  - Method `ImagesOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `ImagesOperations.begin_create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `ImagesOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `ImagesOperations.begin_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `ImagesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProximityPlacementGroupsOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `ProximityPlacementGroupsOperations.create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `ProximityPlacementGroupsOperations.get` changed its parameter `include_colocation_status` from `positional_or_keyword` to `keyword_only`
+  - Method `ProximityPlacementGroupsOperations.update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `ProximityPlacementGroupsOperations.update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `ResourceSkusOperations.list` changed its parameter `include_extended_locations` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorePointCollectionsOperations.create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `RestorePointCollectionsOperations.create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `RestorePointCollectionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `RestorePointCollectionsOperations.update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `RestorePointCollectionsOperations.update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `RestorePointsOperations.begin_create` inserted a `positional_or_keyword` parameter `resource`
+  - Method `RestorePointsOperations.begin_create` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `RestorePointsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `SharedGalleriesOperations.list` changed its parameter `shared_to` from `positional_or_keyword` to `keyword_only`
+  - Method `SharedGalleryImageVersionsOperations.list` changed its parameter `shared_to` from `positional_or_keyword` to `keyword_only`
+  - Method `SharedGalleryImagesOperations.list` changed its parameter `shared_to` from `positional_or_keyword` to `keyword_only`
+  - Method `SnapshotsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `SnapshotsOperations.begin_create_or_update` deleted or renamed its parameter `snapshot` of kind `positional_or_keyword`
+  - Method `SnapshotsOperations.begin_grant_access` inserted a `positional_or_keyword` parameter `body`
+  - Method `SnapshotsOperations.begin_grant_access` deleted or renamed its parameter `grant_access_data` of kind `positional_or_keyword`
+  - Method `SnapshotsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `SnapshotsOperations.begin_update` deleted or renamed its parameter `snapshot` of kind `positional_or_keyword`
+  - Method `VirtualMachineExtensionImagesOperations.list_versions` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineExtensionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `VirtualMachineExtensionsOperations.begin_create_or_update` deleted or renamed its parameter `extension_parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineExtensionsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `VirtualMachineExtensionsOperations.begin_update` deleted or renamed its parameter `extension_parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineRunCommandsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineRunCommandsOperations.begin_create_or_update` deleted or renamed its parameter `run_command` of kind `positional_or_keyword`
+  - Method `VirtualMachineRunCommandsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineRunCommandsOperations.begin_update` deleted or renamed its parameter `run_command` of kind `positional_or_keyword`
+  - Method `VirtualMachineRunCommandsOperations.get_by_virtual_machine` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineRunCommandsOperations.list_by_virtual_machine` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `VirtualMachineRunCommandsOperations.get`
+  - Deleted or renamed method `VirtualMachineRunCommandsOperations.list`
+  - Method `VirtualMachineScaleSetExtensionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `VirtualMachineScaleSetExtensionsOperations.begin_create_or_update` deleted or renamed its parameter `extension_parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetExtensionsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `VirtualMachineScaleSetExtensionsOperations.begin_update` deleted or renamed its parameter `extension_parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.begin_create_or_update` deleted or renamed its parameter `extension_parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.begin_update` deleted or renamed its parameter `extension_parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update` deleted or renamed its parameter `run_command` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.begin_update` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.begin_update` deleted or renamed its parameter `run_command` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` changed its parameter `hibernate` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete_instances` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete_instances` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete_instances` deleted or renamed its parameter `vm_instance_i_ds` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_power_off` changed its parameter `skip_shutdown` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.begin_scale_out` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetsOperations.begin_scale_out` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_set_orchestration_service_state` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetsOperations.begin_set_orchestration_service_state` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.begin_update_instances` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetsOperations.begin_update_instances` deleted or renamed its parameter `vm_instance_i_ds` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.convert_to_single_placement_group` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachineScaleSetsOperations.convert_to_single_placement_group` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk` changed its parameter `platform_update_domain` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk` changed its parameter `zone` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.force_recovery_service_fabric_platform_update_domain_walk` changed its parameter `placement_group_id` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachineScaleSetsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `VirtualMachineScaleSetsOperations.list_by_location`
+  - Method `VirtualMachinesOperations.begin_attach_detach_data_disks` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachinesOperations.begin_attach_detach_data_disks` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_capture` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachinesOperations.begin_capture` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_create_or_update` inserted a `positional_or_keyword` parameter `resource`
+  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_deallocate` changed its parameter `hibernate` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.begin_delete` changed its parameter `force_deletion` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.begin_install_patches` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachinesOperations.begin_install_patches` deleted or renamed its parameter `install_patches_input` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_power_off` changed its parameter `skip_shutdown` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.begin_run_command` inserted a `positional_or_keyword` parameter `body`
+  - Method `VirtualMachinesOperations.begin_run_command` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_update` inserted a `positional_or_keyword` parameter `properties`
+  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `parameters` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list_all` changed its parameter `status_only` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list_all` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.retrieve_boot_diagnostics_data` changed its parameter `sas_uri_expiration_time_in_minutes` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `VirtualMachinesOperations.list_by_location`
+  - Deleted or renamed model `CloudServiceOperatingSystemsOperations`
+  - Deleted or renamed model `CloudServiceRoleInstancesOperations`
+  - Deleted or renamed model `CloudServiceRolesOperations`
+  - Deleted or renamed model `CloudServicesOperations`
+  - Deleted or renamed model `CloudServicesUpdateDomainOperations`
+  - Deleted or renamed model `DiskRestorePointOperations`
+  - Deleted or renamed model `GallerySharingProfileOperations`
+  - Deleted or renamed model `LogAnalyticsOperations`
+  - Deleted or renamed model `SoftDeletedResourceOperations`
+  - Deleted or renamed model `SshPublicKeysOperations`
+  - Deleted or renamed model `UsageOperations`
+  - Deleted or renamed model `VirtualMachineImagesEdgeZoneOperations`
+  - Deleted or renamed model `VirtualMachineImagesOperations`
+  - Deleted or renamed model `VirtualMachineScaleSetRollingUpgradesOperations`
+  - Deleted or renamed model `VirtualMachineScaleSetVMsOperations`
+  - Deleted or renamed model `VirtualMachineSizesOperations`
+  - Method `SnapshotsOperations.begin_grant_access` re-ordered its parameters from `['self', 'resource_group_name', 'snapshot_name', 'grant_access_data', 'kwargs']` to `['self', 'resource_group_name', 'snapshot_name', 'body', 'kwargs']`
+  - Method `SnapshotsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'snapshot_name', 'snapshot', 'kwargs']` to `['self', 'resource_group_name', 'snapshot_name', 'resource', 'kwargs']`
+  - Method `SnapshotsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'snapshot_name', 'snapshot', 'kwargs']` to `['self', 'resource_group_name', 'snapshot_name', 'properties', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_update_instances` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'body', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_deallocate` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'hibernate', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'hibernate', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'properties', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_delete_instances` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'force_deletion', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'body', 'force_deletion', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'resource', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_power_off` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'skip_shutdown', 'vm_instance_i_ds', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vm_instance_i_ds', 'skip_shutdown', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_scale_out` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'body', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.begin_set_orchestration_service_state` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'body', 'kwargs']`
+  - Method `VirtualMachineScaleSetsOperations.convert_to_single_placement_group` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'body', 'kwargs']`
+  - Method `RestorePointsOperations.begin_create` re-ordered its parameters from `['self', 'resource_group_name', 'restore_point_collection_name', 'restore_point_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'restore_point_collection_name', 'restore_point_name', 'resource', 'kwargs']`
+  - Method `DedicatedHostsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'host_group_name', 'host_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'host_group_name', 'host_name', 'resource', 'kwargs']`
+  - Method `DedicatedHostsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'host_group_name', 'host_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'host_group_name', 'host_name', 'properties', 'kwargs']`
+  - Method `ImagesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'image_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'image_name', 'resource', 'kwargs']`
+  - Method `ImagesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'image_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'image_name', 'properties', 'kwargs']`
+  - Method `DisksOperations.begin_grant_access` re-ordered its parameters from `['self', 'resource_group_name', 'disk_name', 'grant_access_data', 'kwargs']` to `['self', 'resource_group_name', 'disk_name', 'body', 'kwargs']`
+  - Method `DisksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'disk_name', 'disk', 'kwargs']` to `['self', 'resource_group_name', 'disk_name', 'resource', 'kwargs']`
+  - Method `DisksOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'disk_name', 'disk', 'kwargs']` to `['self', 'resource_group_name', 'disk_name', 'properties', 'kwargs']`
+  - Method `DiskAccessesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'disk_access_name', 'disk_access', 'kwargs']` to `['self', 'resource_group_name', 'disk_access_name', 'resource', 'kwargs']`
+  - Method `DiskAccessesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'disk_access_name', 'disk_access', 'kwargs']` to `['self', 'resource_group_name', 'disk_access_name', 'properties', 'kwargs']`
+  - Method `GalleriesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'resource', 'kwargs']`
+  - Method `GalleriesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'properties', 'kwargs']`
+  - Method `VirtualMachineRunCommandsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'run_command_name', 'run_command', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'run_command_name', 'body', 'kwargs']`
+  - Method `VirtualMachineRunCommandsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'run_command_name', 'run_command', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'run_command_name', 'body', 'kwargs']`
+  - Method `GalleryInVMAccessControlProfileVersionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'in_vm_access_control_profile_version_name', 'gallery_in_vm_access_control_profile_version', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'in_vm_access_control_profile_version_name', 'resource', 'kwargs']`
+  - Method `GalleryInVMAccessControlProfileVersionsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'in_vm_access_control_profile_version_name', 'gallery_in_vm_access_control_profile_version', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'in_vm_access_control_profile_version_name', 'properties', 'kwargs']`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'run_command_name', 'run_command', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'run_command_name', 'body', 'kwargs']`
+  - Method `VirtualMachineScaleSetVMRunCommandsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'run_command_name', 'run_command', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'run_command_name', 'body', 'kwargs']`
+  - Method `ProximityPlacementGroupsOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'proximity_placement_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'proximity_placement_group_name', 'resource', 'kwargs']`
+  - Method `ProximityPlacementGroupsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'proximity_placement_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'proximity_placement_group_name', 'properties', 'kwargs']`
+  - Method `GalleryApplicationsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'gallery_application', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'resource', 'kwargs']`
+  - Method `GalleryApplicationsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'gallery_application', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'properties', 'kwargs']`
+  - Method `DiskEncryptionSetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'disk_encryption_set_name', 'disk_encryption_set', 'kwargs']` to `['self', 'resource_group_name', 'disk_encryption_set_name', 'resource', 'kwargs']`
+  - Method `DiskEncryptionSetsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'disk_encryption_set_name', 'disk_encryption_set', 'kwargs']` to `['self', 'resource_group_name', 'disk_encryption_set_name', 'properties', 'kwargs']`
+  - Method `CapacityReservationsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'capacity_reservation_group_name', 'capacity_reservation_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'capacity_reservation_group_name', 'capacity_reservation_name', 'resource', 'kwargs']`
+  - Method `CapacityReservationsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'capacity_reservation_group_name', 'capacity_reservation_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'capacity_reservation_group_name', 'capacity_reservation_name', 'properties', 'kwargs']`
+  - Method `GalleryApplicationVersionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'gallery_application_version_name', 'gallery_application_version', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'gallery_application_version_name', 'resource', 'kwargs']`
+  - Method `GalleryApplicationVersionsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'gallery_application_version_name', 'gallery_application_version', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_application_name', 'gallery_application_version_name', 'properties', 'kwargs']`
+  - Method `DedicatedHostGroupsOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'host_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'host_group_name', 'resource', 'kwargs']`
+  - Method `DedicatedHostGroupsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'host_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'host_group_name', 'properties', 'kwargs']`
+  - Method `GalleryImageVersionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'gallery_image_version_name', 'gallery_image_version', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'gallery_image_version_name', 'resource', 'kwargs']`
+  - Method `GalleryImageVersionsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'gallery_image_version_name', 'gallery_image_version', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'gallery_image_version_name', 'properties', 'kwargs']`
+  - Method `VirtualMachineScaleSetExtensionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'vmss_extension_name', 'extension_parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vmss_extension_name', 'resource', 'kwargs']`
+  - Method `VirtualMachineScaleSetExtensionsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'vmss_extension_name', 'extension_parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'vmss_extension_name', 'properties', 'kwargs']`
+  - Method `GalleryImagesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'gallery_image', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'resource', 'kwargs']`
+  - Method `GalleryImagesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'gallery_image', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'gallery_image_name', 'properties', 'kwargs']`
+  - Method `GalleryInVMAccessControlProfilesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'gallery_in_vm_access_control_profile', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'resource', 'kwargs']`
+  - Method `GalleryInVMAccessControlProfilesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'gallery_in_vm_access_control_profile', 'kwargs']` to `['self', 'resource_group_name', 'gallery_name', 'in_vm_access_control_profile_name', 'properties', 'kwargs']`
+  - Method `AvailabilitySetsOperations.validate_migration_to_virtual_machine_scale_set` re-ordered its parameters from `['self', 'resource_group_name', 'availability_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'availability_set_name', 'body', 'kwargs']`
+  - Method `AvailabilitySetsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'availability_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'availability_set_name', 'properties', 'kwargs']`
+  - Method `AvailabilitySetsOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'availability_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'availability_set_name', 'resource', 'kwargs']`
+  - Method `AvailabilitySetsOperations.start_migration_to_virtual_machine_scale_set` re-ordered its parameters from `['self', 'resource_group_name', 'availability_set_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'availability_set_name', 'body', 'kwargs']`
+  - Method `CapacityReservationGroupsOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'capacity_reservation_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'capacity_reservation_group_name', 'resource', 'kwargs']`
+  - Method `CapacityReservationGroupsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'capacity_reservation_group_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'capacity_reservation_group_name', 'properties', 'kwargs']`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'vm_extension_name', 'extension_parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'vm_extension_name', 'resource', 'kwargs']`
+  - Method `VirtualMachineScaleSetVMExtensionsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'vm_extension_name', 'extension_parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_scale_set_name', 'instance_id', 'vm_extension_name', 'properties', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'properties', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_capture` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'body', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_attach_detach_data_disks` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'body', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_install_patches` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'install_patches_input', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'body', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_run_command` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'body', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'resource', 'etag', 'match_condition', 'kwargs']`
+  - Method `VirtualMachineExtensionsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'vm_extension_name', 'extension_parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'vm_extension_name', 'resource', 'kwargs']`
+  - Method `VirtualMachineExtensionsOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'vm_name', 'vm_extension_name', 'extension_parameters', 'kwargs']` to `['self', 'resource_group_name', 'vm_name', 'vm_extension_name', 'properties', 'kwargs']`
+  - Method `RestorePointCollectionsOperations.create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'restore_point_collection_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'restore_point_collection_name', 'resource', 'kwargs']`
+  - Method `RestorePointCollectionsOperations.update` re-ordered its parameters from `['self', 'resource_group_name', 'restore_point_collection_name', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'restore_point_collection_name', 'properties', 'kwargs']`
+
 ## 37.0.1 (2025-10-09)
 
 ### Bugs Fixed
