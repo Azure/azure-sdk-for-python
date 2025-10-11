@@ -10,8 +10,10 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Literal, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -25,6 +27,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -3149,18 +3152,24 @@ class IndexesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(self, *, select: Optional[str] = None, **kwargs: Any) -> _models2.ListIndexesResult:
+    @distributed_trace
+    def list(self, *, select: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models2.SearchIndex"]:
         """Lists all indexes available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: str
-        :return: ListIndexesResult. The ListIndexesResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.ListIndexesResult
+        :return: An iterator like instance of SearchIndex
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models2.SearchIndex]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3169,48 +3178,68 @@ class IndexesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models2.ListIndexesResult] = kwargs.pop("cls", None)
+                _request = build_indexes_list_request(
+                    select=select,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_indexes_list_request(
-            select=select,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models2.SearchIndex], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models3.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models2.ListIndexesResult, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models3.ErrorResponse, response)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create(
@@ -3906,14 +3935,20 @@ class AliasesOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(self, **kwargs: Any) -> _models2.ListAliasesResult:
+    @distributed_trace
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models2.SearchAlias"]:
         """Lists all aliases available for a search service.
 
-        :return: ListAliasesResult. The ListAliasesResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.ListAliasesResult
+        :return: An iterator like instance of SearchAlias
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchAlias]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models2.SearchAlias]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3922,47 +3957,67 @@ class AliasesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models2.ListAliasesResult] = kwargs.pop("cls", None)
+                _request = build_aliases_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_aliases_list_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models2.SearchAlias], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models3.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models2.ListAliasesResult, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models3.ErrorResponse, response)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
     async def create(
@@ -5181,19 +5236,25 @@ class _SearchServiceClientOperationsMixin(
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
+    @distributed_trace
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
         api_versions_list=["2025-08-01-preview"],
     )
-    async def get_index_stats_summary(self, **kwargs: Any) -> _models2.ListIndexStatsSummary:
+    def get_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged["_models2.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.
 
-        :return: ListIndexStatsSummary. The ListIndexStatsSummary is compatible with MutableMapping
-        :rtype: ~azure.search.documents.indexes.models.ListIndexStatsSummary
+        :return: An iterator like instance of IndexStatisticsSummary
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.IndexStatisticsSummary]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models2.IndexStatisticsSummary]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5202,44 +5263,64 @@ class _SearchServiceClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models2.ListIndexStatsSummary] = kwargs.pop("cls", None)
+                _request = build_search_service_get_index_stats_summary_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_search_service_get_index_stats_summary_request(
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models2.IndexStatisticsSummary], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models3.ErrorResponse, response)
-            raise HttpResponseError(response=response, model=error)
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models2.ListIndexStatsSummary, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models3.ErrorResponse, response)
+                raise HttpResponseError(response=response, model=error)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

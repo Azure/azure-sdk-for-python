@@ -27,7 +27,7 @@ from .models import (
 )
 from .._api_versions import DEFAULT_VERSION
 from .._headers_mixin import HeadersMixin
-from .._utils import get_authentication_policy
+from .._utils import DEFAULT_AUDIENCE
 from .._version import SDK_MONIKER
 
 
@@ -51,23 +51,20 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._endpoint = normalize_endpoint(endpoint)
         self._credential = credential
-        audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = _SearchServiceClient(
-                endpoint=endpoint, credential=credential, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = _SearchServiceClient(
-                endpoint=endpoint,
-                credential=credential,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._audience = kwargs.pop("audience", None)
+        if not self._audience:
+            self._audience = DEFAULT_AUDIENCE
+        scope = self._audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = _SearchServiceClient(
+            endpoint=endpoint,
+            credential=credential,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __enter__(self) -> "SearchIndexerClient":
         self._client.__enter__()
@@ -244,6 +241,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexer
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(indexer, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         try:
             name = indexer.name  # type: ignore
             etag = indexer.e_tag
@@ -528,6 +527,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
                 :caption: Delete a SearchIndexerDataSourceConnection
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(data_source_connection, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         try:
             name = data_source_connection.name  # type: ignore
             etag = data_source_connection.e_tag  # type: ignore
@@ -607,6 +608,8 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :paramtype match_condition: ~azure.core.MatchConditions
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        if isinstance(skillset, str) and match_condition is not MatchConditions.Unconditionally:
+            raise ValueError("A model must be passed to use access conditions")
         try:
             name = skillset.name  # type: ignore
             etag = skillset.e_tag  # type: ignore            

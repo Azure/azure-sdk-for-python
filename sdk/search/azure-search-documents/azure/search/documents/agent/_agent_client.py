@@ -15,7 +15,7 @@ from ._generated.models import (
     KnowledgeAgentRetrievalResponse,
 )
 from .._headers_mixin import HeadersMixin
-from .._utils import get_authentication_policy
+from .._utils import DEFAULT_AUDIENCE
 from .._version import SDK_MONIKER
 
 
@@ -44,27 +44,20 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
         self._endpoint = endpoint
         self._agent_name = agent_name
         self._credential = credential
-        audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = _KnowledgeAgentRetrievalClient(
-                endpoint=endpoint,
-                agent_name=agent_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = _KnowledgeAgentRetrievalClient(
-                endpoint=endpoint,
-                agent_name=agent_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._audience = kwargs.pop("audience", None)
+        if not self._audience:
+            self._audience = DEFAULT_AUDIENCE
+        scope = self._audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = _KnowledgeAgentRetrievalClient(
+            endpoint=endpoint,
+            credential=credential,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
         self.knowledge_retrieval = self._client.knowledge_retrieval
 
     def __repr__(self) -> str:

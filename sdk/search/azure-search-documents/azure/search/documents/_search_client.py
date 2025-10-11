@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import cast, List, Any, Union, Dict, Optional, MutableMapping
+from typing import cast, List, Any, Union, Dict, Optional
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -11,8 +11,10 @@ from azure.core.tracing.decorator import distributed_trace
 from ._api_versions import DEFAULT_VERSION
 from ._generated import SearchIndexClient
 from ._generated.models import (
+    AutocompleteItem,
     AutocompleteMode,
     AutocompleteRequest,
+    HybridSearch,
     IndexAction,
     IndexBatch,
     IndexingResult,
@@ -29,14 +31,14 @@ from ._generated.models import (
     QueryDebugMode,
     QueryRewritesType,
     SuggestRequest,
-    HybridSearch,
+    SuggestResult,
 )
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
 from ._queries import AutocompleteQuery, SearchQuery, SuggestQuery
 from ._headers_mixin import HeadersMixin
-from ._utils import get_authentication_policy, get_answer_query, get_rewrites_query
+from ._utils import DEFAULT_AUDIENCE, get_answer_query, get_rewrites_query
 from ._version import SDK_MONIKER
 
 
@@ -74,29 +76,21 @@ class SearchClient(HeadersMixin):
         self._endpoint = endpoint
         self._index_name = index_name
         self._credential = credential
-        audience = kwargs.pop("audience", None)
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                credential=credential,
-                index_name=index_name,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
-        else:
-            self._aad = True
-            authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client = SearchIndexClient(
-                endpoint=endpoint,
-                credential=credential,
-                index_name=index_name,
-                authentication_policy=authentication_policy,
-                sdk_moniker=SDK_MONIKER,
-                api_version=self._api_version,
-                **kwargs
-            )
+        self._audience = kwargs.pop("audience", None)
+        if not self._audience:
+            self._audience = DEFAULT_AUDIENCE
+        scope = self._audience.rstrip("/") + "/.default"
+        credential_scopes = [scope]
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = SearchIndexClient(
+            endpoint=endpoint,
+            credential=credential,
+            index_name=index_name,
+            sdk_moniker=SDK_MONIKER,
+            api_version=self._api_version,
+            credential_scopes=credential_scopes,
+            **kwargs
+        )
 
     def __repr__(self) -> str:
         return "<SearchClient [endpoint={}, index={}]>".format(repr(self._endpoint), repr(self._index_name))[:1024]
@@ -184,7 +178,7 @@ class SearchClient(HeadersMixin):
         query_rewrites_count: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
         hybrid_search: Optional[HybridSearch] = None,
-        x_ms_query_source_authorization: Optional[str] = None,
+        query_source_authorization: Optional[str] = None,
         **kwargs: Any
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals, disable=redefined-builtin
@@ -312,10 +306,10 @@ class SearchClient(HeadersMixin):
         :paramtype vector_filter_mode: str or VectorFilterMode
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
-        :keyword x_ms_query_source_authorization: Token identifying the user for which the query is being
+        :keyword query_source_authorization: Token identifying the user for which the query is being
             executed. This token is used to enforce security restrictions on documents. Default value is
             None.
-        :paramtype x_ms_query_source_authorization: str
+        :paramtype query_source_authorization: str
         :return: List of search results.
         :rtype:  SearchItemPaged[dict]
 
@@ -404,7 +398,7 @@ class SearchClient(HeadersMixin):
             query.order_by(order_by)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        kwargs["x_ms_query_source_authorization"] = x_ms_query_source_authorization
+        kwargs["query_source_authorization"] = query_source_authorization
         kwargs["api_version"] = self._api_version
         return SearchItemPaged(self._client, query, kwargs, page_iterator_class=SearchPageIterator)
 
@@ -424,7 +418,7 @@ class SearchClient(HeadersMixin):
         select: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[MutableMapping[str, Any]]:
+    ) -> List[SuggestResult]:
         """Get search suggestion results from the Azure search index.
 
         :param str search_text: Required. The search text to use to suggest documents. Must be at least 1
@@ -459,7 +453,7 @@ class SearchClient(HeadersMixin):
             100. The default is 5.
 
         :return: List of suggestion results.
-        :rtype:  list[dict]
+        :rtype:  list[~azure.search.documents.models.SuggestResult]
 
         .. admonition:: Example:
 
@@ -493,7 +487,7 @@ class SearchClient(HeadersMixin):
         request = cast(SuggestRequest, query.request)
         response = self._client.documents.suggest_post(suggest_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
-        results = [r.as_dict() for r in response.results]
+        results = response.results
         return results
 
     @distributed_trace
@@ -511,7 +505,7 @@ class SearchClient(HeadersMixin):
         search_fields: Optional[List[str]] = None,
         top: Optional[int] = None,
         **kwargs
-    ) -> List[MutableMapping[str, Any]]:
+    ) -> List[AutocompleteItem]:
         """Get search auto-completion results from the Azure search index.
 
         :param str search_text: The search text on which to base autocomplete results.
@@ -541,7 +535,7 @@ class SearchClient(HeadersMixin):
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
             100. The default is 5.
         :return: List of auto-completion results.
-        :rtype:  list[dict]
+        :rtype:  list[~azure.search.documents.models.AutocompleteItem]
 
         .. admonition:: Example:
 
@@ -572,7 +566,7 @@ class SearchClient(HeadersMixin):
         request = cast(AutocompleteRequest, query.request)
         response = self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
         assert response.results is not None  # Hint for mypy
-        results = [r.as_dict() for r in response.results]
+        results = response.results
         return results
 
     # pylint:disable=client-method-missing-tracing-decorator

@@ -4,10 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Any, Optional, Union
-from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
-    AsyncBearerTokenCredentialPolicy,
-)
 from ._generated.models import QueryAnswerType, QueryRewritesType
 
 DEFAULT_AUDIENCE = "https://search.azure.com"
@@ -42,16 +38,6 @@ def is_retryable_status_code(status_code: Optional[int]) -> bool:
     if not status_code:
         return False
     return status_code in [422, 409, 503]
-
-
-def get_authentication_policy(credential, *, is_async: bool = False, **kwargs):
-    audience = kwargs.get("audience", None)
-    if not audience:
-        audience = DEFAULT_AUDIENCE
-    scope = audience.rstrip("/") + "/.default"
-    _policy = BearerTokenCredentialPolicy if not is_async else AsyncBearerTokenCredentialPolicy
-    authentication_policy = _policy(credential, scope)
-    return authentication_policy
 
 
 def odata(statement: str, **kwargs: Any) -> str:

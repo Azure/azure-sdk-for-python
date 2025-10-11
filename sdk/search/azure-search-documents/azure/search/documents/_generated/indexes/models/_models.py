@@ -5798,18 +5798,6 @@ class LimitTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Limit
         self.odata_type = "#Microsoft.Azure.Search.LimitTokenFilter"  # type: ignore
 
 
-class ListAliasesResult(_Model):
-    """Response from a List Aliases request. If successful, it includes the associated index mappings
-    for all aliases.
-
-    :ivar aliases: The aliases in the Search service. Required.
-    :vartype aliases: list[~azure.search.documents.indexes.models.SearchAlias]
-    """
-
-    aliases: list["_models.SearchAlias"] = rest_field(name="value", visibility=["read"])
-    """The aliases in the Search service. Required."""
-
-
 class ListDataSourcesResult(_Model):
     """Response from a List Datasources request. If successful, it includes the full definitions of
     all datasources.
@@ -5870,51 +5858,6 @@ class ListIndexersResult(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ListIndexesResult(_Model):
-    """Response from a List Indexes request. If successful, it includes the full definitions of all
-    indexes.
-
-    :ivar indexes: The indexes in the Search service. Required.
-    :vartype indexes: list[~azure.search.documents.indexes.models.SearchIndex]
-    """
-
-    indexes: list["_models.SearchIndex"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The indexes in the Search service. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        indexes: list["_models.SearchIndex"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ListIndexStatsSummary(_Model):
-    """Response from a request to retrieve stats summary of all indexes. If successful, it includes
-    the stats of each index in the service.
-
-    :ivar indexes_statistics: The Statistics summary of all indexes in the Search service.
-     Required.
-    :vartype indexes_statistics:
-     list[~azure.search.documents.indexes.models.IndexStatisticsSummary]
-    """
-
-    indexes_statistics: list["_models.IndexStatisticsSummary"] = rest_field(name="value", visibility=["read"])
-    """The Statistics summary of all indexes in the Search service. Required."""
 
 
 class ListKnowledgeAgentsResult(_Model):
