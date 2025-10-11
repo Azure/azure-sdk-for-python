@@ -33,10 +33,10 @@ options:
 Paired removal and addition entries showing naming changes from words to numbers:
 
 ```md
-- Enum `Minute` deleted or renamed its member `MinuteZero`
-- Enum `Minute` deleted or renamed its member `MinuteThirty`
-- Enum `Minute` added member `Minute0`
-- Enum `Minute` added member `Minute30`
+- Enum `Minute` deleted or renamed its member `Zero`
+- Enum `Minute` deleted or renamed its member `Thirty`
+- Enum `Minute` added member `ENUM_0`
+- Enum `Minute` added member `ENUM_30`
 ```
 
 **Reason**: Swagger automatically converts numeric names to words during code generation, while TypeSpec preserves the original naming. This affects all type names, including enums, models, and operations.
@@ -58,8 +58,8 @@ union Minute {
 Use client customization to restore the original names from the removal entries:
 
 ```tsp
-@@clientName(Minute.Minute0, "Zero", "python");
-@@clientName(Minute.Minute30, "Thirty", "python");
+@@clientName(Minute.`0`, "Zero", "python");
+@@clientName(Minute.`30`, "Thirty", "python");
 ```
 
 ## 2. Operation Naming Changes
@@ -266,7 +266,7 @@ Removal of multiple parameters and addition of parameters `properties` entries f
 - Model `VaultExtendedInfoResource` deleted or renamed its instance variable `algorithm`
 ```
 
-**Reason**: Typespec no longer supports multi-level flattening and will always preserve the actual REST API hierarchy.
+**Reason**: Typespec no longer supports multi-level flattening and will always preserve the actual REST API hierarchy. For more detailed information about model hierarchy, please refer to https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/hybrid_model_migration.md#model-hierarchy-reflects-rest-api-structure
 
 **Impact**: Users can only get the property following the actual model structure which matches the REST API documentation.
 
