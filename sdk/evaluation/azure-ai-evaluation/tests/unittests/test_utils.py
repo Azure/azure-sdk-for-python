@@ -16,9 +16,6 @@ from azure.ai.evaluation._common.utils import (
     reformat_agent_response,
     reformat_tool_definitions,
 )
-from azure.ai.evaluation._evaluate._utils import (
-    _convert_results_to_aoai_evaluation_results
-)
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter

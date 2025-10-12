@@ -1158,8 +1158,6 @@ class TestEvaluate:
         # Run the async function
         run_test()
         converted_results = test_results
-        with open("C:\\works\\adhoc\\FDP\\AOAIAlign\\sdktestoutput\\1010\\ut_output.json", 'w') as f:
-            f.write(json.dumps(converted_results))
 
         # Verify the structure
         assert "metrics" in converted_results
