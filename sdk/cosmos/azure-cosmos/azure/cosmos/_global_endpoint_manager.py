@@ -61,6 +61,7 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
         self._database_account_cache = None
         self.startup = True
         self._refresh_thread = None
+        self.executor = ThreadPoolExecutor(max_workers=os.cpu_count())
 
     def get_write_endpoint(self):
         return self.location_cache.get_write_regional_routing_context()
@@ -203,12 +204,10 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                 if isinstance(exception, (ServiceRequestError, ServiceResponseError)):
                     self._mark_endpoint_unavailable(endpoint)
 
-        max_workers = min(len(endpoints), constants._Constants.MaxHealthCheckThreadPoolSize)
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [executor.submit(probe, ep) for ep in endpoints]
-            for f in as_completed(futures):
-                # propagate unexpected exceptions (should be none besides those swallowed in probe)
-                _ = f.result()
+        futures = [self.executor.submit(probe, ep) for ep in endpoints]
+        for f in as_completed(futures):
+            # propagate unexpected exceptions (should be none besides those swallowed in probe)
+            _ = f.result()
         # After all probes, update cache once
         self.location_cache.update_location_cache()
 
