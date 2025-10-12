@@ -386,7 +386,9 @@ class MockConnectionRetryPolicy(RetryPolicy):
         super().__init__(**clean_kwargs)
 
     def send(self, request):
-        self.counter = 0
+        # background health checks could reset counter unintentionally
+        if not _has_health_check_or_dba_header(request.http_request.headers):
+            self.counter = 0
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
         request_params = request.context.options.pop('request_params', None)

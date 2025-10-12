@@ -139,7 +139,6 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # background full refresh (database account + health checks)
                     self._start_background_refresh(self._refresh_database_account_and_health, kwargs)
                 else:
-                    database_account = self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
                     self._start_background_refresh(self._endpoints_health_check, kwargs)
                     self.startup = False

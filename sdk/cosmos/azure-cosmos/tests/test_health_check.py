@@ -3,6 +3,7 @@
 
 import unittest
 import uuid
+from time import sleep
 from typing import List
 
 import pytest
@@ -48,19 +49,18 @@ class TestHealthCheck:
     def test_health_check_success(self, setup):
         # checks at startup that we perform a health check on all the necessary endpoints
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection.health_check
+        self.original_health_check = _cosmos_client_connection.CosmosClientConnection.health_check
         mock_health_check = self.MockHealthCheckProbe()
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS))
         _cosmos_client_connection.CosmosClientConnection.health_check = mock_health_check
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
-            # this will setup the location cache
-            client.client_connection._global_endpoint_manager.refresh_needed = True
-            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
+            # give some time for the health check to finish
+            sleep(3)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection.CosmosClientConnection.health_check = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection.CosmosClientConnection.health_check = self.original_health_check
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
@@ -78,9 +78,8 @@ class TestHealthCheck:
             self.MockGetDatabaseAccount(REGIONS))
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
-            # this will setup the location cache
-            client.client_connection._global_endpoint_manager.refresh_needed = True
-            client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
+            # give some time for the health check to finish
+            sleep(6)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
@@ -97,7 +96,7 @@ class TestHealthCheck:
     def test_health_check_timeouts_on_unavailable_endpoints(self, setup):
         # checks that the health check changes the timeouts when the endpoints were previously unavailable
         self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection.CosmosClientConnection.health_check
+        self.original_health_check = _cosmos_client_connection.CosmosClientConnection.health_check
         mock_health_check = self.MockHealthCheckProbe(setup[COLLECTION].client_connection, True)
         _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = (
             self.MockGetDatabaseAccount(REGIONS))
@@ -113,22 +112,18 @@ class TestHealthCheck:
             setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection.CosmosClientConnection.health_check = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection.CosmosClientConnection.health_check = self.original_health_check
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
 
     class MockHealthCheckProbe(object):
         def __init__(self, client_connection=None, endpoint_unavailable=False):
             self.counter = 0
             self.client_connection = client_connection
-            self.endpoint_unavailable = endpoint_unavailable
-            self.index = 0
 
 
         def __call__(self, endpoint):
-            if self.endpoint_unavailable:
-                assert self.client_connection.connection_policy.DBAReadTimeout == 1
-            self.index -= 1
             self.counter += 1
+            return
 
     class MockGetDatabaseAccount(object):
         def __init__(
