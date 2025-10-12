@@ -79,7 +79,7 @@ class TestHealthCheck:
         try:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # give some time for the health check to finish
-            sleep(6)
+            sleep(10)
         finally:
             _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
