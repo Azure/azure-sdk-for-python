@@ -452,6 +452,37 @@ class Index(msrest.serialization.Model):
         self.storage_uri = storage_uri
 
 
+class LongRunningNullResponse(msrest.serialization.Model):
+    """LongRunningNullResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Required. Polling Uri.
+    :vartype location: str
+    """
+
+    _validation = {
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Polling Uri.
+        :paramtype location: str
+        """
+        super(LongRunningNullResponse, self).__init__(**kwargs)
+        self.location = location
+
+
 class OnlineRequestSettings(msrest.serialization.Model):
     """Settings for online request configuration.
 
@@ -470,7 +501,7 @@ class OnlineRequestSettings(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'request_timeout': {'key': 'requestTimeout', 'type': 'str'}, #TODO: Change type to duration
+        'request_timeout': {'key': 'requestTimeout', 'type': 'duration'},
         'max_concurrent_requests_per_instance': {'key': 'maxConcurrentRequestsPerInstance', 'type': 'int'},
     }
 
@@ -608,9 +639,9 @@ class ProbeSettings(msrest.serialization.Model):
     }
 
     _attribute_map = {
-        'initial_delay': {'key': 'initialDelay', 'type': 'str'}, #TODO: Change type to duration
-        'period': {'key': 'period', 'type': 'str'}, #TODO: Change type to duration
-        'timeout': {'key': 'timeout', 'type': 'str'}, #TODO: Change type to duration
+        'initial_delay': {'key': 'initialDelay', 'type': 'duration'},
+        'period': {'key': 'period', 'type': 'duration'},
+        'timeout': {'key': 'timeout', 'type': 'duration'},
         'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
         'success_threshold': {'key': 'successThreshold', 'type': 'int'},
         'path': {'key': 'path', 'type': 'str'},
@@ -665,6 +696,37 @@ class ProbeSettings(msrest.serialization.Model):
         self.port = port
         self.scheme = scheme
         self.http_method = http_method
+
+
+class PutAssetLROResponse(msrest.serialization.Model):
+    """PutAssetLROResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar asset_id: Required. Response of completed put asset lro.
+    :vartype asset_id: str
+    """
+
+    _validation = {
+        'asset_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        asset_id: str,
+        **kwargs
+    ):
+        """
+        :keyword asset_id: Required. Response of completed put asset lro.
+        :paramtype asset_id: str
+        """
+        super(PutAssetLROResponse, self).__init__(**kwargs)
+        self.asset_id = asset_id
 
 
 class SystemData(msrest.serialization.Model):

@@ -314,7 +314,7 @@ These settings apply only when `--tag=v2024-04-01-dataplanepreview` is specified
 ```yaml $(tag) == 'v2024-04-01-dataplanepreview'
 input-file:
   - Microsoft.MachineLearningServices/preview/2024-04-01-dataplanepreview/azure-ai-assets.json
-output-folder: $(python-sdks-folder)/v2024-04-01-dataplanepreview
+output-folder: $(python-sdks-folder)/v2024_04_01_dataplanepreview
 ```
 
 ### Tag: multiapi

@@ -409,6 +409,35 @@ class Index(msrest.serialization.Model):
         self.storage_uri = kwargs['storage_uri']
 
 
+class LongRunningNullResponse(msrest.serialization.Model):
+    """LongRunningNullResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Required. Polling Uri.
+    :vartype location: str
+    """
+
+    _validation = {
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'location': {'key': 'location', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword location: Required. Polling Uri.
+        :paramtype location: str
+        """
+        super(LongRunningNullResponse, self).__init__(**kwargs)
+        self.location = kwargs['location']
+
+
 class OnlineRequestSettings(msrest.serialization.Model):
     """Settings for online request configuration.
 
@@ -603,6 +632,35 @@ class ProbeSettings(msrest.serialization.Model):
         self.port = kwargs['port']
         self.scheme = kwargs['scheme']
         self.http_method = kwargs['http_method']
+
+
+class PutAssetLROResponse(msrest.serialization.Model):
+    """PutAssetLROResponse.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar asset_id: Required. Response of completed put asset lro.
+    :vartype asset_id: str
+    """
+
+    _validation = {
+        'asset_id': {'required': True},
+    }
+
+    _attribute_map = {
+        'asset_id': {'key': 'assetId', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword asset_id: Required. Response of completed put asset lro.
+        :paramtype asset_id: str
+        """
+        super(PutAssetLROResponse, self).__init__(**kwargs)
+        self.asset_id = kwargs['asset_id']
 
 
 class SystemData(msrest.serialization.Model):

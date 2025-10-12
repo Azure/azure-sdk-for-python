@@ -14,16 +14,18 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._vendor import _convert_request, _format_url_section
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+    from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union
     T = TypeVar('T')
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -31,7 +33,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
 
-def build_create_request(
+def build_create_request_initial(
     registry_name,  # type: str
     name,  # type: str
     version,  # type: str
@@ -71,7 +73,7 @@ def build_create_request(
     )
 
 
-def build_list_deployment_templates_request(
+def build_list_request(
     registry_name,  # type: str
     **kwargs  # type: Any
 ):
@@ -165,7 +167,7 @@ def build_get_request(
     )
 
 
-def build_delete_deployment_template_request(
+def build_delete_request(
     registry_name,  # type: str
     name,  # type: str
     version,  # type: str
@@ -224,8 +226,7 @@ class DeploymentTemplatesOperations(object):
         self._deserialize = deserializer
         self._config = config
 
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def _create_initial(
         self,
         endpoint,  # type: str
         subscription_id,  # type: str
@@ -236,7 +237,69 @@ class DeploymentTemplatesOperations(object):
         body,  # type: "_models.DeploymentTemplate"
         **kwargs  # type: Any
     ):
-        # type: (...) -> None
+        # type: (...) -> "_models.LongRunningNullResponse"
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningNullResponse"]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'DeploymentTemplate')
+
+        request = build_create_request_initial(
+            registry_name=registry_name,
+            name=name,
+            version=version,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._create_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
+            "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize('LongRunningNullResponse', pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    _create_initial.metadata = {'url': "/registries/{registryName}/{name}/versions/{version}"}  # type: ignore
+
+
+    @distributed_trace
+    def begin_create(
+        self,
+        endpoint,  # type: str
+        subscription_id,  # type: str
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        name,  # type: str
+        version,  # type: str
+        body,  # type: "_models.DeploymentTemplate"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.LongRunningNullResponse"]
         """Creates a deployment template version.
 
         :param endpoint: Supported Azure-AI asset endpoints.
@@ -254,59 +317,74 @@ class DeploymentTemplatesOperations(object):
         :param body: Properties of a Deployment Template Version.
         :type body: ~azure.mgmt.machinelearningservices.models.DeploymentTemplate
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
-        :rtype: None
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either LongRunningNullResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.LongRunningNullResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
-
         api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-
-        _json = self._serialize.body(body, 'DeploymentTemplate')
-        _json["type"] = "deploymenttemplates"
-
-        request = build_create_request(
-            registry_name=registry_name,
-            name=name,
-            version=version,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            template_url=self.create.metadata['url'],
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningNullResponse"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
         )
-        request = _convert_request(request)
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._create_initial(
+                endpoint=endpoint,
+                subscription_id=subscription_id,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                name=name,
+                version=version,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('LongRunningNullResponse', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
         path_format_arguments = {
             "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
             "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
             "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
-        )
-        response = pipeline_response.http_response
+        if polling is True: polling_method = ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    create.metadata = {'url': "/registries/{registryName}/{name}/versions/{version}"}  # type: ignore
-
+    begin_create.metadata = {'url': "/registries/{registryName}/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace
-    def list_deployment_templates(
+    def list(
         self,
         endpoint,  # type: str
         subscription_id,  # type: str
@@ -364,7 +442,7 @@ class DeploymentTemplatesOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_list_deployment_templates_request(
+                request = build_list_request(
                     registry_name=registry_name,
                     api_version=api_version,
                     name=name,
@@ -374,7 +452,7 @@ class DeploymentTemplatesOperations(object):
                     count=count,
                     stage=stage,
                     list_view_type=list_view_type,
-                    template_url=self.list_deployment_templates.metadata['url'],
+                    template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
@@ -386,7 +464,7 @@ class DeploymentTemplatesOperations(object):
 
             else:
                 
-                request = build_list_deployment_templates_request(
+                request = build_list_request(
                     registry_name=registry_name,
                     api_version=api_version,
                     name=name,
@@ -442,7 +520,7 @@ class DeploymentTemplatesOperations(object):
         return ItemPaged(
             get_next, extract_data
         )
-    list_deployment_templates.metadata = {'url': "/registries/{registryName}/deploymenttemplates"}  # type: ignore
+    list.metadata = {'url': "/registries/{registryName}/deploymenttemplates"}  # type: ignore
 
     @distributed_trace
     def get(
@@ -526,7 +604,7 @@ class DeploymentTemplatesOperations(object):
 
 
     @distributed_trace
-    def delete_deployment_template(  # pylint: disable=inconsistent-return-statements
+    def delete(  # pylint: disable=inconsistent-return-statements
         self,
         endpoint,  # type: str
         subscription_id,  # type: str
@@ -565,12 +643,12 @@ class DeploymentTemplatesOperations(object):
         api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
 
         
-        request = build_delete_deployment_template_request(
+        request = build_delete_request(
             registry_name=registry_name,
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self.delete_deployment_template.metadata['url'],
+            template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
         path_format_arguments = {
@@ -595,5 +673,5 @@ class DeploymentTemplatesOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete_deployment_template.metadata = {'url': "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}"}  # type: ignore
+    delete.metadata = {'url': "/registries/{registryName}/deploymenttemplates/{name}/versions/{version}"}  # type: ignore
 

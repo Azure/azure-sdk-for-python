@@ -13,10 +13,12 @@ try:
     from ._models_py3 import AzureCoreFoundationsInnerError
     from ._models_py3 import DeploymentTemplate
     from ._models_py3 import Index
+    from ._models_py3 import LongRunningNullResponse
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import PagedDeploymentTemplate
     from ._models_py3 import PagedIndex
     from ._models_py3 import ProbeSettings
+    from ._models_py3 import PutAssetLROResponse
     from ._models_py3 import SystemData
     from ._models_py3 import VersionInfo
 except (SyntaxError, ImportError):
@@ -26,10 +28,12 @@ except (SyntaxError, ImportError):
     from ._models import AzureCoreFoundationsInnerError  # type: ignore
     from ._models import DeploymentTemplate  # type: ignore
     from ._models import Index  # type: ignore
+    from ._models import LongRunningNullResponse  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import PagedDeploymentTemplate  # type: ignore
     from ._models import PagedIndex  # type: ignore
     from ._models import ProbeSettings  # type: ignore
+    from ._models import PutAssetLROResponse  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import VersionInfo  # type: ignore
 
@@ -40,10 +44,12 @@ __all__ = [
     'AzureCoreFoundationsInnerError',
     'DeploymentTemplate',
     'Index',
+    'LongRunningNullResponse',
     'OnlineRequestSettings',
     'PagedDeploymentTemplate',
     'PagedIndex',
     'ProbeSettings',
+    'PutAssetLROResponse',
     'SystemData',
     'VersionInfo',
 ]

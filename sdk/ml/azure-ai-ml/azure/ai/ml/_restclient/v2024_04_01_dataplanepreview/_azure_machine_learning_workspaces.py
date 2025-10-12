@@ -19,7 +19,7 @@ from .operations import DeploymentTemplatesOperations, IndexesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any
 
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
@@ -37,26 +37,20 @@ class AzureMachineLearningWorkspaces(object):
     :keyword api_version: Api Version. The default value is "2024-04-01-preview". Note that
      overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        base_url=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        # Note: base_url parameter is accepted for compatibility but ignored 
-        # since this client uses a dynamic endpoint template
         _base_url = '{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices'
         self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, **kwargs)
-        
-        # Remove base_url from kwargs to avoid conflicts with the explicit base_url parameter
-        client_kwargs = kwargs.copy()
-        client_kwargs.pop('base_url', None)
-        
-        self._client = ARMPipelineClient(base_url=_base_url, config=self._config, **client_kwargs)
-        
+        self._client = ARMPipelineClient(base_url=_base_url, config=self._config, **kwargs)
+
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
