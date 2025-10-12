@@ -479,6 +479,8 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource, toke
 
     url = get_random_url()
     url_with_port = add_url_port(url)
+    url_with_caps = "https://MY_KV_NAME.MYVAULT.azure.net"
+    url_with_slash = "https://my_kv_name.myvault.azure.net/"
     token = "**"
     resource = "https://myvault.azure.net"  # Doesn't match a "".vault.azure.net" resource because of the "my" prefix
 
@@ -490,29 +492,40 @@ async def test_verify_challenge_resource_matches(verify_challenge_resource, toke
     else:
         credential = Mock(spec_set=["get_token_info"], get_token_info=Mock(wraps=get_token))
 
-    transport = async_validating_transport(
-        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
-        responses=[
-            mock_response(
-                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
-            ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
-    )
-    transport_2 = async_validating_transport(
-        requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
-        responses=[
-            mock_response(
-                status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
-            ),
-            mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
-        ]
-    )
+    def get_transport():
+        return async_validating_transport(
+            requests=[Request(), Request(required_headers={"Authorization": f"Bearer {token}"})],
+            responses=[
+                mock_response(
+                    status_code=401, headers={"WWW-Authenticate": f'Bearer authorization="{url}", resource={resource}'}
+                ),
+                mock_response(status_code=200, json_payload={"key": {"kid": f"{url}/key-name"}})
+            ]
+        )
+
+    transport = get_transport()
+    transport_2 = get_transport()
+    transport_3 = get_transport()
+    transport_4 = get_transport()
 
     client = KeyClient(url, credential, transport=transport, verify_challenge_resource=verify_challenge_resource)
     client_with_port = KeyClient(
         url_with_port, credential, transport=transport_2, verify_challenge_resource=verify_challenge_resource
     )
+    client_with_caps = KeyClient(
+        url_with_caps, credential, transport=transport_3, verify_challenge_resource=verify_challenge_resource
+    )
+    client_with_slash = KeyClient(
+        url_with_slash, credential, transport=transport_4, verify_challenge_resource=verify_challenge_resource
+    )
+
+    # Regression test for https://github.com/Azure/azure-sdk-for-python/issues/42964
+    # Resource matching should be case insensitive since service calls would otherwise succeed
+    # Resource matching should ignore a trailing slash since service calls would otherwise succeed
+    key = await client_with_caps.get_key("key-name")
+    assert key.name == "key-name"
+    key = await client_with_slash.get_key("key-name")
+    assert key.name == "key-name"
 
     if verify_challenge_resource:
         with pytest.raises(ValueError) as e:
