@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    client.ingestion.delete_source(
+    client.ingestion_management.delete_source(
         id="c1007ec2-3ddc-4335-9edd-b1c26b1b4c92",
     )
 

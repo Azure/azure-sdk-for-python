@@ -37,24 +37,24 @@ from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
-    build_ingestion_cancel_all_operations_request,
-    build_ingestion_cancel_operation_request,
-    build_ingestion_create_or_replace_source_request,
-    build_ingestion_create_request,
-    build_ingestion_create_run_request,
-    build_ingestion_create_source_request,
-    build_ingestion_delete_request,
-    build_ingestion_delete_source_request,
-    build_ingestion_get_operation_request,
-    build_ingestion_get_request,
-    build_ingestion_get_run_request,
-    build_ingestion_get_source_request,
-    build_ingestion_list_managed_identities_request,
-    build_ingestion_list_operations_request,
-    build_ingestion_list_runs_request,
-    build_ingestion_list_sources_request,
-    build_ingestion_lists_request,
-    build_ingestion_update_request,
+    build_ingestion_management_cancel_all_operations_request,
+    build_ingestion_management_cancel_operation_request,
+    build_ingestion_management_create_or_replace_source_request,
+    build_ingestion_management_create_request,
+    build_ingestion_management_create_run_request,
+    build_ingestion_management_create_source_request,
+    build_ingestion_management_delete_request,
+    build_ingestion_management_delete_source_request,
+    build_ingestion_management_get_operation_request,
+    build_ingestion_management_get_request,
+    build_ingestion_management_get_run_request,
+    build_ingestion_management_get_source_request,
+    build_ingestion_management_list_managed_identities_request,
+    build_ingestion_management_list_operations_request,
+    build_ingestion_management_list_runs_request,
+    build_ingestion_management_list_sources_request,
+    build_ingestion_management_lists_request,
+    build_ingestion_management_update_request,
     build_shared_access_signature_get_sign_request,
     build_shared_access_signature_get_token_request,
     build_shared_access_signature_revoke_token_request,
@@ -138,14 +138,14 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 _Unset: Any = object()
 
 
-class IngestionOperations:
+class IngestionManagementOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.aio.PlanetaryComputerClient`'s
-        :attr:`ingestion` attribute.
+        :attr:`ingestion_management` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -178,7 +178,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_cancel_operation_request(
+        _request = build_ingestion_management_cancel_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -224,7 +224,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_cancel_all_operations_request(
+        _request = build_ingestion_management_cancel_all_operations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -271,7 +271,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_operation_request(
+        _request = build_ingestion_management_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -349,7 +349,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_operations_request(
+                _request = build_ingestion_management_list_operations_request(
                     top=top,
                     skip=skip,
                     collection_id=collection_id,
@@ -436,7 +436,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_create_run_request(
+        _request = build_ingestion_management_create_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -504,7 +504,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_run_request(
+        _request = build_ingestion_management_get_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             run_id=run_id,
@@ -583,7 +583,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_runs_request(
+                _request = build_ingestion_management_list_runs_request(
                     collection_id=collection_id,
                     ingestion_id=ingestion_id,
                     top=top,
@@ -740,7 +740,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_request(
+        _request = build_ingestion_management_create_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -796,7 +796,7 @@ class IngestionOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_request(
+        _request = build_ingestion_management_delete_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -917,7 +917,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_request(
+        _request = build_ingestion_management_get_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -987,7 +987,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_lists_request(
+                _request = build_ingestion_management_lists_request(
                     collection_id=collection_id,
                     top=top,
                     skip=skip,
@@ -1168,7 +1168,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_update_request(
+        _request = build_ingestion_management_update_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             content_type=content_type,
@@ -1290,7 +1290,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_source_request(
+        _request = build_ingestion_management_create_source_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1426,7 +1426,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_or_replace_source_request(
+        _request = build_ingestion_management_create_or_replace_source_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1491,7 +1491,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_source_request(
+        _request = build_ingestion_management_delete_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1539,7 +1539,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_source_request(
+        _request = build_ingestion_management_get_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1607,7 +1607,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_sources_request(
+                _request = build_ingestion_management_list_sources_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -1692,7 +1692,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_managed_identities_request(
+                _request = build_ingestion_management_list_managed_identities_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.create_run(
+    response = client.ingestion_management.create_run(
         collection_id="collectionId",
         ingestion_id="64224dad-2778-409e-95b1-0675522bbaa4",
     )

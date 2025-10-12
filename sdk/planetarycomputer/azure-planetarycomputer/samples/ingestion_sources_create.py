@@ -31,7 +31,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.create_source(
+    response = client.ingestion_management.create_source(
         ingestion_source={
             "connectionInfo": {
                 "containerUrl": "https://sample.blob.core.windows.net/sample",

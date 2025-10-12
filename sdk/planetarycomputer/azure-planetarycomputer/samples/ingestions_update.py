@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.update(
+    response = client.ingestion_management.update(
         collection_id="potsdam-stacforge",
         ingestion_id="5e961a4c-7c3e-40ca-b151-2e574bae1635",
         definition={

@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import PlanetaryComputerClientConfiguration
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
@@ -48,7 +48,9 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_ingestion_cancel_operation_request(operation_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_cancel_operation_request(  # pylint: disable=name-too-long
+    operation_id: str, **kwargs: Any
+) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
@@ -66,7 +68,9 @@ def build_ingestion_cancel_operation_request(operation_id: str, **kwargs: Any) -
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_cancel_all_operations_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_ingestion_management_cancel_all_operations_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
@@ -79,7 +83,9 @@ def build_ingestion_cancel_all_operations_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_get_operation_request(operation_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_get_operation_request(  # pylint: disable=name-too-long
+    operation_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -103,13 +109,13 @@ def build_ingestion_get_operation_request(operation_id: str, **kwargs: Any) -> H
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_list_operations_request(
+def build_ingestion_management_list_operations_request(  # pylint: disable=name-too-long
     *,
     top: Optional[int] = None,
     skip: Optional[int] = None,
     collection_id: Optional[str] = None,
     status: Optional[Union[str, _models.OperationStatus]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -137,7 +143,9 @@ def build_ingestion_list_operations_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_create_run_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_create_run_request(  # pylint: disable=name-too-long
+    collection_id: str, ingestion_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -162,7 +170,9 @@ def build_ingestion_create_run_request(collection_id: str, ingestion_id: str, **
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_run_request(collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_get_run_request(  # pylint: disable=name-too-long
+    collection_id: str, ingestion_id: str, run_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -188,7 +198,7 @@ def build_ingestion_get_run_request(collection_id: str, ingestion_id: str, run_i
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_list_runs_request(
+def build_ingestion_management_list_runs_request(  # pylint: disable=name-too-long
     collection_id: str, ingestion_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -219,7 +229,9 @@ def build_ingestion_list_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_create_request(collection_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_create_request(  # pylint: disable=name-too-long
+    collection_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -246,7 +258,9 @@ def build_ingestion_create_request(collection_id: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_delete_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_delete_request(  # pylint: disable=name-too-long
+    collection_id: str, ingestion_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -271,7 +285,7 @@ def build_ingestion_delete_request(collection_id: str, ingestion_id: str, **kwar
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_get_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_get_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -296,7 +310,7 @@ def build_ingestion_get_request(collection_id: str, ingestion_id: str, **kwargs:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_lists_request(
+def build_ingestion_management_lists_request(
     collection_id: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -326,7 +340,9 @@ def build_ingestion_lists_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_update_request(collection_id: str, ingestion_id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_update_request(  # pylint: disable=name-too-long
+    collection_id: str, ingestion_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -354,7 +370,7 @@ def build_ingestion_update_request(collection_id: str, ingestion_id: str, **kwar
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_create_source_request(**kwargs: Any) -> HttpRequest:
+def build_ingestion_management_create_source_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -376,7 +392,7 @@ def build_ingestion_create_source_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_create_or_replace_source_request(  # pylint: disable=name-too-long
+def build_ingestion_management_create_or_replace_source_request(  # pylint: disable=name-too-long
     id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -405,7 +421,9 @@ def build_ingestion_create_or_replace_source_request(  # pylint: disable=name-to
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_delete_source_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_delete_source_request(  # pylint: disable=name-too-long
+    id: str, **kwargs: Any
+) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-30-preview"))
@@ -423,7 +441,9 @@ def build_ingestion_delete_source_request(id: str, **kwargs: Any) -> HttpRequest
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_ingestion_get_source_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_ingestion_management_get_source_request(  # pylint: disable=name-too-long
+    id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -447,7 +467,7 @@ def build_ingestion_get_source_request(id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_list_sources_request(
+def build_ingestion_management_list_sources_request(  # pylint: disable=name-too-long
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -472,7 +492,9 @@ def build_ingestion_list_sources_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_ingestion_list_managed_identities_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_ingestion_management_list_managed_identities_request(  # pylint: disable=name-too-long
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -796,7 +818,7 @@ def build_stac_get_collection_request(
     *,
     sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
     duration_in_minutes: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -829,7 +851,7 @@ def build_stac_list_collections_request(
     *,
     sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
     duration_in_minutes: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1238,7 +1260,7 @@ def build_stac_list_items_request(
     limit: Optional[int] = None,
     bounding_box: Optional[list[str]] = None,
     datetime: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1751,7 +1773,7 @@ def build_tiler_get_part_with_dimensions_request(  # pylint: disable=name-too-lo
     width: float,
     height: float,
     format: str,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
@@ -1794,7 +1816,7 @@ def build_tiler_get_point_request(
     unscale: Optional[bool] = None,
     coordinate_reference_system: Optional[str] = None,
     resampling: Optional[Union[str, _models.Resampling]] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1987,7 +2009,7 @@ def build_tiler_get_tile_request(
     y: float,
     scale: float,
     format: str,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
@@ -2105,7 +2127,7 @@ def build_tiler_get_legend_request(
     width: Optional[float] = None,
     trim_start: Optional[int] = None,
     trim_end: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2149,7 +2171,7 @@ def build_tiler_get_mosaics_assets_for_point_request(  # pylint: disable=name-to
     exit_when_full: Optional[bool] = None,
     skip_covered: Optional[bool] = None,
     coordinate_reference_system: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2200,7 +2222,7 @@ def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too
     time_limit: Optional[int] = None,
     exit_when_full: Optional[bool] = None,
     skip_covered: Optional[bool] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2428,14 +2450,14 @@ def build_shared_access_signature_revoke_token_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-class IngestionOperations:
+class IngestionManagementOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.planetarycomputer.PlanetaryComputerClient`'s
-        :attr:`ingestion` attribute.
+        :attr:`ingestion_management` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -2470,7 +2492,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_cancel_operation_request(
+        _request = build_ingestion_management_cancel_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2516,7 +2538,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_cancel_all_operations_request(
+        _request = build_ingestion_management_cancel_all_operations_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2563,7 +2585,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.Operation] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_operation_request(
+        _request = build_ingestion_management_get_operation_request(
             operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2608,7 +2630,7 @@ class IngestionOperations:
         skip: Optional[int] = None,
         collection_id: Optional[str] = None,
         status: Optional[Union[str, _models.OperationStatus]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.Operation"]:
         """Get operations of a geo-catalog collection.
 
@@ -2641,7 +2663,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_operations_request(
+                _request = build_ingestion_management_list_operations_request(
                     top=top,
                     skip=skip,
                     collection_id=collection_id,
@@ -2728,7 +2750,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_create_run_request(
+        _request = build_ingestion_management_create_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -2796,7 +2818,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionRun] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_run_request(
+        _request = build_ingestion_management_get_run_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             run_id=run_id,
@@ -2843,7 +2865,7 @@ class IngestionOperations:
         *,
         top: Optional[int] = None,
         skip: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ItemPaged["_models.IngestionRun"]:
         """Get the runs of an ingestion.
 
@@ -2875,7 +2897,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_runs_request(
+                _request = build_ingestion_management_list_runs_request(
                     collection_id=collection_id,
                     ingestion_id=ingestion_id,
                     top=top,
@@ -2944,7 +2966,7 @@ class IngestionOperations:
         definition: _models.Ingestion,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Ingestion:
         """Create a new ingestion.
 
@@ -3032,7 +3054,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_request(
+        _request = build_ingestion_management_create_request(
             collection_id=collection_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3088,7 +3110,7 @@ class IngestionOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_request(
+        _request = build_ingestion_management_delete_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -3153,7 +3175,7 @@ class IngestionOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -3208,7 +3230,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.Ingestion] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_request(
+        _request = build_ingestion_management_get_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             api_version=self._config.api_version,
@@ -3278,7 +3300,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_lists_request(
+                _request = build_ingestion_management_lists_request(
                     collection_id=collection_id,
                     top=top,
                     skip=skip,
@@ -3347,7 +3369,7 @@ class IngestionOperations:
         definition: _models.Ingestion,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Ingestion:
         """Update an existing ingestion.
 
@@ -3373,7 +3395,7 @@ class IngestionOperations:
         definition: JSON,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Ingestion:
         """Update an existing ingestion.
 
@@ -3399,7 +3421,7 @@ class IngestionOperations:
         definition: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Ingestion:
         """Update an existing ingestion.
 
@@ -3423,7 +3445,7 @@ class IngestionOperations:
         collection_id: str,
         ingestion_id: str,
         definition: Union[_models.Ingestion, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.Ingestion:
         """Update an existing ingestion.
 
@@ -3459,7 +3481,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(definition, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_update_request(
+        _request = build_ingestion_management_update_request(
             collection_id=collection_id,
             ingestion_id=ingestion_id,
             content_type=content_type,
@@ -3581,7 +3603,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_source_request(
+        _request = build_ingestion_management_create_source_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3629,7 +3651,7 @@ class IngestionOperations:
         ingestion_source: _models.IngestionSource,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.IngestionSource:
         """Update an existing ingestion source in a geo-catalog.
 
@@ -3717,7 +3739,7 @@ class IngestionOperations:
         else:
             _content = json.dumps(ingestion_source, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_ingestion_create_or_replace_source_request(
+        _request = build_ingestion_management_create_or_replace_source_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3782,7 +3804,7 @@ class IngestionOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_delete_source_request(
+        _request = build_ingestion_management_delete_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3830,7 +3852,7 @@ class IngestionOperations:
 
         cls: ClsType[_models.IngestionSource] = kwargs.pop("cls", None)
 
-        _request = build_ingestion_get_source_request(
+        _request = build_ingestion_management_get_source_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3897,7 +3919,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_sources_request(
+                _request = build_ingestion_management_list_sources_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -3981,7 +4003,7 @@ class IngestionOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_ingestion_list_managed_identities_request(
+                _request = build_ingestion_management_list_managed_identities_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -4541,7 +4563,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacMosaic,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
@@ -4591,7 +4613,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacMosaic:
         """Update Collection Mosaic.
 
@@ -5200,7 +5222,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -5339,7 +5361,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         *,
         sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
         duration_in_minutes: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacCollection:
         """Get Collection.
 
@@ -5414,7 +5436,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         *,
         sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
         duration_in_minutes: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacCatalogCollections:
         """Get Collections.
 
@@ -5839,7 +5861,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.RenderOption,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -5867,7 +5889,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -5895,7 +5917,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -5921,7 +5943,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         render_option_id: str,
         body: Union[_models.RenderOption, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.RenderOption:
         """Update Collection Render Option.
 
@@ -6577,7 +6599,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItemOrStacItemCollection,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Create a new STAC item or a set of items in a collection.
 
@@ -6707,7 +6729,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -6809,7 +6831,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItem,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Create or replace a STAC item in a collection.
 
@@ -6855,7 +6877,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Create or replace a STAC item in a collection.
 
@@ -6906,7 +6928,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -7014,7 +7036,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -7115,7 +7137,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         limit: Optional[int] = None,
         bounding_box: Optional[list[str]] = None,
         datetime: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacItemCollection:
         """Fetch features of the feature collection with id ``collectionId``.
 
@@ -7314,7 +7336,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItem,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Update a STAC item in a collection.
 
@@ -7340,7 +7362,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: JSON,
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Update a STAC item in a collection.
 
@@ -7366,7 +7388,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> LROPoller[None]:
         """Update a STAC item in a collection.
 
@@ -7417,7 +7439,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs
+                **kwargs,
             )
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -7513,7 +7535,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: list[_models.StacQueryable],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> list[_models.StacQueryable]:
         """Set Collection Queryables.
 
@@ -7656,7 +7678,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacQueryable,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -7685,7 +7707,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -7714,7 +7736,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -7741,7 +7763,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         queryable_name: str,
         body: Union[_models.StacQueryable, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
@@ -8466,7 +8488,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItem,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8498,7 +8520,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8530,7 +8552,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8560,7 +8582,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         item_id: str,
         format: str,
         body: Union[_models.StacItem, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8658,7 +8680,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItem,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8695,7 +8717,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8732,7 +8754,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8767,7 +8789,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         height: float,
         format: str,
         body: Union[_models.StacItem, JSON, IO[bytes]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Geojson Crop.
 
@@ -8867,7 +8889,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: _models.StacItemCollection,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
@@ -8919,7 +8941,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         body: IO[bytes],
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.GeoJsonStatisticsForStacItemCollection:
         """Geojson Statistics.
 
@@ -9170,7 +9192,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         maxx: float,
         maxy: float,
         format: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Part.
 
@@ -9267,7 +9289,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         width: float,
         height: float,
         format: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Part.
 
@@ -9374,7 +9396,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         unscale: Optional[bool] = None,
         coordinate_reference_system: Optional[str] = None,
         resampling: Optional[Union[str, _models.Resampling]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.TilerCoreModelsResponsesPoint:
         """Point.
 
@@ -9962,7 +9984,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         y: float,
         scale: float,
         format: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid As Path.
 
@@ -10276,7 +10298,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         width: Optional[float] = None,
         trim_start: Optional[int] = None,
         trim_end: Optional[int] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Get Legend.
 
@@ -10367,7 +10389,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
         coordinate_reference_system: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> list[_models.StacAsset]:
         """Assets For Point.
 
@@ -10474,7 +10496,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         time_limit: Optional[int] = None,
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> list[Any]:
         """Assets For Tile Tilematrixsetid As Path.
 
@@ -10650,7 +10672,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         sort_by: Optional[list[_models.StacSortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.MosaicMetadata] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.TilerMosaicSearchRegistrationResponse:
         """Register Search.
 
@@ -10742,7 +10764,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         sort_by: Optional[list[_models.StacSortExtension]] = None,
         filter_language: Optional[Union[str, _models.FilterLanguage]] = None,
         metadata: Optional[_models.MosaicMetadata] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> _models.TilerMosaicSearchRegistrationResponse:
         """Register Search.
 
@@ -10926,7 +10948,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         y: float,
         scale: float,
         format: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> Iterator[bytes]:
         """Tile Tilematrixsetid As Path.
 

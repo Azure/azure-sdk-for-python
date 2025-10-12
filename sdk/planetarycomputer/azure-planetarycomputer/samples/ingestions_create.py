@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.create(
+    response = client.ingestion_management.create(
         collection_id="collectionId",
         definition={
             "importType": "StaticCatalog",

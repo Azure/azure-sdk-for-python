@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    client.ingestion.cancel_operation(
+    client.ingestion_management.cancel_operation(
         operation_id="9bb31abd-91d6-4649-9c6f-beadbec7c622",
     )
 

@@ -30,7 +30,7 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.ingestion.list_operations()
+    response = client.ingestion_management.list_operations()
     for item in response:
         print(item)
 

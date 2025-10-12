@@ -16,7 +16,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import PlanetaryComputerClientConfiguration
-from .operations import IngestionOperations, SharedAccessSignatureOperations, StacOperations, TilerOperations
+from .operations import IngestionManagementOperations, SharedAccessSignatureOperations, StacOperations, TilerOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -25,8 +25,9 @@ if TYPE_CHECKING:
 class PlanetaryComputerClient:
     """PlanetaryComputerClient.
 
-    :ivar ingestion: IngestionOperations operations
-    :vartype ingestion: azure.planetarycomputer.aio.operations.IngestionOperations
+    :ivar ingestion_management: IngestionManagementOperations operations
+    :vartype ingestion_management:
+     azure.planetarycomputer.aio.operations.IngestionManagementOperations
     :ivar stac: StacOperations operations
     :vartype stac: azure.planetarycomputer.aio.operations.StacOperations
     :ivar tiler: TilerOperations operations
@@ -72,7 +73,9 @@ class PlanetaryComputerClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.ingestion = IngestionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.ingestion_management = IngestionManagementOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.stac = StacOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tiler = TilerOperations(self._client, self._config, self._serialize, self._deserialize)
         self.shared_access_signature = SharedAccessSignatureOperations(
