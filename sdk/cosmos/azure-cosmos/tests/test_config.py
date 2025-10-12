@@ -387,7 +387,7 @@ class MockConnectionRetryPolicy(RetryPolicy):
 
     def send(self, request):
         # background health checks could reset counter unintentionally
-        if not _has_health_check_or_dba_header(request.http_request.headers):
+        if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
             self.counter = 0
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)

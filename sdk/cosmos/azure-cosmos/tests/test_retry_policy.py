@@ -589,6 +589,8 @@ class TestRetryPolicy(unittest.TestCase):
             container = database.get_container_client(test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID)
             sleep(1)
             container.create_item({'id': str(uuid.uuid4()), })
+            sleep(1)
+            container.create_item({'id': str(uuid.uuid4()), })
 
             # multiple database account calls should be made
             assert mock_execute.counter > 2

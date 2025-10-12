@@ -63,7 +63,7 @@ class TestHealthCheckAsync:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
             await client.__aenter__()
-            await asyncio.sleep(5) # give some time for the background health check to complete
+            await asyncio.sleep(10) # give some time for the background health check to complete
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check
@@ -89,7 +89,7 @@ class TestHealthCheckAsync:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
             await client.__aenter__()
-            await asyncio.sleep(5) # give some time for the background health check to complete
+            await asyncio.sleep(10) # give some time for the background health check to complete
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []

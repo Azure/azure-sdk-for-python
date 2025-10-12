@@ -267,7 +267,7 @@ def _has_read_retryable_headers(request_headers):
 
 def _has_health_check_or_dba_header(request_headers):
     if (request_headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.Probe
-            or request_headers.get(HttpHeaders.ThinClientProxyOperationType) == ResourceType.DatabaseAccount):
+            or request_headers.get(HttpHeaders.ThinClientProxyResourceType) == ResourceType.DatabaseAccount):
         return True
     return False
 
