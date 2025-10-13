@@ -28,7 +28,19 @@ List of evaluators can be found at [here](https://github.com/Azure/azure-sdk-for
 
 ## Step 2: Provide your evaluator
 
-We are storing all the builtin evaluators in Azureml-asset Repo. Please provide your evaluators files by creating a PR in this repo. Please follow the steps.
+Please use this excel file. Please include new evaluators details. It contains PR links (SDK, Asset) and timelines. 
+[New Evaluators List](https://microsoft-my.sharepoint.com/:x:/p/waqasjaved/EW0nhGi9D09ErARvd-xTnc4BW_p2wrtQ3VJV_BaDFsvgiA?wdOrigin=TEAMS-MAGLEV.p2p_ns.rwc&wdExp=TEAMS-TREATMENT&wdhostclicktime=1760366435725&web=1)
+
+
+We are storing all the builtin evaluators in Azureml-asset Repo. 
+
+Please provide your evaluators files by creating a PR in this repo. 
+
+Note: These assets should be Prod Ready. These are immutable. Please provide them when they well tested and prod ready. 
+1. No fork PRs are allowed. Please get write permissions from [Asset Team](htps://github.com/orgs/Azure/teams/aml-assets). 
+2. Please fix flake8 lint issue if found in the PR. 
+
+Please follow the steps to create a PR.
 
 1. Add a new folder with name as the Evaluator name. 
 
