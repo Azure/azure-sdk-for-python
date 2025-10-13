@@ -7,19 +7,25 @@ from testcase import QuestionAnsweringAuthoringTestCase
 
 class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
     def test_export_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
-        client = QuestionAnsweringAuthoringClient(qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"]))
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
         project_name = "IsaacNewton"
-        AuthoringTestHelper.create_test_project(client, project_name=project_name, polling_interval=0 if self.is_playback else None)
+        AuthoringTestHelper.create_test_project(
+            client, project_name=project_name, polling_interval=0 if self.is_playback else None
+        )
         export_poller = client.begin_export(
             project_name=project_name,
-            format="json",
+            file_format="json",
             polling_interval=0 if self.is_playback else None,
         )
         export_poller.result()  # LROPoller[None]; ensure no exception
         assert export_poller.done()
 
     def test_import_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
-        client = QuestionAnsweringAuthoringClient(qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"]))
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
         project_name = "IsaacNewton"
         # Create project without deleting it; we just need it present for import.
         AuthoringTestHelper.create_test_project(
@@ -33,6 +39,7 @@ class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
         visible = any(p.get("projectName") == project_name for p in client.list_projects())
         if not visible:
             import time
+
             for _ in range(5):
                 time.sleep(1)
                 if any(p.get("projectName") == project_name for p in client.list_projects()):
@@ -52,10 +59,10 @@ class TestExportAndImport(QuestionAnsweringAuthoringTestCase):
                 ]
             )
         )
-        import_poller = client.begin_import_method(
+        import_poller = client.begin_import_assets(
             project_name=project_name,
             body=project_payload,
-            format="json",
+            file_format="json",
             polling_interval=0 if self.is_playback else None,
         )
         import_poller.result()  # LROPoller[None]; ensure completion

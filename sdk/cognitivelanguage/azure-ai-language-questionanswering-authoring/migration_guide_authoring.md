@@ -65,7 +65,6 @@ Key changes from earlier previews or combined forms:
 
 | Area | Before | Now |
 |------|--------|-----|
-| Import operation name | `begin_import_assets` | `begin_import_method` |
 | Export/Import format arg | `file_format` | `format` |
 | Synonyms listing | `list_synonyms()` | `get_synonyms()` (returns iterable groups) |
 | Deployment poller result | Dict with metadata (assumed) | `None` (completion only) |
@@ -80,7 +79,7 @@ Current preview LRO pollers return `None` from `.result()`. Treat `.result()` as
 * `begin_update_sources`
 * `begin_update_qnas`
 * `begin_export`
-* `begin_import_method`
+* `begin_import_assets`
 * `begin_deploy_project`
 
 Future versions may introduce typed results; avoid relying on payload shape.
@@ -104,7 +103,7 @@ assets = qa_models.ImportJobOptions(
         ]
     )
 )
-poller = client.begin_import_method(project_name="MyProject", body=assets, format="json")
+poller = client.begin_import_assets(project_name="MyProject", body=assets, format="json")
 poller.result()  # None (just completion)
 ```
 
@@ -197,7 +196,7 @@ client.begin_update_sources(
 
 | Symptom | Likely Cause | Fix |
 |---------|-------------|-----|
-| `AttributeError: begin_import_assets` | Old method name | Use `begin_import_method` |
+| `AttributeError: begin_import_assets` | Old method name | Use `begin_import_assets` |
 | `TypeError: unexpected keyword file_format` | Param rename | Replace with `format` |
 | `AttributeError: list_synonyms` | Method rename | Use `get_synonyms()` |
 | `TypeError: 'NoneType' object is not subscriptable` after deploy | Expecting payload | Treat `.result()` as completion only |

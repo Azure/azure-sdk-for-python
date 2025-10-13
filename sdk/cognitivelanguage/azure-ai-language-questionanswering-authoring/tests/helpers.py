@@ -52,7 +52,7 @@ class AuthoringTestHelper:
     def export_project(client, project_name, delete_project=True, **kwargs):
         # begin_export poller is typed as LROPoller[None]; generator currently discards
         # the final body so result() returns None. We only validate successful completion.
-        export_poller = client.begin_export(project_name=project_name, format="json", **kwargs)
+        export_poller = client.begin_export(project_name=project_name, file_format="json", **kwargs)
         export_poller.result()  # ensure completion (raises on failure)
         if delete_project:
             delete_poller = client.begin_delete_project(project_name=project_name, **kwargs)
@@ -112,10 +112,9 @@ class AuthoringAsyncTestHelper:
 
     @staticmethod
     async def export_project(client, project_name, delete_project=True, **kwargs):
-        export_poller = await client.begin_export(project_name=project_name, format="json", **kwargs)
+        export_poller = await client.begin_export(project_name=project_name, file_format="json", **kwargs)
         await export_poller.result()
         if delete_project:
             delete_poller = await client.begin_delete_project(project_name=project_name, **kwargs)
             await delete_poller.result()
         return None
-

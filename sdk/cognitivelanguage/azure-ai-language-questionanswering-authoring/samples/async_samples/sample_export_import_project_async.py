@@ -1,10 +1,7 @@
 """Async sample - Export and import a Question Answering authoring project."""
 
 import os
-import io
-import zipfile
 import asyncio
-from azure.core.rest import HttpRequest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
 
@@ -18,7 +15,7 @@ async def sample_export_import_project_async():
     client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
         export_format = "json"
-        export_poller = await client.begin_export(project_name=project_name, format=export_format)
+        export_poller = await client.begin_export(project_name=project_name, file_format=export_format)
         await export_poller.result()  # completes; no payload
         # No export URL available from the poller result in current API; skipping download section.
         minimal_assets = {
@@ -34,7 +31,7 @@ async def sample_export_import_project_async():
             }
         }
         import_poller = await client.begin_import_assets(
-            project_name=f"{project_name}-imported", body=minimal_assets, format="json"
+            project_name=f"{project_name}-imported", body=minimal_assets, file_format="json"
         )
         await import_poller.result()
         print(f"Imported project as {project_name}-imported (minimal assets)")

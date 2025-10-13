@@ -166,7 +166,7 @@ assets = qa_models.ImportJobOptions(
         ]
     )
 )
-client.begin_import_method(project_name="FAQ", body=assets, format="json").result()
+client.begin_import_assets(project_name="FAQ", body=assets, format="json").result()
 ```
 
 ## Troubleshooting

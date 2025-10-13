@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 import pytest
 from typing import Any, Dict, cast
 from azure.core.credentials import AzureKeyCredential
@@ -9,7 +10,9 @@ from testcase import QuestionAnsweringAuthoringTestCase
 
 class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
     def test_polling_interval(self, qna_authoring_creds):
-        client = QuestionAnsweringAuthoringClient(qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"]))
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
         # Default polling interval may change across previews; assert it is a positive int (previously 30) instead of a fixed legacy value
         assert isinstance(client._config.polling_interval, int) and client._config.polling_interval > 0
         client = QuestionAnsweringAuthoringClient(
@@ -18,7 +21,9 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         assert client._config.polling_interval == 1
 
     def test_create_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
-        client = QuestionAnsweringAuthoringClient(qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"]))
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
         project_name = "IsaacNewton"
         client.create_project(
             project_name=project_name,
@@ -33,7 +38,9 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         assert found
 
     def test_deploy_project(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined]
-        client = QuestionAnsweringAuthoringClient(qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"]))
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
         project_name = "IsaacNewton"
         AuthoringTestHelper.create_test_project(
             client,
@@ -48,6 +55,4 @@ class TestCreateAndDeploy(QuestionAnsweringAuthoringTestCase):
         )
         # Preview LRO returns None; just ensure it completes without error
         deployment_poller.result()
-        assert any(
-            d.get("deploymentName") == "production" for d in client.list_deployments(project_name=project_name)
-        )
+        assert any(d.get("deploymentName") == "production" for d in client.list_deployments(project_name=project_name))

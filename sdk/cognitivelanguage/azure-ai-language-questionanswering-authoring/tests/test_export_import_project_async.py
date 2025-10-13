@@ -22,7 +22,7 @@ class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
                 client, project_name=project_name, polling_interval=polling_interval
             )
             poller = await client.begin_export(
-                project_name=project_name, format="json", polling_interval=polling_interval
+                project_name=project_name, file_format="json", polling_interval=polling_interval
             )
             await poller.result()  # LROPoller[None]; ensure completion
             assert poller.done()
@@ -69,8 +69,8 @@ class TestExportAndImportAsync(QuestionAnsweringAuthoringTestCase):
                     ]
                 )
             )
-            poller = await client.begin_import_method(
-                project_name=project_name, body=import_body, format="json", polling_interval=polling_interval
+            poller = await client.begin_import_assets(
+                project_name=project_name, body=import_body, file_format="json", polling_interval=polling_interval
             )
             await poller.result()  # LROPoller[None]; ensure completion
             assert poller.done()

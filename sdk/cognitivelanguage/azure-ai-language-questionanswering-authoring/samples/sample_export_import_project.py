@@ -13,9 +13,6 @@ Run with: python sample_export_import_project.py
 """
 
 import os
-import io
-import zipfile
-from azure.core.rest import HttpRequest
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.language.questionanswering.authoring import QuestionAnsweringAuthoringClient
 
@@ -29,8 +26,8 @@ def sample_export_import_project():
     client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
         export_format = "json"
-        # Updated: parameter is now 'format', and LRO result is None (no metadata dict).
-        export_poller = client.begin_export(project_name=project_name, format=export_format)
+        # Updated: parameter is now 'file_format', and LRO result is None (no metadata dict).
+        export_poller = client.begin_export(project_name=project_name, file_format=export_format)
         export_poller.result()  # completes; no result payload
         # In the new API surface an export URL isn't returned via poller.result(); a separate
         # retrieval step would be needed if/when service exposes it. This sample now focuses on
@@ -50,7 +47,7 @@ def sample_export_import_project():
             }
         }
         import_poller = client.begin_import_assets(
-            project_name=f"{project_name}-imported", body=minimal_assets, format="json"
+            project_name=f"{project_name}-imported", body=minimal_assets, file_format="json"
         )
         import_poller.result()  # completes; no result payload
         print(f"Imported project as {project_name}-imported (minimal assets)")
