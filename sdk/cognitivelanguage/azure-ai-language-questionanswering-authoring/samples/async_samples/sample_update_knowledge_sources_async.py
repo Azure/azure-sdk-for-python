@@ -1,4 +1,5 @@
 """Async sample - Update project knowledge sources and add QnAs & synonyms."""
+
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential

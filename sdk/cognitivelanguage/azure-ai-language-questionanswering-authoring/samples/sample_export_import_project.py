@@ -49,7 +49,7 @@ def sample_export_import_project():
                 ]
             }
         }
-        import_poller = client.begin_import_method(
+        import_poller = client.begin_import_assets(
             project_name=f"{project_name}-imported", body=minimal_assets, format="json"
         )
         import_poller.result()  # completes; no result payload

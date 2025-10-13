@@ -1,4 +1,5 @@
 """Async sample - Export and import a Question Answering authoring project."""
+
 import os
 import io
 import zipfile
@@ -17,9 +18,7 @@ async def sample_export_import_project_async():
     client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
         export_format = "json"
-        export_poller = await client.begin_export(
-            project_name=project_name, format=export_format
-        )
+        export_poller = await client.begin_export(project_name=project_name, format=export_format)
         await export_poller.result()  # completes; no payload
         # No export URL available from the poller result in current API; skipping download section.
         minimal_assets = {
@@ -34,7 +33,7 @@ async def sample_export_import_project_async():
                 ]
             }
         }
-        import_poller = await client.begin_import_method(
+        import_poller = await client.begin_import_assets(
             project_name=f"{project_name}-imported", body=minimal_assets, format="json"
         )
         await import_poller.result()

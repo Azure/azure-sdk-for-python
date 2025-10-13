@@ -47,7 +47,7 @@ $env:AZURE_QUESTIONANSWERING_PROJECT="myProject"
 | File (sync) | Scenario | Key operations | Async equivalent |
 |-------------|----------|----------------|------------------|
 | `sample_create_and_deploy_project.py` | Create a project, add a knowledge source, deploy to `production` | `create_project`, `begin_update_sources`, `begin_deploy_project` | `async_samples/sample_create_and_deploy_project_async.py` |
-| `sample_export_import_project.py` | Export an existing project then import as a new one | `begin_export`, `begin_import_method` | `async_samples/sample_export_import_project_async.py` |
+| `sample_export_import_project.py` | Export an existing project then import as a new one | `begin_export`, `begin_import_assets` | `async_samples/sample_export_import_project_async.py` |
 | `sample_update_knowledge_sources.py` | Batch modify sources, add QnA pairs, manage synonyms | `begin_update_sources`, `begin_update_qnas`, `update_synonyms` | `async_samples/sample_update_knowledge_sources_async.py` |
 
 All async samples mirror their sync counterparts and reside in `async_samples/`.

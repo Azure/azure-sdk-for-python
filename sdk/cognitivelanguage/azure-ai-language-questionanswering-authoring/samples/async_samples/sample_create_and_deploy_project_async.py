@@ -1,4 +1,5 @@
 """Async sample - Create and deploy a Question Answering authoring project."""
+
 import os
 import asyncio
 from azure.core.credentials import AzureKeyCredential
@@ -49,9 +50,7 @@ async def sample_create_and_deploy_project_async():
         await update_sources_poller.result()
         print("Knowledge sources updated (1 URL added)")
 
-        deployment_poller = await client.begin_deploy_project(
-            project_name=project_name, deployment_name="production"
-        )
+        deployment_poller = await client.begin_deploy_project(project_name=project_name, deployment_name="production")
         await deployment_poller.result()  # completes; no payload
         print("Deployment created: production")
 

@@ -65,9 +65,7 @@ def sample_create_and_deploy_project():
         update_sources_poller.result()  # completes; no return payload
         print("Knowledge sources updated (1 URL added)")
 
-        deployment_poller = client.begin_deploy_project(
-            project_name=project_name, deployment_name="production"
-        )
+        deployment_poller = client.begin_deploy_project(project_name=project_name, deployment_name="production")
         deployment_poller.result()  # LRO completes; no deployment payload returned in current SDK
         print("Deployment created: production")
 
