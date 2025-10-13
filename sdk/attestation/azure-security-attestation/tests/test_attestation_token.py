@@ -49,7 +49,7 @@ class TestAzureAttestationToken(object):
     def test_create_unsecured_empty_token(self):
         token = AttestationToken(body=None)
         assert token._get_body() is None
-        token._validate_token(None)
+        token._validate_token()
 
     def test_create_secured_token(self):
         key = self._create_rsa_key()
@@ -57,7 +57,7 @@ class TestAzureAttestationToken(object):
 
         token = AttestationToken(body={"val1": [1, 2, 3]}, signing_key=key, signing_certificate=cert)
         assert token._get_body() == {"val1": [1, 2, 3]}
-        token._validate_token(None)
+        token._validate_token()
 
     def test_create_secured_empty_token(self):
         key = self._create_rsa_key()
@@ -65,7 +65,7 @@ class TestAzureAttestationToken(object):
 
         token = AttestationToken(body=None, signing_key=key, signing_certificate=cert)
         assert token._get_body() is None
-        token._validate_token(None)
+        token._validate_token()
 
     def test_token_callback(self):
         key = self._create_rsa_key()
@@ -82,7 +82,7 @@ class TestAzureAttestationToken(object):
             callback_invoked = True
             assert signer.certificates[0] == cert
 
-        token._validate_token(None, validation_callback=callback)
+        token._validate_token(validation_callback=callback)
         assert callback_invoked
 
     def test_token_callback_rejected(self):
@@ -100,7 +100,7 @@ class TestAzureAttestationToken(object):
             raise ValueError("Validation failed.")
 
         with pytest.raises(ValueError):
-            token._validate_token(None, validation_callback=callback)
+            token._validate_token(validation_callback=callback)
 
     # Verify that the token expiration checks work correctly.
 
@@ -112,7 +112,7 @@ class TestAzureAttestationToken(object):
                 "nbf": time(),  # Not valid before now.
             }
         )
-        token30sec._validate_token(None)
+        token30sec._validate_token()
 
         expired_token = AttestationToken(
             body={
@@ -122,7 +122,7 @@ class TestAzureAttestationToken(object):
             }
         )
         with pytest.raises(AttestationTokenValidationException):
-            expired_token._validate_token(None)
+            expired_token._validate_token()
 
         early_token = AttestationToken(
             body={
@@ -132,13 +132,13 @@ class TestAzureAttestationToken(object):
             }
         )
         with pytest.raises(AttestationTokenValidationException):
-            early_token._validate_token(None)
+            early_token._validate_token()
 
         # Specify 40 seconds of slack, so we're within the slack.
         # Token validation should start succeeding now because the slack
         # lets it work.
-        expired_token._validate_token(None, validation_slack=40)
-        early_token._validate_token(None, validation_slack=40)
+        expired_token._validate_token(validation_slack=40)
+        early_token._validate_token(validation_slack=40)
 
     # Helper functions to create keys and certificates wrapping those keys.
 
