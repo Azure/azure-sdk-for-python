@@ -1,3 +1,4 @@
+
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,6 +21,7 @@ from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
+    EvaluationResultsOperations,
     EvaluationTaxonomiesOperations,
     EvaluationsOperations,
     EvaluatorsOperations,
@@ -59,6 +61,8 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
     :vartype evaluation_taxonomies: azure.ai.projects.operations.EvaluationTaxonomiesOperations
     :ivar schedules: SchedulesOperations operations
     :vartype schedules: azure.ai.projects.operations.SchedulesOperations
+    :ivar evaluation_results: EvaluationResultsOperations operations
+    :vartype evaluation_results: azure.ai.projects.operations.EvaluationResultsOperations
     :param endpoint: Project endpoint. In the form
      "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project
      <https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project>`_"
@@ -116,6 +120,9 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluation_results = EvaluationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -152,3 +159,7 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
+
+
+# Backward compatibility alias
+AIProjectClient = ProjectsClient

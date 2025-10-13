@@ -272,6 +272,17 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """List View Type Definition."""
+
+    ACTIVE_ONLY = "ActiveOnly"
+    """List only active items."""
+    ARCHIVED_ONLY = "ArchivedOnly"
+    """List only archived items."""
+    ALL = "All"
+    """List all items."""
+
+
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enum describing allowed operation states."""
 
@@ -294,6 +305,8 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No pending upload."""
     BLOB_REFERENCE = "BlobReference"
     """Blob Reference is the only supported type."""
+    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+    """Temporary Blob Reference is the only supported type."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -307,6 +320,19 @@ class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Weekly recurrence pattern."""
     MONTHLY = "Monthly"
     """Monthly recurrence pattern."""
+
+
+class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Evaluation result."""
+
+    BENCHMARK = "Benchmark"
+    """Benchmark result"""
+    EVALUATION = "Evaluation"
+    """Evaluations Result"""
+    REDTEAM = "Redteam"
+    """Red Team Result"""
+    SIMULATION = "Simulation"
+    """Simulation Result"""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -71,7 +71,7 @@ class EvaluationServiceOneDPClient:
         )
         start_pending_upload_response = self.rest_client.evaluation_results.start_pending_upload(
             name=name,
-            version=version,
+            version=str(version),
             body=PendingUploadRequest(pending_upload_type=PendingUploadType.TEMPORARY_BLOB_REFERENCE),
             **kwargs,
         )
@@ -84,15 +84,15 @@ class EvaluationServiceOneDPClient:
 
         LOGGER.debug(f"Creating evaluation result version for {name} with version {version}")
         create_version_response = self.rest_client.evaluation_results.create_or_update_version(
-            body=EvaluationResult(
+            evaluation_result=EvaluationResult(
                 blob_uri=start_pending_upload_response.blob_reference_for_consumption.blob_uri,
                 result_type=result_type,
                 name=name,
-                version=version,
+                version=str(version),
                 metrics=metrics,
             ),
             name=name,
-            version=version,
+            version=str(version),
             **kwargs,
         )
 
