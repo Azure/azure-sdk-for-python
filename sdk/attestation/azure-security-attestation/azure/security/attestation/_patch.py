@@ -441,7 +441,13 @@ class AttestationClient:
         """
 
         response = self._client.attestation.attest_tpm(data=content, **kwargs)
-        result = TpmAttestationResult(cast(bytes, response.data))
+        # Handle response.data as either bytes or base64-encoded string
+        data = response.data
+        if isinstance(data, str):
+            # If it's a base64-encoded string, decode it to bytes
+            # Use base64url_decode for proper handling of URL-safe base64
+            data = base64url_decode(data)
+        result = TpmAttestationResult(cast(bytes, data))
         return result
 
     def _get_signers(self, **kwargs: Any) -> list[AttestationSigner]:
