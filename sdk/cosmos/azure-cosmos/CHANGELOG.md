@@ -1,6 +1,7 @@
 ## Release History
 
-### 4.14.0b5 (Unreleased)
+### 4.14.0 (2025-10-13)
+This version and all future versions will require Python 3.9+.
 
 #### Features Added
 * Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
