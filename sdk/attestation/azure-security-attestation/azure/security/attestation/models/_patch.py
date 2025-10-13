@@ -856,7 +856,11 @@ class AttestationToken:
         try:
             body = body.serialize()
         except AttributeError:
-            pass
+            # If serialize() doesn't exist, try as_dict() for Model objects and apply _serialize
+            try:
+                body = _serialize(body.as_dict())
+            except AttributeError:
+                pass
         json_body = ""
         if body is not None:
             json_body = json.dumps(body)
@@ -890,7 +894,11 @@ class AttestationToken:
         try:
             body = body.serialize()
         except AttributeError:
-            pass
+            # If serialize() doesn't exist, try as_dict() for Model objects and apply _serialize
+            try:
+                body = _serialize(body.as_dict())
+            except AttributeError:
+                pass
         json_body = ""
         if body is not None:
             json_body = json.dumps(body)
