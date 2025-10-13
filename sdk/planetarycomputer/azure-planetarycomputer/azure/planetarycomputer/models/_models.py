@@ -176,10 +176,6 @@ class BandStatistics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CropGeoJsonOptions(_Model):
-    """Options for cropping GeoJSON."""
-
-
 class DefaultLocation(_Model):
     """Defines a default geographic location for map visualization.
 
@@ -485,50 +481,6 @@ class Geometry(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class GetAssetStatisticsOptions(_Model):
-    """Options for getting asset statistics."""
-
-
-class GetGeoJsonStatisticsOptions(_Model):
-    """Options for getting GeoJSON statistics."""
-
-
-class GetMosaicTileJsonOptions(_Model):
-    """Options for mosaic TileJSON."""
-
-
-class GetMosaicTileOptions(_Model):
-    """Options for mosaic tiles."""
-
-
-class GetMosaicWmtsCapabilitiesOptions(_Model):
-    """Options for mosaic WMTS capabilities."""
-
-
-class GetPartOptions(_Model):
-    """Options for getting parts (cropped to bounding box)."""
-
-
-class GetPreviewOptions(_Model):
-    """Options for getting previews."""
-
-
-class GetStatisticsOptions(_Model):
-    """Options for getting statistics."""
-
-
-class GetTileJsonOptions(_Model):
-    """Options for getting TileJSON."""
-
-
-class GetTileOptions(_Model):
-    """Options for getting a tile from a dataset."""
-
-
-class GetWmtsCapabilitiesOptions(_Model):
-    """Options for getting WMTS capabilities."""
 
 
 class ImageRequest(_Model):
@@ -1817,6 +1769,41 @@ class SearchOptionsFields(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SharedAccessSignatureSignedLink(_Model):
+    """UnsignedLink.
+
+    :ivar expires_on: Msft:Expiry.
+    :vartype expires_on: ~datetime.datetime
+    :ivar href: Href. Required.
+    :vartype href: str
+    """
+
+    expires_on: Optional[datetime.datetime] = rest_field(
+        name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Msft:Expiry."""
+    href: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Href. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        href: str,
+        expires_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SharedAccessSignatureToken(_Model):
     """Managed Storage Shared Access Signature (SAS) Token.
 
@@ -1929,41 +1916,6 @@ class SharedAccessSignatureTokenIngestionSource(
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = IngestionSourceType.SHARED_ACCESS_SIGNATURE_TOKEN  # type: ignore
-
-
-class SignedLink(_Model):
-    """UnsignedLink.
-
-    :ivar expires_on: Msft:Expiry.
-    :vartype expires_on: ~datetime.datetime
-    :ivar href: Href. Required.
-    :vartype href: str
-    """
-
-    expires_on: Optional[datetime.datetime] = rest_field(
-        name="msft:expiry", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """Msft:Expiry."""
-    href: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Href. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        href: str,
-        expires_on: Optional[datetime.datetime] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class StacAsset(_Model):
