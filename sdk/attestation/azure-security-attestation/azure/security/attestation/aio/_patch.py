@@ -429,7 +429,7 @@ class AttestationClient:
         :rtype: ~azure.security.attestation.TpmAttestationResult
         """
 
-        response = await self._client.attestation.attest_tpm(content, **kwargs)  # type: ignore
+        response = await self._client.attestation.attest_tpm(data=content, **kwargs)  # type: ignore
         # Handle response.data as either bytes or base64-encoded string
         data = response.data
         if isinstance(data, str):
