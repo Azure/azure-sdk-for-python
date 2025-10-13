@@ -134,7 +134,7 @@ class AttestationPolicyResult:
         # If we have a generated policy result or policy text, return that.
         if not generated:
             return None
-        signer = AttestationSigner._from_generated( # pylint: disable=protected-access
+        signer = AttestationSigner._from_generated(  # pylint: disable=protected-access
             cast(JSONWebKey, generated.policy_signer)
         )
 
@@ -156,12 +156,12 @@ class AttestationPolicyResult:
                 token_hash_bytes = token_hash
             else:
                 # Fallback
-                token_hash_bytes = str(token_hash).encode('utf-8')
+                token_hash_bytes = str(token_hash).encode("utf-8")
 
         # signer can be None for unsigned policies
         return AttestationPolicyResult(
             generated.policy_resolution,
-            signer, # type: ignore
+            signer,  # type: ignore
             token_hash_bytes,
         )
 
@@ -351,7 +351,7 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
 
         :rtype: ~azure.security.attestation.AttestationSigner or None
         """
-        return AttestationSigner._from_generated( # pylint: disable=protected-access
+        return AttestationSigner._from_generated(  # pylint: disable=protected-access
             cast(JSONWebKey, self._policy_signer)
         )
 
@@ -736,7 +736,7 @@ class AttestationToken:
         signer = None
         if self.algorithm != "none" and options.get("validate_signature", True):
             # validate the signature for the token.
-            candidate_certificates = self._get_candidate_signing_certificates(signers) # type: ignore
+            candidate_certificates = self._get_candidate_signing_certificates(signers)  # type: ignore
             signer = self._validate_signature(candidate_certificates)
             if signer is None:
                 raise AttestationTokenValidationException("Could not find the certificate used to sign the token.")
@@ -852,9 +852,7 @@ class AttestationToken:
                 expected_issuer = kwargs.get("issuer", None)
                 if expected_issuer is not None and expected_issuer != self.issuer:
                     raise AttestationTokenValidationException(
-                        "Issuer in token: {} is not the expected issuer: {}.".format(
-                            self.issuer, expected_issuer
-                        )
+                        "Issuer in token: {} is not the expected issuer: {}.".format(self.issuer, expected_issuer)
                     )
         return True
 
