@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -67,6 +68,14 @@ class AttestationSigner:
     def _from_generated(cls, generated: JSONWebKey) -> Optional["AttestationSigner"]:
         if not generated:
             return None
+        # Handle both dict and JSONWebKey object
+        if isinstance(generated, dict):
+            x5_c = generated.get("x5c") or generated.get("x5_c")
+            kid = generated.get("kid")
+            if x5_c is None or kid is None:
+                return None
+            return cls(x5_c, kid)
+        # Handle JSONWebKey object
         if generated.x5_c is None or generated.kid is None:
             return None
         return cls(generated.x5_c, generated.kid)
@@ -142,27 +151,12 @@ class AttestationPolicyResult:
         if generated.policy_resolution is None:
             return None
 
-        # Handle policy_token_hash as either bytes, base64url-encoded string, or None
-        # The field should be bytes (the raw hash), but may come as base64url string from service
+        # TypeSpec handles base64url decoding now, policy_token_hash comes as bytes or None
         # For reset_policy operations, it may be None
-        token_hash_bytes = None
-        if generated.policy_token_hash is not None:
-            token_hash = generated.policy_token_hash
-            if isinstance(token_hash, str):
-                # If it's a base64url-encoded string, decode it to bytes
-                token_hash_bytes = base64url_decode(token_hash)
-            elif isinstance(token_hash, bytes):
-                # Already bytes, use as-is
-                token_hash_bytes = token_hash
-            else:
-                # Fallback
-                token_hash_bytes = str(token_hash).encode("utf-8")
-
-        # signer can be None for unsigned policies
         return AttestationPolicyResult(
             generated.policy_resolution,
             signer,  # type: ignore
-            token_hash_bytes,
+            generated.policy_token_hash,  # Already decoded by TypeSpec
         )
 
 
@@ -221,30 +215,60 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
         self._enclave_held_data = kwargs.pop("enclave_held_data", None)  # type: Union[bytes, None]
         self._sgx_collateral = kwargs.pop("sgx_collateral")  # type: Dict
 
+    @staticmethod
+    def _decode_enclave_held_data(data: Any) -> Optional[bytes]:
+        """Helper to decode enclave_held_data from various formats.
+
+        :param data: The data to decode. Can be bytes, base64url-encoded string, or None.
+        :type data: Any
+        :return: The decoded data as bytes, or None if input is None.
+        :rtype: Optional[bytes]
+        """
+        if data is None:
+            return None
+        if isinstance(data, bytes):
+            return data
+        if isinstance(data, str):
+            # If it's a base64/base64url-encoded string, decode it
+            try:
+                # Try base64url first (no padding)
+                return base64url_decode(data)
+            except Exception: # pylint: disable=broad-except
+                # Fall back to standard base64
+                try:
+                    return base64.b64decode(data)
+                except Exception: # pylint: disable=broad-except
+                    # If all else fails, encode the string as UTF-8
+                    return data.encode("utf-8")
+        return None
+
     @classmethod
     def _from_generated(cls, generated: GeneratedAttestationResult) -> Optional["AttestationResult"]:
         if not generated:
             return None
+        # If it's already an AttestationResult instance, return as-is
+        if isinstance(generated, AttestationResult):
+            return generated
         return AttestationResult(
             issuer=generated.get("iss", None),
             unique_identifier=generated.get("jti", None),
             nonce=generated.get("nonce", None),
-            version=generated.get("version", None),
-            runtime_claims=generated.get("runtime_claims", None),
-            inittime_claims=generated.get("inittime_claims", None),
-            policy_claims=generated.get("policy_claims", None),
-            verifier_type=generated.get("verifier_type", None),
+            version=generated.get("x-ms-ver", None),
+            runtime_claims=generated.get("x-ms-runtime", None),
+            inittime_claims=generated.get("x-ms-inittime", None),
+            policy_claims=generated.get("x-ms-policy", None),
+            verifier_type=generated.get("x-ms-attestation-type", None),
             policy_signer=AttestationSigner._from_generated(  # pylint: disable=protected-access
-                generated.get("policy_signer", None)
+                generated.get("x-ms-policy-signer", None)
             ),
-            policy_hash=generated.get("policy_hash", None),
-            is_debuggable=generated.get("is_debuggable", None),
-            product_id=generated.get("product_id", None),
-            mr_enclave=generated.get("mr_enclave", None),
-            mr_signer=generated.get("mr_signer", None),
+            policy_hash=generated.get("x-ms-policy-hash", None),
+            is_debuggable=generated.get("is-debuggable", None),
+            product_id=generated.get("x-ms-sgx-product-id", None),
+            mr_enclave=generated.get("x-ms-sgx-mrenclave", None),
+            mr_signer=generated.get("x-ms-sgx-mrsigner", None),
             svn=generated.get("svn", None),
-            enclave_held_data=generated.get("enclave_held_data", None),
-            sgx_collateral=generated.get("sgx_collateral", None),
+            enclave_held_data=cls._decode_enclave_held_data(generated.get("x-ms-sgx-ehd", None)),
+            sgx_collateral=generated.get("x-ms-sgx-collateral", None),
         )
 
     @property
@@ -681,7 +705,7 @@ class AttestationToken:
         validation_slack: Optional[float] = None,
         validate_issuer: Optional[bool] = None,
         validate_not_before_time: Optional[bool] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
