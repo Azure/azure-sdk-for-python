@@ -651,7 +651,6 @@ class TestRetryPolicyAsync(unittest.IsolatedAsyncioTestCase):
                 container.create_item({'id': str(uuid.uuid4()), })
 
             # multiple database account calls should be made
-            print(mock_execute.counter)
             assert mock_execute.counter > 2
 
         finally:
