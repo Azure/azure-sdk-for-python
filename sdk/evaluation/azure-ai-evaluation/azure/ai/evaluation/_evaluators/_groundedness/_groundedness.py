@@ -219,7 +219,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         Return True if eval_input contains a non-empty 'context' field.
         Treats None, empty strings, empty lists, and lists of empty strings as no context.
         """
-        context = eval_input.get("context", None)
+        context = eval_input.get("context")
         if not context:
             return False
         if context == "<>":  # Special marker for no context
