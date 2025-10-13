@@ -8,6 +8,7 @@ from urllib.parse import urlparse
 import warnings
 
 from azure.core.credentials import AzureKeyCredential
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._version import SDK_MONIKER
@@ -151,6 +152,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
+    @distributed_trace
     def get_call_connection(
         self, call_connection_id: str, **kwargs
     ) -> CallConnectionClient:

@@ -152,6 +152,7 @@ class CallAutomationClient:
         endpoint, access_key = parse_connection_str(conn_str)
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
+    @distributed_trace
     def get_call_connection(
         self, call_connection_id: str, **kwargs
     ) -> CallConnectionClient:
