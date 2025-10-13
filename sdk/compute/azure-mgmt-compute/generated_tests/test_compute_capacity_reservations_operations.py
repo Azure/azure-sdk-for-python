@@ -37,7 +37,7 @@ class TestComputeCapacityReservationsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "sku": {"capacity": 0, "name": "str", "tier": "str"},
                 "id": "str",
@@ -87,7 +87,7 @@ class TestComputeCapacityReservationsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            properties={
+            parameters={
                 "properties": {
                     "instanceView": {
                         "statuses": [

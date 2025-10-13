@@ -37,7 +37,7 @@ class TestComputeVirtualMachineRunCommandsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_name="str",
             run_command_name="str",
-            body={
+            run_command={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -104,7 +104,7 @@ class TestComputeVirtualMachineRunCommandsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_name="str",
             run_command_name="str",
-            body={
+            run_command={
                 "properties": {
                     "asyncExecution": bool,
                     "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},

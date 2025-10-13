@@ -37,7 +37,7 @@ class TestComputePrivateEndpointConnectionsOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             disk_access_name="str",
             private_endpoint_connection_name="str",
-            resource={
+            private_endpoint_connection={
                 "id": "str",
                 "name": "str",
                 "properties": {

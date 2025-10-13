@@ -36,7 +36,7 @@ class TestComputeRestorePointCollectionsOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.restore_point_collections.create_or_update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -247,7 +247,7 @@ class TestComputeRestorePointCollectionsOperationsAsync(AzureMgmtRecordedTestCas
         response = await self.client.restore_point_collections.update(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
-            properties={
+            parameters={
                 "properties": {
                     "provisioningState": "str",
                     "restorePointCollectionId": "str",

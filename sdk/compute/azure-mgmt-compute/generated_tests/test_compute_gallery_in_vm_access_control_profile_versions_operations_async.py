@@ -41,7 +41,7 @@ class TestComputeGalleryInVMAccessControlProfileVersionsOperationsAsync(AzureMgm
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
                 in_vm_access_control_profile_version_name="str",
-                resource={
+                gallery_in_vm_access_control_profile_version={
                     "location": "str",
                     "id": "str",
                     "name": "str",
@@ -115,7 +115,7 @@ class TestComputeGalleryInVMAccessControlProfileVersionsOperationsAsync(AzureMgm
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
                 in_vm_access_control_profile_version_name="str",
-                properties={
+                gallery_in_vm_access_control_profile_version={
                     "id": "str",
                     "name": "str",
                     "properties": {

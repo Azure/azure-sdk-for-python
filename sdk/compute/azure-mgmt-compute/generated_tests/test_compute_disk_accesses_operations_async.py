@@ -37,7 +37,7 @@ class TestComputeDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.disk_accesses.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 disk_access_name="str",
-                resource={
+                disk_access={
                     "location": "str",
                     "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
@@ -94,7 +94,7 @@ class TestComputeDiskAccessesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.disk_accesses.begin_update(
                 resource_group_name=resource_group.name,
                 disk_access_name="str",
-                properties={"tags": {"str": "str"}},
+                disk_access={"tags": {"str": "str"}},
             )
         ).result()  # call '.result()' to poll until service return final result
 

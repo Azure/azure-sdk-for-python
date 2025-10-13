@@ -36,7 +36,7 @@ class TestComputeSshPublicKeyResourcesOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.ssh_public_key_resources.create(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -63,7 +63,7 @@ class TestComputeSshPublicKeyResourcesOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.ssh_public_key_resources.update(
             resource_group_name=resource_group.name,
             ssh_public_key_name="str",
-            properties={"properties": {"publicKey": "str"}, "tags": {"str": "str"}},
+            parameters={"properties": {"publicKey": "str"}, "tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself

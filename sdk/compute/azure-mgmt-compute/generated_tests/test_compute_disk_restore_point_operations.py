@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeDiskRestorePointsOperations(AzureMgmtRecordedTestCase):
+class TestComputeDiskRestorePointOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_disk_restore_points_get(self, resource_group):
-        response = self.client.disk_restore_points.get(
+    def test_disk_restore_point_get(self, resource_group):
+        response = self.client.disk_restore_point.get(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             vm_restore_point_name="str",
@@ -33,8 +33,8 @@ class TestComputeDiskRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_disk_restore_points_list_by_restore_point(self, resource_group):
-        response = self.client.disk_restore_points.list_by_restore_point(
+    def test_disk_restore_point_list_by_restore_point(self, resource_group):
+        response = self.client.disk_restore_point.list_by_restore_point(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             vm_restore_point_name="str",
@@ -45,13 +45,18 @@ class TestComputeDiskRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_disk_restore_points_begin_grant_access(self, resource_group):
-        response = self.client.disk_restore_points.begin_grant_access(
+    def test_disk_restore_point_begin_grant_access(self, resource_group):
+        response = self.client.disk_restore_point.begin_grant_access(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             vm_restore_point_name="str",
             disk_restore_point_name="str",
-            body={"access": "str", "durationInSeconds": 0, "fileFormat": "str", "getSecureVMGuestStateSAS": bool},
+            grant_access_data={
+                "access": "str",
+                "durationInSeconds": 0,
+                "fileFormat": "str",
+                "getSecureVMGuestStateSAS": bool,
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -59,8 +64,8 @@ class TestComputeDiskRestorePointsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_disk_restore_points_begin_revoke_access(self, resource_group):
-        response = self.client.disk_restore_points.begin_revoke_access(
+    def test_disk_restore_point_begin_revoke_access(self, resource_group):
+        response = self.client.disk_restore_point.begin_revoke_access(
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             vm_restore_point_name="str",

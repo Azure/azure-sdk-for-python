@@ -39,7 +39,7 @@ class TestComputeVirtualMachineExtensionsOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 vm_extension_name="str",
-                resource={
+                extension_parameters={
                     "location": "str",
                     "id": "str",
                     "name": "str",
@@ -105,7 +105,7 @@ class TestComputeVirtualMachineExtensionsOperationsAsync(AzureMgmtRecordedTestCa
                 resource_group_name=resource_group.name,
                 vm_name="str",
                 vm_extension_name="str",
-                properties={
+                extension_parameters={
                     "properties": {
                         "autoUpgradeMinorVersion": bool,
                         "enableAutomaticUpgrade": bool,

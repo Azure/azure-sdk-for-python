@@ -36,7 +36,7 @@ class TestComputeCapacityReservationGroupsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.capacity_reservation_groups.create_or_update(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -87,7 +87,7 @@ class TestComputeCapacityReservationGroupsOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.capacity_reservation_groups.update(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            properties={
+            parameters={
                 "properties": {
                     "capacityReservations": [{"id": "str"}],
                     "instanceView": {

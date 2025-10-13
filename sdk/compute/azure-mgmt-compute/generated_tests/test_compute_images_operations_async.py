@@ -37,7 +37,7 @@ class TestComputeImagesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.images.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 image_name="str",
-                resource={
+                parameters={
                     "location": "str",
                     "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
@@ -97,7 +97,7 @@ class TestComputeImagesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.images.begin_update(
                 resource_group_name=resource_group.name,
                 image_name="str",
-                properties={
+                parameters={
                     "properties": {
                         "hyperVGeneration": "str",
                         "provisioningState": "str",

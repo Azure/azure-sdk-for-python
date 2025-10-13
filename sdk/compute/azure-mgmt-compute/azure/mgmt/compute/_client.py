@@ -30,7 +30,7 @@ from .operations import (
     DedicatedHostsOperations,
     DiskAccessesOperations,
     DiskEncryptionSetsOperations,
-    DiskRestorePointsOperations,
+    DiskRestorePointOperations,
     DisksOperations,
     GalleriesOperations,
     GalleryApplicationVersionsOperations,
@@ -174,8 +174,6 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.compute.operations.PrivateEndpointConnectionsOperations
     :ivar disk_encryption_sets: DiskEncryptionSetsOperations operations
     :vartype disk_encryption_sets: azure.mgmt.compute.operations.DiskEncryptionSetsOperations
-    :ivar disk_restore_points: DiskRestorePointsOperations operations
-    :vartype disk_restore_points: azure.mgmt.compute.operations.DiskRestorePointsOperations
     :ivar snapshots: SnapshotsOperations operations
     :vartype snapshots: azure.mgmt.compute.operations.SnapshotsOperations
     :ivar galleries: GalleriesOperations operations
@@ -214,6 +212,8 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.compute.operations.CommunityGalleryImageVersionsOperations
     :ivar resource_skus: ResourceSkusOperations operations
     :vartype resource_skus: azure.mgmt.compute.operations.ResourceSkusOperations
+    :ivar disk_restore_point: DiskRestorePointOperations operations
+    :vartype disk_restore_point: azure.mgmt.compute.operations.DiskRestorePointOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -364,9 +364,6 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
         self.disk_encryption_sets = DiskEncryptionSetsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.disk_restore_points = DiskRestorePointsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.galleries = GalleriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.gallery_images = GalleryImagesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -404,6 +401,9 @@ class ComputeClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.disk_restore_point = DiskRestorePointOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

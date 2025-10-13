@@ -6384,149 +6384,6 @@ def build_disk_encryption_sets_list_associated_resources_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_disk_restore_points_get_request(
-    resource_group_name: str,
-    restore_point_collection_name: str,
-    vm_restore_point_name: str,
-    disk_restore_point_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "restorePointCollectionName": _SERIALIZER.url(
-            "restore_point_collection_name", restore_point_collection_name, "str"
-        ),
-        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
-        "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_disk_restore_points_list_by_restore_point_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    restore_point_collection_name: str,
-    vm_restore_point_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "restorePointCollectionName": _SERIALIZER.url(
-            "restore_point_collection_name", restore_point_collection_name, "str"
-        ),
-        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_disk_restore_points_grant_access_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    restore_point_collection_name: str,
-    vm_restore_point_name: str,
-    disk_restore_point_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}/beginGetAccess"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "restorePointCollectionName": _SERIALIZER.url(
-            "restore_point_collection_name", restore_point_collection_name, "str"
-        ),
-        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
-        "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_disk_restore_points_revoke_access_request(  # pylint: disable=name-too-long
-    resource_group_name: str,
-    restore_point_collection_name: str,
-    vm_restore_point_name: str,
-    disk_restore_point_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}/endGetAccess"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "restorePointCollectionName": _SERIALIZER.url(
-            "restore_point_collection_name", restore_point_collection_name, "str"
-        ),
-        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
-        "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
-
-
 def build_snapshots_get_request(
     resource_group_name: str, snapshot_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -8365,6 +8222,149 @@ def build_resource_skus_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_disk_restore_point_get_request(
+    resource_group_name: str,
+    restore_point_collection_name: str,
+    vm_restore_point_name: str,
+    disk_restore_point_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "restorePointCollectionName": _SERIALIZER.url(
+            "restore_point_collection_name", restore_point_collection_name, "str"
+        ),
+        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
+        "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_disk_restore_point_list_by_restore_point_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    restore_point_collection_name: str,
+    vm_restore_point_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "restorePointCollectionName": _SERIALIZER.url(
+            "restore_point_collection_name", restore_point_collection_name, "str"
+        ),
+        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_disk_restore_point_grant_access_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    restore_point_collection_name: str,
+    vm_restore_point_name: str,
+    disk_restore_point_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}/beginGetAccess"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "restorePointCollectionName": _SERIALIZER.url(
+            "restore_point_collection_name", restore_point_collection_name, "str"
+        ),
+        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
+        "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_disk_restore_point_revoke_access_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    restore_point_collection_name: str,
+    vm_restore_point_name: str,
+    disk_restore_point_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/restorePointCollections/{restorePointCollectionName}/restorePoints/{vmRestorePointName}/diskRestorePoints/{diskRestorePointName}/endGetAccess"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "restorePointCollectionName": _SERIALIZER.url(
+            "restore_point_collection_name", restore_point_collection_name, "str"
+        ),
+        "vmRestorePointName": _SERIALIZER.url("vm_restore_point_name", vm_restore_point_name, "str"),
+        "diskRestorePointName": _SERIALIZER.url("disk_restore_point_name", disk_restore_point_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 class Operations:
     """
     .. warning::
@@ -8565,7 +8565,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        resource: Union[_models.VirtualMachineScaleSet, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineScaleSet, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -8593,10 +8593,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -8648,7 +8648,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        resource: _models.VirtualMachineScaleSet,
+        parameters: _models.VirtualMachineScaleSet,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8662,8 +8662,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param resource: The scale set object. Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSet
+        :param parameters: The scale set object. Required.
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8682,7 +8682,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8696,8 +8696,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param resource: The scale set object. Required.
-        :type resource: JSON
+        :param parameters: The scale set object. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8716,7 +8716,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8730,8 +8730,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param resource: The scale set object. Required.
-        :type resource: IO[bytes]
+        :param parameters: The scale set object. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8750,7 +8750,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        resource: Union[_models.VirtualMachineScaleSet, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineScaleSet, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -8763,9 +8763,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param resource: The scale set object. Is one of the following types: VirtualMachineScaleSet,
+        :param parameters: The scale set object. Is one of the following types: VirtualMachineScaleSet,
          JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSet or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSet or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -8787,7 +8787,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
-                resource=resource,
+                parameters=parameters,
                 etag=etag,
                 match_condition=match_condition,
                 content_type=content_type,
@@ -8828,7 +8828,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        properties: Union[_models.VirtualMachineScaleSetUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineScaleSetUpdate, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -8856,10 +8856,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_update_request(
             resource_group_name=resource_group_name,
@@ -8910,7 +8910,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        properties: _models.VirtualMachineScaleSetUpdate,
+        parameters: _models.VirtualMachineScaleSetUpdate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8924,8 +8924,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param properties: The scale set object. Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetUpdate
+        :param parameters: The scale set object. Required.
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8944,7 +8944,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8958,8 +8958,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param properties: The scale set object. Required.
-        :type properties: JSON
+        :param parameters: The scale set object. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8978,7 +8978,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -8992,8 +8992,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param properties: The scale set object. Required.
-        :type properties: IO[bytes]
+        :param parameters: The scale set object. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9012,7 +9012,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        properties: Union[_models.VirtualMachineScaleSetUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineScaleSetUpdate, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -9025,9 +9025,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param properties: The scale set object. Is one of the following types:
+        :param parameters: The scale set object. Is one of the following types:
          VirtualMachineScaleSetUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetUpdate or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -9049,7 +9049,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
-                properties=properties,
+                parameters=parameters,
                 etag=etag,
                 match_condition=match_condition,
                 content_type=content_type,
@@ -9620,7 +9620,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: _models.VMScaleSetConvertToSinglePlacementGroupInput,
+        parameters: _models.VMScaleSetConvertToSinglePlacementGroupInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9632,8 +9632,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ConvertToSinglePlacementGroup API. Required.
-        :type body: ~azure.mgmt.compute.models.VMScaleSetConvertToSinglePlacementGroupInput
+        :param parameters: The input object for ConvertToSinglePlacementGroup API. Required.
+        :type parameters: ~azure.mgmt.compute.models.VMScaleSetConvertToSinglePlacementGroupInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9647,7 +9647,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9659,8 +9659,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ConvertToSinglePlacementGroup API. Required.
-        :type body: JSON
+        :param parameters: The input object for ConvertToSinglePlacementGroup API. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9674,7 +9674,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9686,8 +9686,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ConvertToSinglePlacementGroup API. Required.
-        :type body: IO[bytes]
+        :param parameters: The input object for ConvertToSinglePlacementGroup API. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9701,7 +9701,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VMScaleSetConvertToSinglePlacementGroupInput, JSON, IO[bytes]],
+        parameters: Union[_models.VMScaleSetConvertToSinglePlacementGroupInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Converts SinglePlacementGroup property to false for a existing virtual machine scale set.
@@ -9711,10 +9711,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ConvertToSinglePlacementGroup API. Is one of the following
-         types: VMScaleSetConvertToSinglePlacementGroupInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VMScaleSetConvertToSinglePlacementGroupInput or JSON or
-         IO[bytes]
+        :param parameters: The input object for ConvertToSinglePlacementGroup API. Is one of the
+         following types: VMScaleSetConvertToSinglePlacementGroupInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.VMScaleSetConvertToSinglePlacementGroupInput or
+         JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9735,10 +9735,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_convert_to_single_placement_group_request(
             resource_group_name=resource_group_name,
@@ -10051,7 +10051,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
+        vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
         *,
         force_deletion: Optional[bool] = None,
         **kwargs: Any
@@ -10072,10 +10072,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(vm_instance_i_ds, (IOBase, bytes)):
+            _content = vm_instance_i_ds
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(vm_instance_i_ds, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_delete_instances_request(
             resource_group_name=resource_group_name,
@@ -10126,7 +10126,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: _models.VirtualMachineScaleSetVMInstanceRequiredIDs,
+        vm_instance_i_ds: _models.VirtualMachineScaleSetVMInstanceRequiredIDs,
         *,
         force_deletion: Optional[bool] = None,
         content_type: str = "application/json",
@@ -10139,8 +10139,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set.
+         Required.
+        :type vm_instance_i_ds: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs
         :keyword force_deletion: Optional parameter to force delete virtual machines from the VM scale
          set. (Feature in Preview). Default value is None.
         :paramtype force_deletion: bool
@@ -10158,7 +10159,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: JSON,
+        vm_instance_i_ds: JSON,
         *,
         force_deletion: Optional[bool] = None,
         content_type: str = "application/json",
@@ -10171,8 +10172,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Required.
-        :type body: JSON
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set.
+         Required.
+        :type vm_instance_i_ds: JSON
         :keyword force_deletion: Optional parameter to force delete virtual machines from the VM scale
          set. (Feature in Preview). Default value is None.
         :paramtype force_deletion: bool
@@ -10190,7 +10192,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: IO[bytes],
+        vm_instance_i_ds: IO[bytes],
         *,
         force_deletion: Optional[bool] = None,
         content_type: str = "application/json",
@@ -10203,8 +10205,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Required.
-        :type body: IO[bytes]
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set.
+         Required.
+        :type vm_instance_i_ds: IO[bytes]
         :keyword force_deletion: Optional parameter to force delete virtual machines from the VM scale
          set. (Feature in Preview). Default value is None.
         :paramtype force_deletion: bool
@@ -10222,7 +10225,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
+        vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
         *,
         force_deletion: Optional[bool] = None,
         **kwargs: Any
@@ -10234,10 +10237,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Is one of the
-         following types: VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs or JSON or
-         IO[bytes]
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is one
+         of the following types: VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes] Required.
+        :type vm_instance_i_ds: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs
+         or JSON or IO[bytes]
         :keyword force_deletion: Optional parameter to force delete virtual machines from the VM scale
          set. (Feature in Preview). Default value is None.
         :paramtype force_deletion: bool
@@ -10258,7 +10261,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             raw_result = self._delete_instances_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
-                body=body,
+                vm_instance_i_ds=vm_instance_i_ds,
                 force_deletion=force_deletion,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -10464,7 +10467,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
+        vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10483,10 +10486,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(vm_instance_i_ds, (IOBase, bytes)):
+            _content = vm_instance_i_ds
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(vm_instance_i_ds, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_update_instances_request(
             resource_group_name=resource_group_name,
@@ -10536,7 +10539,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: _models.VirtualMachineScaleSetVMInstanceRequiredIDs,
+        vm_instance_i_ds: _models.VirtualMachineScaleSetVMInstanceRequiredIDs,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10548,8 +10551,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set.
+         Required.
+        :type vm_instance_i_ds: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10564,7 +10568,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: JSON,
+        vm_instance_i_ds: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10576,8 +10580,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Required.
-        :type body: JSON
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set.
+         Required.
+        :type vm_instance_i_ds: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10592,7 +10597,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: IO[bytes],
+        vm_instance_i_ds: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10604,8 +10609,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Required.
-        :type body: IO[bytes]
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set.
+         Required.
+        :type vm_instance_i_ds: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10620,7 +10626,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
+        vm_instance_i_ds: Union[_models.VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OkResponse]:
         """Upgrades one or more virtual machines to the latest SKU set in the VM scale set model.
@@ -10630,10 +10636,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: A list of virtual machine instance IDs from the VM scale set. Is one of the
-         following types: VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs or JSON or
-         IO[bytes]
+        :param vm_instance_i_ds: A list of virtual machine instance IDs from the VM scale set. Is one
+         of the following types: VirtualMachineScaleSetVMInstanceRequiredIDs, JSON, IO[bytes] Required.
+        :type vm_instance_i_ds: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMInstanceRequiredIDs
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns OkResponse. The OkResponse is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.OkResponse]
@@ -10651,7 +10657,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             raw_result = self._update_instances_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
-                body=body,
+                vm_instance_i_ds=vm_instance_i_ds,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -12451,7 +12457,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.OrchestrationServiceStateInput, JSON, IO[bytes]],
+        parameters: Union[_models.OrchestrationServiceStateInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12470,10 +12476,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_set_orchestration_service_state_request(
             resource_group_name=resource_group_name,
@@ -12523,7 +12529,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: _models.OrchestrationServiceStateInput,
+        parameters: _models.OrchestrationServiceStateInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12535,8 +12541,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for SetOrchestrationServiceState API. Required.
-        :type body: ~azure.mgmt.compute.models.OrchestrationServiceStateInput
+        :param parameters: The input object for SetOrchestrationServiceState API. Required.
+        :type parameters: ~azure.mgmt.compute.models.OrchestrationServiceStateInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12551,7 +12557,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12563,8 +12569,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for SetOrchestrationServiceState API. Required.
-        :type body: JSON
+        :param parameters: The input object for SetOrchestrationServiceState API. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12579,7 +12585,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12591,8 +12597,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for SetOrchestrationServiceState API. Required.
-        :type body: IO[bytes]
+        :param parameters: The input object for SetOrchestrationServiceState API. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12607,7 +12613,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.OrchestrationServiceStateInput, JSON, IO[bytes]],
+        parameters: Union[_models.OrchestrationServiceStateInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OkResponse]:
         """Changes ServiceState property for a given service.
@@ -12617,9 +12623,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for SetOrchestrationServiceState API. Is one of the following
-         types: OrchestrationServiceStateInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.OrchestrationServiceStateInput or JSON or IO[bytes]
+        :param parameters: The input object for SetOrchestrationServiceState API. Is one of the
+         following types: OrchestrationServiceStateInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.OrchestrationServiceStateInput or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns OkResponse. The OkResponse is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.OkResponse]
@@ -12637,7 +12644,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             raw_result = self._set_orchestration_service_state_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -13410,7 +13417,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VMScaleSetScaleOutInput, JSON, IO[bytes]],
+        parameters: Union[_models.VMScaleSetScaleOutInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13429,10 +13436,10 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_sets_scale_out_request(
             resource_group_name=resource_group_name,
@@ -13482,7 +13489,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: _models.VMScaleSetScaleOutInput,
+        parameters: _models.VMScaleSetScaleOutInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13494,8 +13501,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ScaleOut API. Required.
-        :type body: ~azure.mgmt.compute.models.VMScaleSetScaleOutInput
+        :param parameters: The input object for ScaleOut API. Required.
+        :type parameters: ~azure.mgmt.compute.models.VMScaleSetScaleOutInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13510,7 +13517,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13522,8 +13529,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ScaleOut API. Required.
-        :type body: JSON
+        :param parameters: The input object for ScaleOut API. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13538,7 +13545,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13550,8 +13557,8 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ScaleOut API. Required.
-        :type body: IO[bytes]
+        :param parameters: The input object for ScaleOut API. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13573,7 +13580,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         self,
         resource_group_name: str,
         vm_scale_set_name: str,
-        body: Union[_models.VMScaleSetScaleOutInput, JSON, IO[bytes]],
+        parameters: Union[_models.VMScaleSetScaleOutInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OkResponse]:
         """Scales out one or more virtual machines in a VM scale set.
@@ -13583,9 +13590,9 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
         :type resource_group_name: str
         :param vm_scale_set_name: The name of the VM scale set. Required.
         :type vm_scale_set_name: str
-        :param body: The input object for ScaleOut API. Is one of the following types:
+        :param parameters: The input object for ScaleOut API. Is one of the following types:
          VMScaleSetScaleOutInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VMScaleSetScaleOutInput or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.VMScaleSetScaleOutInput or JSON or IO[bytes]
         :return: An instance of LROPoller that returns OkResponse. The OkResponse is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.OkResponse]
@@ -13603,7 +13610,7 @@ class VirtualMachineScaleSetsOperations:  # pylint: disable=too-many-public-meth
             raw_result = self._scale_out_initial(
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -13838,7 +13845,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        resource: Union[_models.VirtualMachineScaleSetExtension, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13857,10 +13864,10 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(extension_parameters, (IOBase, bytes)):
+            _content = extension_parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(extension_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_extensions_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -13912,7 +13919,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        resource: _models.VirtualMachineScaleSetExtension,
+        extension_parameters: _models.VirtualMachineScaleSetExtension,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13926,8 +13933,9 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param resource: Parameters supplied to the Create VM scale set Extension operation. Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtension
+        :param extension_parameters: Parameters supplied to the Create VM scale set Extension
+         operation. Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtension
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13942,7 +13950,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        resource: JSON,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13956,8 +13964,9 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param resource: Parameters supplied to the Create VM scale set Extension operation. Required.
-        :type resource: JSON
+        :param extension_parameters: Parameters supplied to the Create VM scale set Extension
+         operation. Required.
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13972,7 +13981,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        resource: IO[bytes],
+        extension_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13986,8 +13995,9 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param resource: Parameters supplied to the Create VM scale set Extension operation. Required.
-        :type resource: IO[bytes]
+        :param extension_parameters: Parameters supplied to the Create VM scale set Extension
+         operation. Required.
+        :type extension_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14002,7 +14012,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        resource: Union[_models.VirtualMachineScaleSetExtension, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create or update an extension.
@@ -14014,9 +14024,11 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param resource: Parameters supplied to the Create VM scale set Extension operation. Is one of
-         the following types: VirtualMachineScaleSetExtension, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtension or JSON or IO[bytes]
+        :param extension_parameters: Parameters supplied to the Create VM scale set Extension
+         operation. Is one of the following types: VirtualMachineScaleSetExtension, JSON, IO[bytes]
+         Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtension or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14034,7 +14046,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vmss_extension_name=vmss_extension_name,
-                resource=resource,
+                extension_parameters=extension_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -14074,7 +14086,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        properties: Union[_models.VirtualMachineScaleSetExtensionUpdate, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14093,10 +14105,10 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(extension_parameters, (IOBase, bytes)):
+            _content = extension_parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(extension_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_extensions_update_request(
             resource_group_name=resource_group_name,
@@ -14148,7 +14160,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        properties: _models.VirtualMachineScaleSetExtensionUpdate,
+        extension_parameters: _models.VirtualMachineScaleSetExtensionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14162,9 +14174,9 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param properties: Parameters supplied to the Update VM scale set Extension operation.
-         Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionUpdate
+        :param extension_parameters: Parameters supplied to the Update VM scale set Extension
+         operation. Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14179,7 +14191,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        properties: JSON,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14193,9 +14205,9 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param properties: Parameters supplied to the Update VM scale set Extension operation.
-         Required.
-        :type properties: JSON
+        :param extension_parameters: Parameters supplied to the Update VM scale set Extension
+         operation. Required.
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14210,7 +14222,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        properties: IO[bytes],
+        extension_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14224,9 +14236,9 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param properties: Parameters supplied to the Update VM scale set Extension operation.
-         Required.
-        :type properties: IO[bytes]
+        :param extension_parameters: Parameters supplied to the Update VM scale set Extension
+         operation. Required.
+        :type extension_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14241,7 +14253,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         vm_scale_set_name: str,
         vmss_extension_name: str,
-        properties: Union[_models.VirtualMachineScaleSetExtensionUpdate, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to update an extension.
@@ -14253,10 +14265,11 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
         :type vm_scale_set_name: str
         :param vmss_extension_name: The name of the VM scale set extension. Required.
         :type vmss_extension_name: str
-        :param properties: Parameters supplied to the Update VM scale set Extension operation. Is one
-         of the following types: VirtualMachineScaleSetExtensionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionUpdate or JSON or
-         IO[bytes]
+        :param extension_parameters: Parameters supplied to the Update VM scale set Extension
+         operation. Is one of the following types: VirtualMachineScaleSetExtensionUpdate, JSON,
+         IO[bytes] Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionUpdate or
+         JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14274,7 +14287,7 @@ class VirtualMachineScaleSetExtensionsOperations:  # pylint: disable=name-too-lo
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 vmss_extension_name=vmss_extension_name,
-                properties=properties,
+                extension_parameters=extension_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -14630,7 +14643,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        resource: Union[_models.VirtualMachineScaleSetVM, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineScaleSetVM, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -14658,10 +14671,10 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vms_update_request(
             resource_group_name=resource_group_name,
@@ -14715,7 +14728,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        resource: _models.VirtualMachineScaleSetVM,
+        parameters: _models.VirtualMachineScaleSetVM,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -14731,9 +14744,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param resource: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
+        :param parameters: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
          Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSetVM
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetVM
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14753,7 +14766,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -14769,9 +14782,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param resource: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
+        :param parameters: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
          Required.
-        :type resource: JSON
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14791,7 +14804,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -14807,9 +14820,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param resource: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
+        :param parameters: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
          Required.
-        :type resource: IO[bytes]
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14829,7 +14842,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        resource: Union[_models.VirtualMachineScaleSetVM, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineScaleSetVM, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -14844,9 +14857,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param resource: Parameters supplied to the Update Virtual Machine Scale Sets VM operation. Is
-         one of the following types: VirtualMachineScaleSetVM, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSetVM or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Update Virtual Machine Scale Sets VM operation.
+         Is one of the following types: VirtualMachineScaleSetVM, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetVM or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -14869,7 +14882,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
-                resource=resource,
+                parameters=parameters,
                 etag=etag,
                 match_condition=match_condition,
                 content_type=content_type,
@@ -15938,7 +15951,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15957,10 +15970,10 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vms_attach_detach_data_disks_request(
             resource_group_name=resource_group_name,
@@ -16012,7 +16025,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: _models.AttachDetachDataDisksRequest,
+        parameters: _models.AttachDetachDataDisksRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16026,9 +16039,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the attach and detach data disks operation on a Virtual
-         Machine Scale Sets VM. Required.
-        :type body: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest
+        :param parameters: Parameters supplied to the attach and detach data disks operation on a
+         Virtual Machine Scale Sets VM. Required.
+        :type parameters: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16044,7 +16057,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16058,9 +16071,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the attach and detach data disks operation on a Virtual
-         Machine Scale Sets VM. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the attach and detach data disks operation on a
+         Virtual Machine Scale Sets VM. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16076,7 +16089,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16090,9 +16103,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the attach and detach data disks operation on a Virtual
-         Machine Scale Sets VM. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the attach and detach data disks operation on a
+         Virtual Machine Scale Sets VM. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16108,7 +16121,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageProfile]:
         """Attach and detach data disks to/from a virtual machine in a VM scale set.
@@ -16120,10 +16133,10 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the attach and detach data disks operation on a Virtual
-         Machine Scale Sets VM. Is one of the following types: AttachDetachDataDisksRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the attach and detach data disks operation on a
+         Virtual Machine Scale Sets VM. Is one of the following types: AttachDetachDataDisksRequest,
+         JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest or JSON or IO[bytes]
         :return: An instance of LROPoller that returns StorageProfile. The StorageProfile is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.StorageProfile]
@@ -16142,7 +16155,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -16946,7 +16959,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: Union[_models.RunCommandInput, JSON, IO[bytes]],
+        parameters: Union[_models.RunCommandInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16965,10 +16978,10 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vms_run_command_request(
             resource_group_name=resource_group_name,
@@ -17020,7 +17033,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: _models.RunCommandInput,
+        parameters: _models.RunCommandInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17034,8 +17047,8 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the Run command operation. Required.
-        :type body: ~azure.mgmt.compute.models.RunCommandInput
+        :param parameters: Parameters supplied to the Run command operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.RunCommandInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17051,7 +17064,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17065,8 +17078,8 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the Run command operation. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the Run command operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17082,7 +17095,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17096,8 +17109,8 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the Run command operation. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the Run command operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17113,7 +17126,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
-        body: Union[_models.RunCommandInput, JSON, IO[bytes]],
+        parameters: Union[_models.RunCommandInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RunCommandResult]:
         """Run command on a virtual machine in a VM scale set.
@@ -17125,9 +17138,9 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param body: Parameters supplied to the Run command operation. Is one of the following types:
-         RunCommandInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.RunCommandInput or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Run command operation. Is one of the following
+         types: RunCommandInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.RunCommandInput or JSON or IO[bytes]
         :return: An instance of LROPoller that returns RunCommandResult. The RunCommandResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.RunCommandResult]
@@ -17146,7 +17159,7 @@ class VirtualMachineScaleSetVMSOperations:  # pylint: disable=too-many-public-me
                 resource_group_name=resource_group_name,
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -17299,7 +17312,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        resource: Union[_models.VirtualMachineScaleSetVMExtension, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetVMExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17318,10 +17331,10 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(extension_parameters, (IOBase, bytes)):
+            _content = extension_parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(extension_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vm_extensions_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -17375,7 +17388,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        resource: _models.VirtualMachineScaleSetVMExtension,
+        extension_parameters: _models.VirtualMachineScaleSetVMExtension,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17391,9 +17404,9 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation.
-         Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtension
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtension
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17409,7 +17422,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        resource: JSON,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17425,9 +17438,9 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation.
-         Required.
-        :type resource: JSON
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17443,7 +17456,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        resource: IO[bytes],
+        extension_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17459,9 +17472,9 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation.
-         Required.
-        :type resource: IO[bytes]
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17477,7 +17490,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        resource: Union[_models.VirtualMachineScaleSetVMExtension, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetVMExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create or update the VMSS VM extension.
@@ -17491,10 +17504,11 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation. Is one
-         of the following types: VirtualMachineScaleSetVMExtension, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtension or JSON or
-         IO[bytes]
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Is one of the following types: VirtualMachineScaleSetVMExtension, JSON, IO[bytes]
+         Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtension or
+         JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17513,7 +17527,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 vm_extension_name=vm_extension_name,
-                resource=resource,
+                extension_parameters=extension_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -17554,7 +17568,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        properties: Union[_models.VirtualMachineScaleSetVMExtensionUpdate, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetVMExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17573,10 +17587,10 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(extension_parameters, (IOBase, bytes)):
+            _content = extension_parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(extension_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vm_extensions_update_request(
             resource_group_name=resource_group_name,
@@ -17629,7 +17643,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        properties: _models.VirtualMachineScaleSetVMExtensionUpdate,
+        extension_parameters: _models.VirtualMachineScaleSetVMExtensionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17645,9 +17659,9 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation.
-         Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionUpdate
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17663,7 +17677,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        properties: JSON,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17679,9 +17693,9 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation.
-         Required.
-        :type properties: JSON
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17697,7 +17711,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        properties: IO[bytes],
+        extension_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17713,9 +17727,9 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation.
-         Required.
-        :type properties: IO[bytes]
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17731,7 +17745,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         vm_scale_set_name: str,
         instance_id: str,
         vm_extension_name: str,
-        properties: Union[_models.VirtualMachineScaleSetVMExtensionUpdate, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineScaleSetVMExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to update the VMSS VM extension.
@@ -17745,10 +17759,11 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
         :type instance_id: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation. Is
-         one of the following types: VirtualMachineScaleSetVMExtensionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionUpdate or JSON or
-         IO[bytes]
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Is one of the following types: VirtualMachineScaleSetVMExtensionUpdate, JSON,
+         IO[bytes] Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineScaleSetVMExtensionUpdate
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17767,7 +17782,7 @@ class VirtualMachineScaleSetVMExtensionsOperations:  # pylint: disable=name-too-
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 vm_extension_name=vm_extension_name,
-                properties=properties,
+                extension_parameters=extension_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -18134,7 +18149,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: Union[_models.VirtualMachine, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachine, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -18162,10 +18177,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machines_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -18217,7 +18232,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: _models.VirtualMachine,
+        parameters: _models.VirtualMachine,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18232,8 +18247,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine operation. Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachine
+        :param parameters: Parameters supplied to the Create Virtual Machine operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachine
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18252,7 +18267,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18267,8 +18282,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine operation. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create Virtual Machine operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18287,7 +18302,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18302,8 +18317,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine operation. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create Virtual Machine operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18322,7 +18337,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: Union[_models.VirtualMachine, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachine, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -18336,9 +18351,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine operation. Is one of the
+        :param parameters: Parameters supplied to the Create Virtual Machine operation. Is one of the
          following types: VirtualMachine, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachine or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachine or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -18360,7 +18375,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
-                resource=resource,
+                parameters=parameters,
                 etag=etag,
                 match_condition=match_condition,
                 content_type=content_type,
@@ -18401,7 +18416,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        properties: Union[_models.VirtualMachineUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineUpdate, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -18429,10 +18444,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machines_update_request(
             resource_group_name=resource_group_name,
@@ -18483,7 +18498,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        properties: _models.VirtualMachineUpdate,
+        parameters: _models.VirtualMachineUpdate,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18497,8 +18512,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine operation. Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineUpdate
+        :param parameters: Parameters supplied to the Update Virtual Machine operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18517,7 +18532,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18531,8 +18546,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine operation. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to the Update Virtual Machine operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18551,7 +18566,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18565,8 +18580,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine operation. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to the Update Virtual Machine operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18585,7 +18600,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        properties: Union[_models.VirtualMachineUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineUpdate, JSON, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -18598,9 +18613,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine operation. Is one of the
+        :param parameters: Parameters supplied to the Update Virtual Machine operation. Is one of the
          following types: VirtualMachineUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineUpdate or JSON or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -18622,7 +18637,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
-                properties=properties,
+                parameters=parameters,
                 etag=etag,
                 match_condition=match_condition,
                 content_type=content_type,
@@ -19123,7 +19138,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19142,10 +19157,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machines_attach_detach_data_disks_request(
             resource_group_name=resource_group_name,
@@ -19195,7 +19210,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: _models.AttachDetachDataDisksRequest,
+        parameters: _models.AttachDetachDataDisksRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19207,9 +19222,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the attach and detach data disks operation on the virtual
-         machine. Required.
-        :type body: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest
+        :param parameters: Parameters supplied to the attach and detach data disks operation on the
+         virtual machine. Required.
+        :type parameters: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19224,7 +19239,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19236,9 +19251,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the attach and detach data disks operation on the virtual
-         machine. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the attach and detach data disks operation on the
+         virtual machine. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19253,7 +19268,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19265,9 +19280,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the attach and detach data disks operation on the virtual
-         machine. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the attach and detach data disks operation on the
+         virtual machine. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19282,7 +19297,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AttachDetachDataDisksRequest, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.StorageProfile]:
         """Attach and detach data disks to/from the virtual machine.
@@ -19292,9 +19307,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the attach and detach data disks operation on the virtual
-         machine. Is one of the following types: AttachDetachDataDisksRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the attach and detach data disks operation on the
+         virtual machine. Is one of the following types: AttachDetachDataDisksRequest, JSON, IO[bytes]
+         Required.
+        :type parameters: ~azure.mgmt.compute.models.AttachDetachDataDisksRequest or JSON or IO[bytes]
         :return: An instance of LROPoller that returns StorageProfile. The StorageProfile is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.StorageProfile]
@@ -19312,7 +19328,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._attach_detach_data_disks_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -19360,7 +19376,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.VirtualMachineCaptureParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineCaptureParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19379,10 +19395,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machines_capture_request(
             resource_group_name=resource_group_name,
@@ -19432,7 +19448,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: _models.VirtualMachineCaptureParameters,
+        parameters: _models.VirtualMachineCaptureParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19445,8 +19461,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Capture Virtual Machine operation. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineCaptureParameters
+        :param parameters: Parameters supplied to the Capture Virtual Machine operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineCaptureParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19461,7 +19477,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19474,8 +19490,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Capture Virtual Machine operation. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the Capture Virtual Machine operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19490,7 +19506,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19503,8 +19519,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Capture Virtual Machine operation. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the Capture Virtual Machine operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19519,7 +19535,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.VirtualMachineCaptureParameters, JSON, IO[bytes]],
+        parameters: Union[_models.VirtualMachineCaptureParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualMachineCaptureResult]:
         """Captures the VM by copying virtual hard disks of the VM and outputs a template that can be used
@@ -19530,9 +19546,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Capture Virtual Machine operation. Is one of the
+        :param parameters: Parameters supplied to the Capture Virtual Machine operation. Is one of the
          following types: VirtualMachineCaptureParameters, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineCaptureParameters or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.VirtualMachineCaptureParameters or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns VirtualMachineCaptureResult. The
          VirtualMachineCaptureResult is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.VirtualMachineCaptureResult]
@@ -19550,7 +19567,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._capture_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -19917,7 +19934,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.VirtualMachineInstallPatchesParameters, JSON, IO[bytes]],
+        install_patches_input: Union[_models.VirtualMachineInstallPatchesParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19936,10 +19953,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(install_patches_input, (IOBase, bytes)):
+            _content = install_patches_input
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(install_patches_input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machines_install_patches_request(
             resource_group_name=resource_group_name,
@@ -19989,7 +20006,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: _models.VirtualMachineInstallPatchesParameters,
+        install_patches_input: _models.VirtualMachineInstallPatchesParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20001,8 +20018,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Input for InstallPatches as directly received by the API. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineInstallPatchesParameters
+        :param install_patches_input: Input for InstallPatches as directly received by the API.
+         Required.
+        :type install_patches_input: ~azure.mgmt.compute.models.VirtualMachineInstallPatchesParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20018,7 +20036,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: JSON,
+        install_patches_input: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20030,8 +20048,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Input for InstallPatches as directly received by the API. Required.
-        :type body: JSON
+        :param install_patches_input: Input for InstallPatches as directly received by the API.
+         Required.
+        :type install_patches_input: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20047,7 +20066,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: IO[bytes],
+        install_patches_input: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20059,8 +20078,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Input for InstallPatches as directly received by the API. Required.
-        :type body: IO[bytes]
+        :param install_patches_input: Input for InstallPatches as directly received by the API.
+         Required.
+        :type install_patches_input: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20076,7 +20096,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.VirtualMachineInstallPatchesParameters, JSON, IO[bytes]],
+        install_patches_input: Union[_models.VirtualMachineInstallPatchesParameters, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VirtualMachineInstallPatchesResult]:
         """Installs patches on the VM.
@@ -20086,10 +20106,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Input for InstallPatches as directly received by the API. Is one of the following
-         types: VirtualMachineInstallPatchesParameters, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineInstallPatchesParameters or JSON or
-         IO[bytes]
+        :param install_patches_input: Input for InstallPatches as directly received by the API. Is one
+         of the following types: VirtualMachineInstallPatchesParameters, JSON, IO[bytes] Required.
+        :type install_patches_input: ~azure.mgmt.compute.models.VirtualMachineInstallPatchesParameters
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns VirtualMachineInstallPatchesResult. The
          VirtualMachineInstallPatchesResult is compatible with MutableMapping
         :rtype:
@@ -20108,7 +20128,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._install_patches_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
-                body=body,
+                install_patches_input=install_patches_input,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -21462,7 +21482,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.RunCommandInput, JSON, IO[bytes]],
+        parameters: Union[_models.RunCommandInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21481,10 +21501,10 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machines_run_command_request(
             resource_group_name=resource_group_name,
@@ -21534,7 +21554,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: _models.RunCommandInput,
+        parameters: _models.RunCommandInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21546,8 +21566,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Run command operation. Required.
-        :type body: ~azure.mgmt.compute.models.RunCommandInput
+        :param parameters: Parameters supplied to the Run command operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.RunCommandInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21562,7 +21582,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21574,8 +21594,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Run command operation. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the Run command operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21590,7 +21610,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21602,8 +21622,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Run command operation. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the Run command operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21618,7 +21638,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vm_name: str,
-        body: Union[_models.RunCommandInput, JSON, IO[bytes]],
+        parameters: Union[_models.RunCommandInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RunCommandResult]:
         """Run command on the VM.
@@ -21628,9 +21648,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param body: Parameters supplied to the Run command operation. Is one of the following types:
-         RunCommandInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.RunCommandInput or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Run command operation. Is one of the following
+         types: RunCommandInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.RunCommandInput or JSON or IO[bytes]
         :return: An instance of LROPoller that returns RunCommandResult. The RunCommandResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.RunCommandResult]
@@ -21648,7 +21668,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._run_command_initial(
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -22024,7 +22044,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        resource: Union[_models.VirtualMachineExtension, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22043,10 +22063,10 @@ class VirtualMachineExtensionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(extension_parameters, (IOBase, bytes)):
+            _content = extension_parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(extension_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_extensions_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -22098,7 +22118,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        resource: _models.VirtualMachineExtension,
+        extension_parameters: _models.VirtualMachineExtension,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22112,9 +22132,9 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation.
-         Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineExtension
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineExtension
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22129,7 +22149,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        resource: JSON,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22143,9 +22163,9 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation.
-         Required.
-        :type resource: JSON
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22160,7 +22180,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        resource: IO[bytes],
+        extension_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22174,9 +22194,9 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation.
-         Required.
-        :type resource: IO[bytes]
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22191,7 +22211,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        resource: Union[_models.VirtualMachineExtension, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineExtension, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create or update the extension.
@@ -22203,9 +22223,10 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param resource: Parameters supplied to the Create Virtual Machine Extension operation. Is one
-         of the following types: VirtualMachineExtension, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.VirtualMachineExtension or JSON or IO[bytes]
+        :param extension_parameters: Parameters supplied to the Create Virtual Machine Extension
+         operation. Is one of the following types: VirtualMachineExtension, JSON, IO[bytes] Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineExtension or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22223,7 +22244,7 @@ class VirtualMachineExtensionsOperations:
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 vm_extension_name=vm_extension_name,
-                resource=resource,
+                extension_parameters=extension_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -22263,7 +22284,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        properties: Union[_models.VirtualMachineExtensionUpdate, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22282,10 +22303,10 @@ class VirtualMachineExtensionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(extension_parameters, (IOBase, bytes)):
+            _content = extension_parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(extension_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_extensions_update_request(
             resource_group_name=resource_group_name,
@@ -22336,7 +22357,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        properties: _models.VirtualMachineExtensionUpdate,
+        extension_parameters: _models.VirtualMachineExtensionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22350,9 +22371,9 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation.
-         Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineExtensionUpdate
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineExtensionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22367,7 +22388,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        properties: JSON,
+        extension_parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22381,9 +22402,9 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation.
-         Required.
-        :type properties: JSON
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22398,7 +22419,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        properties: IO[bytes],
+        extension_parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22412,9 +22433,9 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation.
-         Required.
-        :type properties: IO[bytes]
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Required.
+        :type extension_parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22429,7 +22450,7 @@ class VirtualMachineExtensionsOperations:
         resource_group_name: str,
         vm_name: str,
         vm_extension_name: str,
-        properties: Union[_models.VirtualMachineExtensionUpdate, JSON, IO[bytes]],
+        extension_parameters: Union[_models.VirtualMachineExtensionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to update the extension.
@@ -22441,9 +22462,11 @@ class VirtualMachineExtensionsOperations:
         :type vm_name: str
         :param vm_extension_name: The name of the virtual machine extension. Required.
         :type vm_extension_name: str
-        :param properties: Parameters supplied to the Update Virtual Machine Extension operation. Is
-         one of the following types: VirtualMachineExtensionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.VirtualMachineExtensionUpdate or JSON or IO[bytes]
+        :param extension_parameters: Parameters supplied to the Update Virtual Machine Extension
+         operation. Is one of the following types: VirtualMachineExtensionUpdate, JSON, IO[bytes]
+         Required.
+        :type extension_parameters: ~azure.mgmt.compute.models.VirtualMachineExtensionUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22461,7 +22484,7 @@ class VirtualMachineExtensionsOperations:
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 vm_extension_name=vm_extension_name,
-                properties=properties,
+                extension_parameters=extension_parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -23047,7 +23070,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        resource: _models.AvailabilitySet,
+        parameters: _models.AvailabilitySet,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23059,8 +23082,8 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param resource: Parameters supplied to the Create Availability Set operation. Required.
-        :type resource: ~azure.mgmt.compute.models.AvailabilitySet
+        :param parameters: Parameters supplied to the Create Availability Set operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.AvailabilitySet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23074,7 +23097,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23086,8 +23109,8 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param resource: Parameters supplied to the Create Availability Set operation. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create Availability Set operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23101,7 +23124,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23113,8 +23136,8 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param resource: Parameters supplied to the Create Availability Set operation. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create Availability Set operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23128,7 +23151,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        resource: Union[_models.AvailabilitySet, JSON, IO[bytes]],
+        parameters: Union[_models.AvailabilitySet, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.AvailabilitySet:
         """Create or update an availability set.
@@ -23138,9 +23161,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param resource: Parameters supplied to the Create Availability Set operation. Is one of the
+        :param parameters: Parameters supplied to the Create Availability Set operation. Is one of the
          following types: AvailabilitySet, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.AvailabilitySet or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.AvailabilitySet or JSON or IO[bytes]
         :return: AvailabilitySet. The AvailabilitySet is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23161,10 +23184,10 @@ class AvailabilitySetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_availability_sets_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -23213,7 +23236,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        properties: _models.AvailabilitySetUpdate,
+        parameters: _models.AvailabilitySetUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23225,8 +23248,8 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param properties: Parameters supplied to the Update Availability Set operation. Required.
-        :type properties: ~azure.mgmt.compute.models.AvailabilitySetUpdate
+        :param parameters: Parameters supplied to the Update Availability Set operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.AvailabilitySetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23240,7 +23263,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23252,8 +23275,8 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param properties: Parameters supplied to the Update Availability Set operation. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to the Update Availability Set operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23267,7 +23290,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23279,8 +23302,8 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param properties: Parameters supplied to the Update Availability Set operation. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to the Update Availability Set operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23294,7 +23317,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        properties: Union[_models.AvailabilitySetUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.AvailabilitySetUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.AvailabilitySet:
         """Update an availability set.
@@ -23304,9 +23327,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param properties: Parameters supplied to the Update Availability Set operation. Is one of the
+        :param parameters: Parameters supplied to the Update Availability Set operation. Is one of the
          following types: AvailabilitySetUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.AvailabilitySetUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.AvailabilitySetUpdate or JSON or IO[bytes]
         :return: AvailabilitySet. The AvailabilitySet is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.AvailabilitySet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23327,10 +23350,10 @@ class AvailabilitySetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_availability_sets_update_request(
             resource_group_name=resource_group_name,
@@ -23707,7 +23730,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: _models.MigrateToVirtualMachineScaleSetInput,
+        parameters: _models.MigrateToVirtualMachineScaleSetInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23721,8 +23744,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Required.
-        :type body: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput
+        :param parameters: Parameters supplied to the migrate operation on the availability set.
+         Required.
+        :type parameters: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23736,7 +23760,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23750,8 +23774,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the migrate operation on the availability set.
+         Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23765,7 +23790,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23779,8 +23804,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the migrate operation on the availability set.
+         Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23794,7 +23820,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: Union[_models.MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes]],
+        parameters: Union[_models.MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Start migration operation on an Availability Set to move its Virtual Machines to a Virtual
@@ -23806,9 +23832,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Is one of
-         the following types: MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput or JSON or
+        :param parameters: Parameters supplied to the migrate operation on the availability set. Is one
+         of the following types: MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput or JSON or
          IO[bytes]
         :return: None
         :rtype: None
@@ -23830,10 +23856,10 @@ class AvailabilitySetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_availability_sets_start_migration_to_virtual_machine_scale_set_request(
             resource_group_name=resource_group_name,
@@ -23926,7 +23952,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: _models.MigrateToVirtualMachineScaleSetInput,
+        parameters: _models.MigrateToVirtualMachineScaleSetInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23939,8 +23965,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Required.
-        :type body: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput
+        :param parameters: Parameters supplied to the migrate operation on the availability set.
+         Required.
+        :type parameters: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23954,7 +23981,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23967,8 +23994,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the migrate operation on the availability set.
+         Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23982,7 +24010,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23995,8 +24023,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the migrate operation on the availability set.
+         Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24010,7 +24039,7 @@ class AvailabilitySetsOperations:
         self,
         resource_group_name: str,
         availability_set_name: str,
-        body: Union[_models.MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes]],
+        parameters: Union[_models.MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Validates that the Virtual Machines in the Availability Set can be migrated to the provided
@@ -24021,9 +24050,9 @@ class AvailabilitySetsOperations:
         :type resource_group_name: str
         :param availability_set_name: The name of the availability set. Required.
         :type availability_set_name: str
-        :param body: Parameters supplied to the migrate operation on the availability set. Is one of
-         the following types: MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput or JSON or
+        :param parameters: Parameters supplied to the migrate operation on the availability set. Is one
+         of the following types: MigrateToVirtualMachineScaleSetInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.MigrateToVirtualMachineScaleSetInput or JSON or
          IO[bytes]
         :return: None
         :rtype: None
@@ -24045,10 +24074,10 @@ class AvailabilitySetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_availability_sets_validate_migration_to_virtual_machine_scale_set_request(
             resource_group_name=resource_group_name,
@@ -24414,7 +24443,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        resource: _models.ProximityPlacementGroup,
+        parameters: _models.ProximityPlacementGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24426,9 +24455,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param resource: Parameters supplied to the Create Proximity Placement Group operation.
+        :param parameters: Parameters supplied to the Create Proximity Placement Group operation.
          Required.
-        :type resource: ~azure.mgmt.compute.models.ProximityPlacementGroup
+        :type parameters: ~azure.mgmt.compute.models.ProximityPlacementGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24442,7 +24471,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24454,9 +24483,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param resource: Parameters supplied to the Create Proximity Placement Group operation.
+        :param parameters: Parameters supplied to the Create Proximity Placement Group operation.
          Required.
-        :type resource: JSON
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24470,7 +24499,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24482,9 +24511,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param resource: Parameters supplied to the Create Proximity Placement Group operation.
+        :param parameters: Parameters supplied to the Create Proximity Placement Group operation.
          Required.
-        :type resource: IO[bytes]
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24498,7 +24527,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        resource: Union[_models.ProximityPlacementGroup, JSON, IO[bytes]],
+        parameters: Union[_models.ProximityPlacementGroup, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProximityPlacementGroup:
         """Create or update a proximity placement group.
@@ -24508,9 +24537,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param resource: Parameters supplied to the Create Proximity Placement Group operation. Is one
-         of the following types: ProximityPlacementGroup, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.ProximityPlacementGroup or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the Create Proximity Placement Group operation. Is
+         one of the following types: ProximityPlacementGroup, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.ProximityPlacementGroup or JSON or IO[bytes]
         :return: ProximityPlacementGroup. The ProximityPlacementGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.ProximityPlacementGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24531,10 +24560,10 @@ class ProximityPlacementGroupsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_proximity_placement_groups_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -24583,7 +24612,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        properties: _models.ProximityPlacementGroupUpdate,
+        parameters: _models.ProximityPlacementGroupUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24595,9 +24624,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param properties: Parameters supplied to the Update Proximity Placement Group operation.
+        :param parameters: Parameters supplied to the Update Proximity Placement Group operation.
          Required.
-        :type properties: ~azure.mgmt.compute.models.ProximityPlacementGroupUpdate
+        :type parameters: ~azure.mgmt.compute.models.ProximityPlacementGroupUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24611,7 +24640,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24623,9 +24652,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param properties: Parameters supplied to the Update Proximity Placement Group operation.
+        :param parameters: Parameters supplied to the Update Proximity Placement Group operation.
          Required.
-        :type properties: JSON
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24639,7 +24668,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24651,9 +24680,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param properties: Parameters supplied to the Update Proximity Placement Group operation.
+        :param parameters: Parameters supplied to the Update Proximity Placement Group operation.
          Required.
-        :type properties: IO[bytes]
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24667,7 +24696,7 @@ class ProximityPlacementGroupsOperations:
         self,
         resource_group_name: str,
         proximity_placement_group_name: str,
-        properties: Union[_models.ProximityPlacementGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ProximityPlacementGroupUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.ProximityPlacementGroup:
         """Update a proximity placement group.
@@ -24677,9 +24706,9 @@ class ProximityPlacementGroupsOperations:
         :type resource_group_name: str
         :param proximity_placement_group_name: The name of the proximity placement group. Required.
         :type proximity_placement_group_name: str
-        :param properties: Parameters supplied to the Update Proximity Placement Group operation. Is
+        :param parameters: Parameters supplied to the Update Proximity Placement Group operation. Is
          one of the following types: ProximityPlacementGroupUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.ProximityPlacementGroupUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.ProximityPlacementGroupUpdate or JSON or IO[bytes]
         :return: ProximityPlacementGroup. The ProximityPlacementGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.ProximityPlacementGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24700,10 +24729,10 @@ class ProximityPlacementGroupsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_proximity_placement_groups_update_request(
             resource_group_name=resource_group_name,
@@ -25079,7 +25108,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        resource: _models.DedicatedHostGroup,
+        parameters: _models.DedicatedHostGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25094,8 +25123,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host Group. Required.
-        :type resource: ~azure.mgmt.compute.models.DedicatedHostGroup
+        :param parameters: Parameters supplied to the Create Dedicated Host Group. Required.
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHostGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25109,7 +25138,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25124,8 +25153,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host Group. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create Dedicated Host Group. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25139,7 +25168,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25154,8 +25183,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host Group. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create Dedicated Host Group. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25169,7 +25198,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        resource: Union[_models.DedicatedHostGroup, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHostGroup, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DedicatedHostGroup:
         """Create or update a dedicated host group. For details of Dedicated Host and Dedicated Host
@@ -25182,9 +25211,9 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host Group. Is one of the
+        :param parameters: Parameters supplied to the Create Dedicated Host Group. Is one of the
          following types: DedicatedHostGroup, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.DedicatedHostGroup or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHostGroup or JSON or IO[bytes]
         :return: DedicatedHostGroup. The DedicatedHostGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.DedicatedHostGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25205,10 +25234,10 @@ class DedicatedHostGroupsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dedicated_host_groups_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -25257,7 +25286,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        properties: _models.DedicatedHostGroupUpdate,
+        parameters: _models.DedicatedHostGroupUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25269,8 +25298,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host Group operation. Required.
-        :type properties: ~azure.mgmt.compute.models.DedicatedHostGroupUpdate
+        :param parameters: Parameters supplied to the Update Dedicated Host Group operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHostGroupUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25284,7 +25313,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25296,8 +25325,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host Group operation. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to the Update Dedicated Host Group operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25311,7 +25340,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25323,8 +25352,8 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host Group operation. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to the Update Dedicated Host Group operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25338,7 +25367,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
-        properties: Union[_models.DedicatedHostGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHostGroupUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.DedicatedHostGroup:
         """Update an dedicated host group.
@@ -25348,9 +25377,9 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host Group operation. Is one of
+        :param parameters: Parameters supplied to the Update Dedicated Host Group operation. Is one of
          the following types: DedicatedHostGroupUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.DedicatedHostGroupUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHostGroupUpdate or JSON or IO[bytes]
         :return: DedicatedHostGroup. The DedicatedHostGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.DedicatedHostGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25371,10 +25400,10 @@ class DedicatedHostGroupsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dedicated_host_groups_update_request(
             resource_group_name=resource_group_name,
@@ -25756,7 +25785,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        resource: Union[_models.DedicatedHost, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHost, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -25775,10 +25804,10 @@ class DedicatedHostsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dedicated_hosts_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -25830,7 +25859,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        resource: _models.DedicatedHost,
+        parameters: _models.DedicatedHost,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25844,8 +25873,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host. Required.
-        :type resource: ~azure.mgmt.compute.models.DedicatedHost
+        :param parameters: Parameters supplied to the Create Dedicated Host. Required.
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHost
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25860,7 +25889,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25874,8 +25903,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create Dedicated Host. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25890,7 +25919,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25904,8 +25933,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create Dedicated Host. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25920,7 +25949,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        resource: Union[_models.DedicatedHost, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHost, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a dedicated host .
@@ -25932,9 +25961,9 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param resource: Parameters supplied to the Create Dedicated Host. Is one of the following
+        :param parameters: Parameters supplied to the Create Dedicated Host. Is one of the following
          types: DedicatedHost, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.DedicatedHost or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHost or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25952,7 +25981,7 @@ class DedicatedHostsOperations:
                 resource_group_name=resource_group_name,
                 host_group_name=host_group_name,
                 host_name=host_name,
-                resource=resource,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -25992,7 +26021,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        properties: Union[_models.DedicatedHostUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHostUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -26011,10 +26040,10 @@ class DedicatedHostsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_dedicated_hosts_update_request(
             resource_group_name=resource_group_name,
@@ -26065,7 +26094,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        properties: _models.DedicatedHostUpdate,
+        parameters: _models.DedicatedHostUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26079,8 +26108,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host operation. Required.
-        :type properties: ~azure.mgmt.compute.models.DedicatedHostUpdate
+        :param parameters: Parameters supplied to the Update Dedicated Host operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHostUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26095,7 +26124,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26109,8 +26138,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host operation. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to the Update Dedicated Host operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26125,7 +26154,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26139,8 +26168,8 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host operation. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to the Update Dedicated Host operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26155,7 +26184,7 @@ class DedicatedHostsOperations:
         resource_group_name: str,
         host_group_name: str,
         host_name: str,
-        properties: Union[_models.DedicatedHostUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.DedicatedHostUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a dedicated host .
@@ -26167,9 +26196,9 @@ class DedicatedHostsOperations:
         :type host_group_name: str
         :param host_name: The name of the dedicated host. Required.
         :type host_name: str
-        :param properties: Parameters supplied to the Update Dedicated Host operation. Is one of the
+        :param parameters: Parameters supplied to the Update Dedicated Host operation. Is one of the
          following types: DedicatedHostUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.DedicatedHostUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.DedicatedHostUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26187,7 +26216,7 @@ class DedicatedHostsOperations:
                 resource_group_name=resource_group_name,
                 host_group_name=host_group_name,
                 host_name=host_name,
-                properties=properties,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -26869,7 +26898,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        resource: _models.SshPublicKeyResource,
+        parameters: _models.SshPublicKeyResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26881,8 +26910,8 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param resource: Parameters supplied to create the SSH public key. Required.
-        :type resource: ~azure.mgmt.compute.models.SshPublicKeyResource
+        :param parameters: Parameters supplied to create the SSH public key. Required.
+        :type parameters: ~azure.mgmt.compute.models.SshPublicKeyResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26896,7 +26925,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26908,8 +26937,8 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param resource: Parameters supplied to create the SSH public key. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to create the SSH public key. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26923,7 +26952,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -26935,8 +26964,8 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param resource: Parameters supplied to create the SSH public key. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to create the SSH public key. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26950,7 +26979,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        resource: Union[_models.SshPublicKeyResource, JSON, IO[bytes]],
+        parameters: Union[_models.SshPublicKeyResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SshPublicKeyResource:
         """Creates a new SSH public key resource.
@@ -26960,9 +26989,9 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param resource: Parameters supplied to create the SSH public key. Is one of the following
+        :param parameters: Parameters supplied to create the SSH public key. Is one of the following
          types: SshPublicKeyResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.SshPublicKeyResource or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.SshPublicKeyResource or JSON or IO[bytes]
         :return: SshPublicKeyResource. The SshPublicKeyResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.SshPublicKeyResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -26983,10 +27012,10 @@ class SshPublicKeyResourcesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_ssh_public_key_resources_create_request(
             resource_group_name=resource_group_name,
@@ -27035,7 +27064,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        properties: _models.SshPublicKeyUpdateResource,
+        parameters: _models.SshPublicKeyUpdateResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27047,8 +27076,8 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param properties: Parameters supplied to update the SSH public key. Required.
-        :type properties: ~azure.mgmt.compute.models.SshPublicKeyUpdateResource
+        :param parameters: Parameters supplied to update the SSH public key. Required.
+        :type parameters: ~azure.mgmt.compute.models.SshPublicKeyUpdateResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27062,7 +27091,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27074,8 +27103,8 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param properties: Parameters supplied to update the SSH public key. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to update the SSH public key. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27089,7 +27118,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27101,8 +27130,8 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param properties: Parameters supplied to update the SSH public key. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to update the SSH public key. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27116,7 +27145,7 @@ class SshPublicKeyResourcesOperations:
         self,
         resource_group_name: str,
         ssh_public_key_name: str,
-        properties: Union[_models.SshPublicKeyUpdateResource, JSON, IO[bytes]],
+        parameters: Union[_models.SshPublicKeyUpdateResource, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.SshPublicKeyResource:
         """Updates a new SSH public key resource.
@@ -27126,9 +27155,9 @@ class SshPublicKeyResourcesOperations:
         :type resource_group_name: str
         :param ssh_public_key_name: The name of the SSH public key. Required.
         :type ssh_public_key_name: str
-        :param properties: Parameters supplied to update the SSH public key. Is one of the following
+        :param parameters: Parameters supplied to update the SSH public key. Is one of the following
          types: SshPublicKeyUpdateResource, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.SshPublicKeyUpdateResource or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.SshPublicKeyUpdateResource or JSON or IO[bytes]
         :return: SshPublicKeyResource. The SshPublicKeyResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.SshPublicKeyResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27149,10 +27178,10 @@ class SshPublicKeyResourcesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_ssh_public_key_resources_update_request(
             resource_group_name=resource_group_name,
@@ -27701,7 +27730,11 @@ class ImagesOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, image_name: str, resource: Union[_models.Image, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        image_name: str,
+        parameters: Union[_models.Image, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -27719,10 +27752,10 @@ class ImagesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_images_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -27772,7 +27805,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        resource: _models.Image,
+        parameters: _models.Image,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27784,8 +27817,8 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param resource: Parameters supplied to the Create Image operation. Required.
-        :type resource: ~azure.mgmt.compute.models.Image
+        :param parameters: Parameters supplied to the Create Image operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.Image
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27799,7 +27832,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27811,8 +27844,8 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param resource: Parameters supplied to the Create Image operation. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create Image operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27826,7 +27859,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27838,8 +27871,8 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param resource: Parameters supplied to the Create Image operation. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create Image operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27850,7 +27883,11 @@ class ImagesOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, image_name: str, resource: Union[_models.Image, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        image_name: str,
+        parameters: Union[_models.Image, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update an image.
 
@@ -27859,9 +27896,9 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param resource: Parameters supplied to the Create Image operation. Is one of the following
+        :param parameters: Parameters supplied to the Create Image operation. Is one of the following
          types: Image, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.Image or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.Image or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27878,7 +27915,7 @@ class ImagesOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 image_name=image_name,
-                resource=resource,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -27917,7 +27954,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        properties: Union[_models.ImageUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ImageUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -27936,10 +27973,10 @@ class ImagesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_images_update_request(
             resource_group_name=resource_group_name,
@@ -27989,7 +28026,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        properties: _models.ImageUpdate,
+        parameters: _models.ImageUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28001,8 +28038,8 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param properties: Parameters supplied to the Update Image operation. Required.
-        :type properties: ~azure.mgmt.compute.models.ImageUpdate
+        :param parameters: Parameters supplied to the Update Image operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.ImageUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28016,7 +28053,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28028,8 +28065,8 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param properties: Parameters supplied to the Update Image operation. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to the Update Image operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28043,7 +28080,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28055,8 +28092,8 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param properties: Parameters supplied to the Update Image operation. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to the Update Image operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28070,7 +28107,7 @@ class ImagesOperations:
         self,
         resource_group_name: str,
         image_name: str,
-        properties: Union[_models.ImageUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.ImageUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update an image.
@@ -28080,9 +28117,9 @@ class ImagesOperations:
         :type resource_group_name: str
         :param image_name: The name of the image. Required.
         :type image_name: str
-        :param properties: Parameters supplied to the Update Image operation. Is one of the following
+        :param parameters: Parameters supplied to the Update Image operation. Is one of the following
          types: ImageUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.ImageUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.ImageUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28099,7 +28136,7 @@ class ImagesOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 image_name=image_name,
-                properties=properties,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -28521,7 +28558,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        resource: _models.RestorePointCollection,
+        parameters: _models.RestorePointCollection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28535,9 +28572,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param resource: Parameters supplied to the Create or Update restore point collection
+        :param parameters: Parameters supplied to the Create or Update restore point collection
          operation. Required.
-        :type resource: ~azure.mgmt.compute.models.RestorePointCollection
+        :type parameters: ~azure.mgmt.compute.models.RestorePointCollection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28551,7 +28588,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28565,9 +28602,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param resource: Parameters supplied to the Create or Update restore point collection
+        :param parameters: Parameters supplied to the Create or Update restore point collection
          operation. Required.
-        :type resource: JSON
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28581,7 +28618,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28595,9 +28632,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param resource: Parameters supplied to the Create or Update restore point collection
+        :param parameters: Parameters supplied to the Create or Update restore point collection
          operation. Required.
-        :type resource: IO[bytes]
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28611,7 +28648,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        resource: Union[_models.RestorePointCollection, JSON, IO[bytes]],
+        parameters: Union[_models.RestorePointCollection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RestorePointCollection:
         """The operation to create or update the restore point collection. Please refer to
@@ -28623,9 +28660,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param resource: Parameters supplied to the Create or Update restore point collection
+        :param parameters: Parameters supplied to the Create or Update restore point collection
          operation. Is one of the following types: RestorePointCollection, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.RestorePointCollection or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.RestorePointCollection or JSON or IO[bytes]
         :return: RestorePointCollection. The RestorePointCollection is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.RestorePointCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28646,10 +28683,10 @@ class RestorePointCollectionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_restore_point_collections_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -28698,7 +28735,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        properties: _models.RestorePointCollectionUpdate,
+        parameters: _models.RestorePointCollectionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28710,9 +28747,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param properties: Parameters supplied to the Update restore point collection operation.
+        :param parameters: Parameters supplied to the Update restore point collection operation.
          Required.
-        :type properties: ~azure.mgmt.compute.models.RestorePointCollectionUpdate
+        :type parameters: ~azure.mgmt.compute.models.RestorePointCollectionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28726,7 +28763,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28738,9 +28775,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param properties: Parameters supplied to the Update restore point collection operation.
+        :param parameters: Parameters supplied to the Update restore point collection operation.
          Required.
-        :type properties: JSON
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28754,7 +28791,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28766,9 +28803,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param properties: Parameters supplied to the Update restore point collection operation.
+        :param parameters: Parameters supplied to the Update restore point collection operation.
          Required.
-        :type properties: IO[bytes]
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28782,7 +28819,7 @@ class RestorePointCollectionsOperations:
         self,
         resource_group_name: str,
         restore_point_collection_name: str,
-        properties: Union[_models.RestorePointCollectionUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.RestorePointCollectionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.RestorePointCollection:
         """The operation to update the restore point collection.
@@ -28792,9 +28829,9 @@ class RestorePointCollectionsOperations:
         :type resource_group_name: str
         :param restore_point_collection_name: The name of the restore point collection. Required.
         :type restore_point_collection_name: str
-        :param properties: Parameters supplied to the Update restore point collection operation. Is one
+        :param parameters: Parameters supplied to the Update restore point collection operation. Is one
          of the following types: RestorePointCollectionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.RestorePointCollectionUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.RestorePointCollectionUpdate or JSON or IO[bytes]
         :return: RestorePointCollection. The RestorePointCollection is compatible with MutableMapping
         :rtype: ~azure.mgmt.compute.models.RestorePointCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -28815,10 +28852,10 @@ class RestorePointCollectionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_restore_point_collections_update_request(
             resource_group_name=resource_group_name,
@@ -29257,7 +29294,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        resource: Union[_models.RestorePoint, JSON, IO[bytes]],
+        parameters: Union[_models.RestorePoint, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -29276,10 +29313,10 @@ class RestorePointsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_restore_points_create_request(
             resource_group_name=resource_group_name,
@@ -29330,7 +29367,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        resource: _models.RestorePoint,
+        parameters: _models.RestorePoint,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29345,8 +29382,8 @@ class RestorePointsOperations:
         :type restore_point_collection_name: str
         :param restore_point_name: The name of the restore point. Required.
         :type restore_point_name: str
-        :param resource: Parameters supplied to the Create restore point operation. Required.
-        :type resource: ~azure.mgmt.compute.models.RestorePoint
+        :param parameters: Parameters supplied to the Create restore point operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.RestorePoint
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29361,7 +29398,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29376,8 +29413,8 @@ class RestorePointsOperations:
         :type restore_point_collection_name: str
         :param restore_point_name: The name of the restore point. Required.
         :type restore_point_name: str
-        :param resource: Parameters supplied to the Create restore point operation. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create restore point operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29392,7 +29429,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29407,8 +29444,8 @@ class RestorePointsOperations:
         :type restore_point_collection_name: str
         :param restore_point_name: The name of the restore point. Required.
         :type restore_point_name: str
-        :param resource: Parameters supplied to the Create restore point operation. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create restore point operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29423,7 +29460,7 @@ class RestorePointsOperations:
         resource_group_name: str,
         restore_point_collection_name: str,
         restore_point_name: str,
-        resource: Union[_models.RestorePoint, JSON, IO[bytes]],
+        parameters: Union[_models.RestorePoint, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create the restore point. Updating properties of an existing restore point is
@@ -29436,9 +29473,9 @@ class RestorePointsOperations:
         :type restore_point_collection_name: str
         :param restore_point_name: The name of the restore point. Required.
         :type restore_point_name: str
-        :param resource: Parameters supplied to the Create restore point operation. Is one of the
+        :param parameters: Parameters supplied to the Create restore point operation. Is one of the
          following types: RestorePoint, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.RestorePoint or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.RestorePoint or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -29456,7 +29493,7 @@ class RestorePointsOperations:
                 resource_group_name=resource_group_name,
                 restore_point_collection_name=restore_point_collection_name,
                 restore_point_name=restore_point_name,
-                resource=resource,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -29715,7 +29752,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        resource: _models.CapacityReservationGroup,
+        parameters: _models.CapacityReservationGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29729,8 +29766,8 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param resource: Parameters supplied to the Create capacity reservation Group. Required.
-        :type resource: ~azure.mgmt.compute.models.CapacityReservationGroup
+        :param parameters: Parameters supplied to the Create capacity reservation Group. Required.
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservationGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29745,7 +29782,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29759,8 +29796,8 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param resource: Parameters supplied to the Create capacity reservation Group. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create capacity reservation Group. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29775,7 +29812,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29789,8 +29826,8 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param resource: Parameters supplied to the Create capacity reservation Group. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create capacity reservation Group. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29805,7 +29842,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        resource: Union[_models.CapacityReservationGroup, JSON, IO[bytes]],
+        parameters: Union[_models.CapacityReservationGroup, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.CapacityReservationGroup:
         """The operation to create or update a capacity reservation group. When updating a capacity
@@ -29817,9 +29854,9 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param resource: Parameters supplied to the Create capacity reservation Group. Is one of the
+        :param parameters: Parameters supplied to the Create capacity reservation Group. Is one of the
          following types: CapacityReservationGroup, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.CapacityReservationGroup or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservationGroup or JSON or IO[bytes]
         :return: CapacityReservationGroup. The CapacityReservationGroup is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.compute.models.CapacityReservationGroup
@@ -29841,10 +29878,10 @@ class CapacityReservationGroupsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_capacity_reservation_groups_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -29893,7 +29930,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        properties: _models.CapacityReservationGroupUpdate,
+        parameters: _models.CapacityReservationGroupUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29906,9 +29943,9 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param properties: Parameters supplied to the Update capacity reservation Group operation.
+        :param parameters: Parameters supplied to the Update capacity reservation Group operation.
          Required.
-        :type properties: ~azure.mgmt.compute.models.CapacityReservationGroupUpdate
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservationGroupUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29923,7 +29960,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29936,9 +29973,9 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param properties: Parameters supplied to the Update capacity reservation Group operation.
+        :param parameters: Parameters supplied to the Update capacity reservation Group operation.
          Required.
-        :type properties: JSON
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29953,7 +29990,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29966,9 +30003,9 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param properties: Parameters supplied to the Update capacity reservation Group operation.
+        :param parameters: Parameters supplied to the Update capacity reservation Group operation.
          Required.
-        :type properties: IO[bytes]
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29983,7 +30020,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        properties: Union[_models.CapacityReservationGroupUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.CapacityReservationGroupUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> _models.CapacityReservationGroup:
         """The operation to update a capacity reservation group. When updating a capacity reservation
@@ -29994,9 +30031,9 @@ class CapacityReservationGroupsOperations:
         :type resource_group_name: str
         :param capacity_reservation_group_name: The name of the capacity reservation group. Required.
         :type capacity_reservation_group_name: str
-        :param properties: Parameters supplied to the Update capacity reservation Group operation. Is
+        :param parameters: Parameters supplied to the Update capacity reservation Group operation. Is
          one of the following types: CapacityReservationGroupUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.CapacityReservationGroupUpdate or JSON or
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservationGroupUpdate or JSON or
          IO[bytes]
         :return: CapacityReservationGroup. The CapacityReservationGroup is compatible with
          MutableMapping
@@ -30019,10 +30056,10 @@ class CapacityReservationGroupsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_capacity_reservation_groups_update_request(
             resource_group_name=resource_group_name,
@@ -30438,7 +30475,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        resource: Union[_models.CapacityReservation, JSON, IO[bytes]],
+        parameters: Union[_models.CapacityReservation, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30457,10 +30494,10 @@ class CapacityReservationsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_capacity_reservations_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -30512,7 +30549,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        resource: _models.CapacityReservation,
+        parameters: _models.CapacityReservation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30528,8 +30565,8 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param resource: Parameters supplied to the Create capacity reservation. Required.
-        :type resource: ~azure.mgmt.compute.models.CapacityReservation
+        :param parameters: Parameters supplied to the Create capacity reservation. Required.
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30544,7 +30581,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        resource: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30560,8 +30597,8 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param resource: Parameters supplied to the Create capacity reservation. Required.
-        :type resource: JSON
+        :param parameters: Parameters supplied to the Create capacity reservation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30576,7 +30613,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        resource: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30592,8 +30629,8 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param resource: Parameters supplied to the Create capacity reservation. Required.
-        :type resource: IO[bytes]
+        :param parameters: Parameters supplied to the Create capacity reservation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30608,7 +30645,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        resource: Union[_models.CapacityReservation, JSON, IO[bytes]],
+        parameters: Union[_models.CapacityReservation, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create or update a capacity reservation. Please note some properties can be
@@ -30622,9 +30659,9 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param resource: Parameters supplied to the Create capacity reservation. Is one of the
+        :param parameters: Parameters supplied to the Create capacity reservation. Is one of the
          following types: CapacityReservation, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.CapacityReservation or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservation or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -30642,7 +30679,7 @@ class CapacityReservationsOperations:
                 resource_group_name=resource_group_name,
                 capacity_reservation_group_name=capacity_reservation_group_name,
                 capacity_reservation_name=capacity_reservation_name,
-                resource=resource,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -30682,7 +30719,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        properties: Union[_models.CapacityReservationUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.CapacityReservationUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30701,10 +30738,10 @@ class CapacityReservationsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_capacity_reservations_update_request(
             resource_group_name=resource_group_name,
@@ -30756,7 +30793,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        properties: _models.CapacityReservationUpdate,
+        parameters: _models.CapacityReservationUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30770,8 +30807,8 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param properties: Parameters supplied to the Update capacity reservation operation. Required.
-        :type properties: ~azure.mgmt.compute.models.CapacityReservationUpdate
+        :param parameters: Parameters supplied to the Update capacity reservation operation. Required.
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservationUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30786,7 +30823,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        properties: JSON,
+        parameters: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30800,8 +30837,8 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param properties: Parameters supplied to the Update capacity reservation operation. Required.
-        :type properties: JSON
+        :param parameters: Parameters supplied to the Update capacity reservation operation. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30816,7 +30853,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        properties: IO[bytes],
+        parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30830,8 +30867,8 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param properties: Parameters supplied to the Update capacity reservation operation. Required.
-        :type properties: IO[bytes]
+        :param parameters: Parameters supplied to the Update capacity reservation operation. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30846,7 +30883,7 @@ class CapacityReservationsOperations:
         resource_group_name: str,
         capacity_reservation_group_name: str,
         capacity_reservation_name: str,
-        properties: Union[_models.CapacityReservationUpdate, JSON, IO[bytes]],
+        parameters: Union[_models.CapacityReservationUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to update a capacity reservation.
@@ -30858,9 +30895,9 @@ class CapacityReservationsOperations:
         :type capacity_reservation_group_name: str
         :param capacity_reservation_name: The name of the capacity reservation. Required.
         :type capacity_reservation_name: str
-        :param properties: Parameters supplied to the Update capacity reservation operation. Is one of
+        :param parameters: Parameters supplied to the Update capacity reservation operation. Is one of
          the following types: CapacityReservationUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.CapacityReservationUpdate or JSON or IO[bytes]
+        :type parameters: ~azure.mgmt.compute.models.CapacityReservationUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -30878,7 +30915,7 @@ class CapacityReservationsOperations:
                 resource_group_name=resource_group_name,
                 capacity_reservation_group_name=capacity_reservation_group_name,
                 capacity_reservation_name=capacity_reservation_name,
-                properties=properties,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -31243,7 +31280,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -31262,10 +31299,10 @@ class VirtualMachineRunCommandsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_run_commands_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -31317,7 +31354,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: _models.VirtualMachineRunCommand,
+        run_command: _models.VirtualMachineRunCommand,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31331,8 +31368,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommand
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommand
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31347,7 +31385,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: JSON,
+        run_command: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31361,8 +31399,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Required.
-        :type body: JSON
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31377,7 +31416,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: IO[bytes],
+        run_command: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31391,8 +31430,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Required.
-        :type body: IO[bytes]
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31407,7 +31447,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create or update the run command.
@@ -31419,9 +31459,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Is one of
-         the following types: VirtualMachineRunCommand, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommand or JSON or IO[bytes]
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation. Is
+         one of the following types: VirtualMachineRunCommand, JSON, IO[bytes] Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommand or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31439,7 +31479,7 @@ class VirtualMachineRunCommandsOperations:
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 run_command_name=run_command_name,
-                body=body,
+                run_command=run_command,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -31479,7 +31519,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -31498,10 +31538,10 @@ class VirtualMachineRunCommandsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_run_commands_update_request(
             resource_group_name=resource_group_name,
@@ -31552,7 +31592,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: _models.VirtualMachineRunCommandUpdate,
+        run_command: _models.VirtualMachineRunCommandUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31566,8 +31606,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Update Virtual Machine RunCommand operation. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate
+        :param run_command: Parameters supplied to the Update Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31582,7 +31623,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: JSON,
+        run_command: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31596,8 +31637,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Update Virtual Machine RunCommand operation. Required.
-        :type body: JSON
+        :param run_command: Parameters supplied to the Update Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31612,7 +31654,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: IO[bytes],
+        run_command: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -31626,8 +31668,9 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Update Virtual Machine RunCommand operation. Required.
-        :type body: IO[bytes]
+        :param run_command: Parameters supplied to the Update Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -31642,7 +31685,7 @@ class VirtualMachineRunCommandsOperations:
         resource_group_name: str,
         vm_name: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to update the run command.
@@ -31654,9 +31697,10 @@ class VirtualMachineRunCommandsOperations:
         :type vm_name: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Update Virtual Machine RunCommand operation. Is one of
-         the following types: VirtualMachineRunCommandUpdate, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate or JSON or IO[bytes]
+        :param run_command: Parameters supplied to the Update Virtual Machine RunCommand operation. Is
+         one of the following types: VirtualMachineRunCommandUpdate, JSON, IO[bytes] Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31674,7 +31718,7 @@ class VirtualMachineRunCommandsOperations:
                 resource_group_name=resource_group_name,
                 vm_name=vm_name,
                 run_command_name=run_command_name,
-                body=body,
+                run_command=run_command,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -32034,7 +32078,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -32053,10 +32097,10 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vm_run_commands_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -32110,7 +32154,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: _models.VirtualMachineRunCommand,
+        run_command: _models.VirtualMachineRunCommand,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32126,8 +32170,9 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommand
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommand
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32143,7 +32188,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: JSON,
+        run_command: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32159,8 +32204,9 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Required.
-        :type body: JSON
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32176,7 +32222,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: IO[bytes],
+        run_command: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32192,8 +32238,9 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Required.
-        :type body: IO[bytes]
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation.
+         Required.
+        :type run_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32209,7 +32256,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommand, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to create or update the VMSS VM run command.
@@ -32223,9 +32270,9 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Parameters supplied to the Create Virtual Machine RunCommand operation. Is one of
-         the following types: VirtualMachineRunCommand, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommand or JSON or IO[bytes]
+        :param run_command: Parameters supplied to the Create Virtual Machine RunCommand operation. Is
+         one of the following types: VirtualMachineRunCommand, JSON, IO[bytes] Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommand or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32244,7 +32291,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 run_command_name=run_command_name,
-                body=body,
+                run_command=run_command,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -32285,7 +32332,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -32304,10 +32351,10 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(run_command, (IOBase, bytes)):
+            _content = run_command
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(run_command, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_virtual_machine_scale_set_vm_run_commands_update_request(
             resource_group_name=resource_group_name,
@@ -32360,7 +32407,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: _models.VirtualMachineRunCommandUpdate,
+        run_command: _models.VirtualMachineRunCommandUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32376,8 +32423,8 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Resource create parameters. Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate
+        :param run_command: Resource create parameters. Required.
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32393,7 +32440,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: JSON,
+        run_command: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32409,8 +32456,8 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Resource create parameters. Required.
-        :type body: JSON
+        :param run_command: Resource create parameters. Required.
+        :type run_command: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32426,7 +32473,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: IO[bytes],
+        run_command: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32442,8 +32489,8 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Resource create parameters. Required.
-        :type body: IO[bytes]
+        :param run_command: Resource create parameters. Required.
+        :type run_command: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32459,7 +32506,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         vm_scale_set_name: str,
         instance_id: str,
         run_command_name: str,
-        body: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
+        run_command: Union[_models.VirtualMachineRunCommandUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """The operation to update the VMSS VM run command.
@@ -32473,9 +32520,10 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
         :type instance_id: str
         :param run_command_name: The name of the VirtualMachineRunCommand. Required.
         :type run_command_name: str
-        :param body: Resource create parameters. Is one of the following types:
+        :param run_command: Resource create parameters. Is one of the following types:
          VirtualMachineRunCommandUpdate, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate or JSON or IO[bytes]
+        :type run_command: ~azure.mgmt.compute.models.VirtualMachineRunCommandUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -32494,7 +32542,7 @@ class VirtualMachineScaleSetVMRunCommandsOperations:  # pylint: disable=name-too
                 vm_scale_set_name=vm_scale_set_name,
                 instance_id=instance_id,
                 run_command_name=run_command_name,
-                body=body,
+                run_command=run_command,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -34148,7 +34196,7 @@ class LogAnalyticsOperationGroupOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     def _export_request_rate_by_interval_initial(
-        self, location: str, body: Union[_models.RequestRateByIntervalInput, JSON, IO[bytes]], **kwargs: Any
+        self, location: str, parameters: Union[_models.RequestRateByIntervalInput, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -34166,10 +34214,10 @@ class LogAnalyticsOperationGroupOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_log_analytics_operation_group_export_request_rate_by_interval_request(
             location=location,
@@ -34219,7 +34267,7 @@ class LogAnalyticsOperationGroupOperations:
     def begin_export_request_rate_by_interval(
         self,
         location: str,
-        body: _models.RequestRateByIntervalInput,
+        parameters: _models.RequestRateByIntervalInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34229,8 +34277,9 @@ class LogAnalyticsOperationGroupOperations:
 
         :param location: The location name. Required.
         :type location: str
-        :param body: Parameters supplied to the LogAnalytics getRequestRateByInterval Api. Required.
-        :type body: ~azure.mgmt.compute.models.RequestRateByIntervalInput
+        :param parameters: Parameters supplied to the LogAnalytics getRequestRateByInterval Api.
+         Required.
+        :type parameters: ~azure.mgmt.compute.models.RequestRateByIntervalInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34241,15 +34290,16 @@ class LogAnalyticsOperationGroupOperations:
 
     @overload
     def begin_export_request_rate_by_interval(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Export logs that show Api requests made by this subscription in the given time window to show
         throttling activities.
 
         :param location: The location name. Required.
         :type location: str
-        :param body: Parameters supplied to the LogAnalytics getRequestRateByInterval Api. Required.
-        :type body: JSON
+        :param parameters: Parameters supplied to the LogAnalytics getRequestRateByInterval Api.
+         Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34260,15 +34310,16 @@ class LogAnalyticsOperationGroupOperations:
 
     @overload
     def begin_export_request_rate_by_interval(
-        self, location: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Export logs that show Api requests made by this subscription in the given time window to show
         throttling activities.
 
         :param location: The location name. Required.
         :type location: str
-        :param body: Parameters supplied to the LogAnalytics getRequestRateByInterval Api. Required.
-        :type body: IO[bytes]
+        :param parameters: Parameters supplied to the LogAnalytics getRequestRateByInterval Api.
+         Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34279,16 +34330,16 @@ class LogAnalyticsOperationGroupOperations:
 
     @distributed_trace
     def begin_export_request_rate_by_interval(
-        self, location: str, body: Union[_models.RequestRateByIntervalInput, JSON, IO[bytes]], **kwargs: Any
+        self, location: str, parameters: Union[_models.RequestRateByIntervalInput, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Export logs that show Api requests made by this subscription in the given time window to show
         throttling activities.
 
         :param location: The location name. Required.
         :type location: str
-        :param body: Parameters supplied to the LogAnalytics getRequestRateByInterval Api. Is one of
-         the following types: RequestRateByIntervalInput, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.RequestRateByIntervalInput or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the LogAnalytics getRequestRateByInterval Api. Is one
+         of the following types: RequestRateByIntervalInput, JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.RequestRateByIntervalInput or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34304,7 +34355,7 @@ class LogAnalyticsOperationGroupOperations:
         if cont_token is None:
             raw_result = self._export_request_rate_by_interval_initial(
                 location=location,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -34340,7 +34391,7 @@ class LogAnalyticsOperationGroupOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _export_throttled_requests_initial(
-        self, location: str, body: Union[_models.ThrottledRequestsInput, JSON, IO[bytes]], **kwargs: Any
+        self, location: str, parameters: Union[_models.ThrottledRequestsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -34358,10 +34409,10 @@ class LogAnalyticsOperationGroupOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_log_analytics_operation_group_export_throttled_requests_request(
             location=location,
@@ -34411,7 +34462,7 @@ class LogAnalyticsOperationGroupOperations:
     def begin_export_throttled_requests(
         self,
         location: str,
-        body: _models.ThrottledRequestsInput,
+        parameters: _models.ThrottledRequestsInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34421,8 +34472,8 @@ class LogAnalyticsOperationGroupOperations:
 
         :param location: The location name. Required.
         :type location: str
-        :param body: The request body. Required.
-        :type body: ~azure.mgmt.compute.models.ThrottledRequestsInput
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.compute.models.ThrottledRequestsInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34433,15 +34484,15 @@ class LogAnalyticsOperationGroupOperations:
 
     @overload
     def begin_export_throttled_requests(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Export logs that show total throttled Api requests for this subscription in the given time
         window.
 
         :param location: The location name. Required.
         :type location: str
-        :param body: The request body. Required.
-        :type body: JSON
+        :param parameters: The request body. Required.
+        :type parameters: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34452,15 +34503,15 @@ class LogAnalyticsOperationGroupOperations:
 
     @overload
     def begin_export_throttled_requests(
-        self, location: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, location: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Export logs that show total throttled Api requests for this subscription in the given time
         window.
 
         :param location: The location name. Required.
         :type location: str
-        :param body: The request body. Required.
-        :type body: IO[bytes]
+        :param parameters: The request body. Required.
+        :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34471,16 +34522,16 @@ class LogAnalyticsOperationGroupOperations:
 
     @distributed_trace
     def begin_export_throttled_requests(
-        self, location: str, body: Union[_models.ThrottledRequestsInput, JSON, IO[bytes]], **kwargs: Any
+        self, location: str, parameters: Union[_models.ThrottledRequestsInput, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Export logs that show total throttled Api requests for this subscription in the given time
         window.
 
         :param location: The location name. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: ThrottledRequestsInput, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.ThrottledRequestsInput or JSON or IO[bytes]
+        :param parameters: The request body. Is one of the following types: ThrottledRequestsInput,
+         JSON, IO[bytes] Required.
+        :type parameters: ~azure.mgmt.compute.models.ThrottledRequestsInput or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34496,7 +34547,7 @@ class LogAnalyticsOperationGroupOperations:
         if cont_token is None:
             raw_result = self._export_throttled_requests_initial(
                 location=location,
-                body=body,
+                parameters=parameters,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -34795,7 +34846,7 @@ class DisksOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, disk_name: str, resource: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -34813,10 +34864,10 @@ class DisksOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(disk, (IOBase, bytes)):
+            _content = disk
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(disk, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disks_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -34866,7 +34917,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        resource: _models.Disk,
+        disk: _models.Disk,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34880,8 +34931,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param resource: Disk object supplied in the body of the Put disk operation. Required.
-        :type resource: ~azure.mgmt.compute.models.Disk
+        :param disk: Disk object supplied in the body of the Put disk operation. Required.
+        :type disk: ~azure.mgmt.compute.models.Disk
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34895,7 +34946,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        resource: JSON,
+        disk: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34909,8 +34960,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param resource: Disk object supplied in the body of the Put disk operation. Required.
-        :type resource: JSON
+        :param disk: Disk object supplied in the body of the Put disk operation. Required.
+        :type disk: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34924,7 +34975,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        resource: IO[bytes],
+        disk: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -34938,8 +34989,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param resource: Disk object supplied in the body of the Put disk operation. Required.
-        :type resource: IO[bytes]
+        :param disk: Disk object supplied in the body of the Put disk operation. Required.
+        :type disk: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34950,7 +35001,7 @@ class DisksOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, disk_name: str, resource: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.Disk, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Creates or updates a disk.
 
@@ -34961,9 +35012,9 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param resource: Disk object supplied in the body of the Put disk operation. Is one of the
+        :param disk: Disk object supplied in the body of the Put disk operation. Is one of the
          following types: Disk, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.Disk or JSON or IO[bytes]
+        :type disk: ~azure.mgmt.compute.models.Disk or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -34980,7 +35031,7 @@ class DisksOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 disk_name=disk_name,
-                resource=resource,
+                disk=disk,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -35016,11 +35067,7 @@ class DisksOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _update_initial(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        properties: Union[_models.DiskUpdate, JSON, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.DiskUpdate, JSON, IO[bytes]], **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -35038,10 +35085,10 @@ class DisksOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(disk, (IOBase, bytes)):
+            _content = disk
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(disk, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disks_update_request(
             resource_group_name=resource_group_name,
@@ -35091,7 +35138,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        properties: _models.DiskUpdate,
+        disk: _models.DiskUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35105,8 +35152,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param properties: Disk object supplied in the body of the Patch disk operation. Required.
-        :type properties: ~azure.mgmt.compute.models.DiskUpdate
+        :param disk: Disk object supplied in the body of the Patch disk operation. Required.
+        :type disk: ~azure.mgmt.compute.models.DiskUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35120,7 +35167,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        properties: JSON,
+        disk: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35134,8 +35181,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param properties: Disk object supplied in the body of the Patch disk operation. Required.
-        :type properties: JSON
+        :param disk: Disk object supplied in the body of the Patch disk operation. Required.
+        :type disk: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35149,7 +35196,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        properties: IO[bytes],
+        disk: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35163,8 +35210,8 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param properties: Disk object supplied in the body of the Patch disk operation. Required.
-        :type properties: IO[bytes]
+        :param disk: Disk object supplied in the body of the Patch disk operation. Required.
+        :type disk: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35175,11 +35222,7 @@ class DisksOperations:
 
     @distributed_trace
     def begin_update(
-        self,
-        resource_group_name: str,
-        disk_name: str,
-        properties: Union[_models.DiskUpdate, JSON, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, disk_name: str, disk: Union[_models.DiskUpdate, JSON, IO[bytes]], **kwargs: Any
     ) -> LROPoller[None]:
         """Updates (patches) a disk.
 
@@ -35190,9 +35233,9 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param properties: Disk object supplied in the body of the Patch disk operation. Is one of the
+        :param disk: Disk object supplied in the body of the Patch disk operation. Is one of the
          following types: DiskUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.DiskUpdate or JSON or IO[bytes]
+        :type disk: ~azure.mgmt.compute.models.DiskUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -35209,7 +35252,7 @@ class DisksOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 disk_name=disk_name,
-                properties=properties,
+                disk=disk,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -35534,7 +35577,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        body: Union[_models.GrantAccessData, JSON, IO[bytes]],
+        grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -35553,10 +35596,10 @@ class DisksOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(grant_access_data, (IOBase, bytes)):
+            _content = grant_access_data
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(grant_access_data, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disks_grant_access_request(
             resource_group_name=resource_group_name,
@@ -35606,7 +35649,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        body: _models.GrantAccessData,
+        grant_access_data: _models.GrantAccessData,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35620,9 +35663,9 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param body: Access data object supplied in the body of the get disk access operation.
-         Required.
-        :type body: ~azure.mgmt.compute.models.GrantAccessData
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Required.
+        :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35637,7 +35680,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        body: JSON,
+        grant_access_data: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35651,9 +35694,9 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param body: Access data object supplied in the body of the get disk access operation.
-         Required.
-        :type body: JSON
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Required.
+        :type grant_access_data: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35668,7 +35711,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        body: IO[bytes],
+        grant_access_data: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -35682,9 +35725,9 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param body: Access data object supplied in the body of the get disk access operation.
-         Required.
-        :type body: IO[bytes]
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Required.
+        :type grant_access_data: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -35699,7 +35742,7 @@ class DisksOperations:
         self,
         resource_group_name: str,
         disk_name: str,
-        body: Union[_models.GrantAccessData, JSON, IO[bytes]],
+        grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
         """Grants access to a disk.
@@ -35711,9 +35754,9 @@ class DisksOperations:
          after the disk is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -. The
          maximum name length is 80 characters. Required.
         :type disk_name: str
-        :param body: Access data object supplied in the body of the get disk access operation. Is one
-         of the following types: GrantAccessData, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Is one of the following types: GrantAccessData, JSON, IO[bytes] Required.
+        :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
@@ -35731,7 +35774,7 @@ class DisksOperations:
             raw_result = self._grant_access_initial(
                 resource_group_name=resource_group_name,
                 disk_name=disk_name,
-                body=body,
+                grant_access_data=grant_access_data,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -35991,7 +36034,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        resource: Union[_models.DiskAccess, JSON, IO[bytes]],
+        disk_access: Union[_models.DiskAccess, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -36010,10 +36053,10 @@ class DiskAccessesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(disk_access, (IOBase, bytes)):
+            _content = disk_access
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(disk_access, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disk_accesses_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -36063,7 +36106,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        resource: _models.DiskAccess,
+        disk_access: _models.DiskAccess,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36077,9 +36120,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param resource: disk access object supplied in the body of the Put disk access operation.
+        :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Required.
-        :type resource: ~azure.mgmt.compute.models.DiskAccess
+        :type disk_access: ~azure.mgmt.compute.models.DiskAccess
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36093,7 +36136,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        resource: JSON,
+        disk_access: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36107,9 +36150,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param resource: disk access object supplied in the body of the Put disk access operation.
+        :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Required.
-        :type resource: JSON
+        :type disk_access: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36123,7 +36166,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        resource: IO[bytes],
+        disk_access: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36137,9 +36180,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param resource: disk access object supplied in the body of the Put disk access operation.
+        :param disk_access: disk access object supplied in the body of the Put disk access operation.
          Required.
-        :type resource: IO[bytes]
+        :type disk_access: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36153,7 +36196,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        resource: Union[_models.DiskAccess, JSON, IO[bytes]],
+        disk_access: Union[_models.DiskAccess, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Creates or updates a disk access resource.
@@ -36165,9 +36208,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param resource: disk access object supplied in the body of the Put disk access operation. Is
-         one of the following types: DiskAccess, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.DiskAccess or JSON or IO[bytes]
+        :param disk_access: disk access object supplied in the body of the Put disk access operation.
+         Is one of the following types: DiskAccess, JSON, IO[bytes] Required.
+        :type disk_access: ~azure.mgmt.compute.models.DiskAccess or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -36184,7 +36227,7 @@ class DiskAccessesOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 disk_access_name=disk_access_name,
-                resource=resource,
+                disk_access=disk_access,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -36223,7 +36266,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        properties: Union[_models.DiskAccessUpdate, JSON, IO[bytes]],
+        disk_access: Union[_models.DiskAccessUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -36242,10 +36285,10 @@ class DiskAccessesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(disk_access, (IOBase, bytes)):
+            _content = disk_access
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(disk_access, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disk_accesses_update_request(
             resource_group_name=resource_group_name,
@@ -36295,7 +36338,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        properties: _models.DiskAccessUpdate,
+        disk_access: _models.DiskAccessUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36309,9 +36352,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param properties: disk access object supplied in the body of the Patch disk access operation.
+        :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Required.
-        :type properties: ~azure.mgmt.compute.models.DiskAccessUpdate
+        :type disk_access: ~azure.mgmt.compute.models.DiskAccessUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36325,7 +36368,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        properties: JSON,
+        disk_access: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36339,9 +36382,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param properties: disk access object supplied in the body of the Patch disk access operation.
+        :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Required.
-        :type properties: JSON
+        :type disk_access: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36355,7 +36398,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        properties: IO[bytes],
+        disk_access: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36369,9 +36412,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param properties: disk access object supplied in the body of the Patch disk access operation.
+        :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Required.
-        :type properties: IO[bytes]
+        :type disk_access: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -36385,7 +36428,7 @@ class DiskAccessesOperations:
         self,
         resource_group_name: str,
         disk_access_name: str,
-        properties: Union[_models.DiskAccessUpdate, JSON, IO[bytes]],
+        disk_access: Union[_models.DiskAccessUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Updates (patches) a disk access resource.
@@ -36397,9 +36440,9 @@ class DiskAccessesOperations:
          can't be changed after the disk encryption set is created. Supported characters for the name
          are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_access_name: str
-        :param properties: disk access object supplied in the body of the Patch disk access operation.
+        :param disk_access: disk access object supplied in the body of the Patch disk access operation.
          Is one of the following types: DiskAccessUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.DiskAccessUpdate or JSON or IO[bytes]
+        :type disk_access: ~azure.mgmt.compute.models.DiskAccessUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -36416,7 +36459,7 @@ class DiskAccessesOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 disk_access_name=disk_access_name,
-                properties=properties,
+                disk_access=disk_access,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -36905,7 +36948,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -36924,10 +36967,10 @@ class PrivateEndpointConnectionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(private_endpoint_connection, (IOBase, bytes)):
+            _content = private_endpoint_connection
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(private_endpoint_connection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_private_endpoint_connections_update_a_private_endpoint_connection_request(
             resource_group_name=resource_group_name,
@@ -36979,7 +37022,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        resource: _models.PrivateEndpointConnection,
+        private_endpoint_connection: _models.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -36996,9 +37039,9 @@ class PrivateEndpointConnectionsOperations:
         :type disk_access_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param resource: private endpoint connection object supplied in the body of the Put private
-         endpoint connection operation. Required.
-        :type resource: ~azure.mgmt.compute.models.PrivateEndpointConnection
+        :param private_endpoint_connection: private endpoint connection object supplied in the body of
+         the Put private endpoint connection operation. Required.
+        :type private_endpoint_connection: ~azure.mgmt.compute.models.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37013,7 +37056,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        private_endpoint_connection: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37030,9 +37073,9 @@ class PrivateEndpointConnectionsOperations:
         :type disk_access_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param resource: private endpoint connection object supplied in the body of the Put private
-         endpoint connection operation. Required.
-        :type resource: JSON
+        :param private_endpoint_connection: private endpoint connection object supplied in the body of
+         the Put private endpoint connection operation. Required.
+        :type private_endpoint_connection: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37047,7 +37090,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        resource: IO[bytes],
+        private_endpoint_connection: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37064,9 +37107,9 @@ class PrivateEndpointConnectionsOperations:
         :type disk_access_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param resource: private endpoint connection object supplied in the body of the Put private
-         endpoint connection operation. Required.
-        :type resource: IO[bytes]
+        :param private_endpoint_connection: private endpoint connection object supplied in the body of
+         the Put private endpoint connection operation. Required.
+        :type private_endpoint_connection: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37081,7 +37124,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         disk_access_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Approve or reject a private endpoint connection under disk access resource, this can't be used
@@ -37096,10 +37139,11 @@ class PrivateEndpointConnectionsOperations:
         :type disk_access_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param resource: private endpoint connection object supplied in the body of the Put private
-         endpoint connection operation. Is one of the following types: PrivateEndpointConnection, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param private_endpoint_connection: private endpoint connection object supplied in the body of
+         the Put private endpoint connection operation. Is one of the following types:
+         PrivateEndpointConnection, JSON, IO[bytes] Required.
+        :type private_endpoint_connection: ~azure.mgmt.compute.models.PrivateEndpointConnection or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -37117,7 +37161,7 @@ class PrivateEndpointConnectionsOperations:
                 resource_group_name=resource_group_name,
                 disk_access_name=disk_access_name,
                 private_endpoint_connection_name=private_endpoint_connection_name,
-                resource=resource,
+                private_endpoint_connection=private_endpoint_connection,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -37459,7 +37503,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        resource: Union[_models.DiskEncryptionSet, JSON, IO[bytes]],
+        disk_encryption_set: Union[_models.DiskEncryptionSet, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -37478,10 +37522,10 @@ class DiskEncryptionSetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(disk_encryption_set, (IOBase, bytes)):
+            _content = disk_encryption_set
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(disk_encryption_set, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disk_encryption_sets_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -37531,7 +37575,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        resource: _models.DiskEncryptionSet,
+        disk_encryption_set: _models.DiskEncryptionSet,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37545,9 +37589,9 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param resource: disk encryption set object supplied in the body of the Put disk encryption set
-         operation. Required.
-        :type resource: ~azure.mgmt.compute.models.DiskEncryptionSet
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
+         encryption set operation. Required.
+        :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37561,7 +37605,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        resource: JSON,
+        disk_encryption_set: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37575,9 +37619,9 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param resource: disk encryption set object supplied in the body of the Put disk encryption set
-         operation. Required.
-        :type resource: JSON
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
+         encryption set operation. Required.
+        :type disk_encryption_set: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37591,7 +37635,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        resource: IO[bytes],
+        disk_encryption_set: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37605,9 +37649,9 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param resource: disk encryption set object supplied in the body of the Put disk encryption set
-         operation. Required.
-        :type resource: IO[bytes]
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
+         encryption set operation. Required.
+        :type disk_encryption_set: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37621,7 +37665,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        resource: Union[_models.DiskEncryptionSet, JSON, IO[bytes]],
+        disk_encryption_set: Union[_models.DiskEncryptionSet, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Creates or updates a disk encryption set.
@@ -37633,9 +37677,10 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param resource: disk encryption set object supplied in the body of the Put disk encryption set
-         operation. Is one of the following types: DiskEncryptionSet, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.DiskEncryptionSet or JSON or IO[bytes]
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Put disk
+         encryption set operation. Is one of the following types: DiskEncryptionSet, JSON, IO[bytes]
+         Required.
+        :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSet or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -37652,7 +37697,7 @@ class DiskEncryptionSetsOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 disk_encryption_set_name=disk_encryption_set_name,
-                resource=resource,
+                disk_encryption_set=disk_encryption_set,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -37691,7 +37736,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        properties: Union[_models.DiskEncryptionSetUpdate, JSON, IO[bytes]],
+        disk_encryption_set: Union[_models.DiskEncryptionSetUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -37710,10 +37755,10 @@ class DiskEncryptionSetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(disk_encryption_set, (IOBase, bytes)):
+            _content = disk_encryption_set
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(disk_encryption_set, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_disk_encryption_sets_update_request(
             resource_group_name=resource_group_name,
@@ -37763,7 +37808,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        properties: _models.DiskEncryptionSetUpdate,
+        disk_encryption_set: _models.DiskEncryptionSetUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37777,9 +37822,9 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param properties: disk encryption set object supplied in the body of the Patch disk encryption
-         set operation. Required.
-        :type properties: ~azure.mgmt.compute.models.DiskEncryptionSetUpdate
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
+         encryption set operation. Required.
+        :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37793,7 +37838,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        properties: JSON,
+        disk_encryption_set: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37807,9 +37852,9 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param properties: disk encryption set object supplied in the body of the Patch disk encryption
-         set operation. Required.
-        :type properties: JSON
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
+         encryption set operation. Required.
+        :type disk_encryption_set: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37823,7 +37868,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        properties: IO[bytes],
+        disk_encryption_set: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -37837,9 +37882,9 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param properties: disk encryption set object supplied in the body of the Patch disk encryption
-         set operation. Required.
-        :type properties: IO[bytes]
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
+         encryption set operation. Required.
+        :type disk_encryption_set: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -37853,7 +37898,7 @@ class DiskEncryptionSetsOperations:
         self,
         resource_group_name: str,
         disk_encryption_set_name: str,
-        properties: Union[_models.DiskEncryptionSetUpdate, JSON, IO[bytes]],
+        disk_encryption_set: Union[_models.DiskEncryptionSetUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Updates (patches) a disk encryption set.
@@ -37865,10 +37910,11 @@ class DiskEncryptionSetsOperations:
          name can't be changed after the disk encryption set is created. Supported characters for the
          name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80 characters. Required.
         :type disk_encryption_set_name: str
-        :param properties: disk encryption set object supplied in the body of the Patch disk encryption
-         set operation. Is one of the following types: DiskEncryptionSetUpdate, JSON, IO[bytes]
-         Required.
-        :type properties: ~azure.mgmt.compute.models.DiskEncryptionSetUpdate or JSON or IO[bytes]
+        :param disk_encryption_set: disk encryption set object supplied in the body of the Patch disk
+         encryption set operation. Is one of the following types: DiskEncryptionSetUpdate, JSON,
+         IO[bytes] Required.
+        :type disk_encryption_set: ~azure.mgmt.compute.models.DiskEncryptionSetUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -37885,7 +37931,7 @@ class DiskEncryptionSetsOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 disk_encryption_set_name=disk_encryption_set_name,
-                properties=properties,
+                disk_encryption_set=disk_encryption_set,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -38304,624 +38350,6 @@ class DiskEncryptionSetsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DiskRestorePointsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.compute.ComputeClient`'s
-        :attr:`disk_restore_points` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        **kwargs: Any
-    ) -> _models.DiskRestorePoint:
-        """Get disk restorePoint resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
-        :type disk_restore_point_name: str
-        :return: DiskRestorePoint. The DiskRestorePoint is compatible with MutableMapping
-        :rtype: ~azure.mgmt.compute.models.DiskRestorePoint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DiskRestorePoint] = kwargs.pop("cls", None)
-
-        _request = build_disk_restore_points_get_request(
-            resource_group_name=resource_group_name,
-            restore_point_collection_name=restore_point_collection_name,
-            vm_restore_point_name=vm_restore_point_name,
-            disk_restore_point_name=disk_restore_point_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DiskRestorePoint, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_by_restore_point(
-        self, resource_group_name: str, restore_point_collection_name: str, vm_restore_point_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.DiskRestorePoint"]:
-        """Lists diskRestorePoints under a vmRestorePoint.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :return: An iterator like instance of DiskRestorePoint
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskRestorePoint]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.DiskRestorePoint]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_disk_restore_points_list_by_restore_point_request(
-                    resource_group_name=resource_group_name,
-                    restore_point_collection_name=restore_point_collection_name,
-                    vm_restore_point_name=vm_restore_point_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.DiskRestorePoint], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.CloudError, response)
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    def _grant_access_initial(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        body: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_disk_restore_points_grant_access_request(
-            resource_group_name=resource_group_name,
-            restore_point_collection_name=restore_point_collection_name,
-            vm_restore_point_name=vm_restore_point_name,
-            disk_restore_point_name=disk_restore_point_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def begin_grant_access(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        body: _models.GrantAccessData,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AccessUri]:
-        """Grants access to a diskRestorePoint.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
-        :type disk_restore_point_name: str
-        :param body: Access data object supplied in the body of the get disk access operation.
-         Required.
-        :type body: ~azure.mgmt.compute.models.GrantAccessData
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_grant_access(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AccessUri]:
-        """Grants access to a diskRestorePoint.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
-        :type disk_restore_point_name: str
-        :param body: Access data object supplied in the body of the get disk access operation.
-         Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_grant_access(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.AccessUri]:
-        """Grants access to a diskRestorePoint.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
-        :type disk_restore_point_name: str
-        :param body: Access data object supplied in the body of the get disk access operation.
-         Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_grant_access(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        body: Union[_models.GrantAccessData, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[_models.AccessUri]:
-        """Grants access to a diskRestorePoint.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
-        :type disk_restore_point_name: str
-        :param body: Access data object supplied in the body of the get disk access operation. Is one
-         of the following types: GrantAccessData, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AccessUri] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._grant_access_initial(
-                resource_group_name=resource_group_name,
-                restore_point_collection_name=restore_point_collection_name,
-                vm_restore_point_name=vm_restore_point_name,
-                disk_restore_point_name=disk_restore_point_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.AccessUri, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.AccessUri].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.AccessUri](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    def _revoke_access_initial(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_disk_restore_points_revoke_access_request(
-            resource_group_name=resource_group_name,
-            restore_point_collection_name=restore_point_collection_name,
-            vm_restore_point_name=vm_restore_point_name,
-            disk_restore_point_name=disk_restore_point_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.CloudError, response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def begin_revoke_access(
-        self,
-        resource_group_name: str,
-        restore_point_collection_name: str,
-        vm_restore_point_name: str,
-        disk_restore_point_name: str,
-        **kwargs: Any
-    ) -> LROPoller[_models.OkResponse]:
-        """Revokes access to a diskRestorePoint.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param restore_point_collection_name: The name of the restore point collection that the disk
-         restore point belongs. Required.
-        :type restore_point_collection_name: str
-        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
-         belongs. Required.
-        :type vm_restore_point_name: str
-        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
-        :type disk_restore_point_name: str
-        :return: An instance of LROPoller that returns OkResponse. The OkResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.OkResponse]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OkResponse] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._revoke_access_initial(
-                resource_group_name=resource_group_name,
-                restore_point_collection_name=restore_point_collection_name,
-                vm_restore_point_name=vm_restore_point_name,
-                disk_restore_point_name=disk_restore_point_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.OkResponse, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.OkResponse].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.OkResponse](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-
 class SnapshotsOperations:
     """
     .. warning::
@@ -39011,7 +38439,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        resource: Union[_models.Snapshot, JSON, IO[bytes]],
+        snapshot: Union[_models.Snapshot, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -39030,10 +38458,10 @@ class SnapshotsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(snapshot, (IOBase, bytes)):
+            _content = snapshot
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(snapshot, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_snapshots_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -39083,7 +38511,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        resource: _models.Snapshot,
+        snapshot: _models.Snapshot,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39097,8 +38525,8 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param resource: Snapshot object supplied in the body of the Put disk operation. Required.
-        :type resource: ~azure.mgmt.compute.models.Snapshot
+        :param snapshot: Snapshot object supplied in the body of the Put disk operation. Required.
+        :type snapshot: ~azure.mgmt.compute.models.Snapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39112,7 +38540,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        resource: JSON,
+        snapshot: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39126,8 +38554,8 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param resource: Snapshot object supplied in the body of the Put disk operation. Required.
-        :type resource: JSON
+        :param snapshot: Snapshot object supplied in the body of the Put disk operation. Required.
+        :type snapshot: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39141,7 +38569,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        resource: IO[bytes],
+        snapshot: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39155,8 +38583,8 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param resource: Snapshot object supplied in the body of the Put disk operation. Required.
-        :type resource: IO[bytes]
+        :param snapshot: Snapshot object supplied in the body of the Put disk operation. Required.
+        :type snapshot: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39170,7 +38598,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        resource: Union[_models.Snapshot, JSON, IO[bytes]],
+        snapshot: Union[_models.Snapshot, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Creates or updates a snapshot.
@@ -39182,9 +38610,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param resource: Snapshot object supplied in the body of the Put disk operation. Is one of the
+        :param snapshot: Snapshot object supplied in the body of the Put disk operation. Is one of the
          following types: Snapshot, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.Snapshot or JSON or IO[bytes]
+        :type snapshot: ~azure.mgmt.compute.models.Snapshot or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -39201,7 +38629,7 @@ class SnapshotsOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 snapshot_name=snapshot_name,
-                resource=resource,
+                snapshot=snapshot,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -39240,7 +38668,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        properties: Union[_models.SnapshotUpdate, JSON, IO[bytes]],
+        snapshot: Union[_models.SnapshotUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -39259,10 +38687,10 @@ class SnapshotsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(snapshot, (IOBase, bytes)):
+            _content = snapshot
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(snapshot, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_snapshots_update_request(
             resource_group_name=resource_group_name,
@@ -39312,7 +38740,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        properties: _models.SnapshotUpdate,
+        snapshot: _models.SnapshotUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39326,9 +38754,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param properties: Snapshot object supplied in the body of the Patch snapshot operation.
+        :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
          Required.
-        :type properties: ~azure.mgmt.compute.models.SnapshotUpdate
+        :type snapshot: ~azure.mgmt.compute.models.SnapshotUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39342,7 +38770,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        properties: JSON,
+        snapshot: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39356,9 +38784,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param properties: Snapshot object supplied in the body of the Patch snapshot operation.
+        :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
          Required.
-        :type properties: JSON
+        :type snapshot: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39372,7 +38800,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        properties: IO[bytes],
+        snapshot: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39386,9 +38814,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param properties: Snapshot object supplied in the body of the Patch snapshot operation.
+        :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation.
          Required.
-        :type properties: IO[bytes]
+        :type snapshot: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39402,7 +38830,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        properties: Union[_models.SnapshotUpdate, JSON, IO[bytes]],
+        snapshot: Union[_models.SnapshotUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Updates (patches) a snapshot.
@@ -39414,9 +38842,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param properties: Snapshot object supplied in the body of the Patch snapshot operation. Is one
+        :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation. Is one
          of the following types: SnapshotUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.SnapshotUpdate or JSON or IO[bytes]
+        :type snapshot: ~azure.mgmt.compute.models.SnapshotUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -39433,7 +38861,7 @@ class SnapshotsOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 snapshot_name=snapshot_name,
-                properties=properties,
+                snapshot=snapshot,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -39758,7 +39186,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        body: Union[_models.GrantAccessData, JSON, IO[bytes]],
+        grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -39777,10 +39205,10 @@ class SnapshotsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(grant_access_data, (IOBase, bytes)):
+            _content = grant_access_data
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(grant_access_data, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_snapshots_grant_access_request(
             resource_group_name=resource_group_name,
@@ -39830,7 +39258,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        body: _models.GrantAccessData,
+        grant_access_data: _models.GrantAccessData,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39844,9 +39272,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param body: Access data object supplied in the body of the get snapshot access operation.
-         Required.
-        :type body: ~azure.mgmt.compute.models.GrantAccessData
+        :param grant_access_data: Access data object supplied in the body of the get snapshot access
+         operation. Required.
+        :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39861,7 +39289,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        body: JSON,
+        grant_access_data: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39875,9 +39303,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param body: Access data object supplied in the body of the get snapshot access operation.
-         Required.
-        :type body: JSON
+        :param grant_access_data: Access data object supplied in the body of the get snapshot access
+         operation. Required.
+        :type grant_access_data: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39892,7 +39320,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        body: IO[bytes],
+        grant_access_data: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -39906,9 +39334,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param body: Access data object supplied in the body of the get snapshot access operation.
-         Required.
-        :type body: IO[bytes]
+        :param grant_access_data: Access data object supplied in the body of the get snapshot access
+         operation. Required.
+        :type grant_access_data: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -39923,7 +39351,7 @@ class SnapshotsOperations:
         self,
         resource_group_name: str,
         snapshot_name: str,
-        body: Union[_models.GrantAccessData, JSON, IO[bytes]],
+        grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AccessUri]:
         """Grants access to a snapshot.
@@ -39935,9 +39363,9 @@ class SnapshotsOperations:
          after the snapshot is created. Supported characters for the name are a-z, A-Z, 0-9, _ and -.
          The max name length is 80 characters. Required.
         :type snapshot_name: str
-        :param body: Access data object supplied in the body of the get snapshot access operation. Is
-         one of the following types: GrantAccessData, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
+        :param grant_access_data: Access data object supplied in the body of the get snapshot access
+         operation. Is one of the following types: GrantAccessData, JSON, IO[bytes] Required.
+        :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
         :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
@@ -39955,7 +39383,7 @@ class SnapshotsOperations:
             raw_result = self._grant_access_initial(
                 resource_group_name=resource_group_name,
                 snapshot_name=snapshot_name,
-                body=body,
+                grant_access_data=grant_access_data,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -40229,7 +39657,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        resource: Union[_models.Gallery, JSON, IO[bytes]],
+        gallery: Union[_models.Gallery, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -40248,10 +39676,10 @@ class GalleriesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery, (IOBase, bytes)):
+            _content = gallery
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_galleries_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -40305,7 +39733,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        resource: _models.Gallery,
+        gallery: _models.Gallery,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40317,9 +39745,9 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param resource: Parameters supplied to the create or update Shared Image Gallery operation.
+        :param gallery: Parameters supplied to the create or update Shared Image Gallery operation.
          Required.
-        :type resource: ~azure.mgmt.compute.models.Gallery
+        :type gallery: ~azure.mgmt.compute.models.Gallery
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40333,7 +39761,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        resource: JSON,
+        gallery: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40345,9 +39773,9 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param resource: Parameters supplied to the create or update Shared Image Gallery operation.
+        :param gallery: Parameters supplied to the create or update Shared Image Gallery operation.
          Required.
-        :type resource: JSON
+        :type gallery: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40361,7 +39789,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        resource: IO[bytes],
+        gallery: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40373,9 +39801,9 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param resource: Parameters supplied to the create or update Shared Image Gallery operation.
+        :param gallery: Parameters supplied to the create or update Shared Image Gallery operation.
          Required.
-        :type resource: IO[bytes]
+        :type gallery: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40389,7 +39817,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        resource: Union[_models.Gallery, JSON, IO[bytes]],
+        gallery: Union[_models.Gallery, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a Shared Image Gallery.
@@ -40399,9 +39827,9 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param resource: Parameters supplied to the create or update Shared Image Gallery operation. Is
+        :param gallery: Parameters supplied to the create or update Shared Image Gallery operation. Is
          one of the following types: Gallery, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.Gallery or JSON or IO[bytes]
+        :type gallery: ~azure.mgmt.compute.models.Gallery or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -40418,7 +39846,7 @@ class GalleriesOperations:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
-                resource=resource,
+                gallery=gallery,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -40457,7 +39885,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        properties: Union[_models.GalleryUpdate, JSON, IO[bytes]],
+        gallery: Union[_models.GalleryUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -40476,10 +39904,10 @@ class GalleriesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery, (IOBase, bytes)):
+            _content = gallery
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_galleries_update_request(
             resource_group_name=resource_group_name,
@@ -40528,7 +39956,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        properties: _models.GalleryUpdate,
+        gallery: _models.GalleryUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40540,8 +39968,8 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param properties: Parameters supplied to the update Shared Image Gallery operation. Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryUpdate
+        :param gallery: Parameters supplied to the update Shared Image Gallery operation. Required.
+        :type gallery: ~azure.mgmt.compute.models.GalleryUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40555,7 +39983,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        properties: JSON,
+        gallery: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40567,8 +39995,8 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param properties: Parameters supplied to the update Shared Image Gallery operation. Required.
-        :type properties: JSON
+        :param gallery: Parameters supplied to the update Shared Image Gallery operation. Required.
+        :type gallery: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40582,7 +40010,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        properties: IO[bytes],
+        gallery: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -40594,8 +40022,8 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param properties: Parameters supplied to the update Shared Image Gallery operation. Required.
-        :type properties: IO[bytes]
+        :param gallery: Parameters supplied to the update Shared Image Gallery operation. Required.
+        :type gallery: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -40609,7 +40037,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        properties: Union[_models.GalleryUpdate, JSON, IO[bytes]],
+        gallery: Union[_models.GalleryUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a Shared Image Gallery.
@@ -40619,9 +40047,9 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param properties: Parameters supplied to the update Shared Image Gallery operation. Is one of
-         the following types: GalleryUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryUpdate or JSON or IO[bytes]
+        :param gallery: Parameters supplied to the update Shared Image Gallery operation. Is one of the
+         following types: GalleryUpdate, JSON, IO[bytes] Required.
+        :type gallery: ~azure.mgmt.compute.models.GalleryUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -40638,7 +40066,7 @@ class GalleriesOperations:
             raw_result = self._update_initial(
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
-                properties=properties,
+                gallery=gallery,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -41063,7 +40491,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        body: Union[_models.SharingUpdate, JSON, IO[bytes]],
+        sharing_update: Union[_models.SharingUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41082,10 +40510,10 @@ class GalleriesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(sharing_update, (IOBase, bytes)):
+            _content = sharing_update
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(sharing_update, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_galleries_gallery_sharing_profile_update_request(
             resource_group_name=resource_group_name,
@@ -41135,7 +40563,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        body: _models.SharingUpdate,
+        sharing_update: _models.SharingUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41147,8 +40575,8 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param body: Parameters supplied to the update gallery sharing profile. Required.
-        :type body: ~azure.mgmt.compute.models.SharingUpdate
+        :param sharing_update: Parameters supplied to the update gallery sharing profile. Required.
+        :type sharing_update: ~azure.mgmt.compute.models.SharingUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41162,7 +40590,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        body: JSON,
+        sharing_update: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41174,8 +40602,8 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param body: Parameters supplied to the update gallery sharing profile. Required.
-        :type body: JSON
+        :param sharing_update: Parameters supplied to the update gallery sharing profile. Required.
+        :type sharing_update: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41189,7 +40617,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        body: IO[bytes],
+        sharing_update: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41201,8 +40629,8 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param body: Parameters supplied to the update gallery sharing profile. Required.
-        :type body: IO[bytes]
+        :param sharing_update: Parameters supplied to the update gallery sharing profile. Required.
+        :type sharing_update: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41216,7 +40644,7 @@ class GalleriesOperations:
         self,
         resource_group_name: str,
         gallery_name: str,
-        body: Union[_models.SharingUpdate, JSON, IO[bytes]],
+        sharing_update: Union[_models.SharingUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update sharing profile of a gallery.
@@ -41226,9 +40654,9 @@ class GalleriesOperations:
         :type resource_group_name: str
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
-        :param body: Parameters supplied to the update gallery sharing profile. Is one of the following
-         types: SharingUpdate, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.compute.models.SharingUpdate or JSON or IO[bytes]
+        :param sharing_update: Parameters supplied to the update gallery sharing profile. Is one of the
+         following types: SharingUpdate, JSON, IO[bytes] Required.
+        :type sharing_update: ~azure.mgmt.compute.models.SharingUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -41245,7 +40673,7 @@ class GalleriesOperations:
             raw_result = self._gallery_sharing_profile_update_initial(
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
-                body=body,
+                sharing_update=sharing_update,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -41374,7 +40802,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        resource: Union[_models.GalleryImage, JSON, IO[bytes]],
+        gallery_image: Union[_models.GalleryImage, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41393,10 +40821,10 @@ class GalleryImagesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery_image, (IOBase, bytes)):
+            _content = gallery_image
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_image, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_images_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -41452,7 +40880,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        resource: _models.GalleryImage,
+        gallery_image: _models.GalleryImage,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41466,8 +40894,9 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param resource: Parameters supplied to the create or update gallery image operation. Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryImage
+        :param gallery_image: Parameters supplied to the create or update gallery image operation.
+         Required.
+        :type gallery_image: ~azure.mgmt.compute.models.GalleryImage
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41482,7 +40911,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        resource: JSON,
+        gallery_image: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41496,8 +40925,9 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param resource: Parameters supplied to the create or update gallery image operation. Required.
-        :type resource: JSON
+        :param gallery_image: Parameters supplied to the create or update gallery image operation.
+         Required.
+        :type gallery_image: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41512,7 +40942,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        resource: IO[bytes],
+        gallery_image: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41526,8 +40956,9 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param resource: Parameters supplied to the create or update gallery image operation. Required.
-        :type resource: IO[bytes]
+        :param gallery_image: Parameters supplied to the create or update gallery image operation.
+         Required.
+        :type gallery_image: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41542,7 +40973,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        resource: Union[_models.GalleryImage, JSON, IO[bytes]],
+        gallery_image: Union[_models.GalleryImage, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a gallery image definition.
@@ -41554,9 +40985,9 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param resource: Parameters supplied to the create or update gallery image operation. Is one of
-         the following types: GalleryImage, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryImage or JSON or IO[bytes]
+        :param gallery_image: Parameters supplied to the create or update gallery image operation. Is
+         one of the following types: GalleryImage, JSON, IO[bytes] Required.
+        :type gallery_image: ~azure.mgmt.compute.models.GalleryImage or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -41574,7 +41005,7 @@ class GalleryImagesOperations:
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
                 gallery_image_name=gallery_image_name,
-                resource=resource,
+                gallery_image=gallery_image,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -41614,7 +41045,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        properties: Union[_models.GalleryImageUpdate, JSON, IO[bytes]],
+        gallery_image: Union[_models.GalleryImageUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -41633,10 +41064,10 @@ class GalleryImagesOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery_image, (IOBase, bytes)):
+            _content = gallery_image
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_image, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_images_update_request(
             resource_group_name=resource_group_name,
@@ -41687,7 +41118,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        properties: _models.GalleryImageUpdate,
+        gallery_image: _models.GalleryImageUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41701,8 +41132,8 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param properties: Parameters supplied to the update gallery image operation. Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryImageUpdate
+        :param gallery_image: Parameters supplied to the update gallery image operation. Required.
+        :type gallery_image: ~azure.mgmt.compute.models.GalleryImageUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41717,7 +41148,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        properties: JSON,
+        gallery_image: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41731,8 +41162,8 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param properties: Parameters supplied to the update gallery image operation. Required.
-        :type properties: JSON
+        :param gallery_image: Parameters supplied to the update gallery image operation. Required.
+        :type gallery_image: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41747,7 +41178,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        properties: IO[bytes],
+        gallery_image: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -41761,8 +41192,8 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param properties: Parameters supplied to the update gallery image operation. Required.
-        :type properties: IO[bytes]
+        :param gallery_image: Parameters supplied to the update gallery image operation. Required.
+        :type gallery_image: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41777,7 +41208,7 @@ class GalleryImagesOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_image_name: str,
-        properties: Union[_models.GalleryImageUpdate, JSON, IO[bytes]],
+        gallery_image: Union[_models.GalleryImageUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery image definition.
@@ -41789,9 +41220,9 @@ class GalleryImagesOperations:
         :type gallery_name: str
         :param gallery_image_name: The name of the gallery image definition to be retrieved. Required.
         :type gallery_image_name: str
-        :param properties: Parameters supplied to the update gallery image operation. Is one of the
+        :param gallery_image: Parameters supplied to the update gallery image operation. Is one of the
          following types: GalleryImageUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryImageUpdate or JSON or IO[bytes]
+        :type gallery_image: ~azure.mgmt.compute.models.GalleryImageUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -41809,7 +41240,7 @@ class GalleryImagesOperations:
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
                 gallery_image_name=gallery_image_name,
-                properties=properties,
+                gallery_image=gallery_image,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -42167,7 +41598,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        resource: Union[_models.GalleryImageVersion, JSON, IO[bytes]],
+        gallery_image_version: Union[_models.GalleryImageVersion, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -42186,10 +41617,10 @@ class GalleryImageVersionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery_image_version, (IOBase, bytes)):
+            _content = gallery_image_version
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_image_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_image_versions_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -42247,7 +41678,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        resource: _models.GalleryImageVersion,
+        gallery_image_version: _models.GalleryImageVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42264,9 +41695,9 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param resource: Parameters supplied to the create or update gallery image version operation.
-         Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryImageVersion
+        :param gallery_image_version: Parameters supplied to the create or update gallery image version
+         operation. Required.
+        :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42282,7 +41713,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        resource: JSON,
+        gallery_image_version: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42299,9 +41730,9 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param resource: Parameters supplied to the create or update gallery image version operation.
-         Required.
-        :type resource: JSON
+        :param gallery_image_version: Parameters supplied to the create or update gallery image version
+         operation. Required.
+        :type gallery_image_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42317,7 +41748,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        resource: IO[bytes],
+        gallery_image_version: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42334,9 +41765,9 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param resource: Parameters supplied to the create or update gallery image version operation.
-         Required.
-        :type resource: IO[bytes]
+        :param gallery_image_version: Parameters supplied to the create or update gallery image version
+         operation. Required.
+        :type gallery_image_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42352,7 +41783,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        resource: Union[_models.GalleryImageVersion, JSON, IO[bytes]],
+        gallery_image_version: Union[_models.GalleryImageVersion, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a gallery image version.
@@ -42367,9 +41798,10 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param resource: Parameters supplied to the create or update gallery image version operation.
-         Is one of the following types: GalleryImageVersion, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryImageVersion or JSON or IO[bytes]
+        :param gallery_image_version: Parameters supplied to the create or update gallery image version
+         operation. Is one of the following types: GalleryImageVersion, JSON, IO[bytes] Required.
+        :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersion or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -42388,7 +41820,7 @@ class GalleryImageVersionsOperations:
                 gallery_name=gallery_name,
                 gallery_image_name=gallery_image_name,
                 gallery_image_version_name=gallery_image_version_name,
-                resource=resource,
+                gallery_image_version=gallery_image_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -42429,7 +41861,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        properties: Union[_models.GalleryImageVersionUpdate, JSON, IO[bytes]],
+        gallery_image_version: Union[_models.GalleryImageVersionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -42448,10 +41880,10 @@ class GalleryImageVersionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery_image_version, (IOBase, bytes)):
+            _content = gallery_image_version
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_image_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_image_versions_update_request(
             resource_group_name=resource_group_name,
@@ -42504,7 +41936,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        properties: _models.GalleryImageVersionUpdate,
+        gallery_image_version: _models.GalleryImageVersionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42521,8 +41953,9 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param properties: Parameters supplied to the update gallery image version operation. Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryImageVersionUpdate
+        :param gallery_image_version: Parameters supplied to the update gallery image version
+         operation. Required.
+        :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42538,7 +41971,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        properties: JSON,
+        gallery_image_version: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42555,8 +41988,9 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param properties: Parameters supplied to the update gallery image version operation. Required.
-        :type properties: JSON
+        :param gallery_image_version: Parameters supplied to the update gallery image version
+         operation. Required.
+        :type gallery_image_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42572,7 +42006,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        properties: IO[bytes],
+        gallery_image_version: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -42589,8 +42023,9 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param properties: Parameters supplied to the update gallery image version operation. Required.
-        :type properties: IO[bytes]
+        :param gallery_image_version: Parameters supplied to the update gallery image version
+         operation. Required.
+        :type gallery_image_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -42606,7 +42041,7 @@ class GalleryImageVersionsOperations:
         gallery_name: str,
         gallery_image_name: str,
         gallery_image_version_name: str,
-        properties: Union[_models.GalleryImageVersionUpdate, JSON, IO[bytes]],
+        gallery_image_version: Union[_models.GalleryImageVersionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery image version.
@@ -42621,9 +42056,10 @@ class GalleryImageVersionsOperations:
         :param gallery_image_version_name: The name of the gallery image version to be retrieved.
          Required.
         :type gallery_image_version_name: str
-        :param properties: Parameters supplied to the update gallery image version operation. Is one of
-         the following types: GalleryImageVersionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryImageVersionUpdate or JSON or IO[bytes]
+        :param gallery_image_version: Parameters supplied to the update gallery image version
+         operation. Is one of the following types: GalleryImageVersionUpdate, JSON, IO[bytes] Required.
+        :type gallery_image_version: ~azure.mgmt.compute.models.GalleryImageVersionUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -42642,7 +42078,7 @@ class GalleryImageVersionsOperations:
                 gallery_name=gallery_name,
                 gallery_image_name=gallery_image_name,
                 gallery_image_version_name=gallery_image_version_name,
-                properties=properties,
+                gallery_image_version=gallery_image_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -43003,7 +42439,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        resource: Union[_models.GalleryApplication, JSON, IO[bytes]],
+        gallery_application: Union[_models.GalleryApplication, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -43022,10 +42458,10 @@ class GalleryApplicationsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery_application, (IOBase, bytes)):
+            _content = gallery_application
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_application, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_applications_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -43081,7 +42517,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        resource: _models.GalleryApplication,
+        gallery_application: _models.GalleryApplication,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43096,9 +42532,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param resource: Parameters supplied to the create or update gallery Application operation.
-         Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryApplication
+        :param gallery_application: Parameters supplied to the create or update gallery Application
+         operation. Required.
+        :type gallery_application: ~azure.mgmt.compute.models.GalleryApplication
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43113,7 +42549,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        resource: JSON,
+        gallery_application: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43128,9 +42564,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param resource: Parameters supplied to the create or update gallery Application operation.
-         Required.
-        :type resource: JSON
+        :param gallery_application: Parameters supplied to the create or update gallery Application
+         operation. Required.
+        :type gallery_application: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43145,7 +42581,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        resource: IO[bytes],
+        gallery_application: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43160,9 +42596,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param resource: Parameters supplied to the create or update gallery Application operation.
-         Required.
-        :type resource: IO[bytes]
+        :param gallery_application: Parameters supplied to the create or update gallery Application
+         operation. Required.
+        :type gallery_application: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43177,7 +42613,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        resource: Union[_models.GalleryApplication, JSON, IO[bytes]],
+        gallery_application: Union[_models.GalleryApplication, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a gallery Application Definition.
@@ -43190,9 +42626,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param resource: Parameters supplied to the create or update gallery Application operation. Is
-         one of the following types: GalleryApplication, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryApplication or JSON or IO[bytes]
+        :param gallery_application: Parameters supplied to the create or update gallery Application
+         operation. Is one of the following types: GalleryApplication, JSON, IO[bytes] Required.
+        :type gallery_application: ~azure.mgmt.compute.models.GalleryApplication or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43210,7 +42646,7 @@ class GalleryApplicationsOperations:
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
                 gallery_application_name=gallery_application_name,
-                resource=resource,
+                gallery_application=gallery_application,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -43250,7 +42686,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        properties: Union[_models.GalleryApplicationUpdate, JSON, IO[bytes]],
+        gallery_application: Union[_models.GalleryApplicationUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -43269,10 +42705,10 @@ class GalleryApplicationsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery_application, (IOBase, bytes)):
+            _content = gallery_application
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_application, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_applications_update_request(
             resource_group_name=resource_group_name,
@@ -43323,7 +42759,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        properties: _models.GalleryApplicationUpdate,
+        gallery_application: _models.GalleryApplicationUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43338,8 +42774,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param properties: Parameters supplied to the update gallery Application operation. Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryApplicationUpdate
+        :param gallery_application: Parameters supplied to the update gallery Application operation.
+         Required.
+        :type gallery_application: ~azure.mgmt.compute.models.GalleryApplicationUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43354,7 +42791,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        properties: JSON,
+        gallery_application: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43369,8 +42806,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param properties: Parameters supplied to the update gallery Application operation. Required.
-        :type properties: JSON
+        :param gallery_application: Parameters supplied to the update gallery Application operation.
+         Required.
+        :type gallery_application: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43385,7 +42823,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        properties: IO[bytes],
+        gallery_application: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43400,8 +42838,9 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param properties: Parameters supplied to the update gallery Application operation. Required.
-        :type properties: IO[bytes]
+        :param gallery_application: Parameters supplied to the update gallery Application operation.
+         Required.
+        :type gallery_application: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43416,7 +42855,7 @@ class GalleryApplicationsOperations:
         resource_group_name: str,
         gallery_name: str,
         gallery_application_name: str,
-        properties: Union[_models.GalleryApplicationUpdate, JSON, IO[bytes]],
+        gallery_application: Union[_models.GalleryApplicationUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery Application Definition.
@@ -43429,9 +42868,10 @@ class GalleryApplicationsOperations:
         :param gallery_application_name: The name of the gallery Application Definition to be
          retrieved. Required.
         :type gallery_application_name: str
-        :param properties: Parameters supplied to the update gallery Application operation. Is one of
-         the following types: GalleryApplicationUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryApplicationUpdate or JSON or IO[bytes]
+        :param gallery_application: Parameters supplied to the update gallery Application operation. Is
+         one of the following types: GalleryApplicationUpdate, JSON, IO[bytes] Required.
+        :type gallery_application: ~azure.mgmt.compute.models.GalleryApplicationUpdate or JSON or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -43449,7 +42889,7 @@ class GalleryApplicationsOperations:
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
                 gallery_application_name=gallery_application_name,
-                properties=properties,
+                gallery_application=gallery_application,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -43810,7 +43250,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        resource: Union[_models.GalleryApplicationVersion, JSON, IO[bytes]],
+        gallery_application_version: Union[_models.GalleryApplicationVersion, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -43829,10 +43269,10 @@ class GalleryApplicationVersionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery_application_version, (IOBase, bytes)):
+            _content = gallery_application_version
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_application_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_application_versions_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -43890,7 +43330,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        resource: _models.GalleryApplicationVersion,
+        gallery_application_version: _models.GalleryApplicationVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43908,9 +43348,9 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param resource: Parameters supplied to the create or update gallery Application Version
-         operation. Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryApplicationVersion
+        :param gallery_application_version: Parameters supplied to the create or update gallery
+         Application Version operation. Required.
+        :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43927,7 +43367,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        resource: JSON,
+        gallery_application_version: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43945,9 +43385,9 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param resource: Parameters supplied to the create or update gallery Application Version
-         operation. Required.
-        :type resource: JSON
+        :param gallery_application_version: Parameters supplied to the create or update gallery
+         Application Version operation. Required.
+        :type gallery_application_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -43964,7 +43404,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        resource: IO[bytes],
+        gallery_application_version: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -43982,9 +43422,9 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param resource: Parameters supplied to the create or update gallery Application Version
-         operation. Required.
-        :type resource: IO[bytes]
+        :param gallery_application_version: Parameters supplied to the create or update gallery
+         Application Version operation. Required.
+        :type gallery_application_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44001,7 +43441,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        resource: Union[_models.GalleryApplicationVersion, JSON, IO[bytes]],
+        gallery_application_version: Union[_models.GalleryApplicationVersion, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GalleryApplicationVersion]:
         """Create or update a gallery Application Version.
@@ -44017,9 +43457,11 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param resource: Parameters supplied to the create or update gallery Application Version
-         operation. Is one of the following types: GalleryApplicationVersion, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryApplicationVersion or JSON or IO[bytes]
+        :param gallery_application_version: Parameters supplied to the create or update gallery
+         Application Version operation. Is one of the following types: GalleryApplicationVersion, JSON,
+         IO[bytes] Required.
+        :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersion or JSON
+         or IO[bytes]
         :return: An instance of LROPoller that returns GalleryApplicationVersion. The
          GalleryApplicationVersion is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.GalleryApplicationVersion]
@@ -44039,7 +43481,7 @@ class GalleryApplicationVersionsOperations:
                 gallery_name=gallery_name,
                 gallery_application_name=gallery_application_name,
                 gallery_application_version_name=gallery_application_version_name,
-                resource=resource,
+                gallery_application_version=gallery_application_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -44085,7 +43527,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        properties: Union[_models.GalleryApplicationVersionUpdate, JSON, IO[bytes]],
+        gallery_application_version: Union[_models.GalleryApplicationVersionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -44104,10 +43546,10 @@ class GalleryApplicationVersionsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery_application_version, (IOBase, bytes)):
+            _content = gallery_application_version
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_application_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_application_versions_update_request(
             resource_group_name=resource_group_name,
@@ -44160,7 +43602,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        properties: _models.GalleryApplicationVersionUpdate,
+        gallery_application_version: _models.GalleryApplicationVersionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44178,9 +43620,9 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param properties: Parameters supplied to the update gallery Application Version operation.
-         Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryApplicationVersionUpdate
+        :param gallery_application_version: Parameters supplied to the update gallery Application
+         Version operation. Required.
+        :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44196,7 +43638,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        properties: JSON,
+        gallery_application_version: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44214,9 +43656,9 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param properties: Parameters supplied to the update gallery Application Version operation.
-         Required.
-        :type properties: JSON
+        :param gallery_application_version: Parameters supplied to the update gallery Application
+         Version operation. Required.
+        :type gallery_application_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44232,7 +43674,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        properties: IO[bytes],
+        gallery_application_version: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44250,9 +43692,9 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param properties: Parameters supplied to the update gallery Application Version operation.
-         Required.
-        :type properties: IO[bytes]
+        :param gallery_application_version: Parameters supplied to the update gallery Application
+         Version operation. Required.
+        :type gallery_application_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44268,7 +43710,7 @@ class GalleryApplicationVersionsOperations:
         gallery_name: str,
         gallery_application_name: str,
         gallery_application_version_name: str,
-        properties: Union[_models.GalleryApplicationVersionUpdate, JSON, IO[bytes]],
+        gallery_application_version: Union[_models.GalleryApplicationVersionUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery Application Version.
@@ -44284,10 +43726,11 @@ class GalleryApplicationVersionsOperations:
         :param gallery_application_version_name: The name of the gallery Application Version to be
          retrieved. Required.
         :type gallery_application_version_name: str
-        :param properties: Parameters supplied to the update gallery Application Version operation. Is
-         one of the following types: GalleryApplicationVersionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryApplicationVersionUpdate or JSON or
-         IO[bytes]
+        :param gallery_application_version: Parameters supplied to the update gallery Application
+         Version operation. Is one of the following types: GalleryApplicationVersionUpdate, JSON,
+         IO[bytes] Required.
+        :type gallery_application_version: ~azure.mgmt.compute.models.GalleryApplicationVersionUpdate
+         or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44306,7 +43749,7 @@ class GalleryApplicationVersionsOperations:
                 gallery_name=gallery_name,
                 gallery_application_name=gallery_application_name,
                 gallery_application_version_name=gallery_application_version_name,
-                properties=properties,
+                gallery_application_version=gallery_application_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -44670,7 +44113,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        resource: Union[_models.GalleryInVMAccessControlProfile, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfile, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -44689,10 +44132,10 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery_in_vm_access_control_profile, (IOBase, bytes)):
+            _content = gallery_in_vm_access_control_profile
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_in_vm_access_control_profile, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_in_vm_access_control_profiles_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -44744,7 +44187,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        resource: _models.GalleryInVMAccessControlProfile,
+        gallery_in_vm_access_control_profile: _models.GalleryInVMAccessControlProfile,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44759,9 +44202,10 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         operation. Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the create or update
+         gallery inVMAccessControlProfile operation. Required.
+        :type gallery_in_vm_access_control_profile:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44776,7 +44220,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        resource: JSON,
+        gallery_in_vm_access_control_profile: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44791,9 +44235,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         operation. Required.
-        :type resource: JSON
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the create or update
+         gallery inVMAccessControlProfile operation. Required.
+        :type gallery_in_vm_access_control_profile: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44808,7 +44252,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        resource: IO[bytes],
+        gallery_in_vm_access_control_profile: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -44823,9 +44267,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         operation. Required.
-        :type resource: IO[bytes]
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the create or update
+         gallery inVMAccessControlProfile operation. Required.
+        :type gallery_in_vm_access_control_profile: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -44840,7 +44284,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        resource: Union[_models.GalleryInVMAccessControlProfile, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfile, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a gallery inVMAccessControlProfile.
@@ -44853,10 +44297,11 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         operation. Is one of the following types: GalleryInVMAccessControlProfile, JSON, IO[bytes]
-         Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile or JSON or IO[bytes]
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the create or update
+         gallery inVMAccessControlProfile operation. Is one of the following types:
+         GalleryInVMAccessControlProfile, JSON, IO[bytes] Required.
+        :type gallery_in_vm_access_control_profile:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfile or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -44874,7 +44319,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
                 in_vm_access_control_profile_name=in_vm_access_control_profile_name,
-                resource=resource,
+                gallery_in_vm_access_control_profile=gallery_in_vm_access_control_profile,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -44914,7 +44359,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        properties: Union[_models.GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -44933,10 +44378,10 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery_in_vm_access_control_profile, (IOBase, bytes)):
+            _content = gallery_in_vm_access_control_profile
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_in_vm_access_control_profile, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_in_vm_access_control_profiles_update_request(
             resource_group_name=resource_group_name,
@@ -44987,7 +44432,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        properties: _models.GalleryInVMAccessControlProfileUpdate,
+        gallery_in_vm_access_control_profile: _models.GalleryInVMAccessControlProfileUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45002,9 +44447,10 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile
-         operation. Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileUpdate
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the update gallery
+         inVMAccessControlProfile operation. Required.
+        :type gallery_in_vm_access_control_profile:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45019,7 +44465,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        properties: JSON,
+        gallery_in_vm_access_control_profile: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45034,9 +44480,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile
-         operation. Required.
-        :type properties: JSON
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the update gallery
+         inVMAccessControlProfile operation. Required.
+        :type gallery_in_vm_access_control_profile: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45051,7 +44497,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        properties: IO[bytes],
+        gallery_in_vm_access_control_profile: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45066,9 +44512,9 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile
-         operation. Required.
-        :type properties: IO[bytes]
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the update gallery
+         inVMAccessControlProfile operation. Required.
+        :type gallery_in_vm_access_control_profile: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45083,7 +44529,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         resource_group_name: str,
         gallery_name: str,
         in_vm_access_control_profile_name: str,
-        properties: Union[_models.GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile: Union[_models.GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery inVMAccessControlProfile.
@@ -45096,11 +44542,11 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
         :param in_vm_access_control_profile_name: The name of the gallery inVMAccessControlProfile to
          be retrieved. Required.
         :type in_vm_access_control_profile_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile
-         operation. Is one of the following types: GalleryInVMAccessControlProfileUpdate, JSON,
-         IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileUpdate or JSON or
-         IO[bytes]
+        :param gallery_in_vm_access_control_profile: Parameters supplied to the update gallery
+         inVMAccessControlProfile operation. Is one of the following types:
+         GalleryInVMAccessControlProfileUpdate, JSON, IO[bytes] Required.
+        :type gallery_in_vm_access_control_profile:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45118,7 +44564,7 @@ class GalleryInVMAccessControlProfilesOperations:  # pylint: disable=name-too-lo
                 resource_group_name=resource_group_name,
                 gallery_name=gallery_name,
                 in_vm_access_control_profile_name=in_vm_access_control_profile_name,
-                properties=properties,
+                gallery_in_vm_access_control_profile=gallery_in_vm_access_control_profile,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -45476,7 +44922,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        resource: Union[_models.GalleryInVMAccessControlProfileVersion, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile_version: Union[
+            _models.GalleryInVMAccessControlProfileVersion, JSON, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -45495,10 +44943,10 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
+        if isinstance(gallery_in_vm_access_control_profile_version, (IOBase, bytes)):
+            _content = gallery_in_vm_access_control_profile_version
         else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_in_vm_access_control_profile_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_in_vm_access_control_profile_versions_create_or_update_request(
             resource_group_name=resource_group_name,
@@ -45552,7 +45000,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        resource: _models.GalleryInVMAccessControlProfileVersion,
+        gallery_in_vm_access_control_profile_version: _models.GalleryInVMAccessControlProfileVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45570,9 +45018,10 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         version operation. Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the create or
+         update gallery inVMAccessControlProfile version operation. Required.
+        :type gallery_in_vm_access_control_profile_version:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45588,7 +45037,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        resource: JSON,
+        gallery_in_vm_access_control_profile_version: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45606,9 +45055,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         version operation. Required.
-        :type resource: JSON
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the create or
+         update gallery inVMAccessControlProfile version operation. Required.
+        :type gallery_in_vm_access_control_profile_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45624,7 +45073,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        resource: IO[bytes],
+        gallery_in_vm_access_control_profile_version: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45642,9 +45091,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         version operation. Required.
-        :type resource: IO[bytes]
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the create or
+         update gallery inVMAccessControlProfile version operation. Required.
+        :type gallery_in_vm_access_control_profile_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45660,7 +45109,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        resource: Union[_models.GalleryInVMAccessControlProfileVersion, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile_version: Union[
+            _models.GalleryInVMAccessControlProfileVersion, JSON, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Create or update a gallery inVMAccessControlProfile version.
@@ -45676,11 +45127,11 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param resource: Parameters supplied to the create or update gallery inVMAccessControlProfile
-         version operation. Is one of the following types: GalleryInVMAccessControlProfileVersion, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion or JSON or
-         IO[bytes]
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the create or
+         update gallery inVMAccessControlProfile version operation. Is one of the following types:
+         GalleryInVMAccessControlProfileVersion, JSON, IO[bytes] Required.
+        :type gallery_in_vm_access_control_profile_version:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersion or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45699,7 +45150,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
                 gallery_name=gallery_name,
                 in_vm_access_control_profile_name=in_vm_access_control_profile_name,
                 in_vm_access_control_profile_version_name=in_vm_access_control_profile_version_name,
-                resource=resource,
+                gallery_in_vm_access_control_profile_version=gallery_in_vm_access_control_profile_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -45740,7 +45191,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        properties: Union[_models.GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile_version: Union[
+            _models.GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -45759,10 +45212,10 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
+        if isinstance(gallery_in_vm_access_control_profile_version, (IOBase, bytes)):
+            _content = gallery_in_vm_access_control_profile_version
         else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(gallery_in_vm_access_control_profile_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_gallery_in_vm_access_control_profile_versions_update_request(
             resource_group_name=resource_group_name,
@@ -45815,7 +45268,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        properties: _models.GalleryInVMAccessControlProfileVersionUpdate,
+        gallery_in_vm_access_control_profile_version: _models.GalleryInVMAccessControlProfileVersionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45833,9 +45286,10 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile version
-         operation. Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersionUpdate
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the update gallery
+         inVMAccessControlProfile version operation. Required.
+        :type gallery_in_vm_access_control_profile_version:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45851,7 +45305,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        properties: JSON,
+        gallery_in_vm_access_control_profile_version: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45869,9 +45323,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile version
-         operation. Required.
-        :type properties: JSON
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the update gallery
+         inVMAccessControlProfile version operation. Required.
+        :type gallery_in_vm_access_control_profile_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45887,7 +45341,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        properties: IO[bytes],
+        gallery_in_vm_access_control_profile_version: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -45905,9 +45359,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile version
-         operation. Required.
-        :type properties: IO[bytes]
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the update gallery
+         inVMAccessControlProfile version operation. Required.
+        :type gallery_in_vm_access_control_profile_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -45923,7 +45377,9 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         gallery_name: str,
         in_vm_access_control_profile_name: str,
         in_vm_access_control_profile_version_name: str,
-        properties: Union[_models.GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes]],
+        gallery_in_vm_access_control_profile_version: Union[
+            _models.GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Update a gallery inVMAccessControlProfile version.
@@ -45939,11 +45395,11 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
         :param in_vm_access_control_profile_version_name: The name of the gallery
          inVMAccessControlProfile version to be retrieved. Required.
         :type in_vm_access_control_profile_version_name: str
-        :param properties: Parameters supplied to the update gallery inVMAccessControlProfile version
-         operation. Is one of the following types: GalleryInVMAccessControlProfileVersionUpdate, JSON,
-         IO[bytes] Required.
-        :type properties: ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersionUpdate or
-         JSON or IO[bytes]
+        :param gallery_in_vm_access_control_profile_version: Parameters supplied to the update gallery
+         inVMAccessControlProfile version operation. Is one of the following types:
+         GalleryInVMAccessControlProfileVersionUpdate, JSON, IO[bytes] Required.
+        :type gallery_in_vm_access_control_profile_version:
+         ~azure.mgmt.compute.models.GalleryInVMAccessControlProfileVersionUpdate or JSON or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -45962,7 +45418,7 @@ class GalleryInVMAccessControlProfileVersionsOperations:  # pylint: disable=name
                 gallery_name=gallery_name,
                 in_vm_access_control_profile_name=in_vm_access_control_profile_name,
                 in_vm_access_control_profile_version_name=in_vm_access_control_profile_version_name,
-                properties=properties,
+                gallery_in_vm_access_control_profile_version=gallery_in_vm_access_control_profile_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -47377,3 +46833,621 @@ class ResourceSkusOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+
+class DiskRestorePointOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.compute.ComputeClient`'s
+        :attr:`disk_restore_point` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        **kwargs: Any
+    ) -> _models.DiskRestorePoint:
+        """Get disk restorePoint resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
+        :type disk_restore_point_name: str
+        :return: DiskRestorePoint. The DiskRestorePoint is compatible with MutableMapping
+        :rtype: ~azure.mgmt.compute.models.DiskRestorePoint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DiskRestorePoint] = kwargs.pop("cls", None)
+
+        _request = build_disk_restore_point_get_request(
+            resource_group_name=resource_group_name,
+            restore_point_collection_name=restore_point_collection_name,
+            vm_restore_point_name=vm_restore_point_name,
+            disk_restore_point_name=disk_restore_point_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.CloudError, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.DiskRestorePoint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_restore_point(
+        self, resource_group_name: str, restore_point_collection_name: str, vm_restore_point_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.DiskRestorePoint"]:
+        """Lists diskRestorePoints under a vmRestorePoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :return: An iterator like instance of DiskRestorePoint
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.compute.models.DiskRestorePoint]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.DiskRestorePoint]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_disk_restore_point_list_by_restore_point_request(
+                    resource_group_name=resource_group_name,
+                    restore_point_collection_name=restore_point_collection_name,
+                    vm_restore_point_name=vm_restore_point_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.DiskRestorePoint], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.CloudError, response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    def _grant_access_initial(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(grant_access_data, (IOBase, bytes)):
+            _content = grant_access_data
+        else:
+            _content = json.dumps(grant_access_data, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_disk_restore_point_grant_access_request(
+            resource_group_name=resource_group_name,
+            restore_point_collection_name=restore_point_collection_name,
+            vm_restore_point_name=vm_restore_point_name,
+            disk_restore_point_name=disk_restore_point_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.CloudError, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_grant_access(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        grant_access_data: _models.GrantAccessData,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessUri]:
+        """Grants access to a diskRestorePoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
+        :type disk_restore_point_name: str
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Required.
+        :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_grant_access(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        grant_access_data: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessUri]:
+        """Grants access to a diskRestorePoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
+        :type disk_restore_point_name: str
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Required.
+        :type grant_access_data: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_grant_access(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        grant_access_data: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessUri]:
+        """Grants access to a diskRestorePoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
+        :type disk_restore_point_name: str
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Required.
+        :type grant_access_data: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_grant_access(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        grant_access_data: Union[_models.GrantAccessData, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessUri]:
+        """Grants access to a diskRestorePoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
+        :type disk_restore_point_name: str
+        :param grant_access_data: Access data object supplied in the body of the get disk access
+         operation. Is one of the following types: GrantAccessData, JSON, IO[bytes] Required.
+        :type grant_access_data: ~azure.mgmt.compute.models.GrantAccessData or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns AccessUri. The AccessUri is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.AccessUri]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AccessUri] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._grant_access_initial(
+                resource_group_name=resource_group_name,
+                restore_point_collection_name=restore_point_collection_name,
+                vm_restore_point_name=vm_restore_point_name,
+                disk_restore_point_name=disk_restore_point_name,
+                grant_access_data=grant_access_data,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.AccessUri, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AccessUri].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AccessUri](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    def _revoke_access_initial(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_disk_restore_point_revoke_access_request(
+            resource_group_name=resource_group_name,
+            restore_point_collection_name=restore_point_collection_name,
+            vm_restore_point_name=vm_restore_point_name,
+            disk_restore_point_name=disk_restore_point_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.CloudError, response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def begin_revoke_access(
+        self,
+        resource_group_name: str,
+        restore_point_collection_name: str,
+        vm_restore_point_name: str,
+        disk_restore_point_name: str,
+        **kwargs: Any
+    ) -> LROPoller[_models.OkResponse]:
+        """Revokes access to a diskRestorePoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param restore_point_collection_name: The name of the restore point collection that the disk
+         restore point belongs. Required.
+        :type restore_point_collection_name: str
+        :param vm_restore_point_name: The name of the vm restore point that the disk disk restore point
+         belongs. Required.
+        :type vm_restore_point_name: str
+        :param disk_restore_point_name: The name of the DiskRestorePoint. Required.
+        :type disk_restore_point_name: str
+        :return: An instance of LROPoller that returns OkResponse. The OkResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.compute.models.OkResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OkResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._revoke_access_initial(
+                resource_group_name=resource_group_name,
+                restore_point_collection_name=restore_point_collection_name,
+                vm_restore_point_name=vm_restore_point_name,
+                disk_restore_point_name=disk_restore_point_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.OkResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OkResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OkResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

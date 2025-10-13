@@ -25,7 +25,7 @@ class TestComputeLogAnalyticsOperationGroupOperationsAsync(AzureMgmtRecordedTest
         response = await (
             await self.client.log_analytics_operation_group.begin_export_request_rate_by_interval(
                 location="str",
-                body={
+                parameters={
                     "blobContainerSasUri": "str",
                     "fromTime": "2020-02-20 00:00:00",
                     "intervalLength": "str",
@@ -48,7 +48,7 @@ class TestComputeLogAnalyticsOperationGroupOperationsAsync(AzureMgmtRecordedTest
         response = await (
             await self.client.log_analytics_operation_group.begin_export_throttled_requests(
                 location="str",
-                body={
+                parameters={
                     "blobContainerSasUri": "str",
                     "fromTime": "2020-02-20 00:00:00",
                     "toTime": "2020-02-20 00:00:00",

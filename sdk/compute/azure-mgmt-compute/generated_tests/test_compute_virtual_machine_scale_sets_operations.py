@@ -35,7 +35,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "etag": "str",
                 "extendedLocation": {"name": "str", "type": "str"},
@@ -363,7 +363,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.begin_update(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            properties={
+            parameters={
                 "identity": {
                     "principalId": "str",
                     "tenantId": "str",
@@ -671,7 +671,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.convert_to_single_placement_group(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            body={"activePlacementGroupId": "str"},
+            parameters={"activePlacementGroupId": "str"},
         )
 
         # please add some check logic here by yourself
@@ -694,7 +694,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.begin_delete_instances(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            body={"instanceIds": ["str"]},
+            vm_instance_i_ds={"instanceIds": ["str"]},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -729,7 +729,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.begin_update_instances(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            body={"instanceIds": ["str"]},
+            vm_instance_i_ds={"instanceIds": ["str"]},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -829,7 +829,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.begin_set_orchestration_service_state(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            body={"action": "str", "serviceName": "str"},
+            parameters={"action": "str", "serviceName": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -896,7 +896,7 @@ class TestComputeVirtualMachineScaleSetsOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machine_scale_sets.begin_scale_out(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            body={"capacity": 0, "properties": {"zone": "str"}},
+            parameters={"capacity": 0, "properties": {"zone": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

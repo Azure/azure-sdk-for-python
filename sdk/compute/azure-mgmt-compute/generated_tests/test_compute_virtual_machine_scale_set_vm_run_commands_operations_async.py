@@ -41,7 +41,7 @@ class TestComputeVirtualMachineScaleSetVMRunCommandsOperationsAsync(AzureMgmtRec
                 vm_scale_set_name="str",
                 instance_id="str",
                 run_command_name="str",
-                body={
+                run_command={
                     "location": "str",
                     "id": "str",
                     "name": "str",
@@ -111,7 +111,7 @@ class TestComputeVirtualMachineScaleSetVMRunCommandsOperationsAsync(AzureMgmtRec
                 vm_scale_set_name="str",
                 instance_id="str",
                 run_command_name="str",
-                body={
+                run_command={
                     "properties": {
                         "asyncExecution": bool,
                         "errorBlobManagedIdentity": {"clientId": "str", "objectId": "str"},

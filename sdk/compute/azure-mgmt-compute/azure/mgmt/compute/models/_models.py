@@ -1036,6 +1036,16 @@ class AvailabilitySet(TrackedResource):
      possible set of values. Use 'Aligned' for virtual machines with managed disks and 'Classic' for
      virtual machines with unmanaged disks. Default value is 'Classic'."""
 
+    __flattened_items = [
+        "platform_update_domain_count",
+        "platform_fault_domain_count",
+        "virtual_machines",
+        "proximity_placement_group",
+        "statuses",
+        "scheduled_events_policy",
+        "virtual_machine_scale_set_migration_info",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1054,7 +1064,25 @@ class AvailabilitySet(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class AvailabilitySetProperties(_Model):
@@ -1179,6 +1207,16 @@ class AvailabilitySetUpdate(UpdateResource):
     sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sku of the availability set."""
 
+    __flattened_items = [
+        "platform_update_domain_count",
+        "platform_fault_domain_count",
+        "virtual_machines",
+        "proximity_placement_group",
+        "statuses",
+        "scheduled_events_policy",
+        "virtual_machine_scale_set_migration_info",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1196,7 +1234,25 @@ class AvailabilitySetUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class AvailablePatchSummary(_Model):
@@ -1421,6 +1477,17 @@ class CapacityReservation(TrackedResource):
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The availability zones."""
 
+    __flattened_items = [
+        "reservation_id",
+        "platform_fault_domain_count",
+        "virtual_machines_associated",
+        "provisioning_time",
+        "provisioning_state",
+        "instance_view",
+        "time_created",
+        "schedule_profile",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1440,7 +1507,25 @@ class CapacityReservation(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CapacityReservationGroup(TrackedResource):
@@ -1477,6 +1562,14 @@ class CapacityReservationGroup(TrackedResource):
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The availability zones."""
 
+    __flattened_items = [
+        "capacity_reservations",
+        "virtual_machines_associated",
+        "instance_view",
+        "sharing_profile",
+        "reservation_type",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1495,7 +1588,25 @@ class CapacityReservationGroup(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CapacityReservationGroupInstanceView(_Model):
@@ -1616,6 +1727,14 @@ class CapacityReservationGroupUpdate(UpdateResource):
     )
     """capacity reservation group Properties."""
 
+    __flattened_items = [
+        "capacity_reservations",
+        "virtual_machines_associated",
+        "instance_view",
+        "sharing_profile",
+        "reservation_type",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1632,7 +1751,25 @@ class CapacityReservationGroupUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CapacityReservationInstanceView(_Model):
@@ -1864,6 +2001,17 @@ class CapacityReservationUpdate(UpdateResource):
      <https://docs.microsoft.com/rest/api/compute/resourceskus/list>`_) for supported values.
      **Note:** The SKU name and capacity cannot be updated for Block capacity reservations."""
 
+    __flattened_items = [
+        "reservation_id",
+        "platform_fault_domain_count",
+        "virtual_machines_associated",
+        "provisioning_time",
+        "provisioning_state",
+        "instance_view",
+        "time_created",
+        "schedule_profile",
+    ]
+
     @overload
     def __init__(
         self,
@@ -1881,7 +2029,25 @@ class CapacityReservationUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CapacityReservationUtilization(_Model):
@@ -1957,6 +2123,8 @@ class PirCommunityGalleryResource(_Model):
     )
     """The identifier information of community gallery."""
 
+    __flattened_items = ["unique_id"]
+
     @overload
     def __init__(
         self,
@@ -1972,7 +2140,25 @@ class PirCommunityGalleryResource(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CommunityGallery(PirCommunityGalleryResource):
@@ -1995,6 +2181,8 @@ class CommunityGallery(PirCommunityGalleryResource):
     )
     """Describes the properties of a community gallery."""
 
+    __flattened_items = ["unique_id", "disclaimer", "artifact_tags", "community_metadata"]
+
     @overload
     def __init__(
         self,
@@ -2011,7 +2199,25 @@ class CommunityGallery(PirCommunityGalleryResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CommunityGalleryIdentifier(_Model):
@@ -2062,6 +2268,24 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
     )
     """Describes the properties of a gallery image definition."""
 
+    __flattened_items = [
+        "unique_id",
+        "os_type",
+        "os_state",
+        "end_of_life_date",
+        "identifier",
+        "recommended",
+        "disallowed",
+        "hyper_v_generation",
+        "features",
+        "purchase_plan",
+        "architecture",
+        "privacy_statement_uri",
+        "eula",
+        "disclaimer",
+        "artifact_tags",
+    ]
+
     @overload
     def __init__(
         self,
@@ -2078,7 +2302,25 @@ class CommunityGalleryImage(PirCommunityGalleryResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CommunityGalleryImageIdentifier(_Model):
@@ -2271,6 +2513,16 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
     )
     """Describes the properties of a gallery image version."""
 
+    __flattened_items = [
+        "unique_id",
+        "published_date",
+        "end_of_life_date",
+        "exclude_from_latest",
+        "storage_profile",
+        "disclaimer",
+        "artifact_tags",
+    ]
+
     @overload
     def __init__(
         self,
@@ -2287,7 +2539,25 @@ class CommunityGalleryImageVersion(PirCommunityGalleryResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class CommunityGalleryImageVersionProperties(_Model):
@@ -3212,6 +3482,18 @@ class DedicatedHost(TrackedResource):
     """SKU of the dedicated host for Hardware Generation and VM family. Only name is required to be
      set. List Microsoft.Compute SKUs for a list of possible values. Required."""
 
+    __flattened_items = [
+        "platform_fault_domain",
+        "auto_replace_on_failure",
+        "host_id",
+        "virtual_machines",
+        "license_type",
+        "provisioning_time",
+        "provisioning_state",
+        "instance_view",
+        "time_created",
+    ]
+
     @overload
     def __init__(
         self,
@@ -3230,7 +3512,25 @@ class DedicatedHost(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DedicatedHostAllocatableVM(_Model):
@@ -3332,6 +3632,14 @@ class DedicatedHostGroup(TrackedResource):
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The availability zones."""
 
+    __flattened_items = [
+        "platform_fault_domain_count",
+        "hosts",
+        "instance_view",
+        "support_automatic_placement",
+        "additional_capabilities",
+    ]
+
     @overload
     def __init__(
         self,
@@ -3350,7 +3658,25 @@ class DedicatedHostGroup(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DedicatedHostGroupInstanceView(_Model):
@@ -3515,6 +3841,14 @@ class DedicatedHostGroupUpdate(UpdateResource):
      assigned only during creation. If not provided, the group supports all zones in the region. If
      provided, enforces each host in the group to be in the same zone."""
 
+    __flattened_items = [
+        "platform_fault_domain_count",
+        "hosts",
+        "instance_view",
+        "support_automatic_placement",
+        "additional_capabilities",
+    ]
+
     @overload
     def __init__(
         self,
@@ -3532,7 +3866,25 @@ class DedicatedHostGroupUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DedicatedHostInstanceView(_Model):
@@ -3723,6 +4075,18 @@ class DedicatedHostUpdate(UpdateResource):
      <https://docs.microsoft.com/rest/api/compute/dedicated-hosts/listavailablesizes>`_). Resizing
      can be only used to scale up DedicatedHost. Only name is required to be set."""
 
+    __flattened_items = [
+        "platform_fault_domain",
+        "auto_replace_on_failure",
+        "host_id",
+        "virtual_machines",
+        "license_type",
+        "provisioning_time",
+        "provisioning_state",
+        "instance_view",
+        "time_created",
+    ]
+
     @overload
     def __init__(
         self,
@@ -3740,7 +4104,25 @@ class DedicatedHostUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DefaultVirtualMachineScaleSetInfo(_Model):
@@ -3976,6 +4358,42 @@ class Disk(TrackedResource):
     )
     """The extended location where the disk will be created. Extended location cannot be changed."""
 
+    __flattened_items = [
+        "time_created",
+        "os_type",
+        "hyper_v_generation",
+        "purchase_plan",
+        "supported_capabilities",
+        "creation_data",
+        "disk_size_gb",
+        "disk_size_bytes",
+        "unique_id",
+        "encryption_settings_collection",
+        "provisioning_state",
+        "disk_iops_read_write",
+        "disk_m_bps_read_write",
+        "disk_iops_read_only",
+        "disk_m_bps_read_only",
+        "disk_state",
+        "encryption",
+        "max_shares",
+        "share_info",
+        "network_access_policy",
+        "disk_access_id",
+        "bursting_enabled_time",
+        "tier",
+        "bursting_enabled",
+        "property_updates_in_progress",
+        "supports_hibernation",
+        "security_profile",
+        "completion_percent",
+        "public_network_access",
+        "data_access_auth_mode",
+        "optimized_for_frequent_attach",
+        "last_ownership_update_time",
+        "availability_policy",
+    ]
+
     @overload
     def __init__(
         self,
@@ -3996,7 +4414,25 @@ class Disk(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DiskAccess(TrackedResource):
@@ -4033,6 +4469,8 @@ class DiskAccess(TrackedResource):
     """The extended location where the disk access will be created. Extended location cannot be
      changed."""
 
+    __flattened_items = ["private_endpoint_connections", "provisioning_state", "time_created"]
+
     @overload
     def __init__(
         self,
@@ -4051,7 +4489,25 @@ class DiskAccess(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DiskAccessProperties(_Model):
@@ -4140,6 +4596,17 @@ class DiskEncryptionSet(TrackedResource):
     """The managed identity for the disk encryption set. It should be given permission on the key
      vault before it can be used to encrypt disks."""
 
+    __flattened_items = [
+        "encryption_type",
+        "active_key",
+        "previous_keys",
+        "provisioning_state",
+        "rotation_to_latest_key_version_enabled",
+        "last_key_rotation_timestamp",
+        "auto_key_rotation_error",
+        "federated_client_id",
+    ]
+
     @overload
     def __init__(
         self,
@@ -4158,7 +4625,25 @@ class DiskEncryptionSet(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SubResource(_Model):
@@ -4284,6 +4769,13 @@ class DiskEncryptionSetUpdate(_Model):
     """The managed identity for the disk encryption set. It should be given permission on the key
      vault before it can be used to encrypt disks."""
 
+    __flattened_items = [
+        "encryption_type",
+        "active_key",
+        "rotation_to_latest_key_version_enabled",
+        "federated_client_id",
+    ]
+
     @overload
     def __init__(
         self,
@@ -4301,7 +4793,25 @@ class DiskEncryptionSetUpdate(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DiskEncryptionSetUpdateProperties(_Model):
@@ -4783,6 +5293,27 @@ class DiskRestorePoint(ProxyResource):
     )
     """Properties of an incremental disk restore point."""
 
+    __flattened_items = [
+        "time_created",
+        "source_resource_id",
+        "os_type",
+        "hyper_v_generation",
+        "purchase_plan",
+        "supported_capabilities",
+        "family_id",
+        "source_unique_id",
+        "encryption",
+        "supports_hibernation",
+        "network_access_policy",
+        "public_network_access",
+        "disk_access_id",
+        "completion_percent",
+        "replication_state",
+        "source_resource_location",
+        "security_profile",
+        "logical_sector_size",
+    ]
+
     @overload
     def __init__(
         self,
@@ -4798,7 +5329,25 @@ class DiskRestorePoint(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SubResourceReadOnly(_Model):
@@ -5167,6 +5716,30 @@ class DiskUpdate(_Model):
     """The disks sku name. Can be Standard_LRS, Premium_LRS, StandardSSD_LRS, UltraSSD_LRS,
      Premium_ZRS, StandardSSD_ZRS, or PremiumV2_LRS."""
 
+    __flattened_items = [
+        "os_type",
+        "disk_size_gb",
+        "encryption_settings_collection",
+        "disk_iops_read_write",
+        "disk_m_bps_read_write",
+        "disk_iops_read_only",
+        "disk_m_bps_read_only",
+        "max_shares",
+        "encryption",
+        "network_access_policy",
+        "disk_access_id",
+        "tier",
+        "bursting_enabled",
+        "purchase_plan",
+        "supported_capabilities",
+        "property_updates_in_progress",
+        "supports_hibernation",
+        "public_network_access",
+        "data_access_auth_mode",
+        "optimized_for_frequent_attach",
+        "availability_policy",
+    ]
+
     @overload
     def __init__(
         self,
@@ -5184,7 +5757,25 @@ class DiskUpdate(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class DiskUpdateProperties(_Model):
@@ -5977,6 +6568,15 @@ class Gallery(TrackedResource):
     )
     """The identity of the gallery, if configured."""
 
+    __flattened_items = [
+        "description",
+        "identifier",
+        "provisioning_state",
+        "sharing_profile",
+        "soft_delete_policy",
+        "sharing_status",
+    ]
+
     @overload
     def __init__(
         self,
@@ -5995,7 +6595,25 @@ class Gallery(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryApplication(TrackedResource):
@@ -6026,6 +6644,16 @@ class GalleryApplication(TrackedResource):
     )
     """Describes the properties of a gallery Application Definition."""
 
+    __flattened_items = [
+        "description",
+        "eula",
+        "privacy_statement_uri",
+        "release_note_uri",
+        "end_of_life_date",
+        "supported_os_type",
+        "custom_actions",
+    ]
+
     @overload
     def __init__(
         self,
@@ -6043,7 +6671,25 @@ class GalleryApplication(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryApplicationCustomAction(_Model):
@@ -6289,6 +6935,16 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
     )
     """Describes the properties of a gallery Application Definition."""
 
+    __flattened_items = [
+        "description",
+        "eula",
+        "privacy_statement_uri",
+        "release_note_uri",
+        "end_of_life_date",
+        "supported_os_type",
+        "custom_actions",
+    ]
+
     @overload
     def __init__(
         self,
@@ -6305,7 +6961,25 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryApplicationVersion(TrackedResource):
@@ -6335,6 +7009,8 @@ class GalleryApplicationVersion(TrackedResource):
     )
     """Describes the properties of a gallery image version."""
 
+    __flattened_items = ["publishing_profile", "safety_profile", "provisioning_state", "replication_status"]
+
     @overload
     def __init__(
         self,
@@ -6352,7 +7028,25 @@ class GalleryApplicationVersion(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryApplicationVersionProperties(_Model):
@@ -6681,6 +7375,8 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
     )
     """Describes the properties of a gallery image version."""
 
+    __flattened_items = ["publishing_profile", "safety_profile", "provisioning_state", "replication_status"]
+
     @overload
     def __init__(
         self,
@@ -6697,7 +7393,25 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryArtifactVersionSource(_Model):
@@ -7030,6 +7744,25 @@ class GalleryImage(TrackedResource):
     )
     """Describes the properties of a gallery image definition."""
 
+    __flattened_items = [
+        "description",
+        "eula",
+        "privacy_statement_uri",
+        "release_note_uri",
+        "os_type",
+        "os_state",
+        "hyper_v_generation",
+        "end_of_life_date",
+        "identifier",
+        "recommended",
+        "disallowed",
+        "purchase_plan",
+        "provisioning_state",
+        "features",
+        "architecture",
+        "allow_update_image",
+    ]
+
     @overload
     def __init__(
         self,
@@ -7047,7 +7780,25 @@ class GalleryImage(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryImageFeature(_Model):
@@ -7297,6 +8048,25 @@ class GalleryImageUpdate(UpdateResourceDefinition):
     )
     """Describes the properties of a gallery image definition."""
 
+    __flattened_items = [
+        "description",
+        "eula",
+        "privacy_statement_uri",
+        "release_note_uri",
+        "os_type",
+        "os_state",
+        "hyper_v_generation",
+        "end_of_life_date",
+        "identifier",
+        "recommended",
+        "disallowed",
+        "purchase_plan",
+        "provisioning_state",
+        "features",
+        "architecture",
+        "allow_update_image",
+    ]
+
     @overload
     def __init__(
         self,
@@ -7313,7 +8083,25 @@ class GalleryImageUpdate(UpdateResourceDefinition):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryImageVersion(TrackedResource):
@@ -7343,6 +8131,17 @@ class GalleryImageVersion(TrackedResource):
     )
     """Describes the properties of a gallery image version."""
 
+    __flattened_items = [
+        "publishing_profile",
+        "provisioning_state",
+        "storage_profile",
+        "safety_profile",
+        "replication_status",
+        "security_profile",
+        "restore",
+        "validations_profile",
+    ]
+
     @overload
     def __init__(
         self,
@@ -7360,7 +8159,25 @@ class GalleryImageVersion(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryImageVersionProperties(_Model):
@@ -7648,6 +8465,17 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
     )
     """Describes the properties of a gallery image version."""
 
+    __flattened_items = [
+        "publishing_profile",
+        "provisioning_state",
+        "storage_profile",
+        "safety_profile",
+        "replication_status",
+        "security_profile",
+        "restore",
+        "validations_profile",
+    ]
+
     @overload
     def __init__(
         self,
@@ -7664,7 +8492,25 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryInVMAccessControlProfile(TrackedResource):
@@ -7852,6 +8698,17 @@ class GalleryInVMAccessControlProfileVersion(TrackedResource):
     )
     """Describes the properties of an inVMAccessControlProfile version."""
 
+    __flattened_items = [
+        "target_locations",
+        "exclude_from_latest",
+        "published_date",
+        "provisioning_state",
+        "replication_status",
+        "mode",
+        "default_access",
+        "rules",
+    ]
+
     @overload
     def __init__(
         self,
@@ -7869,7 +8726,25 @@ class GalleryInVMAccessControlProfileVersion(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryResourceProfileVersionPropertiesBase(_Model):  # pylint: disable=name-too-long
@@ -8025,6 +8900,17 @@ class GalleryInVMAccessControlProfileVersionUpdate(UpdateResourceDefinition):  #
     )
     """Describes the properties of an inVMAccessControlProfile version."""
 
+    __flattened_items = [
+        "target_locations",
+        "exclude_from_latest",
+        "published_date",
+        "provisioning_state",
+        "replication_status",
+        "mode",
+        "default_access",
+        "rules",
+    ]
+
     @overload
     def __init__(
         self,
@@ -8041,7 +8927,25 @@ class GalleryInVMAccessControlProfileVersionUpdate(UpdateResourceDefinition):  #
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GalleryOSDiskImage(GalleryDiskImage):
@@ -8164,6 +9068,8 @@ class GallerySoftDeletedResource(TrackedResource):
     )
     """Describes the properties of a soft-deleted resource."""
 
+    __flattened_items = ["resource_arm_id", "soft_deleted_artifact_type", "soft_deleted_time"]
+
     @overload
     def __init__(
         self,
@@ -8181,7 +9087,25 @@ class GallerySoftDeletedResource(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GallerySoftDeletedResourceProperties(_Model):
@@ -8319,6 +9243,15 @@ class GalleryUpdate(UpdateResourceDefinition):
     )
     """The identity of the gallery, if configured."""
 
+    __flattened_items = [
+        "description",
+        "identifier",
+        "provisioning_state",
+        "sharing_profile",
+        "soft_delete_policy",
+        "sharing_status",
+    ]
+
     @overload
     def __init__(
         self,
@@ -8336,7 +9269,25 @@ class GalleryUpdate(UpdateResourceDefinition):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class GenerateKeyPairParameterBody(_Model):
@@ -8640,6 +9591,8 @@ class Image(TrackedResource):
     )
     """The extended location of the Image."""
 
+    __flattened_items = ["source_virtual_machine", "storage_profile", "provisioning_state", "hyper_v_generation"]
+
     @overload
     def __init__(
         self,
@@ -8658,7 +9611,25 @@ class Image(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class ImageDisk(_Model):
@@ -9234,6 +10205,8 @@ class ImageUpdate(UpdateResource):
     )
     """Describes the properties of an Image."""
 
+    __flattened_items = ["source_virtual_machine", "storage_profile", "provisioning_state", "hyper_v_generation"]
+
     @overload
     def __init__(
         self,
@@ -9250,7 +10223,25 @@ class ImageUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class ImageVersionSecurityProfile(_Model):
@@ -10224,6 +11215,8 @@ class NetworkInterfaceReference(SubResource):
     )
     """Describes a network interface reference properties."""
 
+    __flattened_items = ["primary", "delete_option"]
+
     @overload
     def __init__(
         self,
@@ -10240,7 +11233,25 @@ class NetworkInterfaceReference(SubResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class NetworkInterfaceReferenceProperties(_Model):
@@ -11218,6 +12229,8 @@ class PirSharedGalleryResource(PirResource):
     )
     """The identifier information of shared gallery."""
 
+    __flattened_items = ["unique_id"]
+
     @overload
     def __init__(
         self,
@@ -11233,7 +12246,25 @@ class PirSharedGalleryResource(PirResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class Placement(_Model):
@@ -11510,6 +12541,8 @@ class PrivateEndpointConnection(ProxyResource):
     )
     """Resource properties."""
 
+    __flattened_items = ["private_endpoint", "private_link_service_connection_state", "provisioning_state"]
+
     @overload
     def __init__(
         self,
@@ -11525,7 +12558,25 @@ class PrivateEndpointConnection(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class PrivateEndpointConnectionProperties(_Model):
@@ -11598,6 +12649,8 @@ class PrivateLinkResource(_Model):
     type: Optional[str] = rest_field(visibility=["read"])
     """private link resource type."""
 
+    __flattened_items = ["group_id", "required_members", "required_zone_names"]
+
     @overload
     def __init__(
         self,
@@ -11613,7 +12666,25 @@ class PrivateLinkResource(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class PrivateLinkResourceListResult(_Model):
@@ -11792,6 +12863,15 @@ class ProximityPlacementGroup(TrackedResource):
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The availability zones."""
 
+    __flattened_items = [
+        "proximity_placement_group_type",
+        "virtual_machines",
+        "virtual_machine_scale_sets",
+        "availability_sets",
+        "colocation_status",
+        "intent",
+    ]
+
     @overload
     def __init__(
         self,
@@ -11810,7 +12890,25 @@ class ProximityPlacementGroup(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class ProximityPlacementGroupProperties(_Model):
@@ -12894,6 +13992,16 @@ class RestorePoint(ProxyResource):
     )
     """The restore point properties."""
 
+    __flattened_items = [
+        "exclude_disks",
+        "source_metadata",
+        "provisioning_state",
+        "consistency_mode",
+        "time_created",
+        "source_restore_point",
+        "instance_view",
+    ]
+
     @overload
     def __init__(
         self,
@@ -12909,7 +14017,25 @@ class RestorePoint(ProxyResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class RestorePointCollection(TrackedResource):
@@ -12939,6 +14065,8 @@ class RestorePointCollection(TrackedResource):
     )
     """The restore point collection properties."""
 
+    __flattened_items = ["source", "provisioning_state", "restore_point_collection_id", "restore_points"]
+
     @overload
     def __init__(
         self,
@@ -12956,7 +14084,25 @@ class RestorePointCollection(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class RestorePointCollectionProperties(_Model):
@@ -13049,6 +14195,8 @@ class RestorePointCollectionUpdate(UpdateResource):
     )
     """The restore point collection properties."""
 
+    __flattened_items = ["source", "provisioning_state", "restore_point_collection_id", "restore_points"]
+
     @overload
     def __init__(
         self,
@@ -13065,7 +14213,25 @@ class RestorePointCollectionUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class RestorePointEncryption(_Model):
@@ -13703,6 +14869,8 @@ class RollingUpgradeStatusInfo(TrackedResource):
     )
     """The status of the latest virtual machine scale set rolling upgrade."""
 
+    __flattened_items = ["policy", "running_status", "progress", "error"]
+
     @overload
     def __init__(
         self,
@@ -13720,7 +14888,25 @@ class RollingUpgradeStatusInfo(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class RollingUpgradeStatusInfoProperties(_Model):
@@ -14521,6 +15707,8 @@ class SharedGallery(PirSharedGalleryResource):
     )
     """Specifies the properties of a shared gallery."""
 
+    __flattened_items = ["unique_id", "artifact_tags"]
+
     @overload
     def __init__(
         self,
@@ -14537,7 +15725,25 @@ class SharedGallery(PirSharedGalleryResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SharedGalleryDiskImage(_Model):
@@ -14660,6 +15866,23 @@ class SharedGalleryImage(PirSharedGalleryResource):
     )
     """Describes the properties of a gallery image definition."""
 
+    __flattened_items = [
+        "unique_id",
+        "os_type",
+        "os_state",
+        "end_of_life_date",
+        "identifier",
+        "recommended",
+        "disallowed",
+        "hyper_v_generation",
+        "features",
+        "purchase_plan",
+        "architecture",
+        "privacy_statement_uri",
+        "eula",
+        "artifact_tags",
+    ]
+
     @overload
     def __init__(
         self,
@@ -14676,7 +15899,25 @@ class SharedGalleryImage(PirSharedGalleryResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SharedGalleryImageProperties(_Model):
@@ -14824,6 +16065,15 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
     )
     """Describes the properties of a gallery image version."""
 
+    __flattened_items = [
+        "unique_id",
+        "published_date",
+        "end_of_life_date",
+        "exclude_from_latest",
+        "storage_profile",
+        "artifact_tags",
+    ]
+
     @overload
     def __init__(
         self,
@@ -14840,7 +16090,25 @@ class SharedGalleryImageVersion(PirSharedGalleryResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.identifier is None:
+                return None
+            return getattr(self.identifier, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.identifier is None:
+                self.identifier = self._attr_to_rest_field["identifier"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SharedGalleryImageVersionProperties(_Model):
@@ -15318,6 +16586,33 @@ class Snapshot(TrackedResource):
     )
     """The extended location where the snapshot will be created. Extended location cannot be changed."""
 
+    __flattened_items = [
+        "time_created",
+        "os_type",
+        "hyper_v_generation",
+        "purchase_plan",
+        "supported_capabilities",
+        "creation_data",
+        "disk_size_gb",
+        "disk_size_bytes",
+        "disk_state",
+        "unique_id",
+        "encryption_settings_collection",
+        "provisioning_state",
+        "incremental",
+        "incremental_snapshot_family_id",
+        "encryption",
+        "network_access_policy",
+        "disk_access_id",
+        "security_profile",
+        "supports_hibernation",
+        "public_network_access",
+        "completion_percent",
+        "copy_completion_error",
+        "data_access_auth_mode",
+        "snapshot_access_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -15337,7 +16632,25 @@ class Snapshot(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SnapshotProperties(_Model):
@@ -15607,6 +16920,20 @@ class SnapshotUpdate(_Model):
      parameter for incremental snapshot and the default behavior is the SKU will be set to the same
      sku as the previous snapshot."""
 
+    __flattened_items = [
+        "os_type",
+        "disk_size_gb",
+        "encryption_settings_collection",
+        "encryption",
+        "network_access_policy",
+        "disk_access_id",
+        "supports_hibernation",
+        "public_network_access",
+        "data_access_auth_mode",
+        "supported_capabilities",
+        "snapshot_access_state",
+    ]
+
     @overload
     def __init__(
         self,
@@ -15624,7 +16951,25 @@ class SnapshotUpdate(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SnapshotUpdateProperties(_Model):
@@ -16029,6 +17374,8 @@ class SshPublicKeyResource(TrackedResource):
     )
     """Properties of the SSH public key."""
 
+    __flattened_items = ["public_key"]
+
     @overload
     def __init__(
         self,
@@ -16046,7 +17393,25 @@ class SshPublicKeyResource(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class SshPublicKeyResourceProperties(_Model):
@@ -16097,6 +17462,8 @@ class SshPublicKeyUpdateResource(UpdateResource):
     )
     """Properties of the SSH public key."""
 
+    __flattened_items = ["public_key"]
+
     @overload
     def __init__(
         self,
@@ -16113,7 +17480,25 @@ class SshPublicKeyUpdateResource(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class StartParameterBody(_Model):
@@ -17361,6 +18746,36 @@ class VirtualMachine(TrackedResource):
      placement. This property cannot be changed once VM is provisioned. Minimum api-version:
      2024-11-01."""
 
+    __flattened_items = [
+        "hardware_profile",
+        "scheduled_events_policy",
+        "storage_profile",
+        "additional_capabilities",
+        "os_profile",
+        "network_profile",
+        "security_profile",
+        "diagnostics_profile",
+        "availability_set",
+        "virtual_machine_scale_set",
+        "proximity_placement_group",
+        "priority",
+        "eviction_policy",
+        "billing_profile",
+        "host",
+        "host_group",
+        "provisioning_state",
+        "instance_view",
+        "license_type",
+        "vm_id",
+        "extensions_time_budget",
+        "platform_fault_domain",
+        "scheduled_events_profile",
+        "user_data",
+        "capacity_reservation",
+        "application_profile",
+        "time_created",
+    ]
+
     @overload
     def __init__(
         self,
@@ -17383,7 +18798,25 @@ class VirtualMachine(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineAgentInstanceView(_Model):
@@ -17604,6 +19037,22 @@ class VirtualMachineExtension(TrackedResource):
     )
     """Describes the properties of a Virtual Machine Extension."""
 
+    __flattened_items = [
+        "force_update_tag",
+        "publisher",
+        "type",
+        "type_handler_version",
+        "auto_upgrade_minor_version",
+        "enable_automatic_upgrade",
+        "settings",
+        "protected_settings",
+        "provisioning_state",
+        "instance_view",
+        "suppress_failures",
+        "protected_settings_from_key_vault",
+        "provision_after_extensions",
+    ]
+
     @overload
     def __init__(
         self,
@@ -17621,7 +19070,25 @@ class VirtualMachineExtension(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineExtensionHandlerInstanceView(_Model):  # pylint: disable=name-too-long
@@ -17693,6 +19160,14 @@ class VirtualMachineExtensionImage(TrackedResource):
     )
     """Describes the properties of a Virtual Machine Extension Image."""
 
+    __flattened_items = [
+        "operating_system",
+        "compute_role",
+        "handler_schema",
+        "vm_scale_set_enabled",
+        "supports_multiple_extensions",
+    ]
+
     @overload
     def __init__(
         self,
@@ -17710,7 +19185,25 @@ class VirtualMachineExtensionImage(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineExtensionImageProperties(_Model):
@@ -17962,6 +19455,19 @@ class VirtualMachineExtensionUpdate(UpdateResource):
     )
     """Describes the properties of a Virtual Machine Extension."""
 
+    __flattened_items = [
+        "force_update_tag",
+        "publisher",
+        "type",
+        "type_handler_version",
+        "auto_upgrade_minor_version",
+        "enable_automatic_upgrade",
+        "settings",
+        "protected_settings",
+        "suppress_failures",
+        "protected_settings_from_key_vault",
+    ]
+
     @overload
     def __init__(
         self,
@@ -17978,7 +19484,25 @@ class VirtualMachineExtensionUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineExtensionUpdateProperties(_Model):
@@ -18230,6 +19754,18 @@ class VirtualMachineImage(VirtualMachineImageResource):
     )
     """Describes the properties of a Virtual Machine Image."""
 
+    __flattened_items = [
+        "plan",
+        "os_disk_image",
+        "data_disk_images",
+        "automatic_os_upgrade_properties",
+        "hyper_v_generation",
+        "disallowed",
+        "features",
+        "architecture",
+        "image_deprecation_status",
+    ]
+
     @overload
     def __init__(
         self,
@@ -18250,7 +19786,25 @@ class VirtualMachineImage(VirtualMachineImageResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineImageFeature(_Model):
@@ -18706,6 +20260,21 @@ class VirtualMachineNetworkInterfaceConfiguration(_Model):  # pylint: disable=na
     """Resource tags applied to the networkInterface address created by this
      NetworkInterfaceConfiguration."""
 
+    __flattened_items = [
+        "primary",
+        "delete_option",
+        "enable_accelerated_networking",
+        "disable_tcp_state_tracking",
+        "enable_fpga",
+        "enable_ip_forwarding",
+        "network_security_group",
+        "dns_settings",
+        "ip_configurations",
+        "dscp_configuration",
+        "auxiliary_mode",
+        "auxiliary_sku",
+    ]
+
     @overload
     def __init__(
         self,
@@ -18723,7 +20292,25 @@ class VirtualMachineNetworkInterfaceConfiguration(_Model):  # pylint: disable=na
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineNetworkInterfaceConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -18889,6 +20476,16 @@ class VirtualMachineNetworkInterfaceIPConfiguration(_Model):  # pylint: disable=
     )
     """Describes a virtual machine network interface IP configuration properties."""
 
+    __flattened_items = [
+        "subnet",
+        "primary",
+        "public_ip_address_configuration",
+        "private_ip_address_version",
+        "application_security_groups",
+        "application_gateway_backend_address_pools",
+        "load_balancer_backend_address_pools",
+    ]
+
     @overload
     def __init__(
         self,
@@ -18905,7 +20502,25 @@ class VirtualMachineNetworkInterfaceIPConfiguration(_Model):  # pylint: disable=
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineNetworkInterfaceIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -19363,6 +20978,16 @@ class VirtualMachinePublicIPAddressConfiguration(_Model):  # pylint: disable=nam
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags applied to the publicIP address created by this PublicIPAddressConfiguration."""
 
+    __flattened_items = [
+        "idle_timeout_in_minutes",
+        "delete_option",
+        "dns_settings",
+        "ip_tags",
+        "public_ip_prefix",
+        "public_ip_address_version",
+        "public_ip_allocation_method",
+    ]
+
     @overload
     def __init__(
         self,
@@ -19381,7 +21006,25 @@ class VirtualMachinePublicIPAddressConfiguration(_Model):  # pylint: disable=nam
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachinePublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -19587,6 +21230,23 @@ class VirtualMachineRunCommand(TrackedResource):
     )
     """Describes the properties of a Virtual Machine run command."""
 
+    __flattened_items = [
+        "source",
+        "parameters",
+        "protected_parameters",
+        "async_execution",
+        "run_as_user",
+        "run_as_password",
+        "timeout_in_seconds",
+        "output_blob_uri",
+        "error_blob_uri",
+        "output_blob_managed_identity",
+        "error_blob_managed_identity",
+        "provisioning_state",
+        "instance_view",
+        "treat_failure_as_deployment_failure",
+    ]
+
     @overload
     def __init__(
         self,
@@ -19604,7 +21264,25 @@ class VirtualMachineRunCommand(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineRunCommandInstanceView(_Model):
@@ -19963,6 +21641,23 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
     )
     """Describes the properties of a Virtual Machine run command."""
 
+    __flattened_items = [
+        "source",
+        "parameters",
+        "protected_parameters",
+        "async_execution",
+        "run_as_user",
+        "run_as_password",
+        "timeout_in_seconds",
+        "output_blob_uri",
+        "error_blob_uri",
+        "output_blob_managed_identity",
+        "error_blob_managed_identity",
+        "provisioning_state",
+        "instance_view",
+        "treat_failure_as_deployment_failure",
+    ]
+
     @overload
     def __init__(
         self,
@@ -19979,7 +21674,25 @@ class VirtualMachineRunCommandUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSet(TrackedResource):
@@ -20055,6 +21768,33 @@ class VirtualMachineScaleSet(TrackedResource):
      placement. This property cannot be changed once VMSS is provisioned. Minimum api-version:
      2025-04-01."""
 
+    __flattened_items = [
+        "upgrade_policy",
+        "scheduled_events_policy",
+        "automatic_repairs_policy",
+        "virtual_machine_profile",
+        "provisioning_state",
+        "overprovision",
+        "do_not_run_extensions_on_overprovisioned_v_ms",
+        "unique_id",
+        "single_placement_group",
+        "zone_balance",
+        "platform_fault_domain_count",
+        "proximity_placement_group",
+        "host_group",
+        "additional_capabilities",
+        "scale_in_policy",
+        "orchestration_mode",
+        "spot_restore_policy",
+        "priority_mix_policy",
+        "time_created",
+        "constrained_maximum_capacity",
+        "resiliency_policy",
+        "zonal_platform_fault_domain_align_mode",
+        "sku_profile",
+        "high_speed_interconnect_placement",
+    ]
+
     @overload
     def __init__(
         self,
@@ -20078,7 +21818,25 @@ class VirtualMachineScaleSet(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetDataDisk(_Model):
@@ -20208,8 +21966,8 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     :vartype id: str
     :ivar properties: Describes the properties of a Virtual Machine Scale Set Extension.
     :vartype properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionProperties
-    :ivar vm_type: Resource type.
-    :vartype vm_type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar name: Resource name.
     :vartype name: str
     """
@@ -20218,10 +21976,25 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Describes the properties of a Virtual Machine Scale Set Extension."""
-    vm_type: Optional[str] = rest_field(name="type", visibility=["read"])
+    type: Optional[str] = rest_field(visibility=["read"])
     """Resource type."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource name."""
+
+    __flattened_items = [
+        "force_update_tag",
+        "publisher",
+        "type",
+        "type_handler_version",
+        "auto_upgrade_minor_version",
+        "enable_automatic_upgrade",
+        "settings",
+        "protected_settings",
+        "provisioning_state",
+        "provision_after_extensions",
+        "suppress_failures",
+        "protected_settings_from_key_vault",
+    ]
 
     @overload
     def __init__(
@@ -20239,7 +22012,25 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetExtensionProfile(_Model):
@@ -20419,6 +22210,21 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
     )
     """Describes the properties of a Virtual Machine Scale Set Extension."""
 
+    __flattened_items = [
+        "force_update_tag",
+        "publisher",
+        "type",
+        "type_handler_version",
+        "auto_upgrade_minor_version",
+        "enable_automatic_upgrade",
+        "settings",
+        "protected_settings",
+        "provisioning_state",
+        "provision_after_extensions",
+        "suppress_failures",
+        "protected_settings_from_key_vault",
+    ]
+
     @overload
     def __init__(
         self,
@@ -20434,7 +22240,25 @@ class VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetHardwareProfile(_Model):
@@ -20610,6 +22434,17 @@ class VirtualMachineScaleSetIPConfiguration(_Model):
     )
     """Describes a virtual machine scale set network profile's IP configuration properties."""
 
+    __flattened_items = [
+        "subnet",
+        "primary",
+        "public_ip_address_configuration",
+        "private_ip_address_version",
+        "application_gateway_backend_address_pools",
+        "application_security_groups",
+        "load_balancer_backend_address_pools",
+        "load_balancer_inbound_nat_pools",
+    ]
+
     @overload
     def __init__(
         self,
@@ -20626,7 +22461,25 @@ class VirtualMachineScaleSetIPConfiguration(_Model):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -20861,6 +22714,20 @@ class VirtualMachineScaleSetNetworkConfiguration(_Model):  # pylint: disable=nam
     """Resource tags applied to the networkInterface address created by this
      NetworkInterfaceConfiguration."""
 
+    __flattened_items = [
+        "primary",
+        "enable_accelerated_networking",
+        "disable_tcp_state_tracking",
+        "enable_fpga",
+        "network_security_group",
+        "dns_settings",
+        "ip_configurations",
+        "enable_ip_forwarding",
+        "delete_option",
+        "auxiliary_mode",
+        "auxiliary_sku",
+    ]
+
     @overload
     def __init__(
         self,
@@ -20878,7 +22745,25 @@ class VirtualMachineScaleSetNetworkConfiguration(_Model):  # pylint: disable=nam
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetNetworkConfigurationDnsSettings(_Model):  # pylint: disable=name-too-long
@@ -21608,6 +23493,15 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: dis
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags applied to the publicIP address created by this PublicIPAddressConfiguration."""
 
+    __flattened_items = [
+        "idle_timeout_in_minutes",
+        "dns_settings",
+        "ip_tags",
+        "public_ip_prefix",
+        "public_ip_address_version",
+        "delete_option",
+    ]
+
     @overload
     def __init__(
         self,
@@ -21626,7 +23520,25 @@ class VirtualMachineScaleSetPublicIPAddressConfiguration(_Model):  # pylint: dis
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(_Model):  # pylint: disable=name-too-long
@@ -21988,6 +23900,23 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The virtual machine scale set zones."""
 
+    __flattened_items = [
+        "upgrade_policy",
+        "automatic_repairs_policy",
+        "virtual_machine_profile",
+        "overprovision",
+        "do_not_run_extensions_on_overprovisioned_v_ms",
+        "single_placement_group",
+        "additional_capabilities",
+        "scale_in_policy",
+        "proximity_placement_group",
+        "priority_mix_policy",
+        "spot_restore_policy",
+        "resiliency_policy",
+        "zonal_platform_fault_domain_align_mode",
+        "sku_profile",
+    ]
+
     @overload
     def __init__(
         self,
@@ -22008,7 +23937,25 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetUpdateIPConfiguration(_Model):  # pylint: disable=name-too-long
@@ -22031,6 +23978,17 @@ class VirtualMachineScaleSetUpdateIPConfiguration(_Model):  # pylint: disable=na
     )
     """Describes a virtual machine scale set network profile's IP configuration properties."""
 
+    __flattened_items = [
+        "subnet",
+        "primary",
+        "public_ip_address_configuration",
+        "private_ip_address_version",
+        "application_gateway_backend_address_pools",
+        "application_security_groups",
+        "load_balancer_backend_address_pools",
+        "load_balancer_inbound_nat_pools",
+    ]
+
     @overload
     def __init__(
         self,
@@ -22047,7 +24005,25 @@ class VirtualMachineScaleSetUpdateIPConfiguration(_Model):  # pylint: disable=na
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetUpdateIPConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -22163,6 +24139,20 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(_Model):  # pylint: disab
     """Resource tags applied to the networkInterface address created by this
      NetworkInterfaceConfiguration."""
 
+    __flattened_items = [
+        "primary",
+        "enable_accelerated_networking",
+        "disable_tcp_state_tracking",
+        "enable_fpga",
+        "network_security_group",
+        "dns_settings",
+        "ip_configurations",
+        "enable_ip_forwarding",
+        "delete_option",
+        "auxiliary_mode",
+        "auxiliary_sku",
+    ]
+
     @overload
     def __init__(
         self,
@@ -22180,7 +24170,25 @@ class VirtualMachineScaleSetUpdateNetworkConfiguration(_Model):  # pylint: disab
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetUpdateNetworkConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -22667,6 +24675,8 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_Model):  # pylin
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags applied to the publicIP address created by this PublicIPAddressConfiguration."""
 
+    __flattened_items = ["idle_timeout_in_minutes", "dns_settings", "public_ip_prefix", "delete_option"]
+
     @overload
     def __init__(
         self,
@@ -22684,7 +24694,25 @@ class VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(_Model):  # pylin
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties(_Model):  # pylint: disable=name-too-long
@@ -22974,6 +25002,28 @@ class VirtualMachineScaleSetVM(TrackedResource):
     """Etag is property returned in Update/Get response of the VMSS VM, so that customer can supply it
      in the header to ensure optimistic updates."""
 
+    __flattened_items = [
+        "latest_model_applied",
+        "vm_id",
+        "instance_view",
+        "hardware_profile",
+        "resilient_vm_deletion_status",
+        "storage_profile",
+        "additional_capabilities",
+        "os_profile",
+        "security_profile",
+        "network_profile",
+        "network_profile_configuration",
+        "diagnostics_profile",
+        "availability_set",
+        "provisioning_state",
+        "license_type",
+        "model_definition_applied",
+        "protection_policy",
+        "user_data",
+        "time_created",
+    ]
+
     @overload
     def __init__(
         self,
@@ -22993,7 +25043,25 @@ class VirtualMachineScaleSetVM(TrackedResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
@@ -23005,8 +25073,8 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
     :vartype properties: ~azure.mgmt.compute.models.VirtualMachineExtensionProperties
     :ivar location: The location of the extension.
     :vartype location: str
-    :ivar vm_type: Resource type.
-    :vartype vm_type: str
+    :ivar type: Resource type.
+    :vartype type: str
     :ivar name: Resource name.
     :vartype name: str
     """
@@ -23017,10 +25085,26 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
     """Describes the properties of a Virtual Machine Extension."""
     location: Optional[str] = rest_field(visibility=["read", "create"])
     """The location of the extension."""
-    vm_type: Optional[str] = rest_field(name="type", visibility=["read"])
+    type: Optional[str] = rest_field(visibility=["read"])
     """Resource type."""
     name: Optional[str] = rest_field(visibility=["read"])
     """Resource name."""
+
+    __flattened_items = [
+        "force_update_tag",
+        "publisher",
+        "type",
+        "type_handler_version",
+        "auto_upgrade_minor_version",
+        "enable_automatic_upgrade",
+        "settings",
+        "protected_settings",
+        "provisioning_state",
+        "instance_view",
+        "suppress_failures",
+        "protected_settings_from_key_vault",
+        "provision_after_extensions",
+    ]
 
     @overload
     def __init__(
@@ -23038,7 +25122,25 @@ class VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetVMExtensionsSummary(_Model):  # pylint: disable=name-too-long
@@ -23080,6 +25182,19 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
     )
     """Describes the properties of a Virtual Machine Extension."""
 
+    __flattened_items = [
+        "force_update_tag",
+        "publisher",
+        "type",
+        "type_handler_version",
+        "auto_upgrade_minor_version",
+        "enable_automatic_upgrade",
+        "settings",
+        "protected_settings",
+        "suppress_failures",
+        "protected_settings_from_key_vault",
+    ]
+
     @overload
     def __init__(
         self,
@@ -23095,7 +25210,25 @@ class VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VirtualMachineScaleSetVMInstanceIDs(_Model):
@@ -23943,6 +26076,36 @@ class VirtualMachineUpdate(UpdateResource):
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The virtual machine zones."""
 
+    __flattened_items = [
+        "hardware_profile",
+        "scheduled_events_policy",
+        "storage_profile",
+        "additional_capabilities",
+        "os_profile",
+        "network_profile",
+        "security_profile",
+        "diagnostics_profile",
+        "availability_set",
+        "virtual_machine_scale_set",
+        "proximity_placement_group",
+        "priority",
+        "eviction_policy",
+        "billing_profile",
+        "host",
+        "host_group",
+        "provisioning_state",
+        "instance_view",
+        "license_type",
+        "vm_id",
+        "extensions_time_budget",
+        "platform_fault_domain",
+        "scheduled_events_profile",
+        "user_data",
+        "capacity_reservation",
+        "application_profile",
+        "time_created",
+    ]
+
     @overload
     def __init__(
         self,
@@ -23962,7 +26125,25 @@ class VirtualMachineUpdate(UpdateResource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class VMDiskSecurityProfile(_Model):

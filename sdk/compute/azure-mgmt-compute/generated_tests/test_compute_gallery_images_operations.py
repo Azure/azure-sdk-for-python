@@ -37,7 +37,7 @@ class TestComputeGalleryImagesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
-            resource={
+            gallery_image={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -82,7 +82,7 @@ class TestComputeGalleryImagesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_image_name="str",
-            properties={
+            gallery_image={
                 "id": "str",
                 "name": "str",
                 "properties": {

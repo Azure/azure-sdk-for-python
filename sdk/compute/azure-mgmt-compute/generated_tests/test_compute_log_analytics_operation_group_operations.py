@@ -23,7 +23,7 @@ class TestComputeLogAnalyticsOperationGroupOperations(AzureMgmtRecordedTestCase)
     def test_log_analytics_operation_group_begin_export_request_rate_by_interval(self, resource_group):
         response = self.client.log_analytics_operation_group.begin_export_request_rate_by_interval(
             location="str",
-            body={
+            parameters={
                 "blobContainerSasUri": "str",
                 "fromTime": "2020-02-20 00:00:00",
                 "intervalLength": "str",
@@ -44,7 +44,7 @@ class TestComputeLogAnalyticsOperationGroupOperations(AzureMgmtRecordedTestCase)
     def test_log_analytics_operation_group_begin_export_throttled_requests(self, resource_group):
         response = self.client.log_analytics_operation_group.begin_export_throttled_requests(
             location="str",
-            body={
+            parameters={
                 "blobContainerSasUri": "str",
                 "fromTime": "2020-02-20 00:00:00",
                 "toTime": "2020-02-20 00:00:00",

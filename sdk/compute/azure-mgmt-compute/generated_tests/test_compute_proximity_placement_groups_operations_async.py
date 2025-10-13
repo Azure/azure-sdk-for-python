@@ -36,7 +36,7 @@ class TestComputeProximityPlacementGroupsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.proximity_placement_groups.create_or_update(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -110,7 +110,7 @@ class TestComputeProximityPlacementGroupsOperationsAsync(AzureMgmtRecordedTestCa
         response = await self.client.proximity_placement_groups.update(
             resource_group_name=resource_group.name,
             proximity_placement_group_name="str",
-            properties={"tags": {"str": "str"}},
+            parameters={"tags": {"str": "str"}},
         )
 
         # please add some check logic here by yourself

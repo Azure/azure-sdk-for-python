@@ -36,7 +36,7 @@ class TestComputeVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_create_or_update(
             resource_group_name=resource_group.name,
             vm_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "etag": "str",
                 "extendedLocation": {"name": "str", "type": "str"},
@@ -525,7 +525,7 @@ class TestComputeVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_update(
             resource_group_name=resource_group.name,
             vm_name="str",
-            properties={
+            parameters={
                 "identity": {
                     "principalId": "str",
                     "tenantId": "str",
@@ -984,7 +984,7 @@ class TestComputeVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_attach_detach_data_disks(
             resource_group_name=resource_group.name,
             vm_name="str",
-            body={
+            parameters={
                 "dataDisksToAttach": [
                     {
                         "diskId": "str",
@@ -1008,7 +1008,7 @@ class TestComputeVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_capture(
             resource_group_name=resource_group.name,
             vm_name="str",
-            body={"destinationContainerName": "str", "overwriteVhds": bool, "vhdPrefix": "str"},
+            parameters={"destinationContainerName": "str", "overwriteVhds": bool, "vhdPrefix": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1053,7 +1053,7 @@ class TestComputeVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_install_patches(
             resource_group_name=resource_group.name,
             vm_name="str",
-            body={
+            install_patches_input={
                 "rebootSetting": "str",
                 "linuxParameters": {
                     "classificationsToInclude": ["str"],
@@ -1204,7 +1204,7 @@ class TestComputeVirtualMachinesOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_machines.begin_run_command(
             resource_group_name=resource_group.name,
             vm_name="str",
-            body={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
+            parameters={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

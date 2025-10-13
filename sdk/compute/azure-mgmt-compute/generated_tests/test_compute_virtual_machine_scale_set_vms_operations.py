@@ -37,7 +37,7 @@ class TestComputeVirtualMachineScaleSetVMSOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            resource={
+            parameters={
                 "location": "str",
                 "etag": "str",
                 "id": "str",
@@ -595,7 +595,7 @@ class TestComputeVirtualMachineScaleSetVMSOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            body={
+            parameters={
                 "dataDisksToAttach": [
                     {
                         "diskId": "str",
@@ -692,7 +692,7 @@ class TestComputeVirtualMachineScaleSetVMSOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            body={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
+            parameters={"commandId": "str", "parameters": [{"name": "str", "value": "str"}], "script": ["str"]},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -39,7 +39,7 @@ class TestComputeGalleryInVMAccessControlProfilesOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
-                resource={
+                gallery_in_vm_access_control_profile={
                     "location": "str",
                     "id": "str",
                     "name": "str",
@@ -74,7 +74,7 @@ class TestComputeGalleryInVMAccessControlProfilesOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
-                properties={
+                gallery_in_vm_access_control_profile={
                     "id": "str",
                     "name": "str",
                     "properties": {

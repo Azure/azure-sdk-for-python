@@ -37,7 +37,7 @@ class TestComputeSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                resource={
+                snapshot={
                     "location": "str",
                     "extendedLocation": {"name": "str", "type": "str"},
                     "id": "str",
@@ -134,7 +134,7 @@ class TestComputeSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_update(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                properties={
+                snapshot={
                     "properties": {
                         "dataAccessAuthMode": "str",
                         "diskAccessId": "str",
@@ -209,7 +209,12 @@ class TestComputeSnapshotsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.snapshots.begin_grant_access(
                 resource_group_name=resource_group.name,
                 snapshot_name="str",
-                body={"access": "str", "durationInSeconds": 0, "fileFormat": "str", "getSecureVMGuestStateSAS": bool},
+                grant_access_data={
+                    "access": "str",
+                    "durationInSeconds": 0,
+                    "fileFormat": "str",
+                    "getSecureVMGuestStateSAS": bool,
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 

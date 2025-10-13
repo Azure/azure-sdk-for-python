@@ -35,7 +35,7 @@ class TestComputeDisksOperations(AzureMgmtRecordedTestCase):
         response = self.client.disks.begin_create_or_update(
             resource_group_name=resource_group.name,
             disk_name="str",
-            resource={
+            disk={
                 "location": "str",
                 "extendedLocation": {"name": "str", "type": "str"},
                 "id": "str",
@@ -141,7 +141,7 @@ class TestComputeDisksOperations(AzureMgmtRecordedTestCase):
         response = self.client.disks.begin_update(
             resource_group_name=resource_group.name,
             disk_name="str",
-            properties={
+            disk={
                 "properties": {
                     "availabilityPolicy": {"actionOnDiskDelay": "str"},
                     "burstingEnabled": bool,
@@ -222,7 +222,12 @@ class TestComputeDisksOperations(AzureMgmtRecordedTestCase):
         response = self.client.disks.begin_grant_access(
             resource_group_name=resource_group.name,
             disk_name="str",
-            body={"access": "str", "durationInSeconds": 0, "fileFormat": "str", "getSecureVMGuestStateSAS": bool},
+            grant_access_data={
+                "access": "str",
+                "durationInSeconds": 0,
+                "fileFormat": "str",
+                "getSecureVMGuestStateSAS": bool,
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

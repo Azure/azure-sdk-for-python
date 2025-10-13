@@ -36,7 +36,7 @@ class TestComputeAvailabilitySetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.availability_sets.create_or_update(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -93,7 +93,7 @@ class TestComputeAvailabilitySetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.availability_sets.update(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            properties={
+            parameters={
                 "properties": {
                     "platformFaultDomainCount": 0,
                     "platformUpdateDomainCount": 0,
@@ -178,7 +178,7 @@ class TestComputeAvailabilitySetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.availability_sets.start_migration_to_virtual_machine_scale_set(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            body={"virtualMachineScaleSetFlexible": {"id": "str"}},
+            parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
         )
 
         # please add some check logic here by yourself
@@ -201,7 +201,7 @@ class TestComputeAvailabilitySetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.availability_sets.validate_migration_to_virtual_machine_scale_set(
             resource_group_name=resource_group.name,
             availability_set_name="str",
-            body={"virtualMachineScaleSetFlexible": {"id": "str"}},
+            parameters={"virtualMachineScaleSetFlexible": {"id": "str"}},
         )
 
         # please add some check logic here by yourself

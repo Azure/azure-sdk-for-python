@@ -39,7 +39,7 @@ class TestComputeVirtualMachineScaleSetVMExtensionsOperations(AzureMgmtRecordedT
             vm_scale_set_name="str",
             instance_id="str",
             vm_extension_name="str",
-            resource={
+            extension_parameters={
                 "id": "str",
                 "location": "str",
                 "name": "str",
@@ -95,7 +95,7 @@ class TestComputeVirtualMachineScaleSetVMExtensionsOperations(AzureMgmtRecordedT
             vm_scale_set_name="str",
             instance_id="str",
             vm_extension_name="str",
-            properties={
+            extension_parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {

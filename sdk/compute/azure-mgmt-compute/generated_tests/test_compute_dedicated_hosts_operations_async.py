@@ -39,7 +39,7 @@ class TestComputeDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 host_group_name="str",
                 host_name="str",
-                resource={
+                parameters={
                     "location": "str",
                     "sku": {"capacity": 0, "name": "str", "tier": "str"},
                     "id": "str",
@@ -92,7 +92,7 @@ class TestComputeDedicatedHostsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 host_group_name="str",
                 host_name="str",
-                properties={
+                parameters={
                     "properties": {
                         "autoReplaceOnFailure": bool,
                         "hostId": "str",

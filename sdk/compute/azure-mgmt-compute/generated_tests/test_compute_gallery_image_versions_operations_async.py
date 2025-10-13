@@ -41,7 +41,7 @@ class TestComputeGalleryImageVersionsOperationsAsync(AzureMgmtRecordedTestCase):
                 gallery_name="str",
                 gallery_image_name="str",
                 gallery_image_version_name="str",
-                resource={
+                gallery_image_version={
                     "location": "str",
                     "id": "str",
                     "name": "str",
@@ -169,7 +169,7 @@ class TestComputeGalleryImageVersionsOperationsAsync(AzureMgmtRecordedTestCase):
                 gallery_name="str",
                 gallery_image_name="str",
                 gallery_image_version_name="str",
-                properties={
+                gallery_image_version={
                     "id": "str",
                     "name": "str",
                     "properties": {

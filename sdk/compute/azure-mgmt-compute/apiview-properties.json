@@ -1051,14 +1051,6 @@
         "azure.mgmt.compute.aio.operations.DiskEncryptionSetsOperations.list": "Microsoft.Compute.DiskEncryptionSets.list",
         "azure.mgmt.compute.operations.DiskEncryptionSetsOperations.list_associated_resources": "Microsoft.Compute.DiskEncryptionSets.listAssociatedResources",
         "azure.mgmt.compute.aio.operations.DiskEncryptionSetsOperations.list_associated_resources": "Microsoft.Compute.DiskEncryptionSets.listAssociatedResources",
-        "azure.mgmt.compute.operations.DiskRestorePointsOperations.get": "Microsoft.Compute.DiskRestorePoints.get",
-        "azure.mgmt.compute.aio.operations.DiskRestorePointsOperations.get": "Microsoft.Compute.DiskRestorePoints.get",
-        "azure.mgmt.compute.operations.DiskRestorePointsOperations.list_by_restore_point": "Microsoft.Compute.DiskRestorePoints.listByRestorePoint",
-        "azure.mgmt.compute.aio.operations.DiskRestorePointsOperations.list_by_restore_point": "Microsoft.Compute.DiskRestorePoints.listByRestorePoint",
-        "azure.mgmt.compute.operations.DiskRestorePointsOperations.begin_grant_access": "Microsoft.Compute.DiskRestorePoints.grantAccess",
-        "azure.mgmt.compute.aio.operations.DiskRestorePointsOperations.begin_grant_access": "Microsoft.Compute.DiskRestorePoints.grantAccess",
-        "azure.mgmt.compute.operations.DiskRestorePointsOperations.begin_revoke_access": "Microsoft.Compute.DiskRestorePoints.revokeAccess",
-        "azure.mgmt.compute.aio.operations.DiskRestorePointsOperations.begin_revoke_access": "Microsoft.Compute.DiskRestorePoints.revokeAccess",
         "azure.mgmt.compute.operations.SnapshotsOperations.get": "Microsoft.Compute.Snapshots.get",
         "azure.mgmt.compute.aio.operations.SnapshotsOperations.get": "Microsoft.Compute.Snapshots.get",
         "azure.mgmt.compute.operations.SnapshotsOperations.begin_create_or_update": "Microsoft.Compute.Snapshots.createOrUpdate",
@@ -1174,6 +1166,14 @@
         "azure.mgmt.compute.operations.CommunityGalleryImageVersionsOperations.list": "Microsoft.Compute.CommunityGalleryImageVersions.list",
         "azure.mgmt.compute.aio.operations.CommunityGalleryImageVersionsOperations.list": "Microsoft.Compute.CommunityGalleryImageVersions.list",
         "azure.mgmt.compute.operations.ResourceSkusOperations.list": "Microsoft.Compute.ResourceSkus.list",
-        "azure.mgmt.compute.aio.operations.ResourceSkusOperations.list": "Microsoft.Compute.ResourceSkus.list"
+        "azure.mgmt.compute.aio.operations.ResourceSkusOperations.list": "Microsoft.Compute.ResourceSkus.list",
+        "azure.mgmt.compute.operations.DiskRestorePointOperations.get": "Microsoft.Compute.DiskRestorePoints.get",
+        "azure.mgmt.compute.aio.operations.DiskRestorePointOperations.get": "Microsoft.Compute.DiskRestorePoints.get",
+        "azure.mgmt.compute.operations.DiskRestorePointOperations.list_by_restore_point": "Microsoft.Compute.DiskRestorePoints.listByRestorePoint",
+        "azure.mgmt.compute.aio.operations.DiskRestorePointOperations.list_by_restore_point": "Microsoft.Compute.DiskRestorePoints.listByRestorePoint",
+        "azure.mgmt.compute.operations.DiskRestorePointOperations.begin_grant_access": "Microsoft.Compute.DiskRestorePoints.grantAccess",
+        "azure.mgmt.compute.aio.operations.DiskRestorePointOperations.begin_grant_access": "Microsoft.Compute.DiskRestorePoints.grantAccess",
+        "azure.mgmt.compute.operations.DiskRestorePointOperations.begin_revoke_access": "Microsoft.Compute.DiskRestorePoints.revokeAccess",
+        "azure.mgmt.compute.aio.operations.DiskRestorePointOperations.begin_revoke_access": "Microsoft.Compute.DiskRestorePoints.revokeAccess"
     }
 }

@@ -35,7 +35,7 @@ class TestComputeDedicatedHostGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.dedicated_host_groups.create_or_update(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            resource={
+            parameters={
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -86,7 +86,7 @@ class TestComputeDedicatedHostGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.dedicated_host_groups.update(
             resource_group_name=resource_group.name,
             host_group_name="str",
-            properties={
+            parameters={
                 "properties": {
                     "platformFaultDomainCount": 0,
                     "additionalCapabilities": {"ultraSSDEnabled": bool},

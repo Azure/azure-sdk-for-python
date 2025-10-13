@@ -45,7 +45,6 @@ from ._operations import DisksOperations  # type: ignore
 from ._operations import DiskAccessesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import DiskEncryptionSetsOperations  # type: ignore
-from ._operations import DiskRestorePointsOperations  # type: ignore
 from ._operations import SnapshotsOperations  # type: ignore
 from ._operations import GalleriesOperations  # type: ignore
 from ._operations import GalleryImagesOperations  # type: ignore
@@ -61,6 +60,7 @@ from ._operations import CommunityGalleriesOperations  # type: ignore
 from ._operations import CommunityGalleryImagesOperations  # type: ignore
 from ._operations import CommunityGalleryImageVersionsOperations  # type: ignore
 from ._operations import ResourceSkusOperations  # type: ignore
+from ._operations import DiskRestorePointOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -100,7 +100,6 @@ __all__ = [
     "DiskAccessesOperations",
     "PrivateEndpointConnectionsOperations",
     "DiskEncryptionSetsOperations",
-    "DiskRestorePointsOperations",
     "SnapshotsOperations",
     "GalleriesOperations",
     "GalleryImagesOperations",
@@ -116,6 +115,7 @@ __all__ = [
     "CommunityGalleryImagesOperations",
     "CommunityGalleryImageVersionsOperations",
     "ResourceSkusOperations",
+    "DiskRestorePointOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -37,7 +37,7 @@ class TestComputeRestorePointsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             restore_point_name="str",
-            resource={
+            parameters={
                 "id": "str",
                 "name": "str",
                 "properties": {

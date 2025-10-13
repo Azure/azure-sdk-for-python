@@ -37,7 +37,7 @@ class TestComputeDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.disk_encryption_sets.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 disk_encryption_set_name="str",
-                resource={
+                disk_encryption_set={
                     "location": "str",
                     "id": "str",
                     "identity": {
@@ -87,7 +87,7 @@ class TestComputeDiskEncryptionSetsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.disk_encryption_sets.begin_update(
                 resource_group_name=resource_group.name,
                 disk_encryption_set_name="str",
-                properties={
+                disk_encryption_set={
                     "identity": {
                         "principalId": "str",
                         "tenantId": "str",

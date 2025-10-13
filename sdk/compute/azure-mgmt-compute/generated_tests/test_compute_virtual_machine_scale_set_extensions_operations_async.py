@@ -39,7 +39,7 @@ class TestComputeVirtualMachineScaleSetExtensionsOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 vmss_extension_name="str",
-                resource={
+                extension_parameters={
                     "id": "str",
                     "name": "str",
                     "properties": {
@@ -72,7 +72,7 @@ class TestComputeVirtualMachineScaleSetExtensionsOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 vm_scale_set_name="str",
                 vmss_extension_name="str",
-                properties={
+                extension_parameters={
                     "id": "str",
                     "name": "str",
                     "properties": {

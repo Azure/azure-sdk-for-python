@@ -37,7 +37,7 @@ class TestComputeGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.galleries.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
-                resource={
+                gallery={
                     "location": "str",
                     "id": "str",
                     "identity": {
@@ -93,7 +93,7 @@ class TestComputeGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.galleries.begin_update(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
-                properties={
+                gallery={
                     "id": "str",
                     "identity": {
                         "principalId": "str",
@@ -184,7 +184,7 @@ class TestComputeGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.galleries.begin_gallery_sharing_profile_update(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
-                body={"operationType": "str", "groups": [{"ids": ["str"], "type": "str"}]},
+                sharing_update={"operationType": "str", "groups": [{"ids": ["str"], "type": "str"}]},
             )
         ).result()  # call '.result()' to poll until service return final result
 
