@@ -40,7 +40,7 @@ from ._enums import (
     CertificateModification,
 )
 
-from .._utils.model_base import _serialize
+from .._utils.model_base import _serialize, SdkJSONEncoder
 
 T = TypeVar("T")
 
@@ -114,7 +114,7 @@ class AttestationPolicyResult:
         had a `signing_certificate` parameter, this will be the certificate
         which was specified in this parameter.
     :type policy_signer: ~azure.security.attestation.AttestationSigner
-    :param str policy_token_hash: The hash of the complete JSON Web Signature
+    :param bytes policy_token_hash: The hash of the complete JSON Web Signature
         presented to the `set_policy` or `reset_policy` API.
 
     """
@@ -123,7 +123,7 @@ class AttestationPolicyResult:
         self,
         policy_resolution: Union[str, PolicyModification],
         policy_signer: AttestationSigner,
-        policy_token_hash: str,
+        policy_token_hash: bytes,
     ) -> None:
         self.policy_resolution = policy_resolution
         self.policy_signer = policy_signer
@@ -138,12 +138,27 @@ class AttestationPolicyResult:
             cast(JSONWebKey, generated.policy_signer)
         )
 
-        if generated.policy_resolution is None or generated.policy_token_hash is None or signer is None:
+        if generated.policy_resolution is None or generated.policy_token_hash is None:
             return None
+
+        # Handle policy_token_hash as either bytes or base64url-encoded string
+        # The field should be bytes (the raw hash), but may come as base64url string from service
+        token_hash = generated.policy_token_hash
+        if isinstance(token_hash, str):
+            # If it's a base64url-encoded string, decode it to bytes
+            token_hash_bytes = base64url_decode(token_hash)
+        elif isinstance(token_hash, bytes):
+            # Already bytes, use as-is
+            token_hash_bytes = token_hash
+        else:
+            # Fallback
+            token_hash_bytes = str(token_hash).encode('utf-8')
+
+        # signer can be None for unsigned policies
         return AttestationPolicyResult(
             generated.policy_resolution,
-            signer,
-            generated.policy_token_hash.decode(),
+            signer, # type: ignore
+            token_hash_bytes,
         )
 
 
@@ -830,10 +845,11 @@ class AttestationToken:
                             )
                         )
             if kwargs.get("validate_issuer", False) and hasattr(self, "issuer") and self.issuer is not None:
-                if kwargs.get("issuer", None) != self.issuer:
+                expected_issuer = kwargs.get("issuer", None)
+                if expected_issuer is not None and expected_issuer != self.issuer:
                     raise AttestationTokenValidationException(
                         "Issuer in token: {} is not the expected issuer: {}.".format(
-                            self.issuer, kwargs.get("issuer", None)
+                            self.issuer, expected_issuer
                         )
                     )
         return True
@@ -856,14 +872,11 @@ class AttestationToken:
         try:
             body = body.serialize()
         except AttributeError:
-            # If serialize() doesn't exist, try as_dict() for Model objects and apply _serialize
-            try:
-                body = _serialize(body.as_dict())
-            except AttributeError:
-                pass
+            pass
         json_body = ""
         if body is not None:
-            json_body = json.dumps(body)
+            # Use SdkJSONEncoder to handle Model objects and bytes properly
+            json_body = json.dumps(body, cls=SdkJSONEncoder)
 
         return_value += base64url_encode(json_body.encode("utf-8"))
         return_value += "."
@@ -894,14 +907,11 @@ class AttestationToken:
         try:
             body = body.serialize()
         except AttributeError:
-            # If serialize() doesn't exist, try as_dict() for Model objects and apply _serialize
-            try:
-                body = _serialize(body.as_dict())
-            except AttributeError:
-                pass
+            pass
         json_body = ""
         if body is not None:
-            json_body = json.dumps(body)
+            # Use SdkJSONEncoder to handle Model objects and bytes properly
+            json_body = json.dumps(body, cls=SdkJSONEncoder)
         return_value += "."
         return_value += base64url_encode(json_body.encode("utf-8"))
 
