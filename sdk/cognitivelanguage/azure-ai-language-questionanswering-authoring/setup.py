@@ -62,7 +62,7 @@ setup(
     ]),
     include_package_data=True,
     package_data={
-        'azure.ai.language.questionanswering': ['py.typed'],
+        'azure.ai.language.questionanswering.authoring': ['py.typed'],
     },
     install_requires=[
         "azure-core>=1.28.0",
