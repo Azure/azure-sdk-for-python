@@ -81,6 +81,8 @@ RESOLUTION_IMPOSSIBLE_LIBRARIES = {
     "azure-core": ["azure-core-experimental", "azure-core-tracing-opencensus", "azure-core-tracing-opentelemetry"],
     "azure-monitor-opentelemetry": ["azure-core-tracing-opentelemetry"],
     "azure-ai-evaluation": ["azure-monitor-opentelemetry-exporter", "azure-monitor-opentelemetry"],
+    "azure-ai-language-conversations-authoring": ["azure-ai-language-conversations"],
+    "azure-ai-textanalytics-authoring": ["azure-ai-textanalytics"],
 }
 
 
@@ -282,9 +284,9 @@ def should_run() -> bool:
 
 
 def update_main_typescores() -> None:
-    if not should_run():
-        logging.info(f"Skipping type scoring update - only runs once a month on the Monday after release week.")
-        return
+    # if not should_run():
+    #     logging.info(f"Skipping type scoring update - only runs once a month on the Monday after release week.")
+    #     return
 
     packages_to_score = get_packages_to_score()
 
