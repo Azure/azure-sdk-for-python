@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuthenticationPolicy
@@ -14,6 +14,7 @@ from azure.mgmt.core.policies import ARMHttpLoggingPolicy, AsyncARMChallengeAuth
 from .._version import VERSION
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -29,9 +30,11 @@ class DurableTaskMgmtClientConfiguration:  # pylint: disable=too-many-instance-a
     :type subscription_id: str
     :param base_url: Service host. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-04-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Default value is "2025-11-01".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -40,9 +43,10 @@ class DurableTaskMgmtClientConfiguration:  # pylint: disable=too-many-instance-a
         credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-04-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-11-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -52,6 +56,7 @@ class DurableTaskMgmtClientConfiguration:  # pylint: disable=too-many-instance-a
         self.credential = credential
         self.subscription_id = subscription_id
         self.base_url = base_url
+        self.cloud_setting = cloud_setting
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-durabletask/{}".format(VERSION))

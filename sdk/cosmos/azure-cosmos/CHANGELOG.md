@@ -4,14 +4,17 @@
 
 #### Features Added
 * Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
-* Added a new API for Semantic Reranking. See [PR 42991](https://github.com/Azure/azure-sdk-for-python/pull/42991)
+* Added a new **preview feature** API for Semantic Reranking. See [PR 42991](https://github.com/Azure/azure-sdk-for-python/pull/42991)
+
 #### Breaking Changes
+* Changed `retry_write` from `bool` to `int` to match other retryable options. See [PR 43341](https://github.com/Azure/azure-sdk-for-python/pull/43341).
 
 #### Bugs Fixed
 
 #### Other Changes
 * Removed dual endpoint tracking from the sdk. See [PR 40451](https://github.com/Azure/azure-sdk-for-python/pull/40451).
 * Reverted typehints to fix the mismatch issue. See [PR 43124](https://github.com/Azure/azure-sdk-for-python/pull/43124)
+* Corrected type hints for `ConsistencyPolicy` in `DatabaseAccount` class. See [PR 43150](https://github.com/Azure/azure-sdk-for-python/pull/43150)
 
 ### 4.14.0b4 (2025-09-11)
 
