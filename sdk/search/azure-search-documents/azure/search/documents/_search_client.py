@@ -739,4 +739,4 @@ class SearchClient(HeadersMixin):
         :rtype: ~azure.core.rest.HttpResponse
         """
         request.headers = self._merge_client_headers(request.headers)
-        return self._client._send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access
+        return self._client.send_request(request, stream=stream, **kwargs)  # pylint:disable=protected-access

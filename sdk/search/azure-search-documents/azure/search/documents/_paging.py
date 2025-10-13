@@ -30,7 +30,7 @@ def pack_continuation_token(response, api_version=DEFAULT_VERSION):
         token = {
             "apiVersion": api_version,
             "nextLink": response.next_link,
-            "nextPageParameters": response.next_page_parameters.serialize(),
+            "nextPageParameters": json.dumps(response.next_page_parameters),
         }
         return base64.b64encode(json.dumps(token).encode("utf-8"))
     return None
@@ -40,7 +40,8 @@ def unpack_continuation_token(token):
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
     next_page_parameters = unpacked_token["nextPageParameters"]
-    next_page_request = SearchRequest.deserialize(next_page_parameters)
+    obj_dict = json.loads(next_page_parameters)
+    next_page_request = SearchRequest(obj_dict)
     return next_link, next_page_request
 
 

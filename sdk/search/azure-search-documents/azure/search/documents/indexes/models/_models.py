@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, MutableMapping, Dict, Callable, Union
+from typing import Any, List, Optional, Dict, Union
 from enum import Enum
 import json
 from typing_extensions import Self
@@ -110,7 +110,9 @@ class SearchIndexerSkillset(Model):
                 generated_skills.append(skill)
         assert len(generated_skills) == len(self.skills)
         encryption_key = getattr(self, "encryption_key", None)
-        encryption_key_patched = None if encryption_key is None else encryption_key._to_generated()
+        encryption_key_patched = (
+            None if encryption_key is None else encryption_key._to_generated()  # pylint:disable=protected-access
+        )
         return _SearchIndexerSkillset(
             name=getattr(self, "name", ""),
             description=getattr(self, "description", None),

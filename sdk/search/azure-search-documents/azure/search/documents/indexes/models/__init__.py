@@ -96,7 +96,7 @@ from ..._generated.indexes.models import (
     DocumentIntelligenceLayoutSkillOutputFormat,
     DocumentIntelligenceLayoutSkillOutputMode,
     DocumentKeysOrIds,
-    EdgeNGramTokenFilterV2 as EdgeNGramTokenFilter,
+    EdgeNGramTokenFilter,
     EdgeNGramTokenizer,
     EdgeNGramTokenFilterSide,
     ElisionTokenFilter,
@@ -135,7 +135,7 @@ from ..._generated.indexes.models import (
     KeyPhraseExtractionSkill,
     KeyPhraseExtractionSkillLanguage,
     KeywordMarkerTokenFilter,
-    KeywordTokenizerV2,
+    KeywordTokenizer,
     KnowledgeAgent,
     KnowledgeAgentAzureOpenAiModel,
     KnowledgeAgentModel,
@@ -156,7 +156,7 @@ from ..._generated.indexes.models import (
     LexicalTokenizerName,
     LimitTokenFilter,
     LuceneStandardAnalyzer,
-    LuceneStandardTokenizerV2 as LuceneStandardTokenizer,
+    LuceneStandardTokenizer,
     MagnitudeScoringFunction,
     MagnitudeScoringParameters,
     MarkdownHeaderDepth,
@@ -168,13 +168,13 @@ from ..._generated.indexes.models import (
     MicrosoftStemmingTokenizerLanguage,
     MicrosoftTokenizerLanguage,
     NativeBlobSoftDeleteDeletionDetectionPolicy,
-    NGramTokenFilterV2 as NGramTokenFilter,
+    NGramTokenFilter,
     NGramTokenizer,
     OcrLineEnding,
     OcrSkill,
     OcrSkillLanguage,
     OutputFieldMappingEntry,
-    PathHierarchyTokenizerV2,
+    PathHierarchyTokenizer,
     PatternCaptureTokenFilter,
     PatternReplaceCharFilter,
     PatternReplaceTokenFilter,
@@ -293,15 +293,6 @@ from ._models import (
 )
 
 SearchFieldDataType = _edm
-
-
-class KeywordTokenizer(KeywordTokenizerV2):
-    pass
-
-
-class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
-    pass
-
 
 __all__ = (
     "AIServicesAccountIdentity",

@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, Dict, Union, List, Optional, MutableMapping, Callable, cast
-from typing_extensions import Self
+from typing import Any, Dict, Union, List, Optional, cast
 import json
+from typing_extensions import Self
 from azure.core.exceptions import DeserializationError
 from ..._generated._utils.model_base import Model
 from ._edm import Collection, ComplexType, String
@@ -337,7 +337,7 @@ class SearchField(Model):
         return self._to_generated().as_dict(**kwargs)  # type: ignore
 
     @classmethod
-    def from_dict(cls, data: Any, **kwargs: Any) -> Optional[Self]:  # type: ignore
+    def from_dict(cls, data: Any, **kwargs: Any) -> Optional[Self]:  # pylint: disable=unused-argument
         """Parse a dict return a model.
 
         :param dict data: A dict using RestAPI structure
@@ -795,7 +795,6 @@ class SearchIndex(Model):
         # pylint: disable=unused-argument
         """Return the JSON that would be sent to server from this model.
 
-        :param bool keep_readonly: If you want to serialize the readonly attributes
         :returns: A dict JSON compatible string
         :rtype: str
         """

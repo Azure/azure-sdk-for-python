@@ -245,7 +245,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             raise ValueError("A model must be passed to use access conditions")
         try:
             name = indexer.name  # type: ignore
-            etag = indexer.e_tag
+            etag = indexer.e_tag  # type: ignore
         except AttributeError:
             name = indexer
             etag = None
@@ -345,7 +345,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         # Create IndexerResyncBody from the list of options
         resync_body = IndexerResyncBody(options=indexer_resync_options)
-        self._client.indexers.resync(name, resync_body, **kwargs)
+        self._client.indexers.resync(indexer=name, resync_body=resync_body, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:

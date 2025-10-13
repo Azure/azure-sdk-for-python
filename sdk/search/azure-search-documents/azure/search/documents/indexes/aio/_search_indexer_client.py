@@ -332,7 +332,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
 
         # Create IndexerResyncBody from the list of options
         resync_body = IndexerResyncBody(options=indexer_resync_options)
-        await self._client.indexers.resync(name, resync_body, **kwargs)
+        await self._client.indexers.resync(indexer_name=name, resync_body=resync_body, **kwargs)
         return
 
     @distributed_trace_async

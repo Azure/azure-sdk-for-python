@@ -671,9 +671,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         except AttributeError:
             agent_name = agent
             etag = None
-        await self._client.knowledge_agents.delete(
-            agent_name=agent_name, match_condition=match_condition, etag=etag, **kwargs
-        )
+        await self._client.agents.delete(agent_name=agent_name, match_condition=match_condition, etag=etag, **kwargs)
 
     @distributed_trace_async
     async def create_agent(self, agent: KnowledgeAgent, **kwargs: Any) -> KnowledgeAgent:
@@ -686,7 +684,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.create(agent, **kwargs)
+        result = await self._client.agents.create(agent, **kwargs)
         return result
 
     @distributed_trace_async
@@ -712,7 +710,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.create_or_update(
+        result = await self._client.agents.create_or_update(
             agent_name=agent.name,
             knowledge_agent=agent,
             match_condition=match_condition,
@@ -733,8 +731,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_agents.get(name, **kwargs)
-        return result
+        result = await self._client.agents.get(name, **kwargs)
+        return cast(KnowledgeAgent, result)
 
     @distributed_trace
     def list_agents(self, **kwargs) -> AsyncItemPaged[KnowledgeAgent]:
@@ -746,7 +744,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
-        return cast(AsyncItemPaged[KnowledgeAgent], self._client.knowledge_agents.list(**kwargs))
+        return cast(AsyncItemPaged[KnowledgeAgent], self._client.agents.list(**kwargs))
 
     @distributed_trace_async
     async def delete_knowledge_source(
@@ -771,9 +769,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         except AttributeError:
             source_name = knowledge_source
             etag = None
-        await self._client.knowledge_sources.delete(
-            source_name=source_name, match_condition=match_condition, etag=etag, **kwargs
-        )
+        await self._client.sources.delete(source_name=source_name, match_condition=match_condition, etag=etag, **kwargs)
 
     @distributed_trace_async
     async def create_knowledge_source(self, knowledge_source: KnowledgeSource, **kwargs: Any) -> KnowledgeSource:
@@ -786,7 +782,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_sources.create(knowledge_source, **kwargs)
+        result = await self._client.sources.create(knowledge_source, **kwargs)
         return result
 
     @distributed_trace_async
@@ -812,7 +808,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.ResourceExistsError: If the index already exists.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_sources.create_or_update(
+        result = await self._client.sources.create_or_update(
             source_name=knowledge_source.name,
             knowledge_source=knowledge_source,
             match_condition=match_condition,
@@ -833,8 +829,8 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         :raises ~azure.core.exceptions.HttpResponseError: If the operation fails.
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        result = await self._client.knowledge_sources.get(name, **kwargs)
-        return result
+        result = await self._client.sources.get(name, **kwargs)
+        return cast(KnowledgeSource, result)
 
     @distributed_trace
     def list_knowledge_sources(self, **kwargs: Any) -> AsyncItemPaged[KnowledgeSource]:
@@ -846,4 +842,4 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         # pylint:disable=protected-access
-        return cast(AsyncItemPaged[KnowledgeSource], self._client.knowledge_sources.list(**kwargs))
+        return cast(AsyncItemPaged[KnowledgeSource], self._client.sources.list(**kwargs))

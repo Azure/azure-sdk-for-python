@@ -496,8 +496,8 @@ class TokenFilter(_Model):
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AsciiFoldingTokenFilter, CjkBigramTokenFilter, CommonGramTokenFilter,
-    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilterV2, ElisionTokenFilter, KeepTokenFilter,
-    KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilterV2,
+    DictionaryDecompounderTokenFilter, EdgeNGramTokenFilter, ElisionTokenFilter, KeepTokenFilter,
+    KeywordMarkerTokenFilter, LengthTokenFilter, LimitTokenFilter, NGramTokenFilter,
     PatternCaptureTokenFilter, PatternReplaceTokenFilter, PhoneticTokenFilter, ShingleTokenFilter,
     SnowballTokenFilter, StemmerOverrideTokenFilter, StemmerTokenFilter, StopwordsTokenFilter,
     SynonymTokenFilter, TruncateTokenFilter, UniqueTokenFilter, WordDelimiterTokenFilter
@@ -2136,9 +2136,9 @@ class LexicalTokenizer(_Model):
     """Base type for tokenizers.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizerV2, MicrosoftLanguageStemmingTokenizer,
-    MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizerV2, PatternTokenizer,
-    LuceneStandardTokenizerV2, UaxUrlEmailTokenizer
+    ClassicTokenizer, EdgeNGramTokenizer, KeywordTokenizer, MicrosoftLanguageStemmingTokenizer,
+    MicrosoftLanguageTokenizer, NGramTokenizer, PathHierarchyTokenizer, PatternTokenizer,
+    LuceneStandardTokenizer, UaxUrlEmailTokenizer
 
     :ivar odata_type: The discriminator for derived types. Required. Default value is None.
     :vartype odata_type: str
@@ -3544,7 +3544,7 @@ class DocumentKeysOrIds(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EdgeNGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
+class EdgeNGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.EdgeNGramTokenFilterV2"):
     """Generates n-grams of the given size(s) starting from the front or the back of an input token.
     This token filter is implemented using Apache Lucene.
 
@@ -5269,7 +5269,7 @@ class KeywordMarkerTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Sear
         self.odata_type = "#Microsoft.Azure.Search.KeywordMarkerTokenFilter"  # type: ignore
 
 
-class KeywordTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
+class KeywordTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.KeywordTokenizerV2"):
     """Emits the entire input as a single token. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -6028,7 +6028,7 @@ class LuceneStandardAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Se
         self.odata_type = "#Microsoft.Azure.Search.StandardAnalyzer"  # type: ignore
 
 
-class LuceneStandardTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
+class LuceneStandardTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.StandardTokenizerV2"):
     """Breaks text following the Unicode Text Segmentation rules. This tokenizer is implemented using
     Apache Lucene.
 
@@ -6472,7 +6472,7 @@ class NativeBlobSoftDeleteDeletionDetectionPolicy(
         self.odata_type = "#Microsoft.Azure.Search.NativeBlobSoftDeleteDeletionDetectionPolicy"  # type: ignore
 
 
-class NGramTokenFilterV2(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
+class NGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.NGramTokenFilterV2"):
     """Generates n-grams of the given size(s). This token filter is implemented using Apache Lucene.
 
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
@@ -6716,7 +6716,7 @@ class OutputFieldMappingEntry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PathHierarchyTokenizerV2(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PathHierarchyTokenizerV2"):
+class PathHierarchyTokenizer(LexicalTokenizer, discriminator="#Microsoft.Azure.Search.PathHierarchyTokenizerV2"):
     """Tokenizer for path-like hierarchies. This tokenizer is implemented using Apache Lucene.
 
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
@@ -7902,7 +7902,7 @@ class SearchIndex(_Model):
 
     :ivar name: The name of the index. Required.
     :vartype name: str
-    :ivar description: The description of the index. Required.
+    :ivar description: The description of the index.
     :vartype description: str
     :ivar fields: The fields of the index. Required.
     :vartype fields: list[~azure.search.documents.indexes.models.SearchField]
@@ -7955,8 +7955,8 @@ class SearchIndex(_Model):
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the index. Required."""
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The description of the index. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the index."""
     fields: list["_models.SearchField"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The fields of the index. Required."""
     scoring_profiles: Optional[list["_models.ScoringProfile"]] = rest_field(
@@ -8034,8 +8034,8 @@ class SearchIndex(_Model):
         self,
         *,
         name: str,
-        description: str,
         fields: list["_models.SearchField"],
+        description: Optional[str] = None,
         scoring_profiles: Optional[list["_models.ScoringProfile"]] = None,
         default_scoring_profile: Optional[str] = None,
         cors_options: Optional["_models.CorsOptions"] = None,
