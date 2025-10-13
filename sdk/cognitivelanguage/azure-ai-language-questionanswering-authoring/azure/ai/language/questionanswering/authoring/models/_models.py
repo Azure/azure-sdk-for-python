@@ -252,14 +252,14 @@ class ImportJobOptions(_Model):
 
     :ivar metadata: Parameters needed to create the project.
     :vartype metadata:
-     ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+     ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
     :ivar assets: All assets for this project.
     :vartype assets: ~azure.ai.language.questionanswering.authoring.models.Assets
     :ivar file_uri: Import data File URI.
     :vartype file_uri: str
     """
 
-    metadata: Optional["_models.QuestionAnsweringProjectMetadata"] = rest_field(
+    metadata: Optional["_models.QuestionAnsweringProject"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Parameters needed to create the project."""
@@ -272,7 +272,7 @@ class ImportJobOptions(_Model):
     def __init__(
         self,
         *,
-        metadata: Optional["_models.QuestionAnsweringProjectMetadata"] = None,
+        metadata: Optional["_models.QuestionAnsweringProject"] = None,
         assets: Optional["_models.Assets"] = None,
         file_uri: Optional[str] = None,
     ) -> None: ...
@@ -1083,7 +1083,7 @@ class QuestionAnsweringAuthoringUpdateSourcesJobState(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class QuestionAnsweringProjectMetadata(_Model):
+class QuestionAnsweringProject(_Model):
     """Represents the project.
 
     :ivar project_name: Name of the project. Required.

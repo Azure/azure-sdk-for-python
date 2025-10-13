@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -177,7 +177,7 @@ def build_question_answering_authoring_get_delete_status_request(  # pylint: dis
 def build_question_answering_authoring_export_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
-    format: Optional[Union[str, _models.Format]] = None,
+    file_format: Optional[Union[str, _models.Format]] = None,
     asset_kind: Optional[Union[str, _models.AssestKind]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -194,8 +194,8 @@ def build_question_answering_authoring_export_request(  # pylint: disable=name-t
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if format is not None:
-        _params["format"] = _SERIALIZER.query("format", format, "str")
+    if file_format is not None:
+        _params["format"] = _SERIALIZER.query("file_format", file_format, "str")
     if asset_kind is not None:
         _params["assetKind"] = _SERIALIZER.query("asset_kind", asset_kind, "str")
 
@@ -229,10 +229,10 @@ def build_question_answering_authoring_get_export_status_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_question_answering_authoring_import_method_request(  # pylint: disable=name-too-long
+def build_question_answering_authoring_begin_import_assets_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
-    format: Optional[Union[str, _models.Format]] = None,
+    file_format: Optional[Union[str, _models.Format]] = None,
     asset_kind: Optional[Union[str, _models.AssestKind]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -251,8 +251,8 @@ def build_question_answering_authoring_import_method_request(  # pylint: disable
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if format is not None:
-        _params["format"] = _SERIALIZER.query("format", format, "str")
+    if file_format is not None:
+        _params["format"] = _SERIALIZER.query("file_format", file_format, "str")
     if asset_kind is not None:
         _params["assetKind"] = _SERIALIZER.query("asset_kind", asset_kind, "str")
 
@@ -699,7 +699,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
     @distributed_trace
     def list_projects(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.QuestionAnsweringProjectMetadata"]:
+    ) -> ItemPaged["_models.QuestionAnsweringProject"]:
         """Gets all projects for a user.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -708,16 +708,16 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :keyword skip: An offset into the collection of the first resource to be returned. Default
          value is None.
         :paramtype skip: int
-        :return: An iterator like instance of QuestionAnsweringProjectMetadata
+        :return: An iterator like instance of QuestionAnsweringProject
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata]
+         ~azure.core.paging.ItemPaged[~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[list[_models.QuestionAnsweringProjectMetadata]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.QuestionAnsweringProject]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -769,7 +769,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.QuestionAnsweringProjectMetadata], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.QuestionAnsweringProject], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -793,14 +793,14 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_project_details(self, project_name: str, **kwargs: Any) -> _models.QuestionAnsweringProjectMetadata:
+    def get_project_details(self, project_name: str, **kwargs: Any) -> _models.QuestionAnsweringProject:
         """Get the requested project metadata.
 
         :param project_name: Name of the project. Required.
         :type project_name: str
-        :return: QuestionAnsweringProjectMetadata. The QuestionAnsweringProjectMetadata is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+        :return: QuestionAnsweringProject. The QuestionAnsweringProject is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -814,7 +814,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.QuestionAnsweringProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.QuestionAnsweringProject] = kwargs.pop("cls", None)
 
         _request = build_question_answering_authoring_get_project_details_request(
             project_name=project_name,
@@ -847,7 +847,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.QuestionAnsweringProjectMetadata, response.json())
+            deserialized = _deserialize(_models.QuestionAnsweringProject, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -858,31 +858,30 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
     def create_project(
         self,
         project_name: str,
-        body: _models.QuestionAnsweringProjectMetadata,
+        body: _models.QuestionAnsweringProject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.QuestionAnsweringProjectMetadata:
+    ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
 
         :param project_name: Name of the project. Required.
         :type project_name: str
         :param body: The resource instance. Required.
-        :type body:
-         ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+        :type body: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: QuestionAnsweringProjectMetadata. The QuestionAnsweringProjectMetadata is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+        :return: QuestionAnsweringProject. The QuestionAnsweringProject is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_project(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.QuestionAnsweringProjectMetadata:
+    ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
 
         :param project_name: Name of the project. Required.
@@ -892,16 +891,16 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: QuestionAnsweringProjectMetadata. The QuestionAnsweringProjectMetadata is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+        :return: QuestionAnsweringProject. The QuestionAnsweringProject is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create_project(
         self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.QuestionAnsweringProjectMetadata:
+    ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
 
         :param project_name: Name of the project. Required.
@@ -911,28 +910,27 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: QuestionAnsweringProjectMetadata. The QuestionAnsweringProjectMetadata is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+        :return: QuestionAnsweringProject. The QuestionAnsweringProject is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create_project(
-        self, project_name: str, body: Union[_models.QuestionAnsweringProjectMetadata, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.QuestionAnsweringProjectMetadata:
+        self, project_name: str, body: Union[_models.QuestionAnsweringProject, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.QuestionAnsweringProject:
         """Create or update a project.
 
         :param project_name: Name of the project. Required.
         :type project_name: str
-        :param body: The resource instance. Is one of the following types:
-         QuestionAnsweringProjectMetadata, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata or JSON
-         or IO[bytes]
-        :return: QuestionAnsweringProjectMetadata. The QuestionAnsweringProjectMetadata is compatible
-         with MutableMapping
-        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProjectMetadata
+        :param body: The resource instance. Is one of the following types: QuestionAnsweringProject,
+         JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject or
+         JSON or IO[bytes]
+        :return: QuestionAnsweringProject. The QuestionAnsweringProject is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.language.questionanswering.authoring.models.QuestionAnsweringProject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -947,7 +945,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.QuestionAnsweringProjectMetadata] = kwargs.pop("cls", None)
+        cls: ClsType[_models.QuestionAnsweringProject] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -989,7 +987,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.QuestionAnsweringProjectMetadata, response.json())
+            deserialized = _deserialize(_models.QuestionAnsweringProject, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1165,7 +1163,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         self,
         project_name: str,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -1184,7 +1182,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
 
         _request = build_question_answering_authoring_export_request(
             project_name=project_name,
-            format=format,
+            file_format=file_format,
             asset_kind=asset_kind,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1226,7 +1224,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         self,
         project_name: str,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -1234,9 +1232,9 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is None.
-        :paramtype format: str or ~azure.ai.language.questionanswering.authoring.models.Format
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is None.
+        :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
@@ -1254,7 +1252,7 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         if cont_token is None:
             raw_result = self._export_initial(
                 project_name=project_name,
-                format=format,
+                file_format=file_format,
                 asset_kind=asset_kind,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1358,12 +1356,12 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
 
         return deserialized  # type: ignore
 
-    def _import_method_initial(
+    def _begin_import_assets_initial(
         self,
         project_name: str,
         body: Optional[Union[_models.ImportJobOptions, JSON, IO[bytes]]] = None,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
@@ -1392,9 +1390,9 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
             else:
                 _content = None
 
-        _request = build_question_answering_authoring_import_method_request(
+        _request = build_question_answering_authoring_begin_import_assets_request(
             project_name=project_name,
-            format=format,
+            file_format=file_format,
             asset_kind=asset_kind,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1434,12 +1432,12 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         return deserialized  # type: ignore
 
     @overload
-    def begin_import_method(
+    def begin_import_assets(
         self,
         project_name: str,
         body: Optional[_models.ImportJobOptions] = None,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1450,9 +1448,9 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :type project_name: str
         :param body: Project assets the needs to be imported. Default value is None.
         :type body: ~azure.ai.language.questionanswering.authoring.models.ImportJobOptions
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is None.
-        :paramtype format: str or ~azure.ai.language.questionanswering.authoring.models.Format
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is None.
+        :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
@@ -1465,12 +1463,12 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         """
 
     @overload
-    def begin_import_method(
+    def begin_import_assets(
         self,
         project_name: str,
         body: Optional[JSON] = None,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1481,9 +1479,9 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :type project_name: str
         :param body: Project assets the needs to be imported. Default value is None.
         :type body: JSON
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is None.
-        :paramtype format: str or ~azure.ai.language.questionanswering.authoring.models.Format
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is None.
+        :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
@@ -1496,12 +1494,12 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         """
 
     @overload
-    def begin_import_method(
+    def begin_import_assets(
         self,
         project_name: str,
         body: Optional[IO[bytes]] = None,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1512,9 +1510,9 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         :type project_name: str
         :param body: Project assets the needs to be imported. Default value is None.
         :type body: IO[bytes]
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is None.
-        :paramtype format: str or ~azure.ai.language.questionanswering.authoring.models.Format
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is None.
+        :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
@@ -1527,12 +1525,12 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         """
 
     @distributed_trace
-    def begin_import_method(
+    def begin_import_assets(
         self,
         project_name: str,
         body: Optional[Union[_models.ImportJobOptions, JSON, IO[bytes]]] = None,
         *,
-        format: Optional[Union[str, _models.Format]] = None,
+        file_format: Optional[Union[str, _models.Format]] = None,
         asset_kind: Optional[Union[str, _models.AssestKind]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -1544,9 +1542,9 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
          ImportJobOptions, JSON, IO[bytes] Default value is None.
         :type body: ~azure.ai.language.questionanswering.authoring.models.ImportJobOptions or JSON or
          IO[bytes]
-        :keyword format: Knowledge base Import or Export format. Known values are: "json", "tsv", and
-         "excel". Default value is None.
-        :paramtype format: str or ~azure.ai.language.questionanswering.authoring.models.Format
+        :keyword file_format: Knowledge base Import or Export format. Known values are: "json", "tsv",
+         and "excel". Default value is None.
+        :paramtype file_format: str or ~azure.ai.language.questionanswering.authoring.models.Format
         :keyword asset_kind: Kind of the asset of the project. Known values are: "qnas" and "synonyms".
          Default value is None.
         :paramtype asset_kind: str or ~azure.ai.language.questionanswering.authoring.models.AssestKind
@@ -1564,10 +1562,10 @@ class _QuestionAnsweringAuthoringClientOperationsMixin(  # pylint: disable=too-m
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._import_method_initial(
+            raw_result = self._begin_import_assets_initial(
                 project_name=project_name,
                 body=body,
-                format=format,
+                file_format=file_format,
                 asset_kind=asset_kind,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
