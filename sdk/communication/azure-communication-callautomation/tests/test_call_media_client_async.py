@@ -108,8 +108,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
             play_to=[],
-            play_options=PlayOptions(loop=False),
-            interrupt_call_media_operation=False,
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=False),
         )
         mock_play.assert_awaited_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -123,7 +122,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(expected_play_request.play_options.loop, actual_play_request.play_options.loop)
         self.assertEqual(
-            expected_play_request.interrupt_call_media_operation, actual_play_request.interrupt_call_media_operation
+            expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation
         )
 
     async def test_play_file_to_all_via_play_back_compat_with_barge_in(self):
@@ -136,8 +135,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
             play_to=[],
-            play_options=PlayOptions(loop=False),
-            interrupt_call_media_operation=True,
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=True),
         )
         mock_play.assert_awaited_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -150,7 +148,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(
-            expected_play_request.interrupt_call_media_operation, actual_play_request.interrupt_call_media_operation
+            expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation
         )
 
     async def test_play_file_to_all_back_compat_with_barge_in(self):
@@ -165,8 +163,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
             play_to=[],
-            play_options=PlayOptions(loop=False),
-            interrupt_call_media_operation=True,
+            play_options=PlayOptions(loop=False, interrupt_call_media_operation=True),
         )
         mock_play.assert_awaited_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -179,7 +176,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(
-            expected_play_request.interrupt_call_media_operation, actual_play_request.interrupt_call_media_operation
+            expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation
         )
 
     async def test_play_file_to_all_back_compat_with_barge_in(self):
@@ -194,8 +191,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         expected_play_request = PlayRequest(
             play_sources=[play_source._to_generated()],
             play_to=[],
-            play_options=PlayOptions(loop=True),
-            interrupt_call_media_operation=True,
+            play_options=PlayOptions(loop=True, interrupt_call_media_operation=True),
         )
         mock_play.assert_awaited_once()
         actual_play_request = mock_play.call_args[0][1]
@@ -208,7 +204,7 @@ class TestCallMediaClientAsync(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(expected_play_request.play_to, actual_play_request.play_to)
         self.assertEqual(
-            expected_play_request.interrupt_call_media_operation, actual_play_request.interrupt_call_media_operation
+            expected_play_request.play_options.interrupt_call_media_operation, actual_play_request.play_options.interrupt_call_media_operation
         )
 
     async def test_play_multiple_source_to_all(self):

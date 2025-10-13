@@ -19,15 +19,15 @@ from . import models as _models
 from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    AzureCommunicationCallAutomationServiceOperationsMixin,
     CallConnectionOperations,
     CallDialogOperations,
     CallMediaOperations,
     CallRecordingOperations,
+    _AzureCommunicationCallAutomationServiceOperationsMixin,
 )
 
 
-class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationServiceOperationsMixin):
+class AzureCommunicationCallAutomationService(_AzureCommunicationCallAutomationServiceOperationsMixin):
     """Azure Communication Service Call Automation APIs.
 
     :ivar call_connection: CallConnectionOperations operations
@@ -74,7 +74,7 @@ class AzureCommunicationCallAutomationService(AzureCommunicationCallAutomationSe
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
-        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
+        client_models |= {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

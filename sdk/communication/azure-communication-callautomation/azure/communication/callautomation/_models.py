@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import datetime
 from typing import List, Optional, Union, TYPE_CHECKING
 from typing_extensions import Literal
 from ._generated.models import (
@@ -693,8 +694,7 @@ class CallConnectionProperties:  # pylint: disable=too-many-instance-attributes
                 id=call_connection_properties_generated.transcription_subscription.id,
                 state=call_connection_properties_generated.transcription_subscription.state,
                 subscribed_result_types=call_connection_properties_generated.transcription_subscription.subscribed_result_types,  # pylint:disable=line-too-long
-                locale=call_connection_properties_generated.transcription_subscription.locale,
-            )
+                )
         return cls(
             call_connection_id=call_connection_properties_generated.call_connection_id,
             server_call_id=call_connection_properties_generated.server_call_id,
@@ -764,36 +764,37 @@ class RecordingProperties:
             recording_kind=recording_state_result.recording_kind,
         )
 
-    class RecordingResult:
-        """Recording result data.
-        Variables are only populated by the server, and will be ignored when sending a request.
-        :ivar recording_id:
-        :vartype recording_id: str
-        :ivar recording_storage_info: Container for chunks.
-        :vartype recording_storage_info:
-         ~azure.communication.callautomation.models.RecordingStorageInfo
-        :ivar errors:
-        :vartype errors: list[~azure.communication.callautomation.models.Error]
-        :ivar recording_start_time:
-        :vartype recording_start_time: ~datetime.datetime
-        :ivar recording_duration_ms:
-        :vartype recording_duration_ms: int
-        :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
-         "initiatorLeft", "handedOverOrTransferred", "maximumSessionTimeReached", "callStartTimeout",
-         "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
-         "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
-         "couldNotRejoinCall", "invalidBotData", "couldNotStart",
-         "appHostedMediaFailureOutcomeWithError", "appHostedMediaFailureOutcomeGracefully",
-         "handedOverDueToMediaTimeout", "handedOverDueToAudioStreamFailure",
-         "speechRecognitionSessionNonRetriableError",
-         "speechRecognitionSessionRetriableErrorMaxRetryCountReached",
-         "handedOverDueToChunkCreationFailure", "chunkCreationFailed",
-         "handedOverDueToProcessingTimeout", "processingTimeout", and "transcriptObjectCreationFailed".
-        :vartype session_end_reason: str or
-         ~azure.communication.callautomation.models.CallSessionEndReason
-        :ivar recording_expiration_time:
-        :vartype recording_expiration_time: ~datetime.datetime
-        """
+
+class RecordingResult:
+    """Recording result data.
+    Variables are only populated by the server, and will be ignored when sending a request.
+    :ivar recording_id:
+    :vartype recording_id: str
+    :ivar recording_storage_info: Container for chunks.
+    :vartype recording_storage_info:
+     ~azure.communication.callautomation.models.RecordingStorageInfo
+    :ivar errors:
+    :vartype errors: list[~azure.communication.callautomation.models.Error]
+    :ivar recording_start_time:
+    :vartype recording_start_time: ~datetime.datetime
+    :ivar recording_duration_ms:
+    :vartype recording_duration_ms: int
+    :ivar session_end_reason: Known values are: "sessionStillOngoing", "callEnded",
+     "initiatorLeft", "handedOverOrTransferred", "maximumSessionTimeReached", "callStartTimeout",
+     "mediaTimeout", "audioStreamFailure", "allInstancesBusy", "teamsTokenConversionFailed",
+     "reportCallStateFailed", "reportCallStateFailedAndSessionMustBeDiscarded",
+     "couldNotRejoinCall", "invalidBotData", "couldNotStart",
+     "appHostedMediaFailureOutcomeWithError", "appHostedMediaFailureOutcomeGracefully",
+     "handedOverDueToMediaTimeout", "handedOverDueToAudioStreamFailure",
+     "speechRecognitionSessionNonRetriableError",
+     "speechRecognitionSessionRetriableErrorMaxRetryCountReached",
+     "handedOverDueToChunkCreationFailure", "chunkCreationFailed",
+     "handedOverDueToProcessingTimeout", "processingTimeout", and "transcriptObjectCreationFailed".
+    :vartype session_end_reason: str or
+     ~azure.communication.callautomation.models.CallSessionEndReason
+    :ivar recording_expiration_time:
+    :vartype recording_expiration_time: ~datetime.datetime
+    """
 
     recording_id: Optional[str]
     """Id of this recording operation."""
@@ -817,7 +818,7 @@ class RecordingProperties:
         recording_start_time: Optional[datetime] = None,
         recording_duration_ms: Optional[int] = None,
         recording_expiration_time: Optional[datetime] = None,
-        errors: Optional[List[Error]]
+        errors: Optional[List[Error]] = None
     ):
         self.recording_id = recording_id
         self.recording_storage_info = recording_storage_info
