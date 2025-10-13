@@ -32,10 +32,10 @@ class CertificateModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     IS_PRESENT = "IsPresent"
     """After the operation was performed, the certificate is in the set of
-    certificates."""
+certificates."""
     IS_ABSENT = "IsAbsent"
     """After the operation was performed, the certificate is no longer present in the
-    set of certificates."""
+set of certificates."""
 
 
 class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -47,8 +47,8 @@ class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The field's content should be treated as binary and not interpreted by MAA."""
     JSON = "JSON"
     """The field's content should be treated as UTF-8 JSON text that may be further
-    interpreted by MAA. Refer to RFC 8259 for a description of JSON serialization
-    standards for interoperability."""
+interpreted by MAA. Refer to RFC 8259 for a description of JSON serialization
+standards for interoperability."""
 
 
 class PolicyModification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
