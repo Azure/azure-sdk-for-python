@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed issue where AAD authentication for Live Metrics failed for users in sovereign cloud environments
+  ([#43392](https://github.com/Azure/azure-sdk-for-python/pull/43392))
 
 ### Other Changes
 
