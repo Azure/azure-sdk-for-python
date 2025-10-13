@@ -32,7 +32,6 @@ from ._models_py3 import (  # type: ignore
     AgentPoolUpgradeSettings,
     AgentPoolWindowsProfile,
     AzureKeyVaultKms,
-    CloudErrorBody,
     ClusterUpgradeSettings,
     CompatibleVersions,
     ContainerServiceLinuxProfile,
@@ -185,7 +184,9 @@ from ._models_py3 import (  # type: ignore
 )
 
 from ._container_service_client_enums import (  # type: ignore
+    AdvancedNetworkPolicies,
     AgentPoolMode,
+    AgentPoolSSHAccess,
     AgentPoolType,
     ArtifactSource,
     BackendPoolType,
@@ -261,7 +262,6 @@ __all__ = [
     "AgentPoolUpgradeSettings",
     "AgentPoolWindowsProfile",
     "AzureKeyVaultKms",
-    "CloudErrorBody",
     "ClusterUpgradeSettings",
     "CompatibleVersions",
     "ContainerServiceLinuxProfile",
@@ -411,7 +411,9 @@ __all__ = [
     "VirtualMachinesProfile",
     "WeeklySchedule",
     "WindowsGmsaProfile",
+    "AdvancedNetworkPolicies",
     "AgentPoolMode",
+    "AgentPoolSSHAccess",
     "AgentPoolType",
     "ArtifactSource",
     "BackendPoolType",
