@@ -1,6 +1,6 @@
 # Azure Python SDK Breaking Changes Review and Resolution Guide for TypeSpec Migration
 
-The Azure Python SDK generally prohibits breaking changes unless they result from service behavior modifications. This guide helps you identify, review, and resolve breaking changes that may occur in new SDK versions due to migrating of service specifications from Swagger to TypeSpec.
+The Azure Python SDK generally prohibits breaking changes unless they result from service behavior modifications. This guide helps you identify, review, and resolve breaking changes that may occur in new SDK versions due to migration of service specifications from Swagger to TypeSpec.
 
 Breaking changes can be resolved by:
 
