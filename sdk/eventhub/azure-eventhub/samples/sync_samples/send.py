@@ -113,7 +113,7 @@ def send_single_large_message(producer, size_mb=17):
         producer.send_batch(batch)
         logger.info("Successfully sent %d MB message.", size_mb)
     except ValueError as e:
-        logger.warning("Failed to add %d MB message to batch -> %s", size_mb, e)
+        logger.warning("Failed to add the %d MB message to batch -> %s", size_mb, e)
     except Exception as e:
         logger.error("Failed to send %d MB message -> %s", size_mb, e)
 
