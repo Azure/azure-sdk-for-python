@@ -134,9 +134,9 @@ class AttestationPolicyResult:
         # If we have a generated policy result or policy text, return that.
         if not generated:
             return None
-        signer = AttestationSigner._from_generated(
+        signer = AttestationSigner._from_generated( # pylint: disable=protected-access
             cast(JSONWebKey, generated.policy_signer)
-        )  # pylint: disable=protected-access
+        )
 
         if generated.policy_resolution is None or generated.policy_token_hash is None or signer is None:
             return None
@@ -332,9 +332,9 @@ class AttestationResult:  # pylint: disable=too-many-instance-attributes
 
         :rtype: ~azure.security.attestation.AttestationSigner or None
         """
-        return AttestationSigner._from_generated(
+        return AttestationSigner._from_generated( # pylint: disable=protected-access
             cast(JSONWebKey, self._policy_signer)
-        )  # pylint: disable=protected-access
+        )
 
     @property
     def policy_hash(self) -> str:
@@ -652,7 +652,7 @@ class AttestationToken:
 
     def _validate_token(
         self,
-        signers: List[AttestationSigner],
+        signers: Optional[List[AttestationSigner]] = None,
         *,
         validate_token: Optional[bool] = None,
         validation_callback: Optional[Callable] = None,
@@ -667,7 +667,7 @@ class AttestationToken:
         """Validate the attestation token based on the options specified in the
          :class:`TokenValidationOptions`.
 
-        :param List[azure.security.attestation.AttestationSigner] signers: Potential signers for the token.
+        :param List[azure.security.attestation.AttestationSigner] or None signers: Potential signers for the token.
             If the signers parameter is specified, validate_token will only
             consider the signers as potential signatories for the token, otherwise
             it will consider attributes in the header of the token.
@@ -717,7 +717,7 @@ class AttestationToken:
         signer = None
         if self.algorithm != "none" and options.get("validate_signature", True):
             # validate the signature for the token.
-            candidate_certificates = self._get_candidate_signing_certificates(signers)
+            candidate_certificates = self._get_candidate_signing_certificates(signers) # type: ignore
             signer = self._validate_signature(candidate_certificates)
             if signer is None:
                 raise AttestationTokenValidationException("Could not find the certificate used to sign the token.")
