@@ -216,12 +216,16 @@ class Feature(_Model):
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
     :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
     :vartype type: str or ~azure.planetarycomputer.models.FeatureType
+    :ivar properties: Feature properties.
+    :vartype properties: dict[str, any]
     """
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """GeoJSON type identifier for Feature. Required. \"Feature\""""
+    properties: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Feature properties."""
 
     @overload
     def __init__(
@@ -229,6 +233,7 @@ class Feature(_Model):
         *,
         geometry: "_models.Geometry",
         type: Union[str, "_models.FeatureType"],
+        properties: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -419,6 +424,8 @@ class GeoJsonStatisticsItemResponse(_Model):
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
     :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
     :vartype type: str or ~azure.planetarycomputer.models.FeatureType
+    :ivar properties: Feature properties.
+    :vartype properties: dict[str, any]
     :ivar created_on: MSFT Created.
     :vartype created_on: str
     :ivar updated_on: MSFT Updated.
@@ -433,8 +440,6 @@ class GeoJsonStatisticsItemResponse(_Model):
     :vartype stac_version: str
     :ivar collection: ID of the STAC collection this item belongs to.
     :vartype collection: str
-    :ivar properties: Properties. Required.
-    :vartype properties: ~azure.planetarycomputer.models.StacItemProperties
     :ivar timestamp: MSFT Timestamp.
     :vartype timestamp: str
     :ivar e_tag: MSFT ETag.
@@ -447,6 +452,8 @@ class GeoJsonStatisticsItemResponse(_Model):
     """Geometry object defining the feature's shape. Required."""
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """GeoJSON type identifier for Feature. Required. \"Feature\""""
+    properties: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Feature properties."""
     created_on: Optional[str] = rest_field(
         name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -467,8 +474,6 @@ class GeoJsonStatisticsItemResponse(_Model):
     """Stac Version."""
     collection: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """ID of the STAC collection this item belongs to."""
-    properties: "_models.StacItemProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Properties. Required."""
     timestamp: Optional[str] = rest_field(name="_msft:ts", visibility=["read", "create", "update", "delete", "query"])
     """MSFT Timestamp."""
     e_tag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
@@ -484,7 +489,7 @@ class GeoJsonStatisticsItemResponse(_Model):
         type: Union[str, "_models.FeatureType"],
         id: str,  # pylint: disable=redefined-builtin
         bounding_box: list[float],
-        properties: "_models.StacItemProperties",
+        properties: Optional[dict[str, Any]] = None,
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
         short_description: Optional[str] = None,

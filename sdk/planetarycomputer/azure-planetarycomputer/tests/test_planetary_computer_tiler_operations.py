@@ -76,7 +76,7 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
             collection_id="str",
             item_id="str",
             format="str",
-            body={"geometry": "geometry", "type": "str"},
+            body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
             width=0.0,
             height=0.0,
             format="str",
-            body={"geometry": "geometry", "type": "str"},
+            body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,11 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
         response = client.tiler.list_geo_json_statistics(
             collection_id="str",
             item_id="str",
-            body={"features": [{"geometry": "geometry", "type": "str"}], "type": "str", "bbox": [0.0]},
+            body={
+                "features": [{"geometry": "geometry", "type": "str", "properties": {"str": {}}}],
+                "type": "str",
+                "bbox": [0.0],
+            },
         )
 
         # please add some check logic here by yourself
