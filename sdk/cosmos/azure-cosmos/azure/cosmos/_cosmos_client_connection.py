@@ -2709,7 +2709,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             url_connection = url_connection + '/probe'
 
         headers = base.GetHeaders(self, self.default_headers, "get", "", "",
-                                  http_constants.ResourceType.Probe, documents._OperationType.Read,{},
+                                  http_constants.ResourceType.Probe, documents._OperationType.Read, {},
                                   client_id=self.client_id)
         request_params = RequestObject(http_constants.ResourceType.Probe,
                                        documents._OperationType.Read,
