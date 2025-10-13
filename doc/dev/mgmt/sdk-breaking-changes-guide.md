@@ -33,8 +33,8 @@ options:
 Paired removal and addition entries showing naming changes from words to numbers:
 
 ```md
-- Enum `Minute` deleted or renamed its member `Zero`
-- Enum `Minute` deleted or renamed its member `Thirty`
+- Enum `Minute` deleted or renamed its member `ZERO`
+- Enum `Minute` deleted or renamed its member `THIRTY`
 - Enum `Minute` added member `ENUM_0`
 - Enum `Minute` added member `ENUM_30`
 ```
@@ -58,8 +58,8 @@ union Minute {
 Use client customization to restore the original names from the removal entries:
 
 ```tsp
-@@clientName(Minute.`0`, "Zero", "python");
-@@clientName(Minute.`30`, "Thirty", "python");
+@@clientName(Minute.`0`, "ZERO", "python");
+@@clientName(Minute.`30`, "THIRTY", "python");
 ```
 
 ## 2. Operation Naming Changes
@@ -138,7 +138,7 @@ Use client customization to do the same renaming as the directives in the legacy
 
 **Changelog Pattern**:
 
-Removel entry showing naming change of the client:
+Removal entry showing naming change of the client:
 
 ```md
 - Deleted or renamed client `IotDpsClient`
@@ -189,15 +189,20 @@ interface ProvisioningServiceDescriptions {
 Override the operation by a customized one with a manually designed order of parameters:
 
 ```tsp
-op VaultsGetDeletedCustomized(
-  @path provider: "Microsoft.ThisWillBeReplaced",
-  @query("api-version") apiVersion: string,
-  @path subscriptionId: uuid,
-  @path vault_name: string,
-  @path location: azureLocation,
-): DeletedVault;
+op IotDpsResourceGetCustomized(
+  @path
+  provider: "Microsoft.ThisWillBeReplaced",
 
-@@override(DeletedVaults.getDeleted, VaultsGetDeletedCustomized, "python");
+  @path
+  provisioningServiceName: string,
+
+  ...Azure.ResourceManager.CommonTypes.ResourceGroupNameParameter,
+): ProvisioningServiceDescription;
+
+@@override(ProvisioningServiceDescriptions.get,
+  IotDpsResourceGetCustomized,
+  "python"
+);
 ```
 
 ## 6. Removal of Unreferenced Models
