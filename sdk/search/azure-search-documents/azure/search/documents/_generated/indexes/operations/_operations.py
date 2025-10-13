@@ -214,6 +214,27 @@ def build_indexers_reset_request(indexer_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_indexers_resync_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    # Construct URL
+    _url = "/indexers('{indexerName}')/search.resync"
+    path_format_arguments = {
+        "indexerName": _SERIALIZER.url("indexer_name", indexer_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_indexers_reset_docs_request(
     indexer_name: str, *, overwrite: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
@@ -1522,7 +1543,7 @@ class DataSourcesOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-08-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2024-07-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview"],
     )
     def create_or_update(
         self,
@@ -2008,6 +2029,60 @@ class IndexersOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "indexer_name"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
+    def resync(self, indexer_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Resync selective options from the datasource to be re-ingested by the indexer.".
+
+        :param indexer_name: The name of the indexer. Required.
+        :type indexer_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_indexers_resync_request(
+            indexer_name=indexer_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models2.ErrorResponse, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
     @overload
     def reset_docs(
         self,
@@ -2353,7 +2428,7 @@ class IndexersOperations:
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2024-07-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview"],
     )
     def create_or_update(
         self,
@@ -2975,7 +3050,7 @@ class SkillsetsOperations:
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2024-07-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview"],
     )
     def create_or_update(
         self,
@@ -5003,6 +5078,22 @@ class AliasesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "prefer",
+                "client_request_id",
+                "alias_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview"],
+    )
     def create_or_update(
         self,
         alias_name: str,
@@ -5100,6 +5191,13 @@ class AliasesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": ["api_version", "client_request_id", "alias_name", "etag", "match_condition"]
+        },
+        api_versions_list=["2025-08-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
         alias_name: str,
@@ -5170,6 +5268,11 @@ class AliasesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "alias_name", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def get(self, alias_name: str, **kwargs: Any) -> _models1.SearchAlias:
         """Retrieves an alias definition.
 
@@ -5231,6 +5334,11 @@ class AliasesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def list(self, **kwargs: Any) -> ItemPaged["_models1.SearchAlias"]:
         """Lists all aliases available for a search service.
 
@@ -5360,6 +5468,11 @@ class AliasesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def create(self, alias: Union[_models1.SearchAlias, JSON, IO[bytes]], **kwargs: Any) -> _models1.SearchAlias:
         """Creates a new search alias.
 
@@ -5539,6 +5652,22 @@ class AgentsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "prefer",
+                "client_request_id",
+                "agent_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview"],
+    )
     def create_or_update(
         self,
         agent_name: str,
@@ -5637,6 +5766,13 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": ["api_version", "client_request_id", "agent_name", "etag", "match_condition"]
+        },
+        api_versions_list=["2025-08-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
         agent_name: str,
@@ -5707,6 +5843,11 @@ class AgentsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "agent_name", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def get(self, agent_name: str, **kwargs: Any) -> _models1.KnowledgeAgent:
         """Retrieves an agent definition.
 
@@ -5768,6 +5909,11 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def list(self, **kwargs: Any) -> _models1.ListKnowledgeAgentsResult:
         """Lists all agents available for a search service.
 
@@ -5875,6 +6021,11 @@ class AgentsOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def create(
         self, knowledge_agent: Union[_models1.KnowledgeAgent, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.KnowledgeAgent:
@@ -6057,6 +6208,22 @@ class SourcesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": [
+                "api_version",
+                "prefer",
+                "client_request_id",
+                "source_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2025-08-01-preview"],
+    )
     def create_or_update(
         self,
         source_name: str,
@@ -6155,6 +6322,13 @@ class SourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={
+            "2025-08-01-preview": ["api_version", "client_request_id", "source_name", "etag", "match_condition"]
+        },
+        api_versions_list=["2025-08-01-preview"],
+    )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
         source_name: str,
@@ -6224,6 +6398,11 @@ class SourcesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "source_name", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def get(self, source_name: str, **kwargs: Any) -> _models1.KnowledgeSource:
         """Retrieves a knowledge source definition.
 
@@ -6285,6 +6464,11 @@ class SourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def list(self, **kwargs: Any) -> _models1.ListKnowledgeSourcesResult:
         """Lists all knowledge sources available for a search service.
 
@@ -6392,6 +6576,11 @@ class SourcesOperations:
         """
 
     @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-08-01-preview",
+        params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-08-01-preview"],
+    )
     def create(
         self, knowledge_source: Union[_models1.KnowledgeSource, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.KnowledgeSource:

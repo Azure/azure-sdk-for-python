@@ -580,7 +580,7 @@ class DocumentsOperations:
         params_added_on={
             "2025-08-01-preview": ["query_rewrites", "debug", "query_language", "speller", "semantic_fields"]
         },
-        api_versions_list=["2024-07-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview"],
     )
     def search_get(
         self,
