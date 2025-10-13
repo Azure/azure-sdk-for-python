@@ -1047,14 +1047,22 @@ def _log_events_to_app_insights(
                     # The KEY is "microsoft.custom_event.name", the VALUE is the event name
                     "microsoft.custom_event.name": EVALUATION_EVENT_NAME,
                     # These fields are always present and are already strings
-                    "gen_ai.evaluation.name": event_data["metric"],
-                    "gen_ai.evaluation.score.value": event_data["score"],
-                    "gen_ai.evaluation.score.label": event_data["label"]
+                    "gen_ai.evaluation.name": event_data.get("metric"),
+                    "gen_ai.evaluation.score.value": event_data.get("score"),
+                    "gen_ai.evaluation.score.label": event_data.get("label")
                 }
                 
                 # Optional field that may not always be present
                 if "reason" in event_data:
                     log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
+                
+                # Handle error from sample if present
+                if "sample" in event_data and len(event_data["sample"]) > 0:
+                    sample_item = event_data["sample"][0]
+                    if "error" in sample_item:
+                        error_dict = sample_item["error"]
+                        if "message" in error_dict:
+                            log_attributes["error.type"] = str(error_dict["message"])
                 
                 # Handle redteam attack properties if present
                 if "properties" in event_data:
@@ -1077,18 +1085,26 @@ def _log_events_to_app_insights(
                     if "run_type" in attributes:
                         log_attributes["gen_ai.evaluation.azure_ai_type"] = str(attributes["run_type"])
                     
-                    if "is_scheduled" in attributes:
-                        log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(attributes["is_scheduled"])
+                    if "schedule_type" in attributes:
+                        log_attributes["gen_ai.evaluation.azure_ai_scheduled"] = str(attributes["schedule_type"])
                     
                     if "run_id" in attributes:
                         log_attributes["gen_ai.evaluation.run.id"] = str(attributes["run_id"])
                     
-                    if "dataset_id" in attributes:
-                        log_attributes["gen_ai.evaluation.dataset.id"] = str(attributes["dataset_id"])
                     if "response_id" in attributes:
                         log_attributes["gen_ai.response.id"] = str(attributes["response_id"])
+                    
                     if "agent_id" in attributes:
                         log_attributes["gen_ai.agent.id"] = str(attributes["agent_id"])
+                    
+                    if "agent_name" in attributes:
+                        log_attributes["gen_ai.agent.name"] = str(attributes["agent_name"])
+                    
+                    if "agent_version" in attributes:
+                        log_attributes["gen_ai.agent.version"] = str(attributes["agent_version"])
+                    
+                    if "project_id" in attributes:
+                        log_attributes["gen_ai.azure_ai_project.id"] = str(attributes["project_id"])
                 
                 # Create a LogRecord and emit it
                 log_record = LogRecord(
@@ -1136,16 +1152,20 @@ def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConf
         app_insights_attributes = {}
         if 'run_type' in app_insights_config:
             app_insights_attributes['run_type'] = app_insights_config['run_type']
-        if 'is_scheduled_run' in app_insights_config:
-            app_insights_attributes['is_scheduled'] = app_insights_config['is_scheduled_run']
+        if 'schedule_type' in app_insights_config:
+            app_insights_attributes['schedule_type'] = app_insights_config['schedule_type']
         if 'run_id' in app_insights_config:
             app_insights_attributes['run_id'] = app_insights_config['run_id']
-        if 'dataset_id' in app_insights_config:
-            app_insights_attributes['dataset_id'] = app_insights_config['dataset_id']
         if 'response_id' in app_insights_config:
             app_insights_attributes['response_id'] = app_insights_config['response_id']
         if "agent_id" in app_insights_config:
             app_insights_attributes["agent_id"] = app_insights_config["agent_id"]
+        if "agent_name" in app_insights_config:
+            app_insights_attributes["agent_name"] = app_insights_config["agent_name"]
+        if "agent_version" in app_insights_config:
+            app_insights_attributes["agent_version"] = app_insights_config["agent_version"]
+        if "project_id" in app_insights_config:
+            app_insights_attributes["project_id"] = app_insights_config["project_id"]
         
         for result in results:
             _log_events_to_app_insights(
