@@ -235,7 +235,7 @@ class OperationDetails(_model_base.Model):
     """The current status of the operation. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
     error: Optional[ODataV4Format] = rest_field()
-    """An error, available when the status is ``Failed``\ , describing why the operation
+    """An error, available when the status is ``Failed``, describing why the operation
      failed."""
 
     @overload
