@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed an issue where AAD authentication for Live Metrics failed for users in sovereign cloud environments
 
 ### Other Changes
 
