@@ -1,16 +1,9 @@
 # Release History
 
-## 1.0.0b44 (Unreleased)
+## 1.0.0b44 (2025-10-14)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
 - Fixed issue where AAD authentication for Live Metrics failed for users in sovereign cloud environments
   ([#43392](https://github.com/Azure/azure-sdk-for-python/pull/43392))
-
-### Other Changes
 
 ## 1.0.0b43 (2025-10-08)
 
