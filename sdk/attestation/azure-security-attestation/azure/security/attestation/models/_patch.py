@@ -115,7 +115,7 @@ class AttestationPolicyResult:
         which was specified in this parameter.
     :type policy_signer: ~azure.security.attestation.AttestationSigner
     :param bytes policy_token_hash: The hash of the complete JSON Web Signature
-        presented to the `set_policy` or `reset_policy` API.
+        presented to the `set_policy` or `reset_policy` API. May be None for reset operations.
 
     """
 
@@ -123,7 +123,7 @@ class AttestationPolicyResult:
         self,
         policy_resolution: Union[str, PolicyModification],
         policy_signer: AttestationSigner,
-        policy_token_hash: bytes,
+        policy_token_hash: Optional[bytes],
     ) -> None:
         self.policy_resolution = policy_resolution
         self.policy_signer = policy_signer
@@ -138,21 +138,25 @@ class AttestationPolicyResult:
             cast(JSONWebKey, generated.policy_signer)
         )
 
-        if generated.policy_resolution is None or generated.policy_token_hash is None:
+        # policy_resolution is required, but policy_token_hash can be None for reset operations
+        if generated.policy_resolution is None:
             return None
 
-        # Handle policy_token_hash as either bytes or base64url-encoded string
+        # Handle policy_token_hash as either bytes, base64url-encoded string, or None
         # The field should be bytes (the raw hash), but may come as base64url string from service
-        token_hash = generated.policy_token_hash
-        if isinstance(token_hash, str):
-            # If it's a base64url-encoded string, decode it to bytes
-            token_hash_bytes = base64url_decode(token_hash)
-        elif isinstance(token_hash, bytes):
-            # Already bytes, use as-is
-            token_hash_bytes = token_hash
-        else:
-            # Fallback
-            token_hash_bytes = str(token_hash).encode('utf-8')
+        # For reset_policy operations, it may be None
+        token_hash_bytes = None
+        if generated.policy_token_hash is not None:
+            token_hash = generated.policy_token_hash
+            if isinstance(token_hash, str):
+                # If it's a base64url-encoded string, decode it to bytes
+                token_hash_bytes = base64url_decode(token_hash)
+            elif isinstance(token_hash, bytes):
+                # Already bytes, use as-is
+                token_hash_bytes = token_hash
+            else:
+                # Fallback
+                token_hash_bytes = str(token_hash).encode('utf-8')
 
         # signer can be None for unsigned policies
         return AttestationPolicyResult(
