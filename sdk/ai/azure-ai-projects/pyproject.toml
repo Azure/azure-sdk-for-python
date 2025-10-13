@@ -38,7 +38,8 @@ dependencies = [
     "azure-ai-agents>=1.2.0b3",
 ]
 dynamic = [
-"version", "readme"
+    "version",
+    "readme"
 ]
 
 [project.urls]

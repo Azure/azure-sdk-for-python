@@ -10,7 +10,7 @@ REM
 
 REM Revert this, as we want to keep some edits to these file.
 git restore pyproject.toml
-git restore azure\ai\agents\_version.py
+git restore azure\ai\projects\_version.py
 
 REM We don't use auto-generated tests. Can this TypeSpec be change to no generate them?
 rmdir /s /q generated_tests
