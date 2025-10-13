@@ -596,7 +596,7 @@ class TestRetryPolicy(unittest.TestCase):
             assert mock_execute.counter > 2
 
         finally:
-            _retry_utility.ExecuteFunction= self.original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
             del os.environ["AZURE_COSMOS_DATABASE_ACCOUNT_REFRESH_INTERVAL_IN_MS"]
 
     class MockExecuteFunctionDBA(object):
