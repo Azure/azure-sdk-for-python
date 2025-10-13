@@ -24,7 +24,7 @@
 import logging
 import threading
 import os
-from typing import Dict, Any, List
+from typing import Any
 from azure.cosmos._routing.routing_range import PartitionKeyRangeWrapper
 from azure.cosmos._location_cache import EndpointOperationType
 from azure.cosmos._request_object import RequestObject
@@ -56,7 +56,7 @@ class _PartitionHealthInfo(object):
         self.read_success_count: int = 0
         self.read_consecutive_failure_count: int = 0
         self.write_consecutive_failure_count: int = 0
-        self.unavailability_info: Dict[str, Any] = {}
+        self.unavailability_info: dict[str, Any] = {}
 
     def reset_failure_rate_health_stats(self) -> None:
         self.write_failure_count = 0
@@ -117,7 +117,7 @@ class _PartitionHealthTracker(object):
 
     def __init__(self) -> None:
         # partition -> regions -> health info
-        self.pk_range_wrapper_to_health_info: Dict[PartitionKeyRangeWrapper, Dict[str, _PartitionHealthInfo]] = {}
+        self.pk_range_wrapper_to_health_info: dict[PartitionKeyRangeWrapper, dict[str, _PartitionHealthInfo]] = {}
         self.last_refresh = current_time_millis()
         self.stale_partition_lock = threading.Lock()
 
@@ -172,6 +172,10 @@ class _PartitionHealthTracker(object):
                         # only one request should be used to recover
                         with self.stale_partition_lock:
                             if _should_mark_healthy_tentative(partition_health_info, current_time):
+                                logger.debug("Attempting recovery for %s in %s where health info is %s.",
+                                            pk_range_wrapper,
+                                            location,
+                                            partition_health_info)
                                 # this will trigger one attempt to recover
                                 partition_health_info.transition_health_status(UNHEALTHY, current_time)
                                 request.healthy_tentative_location = location
@@ -186,16 +190,16 @@ class _PartitionHealthTracker(object):
             self,
             request: RequestObject,
             pk_range_wrapper: PartitionKeyRangeWrapper
-        ) -> List[str]:
-        excluded_locations = []
+        ) -> list[str]:
+        unhealthy_locations = []
         if pk_range_wrapper in self.pk_range_wrapper_to_health_info:
             for location, partition_health_info in self.pk_range_wrapper_to_health_info[pk_range_wrapper].items():
                 if (partition_health_info.unavailability_info and
                         not (request.healthy_tentative_location and request.healthy_tentative_location == location)):
                     health_status = partition_health_info.unavailability_info[HEALTH_STATUS]
                     if health_status in (UNHEALTHY_TENTATIVE, UNHEALTHY) :
-                        excluded_locations.append(location)
-        return excluded_locations
+                        unhealthy_locations.append(location)
+        return unhealthy_locations
 
     def add_failure(
             self,
@@ -235,6 +239,11 @@ class _PartitionHealthTracker(object):
 
         # Retrieve the consecutive failure threshold from the environment.
         consecutive_failure_threshold = int(os.environ.get(env_key, default_consecutive_threshold))
+        # log the current stats
+        logger.debug("Failure for partition %s in location %s has %s",
+                    pk_range_wrapper,
+                     location,
+                     self.pk_range_wrapper_to_health_info[pk_range_wrapper][location])
 
         # Call the threshold checker with the current stats.
         self._check_thresholds(

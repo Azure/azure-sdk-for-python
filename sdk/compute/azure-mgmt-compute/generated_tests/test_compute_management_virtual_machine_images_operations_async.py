@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
+from azure.mgmt.compute.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
         response = await self.client.virtual_machine_images.list_by_edge_zone(
             location="str",
             edge_zone="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
     async def test_virtual_machine_images_list_publishers(self, resource_group):
         response = await self.client.virtual_machine_images.list_publishers(
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
         response = await self.client.virtual_machine_images.list_offers(
             location="str",
             publisher_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
             location="str",
             publisher_name="str",
             offer="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
             publisher_name="str",
             offer="str",
             skus="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
             offer="str",
             skus="str",
             version="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestComputeManagementVirtualMachineImagesOperationsAsync(AzureMgmtRecorded
             offer="str",
             skus="str",
             expand="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself

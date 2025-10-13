@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01 import ComputeManagementClient
+from azure.mgmt.compute import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -24,7 +24,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
         response = self.client.capacity_reservations.list_by_capacity_reservation_group(
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -71,6 +71,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
                 "provisioningState": "str",
                 "provisioningTime": "2020-02-20 00:00:00",
                 "reservationId": "str",
+                "scheduleProfile": {"end": "str", "start": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -85,7 +86,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
                 "virtualMachinesAssociated": [{"id": "str"}],
                 "zones": ["str"],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -115,12 +116,13 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
                 "provisioningState": "str",
                 "provisioningTime": "2020-02-20 00:00:00",
                 "reservationId": "str",
+                "scheduleProfile": {"end": "str", "start": "str"},
                 "sku": {"capacity": 0, "name": "str", "tier": "str"},
                 "tags": {"str": "str"},
                 "timeCreated": "2020-02-20 00:00:00",
                 "virtualMachinesAssociated": [{"id": "str"}],
             },
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -133,7 +135,7 @@ class TestComputeManagementCapacityReservationsOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             capacity_reservation_group_name="str",
             capacity_reservation_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

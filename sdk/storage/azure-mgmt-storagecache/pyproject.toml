@@ -1,6 +1,88 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-mgmt-storagecache"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Storagecache Management Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.9"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "msrest>=0.7.1",
+    "azure-mgmt-core>=1.5.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic.version]
+attr = "azure.mgmt.storagecache._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "generated_tests*",
+    "generated_samples*",
+    "doc*",
+    "azure",
+    "azure.mgmt",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
 [tool.azure-sdk-build]
 breaking = false
 mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[packaging]
+package_name = "azure-mgmt-storagecache"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Storage Cache Management"
+package_doc_id = ""
+is_stable = true
+is_arm = true
+title = "StorageCacheManagementClient"
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+exclude_folders = ""

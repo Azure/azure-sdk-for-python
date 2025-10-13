@@ -8,7 +8,6 @@ GitHub repository, but this isn't necessary to read for Python testing.
 ## Table of contents
 
 - [Debugging tip](#debugging-tip)
-- [ServiceRequestError: Cannot connect to host](#servicerequesterror-cannot-connect-to-host)
 - [ResourceNotFoundError: Playback failure](#resourcenotfounderror-playback-failure)
 - [Test collection failure](#test-collection-failure)
 - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
@@ -23,6 +22,7 @@ GitHub repository, but this isn't necessary to read for Python testing.
 - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
 - [Fixture not found error](#fixture-not-found-error)
 - [PermissionError during startup](#permissionerror-during-startup)
+- [ServiceRequestError: Cannot connect to host](#servicerequesterror-cannot-connect-to-host)
 
 ## Debugging tip
 
@@ -39,32 +39,6 @@ Additionally, the `-k` flag can be used to collect and run tests that have a spe
 containing the strings `test_delete` or `test_upload`.
 
 For more information about `pytest` invocations, refer to [Usage and Invocations][pytest_commands].
-
-## ServiceRequestError: Cannot connect to host
-
-Tests may fail during startup with the following exception:
-
-```text
-azure.core.exceptions.ServiceRequestError: Cannot connect to host localhost:5001
-ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate
-verify failed: self signed certificate (_ssl.c:1123)')]
-```
-
-This is caused by the test proxy's certificate being incorrectly configured. First, update your branch to include the
-latest changes from `main` -- this ensures you have the latest certificate version (it needs to be occasionally
-rotated).
-
-If tests continue to fail, this is likely due to an async-specific environment issue. The certificate is
-[automatically configured][cert_setup] during proxy startup, but async environments can still nondeterministically fail.
-
-To work around this, set the following environment variable in your `.env` file:
-
-```text
-PROXY_URL='http://localhost:5000'
-```
-
-This will target an HTTP endpoint for the test proxy that doesn't require certificates. Service requests will still be
-sent securely from your client; this change only affects test proxy interactions.
 
 ## ResourceNotFoundError: Playback failure
 
@@ -459,6 +433,27 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 - Delete the `.proxy` folder at the root of your local `azure-sdk-for-python` clone.
 - Re-run your tests; the test proxy will be reinstalled and should correctly set file permissions.
 
+## ServiceRequestError: Cannot connect to host
+
+When [using HTTPS][proxy_https] via `PROXY_URL='https://localhost:5001'`, tests may fail during startup with the
+following exception:
+
+```text
+azure.core.exceptions.ServiceRequestError: Cannot connect to host localhost:5001
+ssl:True [SSLCertVerificationError: (1, '[SSL: CERTIFICATE_VERIFY_FAILED] certificate
+verify failed: self signed certificate (_ssl.c:1123)')]
+```
+
+This is caused by the test proxy's certificate being incorrectly configured. First, update your branch to include the
+latest changes from `main` -- this ensures you have the latest certificate version (it needs to be occasionally
+rotated).
+
+If tests continue to fail, this is likely due to an async-specific environment issue. The certificate is
+[automatically configured][cert_setup] during proxy startup, but async environments can still nondeterministically fail.
+
+To work around this, unset the `PROXY_URL` environment variable to default to HTTP, which doesn't require a certificate.
+If your tests require an HTTPS endpoint, reach out to the Azure SDK team for assistance.
+
 <!-- Links -->
 
 [cert_setup]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_startup.py#L210
@@ -473,6 +468,7 @@ Alternatively, you can delete the installed tool and re-run your tests to automa
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
 [playback_request_failure]: https://github.com/Azure/azure-sdk-for-python/blob/9958caf6269247f940c697a3f982bbbf0a47a19b/eng/tools/azure-sdk-tools/devtools_testutils/proxy_testcase.py#L102
+[proxy_https]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests-advanced.md#use-https-test-proxy-endpoint
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery
 [pytest_commands]: https://docs.pytest.org/latest/usage.html

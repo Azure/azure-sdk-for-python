@@ -11,7 +11,8 @@ from azure.keyvault.administration import KeyVaultDataAction, KeyVaultPermission
 from devtools_testutils import add_general_regex_sanitizer, set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import KeyVaultAccessControlClientPreparer, get_decorator
+from _async_test_case import KeyVaultAccessControlClientPreparer
+from _test_case import get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 from test_access_control import assert_role_definitions_equal
 

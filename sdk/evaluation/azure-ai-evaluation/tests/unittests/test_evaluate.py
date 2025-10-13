@@ -9,7 +9,6 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
-import test
 from azure.ai.evaluation._legacy._adapters.client import PFClient
 
 from azure.ai.evaluation._common.math import list_mean
@@ -80,6 +79,11 @@ def evaluate_test_data_conversion_jsonl_file():
 @pytest.fixture
 def evaluate_test_data_alphanumeric():
     return _get_file("evaluate_test_data_alphanumeric.jsonl")
+
+
+@pytest.fixture
+def evaluate_test_data_for_groundedness():
+    return _get_file("evaluate_test_data_for_groundedness.jsonl")
 
 
 @pytest.fixture
@@ -461,6 +465,31 @@ class TestEvaluate:
         assert "inputs.response123" in row_result_df.columns
         assert "inputs.query456" in row_result_df.columns
         assert "inputs.context789" in row_result_df.columns
+
+    def test_evaluate_groundedness_tool_result(self, mock_model_config, evaluate_test_data_for_groundedness):
+        # Validates if groundedness evaluator does not add tool_call results to tool call messages
+
+        result = evaluate(
+            data=evaluate_test_data_for_groundedness,
+            evaluators={"g": GroundednessEvaluator(model_config=mock_model_config)},
+            fail_on_evaluator_errors=False,
+        )
+
+        # Verify that the test completed without errors related to column mapping format
+        # The test data has the fields with numeric characters, so it should work correctly
+        assert result is not None
+        # Verify we're getting data from the numerically-named fields
+        row_result_df = pd.DataFrame(result["rows"])
+        assert "inputs.response" in row_result_df.columns
+        assert "inputs.query" in row_result_df.columns
+
+        # Break down the assertion for better error handling
+        response_data = row_result_df["inputs.response"][0]
+        first_message = response_data[0]
+        content_data = first_message["content"][0]
+
+        # Now check if "tool_result" is in the keys
+        assert "tool_result" not in content_data.keys()
 
     def test_renaming_column(self):
         """Test that the columns are renamed correctly."""
@@ -975,6 +1004,82 @@ class TestEvaluate:
         result = _convert_name_map_into_property_entries(test_map, segment_length=10, max_segments=1)
         assert result[EvaluationRunProperties.NAME_MAP_LENGTH] == -1
         assert len(result) == 1
+
+    def test_evaluate_evaluator_only_kwargs_param(self, evaluate_test_data_jsonl_file):
+        """Validate that an evaluator with only an **kwargs param receives all input in kwargs."""
+
+        def evaluator(**kwargs):
+            return locals()
+
+        result = evaluate(data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator})
+
+        assert len(result["rows"]) == 3
+
+        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][0]["outputs.test.kwargs"])
+        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][1]["outputs.test.kwargs"])
+        assert {"query", "response", "ground_truth", "context"}.issubset(result["rows"][2]["outputs.test.kwargs"])
+
+    def test_evaluate_evaluator_kwargs_param(self, evaluate_test_data_jsonl_file):
+        """Validate that an evaluator with named parameters and **kwargs obeys python function call semantics."""
+
+        def evaluator(query, response, *, bar=None, **kwargs):
+            return locals()
+
+        result = evaluate(data=evaluate_test_data_jsonl_file, evaluators={"test": evaluator})
+
+        assert len(result["rows"]) == 3
+
+        row1_kwargs = result["rows"][0]["outputs.test.kwargs"]
+        row2_kwargs = result["rows"][1]["outputs.test.kwargs"]
+        row3_kwargs = result["rows"][2]["outputs.test.kwargs"]
+
+        assert {"ground_truth", "context"}.issubset(row1_kwargs), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
+
+    def test_evaluate_evaluator_kwargs_param_column_mapping(self, evaluate_test_data_jsonl_file):
+        """Validate that an evaluator with kwargs can receive column mapped values."""
+
+        def evaluator(query, response, *, bar=None, **kwargs):
+            return locals()
+
+        result = evaluate(
+            data=evaluate_test_data_jsonl_file,
+            evaluators={"test": evaluator},
+            evaluator_config={
+                "default": {
+                    "column_mapping": {
+                        "query": "${data.query}",
+                        "response": "${data.response}",
+                        "foo": "${data.context}",
+                        "bar": "${data.ground_truth}",
+                    }
+                }
+            },
+        )
+
+        assert len(result["rows"]) == 3
+
+        row1_kwargs = result["rows"][0]["outputs.test.kwargs"]
+        row2_kwargs = result["rows"][1]["outputs.test.kwargs"]
+        row3_kwargs = result["rows"][2]["outputs.test.kwargs"]
+
+        assert {"ground_truth", "context"}.issubset(row1_kwargs), "Unnamed parameters should be in kwargs"
+        assert "foo" in row1_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row1_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row2_kwargs), "Unnamed parameters should be in kwargs"
+        assert "foo" in row2_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row2_kwargs), "Named parameters should not be in kwargs"
+
+        assert {"ground_truth", "context"}.issubset(row3_kwargs), "Unnamed parameters should be in kwargs"
+        assert "foo" in row3_kwargs, "Making a column mapping to an unnamed parameter should appear in kwargs"
+        assert {"query", "response", "bar"}.isdisjoint(row3_kwargs), "Named parameters should not be in kwargs"
 
 
 @pytest.mark.unittest

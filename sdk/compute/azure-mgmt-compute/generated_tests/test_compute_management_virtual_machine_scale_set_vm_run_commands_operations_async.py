@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
+from azure.mgmt.compute.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -26,7 +26,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
             vm_scale_set_name="str",
             instance_id="str",
             run_command_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,9 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "runAsUser": "str",
                     "source": {
                         "commandId": "str",
+                        "galleryScriptReferenceId": "str",
                         "script": "str",
+                        "scriptShell": "str",
                         "scriptUri": "str",
                         "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
                     },
@@ -106,7 +108,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "treatFailureAsDeploymentFailure": bool,
                     "type": "str",
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -153,7 +155,9 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "runAsUser": "str",
                     "source": {
                         "commandId": "str",
+                        "galleryScriptReferenceId": "str",
                         "script": "str",
+                        "scriptShell": "str",
                         "scriptUri": "str",
                         "scriptUriManagedIdentity": {"clientId": "str", "objectId": "str"},
                     },
@@ -161,7 +165,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                     "timeoutInSeconds": 0,
                     "treatFailureAsDeploymentFailure": bool,
                 },
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -177,7 +181,7 @@ class TestComputeManagementVirtualMachineScaleSetVMRunCommandsOperationsAsync(Az
                 vm_scale_set_name="str",
                 instance_id="str",
                 run_command_name="str",
-                api_version="2024-11-01",
+                api_version="2025-04-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

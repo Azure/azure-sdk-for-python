@@ -107,9 +107,11 @@ def get_type_annotation(model_cls: object, attribute: str) -> List[str]:
     type_list = getattr(attr_type, "__args__", [attr_type])
     return sorted(
         [
-            item.__forward_arg__.replace("_models.", "")
-            if isinstance(item, ForwardRef)
-            else getattr(item, "__name__", str(item))
+            (
+                item.__forward_arg__.replace("_models.", "")
+                if isinstance(item, ForwardRef)
+                else getattr(item, "__name__", str(item))
+            )
             for item in type_list
         ]
     )
@@ -186,10 +188,16 @@ def create_report_from_func(function_attr):
 
 # given an input of a name, we need to return the appropriate relative diff between the sdk_root and the actual package directory
 def resolve_package_directory(package_name):
-    packages = [
-        os.path.dirname(p)
-        for p in (glob.glob("{}/setup.py".format(package_name)) + glob.glob("sdk/*/{}/setup.py".format(package_name)))
-    ]
+    for install_file in ["setup.py", "pyproject.toml"]:
+        packages = [
+            os.path.dirname(p)
+            for p in (
+                glob.glob("{}/{}".format(package_name, install_file))
+                + glob.glob("sdk/*/{}/{}".format(package_name, install_file))
+            )
+        ]
+        if packages:
+            break
 
     if len(packages) > 1:
         print(

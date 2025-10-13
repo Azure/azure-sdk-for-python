@@ -7,6 +7,7 @@ import itertools
 import logging
 import math
 import os
+from pathlib import Path
 import random
 import time
 import uuid
@@ -305,6 +306,7 @@ class RedTeam:
             application_scenario=getattr(self, "application_scenario", ""),
             risk_categories=getattr(self, "risk_categories", []),
             ai_studio_url=getattr(self.mlflow_integration, "ai_studio_url", None),
+            mlflow_integration=self.mlflow_integration,
         )
 
     async def _get_attack_objectives(
@@ -783,6 +785,9 @@ class RedTeam:
         :rtype: RedTeamResult
         """
         user_agent: Optional[str] = kwargs.get("user_agent", "(type=redteam; subtype=RedTeam)")
+        run_id_override = kwargs.get("run_id") or kwargs.get("runId")
+        eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
+        created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan
             self._initialize_scan(scan_name, application_scenario)
@@ -801,6 +806,12 @@ class RedTeam:
             self.evaluation_processor.logger = self.logger
             self.mlflow_integration.logger = self.logger
             self.result_processor.logger = self.logger
+
+            self.mlflow_integration.set_run_identity_overrides(
+                run_id=run_id_override,
+                eval_id=eval_id_override,
+                created_at=created_at_override,
+            )
 
             # Validate attack objective generator
             if not self.attack_objective_generator:
@@ -872,7 +883,7 @@ class RedTeam:
             )
 
             # Process and return results
-            return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path)
+            return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
 
     def _initialize_scan(self, scan_name: Optional[str], application_scenario: Optional[str]):
         """Initialize scan-specific variables."""
@@ -944,12 +955,15 @@ class RedTeam:
             )
             raise ValueError("MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.")
         if AttackStrategy.Tense in flattened_attack_strategies and (
-            RiskCategory.XPIA in self.risk_categories or RiskCategory.UngroundedAttributes in self.risk_categories
+            RiskCategory.IndirectAttack in self.risk_categories
+            or RiskCategory.UngroundedAttributes in self.risk_categories
         ):
             self.logger.warning(
-                "Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories. Skipping Tense strategy."
+                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories. Skipping Tense strategy."
             )
-            raise ValueError("Tense strategy is not compatible with XPIA or UngroundedAttributes risk categories.")
+            raise ValueError(
+                "Tense strategy is not compatible with IndirectAttack or UngroundedAttributes risk categories."
+            )
 
     def _initialize_tracking_dict(self, flattened_attack_strategies: List):
         """Initialize the red_team_info tracking dictionary."""
@@ -1101,47 +1115,68 @@ class RedTeam:
                     self.logger.error(f"Error processing task {i+1}: {str(e)}")
                     continue
 
-    async def _finalize_results(self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str) -> RedTeamResult:
+    async def _finalize_results(
+        self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str, scan_name: str
+    ) -> RedTeamResult:
         """Process and finalize scan results."""
         log_section_header(self.logger, "Processing results")
 
-        # Convert results to RedTeamResult
-        red_team_result = self.result_processor.to_red_team_result(self.red_team_info)
-
-        output = RedTeamResult(
-            scan_result=red_team_result,
-            attack_details=red_team_result["attack_details"],
+        # Convert results to RedTeamResult (now builds AOAI summary internally)
+        red_team_result = self.result_processor.to_red_team_result(
+            red_team_info=self.red_team_info,
+            eval_run=eval_run,
+            scan_name=scan_name,
         )
+
+        # Extract AOAI summary for passing to MLflow logging
+        aoai_summary = red_team_result.scan_result.get("AOAI_Compatible_Summary")
 
         # Log results to MLFlow if not skipping upload
         if not skip_upload:
             self.logger.info("Logging results to AI Foundry")
             await self.mlflow_integration.log_redteam_results_to_mlflow(
-                redteam_result=output, eval_run=eval_run, red_team_info=self.red_team_info, _skip_evals=skip_evals
+                redteam_result=red_team_result,
+                eval_run=eval_run,
+                red_team_info=self.red_team_info,
+                _skip_evals=skip_evals,
+                aoai_summary=aoai_summary,
             )
-
         # Write output to specified path
-        if output_path and output.scan_result:
+        if output_path and red_team_result.scan_result:
             abs_output_path = output_path if os.path.isabs(output_path) else os.path.abspath(output_path)
             self.logger.info(f"Writing output to {abs_output_path}")
-            _write_output(abs_output_path, output.scan_result)
+
+            # Ensure output_path is treated as a directory
+            # If it exists as a file, remove it first
+            if os.path.exists(abs_output_path) and not os.path.isdir(abs_output_path):
+                os.remove(abs_output_path)
+            os.makedirs(abs_output_path, exist_ok=True)
+
+            # Write scan result to eval_result.json (default name when path is directory)
+            _write_output(abs_output_path, red_team_result.scan_result)
+
+            # Write the AOAI summary to results.json
+            if aoai_summary:
+                _write_output(os.path.join(abs_output_path, "results.json"), aoai_summary)
+            else:
+                self.logger.warning("AOAI summary not available for output_path write")
 
             # Also save a copy to the scan output directory if available
             if self.scan_output_dir:
                 final_output = os.path.join(self.scan_output_dir, "final_results.json")
-                _write_output(final_output, output.scan_result)
-        elif output.scan_result and self.scan_output_dir:
+                _write_output(final_output, red_team_result.scan_result)
+        elif red_team_result.scan_result and self.scan_output_dir:
             # If no output_path was specified but we have scan_output_dir, save there
             final_output = os.path.join(self.scan_output_dir, "final_results.json")
-            _write_output(final_output, output.scan_result)
+            _write_output(final_output, red_team_result.scan_result)
 
         # Display final scorecard and results
-        if output.scan_result:
-            scorecard = format_scorecard(output.scan_result)
+        if red_team_result.scan_result:
+            scorecard = format_scorecard(red_team_result.scan_result)
             tqdm.write(scorecard)
 
             # Print URL for detailed results
-            studio_url = output.scan_result.get("studio_url", "")
+            studio_url = red_team_result.scan_result.get("studio_url", "")
             if studio_url:
                 tqdm.write(f"\nDetailed results available at:\n{studio_url}")
 
@@ -1158,4 +1193,4 @@ class RedTeam:
                 handler.close()
                 self.logger.removeHandler(handler)
 
-        return output
+        return red_team_result

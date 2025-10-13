@@ -18,7 +18,7 @@ from ._deleted_accounts_operations import DeletedAccountsOperations  # type: ign
 from ._resource_skus_operations import ResourceSkusOperations  # type: ignore
 from ._usages_operations import UsagesOperations  # type: ignore
 from ._operations import Operations  # type: ignore
-from ._cognitive_services_management_client_operations import CognitiveServicesManagementClientOperationsMixin  # type: ignore
+from ._cognitive_services_management_client_operations import _CognitiveServicesManagementClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._commitment_tiers_operations import CommitmentTiersOperations  # type: ignore
 from ._models_operations import ModelsOperations  # type: ignore
 from ._location_based_model_capacities_operations import LocationBasedModelCapacitiesOperations  # type: ignore
@@ -50,7 +50,6 @@ __all__ = [
     "ResourceSkusOperations",
     "UsagesOperations",
     "Operations",
-    "CognitiveServicesManagementClientOperationsMixin",
     "CommitmentTiersOperations",
     "ModelsOperations",
     "LocationBasedModelCapacitiesOperations",

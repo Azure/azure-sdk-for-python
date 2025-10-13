@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.compute.v2024_11_01.aio import ComputeManagementClient
+from azure.mgmt.compute.aio import ComputeManagementClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestComputeManagementVirtualMachineExtensionImagesOperationsAsync(AzureMgm
         response = await self.client.virtual_machine_extension_images.list_types(
             location="str",
             publisher_name="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementVirtualMachineExtensionImagesOperationsAsync(AzureMgm
             location="str",
             publisher_name="str",
             type="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestComputeManagementVirtualMachineExtensionImagesOperationsAsync(AzureMgm
             publisher_name="str",
             type="str",
             version="str",
-            api_version="2024-11-01",
+            api_version="2025-04-01",
         )
 
         # please add some check logic here by yourself
