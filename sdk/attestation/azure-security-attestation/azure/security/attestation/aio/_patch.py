@@ -436,7 +436,7 @@ class AttestationClient:
             # If it's a base64-encoded string, decode it to bytes
             # Use base64url_decode for proper handling of URL-safe base64
             data = base64url_decode(data)
-        result = TpmAttestationResult(data)
+        result = TpmAttestationResult(data) # type: ignore
         return result
 
     async def _get_signers(self, **kwargs: Any) -> List[AttestationSigner]:
@@ -630,11 +630,9 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(await self._get_signers(**kwargs), **options)
 
-        # Handle both bytes and str (base64url-encoded) formats
         if isinstance(actual_policy, bytes):
             return actual_policy.decode("utf-8"), token
-        # If it's already a string (base64url-encoded), decode from base64url first
-        return base64url_decode(actual_policy).decode("utf-8"), token
+        return actual_policy, token
 
     @distributed_trace_async
     async def set_policy(
