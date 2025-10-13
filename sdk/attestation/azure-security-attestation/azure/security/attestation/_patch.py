@@ -58,7 +58,7 @@ from .models._enums import (
     AttestationType,
 )
 
-from ._common import pem_from_base64, validate_signing_keys, merge_validation_args
+from ._common import pem_from_base64, validate_signing_keys, merge_validation_args, base64url_decode
 
 
 class AttestationClient:
@@ -627,7 +627,11 @@ class AttestationAdministrationClient:
         if options.get("validate_token", True):
             token._validate_token(self._get_signers(**kwargs), **options)
 
-        return actual_policy.decode("utf-8"), token
+        # Handle both bytes and str (base64url-encoded) formats
+        if isinstance(actual_policy, bytes):
+            return actual_policy.decode("utf-8"), token
+        # If it's already a string (base64url-encoded), decode from base64url first
+        return base64url_decode(actual_policy).decode("utf-8"), token
 
     @distributed_trace
     def set_policy(
