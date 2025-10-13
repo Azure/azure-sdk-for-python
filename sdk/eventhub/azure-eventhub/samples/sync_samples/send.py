@@ -16,19 +16,10 @@ Note: Native async APIs should be used instead of running in a ThreadPoolExecuto
 import time
 import os
 import threading
-import logging
 from concurrent.futures import ThreadPoolExecutor
 
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)  
-handler = logging.StreamHandler()
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ["EVENT_HUB_NAME"]
@@ -104,19 +95,15 @@ def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 def send_single_large_message(producer, size_mb=17):
-    """
-    Try to send one single oversized message to Event Hub using a logger.
-    """
-    payload = "X" * (size_mb * 1024 * 1024)  # 17 MB string by default
+    payload = "X" * (size_mb * 1024 * 1024)
     try:
-        batch = producer.create_batch(max_size_in_bytes=19 * 1024 * 1024)  # 19MB limit
+        batch = producer.create_batch(max_size_in_bytes=19 * 1024 * 1024)
         batch.add(EventData(payload))
         producer.send_batch(batch)
-        logger.info("Successfully sent %d MB message.", size_mb)
-    except ValueError as e:
-        logger.warning("Failed to add %d MB message to batch -> %s", size_mb, e)
-    except Exception as e:
-        logger.error("Failed to send %d MB message -> %s", size_mb, e)
+    except ValueError:
+        pass
+    except Exception:
+        pass
 
 def send_concurrent_with_shared_client_and_lock():
     """
