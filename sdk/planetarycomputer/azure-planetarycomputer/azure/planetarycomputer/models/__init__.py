@@ -17,6 +17,8 @@ from ._models import (  # type: ignore
     AssetMetadata,
     BandStatistics,
     DefaultLocation,
+    Feature,
+    FeatureCollection,
     FormContent,
     GeoJsonStatisticsForStacItemCollection,
     GeoJsonStatisticsItemResponse,
@@ -91,6 +93,7 @@ from ._models import (  # type: ignore
 
 from ._enums import (  # type: ignore
     ColorMapNames,
+    FeatureCollectionType,
     FeatureType,
     FilterLanguage,
     GeometryType,
@@ -124,6 +127,8 @@ __all__ = [
     "AssetMetadata",
     "BandStatistics",
     "DefaultLocation",
+    "Feature",
+    "FeatureCollection",
     "FormContent",
     "GeoJsonStatisticsForStacItemCollection",
     "GeoJsonStatisticsItemResponse",
@@ -195,6 +200,7 @@ __all__ = [
     "UserCollectionSettings",
     "VariableMatrixWidth",
     "ColorMapNames",
+    "FeatureCollectionType",
     "FeatureType",
     "FilterLanguage",
     "GeometryType",

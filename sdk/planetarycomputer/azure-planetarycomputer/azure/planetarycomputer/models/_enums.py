@@ -447,6 +447,13 @@ class ColorMapNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reversed YlOrRd colormap"""
 
 
+class FeatureCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type identifier for GeoJSON FeatureCollection objects."""
+
+    FEATURE_COLLECTION = "FeatureCollection"
+    """Standard GeoJSON FeatureCollection type identifier"""
+
+
 class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type identifier for GeoJSON Feature objects."""
 

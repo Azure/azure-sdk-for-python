@@ -6256,7 +6256,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         format: str,
-        body: _models.StacItem,
+        body: _models.Feature,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -6290,7 +6290,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.StacItem
+        :type body: ~azure.planetarycomputer.models.Feature
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -6622,7 +6622,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         collection_id: str,
         item_id: str,
         format: str,
-        body: Union[_models.StacItem, JSON, IO[bytes]],
+        body: Union[_models.Feature, JSON, IO[bytes]],
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -6654,9 +6654,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
-        :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
+        :param body: Request GeoJson body. Is one of the following types: Feature, JSON, IO[bytes]
          Required.
-        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.Feature or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -6828,7 +6828,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         width: float,
         height: float,
         format: str,
-        body: _models.StacItem,
+        body: _models.Feature,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -6864,7 +6864,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
         :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.StacItem
+        :type body: ~azure.planetarycomputer.models.Feature
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7194,7 +7194,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         width: float,
         height: float,
         format: str,
-        body: Union[_models.StacItem, JSON, IO[bytes]],
+        body: Union[_models.Feature, JSON, IO[bytes]],
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -7228,9 +7228,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type height: float
         :param format: Output format for the tile or image (e.g., png, jpeg, webp). Required.
         :type format: str
-        :param body: Request GeoJson body. Is one of the following types: StacItem, JSON, IO[bytes]
+        :param body: Request GeoJson body. Is one of the following types: Feature, JSON, IO[bytes]
          Required.
-        :type body: ~azure.planetarycomputer.models.StacItem or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.Feature or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7395,7 +7395,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        body: _models.StacItemCollection,
+        body: _models.FeatureCollection,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -7423,7 +7423,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.StacItemCollection
+        :type body: ~azure.planetarycomputer.models.FeatureCollection
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7683,7 +7683,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         self,
         collection_id: str,
         item_id: str,
-        body: Union[_models.StacItemCollection, JSON, IO[bytes]],
+        body: Union[_models.FeatureCollection, JSON, IO[bytes]],
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -7709,9 +7709,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param body: Request GeoJson body. Is one of the following types: StacItemCollection, JSON,
+        :param body: Request GeoJson body. Is one of the following types: FeatureCollection, JSON,
          IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.StacItemCollection or JSON or IO[bytes]
+        :type body: ~azure.planetarycomputer.models.FeatureCollection or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.

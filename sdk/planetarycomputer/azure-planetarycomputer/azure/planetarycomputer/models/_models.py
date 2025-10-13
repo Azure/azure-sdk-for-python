@@ -209,6 +209,81 @@ class DefaultLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Feature(_Model):
+    """GeoJSON Feature object representing a geographic entity.
+
+    :ivar geometry: Geometry object defining the feature's shape. Required.
+    :vartype geometry: ~azure.planetarycomputer.models.Geometry
+    :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
+    :vartype type: str or ~azure.planetarycomputer.models.FeatureType
+    """
+
+    geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Geometry object defining the feature's shape. Required."""
+    type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """GeoJSON type identifier for Feature. Required. \"Feature\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        geometry: "_models.Geometry",
+        type: Union[str, "_models.FeatureType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureCollection(_Model):
+    """GeoJSON FeatureCollection containing multiple Feature objects.
+
+    :ivar type: GeoJSON type identifier for FeatureCollection. Required. "FeatureCollection"
+    :vartype type: str or ~azure.planetarycomputer.models.FeatureCollectionType
+    :ivar features: Array of GeoJSON Feature objects. Required.
+    :vartype features: list[~azure.planetarycomputer.models.Feature]
+    :ivar bounding_box: Bounding box coordinates for the collection.
+    :vartype bounding_box: list[float]
+    """
+
+    type: Union[str, "_models.FeatureCollectionType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """GeoJSON type identifier for FeatureCollection. Required. \"FeatureCollection\""""
+    features: list["_models.Feature"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of GeoJSON Feature objects. Required."""
+    bounding_box: Optional[list[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bounding box coordinates for the collection."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.FeatureCollectionType"],
+        features: list["_models.Feature"],
+        bounding_box: Optional[list[float]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FormContent(_Model):
     """FormContent model for file upload.
 
@@ -342,10 +417,6 @@ class GeoJsonStatisticsItemResponse(_Model):
 
     :ivar geometry: Geometry object defining the feature's shape. Required.
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar bounding_box: Bounding box coordinates for the feature. Required.
-    :vartype bounding_box: list[float]
-    :ivar id: Unique identifier for the feature. Required.
-    :vartype id: str
     :ivar type: GeoJSON type identifier for Feature. Required. "Feature"
     :vartype type: str or ~azure.planetarycomputer.models.FeatureType
     :ivar created_on: MSFT Created.
@@ -354,6 +425,10 @@ class GeoJsonStatisticsItemResponse(_Model):
     :vartype updated_on: str
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
+    :ivar id: Unique identifier for the feature. Required.
+    :vartype id: str
+    :ivar bounding_box: Bounding box coordinates for the feature. Required.
+    :vartype bounding_box: list[float]
     :ivar stac_version: Stac Version.
     :vartype stac_version: str
     :ivar collection: ID of the STAC collection this item belongs to.
@@ -370,10 +445,6 @@ class GeoJsonStatisticsItemResponse(_Model):
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
-    """Bounding box coordinates for the feature. Required."""
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Unique identifier for the feature. Required."""
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """GeoJSON type identifier for Feature. Required. \"Feature\""""
     created_on: Optional[str] = rest_field(
@@ -388,6 +459,10 @@ class GeoJsonStatisticsItemResponse(_Model):
         name="msft:short_description", visibility=["read", "create", "update", "delete", "query"]
     )
     """MSFT Short Description."""
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the feature. Required."""
+    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    """Bounding box coordinates for the feature. Required."""
     stac_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Stac Version."""
     collection: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -406,9 +481,9 @@ class GeoJsonStatisticsItemResponse(_Model):
         self,
         *,
         geometry: "_models.Geometry",
-        bounding_box: list[float],
-        id: str,  # pylint: disable=redefined-builtin
         type: Union[str, "_models.FeatureType"],
+        id: str,  # pylint: disable=redefined-builtin
+        bounding_box: list[float],
         properties: "_models.StacItemProperties",
         created_on: Optional[str] = None,
         updated_on: Optional[str] = None,
@@ -2483,14 +2558,14 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     :vartype stac_extensions: list[str]
     :ivar geometry: Geometry object defining the feature's shape. Required.
     :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar bounding_box: Bounding box coordinates for the feature. Required.
-    :vartype bounding_box: list[float]
     :ivar id: Unique identifier for the feature. Required.
     :vartype id: str
     :ivar type: GeoJSON type identifier for Feature. Required. GeoJSON Feature type.
     :vartype type: str or ~azure.planetarycomputer.models.FEATURE
     :ivar collection: ID of the STAC collection this item belongs to.
     :vartype collection: str
+    :ivar bounding_box: Bounding box coordinates for the feature. Required.
+    :vartype bounding_box: list[float]
     :ivar properties: Attributes associated with the feature. Required.
     :vartype properties: ~azure.planetarycomputer.models.StacItemProperties
     :ivar assets: Assets. Required.
@@ -2503,14 +2578,14 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
 
     geometry: "_models.Geometry" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Geometry object defining the feature's shape. Required."""
-    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
-    """Bounding box coordinates for the feature. Required."""
     id: str = rest_field(visibility=["read", "create", "update"])
     """Unique identifier for the feature. Required."""
     type: Literal[StacModelType.FEATURE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """GeoJSON type identifier for Feature. Required. GeoJSON Feature type."""
     collection: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """ID of the STAC collection this item belongs to."""
+    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    """Bounding box coordinates for the feature. Required."""
     properties: "_models.StacItemProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Attributes associated with the feature. Required."""
     assets: dict[str, "_models.StacAsset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2525,8 +2600,8 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
         self,
         *,
         geometry: "_models.Geometry",
-        bounding_box: list[float],
         id: str,  # pylint: disable=redefined-builtin
+        bounding_box: list[float],
         properties: "_models.StacItemProperties",
         assets: dict[str, "_models.StacAsset"],
         stac_version: Optional[str] = None,

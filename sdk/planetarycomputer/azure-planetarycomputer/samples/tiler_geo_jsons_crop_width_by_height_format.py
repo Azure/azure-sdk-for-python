@@ -37,16 +37,6 @@ def main():
         height=0.08,
         format="png",
         body={
-            "assets": {
-                "data": {
-                    "href": "https://spatiocitest.blob.core.windows.net/test-data-0df36a74d7ed/asset.tif",
-                    "roles": ["data"],
-                    "title": "Test data",
-                    "type": "image/tiff; application=geotiff",
-                }
-            },
-            "bbox": [-65.75386020444417, 18.252569552371305, -65.75376429311993, 18.252661191551685],
-            "collection": "test-collection-0df36a74d7ed",
             "geometry": {
                 "coordinates": [
                     [
@@ -59,23 +49,6 @@ def main():
                 ],
                 "type": "Polygon",
             },
-            "id": "test-item-0df36a74d7ed",
-            "links": [
-                {
-                    "href": "https://spatiocitest.blob.core.windows.net/test-data-0df36a74d7ed/test-item.json",
-                    "rel": "self",
-                    "type": "application/json",
-                }
-            ],
-            "properties": {
-                "datetime": "2024-11-06T22:49:19.098983Z",
-                "proj:bbox": [208796.4, 2020322.3, 208806.4, 2020332.3],
-                "proj:epsg": 26920,
-                "proj:shape": [10, 10],
-                "proj:transform": [208796.4, 1, 0, 2020332.3, 0, -1],
-            },
-            "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json"],
-            "stac_version": "1.0.0",
             "type": "Feature",
         },
     )
