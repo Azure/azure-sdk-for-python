@@ -54,6 +54,9 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
     def __init__(self, base_url: str, credential: TokenCredential, **kwargs: Any) -> None:
+        if not isinstance(base_url, str):
+            raise ValueError("Base URL must be a string.")
+
         if not credential:
             raise ValueError("Missing credential")
 
