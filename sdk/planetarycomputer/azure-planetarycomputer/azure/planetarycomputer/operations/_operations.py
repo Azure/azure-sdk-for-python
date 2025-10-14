@@ -2935,6 +2935,7 @@ def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too
     x: float,
     y: float,
     *,
+    collection_id: str,
     scan_limit: Optional[int] = None,
     items_limit: Optional[int] = None,
     time_limit: Optional[int] = None,
@@ -2972,6 +2973,7 @@ def build_tiler_get_mosaics_assets_for_tile_request(  # pylint: disable=name-too
         _params["exitwhenfull"] = _SERIALIZER.query("exit_when_full", exit_when_full, "bool")
     if skip_covered is not None:
         _params["skipcovered"] = _SERIALIZER.query("skip_covered", skip_covered, "bool")
+    _params["collection"] = _SERIALIZER.query("collection_id", collection_id, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -13448,6 +13450,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         x: float,
         y: float,
         *,
+        collection_id: str,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
@@ -13472,6 +13475,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
         :type y: float
+        :keyword collection_id: STAC Collection Identifier. Required.
+        :paramtype collection_id: str
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -13511,6 +13516,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             z=z,
             x=x,
             y=y,
+            collection_id=collection_id,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,

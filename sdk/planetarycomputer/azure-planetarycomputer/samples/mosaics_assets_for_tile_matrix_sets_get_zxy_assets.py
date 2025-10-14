@@ -36,6 +36,7 @@ def main():
         z=12,
         x=47.6062,
         y=17,
+        collection_id="{{collectionId}}",
     )
     print(response)
 

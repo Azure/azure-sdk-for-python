@@ -355,6 +355,7 @@ class TestPlanetaryComputerTilerOperations(PlanetaryComputerClientTestBase):
             z=0.0,
             x=0.0,
             y=0.0,
+            collection_id="str",
         )
 
         # please add some check logic here by yourself

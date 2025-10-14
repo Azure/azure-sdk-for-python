@@ -33,7 +33,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
@@ -10188,6 +10188,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         x: float,
         y: float,
         *,
+        collection_id: str,
         scan_limit: Optional[int] = None,
         items_limit: Optional[int] = None,
         time_limit: Optional[int] = None,
@@ -10212,6 +10213,8 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :param y: Row (Y) index of the tile on the selected TileMatrix. It cannot exceed the
          MatrixWidth-1 for the selected TileMatrix. Required.
         :type y: float
+        :keyword collection_id: STAC Collection Identifier. Required.
+        :paramtype collection_id: str
         :keyword scan_limit: Return as soon as we scan N items (defaults to 10000 in PgSTAC). Default
          value is None.
         :paramtype scan_limit: int
@@ -10251,6 +10254,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
             z=z,
             x=x,
             y=y,
+            collection_id=collection_id,
             scan_limit=scan_limit,
             items_limit=items_limit,
             time_limit=time_limit,
