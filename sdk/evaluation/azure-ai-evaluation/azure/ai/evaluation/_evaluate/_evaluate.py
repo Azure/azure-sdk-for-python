@@ -1037,9 +1037,9 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     result: EvaluationResult = {"rows": result_df_dict, "metrics": metrics, "studio_url": studio_url}  # type: ignore
     # _add_aoai_structured_results_to_results(result, LOGGER, kwargs.get("eval_meta_data"))
 
-    eval_id: Optional[str] = kwargs.get("eval_id")
-    eval_run_id: Optional[str] = kwargs.get("eval_run_id")
-    eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("eval_meta_data")
+    eval_id: Optional[str] = kwargs.get("_eval_id")
+    eval_run_id: Optional[str] = kwargs.get("_eval_run_id")
+    eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
     _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data)
     if app_insights_configuration := kwargs.get("app_insights_configuration"):
         emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
@@ -1702,7 +1702,7 @@ def _convert_results_to_aoai_evaluation_results(
         elif isinstance(evaluator, AzureOpenAIGrader):
             criteria_type = evaluator._type  # pylint: disable=protected-access
             metrics.append(criteria_name)
-        elif isinstance(evaluator, Callable):
+        elif isinstance(evaluator, EvaluatorBase):
             criteria_type = "azure_ai_evaluator"
             evaluator_class_name = evaluator.__class__.__name__
             eval_name = _EvaluatorMetricMapping.EVAL_CLASS_NAME_MAP.get(evaluator_class_name, None)
@@ -1821,21 +1821,11 @@ def _convert_results_to_aoai_evaluation_results(
                 if sample is not None:
                     result_obj["sample"] = sample
                     top_sample = sample  # Save top sample for the row
-                elif (eval_run_summary and criteria_name in eval_run_summary 
-                    and isinstance(eval_run_summary[criteria_name], dict) 
-                    and "error_code" in eval_run_summary[criteria_name]):
-                    error_info = {
-                        "code": eval_run_summary[criteria_name].get("error_code", None),
-                        "message": eval_run_summary[criteria_name].get("error_message", None),
-                    } if eval_run_summary[criteria_name].get("error_code", None) is not None else None
-                    sample = {
-                        "error": error_info
-                    } if error_info is not None else None
-                    result_obj["sample"] = sample
+                run_output_results.append(result_obj)
 
             if (eval_run_summary and criteria_name in eval_run_summary 
                     and isinstance(eval_run_summary[criteria_name], dict) 
-                    and "error_code" in eval_run_summary[criteria_name]):
+                    and "error_code" in eval_run_summary[criteria_name]) and eval_run_summary[criteria_name].get("error_code", None) is not None:
                 error_info = {
                     "code": eval_run_summary[criteria_name].get("error_code", None),
                     "message": eval_run_summary[criteria_name].get("error_message", None),
@@ -1857,8 +1847,7 @@ def _convert_results_to_aoai_evaluation_results(
                         "passed": None,
                         "sample": sample
                     }
-
-            run_output_results.append(result_obj)
+                    run_output_results.append(result_obj)
 
         # Create RunOutputItem structure
         run_output_item = {
