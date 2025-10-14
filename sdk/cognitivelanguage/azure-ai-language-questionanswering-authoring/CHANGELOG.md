@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0a1 (Unreleased)
 
 ### Features Added
 - Initial preview release of `azure-ai-language-questionanswering-authoring` separated from the combined `azure-ai-language-questionanswering` package.

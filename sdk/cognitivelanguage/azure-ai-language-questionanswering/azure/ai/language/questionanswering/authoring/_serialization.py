@@ -1582,15 +1582,24 @@ class Deserializer(object):
         """
         if callable(response):
             subtype = getattr(response, "_subtype_map", {})
+            validation = getattr(response, "_validation", {})
             try:
-                readonly = [k for k, v in response._validation.items() if v.get("readonly")]
-                const = [k for k, v in response._validation.items() if v.get("constant")]
-                kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
+                readonly: List[str] = []
+                const: List[str] = []
+                if isinstance(validation, Mapping):
+                    for key, rules in validation.items():
+                        if isinstance(rules, Mapping):
+                            if rules.get("readonly"):
+                                readonly.append(key)
+                            if rules.get("constant"):
+                                const.append(key)
+                exclusion_keys = set(subtype) | set(readonly) | set(const)
+                kwargs = {k: v for k, v in attrs.items() if k not in exclusion_keys}
                 response_obj = response(**kwargs)
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
-                if additional_properties:
-                    response_obj.additional_properties = additional_properties
+                if additional_properties is not None and hasattr(response_obj, "additional_properties"):
+                    setattr(response_obj, "additional_properties", additional_properties)
                 return response_obj
             except TypeError as err:
                 msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)  # type: ignore
