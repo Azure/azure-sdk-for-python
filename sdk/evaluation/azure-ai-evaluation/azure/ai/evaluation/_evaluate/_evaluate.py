@@ -291,6 +291,44 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     return results
 
 
+def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
+    """Identify token count columns from known SDK metrics that should be excluded from aggregation.
+    
+    Token counts from custom evaluators are not excluded, only those from EvaluationMetrics
+    and _InternalEvaluationMetrics.
+    
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: List of column names to exclude from aggregation.
+    :rtype: List[str]
+    """
+    # Get all metric values from EvaluationMetrics class
+    evaluation_metrics_values = [
+        getattr(EvaluationMetrics, attr) 
+        for attr in dir(EvaluationMetrics) 
+        if not attr.startswith('_') and isinstance(getattr(EvaluationMetrics, attr), str)
+    ]
+    
+    # Get all metric values from _InternalEvaluationMetrics class
+    internal_metrics_values = [
+        getattr(_InternalEvaluationMetrics, attr)
+        for attr in dir(_InternalEvaluationMetrics)
+        if not attr.startswith('_') and isinstance(getattr(_InternalEvaluationMetrics, attr), str)
+    ]
+    
+    # Combine all known metrics
+    all_known_metrics = evaluation_metrics_values + internal_metrics_values
+    
+    # Find token count columns that belong to known metrics
+    token_count_cols = [
+        col for col in df.columns 
+        if (col.endswith('input_token_count') or col.endswith('output_token_count'))
+        and any(col.startswith(f"{metric}.") for metric in all_known_metrics)
+    ]
+    
+    return token_count_cols
+
+
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
@@ -322,6 +360,10 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
     label_cols, label_defect_rates = _aggregate_label_defect_metrics(df)
     handled_columns.extend(label_cols)
     defect_rates.update(label_defect_rates)
+
+    # Exclude token count columns from aggregation for known SDK metrics
+    token_count_cols = _get_token_count_columns_to_exclude(df)
+    handled_columns.extend(token_count_cols)
 
     # For rest of metrics, we will calculate mean
     df.drop(columns=handled_columns, inplace=True)
