@@ -13,6 +13,7 @@
 ### Other Changes
 * Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
 * Changed samples and README examples to use explicit `AnswersOptions` / `AnswersFromTextOptions` objects as the first argument when calling `get_answers` and `get_answers_from_text`.
+* Restored backwards compatibility for `MetadataFilter.metadata` inputs so legacy dict or `(key, value)` tuple collections continue to work alongside the new `MetadataRecord` model type.
 
 ## 1.1.0 (2022-10-13)
 
