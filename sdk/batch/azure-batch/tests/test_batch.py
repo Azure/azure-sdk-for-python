@@ -79,7 +79,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
             try:
                 batch_error = err.errors.pop()
                 if code:
-                    # self.assertEqual(batch_error.error.code, code)
                     assert batch_error.error.code == code
             except IndexError:
                 pytest.fail("Inner BatchErrorException expected but not exist")
@@ -333,7 +332,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert pool.id == test_paas_pool.id
         assert pool.state == models.BatchPoolState.ACTIVE
         assert pool.allocation_state == models.AllocationState.STEADY
-        # assert pool.vm_configuration.node_agent_sku_id == "batch.node.ubuntu 22.04"
         assert pool.vm_size == DEFAULT_VM_SIZE
         assert pool.start_task is None
         assert pool.metadata is not None
@@ -359,10 +357,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
-
-        # Test Delete Pool
-        # response = await wrap_result(client.delete_pool(test_paas_pool.id))
-        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -411,17 +405,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             pool = await wrap_result(client.get_pool(batch_pool.name))
         params = models.BatchPoolResizeOptions(target_dedicated_nodes=0, target_low_priority_nodes=2)
 
-        # TODO: figure out separate test bc the resize + stop_pool_resize tests are working together
         # LRO for resizing
         poller = await wrap_result(client.begin_resize_pool(batch_pool.name, params, polling_interval=5))
         assert poller is not None
-
-        # response = await wrap_result(client.resize_pool(batch_pool.name, params))
-        # assert response is None
-
-        # Test Stop Pool Resize
-        # response = await wrap_result(client.stop_pool_resize(batch_pool.name))
-        # assert response is None
 
         poller = await wrap_result(client.begin_stop_pool_resize(batch_pool.name, polling_interval=5))
         assert poller is not None
@@ -500,10 +486,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await wrap_result(client.update_job_schedule(schedule_id, params))
         assert response is None
 
-        # Test Terminate Job Schedule
-        # response = await wrap_result(client.terminate_job_schedule(schedule_id))
-        # assert response is None
-
         # Test Terminate Job Schedule using LRO
         poller = await wrap_result(client.begin_terminate_job_schedule(job_schedule_id=schedule_id, polling_interval=5))
         assert poller is not None
@@ -527,10 +509,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
-
-        # Test Delete Job Schedule
-        # response = await wrap_result(client.delete_job_schedule(schedule_id))
-        # assert response is None
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -662,16 +640,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert poller.done()
         assert poller.status() == "Succeeded"
 
-        # Test Reboot Node
-        # response = await wrap_result(
-        #     client.reboot_node(
-        #         batch_pool.name,
-        #         nodes[0].id,
-        #         models.BatchNodeRebootKinds(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
-        #     )
-        # )
-        # assert response is None
-
         # Test Reimage Node
         # TODO: check to see if reimage is removed from service
         # await self.assertBatchError(
@@ -784,7 +752,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         user_name = "BatchPythonSDKUser"
         nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
         user = models.BatchNodeUserCreateOptions(name=user_name, password="secret", is_admin=False)
-        assert nodes[0].id is not None  # TODO: get a better fix for this
+        assert nodes[0].id is not None  # TODO: typespec fix for id possibly None
         response = await wrap_result(client.create_node_user(batch_pool.name, nodes[0].id, user))
         assert response is None
 
@@ -867,7 +835,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         else:
             raise ValueError("File path is None")
         assert props.content_length is not None
-        # assert props.content_type is not None # add content-type to typespec
+        # assert props.content_type is not None # TODO: add content-type to typespec
 
         # Test Get File from Batch Node
         file_length = 0
@@ -880,7 +848,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Delete File from Batch Node
         response = await wrap_result(
             client.delete_node_file(batch_pool.name, node, only_files[1].name)
-        )  # TODO: maybe delete stderr to use in the next test for content_length (against "hello world")
+        )  # TODO: delete stderr to use in test for content_length (against "hello world")
         assert response is None
 
         # Test List Files from Task
@@ -896,7 +864,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         else:
             raise ValueError("File path is None")
         assert props.content_length is not None
-        # assert props.content_type is not None # add content-type to typespec
+        # assert props.content_type is not None # TODO: add content-type to typespec
 
         # Test Get File from Task
         file_length = 0
@@ -1252,7 +1220,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert list(task_status) == []
 
         # Test Terminate Job using LRO
-        # TODO: default for termination_reason wasn't set so manually adding it. fix later
+        # TODO: default for termination_reason wasn't set so manually adding it. check on why default isn't working
         poller = await wrap_result(
             client.begin_terminate_job(
                 job_id=job_param.id,
@@ -1282,8 +1250,6 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result is None
         assert poller.done()
         assert poller.status() == "Succeeded"
-
-        # introduce artificial states or failures to test more (returning back deleting for 10 calls so make it longer and to test LRO)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)

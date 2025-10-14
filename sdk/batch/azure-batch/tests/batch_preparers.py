@@ -229,7 +229,6 @@ class PoolPreparer(AzureMgmtPreparer):
             ):
                 time.sleep(10)
                 self.resource = self.client.pool.get(group.name, batch_account.name, name)
-            # add_general_regex_sanitizer(regex=name, value=self.moniker)
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
