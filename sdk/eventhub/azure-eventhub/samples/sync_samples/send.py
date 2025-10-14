@@ -96,14 +96,9 @@ def send_event_data_list(producer):
 
 def send_single_large_message(producer, size_mb=17):
     payload = "X" * (size_mb * 1024 * 1024)
-    try:
-        batch = producer.create_batch(max_size_in_bytes=19 * 1024 * 1024)
-        batch.add(EventData(payload))
-        producer.send_batch(batch)
-    except ValueError:
-        pass
-    except Exception:
-        pass
+    batch = producer.create_batch(max_size_in_bytes=19 * 1024 * 1024)
+    batch.add(EventData(payload))
+    producer.send_batch(batch)
 
 def send_concurrent_with_shared_client_and_lock():
     """
