@@ -1,22 +1,15 @@
-# pylint: disable=line-too-long,useless-suppression
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
-from ._patch_datasets_async import DatasetsOperations
-from ._patch_telemetry_async import TelemetryOperations
-from ._patch_connections_async import ConnectionsOperations
 
-__all__: List[str] = [
-    "TelemetryOperations",
-    "DatasetsOperations",
-    "ConnectionsOperations",
-]  # Add all objects you want publicly available to users at this package level
+
+__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
