@@ -32,8 +32,8 @@
   - Added model `UnifiedAlertingScreenshots`
   - Added model `Users`
   - Model `GrafanaOperations` added method `begin_update`
-  - Added model `IntegrationFabricsOperations`
-  - Added model `ManagedDashboardsOperations`
+  - Added operation group `IntegrationFabricsOperations`
+  - Added operation group `ManagedDashboardsOperations`
 
 ### Breaking Changes
 
