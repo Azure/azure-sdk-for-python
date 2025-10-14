@@ -2176,9 +2176,7 @@ class SyncEvalsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        # _request.url = self._client.format_url(_request.url, **path_format_arguments)
-        #TODO: uncomment when sync is ready in prod
-        _request.url='https://int.api.azureml-test.ms/raisvc/v1.0/subscriptions/2d385bf4-0756-4a76-aa95-28bf9ed3b625/resourceGroups/common-1dp-test-rg/providers/Microsoft.MachineLearningServices/workspaces/np-int-resource@np-int@AML/sync_evals:run?api-version=2025-10-15-preview'
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
