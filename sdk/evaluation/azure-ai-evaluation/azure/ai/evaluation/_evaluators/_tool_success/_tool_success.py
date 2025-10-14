@@ -19,7 +19,7 @@ class ToolSuccessEvaluator(PromptyEvaluatorBase[Union[str, bool]]):
     and tool definitions, disregarding user's query to the agent, conversation history and agent's final response.
     Although tool definitions is optional, providing them can help the evaluator better understand the context of the tool calls made by the agent.
     Please note that this evaluator validates tool calls for potential technical failures like errors, exceptions, timeouts and empty results (only in cases where empty results could indicate a failure).
-    It does not assess the correctness or the tool result itself, like mathematical errors and unrealistic field values like name="54sasda46a"
+    It does not assess the correctness or the tool result itself, like mathematical errors and unrealistic field values like name="668656"
     Scoring is binary:
     - TRUE: All tool calls were successful
     - FALSE: At least one tool call failed

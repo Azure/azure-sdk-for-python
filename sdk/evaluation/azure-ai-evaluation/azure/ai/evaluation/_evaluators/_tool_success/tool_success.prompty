@@ -135,7 +135,7 @@ EXPECTED OUTPUT
 {
      "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool , not a technical error. The tool did not return an error",
      "details": {
-       "failed_tools": "david33;amr_master;phatom5",
+       "failed_tools": "david33;amr_master;phantom5",
      },
      "success": True
 } 
