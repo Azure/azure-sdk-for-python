@@ -1,10 +1,11 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.0.0b1
 
 ### Breaking Changes
 * Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, and related authoring operations have been eliminated from the runtime client distribution.
 * Dropped support for Python versions earlier than 3.9 (aligns with Azure SDK Python support policy going forward).
+* Model base class change: all public model types now inherit from `MutableMapping[str, Any]` (dict-like) instead of the previous `Model` base class. As a result they now support standard mutable mapping behavior (key iteration, item assignment, etc.) and any code depending on methods/properties inherited from the old base class should be reviewed/updated.
 
 ### Features Added
 * Documentation improvements: expanded README with authentication guidance, AAD usage, async examples, and troubleshooting section.
@@ -12,16 +13,6 @@
 ### Other Changes
 * Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
 * Changed samples and README examples to use explicit `AnswersOptions` / `AnswersFromTextOptions` objects as the first argument when calling `get_answers` and `get_answers_from_text`.
-
-## 1.1.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.1.0 (2022-10-13)
 
