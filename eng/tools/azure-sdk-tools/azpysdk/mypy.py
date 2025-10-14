@@ -17,12 +17,13 @@ from ci_tools.logging import logger
 PYTHON_VERSION = "3.9"
 MYPY_VERSION = "1.14.1"
 ADDITIONAL_LOCKED_DEPENDENCIES = [
-  "types-chardet==5.0.4.6",
-  "types-requests==2.31.0.6",
-  "types-six==1.16.21.9",
-  "types-redis==4.6.0.7",
-  "PyGitHub>=1.59.0"
+    "types-chardet==5.0.4.6",
+    "types-requests==2.31.0.6",
+    "types-six==1.16.21.9",
+    "types-redis==4.6.0.7",
+    "PyGitHub>=1.59.0",
 ]
+
 
 class mypy(Check):
     def __init__(self) -> None:
