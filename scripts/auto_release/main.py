@@ -220,6 +220,7 @@ class CodegenTestPR:
             "azure-mgmt-resource-templatespecs",
             "azure-mgmt-resource-deploymentscripts",
             "azure-mgmt-resource-deployments",
+            "azure-mgmt-recoveryservicesbackup-passivestamp",
         ]:
             return
         if self.from_swagger:
