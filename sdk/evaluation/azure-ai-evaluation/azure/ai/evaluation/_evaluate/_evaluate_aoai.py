@@ -712,8 +712,8 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             isinstance(formatted_entry, str) and formatted_entry.startswith("${") and formatted_entry.endswith("}")
         ):
             continue
-        body = formatted_entry[2:-1]  # remove ${ }
-        pieces = body.split(".")
+
+        pieces = formatted_entry.removeprefix("${").removesuffix("}").strip().split(".")
 
         if not pieces:
             continue
@@ -731,8 +731,8 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             dataframe_col = source_path
 
             # Relative parts for nested insertion (drop leading wrapper if present)
-            if source_path.startswith(WRAPPER_KEY + "."):
-                relative_path = source_path[len(WRAPPER_KEY) + 1 :]
+            if source_path.startswith(f"{WRAPPER_KEY}."):
+                relative_path = source_path.removeprefix(f"{WRAPPER_KEY}.")
             else:
                 # Path not under wrapper; treat its segments as is (will live directly under wrapper)
                 relative_path = source_path
