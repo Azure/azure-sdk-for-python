@@ -2,4 +2,3 @@
 -e ../../core/azure-core
 -e ../../identity/azure-identity
 aiohttp
-../azure-confidentialledger-certificate

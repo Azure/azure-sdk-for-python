@@ -14,10 +14,6 @@
 
 **The `ConfidentialLedgerCertificateClient` can now be used through the `azure-confidentialledger-certificate` package.**
 
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.2.0b1 (2025-04-23)
 
 ### Features Added
