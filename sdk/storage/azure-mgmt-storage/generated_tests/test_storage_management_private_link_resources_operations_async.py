@@ -25,7 +25,7 @@ class TestStorageManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecorded
         response = await self.client.private_link_resources.list_by_storage_account(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

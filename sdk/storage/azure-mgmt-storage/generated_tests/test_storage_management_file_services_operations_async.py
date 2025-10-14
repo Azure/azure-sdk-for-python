@@ -25,7 +25,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.file_services.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
                 "sku": {"name": "str", "tier": "str"},
                 "type": "str",
             },
-            api_version="2025-01-01",
+            api_version="2025-06-01",
             file_services_name="default",
         )
 
@@ -79,7 +79,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.file_services.get_service_properties(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
             file_services_name="default",
         )
 
@@ -92,7 +92,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
         response = self.client.file_services.list_service_usages(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
             file_services_name="default",
         )
         result = [r async for r in response]
@@ -105,7 +105,7 @@ class TestStorageManagementFileServicesOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.file_services.get_service_usage(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
             file_services_name="default",
             file_service_usages_name="default",
         )
