@@ -15,7 +15,7 @@ from .._attack_strategy import AttackStrategy
 from .._red_team_result import RedTeamResult
 
 
-def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[Any] = None) -> Dict[str, str]:
+def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[Any] = None) -> Dict[str, Any]:
     """Convert a ChatMessage and context to dictionary format.
 
     :param message: The chat message to convert
@@ -25,7 +25,7 @@ def message_to_dict(message: ChatMessage, context: str = None, tool_calls: List[
     :param tool_calls: List of tool calls to include in the dictionary
     :type tool_calls: List[Any]
     :return: Dictionary representation with role and content
-    :rtype: Dict[str, str]
+    :rtype: Dict[str, Any]
     """
     return {"role": message.role, "content": message.content, "context": context, "tool_calls": tool_calls}
 
