@@ -341,8 +341,9 @@ def start_test_proxy(request) -> None:
     """
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
+    requires_https = PROXY_URL.startswith("https://")
 
-    if PROXY_URL.startswith("https://"):
+    if requires_https:
         check_certificate_location(repo_root)
 
     if not PROXY_MANUALLY_STARTED:
@@ -369,7 +370,7 @@ def start_test_proxy(request) -> None:
                 _LOGGER.info("Downloading and starting standalone proxy executable...")
                 tool_name = prepare_local_tool(root)
 
-            if PROXY_URL.startswith("https://"):
+            if requires_https:
                 # Always start the proxy with these two defaults set to allow SSL connection
                 passenv = {
                     "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
