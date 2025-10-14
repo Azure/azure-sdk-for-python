@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added ability to return a tuple of a DatabaseProxy/ContainerProxy with the associated database/container properties when creating or reading databases/containers through `return_properties` parameter. See [PR 41742](https://github.com/Azure/azure-sdk-for-python/pull/41742)
+* Added better support for OpenTelemetry Distributed Tracing for Cosmos with some End-to-End samples. See [PR 43405](https://github.com/Azure/azure-sdk-for-python/pull/43405)
 #### Breaking Changes
 
 #### Bugs Fixed
