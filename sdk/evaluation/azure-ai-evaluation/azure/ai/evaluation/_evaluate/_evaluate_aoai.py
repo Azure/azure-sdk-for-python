@@ -7,7 +7,7 @@ import re
 
 from openai import AzureOpenAI, OpenAI
 import pandas as pd
-from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set
+from typing import Any, Callable, Dict, Tuple, TypeVar, Union, Type, Optional, TypedDict, List, cast, Set, NamedTuple
 from time import sleep
 
 from ._batch_run import CodeClient, ProxyClient
@@ -697,9 +697,15 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
     :rtype: Dict[str, Any]
     """
+
+    class ColumnMapping(NamedTuple):
+        destination_column: str
+        source_column: str
+        value_path: List[str]
+
     # Gather path specs: list of tuples (original_mapping_value, relative_parts, dataframe_column_name)
     # relative_parts excludes the wrapper (so schema + content align).
-    path_specs: List[Tuple[str, List[str], str]] = []
+    path_specs: List[ColumnMapping] = []
 
     for name, formatted_entry in column_mapping.items():
         if not (
@@ -738,22 +744,24 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             if not relative_parts:
                 continue
 
-            path_specs.append((formatted_entry, relative_parts, dataframe_col))
+            path_specs.append(
+                ColumnMapping(destination_column=name, source_column=dataframe_col, value_path=relative_parts)
+            )
 
         elif pieces[0] == "run" and len(pieces) >= 3 and pieces[1] == "outputs":
             # Target / run outputs become __outputs.<rest> columns
             run_col = "__outputs." + ".".join(pieces[2:])
             leaf_name = pieces[-1]
-            path_specs.append((formatted_entry, [leaf_name], run_col))
+            path_specs.append(ColumnMapping(destination_column=name, source_column=run_col, value_path=[leaf_name]))
 
     content: List[Dict[str, Any]] = []
 
     for _, row in input_data_df.iterrows():
         item_root: Dict[str, Any] = {}
 
-        for _, rel_parts, df_col in path_specs:
+        for mapping in path_specs:
             # Safely fetch value
-            val = row.get(df_col, None)
+            val = row.get(mapping.source_column, None)
 
             # Convert value to string to match schema's "type": "string" leaves.
             # (If you later infer types, you can remove the stringify.)
@@ -767,14 +775,13 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
 
             # Insert into nested dict
             cursor = item_root
-            for seg in rel_parts[:-1]:
+            for seg in mapping.value_path[:-1]:
                 nxt = cursor.get(seg)
                 if not isinstance(nxt, dict):
                     nxt = {}
                     cursor[seg] = nxt
                 cursor = nxt
-            leaf_key = rel_parts[-1]
-            cursor[leaf_key] = str_val
+            cursor[mapping.destination_column] = str_val
 
         content.append({WRAPPER_KEY: item_root})
 
