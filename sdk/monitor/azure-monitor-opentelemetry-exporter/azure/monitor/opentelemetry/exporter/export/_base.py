@@ -137,9 +137,7 @@ class BaseExporter:
         if "storage_directory" in kwargs:
             self._storage_directory = kwargs.get("storage_directory")
         elif not self._disable_offline_storage:
-            self._storage_directory = os.path.join(
-                tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
-            )
+            self._storage_directory = os.path.join(_make_azure_tempdir(), _TEMPDIR_PREFIX + temp_suffix)
         else:
             self._storage_directory = None
         self._storage_retention_period = kwargs.get(
@@ -506,6 +504,21 @@ class BaseExporter:
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, '_is_customer_sdkstats', False)
+
+
+def _make_azure_tempdir():
+    """Make and prepare a subdirectory on the systems TMP directory.
+
+    This will be writable by all users on the system
+
+    :rtype: str"""
+    current_path = tempfile.gettempdir()
+    for part in _AZURE_TEMPDIR_PREFIX.split(os.sep):
+        current_path = os.path.join(current_path, part)
+        os.makedirs(current_path, exist_ok=True)
+        os.chmod(current_path, 0o777)
+    return current_path
+
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:
     """Determine if response is a invalid response.
