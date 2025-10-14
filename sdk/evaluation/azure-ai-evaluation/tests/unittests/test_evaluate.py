@@ -1273,7 +1273,7 @@ class TestTagsInLoggingFunctions:
         # Verify that sync_evals.create was called
         mock_sync_evals.create.assert_called_once()
         call_args = mock_sync_evals.create.call_args[1]["eval"]
-        
+
         # Verify properties include tags
         assert call_args.properties is not None
         assert "experiment" in call_args.properties
@@ -1314,7 +1314,7 @@ class TestTagsInLoggingFunctions:
         # Verify that sync_evals.create was called
         mock_sync_evals.create.assert_called_once()
         call_args = mock_sync_evals.create.call_args[1]["eval"]
-        
+
         # Verify properties exist but don't contain extra tags
         assert call_args.properties is not None
 

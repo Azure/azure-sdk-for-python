@@ -801,11 +801,9 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
+
 def _build_sync_eval_payload(
-    data: dict,
-    metric_name: str,
-    annotation_task: str,
-    scan_session_id: Optional[str] = None
+    data: dict, metric_name: str, annotation_task: str, scan_session_id: Optional[str] = None
 ) -> Dict:
     """Build the sync_evals payload for evaluation.
 
@@ -847,19 +845,16 @@ def _build_sync_eval_payload(
         "name": f"Safety Eval - {metric_name}",
         "data_source": {
             "type": "jsonl",
-            "source": {
-                "type": "file_content",
-                "content": {
-                    "item": item_content  # Object, not array
-                }
-            }
+            "source": {"type": "file_content", "content": {"item": item_content}},  # Object, not array
         },
-        "testing_criteria": [{
-            "type": "azure_ai_evaluator",
-            "name": metric_name,
-            "evaluator_name": metric_name,
-            "data_mapping": data_mapping
-        }]
+        "testing_criteria": [
+            {
+                "type": "azure_ai_evaluator",
+                "name": metric_name,
+                "evaluator_name": metric_name,
+                "data_mapping": data_mapping,
+            }
+        ],
     }
 
     # Add properties/metadata if needed
@@ -874,9 +869,7 @@ def _build_sync_eval_payload(
 
 
 def _parse_sync_eval_result(
-    eval_result,
-    metric_name: str,
-    metric_display_name: Optional[str] = None
+    eval_result, metric_name: str, metric_display_name: Optional[str] = None
 ) -> Dict[str, Union[str, float]]:
     """Parse the result from sync_evals response (EvalRunOutputItem) into the standard format.
 
@@ -890,61 +883,57 @@ def _parse_sync_eval_result(
     """
     # Handle EvalRunOutputItem structure
     # Expected structure: {'results': [{'name': 'violence', 'score': 0.0, 'reason': '...', ...}]}
-    
+
     display_name = metric_display_name or metric_name
-    
+
     # Handle both dict and object formats
-    if hasattr(eval_result, 'results'):
+    if hasattr(eval_result, "results"):
         results = eval_result.results
-    elif isinstance(eval_result, dict) and 'results' in eval_result:
-        results = eval_result['results']
+    elif isinstance(eval_result, dict) and "results" in eval_result:
+        results = eval_result["results"]
     else:
         return {}
-    
+
     if not results or len(results) == 0:
         return {}
-    
+
     # Find the result for our specific metric
     target_result = None
     for result_item in results:
         if isinstance(result_item, dict):
-            if result_item.get('name') == metric_name or result_item.get('metric') == metric_name:
+            if result_item.get("name") == metric_name or result_item.get("metric") == metric_name:
                 target_result = result_item
                 break
-        elif hasattr(result_item, 'name') and result_item.name == metric_name:
+        elif hasattr(result_item, "name") and result_item.name == metric_name:
             target_result = result_item
             break
-    
+
     if not target_result:
         return {}
-    
+
     # Extract values from the result item
     if isinstance(target_result, dict):
-        score = target_result.get('score', math.nan)
-        reason = target_result.get('reason', '')
+        score = target_result.get("score", math.nan)
+        reason = target_result.get("reason", "")
         # Also check properties.reasoning for additional reason text
-        if not reason and 'properties' in target_result:
-            props = target_result['properties']
+        if not reason and "properties" in target_result:
+            props = target_result["properties"]
             if isinstance(props, dict):
-                reason = props.get('reasoning', props.get('scoreProperties', {}).get('reasoning', ''))
+                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
     else:
-        score = getattr(target_result, 'score', math.nan)
-        reason = getattr(target_result, 'reason', '')
-        if not reason and hasattr(target_result, 'properties'):
+        score = getattr(target_result, "score", math.nan)
+        reason = getattr(target_result, "reason", "")
+        if not reason and hasattr(target_result, "properties"):
             props = target_result.properties
             if isinstance(props, dict):
-                reason = props.get('reasoning', props.get('scoreProperties', {}).get('reasoning', ''))
-    
+                reason = props.get("reasoning", props.get("scoreProperties", {}).get("reasoning", ""))
+
     # Convert score to severity level using existing logic
     harm_score = score if not math.isnan(score) else math.nan
     severity_level = get_harm_severity_level(harm_score) if not math.isnan(harm_score) else math.nan
-    
+
     # Return in the standard format expected by the red team processor
-    return {
-        display_name: severity_level,
-        f"{display_name}_score": harm_score,
-        f"{display_name}_reason": reason
-    }
+    return {display_name: severity_level, f"{display_name}_score": harm_score, f"{display_name}_reason": reason}
 
 
 async def evaluate_with_rai_service_sync(
@@ -1005,10 +994,10 @@ async def evaluate_with_rai_service_sync(
 
     # Call sync_evals.create() with the JSON payload
     eval_result = client.sync_evals.create(eval=sync_eval_payload)
-    
+
     # Parse and return the result in standard format
     result = _parse_sync_eval_result(eval_result, metric_name, metric_display_name)
-    
+
     return result
 
 

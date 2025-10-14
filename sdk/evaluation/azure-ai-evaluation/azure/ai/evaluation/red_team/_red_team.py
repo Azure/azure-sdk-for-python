@@ -172,7 +172,7 @@ class RedTeam:
             console_formatter = logging.Formatter("%(levelname)s - %(message)s")
             console_handler.setFormatter(console_formatter)
             self.logger.addHandler(console_handler)
-            
+
         if not self._one_dp_project:
             self.token_manager = ManagedIdentityAPITokenManager(
                 token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
@@ -293,7 +293,7 @@ class RedTeam:
             retry_config=retry_config,
             scan_session_id=self.scan_session_id,
             scan_output_dir=self.scan_output_dir,
-            taxonomy_risk_categories=getattr(self, 'taxonomy_risk_categories', None),
+            taxonomy_risk_categories=getattr(self, "taxonomy_risk_categories", None),
         )
 
         # Initialize MLflow integration
@@ -799,7 +799,7 @@ class RedTeam:
                 # Select objectives to match num_objectives
                 selected_cat_objectives = []
                 baseline_ids = list(selected_by_id.keys())
-                
+
                 # If we have enough baseline IDs to cover num_objectives, select one per baseline ID
                 if len(baseline_ids) >= num_objectives:
                     # Select from the first num_objectives baseline IDs
@@ -817,7 +817,7 @@ class RedTeam:
                         for selected_obj in already_selected:
                             if selected_obj in available_variations:
                                 available_variations.remove(selected_obj)
-                        
+
                         if available_variations:
                             selected_cat_objectives.append(random.choice(available_variations))
                         else:
@@ -1173,7 +1173,7 @@ class RedTeam:
         run_id_override = kwargs.get("run_id") or kwargs.get("runId")
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
-        taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories") # key is risk category value is taxonomy
+        taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories")  # key is risk category value is taxonomy
         self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         with UserAgentSingleton().add_useragent_product(user_agent):
