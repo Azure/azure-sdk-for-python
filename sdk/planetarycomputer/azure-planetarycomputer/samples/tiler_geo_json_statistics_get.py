@@ -15,7 +15,7 @@ from azure.planetarycomputer import PlanetaryComputerClient
     pip install azure-identity
     pip install azure-planetarycomputer
 # USAGE
-    python tiler_geo_json_statistics_get_all.py
+    python tiler_geo_json_statistics_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,33 +30,28 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.tiler.list_geo_json_statistics(
+    response = client.tiler.get_geo_json_statistics(
         collection_id="{{collectionId}}",
         item_id="{{itemId}}",
         body={
-            "features": [
-                {
-                    "geometry": {
-                        "coordinates": [
-                            [
-                                [-65.75386020444417, 18.252659831448764],
-                                [-65.75385878091376, 18.252569552371305],
-                                [-65.75376429311993, 18.252570912467043],
-                                [-65.75376571660163, 18.252661191551685],
-                                [-65.75386020444417, 18.252659831448764],
-                            ]
-                        ],
-                        "type": "Polygon",
-                    },
-                    "type": "Feature",
-                }
-            ],
-            "type": "FeatureCollection",
+            "geometry": {
+                "coordinates": [
+                    [
+                        [-65.75386020444417, 18.252659831448764],
+                        [-65.75385878091376, 18.252569552371305],
+                        [-65.75376429311993, 18.252570912467043],
+                        [-65.75376571660163, 18.252661191551685],
+                        [-65.75386020444417, 18.252659831448764],
+                    ]
+                ],
+                "type": "Polygon",
+            },
+            "type": "Feature",
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-30-preview/TilerGeoJsonStatistics_GetAll.json
+# x-ms-original-file: 2025-04-30-preview/TilerGeoJsonStatistics_Get.json
 if __name__ == "__main__":
     main()

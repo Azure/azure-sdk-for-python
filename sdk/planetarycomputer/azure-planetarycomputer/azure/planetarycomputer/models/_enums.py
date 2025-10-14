@@ -447,13 +447,6 @@ class ColorMapNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reversed YlOrRd colormap"""
 
 
-class FeatureCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type identifier for GeoJSON FeatureCollection objects."""
-
-    FEATURE_COLLECTION = "FeatureCollection"
-    """Standard GeoJSON FeatureCollection type identifier"""
-
-
 class FeatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type identifier for GeoJSON Feature objects."""
 
@@ -658,13 +651,6 @@ class StacAssetUrlSigningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sign asset URLs in the response."""
     FALSE = "false"
     """Do not sign asset URLs in the response."""
-
-
-class StacItemCollectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the GeoJSON feature collection type for STAC item collections."""
-
-    FEATURE_COLLECTION = "FeatureCollection"
-    """Standard GeoJSON FeatureCollection type."""
 
 
 class StacLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

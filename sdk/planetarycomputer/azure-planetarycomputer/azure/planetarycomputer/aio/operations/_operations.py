@@ -102,6 +102,7 @@ from ...operations._operations import (
     build_tiler_get_asset_statistics_request,
     build_tiler_get_assets_info_request,
     build_tiler_get_class_map_legend_request,
+    build_tiler_get_geo_json_statistics_request,
     build_tiler_get_info_geo_json_request,
     build_tiler_get_interval_legend_request,
     build_tiler_get_legend_request,
@@ -123,7 +124,6 @@ from ...operations._operations import (
     build_tiler_get_wmts_capabilities_request,
     build_tiler_list_available_assets_request,
     build_tiler_list_bounds_request,
-    build_tiler_list_geo_json_statistics_request,
     build_tiler_list_statistics_request,
     build_tiler_list_tile_matrices_request,
     build_tiler_register_mosaics_search_request,
@@ -7391,11 +7391,11 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def list_geo_json_statistics(
+    async def get_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
-        body: _models.FeatureCollection,
+        body: _models.Feature,
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -7413,17 +7413,17 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.GeoJsonStatisticsForStacItemCollection:
+    ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
-        Get Statistics from a geojson feature or featureCollection.
+        Get Statistics from a geojson feature.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
         :param body: Request GeoJson body. Required.
-        :type body: ~azure.planetarycomputer.models.FeatureCollection
+        :type body: ~azure.planetarycomputer.models.Feature
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7480,14 +7480,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
-         compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
+        :return: StacItemStatisticsGeoJson. The StacItemStatisticsGeoJson is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemStatisticsGeoJson
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def list_geo_json_statistics(
+    async def get_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -7509,10 +7509,10 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.GeoJsonStatisticsForStacItemCollection:
+    ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
-        Get Statistics from a geojson feature or featureCollection.
+        Get Statistics from a geojson feature.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
@@ -7576,14 +7576,14 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
-         compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
+        :return: StacItemStatisticsGeoJson. The StacItemStatisticsGeoJson is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemStatisticsGeoJson
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def list_geo_json_statistics(
+    async def get_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
@@ -7605,10 +7605,10 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_range: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.GeoJsonStatisticsForStacItemCollection:
+    ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
-        Get Statistics from a geojson feature or featureCollection.
+        Get Statistics from a geojson feature.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
@@ -7672,18 +7672,18 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
-         compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
+        :return: StacItemStatisticsGeoJson. The StacItemStatisticsGeoJson is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemStatisticsGeoJson
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def list_geo_json_statistics(
+    async def get_geo_json_statistics(
         self,
         collection_id: str,
         item_id: str,
-        body: Union[_models.FeatureCollection, JSON, IO[bytes]],
+        body: Union[_models.Feature, JSON, IO[bytes]],
         *,
         assets: Optional[list[str]] = None,
         expression: Optional[str] = None,
@@ -7700,18 +7700,18 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.GeoJsonStatisticsForStacItemCollection:
+    ) -> _models.StacItemStatisticsGeoJson:
         """Geojson Statistics.
 
-        Get Statistics from a geojson feature or featureCollection.
+        Get Statistics from a geojson feature.
 
         :param collection_id: STAC Collection Identifier. Required.
         :type collection_id: str
         :param item_id: STAC Item Identifier. Required.
         :type item_id: str
-        :param body: Request GeoJson body. Is one of the following types: FeatureCollection, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.planetarycomputer.models.FeatureCollection or JSON or IO[bytes]
+        :param body: Request GeoJson body. Is one of the following types: Feature, JSON, IO[bytes]
+         Required.
+        :type body: ~azure.planetarycomputer.models.Feature or JSON or IO[bytes]
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
         :keyword expression: Band math expression between assets. Default value is None.
@@ -7765,9 +7765,9 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: GeoJsonStatisticsForStacItemCollection. The GeoJsonStatisticsForStacItemCollection is
-         compatible with MutableMapping
-        :rtype: ~azure.planetarycomputer.models.GeoJsonStatisticsForStacItemCollection
+        :return: StacItemStatisticsGeoJson. The StacItemStatisticsGeoJson is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.StacItemStatisticsGeoJson
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7782,7 +7782,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.GeoJsonStatisticsForStacItemCollection] = kwargs.pop("cls", None)
+        cls: ClsType[_models.StacItemStatisticsGeoJson] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7791,7 +7791,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_tiler_list_geo_json_statistics_request(
+        _request = build_tiler_get_geo_json_statistics_request(
             collection_id=collection_id,
             item_id=item_id,
             assets=assets,
@@ -7838,7 +7838,7 @@ class TilerOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.GeoJsonStatisticsForStacItemCollection, response.json())
+            deserialized = _deserialize(_models.StacItemStatisticsGeoJson, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

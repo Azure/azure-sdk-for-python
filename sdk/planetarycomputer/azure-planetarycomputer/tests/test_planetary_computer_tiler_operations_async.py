@@ -101,16 +101,12 @@ class TestPlanetaryComputerTilerOperationsAsync(PlanetaryComputerClientTestBaseA
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_tiler_list_geo_json_statistics(self, planetarycomputer_endpoint):
+    async def test_tiler_get_geo_json_statistics(self, planetarycomputer_endpoint):
         client = self.create_async_client(endpoint=planetarycomputer_endpoint)
-        response = await client.tiler.list_geo_json_statistics(
+        response = await client.tiler.get_geo_json_statistics(
             collection_id="str",
             item_id="str",
-            body={
-                "features": [{"geometry": "geometry", "type": "str", "properties": {"str": {}}}],
-                "type": "str",
-                "bbox": [0.0],
-            },
+            body={"geometry": "geometry", "type": "str", "properties": {"str": {}}},
         )
 
         # please add some check logic here by yourself
