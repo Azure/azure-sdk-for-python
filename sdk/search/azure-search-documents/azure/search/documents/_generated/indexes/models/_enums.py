@@ -568,6 +568,14 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A knowledge source that reads data from a Search Index."""
     AZURE_BLOB = "azureBlob"
     """A knowledge source that read and ingest data from Azure Blob Storage to a Search Index."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """A knowledge source that reads data from indexed SharePoint."""
+    INDEXED_ONE_LAKE = "indexedOneLake"
+    """A knowledge source that reads data from indexed OneLake."""
+    WEB = "web"
+    """A knowledge source that reads data from the web."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """A knowledge source that reads data from remote SharePoint."""
 
 
 class LexicalAnalyzerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -60,7 +60,7 @@ def build_data_sources_create_or_update_request(  # pylint: disable=name-too-lon
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -103,7 +103,7 @@ def build_data_sources_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/datasources('{dataSourceName}')"
     path_format_arguments = {
@@ -130,7 +130,7 @@ def build_data_sources_get_request(data_source_name: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -154,7 +154,7 @@ def build_data_sources_list_request(*, select: Optional[str] = None, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,7 +176,7 @@ def build_data_sources_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,7 +197,7 @@ def build_indexers_reset_request(indexer_name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/indexers('{indexerName}')/search.reset"
     path_format_arguments = {
@@ -218,7 +218,7 @@ def build_indexers_resync_request(indexer_name: str, **kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/indexers('{indexerName}')/search.resync"
     path_format_arguments = {
@@ -242,7 +242,7 @@ def build_indexers_reset_docs_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/indexers('{indexerName}')/search.resetdocs"
     path_format_arguments = {
@@ -267,7 +267,7 @@ def build_indexers_run_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/indexers('{indexerName}')/search.run"
     path_format_arguments = {
@@ -298,7 +298,7 @@ def build_indexers_create_or_update_request(
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -341,7 +341,7 @@ def build_indexers_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/indexers('{indexerName}')"
     path_format_arguments = {
@@ -368,7 +368,7 @@ def build_indexers_get_request(indexer_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -392,7 +392,7 @@ def build_indexers_list_request(*, select: Optional[str] = None, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -414,7 +414,7 @@ def build_indexers_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -435,7 +435,7 @@ def build_indexers_get_status_request(indexer_name: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -469,7 +469,7 @@ def build_skillsets_create_or_update_request(
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -512,7 +512,7 @@ def build_skillsets_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/skillsets('{skillsetName}')"
     path_format_arguments = {
@@ -539,7 +539,7 @@ def build_skillsets_get_request(skillset_name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -563,7 +563,7 @@ def build_skillsets_list_request(*, select: Optional[str] = None, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -585,7 +585,7 @@ def build_skillsets_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -607,7 +607,7 @@ def build_skillsets_reset_skills_request(skillset_name: str, **kwargs: Any) -> H
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/skillsets('{skillsetName}')/search.resetskills"
     path_format_arguments = {
@@ -638,7 +638,7 @@ def build_synonym_maps_create_or_update_request(  # pylint: disable=name-too-lon
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -677,7 +677,7 @@ def build_synonym_maps_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/synonymmaps('{synonymMapName}')"
     path_format_arguments = {
@@ -704,7 +704,7 @@ def build_synonym_maps_get_request(synonym_map_name: str, **kwargs: Any) -> Http
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -728,7 +728,7 @@ def build_synonym_maps_list_request(*, select: Optional[str] = None, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -750,7 +750,7 @@ def build_synonym_maps_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -781,7 +781,7 @@ def build_indexes_create_or_update_request(
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -827,7 +827,7 @@ def build_indexes_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/indexes('{indexName}')"
     path_format_arguments = {
@@ -860,7 +860,7 @@ def build_indexes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -888,7 +888,7 @@ def build_indexes_list_request(*, select: Optional[str] = None, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -910,7 +910,7 @@ def build_indexes_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -933,7 +933,7 @@ def build_indexes_get_statistics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -964,7 +964,7 @@ def build_indexes_analyze_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -998,7 +998,7 @@ def build_aliases_create_or_update_request(
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1033,7 +1033,7 @@ def build_aliases_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/aliases('{aliasName}')"
     path_format_arguments = {
@@ -1060,7 +1060,7 @@ def build_aliases_get_request(alias_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1084,7 +1084,7 @@ def build_aliases_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1104,7 +1104,7 @@ def build_aliases_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1129,7 +1129,7 @@ def build_agents_create_or_update_request(
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1164,7 +1164,7 @@ def build_agents_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/agents('{agentName}')"
     path_format_arguments = {
@@ -1191,7 +1191,7 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1215,7 +1215,7 @@ def build_agents_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1235,7 +1235,7 @@ def build_agents_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1260,7 +1260,7 @@ def build_sources_create_or_update_request(
 
     prefer: Literal["return=representation"] = kwargs.pop("prefer")
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1295,7 +1295,7 @@ def build_sources_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     # Construct URL
     _url = "/knowledgesources('{sourceName}')"
     path_format_arguments = {
@@ -1322,7 +1322,7 @@ def build_sources_get_request(source_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1346,7 +1346,7 @@ def build_sources_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1366,7 +1366,7 @@ def build_sources_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1387,7 +1387,7 @@ def build_search_service_get_service_statistics_request(**kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1406,7 +1406,7 @@ def build_search_service_get_index_stats_summary_request(**kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1543,7 +1543,7 @@ class DataSourcesOperations:
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-08-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-09-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
     def create_or_update(
         self,
@@ -2033,7 +2033,7 @@ class IndexersOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "indexer_name"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def resync(self, indexer_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Resync selective options from the datasource to be re-ingested by the indexer.".
@@ -2176,7 +2176,7 @@ class IndexersOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "overwrite", "client_request_id", "indexer_name", "content_type"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def reset_docs(  # pylint: disable=inconsistent-return-statements
         self,
@@ -2428,7 +2428,7 @@ class IndexersOperations:
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-09-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
     def create_or_update(
         self,
@@ -3050,7 +3050,7 @@ class SkillsetsOperations:
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-09-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
     def create_or_update(
         self,
@@ -3543,7 +3543,7 @@ class SkillsetsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "skillset_name", "content_type"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def reset_skills(  # pylint: disable=inconsistent-return-statements
         self, skillset_name: str, skill_names: Union[_models1.SkillNames, JSON, IO[bytes]], **kwargs: Any
@@ -5092,7 +5092,7 @@ class AliasesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def create_or_update(
         self,
@@ -5196,7 +5196,7 @@ class AliasesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "client_request_id", "alias_name", "etag", "match_condition"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
@@ -5271,7 +5271,7 @@ class AliasesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "alias_name", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def get(self, alias_name: str, **kwargs: Any) -> _models1.SearchAlias:
         """Retrieves an alias definition.
@@ -5337,7 +5337,7 @@ class AliasesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models1.SearchAlias"]:
         """Lists all aliases available for a search service.
@@ -5471,7 +5471,7 @@ class AliasesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def create(self, alias: Union[_models1.SearchAlias, JSON, IO[bytes]], **kwargs: Any) -> _models1.SearchAlias:
         """Creates a new search alias.
@@ -5666,7 +5666,7 @@ class AgentsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def create_or_update(
         self,
@@ -5771,7 +5771,7 @@ class AgentsOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "client_request_id", "agent_name", "etag", "match_condition"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
@@ -5846,7 +5846,7 @@ class AgentsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "agent_name", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def get(self, agent_name: str, **kwargs: Any) -> _models1.KnowledgeAgent:
         """Retrieves an agent definition.
@@ -5912,7 +5912,7 @@ class AgentsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def list(self, **kwargs: Any) -> _models1.ListKnowledgeAgentsResult:
         """Lists all agents available for a search service.
@@ -6024,7 +6024,7 @@ class AgentsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def create(
         self, knowledge_agent: Union[_models1.KnowledgeAgent, JSON, IO[bytes]], **kwargs: Any
@@ -6222,7 +6222,7 @@ class SourcesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def create_or_update(
         self,
@@ -6327,7 +6327,7 @@ class SourcesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "client_request_id", "source_name", "etag", "match_condition"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
@@ -6401,7 +6401,7 @@ class SourcesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "source_name", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def get(self, source_name: str, **kwargs: Any) -> _models1.KnowledgeSource:
         """Retrieves a knowledge source definition.
@@ -6467,7 +6467,7 @@ class SourcesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def list(self, **kwargs: Any) -> _models1.ListKnowledgeSourcesResult:
         """Lists all knowledge sources available for a search service.
@@ -6579,7 +6579,7 @@ class SourcesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def create(
         self, knowledge_source: Union[_models1.KnowledgeSource, JSON, IO[bytes]], **kwargs: Any
@@ -6721,7 +6721,7 @@ class _SearchServiceClientOperationsMixin(
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def get_index_stats_summary(self, **kwargs: Any) -> ItemPaged["_models1.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.

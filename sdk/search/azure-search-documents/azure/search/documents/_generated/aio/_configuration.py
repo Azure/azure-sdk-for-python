@@ -32,7 +32,7 @@ class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attri
     :param index_name: The name of the index. Required.
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-08-01-preview". Note that overriding this default value may result in unsupported
+     "2025-11-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -44,7 +44,7 @@ class SearchIndexClientConfiguration:  # pylint: disable=too-many-instance-attri
         index_name: str,
         **kwargs: Any,
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-08-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

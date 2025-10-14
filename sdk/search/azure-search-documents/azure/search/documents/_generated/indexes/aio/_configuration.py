@@ -30,7 +30,7 @@ class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-att
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-08-01-preview". Note that overriding this default value may result in unsupported
+     "2025-11-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -38,7 +38,7 @@ class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-att
     def __init__(
         self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-08-01-preview")
+        api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

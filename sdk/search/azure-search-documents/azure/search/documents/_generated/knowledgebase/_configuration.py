@@ -17,8 +17,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for SearchServiceClient.
+class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for KnowledgeBaseRetrievalClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

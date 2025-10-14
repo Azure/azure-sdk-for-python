@@ -632,8 +632,8 @@ class KnowledgeSource(_Model):
     :vartype name: str
     :ivar description: Optional user-defined description.
     :vartype description: str
-    :ivar kind: The type of the knowledge source. Required. Known values are: "searchIndex" and
-     "azureBlob".
+    :ivar kind: The type of the knowledge source. Required. Known values are: "searchIndex",
+     "azureBlob", "indexedSharePoint", "indexedOneLake", "web", and "remoteSharePoint".
     :vartype kind: str or ~azure.search.documents.indexes.models.KnowledgeSourceKind
     :ivar e_tag: The ETag of the agent.
     :vartype e_tag: str
@@ -647,8 +647,8 @@ class KnowledgeSource(_Model):
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined description."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """The type of the knowledge source. Required. Known values are: \"searchIndex\" and
-     \"azureBlob\"."""
+    """The type of the knowledge source. Required. Known values are: \"searchIndex\", \"azureBlob\",
+     \"indexedSharePoint\", \"indexedOneLake\", \"web\", and \"remoteSharePoint\"."""
     e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the agent."""
     encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(

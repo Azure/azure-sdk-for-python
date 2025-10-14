@@ -219,7 +219,7 @@ class DataSourcesOperations:
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2025-08-01-preview": ["skip_indexer_reset_requirement_for_cache"]},
-        api_versions_list=["2025-09-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create_or_update(
         self,
@@ -709,7 +709,7 @@ class IndexersOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "indexer_name"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def resync(self, indexer_name: str, **kwargs: Any) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.".
@@ -852,7 +852,7 @@ class IndexersOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "overwrite", "client_request_id", "indexer_name", "content_type"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def reset_docs(
         self,
@@ -1104,7 +1104,7 @@ class IndexersOperations:
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-09-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create_or_update(
         self,
@@ -1730,7 +1730,7 @@ class SkillsetsOperations:
                 "disable_cache_reprocessing_change_detection",
             ]
         },
-        api_versions_list=["2025-09-01", "2025-08-01-preview"],
+        api_versions_list=["2025-09-01", "2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create_or_update(
         self,
@@ -2223,7 +2223,7 @@ class SkillsetsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "skillset_name", "content_type"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def reset_skills(
         self, skillset_name: str, skill_names: Union[_models2.SkillNames, JSON, IO[bytes]], **kwargs: Any
@@ -3777,7 +3777,7 @@ class AliasesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create_or_update(
         self,
@@ -3881,7 +3881,7 @@ class AliasesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "client_request_id", "alias_name", "etag", "match_condition"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def delete(
         self,
@@ -3956,7 +3956,7 @@ class AliasesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "alias_name", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def get(self, alias_name: str, **kwargs: Any) -> _models2.SearchAlias:
         """Retrieves an alias definition.
@@ -4022,7 +4022,7 @@ class AliasesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models2.SearchAlias"]:
         """Lists all aliases available for a search service.
@@ -4159,7 +4159,7 @@ class AliasesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create(self, alias: Union[_models2.SearchAlias, JSON, IO[bytes]], **kwargs: Any) -> _models2.SearchAlias:
         """Creates a new search alias.
@@ -4354,7 +4354,7 @@ class AgentsOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create_or_update(
         self,
@@ -4459,7 +4459,7 @@ class AgentsOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "client_request_id", "agent_name", "etag", "match_condition"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def delete(
         self,
@@ -4534,7 +4534,7 @@ class AgentsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "agent_name", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def get(self, agent_name: str, **kwargs: Any) -> _models2.KnowledgeAgent:
         """Retrieves an agent definition.
@@ -4600,7 +4600,7 @@ class AgentsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def list(self, **kwargs: Any) -> _models2.ListKnowledgeAgentsResult:
         """Lists all agents available for a search service.
@@ -4712,7 +4712,7 @@ class AgentsOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create(
         self, knowledge_agent: Union[_models2.KnowledgeAgent, JSON, IO[bytes]], **kwargs: Any
@@ -4910,7 +4910,7 @@ class SourcesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create_or_update(
         self,
@@ -5015,7 +5015,7 @@ class SourcesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "client_request_id", "source_name", "etag", "match_condition"]
         },
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def delete(
         self,
@@ -5089,7 +5089,7 @@ class SourcesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "source_name", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def get(self, source_name: str, **kwargs: Any) -> _models2.KnowledgeSource:
         """Retrieves a knowledge source definition.
@@ -5155,7 +5155,7 @@ class SourcesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def list(self, **kwargs: Any) -> _models2.ListKnowledgeSourcesResult:
         """Lists all knowledge sources available for a search service.
@@ -5267,7 +5267,7 @@ class SourcesOperations:
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     async def create(
         self, knowledge_source: Union[_models2.KnowledgeSource, JSON, IO[bytes]], **kwargs: Any
@@ -5409,7 +5409,7 @@ class _SearchServiceClientOperationsMixin(
     @api_version_validation(
         method_added_on="2025-08-01-preview",
         params_added_on={"2025-08-01-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-08-01-preview"],
+        api_versions_list=["2025-08-01-preview", "2025-11-01-preview"],
     )
     def get_index_stats_summary(self, **kwargs: Any) -> AsyncItemPaged["_models2.IndexStatisticsSummary"]:
         """Retrieves a summary of statistics for all indexes in the search service.

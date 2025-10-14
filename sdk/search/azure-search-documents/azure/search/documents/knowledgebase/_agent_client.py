@@ -3,21 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Optional, IO
+from typing import Any, Union, Optional, IO
 
-from azure.core.credentials import AzureKeyCredential
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.tracing.decorator_async import distributed_trace_async
-from ..._utils import DEFAULT_AUDIENCE
-from .._generated.aio import KnowledgeAgentRetrievalClient as _KnowledgeAgentRetrievalClient
-from .._generated.models import (
-    KnowledgeAgentRetrievalRequest,
-    RequestOptions,
-    KnowledgeAgentRetrievalResponse,
+from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.tracing.decorator import distributed_trace
+from .._api_versions import DEFAULT_VERSION
+from .._generated.knowledgebase import KnowledgeBaseRetrievalClient as _KnowledgeBaseRetrievalClient
+from .._generated.knowledgebase.models import (
+    KnowledgeBaseRetrievalRequest,
+    KnowledgeBaseRetrievalResponse,
 )
-from ..._api_versions import DEFAULT_VERSION
-from ..._headers_mixin import HeadersMixin
-from ..._version import SDK_MONIKER
+from .._headers_mixin import HeadersMixin
+from .._utils import DEFAULT_AUDIENCE
+from .._version import SDK_MONIKER
 
 
 class KnowledgeAgentRetrievalClient(HeadersMixin):
@@ -28,7 +26,7 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
     :param agent_name: The name of the agent. Required.
     :type agent_name: str
     :param credential: A credential to authorize search client requests
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword str api_version: The Search API version to use for requests.
     :keyword str audience: sets the Audience to use for authentication with Microsoft Entra ID. The
         audience is not considered when using a shared key. If audience is not provided, the public cloud audience
@@ -36,14 +34,14 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
     """
 
     _ODATA_ACCEPT: str = "application/json;odata.metadata=none"
-    _client: _KnowledgeAgentRetrievalClient
+    _client: _KnowledgeBaseRetrievalClient
 
     def __init__(
-        self, endpoint: str, agent_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
+        self, endpoint: str, agent_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._endpoint: str = endpoint
-        self._agent_name: str = agent_name
+        self._endpoint = endpoint
+        self._agent_name = agent_name
         self._credential = credential
         self._audience = kwargs.pop("audience", None)
         if not self._audience:
@@ -51,7 +49,7 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
         scope = self._audience.rstrip("/") + "/.default"
         credential_scopes = [scope]
         self._aad = not isinstance(credential, AzureKeyCredential)
-        self._client = _KnowledgeAgentRetrievalClient(
+        self._client = _KnowledgeBaseRetrievalClient(
             endpoint=endpoint,
             credential=credential,
             sdk_moniker=SDK_MONIKER,
@@ -66,26 +64,22 @@ class KnowledgeAgentRetrievalClient(HeadersMixin):
             repr(self._endpoint), repr(self._agent_name)
         )[:1024]
 
-    async def close(self) -> None:
+    def close(self) -> None:
         """Close the session.
 
         :return: None
         :rtype: None
         """
-        return await self._client.close()
+        return self._client.close()
 
-    @distributed_trace_async
-    async def retrieve(
+    @distributed_trace
+    def retrieve(
         self,
-        retrieval_request: Union[KnowledgeAgentRetrievalRequest, IO[bytes]],
-        x_ms_query_source_authorization: Optional[str] = None,
-        request_options: Optional[RequestOptions] = None,
+        retrieval_request: Union[KnowledgeBaseRetrievalRequest, IO[bytes]],
+        query_source_authorization: Optional[str] = None,
         **kwargs: Any
-    ) -> KnowledgeAgentRetrievalResponse:
+    ) -> KnowledgeBaseRetrievalResponse:
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        return await self._client.knowledge_retrieval.retrieve(
-            retrieval_request=retrieval_request,
-            x_ms_query_source_authorization=x_ms_query_source_authorization,
-            request_options=request_options,
-            **kwargs
+        return self._client.knowledge_retrieval.retrieve(
+            retrieval_request=retrieval_request, query_source_authorization=query_source_authorization, **kwargs
         )

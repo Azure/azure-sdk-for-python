@@ -11,14 +11,14 @@ from typing import Any, TYPE_CHECKING, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
-from .._version import VERSION
+from ..._version import VERSION
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for SearchServiceClient.
+class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+    """Configuration for KnowledgeBaseRetrievalClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -28,14 +28,16 @@ class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-att
     :param credential: Credential used to authenticate requests to the service. Is either a key
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+     ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
      "2025-11-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         api_version: str = kwargs.pop("api_version", "2025-11-01-preview")
 
         if endpoint is None:
@@ -55,7 +57,7 @@ class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-att
         if isinstance(self.credential, AzureKeyCredential):
             return policies.AzureKeyCredentialPolicy(self.credential, "api-key", **kwargs)
         if hasattr(self.credential, "get_token"):
-            return policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
         raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
@@ -65,8 +67,8 @@ class SearchServiceClientConfiguration:  # pylint: disable=too-many-instance-att
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = self._infer_policy(**kwargs)

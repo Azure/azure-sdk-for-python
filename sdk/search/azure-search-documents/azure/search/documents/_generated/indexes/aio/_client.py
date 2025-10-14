@@ -59,7 +59,7 @@ class SearchServiceClient(_SearchServiceClientOperationsMixin):  # pylint: disab
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-08-01-preview". Note that overriding this default value may result in unsupported
+     "2025-11-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
