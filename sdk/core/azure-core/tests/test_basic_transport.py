@@ -14,9 +14,9 @@ try:
 except ImportError:
     import mock
 
-from urllib3.util import connection
-from urllib3.response import HTTPResponse
-from urllib3.connection import HTTPConnection
+from urllib3.util import connection as urllib_connection
+from urllib3.response import HTTPResponse as UrllibResponse
+from urllib3.connection import HTTPConnection as UrllibConnection
 from socket import timeout as SocketTimeout
 
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
@@ -1342,7 +1342,7 @@ def test_requests_timeout_response(caplog, port, http_request):
 
     request = http_request("GET", f"http://localhost:{port}/basic/string")
 
-    with mock.patch.object(HTTPConnection, "getresponse", side_effect=SocketTimeout) as mock_method:
+    with mock.patch.object(UrllibConnection, "getresponse", side_effect=SocketTimeout) as mock_method:
         with pytest.raises(ServiceResponseTimeoutError) as err:
             transport.send(request, read_timeout=0.0001)
 
@@ -1354,11 +1354,13 @@ def test_requests_timeout_response(caplog, port, http_request):
             transport.send(stream_request, stream=True, read_timeout=0.0001)
     
     stream_resp = transport.send(stream_request, stream=True)
-    with mock.patch.object(HTTPResponse, "_handle_chunk", side_effect=SocketTimeout) as mock_method:
+    with mock.patch.object(UrllibResponse, "_handle_chunk", side_effect=SocketTimeout) as mock_method:
         with pytest.raises(ServiceResponseTimeoutError) as err:
             try:
+                # current HttpResponse
                 stream_resp.read()
             except AttributeError:
+                # legacy HttpResponse
                 b"".join(stream_resp.stream_download(None))
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -1367,7 +1369,7 @@ def test_requests_timeout_request(caplog, port, http_request):
 
     request = http_request("GET", f"http://localhost:{port}/basic/string")
 
-    with mock.patch.object(connection, 'create_connection', side_effect=SocketTimeout) as mock_method:
+    with mock.patch.object(urllib_connection, 'create_connection', side_effect=SocketTimeout) as mock_method:
         with pytest.raises(ServiceRequestTimeoutError) as err:
             transport.send(request, connection_timeout=0.0001)
 
