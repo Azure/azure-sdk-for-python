@@ -44,10 +44,10 @@ from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
     enable_live_metrics,
 )
-from azure.monitor.opentelemetry.exporter._performance_counters import (
+from azure.monitor.opentelemetry.exporter._performance_counters import (  # pylint: disable=import-error,no-name-in-module
     enable_performance_counters,
 )
-from azure.monitor.opentelemetry.exporter._performance_counters._processor import (
+from azure.monitor.opentelemetry.exporter._performance_counters._processor import (  # pylint: disable=import-error,no-name-in-module
     _PerformanceCountersLogRecordProcessor,
     _PerformanceCountersSpanProcessor,
 )
