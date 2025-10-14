@@ -107,45 +107,7 @@ class RedTeam:
         or None to use default binary evaluation (evaluation results determine success).
         When using thresholds, scores >= threshold are considered successful attacks.
     :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
-    :param rai_service_url: Optional URL for a local or custom RAI service endpoint (e.g., "http://localhost:5000").
-        Can also be set globally using RedTeam.configure_rai_service() or via RAI_SVC_URL environment variable.
-    :type rai_service_url: Optional[str]
-
-    .. note::
-        For local development or custom RAI service endpoints, you can configure the service URL in three ways:
-
-        1. Set the RAI_SVC_URL environment variable: ``export RAI_SVC_URL="http://localhost:5000"``
-        2. Use the class method: ``RedTeam.configure_rai_service("http://localhost:5000")``
-        3. Pass it to the constructor: ``RedTeam(..., rai_service_url="http://localhost:5000")``
     """
-
-    @classmethod
-    def configure_rai_service(cls, service_url: str) -> None:
-        """
-        Configure the RAI service URL globally for all RedTeam instances.
-
-        This is useful when you want to use a local or custom RAI service endpoint
-        for all RedTeam operations in your application.
-
-        :param service_url: The URL of the RAI service (e.g., "http://localhost:5000")
-        :type service_url: str
-
-        Example:
-            >>> RedTeam.configure_rai_service("http://localhost:5000")
-            >>> red_team = RedTeam(azure_ai_project=project, credential=cred)
-            # Will use the configured local service
-        """
-        os.environ["RAI_SVC_URL"] = service_url
-
-    @classmethod
-    def get_current_rai_service_url(cls) -> Optional[str]:
-        """
-        Get the currently configured RAI service URL.
-
-        :return: The RAI service URL if configured, None otherwise
-        :rtype: Optional[str]
-        """
-        return os.environ.get("RAI_SVC_URL")
 
     def __init__(
         self,
@@ -159,7 +121,6 @@ class RedTeam:
         language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
         attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
-        rai_service_url: Optional[str] = None,
     ):
         """Initialize a new Red Team agent for AI model evaluation.
 
@@ -189,8 +150,6 @@ class RedTeam:
             or None to use default binary evaluation (evaluation results determine success).
             When using thresholds, scores >= threshold are considered successful attacks.
         :type attack_success_thresholds: Optional[Dict[RiskCategory, int]]
-        :param rai_service_url: Optional URL for a local or custom RAI service endpoint (e.g., "http://localhost:5000")
-        :type rai_service_url: Optional[str]
         """
 
         self.azure_ai_project = validate_azure_ai_project(azure_ai_project)
@@ -198,10 +157,6 @@ class RedTeam:
         self.output_dir = output_dir
         self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
-
-        # Set RAI service URL if provided
-        if rai_service_url:
-            os.environ["RAI_SVC_URL"] = rai_service_url
 
         # Configure attack success thresholds
         self.attack_success_thresholds = self._configure_attack_success_thresholds(attack_success_thresholds)
@@ -217,14 +172,7 @@ class RedTeam:
             console_formatter = logging.Formatter("%(levelname)s - %(message)s")
             console_handler.setFormatter(console_formatter)
             self.logger.addHandler(console_handler)
-
-        # Log current RAI service configuration (after logger is initialized)
-        current_rai_url = os.environ.get("RAI_SVC_URL")
-        if current_rai_url:
-            self.logger.info(f"Using custom RAI service URL: {current_rai_url}")
-        else:
-            self.logger.debug("Using default Azure RAI service discovery")
-
+            
         if not self._one_dp_project:
             self.token_manager = ManagedIdentityAPITokenManager(
                 token_scope=TokenScope.DEFAULT_AZURE_MANAGEMENT,
