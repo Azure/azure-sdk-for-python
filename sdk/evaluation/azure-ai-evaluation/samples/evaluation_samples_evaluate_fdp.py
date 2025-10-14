@@ -434,7 +434,7 @@ class EvaluationEvaluateSamples(object):
 
         # [START task_completion_evaluator]
         import os
-        from azure.ai.evaluation._evaluators._task_completion import TaskCompletionEvaluator
+        from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
 
         model_config = {
             "azure_endpoint": os.environ.get("AZURE_OPENAI_ENDPOINT"),  # https://<account_name>.services.ai.azure.com
@@ -442,7 +442,7 @@ class EvaluationEvaluateSamples(object):
             "azure_deployment": os.environ.get("AZURE_OPENAI_DEPLOYMENT"),
         }
 
-        task_completion_evaluator = TaskCompletionEvaluator(model_config=model_config)
+        task_completion_evaluator = _TaskCompletionEvaluator(model_config=model_config)
 
         query = [
             {"role": "system", "content": "You are a travel booking assistant. Help users find and book flights."},
