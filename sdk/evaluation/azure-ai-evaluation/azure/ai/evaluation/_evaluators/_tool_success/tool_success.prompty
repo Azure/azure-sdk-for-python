@@ -129,13 +129,13 @@ EXPECTED OUTPUT
 [TOOL_DEFINITIONS] [get_blocked_usernames] gets comma-separated list of usernames for blocked users
 [TOOL_CALLS]
 [TOOL_CALL] get_blocked_usernames()
-[TOOL_RESULT] ""
+[TOOL_RESULT] "david33;amr_master;phantom5"
 
 EXPECTED OUTPUT
 {
-     "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool , not a technical error. The tool did not return an error",
+     "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool , not a technical failure. The tool did not return an error",
      "details": {
-       "failed_tools": "david33;amr_master;phantom5",
+       "failed_tools": "",
      },
      "success": True
 } 
