@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.newrelicobservability import NewRelicObservabilityMgmtClient
     pip install azure-identity
     pip install azure-mgmt-newrelicobservability
 # USAGE
-    python monitored_subscriptions_createor_update.py
+    python monitors_latest_linked_saa_s_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +31,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.monitored_subscriptions.begin_createor_update(
-        resource_group_name="myResourceGroup",
-        monitor_name="myMonitor",
-        configuration_name="default",
-    ).result()
+    response = client.monitors.latest_linked_saa_s(
+        resource_group_name="rgopenapi",
+        monitor_name="ipxmlcbonyxtolzejcjshkmlron",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/stable/2024-01-01/examples/MonitoredSubscriptions_CreateorUpdate.json
+# x-ms-original-file: specification/newrelic/resource-manager/NewRelic.Observability/preview/2025-05-01-preview/examples/Monitors_LatestLinkedSaaS_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

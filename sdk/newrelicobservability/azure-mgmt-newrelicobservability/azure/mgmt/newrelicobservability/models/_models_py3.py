@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class AccountInfo(_serialization.Model):
@@ -91,10 +92,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -115,24 +116,6 @@ class ProxyResource(Resource):
      information.
     :vartype system_data: ~azure.mgmt.newrelicobservability.models.SystemData
     """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
 
 
 class AccountResource(ProxyResource):
@@ -208,7 +191,7 @@ class AccountResource(ProxyResource):
 class AccountsListResponse(_serialization.Model):
     """Response of get all accounts Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The AccountResource items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.AccountResource]
@@ -226,7 +209,7 @@ class AccountsListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.AccountResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.AccountResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The AccountResource items on this page. Required.
@@ -237,6 +220,39 @@ class AccountsListResponse(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class ActivateSaaSParameterRequest(_serialization.Model):
+    """SaaS guid & PublishedId for Activate and Validate SaaS Resource.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
+    :vartype saas_guid: str
+    :ivar publisher_id: Publisher Id for NewRelic resource. Required.
+    :vartype publisher_id: str
+    """
+
+    _validation = {
+        "saas_guid": {"required": True},
+        "publisher_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "saas_guid": {"key": "saasGuid", "type": "str"},
+        "publisher_id": {"key": "publisherId", "type": "str"},
+    }
+
+    def __init__(self, *, saas_guid: str, publisher_id: str, **kwargs: Any) -> None:
+        """
+        :keyword saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
+        :paramtype saas_guid: str
+        :keyword publisher_id: Publisher Id for NewRelic resource. Required.
+        :paramtype publisher_id: str
+        """
+        super().__init__(**kwargs)
+        self.saas_guid = saas_guid
+        self.publisher_id = publisher_id
 
 
 class AppServiceInfo(_serialization.Model):
@@ -281,7 +297,7 @@ class AppServiceInfo(_serialization.Model):
 class AppServicesGetParameter(_serialization.Model):
     """App services Get Parameter specification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar request: The details of the app services get request. Required.
     :vartype request: ~azure.mgmt.newrelicobservability.models.AppServicesGetRequest
@@ -307,7 +323,7 @@ class AppServicesGetParameter(_serialization.Model):
 class AppServicesGetRequest(_serialization.Model):
     """Request of a app services get Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar azure_resource_ids: Azure resource IDs.
     :vartype azure_resource_ids: list[str]
@@ -324,7 +340,7 @@ class AppServicesGetRequest(_serialization.Model):
         "user_email": {"key": "userEmail", "type": "str"},
     }
 
-    def __init__(self, *, user_email: str, azure_resource_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, user_email: str, azure_resource_ids: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword azure_resource_ids: Azure resource IDs.
         :paramtype azure_resource_ids: list[str]
@@ -339,7 +355,7 @@ class AppServicesGetRequest(_serialization.Model):
 class AppServicesListResponse(_serialization.Model):
     """Response of a list app services Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The AppServiceInfo items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.AppServiceInfo]
@@ -357,7 +373,7 @@ class AppServicesListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.AppServiceInfo"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.AppServiceInfo"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The AppServiceInfo items on this page. Required.
@@ -491,7 +507,7 @@ class ConnectedPartnerResourcesListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ConnectedPartnerResourcesListFormat"]] = None,
+        value: Optional[list["_models.ConnectedPartnerResourcesListFormat"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -531,8 +547,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None
-        self.info = None
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
 class ErrorDetail(_serialization.Model):
@@ -571,11 +587,11 @@ class ErrorDetail(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -644,7 +660,7 @@ class FilteringTag(_serialization.Model):
 class HostsGetParameter(_serialization.Model):
     """Host Get Parameter specification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar request: The details of the Hosts get request. Required.
     :vartype request: ~azure.mgmt.newrelicobservability.models.HostsGetRequest
@@ -670,7 +686,7 @@ class HostsGetParameter(_serialization.Model):
 class HostsGetRequest(_serialization.Model):
     """Request of a Hosts get Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar vm_ids: VM resource IDs.
     :vartype vm_ids: list[str]
@@ -687,7 +703,7 @@ class HostsGetRequest(_serialization.Model):
         "user_email": {"key": "userEmail", "type": "str"},
     }
 
-    def __init__(self, *, user_email: str, vm_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, user_email: str, vm_ids: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword vm_ids: VM resource IDs.
         :paramtype vm_ids: list[str]
@@ -697,6 +713,34 @@ class HostsGetRequest(_serialization.Model):
         super().__init__(**kwargs)
         self.vm_ids = vm_ids
         self.user_email = user_email
+
+
+class LatestLinkedSaaSResponse(_serialization.Model):
+    """Response of get latest linked SaaS resource operation.
+
+    :ivar saa_s_resource_id: SaaS resource id.
+    :vartype saa_s_resource_id: str
+    :ivar is_hidden_saa_s: Flag indicating if the SaaS resource is hidden.
+    :vartype is_hidden_saa_s: bool
+    """
+
+    _attribute_map = {
+        "saa_s_resource_id": {"key": "saaSResourceId", "type": "str"},
+        "is_hidden_saa_s": {"key": "isHiddenSaaS", "type": "bool"},
+    }
+
+    def __init__(
+        self, *, saa_s_resource_id: Optional[str] = None, is_hidden_saa_s: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword saa_s_resource_id: SaaS resource id.
+        :paramtype saa_s_resource_id: str
+        :keyword is_hidden_saa_s: Flag indicating if the SaaS resource is hidden.
+        :paramtype is_hidden_saa_s: bool
+        """
+        super().__init__(**kwargs)
+        self.saa_s_resource_id = saa_s_resource_id
+        self.is_hidden_saa_s = is_hidden_saa_s
 
 
 class LinkedResource(_serialization.Model):
@@ -734,7 +778,7 @@ class LinkedResourceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LinkedResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.LinkedResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Results of a list operation.
@@ -750,23 +794,23 @@ class LinkedResourceListResponse(_serialization.Model):
 class LogRules(_serialization.Model):
     """Set of rules for sending logs for the Monitor resource.
 
-    :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource. Known
-     values are: "Enabled" and "Disabled".
-    :vartype send_aad_logs: str or ~azure.mgmt.newrelicobservability.models.SendAadLogsStatus
-    :ivar send_subscription_logs: Flag specifying if subscription logs should be sent for the
-     Monitor resource. Known values are: "Enabled" and "Disabled".
-    :vartype send_subscription_logs: str or
-     ~azure.mgmt.newrelicobservability.models.SendSubscriptionLogsStatus
-    :ivar send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
-     for the Monitor resource. Known values are: "Enabled" and "Disabled".
-    :vartype send_activity_logs: str or
-     ~azure.mgmt.newrelicobservability.models.SendActivityLogsStatus
-    :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
-     effect if SendActivityLogs flag is enabled. If empty, all resources will be captured.
-     If only Exclude action is specified, the rules will apply to the list of all available
-     resources. If Include actions are specified, the rules will only include resources with the
-     associated tags.
-    :vartype filtering_tags: list[~azure.mgmt.newrelicobservability.models.FilteringTag]
+       :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource. Known
+        values are: "Enabled" and "Disabled".
+       :vartype send_aad_logs: str or ~azure.mgmt.newrelicobservability.models.SendAadLogsStatus
+       :ivar send_subscription_logs: Flag specifying if subscription logs should be sent for the
+        Monitor resource. Known values are: "Enabled" and "Disabled".
+       :vartype send_subscription_logs: str or
+        ~azure.mgmt.newrelicobservability.models.SendSubscriptionLogsStatus
+       :ivar send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
+        for the Monitor resource. Known values are: "Enabled" and "Disabled".
+       :vartype send_activity_logs: str or
+        ~azure.mgmt.newrelicobservability.models.SendActivityLogsStatus
+       :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+        effect if SendActivityLogs flag is enabled. If empty, all resources will be captured.
+    If only Exclude action is specified, the rules will apply to the list of all available
+        resources. If Include actions are specified, the rules will only include resources with the
+        associated tags.
+       :vartype filtering_tags: list[~azure.mgmt.newrelicobservability.models.FilteringTag]
     """
 
     _attribute_map = {
@@ -782,27 +826,27 @@ class LogRules(_serialization.Model):
         send_aad_logs: Optional[Union[str, "_models.SendAadLogsStatus"]] = None,
         send_subscription_logs: Optional[Union[str, "_models.SendSubscriptionLogsStatus"]] = None,
         send_activity_logs: Optional[Union[str, "_models.SendActivityLogsStatus"]] = None,
-        filtering_tags: Optional[List["_models.FilteringTag"]] = None,
+        filtering_tags: Optional[list["_models.FilteringTag"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
-         Known values are: "Enabled" and "Disabled".
-        :paramtype send_aad_logs: str or ~azure.mgmt.newrelicobservability.models.SendAadLogsStatus
-        :keyword send_subscription_logs: Flag specifying if subscription logs should be sent for the
-         Monitor resource. Known values are: "Enabled" and "Disabled".
-        :paramtype send_subscription_logs: str or
-         ~azure.mgmt.newrelicobservability.models.SendSubscriptionLogsStatus
-        :keyword send_activity_logs: Flag specifying if activity logs from Azure resources should be
-         sent for the Monitor resource. Known values are: "Enabled" and "Disabled".
-        :paramtype send_activity_logs: str or
-         ~azure.mgmt.newrelicobservability.models.SendActivityLogsStatus
-        :keyword filtering_tags: List of filtering tags to be used for capturing logs. This only takes
-         effect if SendActivityLogs flag is enabled. If empty, all resources will be captured.
-         If only Exclude action is specified, the rules will apply to the list of all available
-         resources. If Include actions are specified, the rules will only include resources with the
-         associated tags.
-        :paramtype filtering_tags: list[~azure.mgmt.newrelicobservability.models.FilteringTag]
+               :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+                Known values are: "Enabled" and "Disabled".
+               :paramtype send_aad_logs: str or ~azure.mgmt.newrelicobservability.models.SendAadLogsStatus
+               :keyword send_subscription_logs: Flag specifying if subscription logs should be sent for the
+                Monitor resource. Known values are: "Enabled" and "Disabled".
+               :paramtype send_subscription_logs: str or
+                ~azure.mgmt.newrelicobservability.models.SendSubscriptionLogsStatus
+               :keyword send_activity_logs: Flag specifying if activity logs from Azure resources should be
+                sent for the Monitor resource. Known values are: "Enabled" and "Disabled".
+               :paramtype send_activity_logs: str or
+                ~azure.mgmt.newrelicobservability.models.SendActivityLogsStatus
+               :keyword filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+                effect if SendActivityLogs flag is enabled. If empty, all resources will be captured.
+        If only Exclude action is specified, the rules will apply to the list of all available
+                resources. If Include actions are specified, the rules will only include resources with the
+                associated tags.
+               :paramtype filtering_tags: list[~azure.mgmt.newrelicobservability.models.FilteringTag]
         """
         super().__init__(**kwargs)
         self.send_aad_logs = send_aad_logs
@@ -816,7 +860,7 @@ class ManagedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -853,7 +897,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -869,8 +913,8 @@ class ManagedServiceIdentity(_serialization.Model):
          ~azure.mgmt.newrelicobservability.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
@@ -890,6 +934,10 @@ class MarketplaceSaaSInfo(_serialization.Model):
     :ivar billed_azure_subscription_id: The Azure Subscription ID to which the Marketplace
      Subscription belongs and gets billed into.
     :vartype billed_azure_subscription_id: str
+    :ivar publisher_id: Publisher Id of the Marketplace offer.
+    :vartype publisher_id: str
+    :ivar offer_id: Offer Id of the Marketplace offer,.
+    :vartype offer_id: str
     """
 
     _attribute_map = {
@@ -898,6 +946,8 @@ class MarketplaceSaaSInfo(_serialization.Model):
         "marketplace_resource_id": {"key": "marketplaceResourceId", "type": "str"},
         "marketplace_status": {"key": "marketplaceStatus", "type": "str"},
         "billed_azure_subscription_id": {"key": "billedAzureSubscriptionId", "type": "str"},
+        "publisher_id": {"key": "publisherId", "type": "str"},
+        "offer_id": {"key": "offerId", "type": "str"},
     }
 
     def __init__(
@@ -908,6 +958,8 @@ class MarketplaceSaaSInfo(_serialization.Model):
         marketplace_resource_id: Optional[str] = None,
         marketplace_status: Optional[str] = None,
         billed_azure_subscription_id: Optional[str] = None,
+        publisher_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -923,6 +975,10 @@ class MarketplaceSaaSInfo(_serialization.Model):
         :keyword billed_azure_subscription_id: The Azure Subscription ID to which the Marketplace
          Subscription belongs and gets billed into.
         :paramtype billed_azure_subscription_id: str
+        :keyword publisher_id: Publisher Id of the Marketplace offer.
+        :paramtype publisher_id: str
+        :keyword offer_id: Offer Id of the Marketplace offer,.
+        :paramtype offer_id: str
         """
         super().__init__(**kwargs)
         self.marketplace_subscription_id = marketplace_subscription_id
@@ -930,6 +986,8 @@ class MarketplaceSaaSInfo(_serialization.Model):
         self.marketplace_resource_id = marketplace_resource_id
         self.marketplace_status = marketplace_status
         self.billed_azure_subscription_id = billed_azure_subscription_id
+        self.publisher_id = publisher_id
+        self.offer_id = offer_id
 
 
 class MetricRules(_serialization.Model):
@@ -958,7 +1016,7 @@ class MetricRules(_serialization.Model):
         self,
         *,
         send_metrics: Optional[Union[str, "_models.SendMetricsStatus"]] = None,
-        filtering_tags: Optional[List["_models.FilteringTag"]] = None,
+        filtering_tags: Optional[list["_models.FilteringTag"]] = None,
         user_email: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -980,7 +1038,7 @@ class MetricRules(_serialization.Model):
 class MetricsRequest(_serialization.Model):
     """Request of get metrics Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar user_email: User Email. Required.
     :vartype user_email: str
@@ -1006,7 +1064,7 @@ class MetricsRequest(_serialization.Model):
 class MetricsRequestParameter(_serialization.Model):
     """Get Metrics Status Parameter specification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar request: The details of the get metrics status request. Required.
     :vartype request: ~azure.mgmt.newrelicobservability.models.MetricsRequest
@@ -1032,7 +1090,7 @@ class MetricsRequestParameter(_serialization.Model):
 class MetricsStatusRequest(_serialization.Model):
     """Request of get metrics status Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar azure_resource_ids: Azure resource IDs.
     :vartype azure_resource_ids: list[str]
@@ -1049,7 +1107,7 @@ class MetricsStatusRequest(_serialization.Model):
         "user_email": {"key": "userEmail", "type": "str"},
     }
 
-    def __init__(self, *, user_email: str, azure_resource_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, user_email: str, azure_resource_ids: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword azure_resource_ids: Azure resource IDs.
         :paramtype azure_resource_ids: list[str]
@@ -1064,7 +1122,7 @@ class MetricsStatusRequest(_serialization.Model):
 class MetricsStatusRequestParameter(_serialization.Model):
     """Get Metrics Status Parameter specification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar request: The details of the get metrics status request. Required.
     :vartype request: ~azure.mgmt.newrelicobservability.models.MetricsStatusRequest
@@ -1098,7 +1156,7 @@ class MetricsStatusResponse(_serialization.Model):
         "azure_resource_ids": {"key": "azureResourceIds", "type": "[str]"},
     }
 
-    def __init__(self, *, azure_resource_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, azure_resource_ids: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword azure_resource_ids: Azure resource IDs.
         :paramtype azure_resource_ids: list[str]
@@ -1172,7 +1230,7 @@ class MonitoredResource(_serialization.Model):
 class MonitoredResourceListResponse(_serialization.Model):
     """List of all the resources being monitored by NewRelic monitor resource.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The MonitoredResource items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.MonitoredResource]
@@ -1190,7 +1248,7 @@ class MonitoredResourceListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.MonitoredResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.MonitoredResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The MonitoredResource items on this page. Required.
@@ -1287,9 +1345,9 @@ class MonitoredSubscriptionProperties(_serialization.Model):
         :paramtype properties: ~azure.mgmt.newrelicobservability.models.SubscriptionList
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.id = None
-        self.type = None
+        self.name: Optional[str] = None
+        self.id: Optional[str] = None
+        self.type: Optional[str] = None
         self.properties = properties
 
 
@@ -1310,7 +1368,7 @@ class MonitoredSubscriptionPropertiesList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.MonitoredSubscriptionProperties"]] = None,
+        value: Optional[list["_models.MonitoredSubscriptionProperties"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1365,7 +1423,7 @@ class MonitoringTagRulesProperties(_serialization.Model):
         :paramtype metric_rules: ~azure.mgmt.newrelicobservability.models.MetricRules
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.log_rules = log_rules
         self.metric_rules = metric_rules
 
@@ -1424,7 +1482,7 @@ class TrackedResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1460,7 +1518,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1472,12 +1530,12 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class NewRelicMonitorResource(TrackedResource):
     """A Monitor Resource by NewRelic.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -1516,6 +1574,8 @@ class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-inst
     :vartype user_info: ~azure.mgmt.newrelicobservability.models.UserInfo
     :ivar plan_data: Plan details.
     :vartype plan_data: ~azure.mgmt.newrelicobservability.models.PlanData
+    :ivar saa_s_data: SaaS details.
+    :vartype saa_s_data: ~azure.mgmt.newrelicobservability.models.SaaSData
     :ivar liftr_resource_category: Liftr resource category. Known values are: "Unknown" and
      "MonitorLogs".
     :vartype liftr_resource_category: str or
@@ -1567,6 +1627,7 @@ class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-inst
         },
         "user_info": {"key": "properties.userInfo", "type": "UserInfo"},
         "plan_data": {"key": "properties.planData", "type": "PlanData"},
+        "saa_s_data": {"key": "properties.saaSData", "type": "SaaSData"},
         "liftr_resource_category": {"key": "properties.liftrResourceCategory", "type": "str"},
         "liftr_resource_preference": {"key": "properties.liftrResourcePreference", "type": "int"},
         "org_creation_source": {"key": "properties.orgCreationSource", "type": "str"},
@@ -1579,11 +1640,12 @@ class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-inst
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         new_relic_account_properties: Optional["_models.NewRelicAccountProperties"] = None,
         user_info: Optional["_models.UserInfo"] = None,
         plan_data: Optional["_models.PlanData"] = None,
+        saa_s_data: Optional["_models.SaaSData"] = None,
         org_creation_source: Optional[Union[str, "_models.OrgCreationSource"]] = None,
         account_creation_source: Optional[Union[str, "_models.AccountCreationSource"]] = None,
         subscription_state: Optional[str] = None,
@@ -1604,6 +1666,8 @@ class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-inst
         :paramtype user_info: ~azure.mgmt.newrelicobservability.models.UserInfo
         :keyword plan_data: Plan details.
         :paramtype plan_data: ~azure.mgmt.newrelicobservability.models.PlanData
+        :keyword saa_s_data: SaaS details.
+        :paramtype saa_s_data: ~azure.mgmt.newrelicobservability.models.SaaSData
         :keyword org_creation_source: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
         :paramtype org_creation_source: str or
          ~azure.mgmt.newrelicobservability.models.OrgCreationSource
@@ -1619,15 +1683,16 @@ class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-inst
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
-        self.provisioning_state = None
-        self.monitoring_status = None
-        self.marketplace_subscription_status = None
-        self.marketplace_subscription_id = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.monitoring_status: Optional[Union[str, "_models.MonitoringStatus"]] = None
+        self.marketplace_subscription_status: Optional[Union[str, "_models.MarketplaceSubscriptionStatus"]] = None
+        self.marketplace_subscription_id: Optional[str] = None
         self.new_relic_account_properties = new_relic_account_properties
         self.user_info = user_info
         self.plan_data = plan_data
-        self.liftr_resource_category = None
-        self.liftr_resource_preference = None
+        self.saa_s_data = saa_s_data
+        self.liftr_resource_category: Optional[Union[str, "_models.LiftrResourceCategories"]] = None
+        self.liftr_resource_preference: Optional[int] = None
         self.org_creation_source = org_creation_source
         self.account_creation_source = account_creation_source
         self.subscription_state = subscription_state
@@ -1637,7 +1702,7 @@ class NewRelicMonitorResource(TrackedResource):  # pylint: disable=too-many-inst
 class NewRelicMonitorResourceListResult(_serialization.Model):
     """The response of a NewRelicMonitorResource list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The NewRelicMonitorResource items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.NewRelicMonitorResource]
@@ -1655,7 +1720,7 @@ class NewRelicMonitorResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.NewRelicMonitorResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.NewRelicMonitorResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The NewRelicMonitorResource items on this page. Required.
@@ -1682,6 +1747,8 @@ class NewRelicMonitorResourceUpdate(_serialization.Model):
     :vartype user_info: ~azure.mgmt.newrelicobservability.models.UserInfo
     :ivar plan_data: Plan details.
     :vartype plan_data: ~azure.mgmt.newrelicobservability.models.PlanData
+    :ivar saa_s_data: SaaS details.
+    :vartype saa_s_data: ~azure.mgmt.newrelicobservability.models.SaaSData
     :ivar org_creation_source: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
     :vartype org_creation_source: str or ~azure.mgmt.newrelicobservability.models.OrgCreationSource
     :ivar account_creation_source: Source of account creation. Known values are: "LIFTR" and
@@ -1699,6 +1766,7 @@ class NewRelicMonitorResourceUpdate(_serialization.Model):
         },
         "user_info": {"key": "properties.userInfo", "type": "UserInfo"},
         "plan_data": {"key": "properties.planData", "type": "PlanData"},
+        "saa_s_data": {"key": "properties.saaSData", "type": "SaaSData"},
         "org_creation_source": {"key": "properties.orgCreationSource", "type": "str"},
         "account_creation_source": {"key": "properties.accountCreationSource", "type": "str"},
     }
@@ -1707,10 +1775,11 @@ class NewRelicMonitorResourceUpdate(_serialization.Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         new_relic_account_properties: Optional["_models.NewRelicAccountProperties"] = None,
         user_info: Optional["_models.UserInfo"] = None,
         plan_data: Optional["_models.PlanData"] = None,
+        saa_s_data: Optional["_models.SaaSData"] = None,
         org_creation_source: Optional[Union[str, "_models.OrgCreationSource"]] = None,
         account_creation_source: Optional[Union[str, "_models.AccountCreationSource"]] = None,
         **kwargs: Any
@@ -1727,6 +1796,8 @@ class NewRelicMonitorResourceUpdate(_serialization.Model):
         :paramtype user_info: ~azure.mgmt.newrelicobservability.models.UserInfo
         :keyword plan_data: Plan details.
         :paramtype plan_data: ~azure.mgmt.newrelicobservability.models.PlanData
+        :keyword saa_s_data: SaaS details.
+        :paramtype saa_s_data: ~azure.mgmt.newrelicobservability.models.SaaSData
         :keyword org_creation_source: Source of org creation. Known values are: "LIFTR" and "NEWRELIC".
         :paramtype org_creation_source: str or
          ~azure.mgmt.newrelicobservability.models.OrgCreationSource
@@ -1741,6 +1812,7 @@ class NewRelicMonitorResourceUpdate(_serialization.Model):
         self.new_relic_account_properties = new_relic_account_properties
         self.user_info = user_info
         self.plan_data = plan_data
+        self.saa_s_data = saa_s_data
         self.org_creation_source = org_creation_source
         self.account_creation_source = account_creation_source
 
@@ -1841,11 +1913,11 @@ class Operation(_serialization.Model):
         :paramtype display: ~azure.mgmt.newrelicobservability.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
-        self.is_data_action = None
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
-        self.origin = None
-        self.action_type = None
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -1884,10 +1956,10 @@ class OperationDisplay(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
@@ -1915,8 +1987,8 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value = None
-        self.next_link = None
+        self.value: Optional[list["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class OrganizationInfo(_serialization.Model):
@@ -2005,7 +2077,7 @@ class OrganizationResource(ProxyResource):
 class OrganizationsListResponse(_serialization.Model):
     """Response of get all organizations Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The OrganizationResource items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.OrganizationResource]
@@ -2023,7 +2095,7 @@ class OrganizationsListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.OrganizationResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.OrganizationResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The OrganizationResource items on this page. Required.
@@ -2070,9 +2142,8 @@ class PlanData(_serialization.Model):
     :ivar usage_type: Different usage type like PAYG/COMMITTED. this could be enum. Known values
      are: "PAYG" and "COMMITTED".
     :vartype usage_type: str or ~azure.mgmt.newrelicobservability.models.UsageType
-    :ivar billing_cycle: Different billing cycles like MONTHLY/WEEKLY. this could be enum. Known
-     values are: "YEARLY", "MONTHLY", and "WEEKLY".
-    :vartype billing_cycle: str or ~azure.mgmt.newrelicobservability.models.BillingCycle
+    :ivar billing_cycle: Different billing cycles like Monthly/Weekly.
+    :vartype billing_cycle: str
     :ivar plan_details: plan id as published by NewRelic.
     :vartype plan_details: str
     :ivar effective_date: date when plan was applied.
@@ -2090,7 +2161,7 @@ class PlanData(_serialization.Model):
         self,
         *,
         usage_type: Optional[Union[str, "_models.UsageType"]] = None,
-        billing_cycle: Optional[Union[str, "_models.BillingCycle"]] = None,
+        billing_cycle: Optional[str] = None,
         plan_details: Optional[str] = None,
         effective_date: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -2099,9 +2170,8 @@ class PlanData(_serialization.Model):
         :keyword usage_type: Different usage type like PAYG/COMMITTED. this could be enum. Known values
          are: "PAYG" and "COMMITTED".
         :paramtype usage_type: str or ~azure.mgmt.newrelicobservability.models.UsageType
-        :keyword billing_cycle: Different billing cycles like MONTHLY/WEEKLY. this could be enum. Known
-         values are: "YEARLY", "MONTHLY", and "WEEKLY".
-        :paramtype billing_cycle: str or ~azure.mgmt.newrelicobservability.models.BillingCycle
+        :keyword billing_cycle: Different billing cycles like Monthly/Weekly.
+        :paramtype billing_cycle: str
         :keyword plan_details: plan id as published by NewRelic.
         :paramtype plan_details: str
         :keyword effective_date: date when plan was applied.
@@ -2117,7 +2187,7 @@ class PlanData(_serialization.Model):
 class PlanDataListResponse(_serialization.Model):
     """Response of get all plan data Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The PlanDataResource items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.PlanDataResource]
@@ -2135,7 +2205,7 @@ class PlanDataListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.PlanDataResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.PlanDataResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The PlanDataResource items on this page. Required.
@@ -2216,6 +2286,147 @@ class PlanDataResource(ProxyResource):
         self.account_creation_source = account_creation_source
 
 
+class ResubscribeProperties(_serialization.Model):
+    """Resubscribe Properties.
+
+    :ivar plan_id: Newly selected plan Id to create the new Marketplace subscription for
+     Resubscribe.
+    :vartype plan_id: str
+    :ivar term_id: Newly selected term Id to create the new Marketplace subscription for
+     Resubscribe.
+    :vartype term_id: str
+    :ivar subscription_id: Newly selected Azure Subscription Id in which the new Marketplace
+     subscription will be created for Resubscribe.
+    :vartype subscription_id: str
+    :ivar resource_group: Newly selected Azure resource group in which the new Marketplace
+     subscription will be created for Resubscribe.
+    :vartype resource_group: str
+    :ivar organization_id: Organization Id of the NewRelic Organization that needs to be
+     resubscribed.
+    :vartype organization_id: str
+    :ivar publisher_id: Publisher Id of the NewRelic offer that needs to be resubscribed.
+    :vartype publisher_id: str
+    :ivar offer_id: Offer Id of the NewRelic offer that needs to be resubscribed.
+    :vartype offer_id: str
+    """
+
+    _attribute_map = {
+        "plan_id": {"key": "planId", "type": "str"},
+        "term_id": {"key": "termId", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "organization_id": {"key": "organizationId", "type": "str"},
+        "publisher_id": {"key": "publisherId", "type": "str"},
+        "offer_id": {"key": "offerId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        plan_id: Optional[str] = None,
+        term_id: Optional[str] = None,
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        organization_id: Optional[str] = None,
+        publisher_id: Optional[str] = None,
+        offer_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword plan_id: Newly selected plan Id to create the new Marketplace subscription for
+         Resubscribe.
+        :paramtype plan_id: str
+        :keyword term_id: Newly selected term Id to create the new Marketplace subscription for
+         Resubscribe.
+        :paramtype term_id: str
+        :keyword subscription_id: Newly selected Azure Subscription Id in which the new Marketplace
+         subscription will be created for Resubscribe.
+        :paramtype subscription_id: str
+        :keyword resource_group: Newly selected Azure resource group in which the new Marketplace
+         subscription will be created for Resubscribe.
+        :paramtype resource_group: str
+        :keyword organization_id: Organization Id of the NewRelic Organization that needs to be
+         resubscribed.
+        :paramtype organization_id: str
+        :keyword publisher_id: Publisher Id of the NewRelic offer that needs to be resubscribed.
+        :paramtype publisher_id: str
+        :keyword offer_id: Offer Id of the NewRelic offer that needs to be resubscribed.
+        :paramtype offer_id: str
+        """
+        super().__init__(**kwargs)
+        self.plan_id = plan_id
+        self.term_id = term_id
+        self.subscription_id = subscription_id
+        self.resource_group = resource_group
+        self.organization_id = organization_id
+        self.publisher_id = publisher_id
+        self.offer_id = offer_id
+
+
+class SaaSData(_serialization.Model):
+    """SaaS details.
+
+    :ivar saa_s_resource_id: SaaS resource id.
+    :vartype saa_s_resource_id: str
+    """
+
+    _attribute_map = {
+        "saa_s_resource_id": {"key": "saaSResourceId", "type": "str"},
+    }
+
+    def __init__(self, *, saa_s_resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword saa_s_resource_id: SaaS resource id.
+        :paramtype saa_s_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.saa_s_resource_id = saa_s_resource_id
+
+
+class SaaSResourceDetailsResponse(ProxyResource):
+    """Marketplace SaaS resource details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.newrelicobservability.models.SystemData
+    :ivar saas_id: Id of the Marketplace SaaS Resource.
+    :vartype saas_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "saas_id": {"key": "saasId", "type": "str"},
+    }
+
+    def __init__(self, *, saas_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword saas_id: Id of the Marketplace SaaS Resource.
+        :paramtype saas_id: str
+        """
+        super().__init__(**kwargs)
+        self.saas_id = saas_id
+
+
 class SubscriptionList(_serialization.Model):
     """The request to update subscriptions needed to be monitored by the NewRelic monitor resource.
 
@@ -2247,7 +2458,7 @@ class SubscriptionList(_serialization.Model):
         self,
         *,
         patch_operation: Optional[Union[str, "_models.PatchOperation"]] = None,
-        monitored_subscription_list: Optional[List["_models.MonitoredSubscription"]] = None,
+        monitored_subscription_list: Optional[list["_models.MonitoredSubscription"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2261,13 +2472,13 @@ class SubscriptionList(_serialization.Model):
         super().__init__(**kwargs)
         self.patch_operation = patch_operation
         self.monitored_subscription_list = monitored_subscription_list
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
 class SwitchBillingParameter(_serialization.Model):
     """Switch Billing Parameter specification.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar request: The details of the switch billing request. Required.
     :vartype request: ~azure.mgmt.newrelicobservability.models.SwitchBillingRequest
@@ -2293,7 +2504,7 @@ class SwitchBillingParameter(_serialization.Model):
 class SwitchBillingRequest(_serialization.Model):
     """Request of a switch billing Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar azure_resource_id: Azure resource Id.
     :vartype azure_resource_id: str
@@ -2464,7 +2675,7 @@ class TagRule(ProxyResource):
         :paramtype metric_rules: ~azure.mgmt.newrelicobservability.models.MetricRules
         """
         super().__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
         self.log_rules = log_rules
         self.metric_rules = metric_rules
 
@@ -2472,7 +2683,7 @@ class TagRule(ProxyResource):
 class TagRuleListResult(_serialization.Model):
     """The response of a TagRule list operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The TagRule items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.TagRule]
@@ -2489,7 +2700,7 @@ class TagRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TagRule"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.TagRule"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The TagRule items on this page. Required.
         :paramtype value: list[~azure.mgmt.newrelicobservability.models.TagRule]
@@ -2557,8 +2768,8 @@ class UserAssignedIdentity(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class UserInfo(_serialization.Model):
@@ -2644,7 +2855,7 @@ class VMExtensionPayload(_serialization.Model):
 class VMHostsListResponse(_serialization.Model):
     """Response of a list VM Host Operation.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: The VMInfo items on this page. Required.
     :vartype value: list[~azure.mgmt.newrelicobservability.models.VMInfo]
@@ -2661,7 +2872,7 @@ class VMHostsListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.VMInfo"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.VMInfo"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The VMInfo items on this page. Required.
         :paramtype value: list[~azure.mgmt.newrelicobservability.models.VMInfo]
