@@ -4,11 +4,7 @@ description: Evaluates Task Adherence score
 model:
   api: chat
   parameters:
-    temperature: 0.0
-    max_tokens: 800
-    top_p: 1.0
-    presence_penalty: 0
-    frequency_penalty: 0
+    max_completion_tokens: 800
     response_format:
       type: json_object
 
