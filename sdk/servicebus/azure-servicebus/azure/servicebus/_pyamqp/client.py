@@ -577,7 +577,7 @@ class SendClient(AMQPClient):
     def __init__(self, hostname, target, **kwargs):
         self.target = target
         # Sender and Link settings
-         self._max_message_size = kwargs.pop("max_message_size", LINK_MAX_MESSAGE_SIZE)
+        self._max_message_size = kwargs.pop("max_message_size", LINK_MAX_MESSAGE_SIZE)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", None)
         super(SendClient, self).__init__(hostname, **kwargs)
