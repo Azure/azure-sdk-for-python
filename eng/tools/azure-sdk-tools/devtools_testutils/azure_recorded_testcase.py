@@ -161,11 +161,7 @@ class AzureRecordedTestCase(object):
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
             trim_kwargs_from_test_function(test_fn, kwargs)
-            try:
-                loop = asyncio.get_event_loop()
-            except RuntimeError:
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
+            loop = asyncio.get_event_loop()
             return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
         return run
