@@ -748,6 +748,16 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
     :return: A dictionary that can be used as the data source input for an OAI evaluation run.
     :rtype: Dict[str, Any]
     """
+    def _convert_value_to_string(val: Any) -> str:
+        """Convert a value to string representation for AOAI evaluation."""
+        if val is None:
+            return ""
+        elif isinstance(val, (str, int, float, bool)):
+            return str(val)
+        else:
+            # Lists / dicts / other -> string for now
+            return str(val)
+
     LOGGER.info(
         f"AOAI: Building data source from {len(input_data_df)} rows with {len(column_mapping)} column mappings..."
     )
@@ -814,13 +824,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
             val = row.get(df_col, None)
 
             # Convert value to string to match schema's "type": "string" leaves.
-            if val is None:
-                str_val = ""
-            elif isinstance(val, (str, int, float, bool)):
-                str_val = str(val)
-            else:
-                # Lists / dicts / other -> string for now
-                str_val = str(val)
+            str_val = _convert_value_to_string(val)
 
             # Insert into nested dict
             cursor = item_root
@@ -840,12 +844,7 @@ def _get_data_source(input_data_df: pd.DataFrame, column_mapping: Dict[str, str]
         for col_name in input_data_df.columns:
             if col_name not in processed_cols:
                 val = row.get(col_name, None)
-                if val is None:
-                    str_val = ""
-                elif isinstance(val, (str, int, float, bool)):
-                    str_val = str(val)
-                else:
-                    str_val = str(val)
+                str_val = _convert_value_to_string(val)
                 item_root[col_name] = str_val
 
         content.append({WRAPPER_KEY: item_root})
