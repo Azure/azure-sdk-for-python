@@ -95,7 +95,7 @@ OPT_IN_ATTRIBUTES = [
     _CosmosTracingConstants.DB_QUERY_PARAMETER_KEY,
 ]
 
-# Mappping of operation names to output correct values.
+# Mapping of operation names to output correct values.
 OPERATION_NAME_MAPPING = {
     # Batch operations
     "execute_batch": "execute_batch",
