@@ -341,7 +341,9 @@ def start_test_proxy(request) -> None:
     """
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
-    check_certificate_location(repo_root)
+
+    if PROXY_URL.startswith("https://"):
+        check_certificate_location(repo_root)
 
     if not PROXY_MANUALLY_STARTED:
         if check_availability() == 200:
@@ -367,13 +369,17 @@ def start_test_proxy(request) -> None:
                 _LOGGER.info("Downloading and starting standalone proxy executable...")
                 tool_name = prepare_local_tool(root)
 
-            # Always start the proxy with these two defaults set to allow SSL connection
-            passenv = {
-                "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
-                    root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
-                ),
-                "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
-            }
+            if PROXY_URL.startswith("https://"):
+                # Always start the proxy with these two defaults set to allow SSL connection
+                passenv = {
+                    "ASPNETCORE_Kestrel__Certificates__Default__Path": os.path.join(
+                        root, "eng", "common", "testproxy", "dotnet-devcert.pfx"
+                    ),
+                    "ASPNETCORE_Kestrel__Certificates__Default__Password": "password",
+                }
+            else:
+                passenv = {}
+
             # If they are already set, override what we give the proxy with what is in os.environ
             passenv.update(os.environ)
 
