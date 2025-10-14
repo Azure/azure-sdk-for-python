@@ -128,9 +128,11 @@ class EvaluationResult(TypedDict):
 class AppInsightsConfig(TypedDict):
     connection_string: str
     agent_id: NotRequired[str]
-    run_type: NotRequired[str] # continuous, batch, etc
+    agent_name: NotRequired[str]
+    agent_version: NotRequired[str]
+    project_id: NotRequired[str]
+    run_type: NotRequired[str]
     response_id: NotRequired[str]
-    is_scheduled_run: NotRequired[bool]
+    schedule_type: NotRequired[str]
     run_id: NotRequired[str]
-    dataset_id: NotRequired[str]
     response_id: NotRequired[str]
