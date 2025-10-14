@@ -54,6 +54,7 @@ class EvaluationProcessor:
         retry_config,
         scan_session_id=None,
         scan_output_dir=None,
+        taxonomy_risk_categories=None,
     ):
         """Initialize the evaluation processor.
 
@@ -64,6 +65,7 @@ class EvaluationProcessor:
         :param retry_config: Retry configuration for network errors
         :param scan_session_id: Session ID for the current scan
         :param scan_output_dir: Directory for scan outputs
+        :param taxonomy_risk_categories: Dictionary mapping risk categories to taxonomy values
         """
         self.logger = logger
         self.azure_ai_project = azure_ai_project
@@ -72,6 +74,7 @@ class EvaluationProcessor:
         self.retry_config = retry_config
         self.scan_session_id = scan_session_id
         self.scan_output_dir = scan_output_dir
+        self.taxonomy_risk_categories = taxonomy_risk_categories or {}
 
     async def evaluate_conversation(
         self,
@@ -100,6 +103,7 @@ class EvaluationProcessor:
         :rtype: Dict
         """
         annotation_task = get_annotation_task_from_risk_category(risk_category)
+
         messages = conversation["conversation"]["messages"]
 
         # Extract all assistant messages for evaluation
@@ -127,6 +131,13 @@ class EvaluationProcessor:
             # Add risk_sub_type to query_response if it exists
             if risk_sub_type:
                 query_response["risk_sub_type"] = risk_sub_type
+
+            # Add taxonomy to query_response if it exists for this risk category
+            if self.taxonomy_risk_categories and risk_category.value in self.taxonomy_risk_categories:
+                taxonomy_value = self.taxonomy_risk_categories[risk_category.value]
+                # Convert taxonomy to string if it's not already a string
+                if taxonomy_value is not None:
+                    query_response["taxonomy"] = str(taxonomy_value)
 
             try:
                 self.logger.debug(f"Evaluating conversation {idx+1} for {risk_category.value}/{strategy_name}")

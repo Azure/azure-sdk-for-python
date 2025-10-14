@@ -345,6 +345,7 @@ class RedTeam:
             retry_config=retry_config,
             scan_session_id=self.scan_session_id,
             scan_output_dir=self.scan_output_dir,
+            taxonomy_risk_categories=getattr(self, 'taxonomy_risk_categories', None),
         )
 
         # Initialize MLflow integration
@@ -1224,6 +1225,8 @@ class RedTeam:
         run_id_override = kwargs.get("run_id") or kwargs.get("runId")
         eval_id_override = kwargs.get("eval_id") or kwargs.get("evalId")
         created_at_override = kwargs.get("created_at") or kwargs.get("createdAt")
+        taxonomy_risk_categories = kwargs.get("taxonomy_risk_categories") # key is risk category value is taxonomy
+        self.taxonomy_risk_categories = taxonomy_risk_categories or {}
         is_agent_target: Optional[bool] = kwargs.get("is_agent_target", False)
         with UserAgentSingleton().add_useragent_product(user_agent):
             # Initialize scan

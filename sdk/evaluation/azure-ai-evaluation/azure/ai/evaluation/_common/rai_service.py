@@ -827,7 +827,13 @@ def _build_sync_eval_payload(
         "response": data.get("response", ""),
     }
 
-    #TODO how to pass in tool calls and context?
+    if data.get("context") is not None:
+        context = ""
+        context += " ".join(c["content"] for c in data["context"]["contexts"])
+        item_content["context"] = context
+
+    if data.get("tool_calls") is not None:
+        item_content["tools"] = data.get("tool_calls")
 
     # Build the data mapping using mustache syntax {{item.field}}
     data_mapping = {
@@ -856,13 +862,14 @@ def _build_sync_eval_payload(
         }]
     }
 
-    # Add properties/metadata if scan_session_id is provided
-    if scan_session_id:
-        sync_eval_payload["properties"] = {
-            "scan_session_id": scan_session_id,
-            "annotation_task": annotation_task,
-            "metric_name": metric_name,
-        }
+    # Add properties/metadata if needed
+    properties = {}
+    if data.get("risk_sub_type") is not None:
+        properties["category"] = data["risk_sub_type"]
+    if data.get("taxonomy") is not None:
+        properties["taxonomy"] = str(data["taxonomy"])  # Ensure taxonomy is converted to string
+    if properties:
+        sync_eval_payload["properties"] = properties
     return sync_eval_payload
 
 
