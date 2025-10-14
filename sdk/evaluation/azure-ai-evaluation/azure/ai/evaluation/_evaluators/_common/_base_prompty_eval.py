@@ -132,7 +132,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
-        llm_output, input_token_count, output_token_count = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output, input_token_count, output_token_count, total_token_count = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
         if llm_output:
@@ -148,6 +148,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     f"{self._result_key}_threshold": self._threshold,
                     "input_token_count": input_token_count,
                     "output_token_count": output_token_count,
+                    "total_token_count": total_token_count,
                 }
             match = re.search(r"\d", llm_output)
             if match:

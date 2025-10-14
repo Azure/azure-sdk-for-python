@@ -266,7 +266,7 @@ class AsyncPrompty:
     async def __call__(  # pylint: disable=docstring-keyword-should-match-keyword-only
         self,
         **kwargs: Any,
-    ) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int]:
+    ) -> Tuple[Union[OpenAIChatResponseType, AsyncGenerator[str, None], str, Mapping[str, Any]], int, int, int]:
         """Calling prompty as a function in async, the inputs should be provided with key word arguments.
         Returns the output of the prompty.
 

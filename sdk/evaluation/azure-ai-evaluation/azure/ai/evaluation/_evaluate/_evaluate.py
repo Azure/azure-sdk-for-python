@@ -322,7 +322,7 @@ def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
     # Find token count columns that belong to known metrics
     token_count_cols = [
         col for col in df.columns 
-        if (col.endswith('input_token_count') or col.endswith('output_token_count'))
+        if (col.endswith('input_token_count') or col.endswith('output_token_count') or col.endswith('total_token_count'))
         and any(col.startswith(f"{metric}.") for metric in all_known_metrics)
     ]
     
@@ -1101,13 +1101,11 @@ def _log_events_to_app_insights(
                     log_attributes["gen_ai.evaluation.explanation"] = str(event_data["reason"])
                 
                 # Handle error from sample if present
-                if "sample" in event_data and len(event_data["sample"]) > 0:
-                    sample_item = event_data["sample"][0]
-                    if "error" in sample_item:
-                        error_dict = sample_item["error"]
-                        if "message" in error_dict:
-                            log_attributes["error.type"] = str(error_dict["message"])
-                
+                # Put the error message in error.type to follow OTel semantic conventions
+                error = event_data.get("sample", {}).get("error", {}).get("message", None)
+                if error:
+                    log_attributes["error.type"] = error
+
                 # Handle redteam attack properties if present
                 if "properties" in event_data:
                     properties = event_data["properties"]
