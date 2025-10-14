@@ -29,6 +29,12 @@ from ._models import (
     AzureCommunicationsRecordingStorage,
     MediaStreamingSubscription,
     TranscriptionSubscription,
+    MoveParticipantsResult,
+    PiiRedactionOptions,
+    SummarizationOptions,
+    TeamsPhoneCallDetails,
+    TeamsPhoneCallerDetails,
+    TeamsPhoneSourceDetails
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -61,6 +67,7 @@ from ._generated.models._enums import (
     RecordingState,
     VoiceKind,
     AudioFormat,
+    RedactionType,
 )
 
 __all__ = [
@@ -77,6 +84,12 @@ __all__ = [
     "TranscriptionOptions",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
+    "PiiRedactionOptions",
+    "SummarizationOptions",
+    "TeamsPhoneCallDetails",
+    "TeamsPhoneCallerDetails",
+    "TeamsPhoneSourceDetails",
+
     # models for output
     "CallConnectionProperties",
     "MediaStreamingSubscription",
@@ -85,6 +98,7 @@ __all__ = [
     "RecordingProperties",
     "AddParticipantResult",
     "RemoveParticipantResult",
+    "MoveParticipantsResult",
     "TransferCallResult",
     "MuteParticipantResult",
     "SendDtmfTonesResult",
@@ -119,6 +133,7 @@ __all__ = [
     "RecordingState",
     "VoiceKind",
     "AudioFormat",
+    "RedactionType",
 ]
 __version__ = VERSION
 
