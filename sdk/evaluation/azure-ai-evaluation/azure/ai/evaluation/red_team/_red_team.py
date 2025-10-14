@@ -838,8 +838,8 @@ class RedTeam:
 
                 # For strategies like indirect_jailbreak, the RAI service may return multiple
                 # objectives per baseline ID (e.g., multiple XPIA variations for one baseline objective).
-                # We need to limit the selection per baseline objective to respect num_objectives.
-                # Group by baseline ID and select one objective per baseline ID.
+                # We should select num_objectives total, ensuring each baseline objective gets an XPIA attack.
+                # Group by baseline ID and select one objective per baseline ID up to num_objectives.
                 selected_by_id = {}
                 for obj in filtered_objectives:
                     obj_id = obj.get("id")
@@ -847,14 +847,36 @@ class RedTeam:
                         selected_by_id[obj_id] = []
                     selected_by_id[obj_id].append(obj)
 
-                # Now select one objective per baseline ID
+                # Select objectives to match num_objectives
                 selected_cat_objectives = []
-                for obj_id, obj_list in selected_by_id.items():
-                    # Randomly select one objective from the variations for this baseline ID
-                    selected_cat_objectives.append(random.choice(obj_list))
+                baseline_ids = list(selected_by_id.keys())
+                
+                # If we have enough baseline IDs to cover num_objectives, select one per baseline ID
+                if len(baseline_ids) >= num_objectives:
+                    # Select from the first num_objectives baseline IDs
+                    for i in range(num_objectives):
+                        obj_id = baseline_ids[i]
+                        selected_cat_objectives.append(random.choice(selected_by_id[obj_id]))
+                else:
+                    # If we have fewer baseline IDs than num_objectives, select all and cycle through
+                    for i in range(num_objectives):
+                        obj_id = baseline_ids[i % len(baseline_ids)]
+                        # For repeated IDs, try to select different variations if available
+                        available_variations = selected_by_id[obj_id].copy()
+                        # Remove already selected variations for this baseline ID
+                        already_selected = [obj for obj in selected_cat_objectives if obj.get("id") == obj_id]
+                        for selected_obj in already_selected:
+                            if selected_obj in available_variations:
+                                available_variations.remove(selected_obj)
+                        
+                        if available_variations:
+                            selected_cat_objectives.append(random.choice(available_variations))
+                        else:
+                            # If no more variations, reuse one (shouldn't happen with proper XPIA generation)
+                            selected_cat_objectives.append(random.choice(selected_by_id[obj_id]))
 
                 self.logger.debug(
-                    f"Selected {len(selected_cat_objectives)} objectives (one per baseline ID) from {len(filtered_objectives)} total variations"
+                    f"Selected {len(selected_cat_objectives)} objectives from {len(baseline_ids)} baseline IDs and {len(filtered_objectives)} total variations for {strategy} strategy"
                 )
             else:
                 self.logger.warning("No baseline objective IDs found, using random selection")
