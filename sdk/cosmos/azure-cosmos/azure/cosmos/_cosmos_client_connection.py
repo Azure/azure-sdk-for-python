@@ -65,6 +65,7 @@ from ._change_feed.change_feed_state import ChangeFeedState
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
+from ._cosmos_distributed_tracing import CosmosDistributedTracingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList
 from ._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper import ReadItemsHelperSync
@@ -220,7 +221,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
+            CosmosDistributedTracingPolicy(tracing_attributes=kwargs.pop("tracing_attributes", {}),
+                                           **kwargs),
             CosmosHttpLoggingPolicy(
                 logger=kwargs.pop("logger", None),
                 enable_diagnostics_logging=self._enable_diagnostics_logging,

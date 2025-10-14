@@ -97,3 +97,54 @@ class _Constants:
         """Whether to retry write operations if they fail. Used either at client level or request level."""
 
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
+
+
+class _CosmosTracingConstants:
+    # Required attributes
+    DB_SYSTEM_NAME: Literal["db.system.name"] = "db.system.name"
+    DB_SYSTEM_VALUE: Literal["azure.cosmosdb"] = "azure.cosmosdb"
+    DB_OPERATION_NAME: Literal["db.operation.name"] = "db.operation.name"
+
+    # Conditionally required attributes
+    AZURE_COSMOS_CONNECTION_MODE: Literal["azure.cosmosdb.connection.mode"] = "azure.cosmosdb.connection.mode"
+    AZURE_COSMOS_CONSISTENCY_LEVEL: Literal["azure.cosmosdb.consistency.level"] = "azure.cosmosdb.consistency.level"
+    AZURE_COSMOS_OPERATION_CONTACTED_REGIONS: Literal[
+        "azure.cosmosdb.operation.contacted_regions"] = "azure.cosmosdb.operation.contacted_regions"
+    AZURE_COSMOS_OPERATION_REQUEST_CHARGE: Literal[
+        "azure.cosmosdb.operation.request_charge"] = "azure.cosmosdb.operation.request_charge"
+    AZURE_COSMOS_RESPONSE_SUB_STATUS_CODE: Literal[
+        "azure.cosmosdb.response.sub_status_code"] = "azure.cosmosdb.response.sub_status_code"
+    DB_COLLECTION_NAME: Literal["db.collection.name"] = "db.collection.name"
+    DB_NAMESPACE: Literal["db.namespace"] = "db.namespace"
+    DB_RESPONSE_RETURNED_ROWS: Literal["db.response.returned_rows"] = "db.response.returned_rows"
+    DB_RESPONSE_STATUS_CODE: Literal["db.response.status_code"] = "db.response.status_code"
+    ERROR_TYPE: Literal["error.type"] = "error.type"
+    SERVER_PORT: Literal["server.port"] = "server.port"
+
+    # Recommended attributes
+    AZURE_CLIENT_ID: Literal["azure.client.id"] = "azure.client.id"
+    AZURE_COSMOS_REQUEST_BODY_SIZE: Literal["azure.cosmosdb.request.body.size"] = "azure.cosmosdb.request.body.size"
+    AZURE_RESOURCE_PROVIDER_NAMESPACE: Literal[
+        "azure.resource_provider.namespace"] = "azure.resource_provider.namespace"
+    DB_OPERATION_BATCH_SIZE: Literal["db.operation.batch.size"] = "db.operation.batch.size"
+    DB_QUERY_TEXT: Literal["db.query.text"] = "db.query.text"
+    DB_STORED_PROCEDURE_NAME: Literal["db.stored_procedure.name"] = "db.stored_procedure.name"
+    SERVER_ADDRESS: Literal["server.address"] = "server.address"
+    USER_AGENT_ORIGINAL: Literal["user_agent.original"] = "user_agent.original"
+
+    # Opt-in / variable-key attributes
+    DB_QUERY_PARAMETER_KEY: Literal["db.query.parameter.<key>"] = "db.query.parameter"
+
+    # Additional common tracing keys seen in code (non-HTTP/header)
+    ACTIVITY_ID: Literal["activity_id"] = "activity_id"
+    DURATION_MS: Literal["duration"] = "duration"
+    VERB: Literal["verb"] = "verb"
+    URL: Literal["url"] = "url"
+    OPERATION_TYPE: Literal["operation_type"] = "operation_type"
+    RESOURCE_TYPE: Literal["resource_type"] = "resource_type"
+    DATABASE_NAME: Literal["database_name"] = "database_name"
+    COLLECTION_NAME: Literal["collection_name"] = "collection_name"
+    STATUS_CODE: Literal["status_code"] = "status_code"
+    SUB_STATUS_CODE: Literal["sub_status_code"] = "sub_status_code"
+    EXCEPTION_TYPE: Literal["exception_type"] = "exception_type"
+    IS_REQUEST: Literal["is_request"] = "is_request"

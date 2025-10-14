@@ -81,6 +81,7 @@ from ..partition_key import (
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
+from .._cosmos_distributed_tracing import CosmosDistributedTracingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 
 
@@ -227,7 +228,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             credentials_policy,
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
+            CosmosDistributedTracingPolicy(tracing_attributes=kwargs.pop("tracing_attributes", {}),
+                                           **kwargs),
             CosmosHttpLoggingPolicy(
                 logger=kwargs.pop("logger", None),
                 enable_diagnostics_logging=self._enable_diagnostics_logging,
