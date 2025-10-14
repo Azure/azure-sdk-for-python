@@ -1,10 +1,18 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
+## 2.0.0b1 (Unreleased)
 
 ### Features Added
 
+- Added models.
+
 ### Breaking Changes
+
+- Changed the input parameter on `create_user_defined_role` from accepting a list of roles to accepting a `Role` model.
+- Removed the `azure.confidentialledger.certificate` namespace from this package.
+- Removed the `ConfidentialLedgerCertificateClient`.
+
+**The `ConfidentialLedgerCertificateClient` can now be used through the `azure-confidentialledger-certificate` package.**
 
 ### Bugs Fixed
 
