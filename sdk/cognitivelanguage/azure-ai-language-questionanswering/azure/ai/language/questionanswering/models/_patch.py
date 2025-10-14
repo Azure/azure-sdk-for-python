@@ -1,92 +1,108 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Optional, Tuple, Union, cast, Any
-from ._models import (
-    MetadataFilter as MetadataFilterGenerated,
-    AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
-    TextDocument,
-    JSON,
-)
+
+from __future__ import annotations
+
+from collections.abc import Iterable, Mapping, MutableMapping
+from typing import Any, Optional
+
+from ._models import MetadataFilter as _GeneratedMetadataFilter
+from ._models import MetadataRecord
+
+__all__: list[str] = ["MetadataFilter"]
+
+_MISSING = object()
 
 
-class MetadataFilter(MetadataFilterGenerated):
-    """Find QnAs that are associated with the given list of metadata.
+def _normalize_metadata_sequence(
+    metadata: Any,
+) -> Optional[list[MetadataRecord]]:
+    """Coerce supported metadata inputs into MetadataRecord objects."""
 
-    :ivar metadata:
-    :vartype metadata: list[tuple[str, str]]
-    :ivar logical_operation: Operation used to join metadata filters. Possible values include:
-     "AND", "OR".
-    :vartype logical_operation: str
-    """
+    if metadata is None:
+        return None
 
-    def __init__(
-        self,
-        *,
-        metadata: Optional[List[Tuple[str, str]]] = None,
-        logical_operation: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword metadata:
-        :paramtype metadata: list[tuple[str, str]]
-        :keyword logical_operation: Operation used to join metadata filters. Possible values include:
-         "AND", "OR".
-        :paramtype logical_operation: str
-        """
-        # pylint:disable=useless-super-delegation
-        super().__init__(metadata=cast(Optional[List[JSON]], metadata), logical_operation=logical_operation, **kwargs)
+    # Single MetadataRecord instance
+    if isinstance(metadata, MetadataRecord):
+        return [metadata]
 
+    # Mapping inputs:
+    if isinstance(metadata, Mapping):
+        if "key" in metadata and "value" in metadata and len(metadata) <= 2:
+            return [MetadataRecord(key=metadata["key"], value=metadata["value"])]
+        metadata_iterable: Iterable[Any] = metadata.items()
+    else:
+        if isinstance(metadata, (str, bytes)):
+            raise ValueError(
+                "'metadata' must be provided as key/value pairs, MetadataRecord instances, "
+                "or mappings; strings are not supported."
+            )
+        try:
+            metadata_iterable = iter(metadata)
+        except TypeError as exc:  # pragma: no cover - defensive guard
+            raise ValueError(
+                "'metadata' must be an iterable of key/value pairs or MetadataRecord instances."
+            ) from exc
 
-class AnswersFromTextOptions(AnswersFromTextOptionsGenerated):
-    """The question and text record parameters to answer.
+    normalized: list[MetadataRecord] = []
+    for entry in metadata_iterable:
+        if isinstance(entry, MetadataRecord):
+            normalized.append(entry)
+            continue
+        if isinstance(entry, Mapping):
+            if "key" in entry and "value" in entry:
+                key = entry["key"]
+                value = entry["value"]
+            elif len(entry) == 1:
+                key, value = next(iter(entry.items()))
+            else:
+                raise ValueError(
+                    "Mapping entries for 'metadata' must either contain 'key'/'value' keys "
+                    "or represent a single key/value pair."
+                )
+        else:
+            if isinstance(entry, (str, bytes)):
+                raise ValueError(
+                    "Invalid metadata entry; expected a 2-item tuple but received a string/bytes value."
+                )
+            try:
+                key, value = entry  # type: ignore[assignment]
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    "Each metadata entry must be a MetadataRecord, a mapping with 'key'/'value', "
+                    "or a 2-item iterable representing (key, value)."
+                ) from exc
+        normalized.append(MetadataRecord(key=key, value=value))
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar question: Required. User question to query against the given text records.
-    :vartype question: str
-    :ivar text_documents: Required. Text records to be searched for given question.
-    :vartype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
-    :ivar language: Language of the text records. This is BCP-47 representation of a language. For
-     example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-     default.
-    :vartype language: str
-    """
-
-    def __init__(
-        self,
-        *,
-        question: str,
-        text_documents: List[Union[str, TextDocument]],
-        language: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword question: Required. User question to query against the given text records.
-        :paramtype question: str
-        :keyword text_documents: Required. Text records to be searched for given question.
-        :paramtype text_documents: list[str or ~azure.ai.language.questionanswering.models.TextDocument]
-        :keyword language: Language of the text records. This is BCP-47 representation of a language.
-         For example, use "en" for English; "es" for Spanish etc. If not set, use "en" for English as
-         default.
-        :paramtype language: str
-        """
-        super().__init__(
-            question=question, text_documents=cast(List[TextDocument], text_documents), language=language, **kwargs
-        )
-        self.string_index_type = "UnicodeCodePoint"
-        self._attribute_map.update({"string_index_type": {"key": "stringIndexType", "type": "str"}})
+    return normalized
 
 
-__all__: List[str] = [
-    "MetadataFilter",
-    "AnswersFromTextOptions",
-]  # Add all objects you want publicly available to users at this package level
+class MetadataFilter(_GeneratedMetadataFilter):
+    """Backward compatible MetadataFilter supporting legacy tuple/dict inputs."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        metadata_kwarg = kwargs.pop("metadata", _MISSING)
+        args_list = list(args)
+
+        if metadata_kwarg is not _MISSING:
+            kwargs["metadata"] = _normalize_metadata_sequence(metadata_kwarg)
+        elif args_list and isinstance(args_list[0], MutableMapping):
+            first_mapping = dict(args_list[0])
+            if "metadata" in first_mapping:
+                first_mapping["metadata"] = _normalize_metadata_sequence(first_mapping["metadata"])
+                args_list[0] = first_mapping
+
+        super().__init__(*args_list, **kwargs)
+
+        if self.metadata is not None:
+            self.metadata = _normalize_metadata_sequence(self.metadata)
 
 
 def patch_sdk():

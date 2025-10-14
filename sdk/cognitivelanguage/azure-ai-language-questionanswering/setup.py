@@ -13,9 +13,11 @@ namespace_name = PACKAGE_NAME.replace('-', '.')
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
-                        fd.read(), re.MULTILINE).group(1)
-if not version:
+    version_file_text = fd.read()
+match = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', version_file_text, re.MULTILINE)
+if match:
+    version = match.group(1)
+else:
     raise RuntimeError('Cannot find version information')
 
 with open('README.md', encoding='utf-8') as f:
@@ -37,18 +39,17 @@ setup(
     license='MIT License',
     # ensure that the development status reflects the status of your package
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
