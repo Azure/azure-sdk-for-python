@@ -801,6 +801,175 @@ async def submit_multimodal_request_onedp(client: AIProjectClient, messages, met
     operation_id = result["location"].split("/")[-1]
     return operation_id
 
+def _build_sync_eval_payload(
+    data: dict,
+    metric_name: str,
+    annotation_task: str,
+    scan_session_id: Optional[str] = None
+) -> Dict:
+    """Build the sync_evals payload for evaluation.
+
+    :param data: The data to evaluate, containing 'query', 'response', and optionally 'context' and 'tool_calls'.
+    :type data: dict
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
+    :param scan_session_id: The scan session ID to use for the evaluation.
+    :type scan_session_id: Optional[str]
+    :return: The sync_eval payload ready to send to the API.
+    :rtype: Dict
+    """
+
+    # Build the item content with direct query/response fields (no message format wrapping)
+    item_content = {
+        "query": data.get("query", ""),
+        "response": data.get("response", ""),
+    }
+
+    #TODO how to pass in tool calls and context?
+
+    # Build the data mapping using mustache syntax {{item.field}}
+    data_mapping = {
+        "query": "{{item.query}}",
+        "response": "{{item.response}}",
+    }
+
+    # Create the sync eval input payload
+    # Structure: No "request" wrapper, item is an object (not array), uses azure_ai_evaluator type
+    sync_eval_payload = {
+        "name": f"Safety Eval - {metric_name}",
+        "data_source": {
+            "type": "jsonl",
+            "source": {
+                "type": "file_content",
+                "content": {
+                    "item": item_content  # Object, not array
+                }
+            }
+        },
+        "testing_criteria": [{
+            "type": "azure_ai_evaluator",
+            "name": metric_name,
+            "evaluator_name": metric_name,
+            "data_mapping": data_mapping
+        }]
+    }
+
+    # Add properties/metadata if scan_session_id is provided
+    if scan_session_id:
+        sync_eval_payload["properties"] = {
+            "scan_session_id": scan_session_id,
+            "annotation_task": annotation_task,
+            "metric_name": metric_name,
+        }
+    return sync_eval_payload
+
+
+def _parse_sync_eval_result(
+    eval_result,
+    metric_name: str,
+    metric_display_name: Optional[str] = None
+) -> Dict[str, Union[str, float]]:
+    """Parse the result from sync_evals response into the standard format.
+
+    :param eval_result: The result from sync_evals.create() call.
+    :param metric_name: The evaluation metric name.
+    :type metric_name: str
+    :param metric_display_name: The display name for the metric.
+    :type metric_display_name: Optional[str]
+    :return: The parsed result in standard format compatible with parse_response.
+    :rtype: Dict[str, Union[str, float]]
+    """
+    # Try to extract outputs or metrics from the eval_result
+    result_data = None
+    
+    if hasattr(eval_result, 'outputs') and eval_result.outputs:
+        result_data = eval_result.outputs
+    elif hasattr(eval_result, 'metrics') and eval_result.metrics:
+        result_data = eval_result.metrics
+    
+    if not result_data:
+        return {}
+    
+    # If result_data is already in the expected format (dict with metric keys), return it
+    if isinstance(result_data, dict):
+        # Check if it already has the expected keys (metric_name, metric_name_score, metric_name_reason)
+        display_name = metric_display_name or metric_name
+        if display_name in result_data or f"{display_name}_score" in result_data:
+            return result_data
+        
+        # Otherwise, try to parse it using the standard parse_response function
+        # Wrap it in a list to match the expected format
+        return parse_response([result_data], metric_name, metric_display_name)
+    
+    return {}
+
+
+async def evaluate_with_rai_service_sync(
+    data: dict,
+    metric_name: str,
+    project_scope: Union[str, AzureAIProject],
+    credential: TokenCredential,
+    annotation_task: str = Tasks.CONTENT_HARM,
+    metric_display_name=None,
+    evaluator_name=None,
+    scan_session_id: Optional[str] = None,
+) -> Dict[str, Union[str, float]]:
+    """Evaluate the content safety of the response using sync_evals endpoint (OneDP only).
+
+    This function uses the sync_evals.create() API instead of the legacy evaluations.submit_annotation()
+    approach. It's specifically designed for OneDP projects and provides better integration with
+    the newer evaluation infrastructure. The interface matches evaluate_with_rai_service for compatibility.
+
+    :param data: The data to evaluate.
+    :type data: dict
+    :param metric_name: The evaluation metric to use.
+    :type metric_name: str
+    :param project_scope: The Azure AI project, which can either be a string representing the project endpoint
+        or an instance of AzureAIProject. It contains subscription id, resource group, and project name.
+    :type project_scope: Union[str, AzureAIProject]
+    :param credential: The Azure authentication credential.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param annotation_task: The annotation task to use.
+    :type annotation_task: str
+    :param metric_display_name: The display name of metric to use.
+    :type metric_display_name: str
+    :param evaluator_name: The evaluator name to use.
+    :type evaluator_name: str
+    :param scan_session_id: The scan session ID to use for the evaluation.
+    :type scan_session_id: Optional[str]
+    :return: The parsed annotation result.
+    :rtype: Dict[str, Union[str, float]]
+    :raises: EvaluationException if project_scope is not a OneDP project
+    """
+    if not is_onedp_project(project_scope):
+        msg = "evaluate_with_rai_service_sync only supports OneDP projects. Use evaluate_with_rai_service for legacy projects."
+        raise EvaluationException(
+            message=msg,
+            internal_message=msg,
+            target=ErrorTarget.RAI_CLIENT,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    client = AIProjectClient(
+        endpoint=project_scope,
+        credential=credential,
+        user_agent_policy=UserAgentPolicy(base_user_agent=UserAgentSingleton().value),
+    )
+
+    # Build the sync eval payload
+    sync_eval_payload = _build_sync_eval_payload(data, metric_name, annotation_task, scan_session_id)
+
+    # Call sync_evals.create() with the JSON payload
+    eval_result = client.sync_evals.create(eval=sync_eval_payload)
+    
+    # Parse and return the result in standard format
+    result = _parse_sync_eval_result(eval_result, metric_name, metric_display_name)
+    
+    return result
+
 
 async def evaluate_with_rai_service_multimodal(
     messages, metric_name: str, project_scope: Union[str, AzureAIProject], credential: TokenCredential

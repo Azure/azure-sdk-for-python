@@ -25,7 +25,8 @@ from tenacity import retry
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
-from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service
+from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service, evaluate_with_rai_service_sync
+from azure.ai.evaluation._common.utils import is_onedp_project
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -133,14 +134,25 @@ class EvaluationProcessor:
                 @retry(**self.retry_config["network_retry"])
                 async def evaluate_with_rai_service_with_retry():
                     try:
-                        return await evaluate_with_rai_service(
-                            data=query_response,
-                            metric_name=metric_name,
-                            project_scope=self.azure_ai_project,
-                            credential=self.credential,
-                            annotation_task=annotation_task,
-                            scan_session_id=self.scan_session_id,
-                        )
+                        # Use sync_evals endpoint for OneDP projects, legacy endpoint for others
+                        if is_onedp_project(self.azure_ai_project):
+                            return await evaluate_with_rai_service_sync(
+                                data=query_response,
+                                metric_name=metric_name,
+                                project_scope=self.azure_ai_project,
+                                credential=self.credential,
+                                annotation_task=annotation_task,
+                                scan_session_id=self.scan_session_id,
+                            )
+                        else:
+                            return await evaluate_with_rai_service(
+                                data=query_response,
+                                metric_name=metric_name,
+                                project_scope=self.azure_ai_project,
+                                credential=self.credential,
+                                annotation_task=annotation_task,
+                                scan_session_id=self.scan_session_id,
+                            )
                     except (
                         httpx.ConnectTimeout,
                         httpx.ReadTimeout,
