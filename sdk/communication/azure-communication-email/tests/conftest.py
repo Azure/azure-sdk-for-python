@@ -62,6 +62,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(
         key="Operation-Location", value="https://someEndpoint/emails/operations/someId?api-version=" + DEFAULT_VERSION
     )
+    add_header_regex_sanitizer(key="Accept-Encoding", value="gzip, deflate")
 
     add_uri_regex_sanitizer(
         regex="https://[^/]+/emails/operations/.*?api", value="https://someEndpoint/emails/operations/someId?api"
