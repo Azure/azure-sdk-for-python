@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,8 +36,9 @@ from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -213,8 +214,6 @@ def build_evaluations_cancel_request(name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/evaluations/runs/{name}:cancel"
     path_format_arguments = {
@@ -227,7 +226,6 @@ def build_evaluations_cancel_request(name: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -237,8 +235,6 @@ def build_evaluations_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/evaluations/runs/{name}"
     path_format_arguments = {
@@ -251,7 +247,6 @@ def build_evaluations_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -325,12 +320,9 @@ def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRe
 
 
 def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/datasets/{name}/versions/{version}"
     path_format_arguments = {
@@ -343,10 +335,7 @@ def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> Htt
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_datasets_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
@@ -499,12 +488,9 @@ def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpReq
 
 
 def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct URL
     _url = "/indexes/{name}/versions/{version}"
     path_format_arguments = {
@@ -517,10 +503,7 @@ def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> Http
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
 def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
@@ -1339,7 +1322,7 @@ class EvaluationsOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id"]},
         api_versions_list=["2025-05-15-preview"],
     )
     def cancel(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -1397,7 +1380,7 @@ class EvaluationsOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id"]},
         api_versions_list=["2025-05-15-preview"],
     )
     def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
