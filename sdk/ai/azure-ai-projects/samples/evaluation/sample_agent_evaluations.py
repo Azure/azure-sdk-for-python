@@ -33,16 +33,19 @@ from azure.ai.projects.models import (
     AgentEvaluationSamplingConfiguration,
     AgentEvaluationRedactionConfiguration,
 )
+
 endpoint = os.environ["PROJECT_ENDPOINT"]
-# model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
+model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]
 
 with DefaultAzureCredential() as credential:
 
     with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
         # [START evaluations_agent_sample]
-        agent = project_client.agents.get_agent(
-            agent_id="asst_WmINuVIRORQWZaoToqCkr722"
+        agent = project_client.agents.create_agent(
+            model=model_deployment_name,
+            name="my-agent",
+            instructions="You are helpful agent",
         )
         print(f"Created agent, agent ID: {agent.id}")
 
@@ -74,7 +77,7 @@ with DefaultAzureCredential() as credential:
             sampling_configuration=AgentEvaluationSamplingConfiguration(
                 name="test",
                 sampling_percent=100,
-                max_request_rate=1,
+                max_request_rate=100,
             ),
             redaction_configuration=AgentEvaluationRedactionConfiguration(
                 redact_score_properties=False,
