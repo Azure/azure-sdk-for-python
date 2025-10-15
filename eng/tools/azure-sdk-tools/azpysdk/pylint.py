@@ -4,7 +4,7 @@ import sys
 
 from typing import Optional, List
 import subprocess
-from subprocess import CalledProcessError, check_call
+from subprocess import CalledProcessError
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, get_pip_command
@@ -91,12 +91,10 @@ class pylint(Check):
                 logger.error(f"Failed to install pylint: {e}")
                 return e.returncode
 
-            # debug a pip freeze result
-            cmd = pip_cmd + ["freeze"]
-            freeze_result = subprocess.run(
-                cmd, cwd=package_dir, check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            freeze_result = self.run_venv_command(
+                executable, ["-m"] + pip_cmd + ["freeze"], cwd=package_dir, check=False
             )
-            logger.debug(f"Running pip freeze with {cmd}")
+            logger.debug(f"Running pip freeze with {pip_cmd}")
             logger.debug(freeze_result.stdout)
 
             top_level_module = parsed.namespace.split(".")[0]
@@ -122,19 +120,30 @@ class pylint(Check):
                     ]
                 )
 
-                results.append(
-                    check_call(
-                        [
-                            executable,
-                            "-m",
-                            "pylint",
-                            "--rcfile={}".format(rcFileLocation),
-                            "--output-format=parseable",
-                            os.path.join(package_dir, top_level_module),
-                        ]
-                    )
+                pylint_result = self.run_venv_command(
+                    executable,
+                    [
+                        "-m",
+                        "pylint",
+                        "--rcfile={}".format(rcFileLocation),
+                        "--output-format=parseable",
+                        os.path.join(package_dir, top_level_module),
+                    ],
+                    cwd=package_dir,
+                    check=True
                 )
+                # Print the pylint output so it's visible to the user
+                # if pylint_result.stdout:
+                #     print(pylint_result.stdout)
+                # if pylint_result.stderr:
+                #     print(pylint_result.stderr)
+                results.append(pylint_result.returncode)
             except CalledProcessError as e:
+                # Print the pylint output even when it fails so it's visible to the user
+                # if hasattr(e, 'stdout') and e.stdout:
+                #     print(e.stdout)
+                # if hasattr(e, 'stderr') and e.stderr:
+                #     print(e.stderr)
                 logger.error(
                     "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
                         package_name, e.returncode
