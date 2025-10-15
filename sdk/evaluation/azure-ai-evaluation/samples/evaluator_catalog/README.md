@@ -126,7 +126,7 @@ Team will verify following:
 ## Step 6: Publish on Prod Registry (Azureml)
 Evaluation Team will be able to kick off the CI Pipeline again to publish evaluator in the Evaluator Catalog in azureml (prod) registry.
 
-## Step 7: Test is Prod Environment
+## Step 7: Test in Prod Environment
 Team will verify following items:
 
 1. Verify if new evaluator is available in Evaluator REST APIs. 
