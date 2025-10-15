@@ -38,8 +38,8 @@ from azure.ai.projects.models import (
     Evaluation,
     InputDataset,
     EvaluatorConfiguration,
+    EvaluatorIds,
     DatasetVersion,
-    EvaluatorVersion,
 )
 
 # Construct the paths to the data folder and data file used in this sample
@@ -50,55 +50,54 @@ data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
 async def main() -> None:
 
-    endpoint = "https://anksingtest1rp.services.ai.azure.com/api/projects/anksingtest1rpproject"
+    endpoint = os.environ[
+        "PROJECT_ENDPOINT"
+    ]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
     connection_name = os.environ["CONNECTION_NAME"]
     model_endpoint = os.environ["MODEL_ENDPOINT"]  # Sample: https://<account_name>.openai.azure.com.
     model_api_key = os.environ["MODEL_API_KEY"]
     model_deployment_name = os.environ["MODEL_DEPLOYMENT_NAME"]  # Sample : gpt-4o-mini
-    dataset_name = os.environ.get("DATASET_NAME", "eval-data-2025-04-25_224852_UTC")
+    dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
     dataset_version = os.environ.get("DATASET_VERSION", "1.0")
-    evaluator_name = os.environ.get("EVALUATOR_NAME", "builtin.rouge_score")
-    evaluator_version = os.environ.get("EVALUATOR_VERSION", "1")
 
     async with DefaultAzureCredential() as credential:
 
         async with AIProjectClient(endpoint=endpoint, credential=credential) as project_client:
 
             print("Upload a single file and create a new Dataset to reference the file.")
-            dataset: DatasetVersion = await project_client.datasets.get(
+            dataset: DatasetVersion = await project_client.datasets.upload_file(
                 name=dataset_name,
-                version=dataset_version
+                version=dataset_version,
+                file_path=data_file,
+                connection_name=connection_name,
             )
             print(dataset)
-
-            # Get a single evaluator version
-            print("Get a single evaluator version")
-            evaluator: EvaluatorVersion = await project_client.evaluators.get_evaluator_version(
-                name=evaluator_name,
-                version=evaluator_version if evaluator_version else "latest",
-            )
-            print(evaluator)
 
             print("Create an evaluation")
             evaluation: Evaluation = Evaluation(
                 display_name="Sample Evaluation Async",
                 description="Sample evaluation for testing",
                 # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-                # azureai://accounts/anksingtest1rp/projects/anksingtest1rpproject/data/eval-data-2025-04-25_224852_UTC/versions/1
                 data=InputDataset(id=dataset.id if dataset.id else ""),
                 evaluators={
-                    "rouge_score": EvaluatorConfiguration(
-                        id=evaluator.id if evaluator.id else "",
+                    "relevance": EvaluatorConfiguration(
+                        id=EvaluatorIds.RELEVANCE.value,
                         init_params={
-                            "rouge_type": "",
-                            "precision_threshold": 0.5,
-                            "recall_threshold": 0.5,
-                            "f1_score_threshold": 0.5
+                            "deployment_name": model_deployment_name,
                         },
                         data_mapping={
+                            "query": "${data.query}",
                             "response": "${data.response}",
-                            "ground_truth": "${data.query}",    
                         },
+                    ),
+                    "violence": EvaluatorConfiguration(
+                        id=EvaluatorIds.VIOLENCE.value,
+                        init_params={
+                            "azure_ai_project": endpoint,
+                        },
+                    ),
+                    "bleu_score": EvaluatorConfiguration(
+                        id=EvaluatorIds.BLEU_SCORE.value,
                     ),
                 },
             )

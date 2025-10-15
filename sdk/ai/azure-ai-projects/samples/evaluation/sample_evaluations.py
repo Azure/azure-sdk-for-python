@@ -38,79 +38,113 @@ from azure.ai.projects.models import (
     Evaluation,
     InputDataset,
     EvaluatorConfiguration,
-    DatasetVersion,
     EvaluatorVersion,
+    DatasetVersion,
+    ModelResponseGenerationTarget,
+    SystemMessage,
+    DeveloperMessage,
 )
 
-def main() -> None:
+endpoint = os.environ[
+    "PROJECT_ENDPOINT"
+]  # Sample : https://<account_name>.services.ai.azure.com/api/projects/<project_name>
+connection_name = os.environ.get("CONNECTION_NAME", "")
+model_endpoint = os.environ.get("MODEL_ENDPOINT", "")  # Sample: https://<account_name>.openai.azure.com.
+model_api_key = os.environ.get("MODEL_API_KEY", "")
+model_deployment_name = os.environ.get("MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
+dataset_name = os.environ.get("DATASET_NAME", "eval-data-2025-04-25_224852_UTC")
+dataset_version = os.environ.get("DATASET_VERSION", "1")
+evaluator_name = os.environ.get("EVALUATOR_NAME", "builtin.rouge_score")
+evaluator_version = os.environ.get("EVALUATOR_VERSION", "1")
 
-    endpoint = "https://anksingtest1rp.services.ai.azure.com/api/projects/anksingtest1rpproject"
-    dataset_name = os.environ.get("DATASET_NAME", "eval-data-2025-04-25_224852_UTC")
-    dataset_version = os.environ.get("DATASET_VERSION", "1")
-    evaluator_name = os.environ.get("EVALUATOR_NAME", "builtin.rouge_score")
-    evaluator_version = os.environ.get("EVALUATOR_VERSION", "1")
+# Construct the paths to the data folder and data file used in this sample
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
+data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
-    # Construct the paths to the data folder and data file used in this sample
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
-    data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
+with DefaultAzureCredential(exclude_interactive_browser_credential=False) as credential:
 
-    with DefaultAzureCredential() as credential:
+    with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-10-15-preview") as project_client:
 
-        with AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-10-15-preview") as project_client:
+        # [START evaluations_sample]
+        print("Upload a single file and create a new Dataset to reference the file.")
+        dataset: DatasetVersion = project_client.datasets.get(
+            name=dataset_name,
+            version=dataset_version,
+        )
+        print(dataset)
+        
+        relevance: EvaluatorVersion = project_client.evaluators.get_evaluator_version(name="builtin.relevance", version="latest")
+        print("Relevance Evaluator: ", relevance)
+        
+        violence: EvaluatorVersion = project_client.evaluators.get_evaluator_version(name="builtin.violence", version="latest")
+        print("Violence Evaluator: ", violence)
+        
+        bleu_score: EvaluatorVersion = project_client.evaluators.get_evaluator_version(name="builtin.bleu_score", version="latest")
+        print("BLEU Score Evaluator: ", bleu_score)
 
-            print("Upload a single file and create a new Dataset to reference the file.")
-            dataset: DatasetVersion = project_client.datasets.get(
-                name=dataset_name,
-                version=dataset_version,
-            )
-            print(dataset)
-
-            # Get a single evaluator version
-            print("Get a single evaluator version")
-            evaluator: EvaluatorVersion = project_client.evaluators.get_evaluator_version(
-                name=evaluator_name,
-                version=evaluator_version if evaluator_version else "latest",
-            )
-            print(evaluator)
-
-            print("Create an evaluation")
-            evaluation: Evaluation = Evaluation(
-                display_name="Sample Evaluation Test",
-                description="Sample evaluation for testing",
-                # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
-                data=InputDataset(id=dataset.id if dataset.id else ""),
-                evaluators={
-                    "rouge_score": EvaluatorConfiguration(
-                        id=evaluator.id if evaluator.id else "",
-                        init_params={
-                            "rouge_type": "",
-                            "precision_threshold": 0.5,
-                            "recall_threshold": 0.5,
-                            "f1_score_threshold": 0.5
-                        },
-                        data_mapping={
+        print("Create an evaluation")
+        evaluation: Evaluation = Evaluation(
+            display_name="Sample Evaluation Test",
+            description="Sample evaluation for testing",
+            # Sample Dataset Id : azureai://accounts/<account_name>/projects/<project_name>/data/<dataset_name>/versions/<version>
+            data=InputDataset(id=dataset.id if dataset.id else ""),
+            target=ModelResponseGenerationTarget(
+                base_messages=[
+                    SystemMessage(content= "You are an AI assistant helping users"),
+                    DeveloperMessage(content="Could you please provide answers to my questions")
+                ],
+                model_deployment_name="tiger5/gpt-4o-mini", 
+                model_params={
+                        "max_tokens": 1024,
+                        "temperature": 0.7,
+                        "dataMapping": {
+                            "query": "${data.query}",
                             "response": "${data.response}",
-                            "ground_truth": "${data.query}",    
                         },
-                    ),
-                },
-            )
+                    },
+                ),
+            evaluators={
+                "relevance": EvaluatorConfiguration(
+                    id=relevance.id,
+                    init_params={
+                        "deployment_name": model_deployment_name,
+                    },
+                    data_mapping={
+                        "query": "${data.query}",
+                        "response": "${data.response}",
+                    },
+                ),
+                "violence": EvaluatorConfiguration(
+                    id=violence.id,
+                    init_params={
+                        "azure_ai_project": endpoint,
+                    },
+                ),
+                "bleu_score": EvaluatorConfiguration(
+                    id=bleu_score.id,
+                ),
+            },
+        )
 
-            evaluation_response: Evaluation = project_client.evaluations.create(
-                evaluation
-            )
-            print(evaluation_response)
+        evaluation_response: Evaluation = project_client.evaluations.create(
+            evaluation
+        )
+        print(evaluation_response)
 
-            print("Get evaluation")
-            get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
-            print(get_evaluation_response)
+        print("Get evaluation")
+        get_evaluation_response: Evaluation = project_client.evaluations.get(evaluation_response.name)
+        print(get_evaluation_response)
 
-            print("List evaluations")
-            for evaluation in project_client.evaluations.list():
-                print(evaluation)
+        print("List evaluations")
+        for evaluation in project_client.evaluations.list():
+            print(evaluation)
 
-            # [END evaluations_sample]
-
-if __name__ == "__main__":
-    main()
+        print("Canceling the evaluation")
+        # project_client.evaluations.cancel(get_evaluation_response.name)
+        print(evaluation_response)
+        
+        print("deleting the evaluation")
+        project_client.evaluations.delete(get_evaluation_response.name)
+        
+        # [END evaluations_sample]
