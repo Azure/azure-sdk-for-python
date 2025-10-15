@@ -7,13 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class AccessKeys(_serialization.Model):
@@ -176,7 +178,7 @@ class AccessPolicyAssignmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AccessPolicyAssignment"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.AccessPolicyAssignment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of access policy assignments.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.AccessPolicyAssignment]
@@ -243,7 +245,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -292,7 +294,7 @@ class Cluster(TrackedResource):
      API versions. Known values are: "1.0", "1.1", and "1.2".
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
-    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -312,6 +314,11 @@ class Cluster(TrackedResource):
      specified Redis Enterprise cluster.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
+    :ivar public_network_access: Whether or not public network traffic can access the Redis
+     cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+     using an old API version which do not have this property and cannot be set. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -341,7 +348,7 @@ class Cluster(TrackedResource):
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "high_availability": {"key": "properties.highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
-        "encryption": {"key": "properties.encryption", "type": "ClusterPropertiesEncryption"},
+        "encryption": {"key": "properties.encryption", "type": "ClusterCommonPropertiesEncryption"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "redundancy_mode": {"key": "properties.redundancyMode", "type": "str"},
@@ -351,6 +358,7 @@ class Cluster(TrackedResource):
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
@@ -358,12 +366,13 @@ class Cluster(TrackedResource):
         *,
         location: str,
         sku: "_models.Sku",
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        zones: Optional[list[str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
-        encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        encryption: Optional["_models.ClusterCommonPropertiesEncryption"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -387,7 +396,12 @@ class Cluster(TrackedResource):
          API versions. Known values are: "1.0", "1.1", and "1.2".
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
-        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+        :keyword public_network_access: Whether or not public network traffic can access the Redis
+         cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+         using an old API version which do not have this property and cannot be set. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.kind: Optional[Union[str, "_models.Kind"]] = None
@@ -402,52 +416,115 @@ class Cluster(TrackedResource):
         self.redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None
         self.resource_state: Optional[Union[str, "_models.ResourceState"]] = None
         self.redis_version: Optional[str] = None
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.public_network_access = public_network_access
 
 
-class ClusterList(_serialization.Model):
-    """The response of a list-all operation.
+class ClusterCommonProperties(_serialization.Model):
+    """Properties of Redis Enterprise clusters, as opposed to general resource properties like
+    location, tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of clusters.
-    :vartype value: list[~azure.mgmt.redisenterprise.models.Cluster]
-    :ivar next_link: The URI to fetch the next page of results.
-    :vartype next_link: str
+    :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
+     not replicated. This affects the availability SLA, and increases the risk of data loss. Known
+     values are: "Enabled" and "Disabled".
+    :vartype high_availability: str or ~azure.mgmt.redisenterprise.models.HighAvailability
+    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+     Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
+     obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
+     API versions. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :ivar encryption: Encryption-at-rest configuration for the cluster.
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+    :ivar host_name: DNS name of the cluster endpoint.
+    :vartype host_name: str
+    :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
+    :ivar redundancy_mode: Explains the current redundancy strategy of the cluster, which affects
+     the expected SLA. Known values are: "None", "LR", and "ZR".
+    :vartype redundancy_mode: str or ~azure.mgmt.redisenterprise.models.RedundancyMode
+    :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
+     "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
+    :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
+    :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
+    :vartype redis_version: str
+    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+     specified Redis Enterprise cluster.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "host_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "redundancy_mode": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "redis_version": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[Cluster]"},
-        "next_link": {"key": "nextLink", "type": "str"},
+        "high_availability": {"key": "highAvailability", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "encryption": {"key": "encryption", "type": "ClusterCommonPropertiesEncryption"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "redundancy_mode": {"key": "redundancyMode", "type": "str"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
+        encryption: Optional["_models.ClusterCommonPropertiesEncryption"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword value: List of clusters.
-        :paramtype value: list[~azure.mgmt.redisenterprise.models.Cluster]
+        :keyword high_availability: Enabled by default. If highAvailability is disabled, the data set
+         is not replicated. This affects the availability SLA, and increases the risk of data loss.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype high_availability: str or ~azure.mgmt.redisenterprise.models.HighAvailability
+        :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+         Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
+         obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
+         API versions. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        :keyword encryption: Encryption-at-rest configuration for the cluster.
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
         """
         super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
+        self.high_availability = high_availability
+        self.minimum_tls_version = minimum_tls_version
+        self.encryption = encryption
+        self.host_name: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None
+        self.resource_state: Optional[Union[str, "_models.ResourceState"]] = None
+        self.redis_version: Optional[str] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
 
 
-class ClusterPropertiesEncryption(_serialization.Model):
+class ClusterCommonPropertiesEncryption(_serialization.Model):
     """Encryption-at-rest configuration for the cluster.
 
     :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
      resource. Set this to an empty object to use Microsoft-managed key encryption.
     :vartype customer_managed_key_encryption:
-     ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryption
+     ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryption
     """
 
     _attribute_map = {
         "customer_managed_key_encryption": {
             "key": "customerManagedKeyEncryption",
-            "type": "ClusterPropertiesEncryptionCustomerManagedKeyEncryption",
+            "type": "ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryption",
         },
     }
 
@@ -455,7 +532,7 @@ class ClusterPropertiesEncryption(_serialization.Model):
         self,
         *,
         customer_managed_key_encryption: Optional[
-            "_models.ClusterPropertiesEncryptionCustomerManagedKeyEncryption"
+            "_models.ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryption"
         ] = None,
         **kwargs: Any
     ) -> None:
@@ -463,20 +540,22 @@ class ClusterPropertiesEncryption(_serialization.Model):
         :keyword customer_managed_key_encryption: All Customer-managed key encryption properties for
          the resource. Set this to an empty object to use Microsoft-managed key encryption.
         :paramtype customer_managed_key_encryption:
-         ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryption
+         ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryption
         """
         super().__init__(**kwargs)
         self.customer_managed_key_encryption = customer_managed_key_encryption
 
 
-class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Model):  # pylint: disable=name-too-long
+class ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryption(
+    _serialization.Model
+):  # pylint: disable=name-too-long
     """All Customer-managed key encryption properties for the resource. Set this to an empty object to
     use Microsoft-managed key encryption.
 
     :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
      defining which identity should be used to auth to Key Vault.
     :vartype key_encryption_key_identity:
-     ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
+     ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
     :ivar key_encryption_key_url: Key encryption key Url, versioned only. Ex:
      https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78.
     :vartype key_encryption_key_url: str
@@ -485,7 +564,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Mod
     _attribute_map = {
         "key_encryption_key_identity": {
             "key": "keyEncryptionKeyIdentity",
-            "type": "ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity",
+            "type": "ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity",
         },
         "key_encryption_key_url": {"key": "keyEncryptionKeyUrl", "type": "str"},
     }
@@ -494,7 +573,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Mod
         self,
         *,
         key_encryption_key_identity: Optional[
-            "_models.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity"
+            "_models.ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity"
         ] = None,
         key_encryption_key_url: Optional[str] = None,
         **kwargs: Any
@@ -503,7 +582,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Mod
         :keyword key_encryption_key_identity: All identity configuration for Customer-managed key
          settings defining which identity should be used to auth to Key Vault.
         :paramtype key_encryption_key_identity:
-         ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
+         ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity
         :keyword key_encryption_key_url: Key encryption key Url, versioned only. Ex:
          https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78.
         :paramtype key_encryption_key_url: str
@@ -513,7 +592,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_serialization.Mod
         self.key_encryption_key_url = key_encryption_key_url
 
 
-class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
+class ClusterCommonPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
     _serialization.Model
 ):  # pylint: disable=name-too-long
     """All identity configuration for Customer-managed key settings defining which identity should be
@@ -556,6 +635,139 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
         self.identity_type = identity_type
 
 
+class ClusterCreateProperties(ClusterCommonProperties):
+    """Properties of Redis Enterprise clusters for create operations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
+     not replicated. This affects the availability SLA, and increases the risk of data loss. Known
+     values are: "Enabled" and "Disabled".
+    :vartype high_availability: str or ~azure.mgmt.redisenterprise.models.HighAvailability
+    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+     Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
+     obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
+     API versions. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :ivar encryption: Encryption-at-rest configuration for the cluster.
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+    :ivar host_name: DNS name of the cluster endpoint.
+    :vartype host_name: str
+    :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
+    :ivar redundancy_mode: Explains the current redundancy strategy of the cluster, which affects
+     the expected SLA. Known values are: "None", "LR", and "ZR".
+    :vartype redundancy_mode: str or ~azure.mgmt.redisenterprise.models.RedundancyMode
+    :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
+     "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
+    :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
+    :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
+    :vartype redis_version: str
+    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+     specified Redis Enterprise cluster.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
+    :ivar public_network_access: Whether or not public network traffic can access the Redis
+     cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+     using an old API version which do not have this property and cannot be set. Required. Known
+     values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
+    """
+
+    _validation = {
+        "host_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "redundancy_mode": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "redis_version": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "public_network_access": {"required": True},
+    }
+
+    _attribute_map = {
+        "high_availability": {"key": "highAvailability", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "encryption": {"key": "encryption", "type": "ClusterCommonPropertiesEncryption"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "redundancy_mode": {"key": "redundancyMode", "type": "str"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        public_network_access: Union[str, "_models.PublicNetworkAccess"],
+        high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
+        encryption: Optional["_models.ClusterCommonPropertiesEncryption"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword high_availability: Enabled by default. If highAvailability is disabled, the data set
+         is not replicated. This affects the availability SLA, and increases the risk of data loss.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype high_availability: str or ~azure.mgmt.redisenterprise.models.HighAvailability
+        :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+         Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
+         obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
+         API versions. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        :keyword encryption: Encryption-at-rest configuration for the cluster.
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+        :keyword public_network_access: Whether or not public network traffic can access the Redis
+         cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+         using an old API version which do not have this property and cannot be set. Required. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
+        """
+        super().__init__(
+            high_availability=high_availability,
+            minimum_tls_version=minimum_tls_version,
+            encryption=encryption,
+            **kwargs
+        )
+        self.public_network_access = public_network_access
+
+
+class ClusterList(_serialization.Model):
+    """The response of a list-all operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of clusters.
+    :vartype value: list[~azure.mgmt.redisenterprise.models.Cluster]
+    :ivar next_link: The URI to fetch the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Cluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.Cluster"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of clusters.
+        :paramtype value: list[~azure.mgmt.redisenterprise.models.Cluster]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
+
+
 class ClusterUpdate(_serialization.Model):
     """A partial update to the Redis Enterprise cluster.
 
@@ -577,7 +789,7 @@ class ClusterUpdate(_serialization.Model):
      API versions. Known values are: "1.0", "1.1", and "1.2".
     :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
     :ivar encryption: Encryption-at-rest configuration for the cluster.
-    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -597,6 +809,11 @@ class ClusterUpdate(_serialization.Model):
      specified Redis Enterprise cluster.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
+    :ivar public_network_access: Whether or not public network traffic can access the Redis
+     cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+     using an old API version which do not have this property and cannot be set. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -614,7 +831,7 @@ class ClusterUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
         "high_availability": {"key": "properties.highAvailability", "type": "str"},
         "minimum_tls_version": {"key": "properties.minimumTlsVersion", "type": "str"},
-        "encryption": {"key": "properties.encryption", "type": "ClusterPropertiesEncryption"},
+        "encryption": {"key": "properties.encryption", "type": "ClusterCommonPropertiesEncryption"},
         "host_name": {"key": "properties.hostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "redundancy_mode": {"key": "properties.redundancyMode", "type": "str"},
@@ -624,6 +841,7 @@ class ClusterUpdate(_serialization.Model):
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
@@ -631,10 +849,11 @@ class ClusterUpdate(_serialization.Model):
         *,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
-        encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
+        encryption: Optional["_models.ClusterCommonPropertiesEncryption"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -654,7 +873,12 @@ class ClusterUpdate(_serialization.Model):
          API versions. Known values are: "1.0", "1.1", and "1.2".
         :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
         :keyword encryption: Encryption-at-rest configuration for the cluster.
-        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+        :keyword public_network_access: Whether or not public network traffic can access the Redis
+         cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+         using an old API version which do not have this property and cannot be set. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -668,7 +892,108 @@ class ClusterUpdate(_serialization.Model):
         self.redundancy_mode: Optional[Union[str, "_models.RedundancyMode"]] = None
         self.resource_state: Optional[Union[str, "_models.ResourceState"]] = None
         self.redis_version: Optional[str] = None
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.public_network_access = public_network_access
+
+
+class ClusterUpdateProperties(ClusterCommonProperties):
+    """Properties of Redis Enterprise clusters for update operations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
+     not replicated. This affects the availability SLA, and increases the risk of data loss. Known
+     values are: "Enabled" and "Disabled".
+    :vartype high_availability: str or ~azure.mgmt.redisenterprise.models.HighAvailability
+    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+     Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
+     obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
+     API versions. Known values are: "1.0", "1.1", and "1.2".
+    :vartype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+    :ivar encryption: Encryption-at-rest configuration for the cluster.
+    :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+    :ivar host_name: DNS name of the cluster endpoint.
+    :vartype host_name: str
+    :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
+    :ivar redundancy_mode: Explains the current redundancy strategy of the cluster, which affects
+     the expected SLA. Known values are: "None", "LR", and "ZR".
+    :vartype redundancy_mode: str or ~azure.mgmt.redisenterprise.models.RedundancyMode
+    :ivar resource_state: Current resource status of the cluster. Known values are: "Running",
+     "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
+    :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
+    :ivar redis_version: Version of redis the cluster supports, e.g. '6'.
+    :vartype redis_version: str
+    :ivar private_endpoint_connections: List of private endpoint connections associated with the
+     specified Redis Enterprise cluster.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
+    :ivar public_network_access: Whether or not public network traffic can access the Redis
+     cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+     using an old API version which do not have this property and cannot be set. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
+    """
+
+    _validation = {
+        "host_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "redundancy_mode": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "redis_version": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "high_availability": {"key": "highAvailability", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "encryption": {"key": "encryption", "type": "ClusterCommonPropertiesEncryption"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "redundancy_mode": {"key": "redundancyMode", "type": "str"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        high_availability: Optional[Union[str, "_models.HighAvailability"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
+        encryption: Optional["_models.ClusterCommonPropertiesEncryption"] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword high_availability: Enabled by default. If highAvailability is disabled, the data set
+         is not replicated. This affects the availability SLA, and increases the risk of data loss.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype high_availability: str or ~azure.mgmt.redisenterprise.models.HighAvailability
+        :keyword minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
+         Newer versions can be added in the future. Note that TLS 1.0 and TLS 1.1 are now completely
+         obsolete -- you cannot use them. They are mentioned only for the sake of consistency with old
+         API versions. Known values are: "1.0", "1.1", and "1.2".
+        :paramtype minimum_tls_version: str or ~azure.mgmt.redisenterprise.models.TlsVersion
+        :keyword encryption: Encryption-at-rest configuration for the cluster.
+        :paramtype encryption: ~azure.mgmt.redisenterprise.models.ClusterCommonPropertiesEncryption
+        :keyword public_network_access: Whether or not public network traffic can access the Redis
+         cluster. Only 'Enabled' or 'Disabled' can be set. null is returned only for clusters created
+         using an old API version which do not have this property and cannot be set. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.redisenterprise.models.PublicNetworkAccess
+        """
+        super().__init__(
+            high_availability=high_availability,
+            minimum_tls_version=minimum_tls_version,
+            encryption=encryption,
+            **kwargs
+        )
+        self.public_network_access = public_network_access
 
 
 class ResourceAutoGenerated(_serialization.Model):
@@ -779,7 +1104,8 @@ class Database(ProxyResource):
     :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
     :ivar geo_replication: Optional set of properties to configure geo replication for this
      database.
-    :vartype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+    :vartype geo_replication:
+     ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
     :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
     :vartype redis_version: str
     :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
@@ -816,7 +1142,7 @@ class Database(ProxyResource):
         "eviction_policy": {"key": "properties.evictionPolicy", "type": "str"},
         "persistence": {"key": "properties.persistence", "type": "Persistence"},
         "modules": {"key": "properties.modules", "type": "[Module]"},
-        "geo_replication": {"key": "properties.geoReplication", "type": "DatabasePropertiesGeoReplication"},
+        "geo_replication": {"key": "properties.geoReplication", "type": "DatabaseCommonPropertiesGeoReplication"},
         "redis_version": {"key": "properties.redisVersion", "type": "str"},
         "defer_upgrade": {"key": "properties.deferUpgrade", "type": "str"},
         "access_keys_authentication": {"key": "properties.accessKeysAuthentication", "type": "str"},
@@ -830,8 +1156,8 @@ class Database(ProxyResource):
         clustering_policy: Optional[Union[str, "_models.ClusteringPolicy"]] = None,
         eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = None,
         persistence: Optional["_models.Persistence"] = None,
-        modules: Optional[List["_models.Module"]] = None,
-        geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
+        modules: Optional[list["_models.Module"]] = None,
+        geo_replication: Optional["_models.DatabaseCommonPropertiesGeoReplication"] = None,
         defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
         access_keys_authentication: Optional[Union[str, "_models.AccessKeysAuthentication"]] = None,
         **kwargs: Any
@@ -860,7 +1186,8 @@ class Database(ProxyResource):
         :paramtype modules: list[~azure.mgmt.redisenterprise.models.Module]
         :keyword geo_replication: Optional set of properties to configure geo replication for this
          database.
-        :paramtype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+        :paramtype geo_replication:
+         ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
         :keyword defer_upgrade: Option to defer upgrade when newest version is released - default is
          NotDeferred. Learn more: https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
          "NotDeferred".
@@ -886,6 +1213,228 @@ class Database(ProxyResource):
         self.access_keys_authentication = access_keys_authentication
 
 
+class DatabaseCommonProperties(_serialization.Model):
+    """Properties of Redis Enterprise databases, as opposed to general resource properties like
+    location, tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+     plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
+     "Plaintext".
+    :vartype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+    :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
+     available port.
+    :vartype port: int
+    :ivar provisioning_state: Current provisioning status of the database. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
+    :ivar resource_state: Current resource status of the database. Known values are: "Running",
+     "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
+    :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
+     updated only if the current value is NoCluster. If the value is OSSCluster or
+     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+     "EnterpriseCluster", "OSSCluster", and "NoCluster".
+    :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+     "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
+     "VolatileRandom", and "NoEviction".
+    :vartype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :ivar persistence: Persistence settings.
+    :vartype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+    :ivar modules: Optional set of redis modules to enable in this database - modules can only be
+     added at creation time.
+    :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :ivar geo_replication: Optional set of properties to configure geo replication for this
+     database.
+    :vartype geo_replication:
+     ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
+    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redis_version: str
+    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+     NotDeferred. Learn more: https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+     "NotDeferred".
+    :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
+    :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
+     with the current access keys. Can be updated even after database is created. Known values are:
+     "Disabled" and "Enabled".
+    :vartype access_keys_authentication: str or
+     ~azure.mgmt.redisenterprise.models.AccessKeysAuthentication
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "redis_version": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "client_protocol": {"key": "clientProtocol", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "clustering_policy": {"key": "clusteringPolicy", "type": "str"},
+        "eviction_policy": {"key": "evictionPolicy", "type": "str"},
+        "persistence": {"key": "persistence", "type": "Persistence"},
+        "modules": {"key": "modules", "type": "[Module]"},
+        "geo_replication": {"key": "geoReplication", "type": "DatabaseCommonPropertiesGeoReplication"},
+        "redis_version": {"key": "redisVersion", "type": "str"},
+        "defer_upgrade": {"key": "deferUpgrade", "type": "str"},
+        "access_keys_authentication": {"key": "accessKeysAuthentication", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        client_protocol: Optional[Union[str, "_models.Protocol"]] = None,
+        port: Optional[int] = None,
+        clustering_policy: Optional[Union[str, "_models.ClusteringPolicy"]] = None,
+        eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = None,
+        persistence: Optional["_models.Persistence"] = None,
+        modules: Optional[list["_models.Module"]] = None,
+        geo_replication: Optional["_models.DatabaseCommonPropertiesGeoReplication"] = None,
+        defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
+        access_keys_authentication: Optional[Union[str, "_models.AccessKeysAuthentication"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+         plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
+         "Plaintext".
+        :paramtype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+        :keyword port: TCP port of the database endpoint. Specified at create time. Defaults to an
+         available port.
+        :paramtype port: int
+        :keyword clustering_policy: Clustering policy - default is OSSCluster. This property can be
+         updated only if the current value is NoCluster. If the value is OSSCluster or
+         EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+         "EnterpriseCluster", "OSSCluster", and "NoCluster".
+        :paramtype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+        :keyword eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+         "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
+         "VolatileRandom", and "NoEviction".
+        :paramtype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+        :keyword persistence: Persistence settings.
+        :paramtype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+        :keyword modules: Optional set of redis modules to enable in this database - modules can only
+         be added at creation time.
+        :paramtype modules: list[~azure.mgmt.redisenterprise.models.Module]
+        :keyword geo_replication: Optional set of properties to configure geo replication for this
+         database.
+        :paramtype geo_replication:
+         ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
+        :keyword defer_upgrade: Option to defer upgrade when newest version is released - default is
+         NotDeferred. Learn more: https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+         "NotDeferred".
+        :paramtype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
+        :keyword access_keys_authentication: This property can be Enabled/Disabled to allow or deny
+         access with the current access keys. Can be updated even after database is created. Known
+         values are: "Disabled" and "Enabled".
+        :paramtype access_keys_authentication: str or
+         ~azure.mgmt.redisenterprise.models.AccessKeysAuthentication
+        """
+        super().__init__(**kwargs)
+        self.client_protocol = client_protocol
+        self.port = port
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_state: Optional[Union[str, "_models.ResourceState"]] = None
+        self.clustering_policy = clustering_policy
+        self.eviction_policy = eviction_policy
+        self.persistence = persistence
+        self.modules = modules
+        self.geo_replication = geo_replication
+        self.redis_version: Optional[str] = None
+        self.defer_upgrade = defer_upgrade
+        self.access_keys_authentication = access_keys_authentication
+
+
+class DatabaseCommonPropertiesGeoReplication(_serialization.Model):
+    """Optional set of properties to configure geo replication for this database.
+
+    :ivar group_nickname: Name for the group of linked database resources.
+    :vartype group_nickname: str
+    :ivar linked_databases: List of database resources to link with this database.
+    :vartype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+    """
+
+    _attribute_map = {
+        "group_nickname": {"key": "groupNickname", "type": "str"},
+        "linked_databases": {"key": "linkedDatabases", "type": "[LinkedDatabase]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        group_nickname: Optional[str] = None,
+        linked_databases: Optional[list["_models.LinkedDatabase"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword group_nickname: Name for the group of linked database resources.
+        :paramtype group_nickname: str
+        :keyword linked_databases: List of database resources to link with this database.
+        :paramtype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
+        """
+        super().__init__(**kwargs)
+        self.group_nickname = group_nickname
+        self.linked_databases = linked_databases
+
+
+class DatabaseCreateProperties(DatabaseCommonProperties):
+    """Properties for creating Redis Enterprise databases.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+     plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
+     "Plaintext".
+    :vartype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+    :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
+     available port.
+    :vartype port: int
+    :ivar provisioning_state: Current provisioning status of the database. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
+    :ivar resource_state: Current resource status of the database. Known values are: "Running",
+     "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
+    :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
+     updated only if the current value is NoCluster. If the value is OSSCluster or
+     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+     "EnterpriseCluster", "OSSCluster", and "NoCluster".
+    :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+     "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
+     "VolatileRandom", and "NoEviction".
+    :vartype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :ivar persistence: Persistence settings.
+    :vartype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+    :ivar modules: Optional set of redis modules to enable in this database - modules can only be
+     added at creation time.
+    :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :ivar geo_replication: Optional set of properties to configure geo replication for this
+     database.
+    :vartype geo_replication:
+     ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
+    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redis_version: str
+    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+     NotDeferred. Learn more: https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+     "NotDeferred".
+    :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
+    :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
+     with the current access keys. Can be updated even after database is created. Known values are:
+     "Disabled" and "Enabled".
+    :vartype access_keys_authentication: str or
+     ~azure.mgmt.redisenterprise.models.AccessKeysAuthentication
+    """
+
+
 class DatabaseList(_serialization.Model):
     """The response of a list-all operation.
 
@@ -906,7 +1455,7 @@ class DatabaseList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Database"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of databases.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.Database]
@@ -914,38 +1463,6 @@ class DatabaseList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link: Optional[str] = None
-
-
-class DatabasePropertiesGeoReplication(_serialization.Model):
-    """Optional set of properties to configure geo replication for this database.
-
-    :ivar group_nickname: Name for the group of linked database resources.
-    :vartype group_nickname: str
-    :ivar linked_databases: List of database resources to link with this database.
-    :vartype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
-    """
-
-    _attribute_map = {
-        "group_nickname": {"key": "groupNickname", "type": "str"},
-        "linked_databases": {"key": "linkedDatabases", "type": "[LinkedDatabase]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        group_nickname: Optional[str] = None,
-        linked_databases: Optional[List["_models.LinkedDatabase"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword group_nickname: Name for the group of linked database resources.
-        :paramtype group_nickname: str
-        :keyword linked_databases: List of database resources to link with this database.
-        :paramtype linked_databases: list[~azure.mgmt.redisenterprise.models.LinkedDatabase]
-        """
-        super().__init__(**kwargs)
-        self.group_nickname = group_nickname
-        self.linked_databases = linked_databases
 
 
 class DatabaseUpdate(_serialization.Model):
@@ -984,7 +1501,8 @@ class DatabaseUpdate(_serialization.Model):
     :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
     :ivar geo_replication: Optional set of properties to configure geo replication for this
      database.
-    :vartype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+    :vartype geo_replication:
+     ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
     :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
     :vartype redis_version: str
     :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
@@ -1013,7 +1531,7 @@ class DatabaseUpdate(_serialization.Model):
         "eviction_policy": {"key": "properties.evictionPolicy", "type": "str"},
         "persistence": {"key": "properties.persistence", "type": "Persistence"},
         "modules": {"key": "properties.modules", "type": "[Module]"},
-        "geo_replication": {"key": "properties.geoReplication", "type": "DatabasePropertiesGeoReplication"},
+        "geo_replication": {"key": "properties.geoReplication", "type": "DatabaseCommonPropertiesGeoReplication"},
         "redis_version": {"key": "properties.redisVersion", "type": "str"},
         "defer_upgrade": {"key": "properties.deferUpgrade", "type": "str"},
         "access_keys_authentication": {"key": "properties.accessKeysAuthentication", "type": "str"},
@@ -1027,8 +1545,8 @@ class DatabaseUpdate(_serialization.Model):
         clustering_policy: Optional[Union[str, "_models.ClusteringPolicy"]] = None,
         eviction_policy: Optional[Union[str, "_models.EvictionPolicy"]] = None,
         persistence: Optional["_models.Persistence"] = None,
-        modules: Optional[List["_models.Module"]] = None,
-        geo_replication: Optional["_models.DatabasePropertiesGeoReplication"] = None,
+        modules: Optional[list["_models.Module"]] = None,
+        geo_replication: Optional["_models.DatabaseCommonPropertiesGeoReplication"] = None,
         defer_upgrade: Optional[Union[str, "_models.DeferUpgradeSetting"]] = None,
         access_keys_authentication: Optional[Union[str, "_models.AccessKeysAuthentication"]] = None,
         **kwargs: Any
@@ -1057,7 +1575,8 @@ class DatabaseUpdate(_serialization.Model):
         :paramtype modules: list[~azure.mgmt.redisenterprise.models.Module]
         :keyword geo_replication: Optional set of properties to configure geo replication for this
          database.
-        :paramtype geo_replication: ~azure.mgmt.redisenterprise.models.DatabasePropertiesGeoReplication
+        :paramtype geo_replication:
+         ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
         :keyword defer_upgrade: Option to defer upgrade when newest version is released - default is
          NotDeferred. Learn more: https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
          "NotDeferred".
@@ -1081,6 +1600,58 @@ class DatabaseUpdate(_serialization.Model):
         self.redis_version: Optional[str] = None
         self.defer_upgrade = defer_upgrade
         self.access_keys_authentication = access_keys_authentication
+
+
+class DatabaseUpdateProperties(DatabaseCommonProperties):
+    """Properties for updating Redis Enterprise databases.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
+     plaintext redis protocols. Default is TLS-encrypted. Known values are: "Encrypted" and
+     "Plaintext".
+    :vartype client_protocol: str or ~azure.mgmt.redisenterprise.models.Protocol
+    :ivar port: TCP port of the database endpoint. Specified at create time. Defaults to an
+     available port.
+    :vartype port: int
+    :ivar provisioning_state: Current provisioning status of the database. Known values are:
+     "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
+    :ivar resource_state: Current resource status of the database. Known values are: "Running",
+     "Creating", "CreateFailed", "Updating", "UpdateFailed", "Deleting", "DeleteFailed", "Enabling",
+     "EnableFailed", "Disabling", "DisableFailed", "Disabled", "Scaling", "ScalingFailed", and
+     "Moving".
+    :vartype resource_state: str or ~azure.mgmt.redisenterprise.models.ResourceState
+    :ivar clustering_policy: Clustering policy - default is OSSCluster. This property can be
+     updated only if the current value is NoCluster. If the value is OSSCluster or
+     EnterpriseCluster, it cannot be updated without deleting the database. Known values are:
+     "EnterpriseCluster", "OSSCluster", and "NoCluster".
+    :vartype clustering_policy: str or ~azure.mgmt.redisenterprise.models.ClusteringPolicy
+    :ivar eviction_policy: Redis eviction policy - default is VolatileLRU. Known values are:
+     "AllKeysLFU", "AllKeysLRU", "AllKeysRandom", "VolatileLRU", "VolatileLFU", "VolatileTTL",
+     "VolatileRandom", and "NoEviction".
+    :vartype eviction_policy: str or ~azure.mgmt.redisenterprise.models.EvictionPolicy
+    :ivar persistence: Persistence settings.
+    :vartype persistence: ~azure.mgmt.redisenterprise.models.Persistence
+    :ivar modules: Optional set of redis modules to enable in this database - modules can only be
+     added at creation time.
+    :vartype modules: list[~azure.mgmt.redisenterprise.models.Module]
+    :ivar geo_replication: Optional set of properties to configure geo replication for this
+     database.
+    :vartype geo_replication:
+     ~azure.mgmt.redisenterprise.models.DatabaseCommonPropertiesGeoReplication
+    :ivar redis_version: Version of Redis the database is running on, e.g. '6.0'.
+    :vartype redis_version: str
+    :ivar defer_upgrade: Option to defer upgrade when newest version is released - default is
+     NotDeferred. Learn more: https://aka.ms/redisversionupgrade. Known values are: "Deferred" and
+     "NotDeferred".
+    :vartype defer_upgrade: str or ~azure.mgmt.redisenterprise.models.DeferUpgradeSetting
+    :ivar access_keys_authentication: This property can be Enabled/Disabled to allow or deny access
+     with the current access keys. Can be updated even after database is created. Known values are:
+     "Disabled" and "Enabled".
+    :vartype access_keys_authentication: str or
+     ~azure.mgmt.redisenterprise.models.AccessKeysAuthentication
+    """
 
 
 class ErrorAdditionalInfo(_serialization.Model):
@@ -1150,8 +1721,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorDetailAutoGenerated(_serialization.Model):
@@ -1193,8 +1764,8 @@ class ErrorDetailAutoGenerated(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetailAutoGenerated"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetailAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -1277,7 +1848,7 @@ class FlushParameters(_serialization.Model):
         "ids": {"key": "ids", "type": "[str]"},
     }
 
-    def __init__(self, *, ids: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, ids: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword ids: The identifiers of all the other database resources in the georeplication group
          to be flushed.
@@ -1336,7 +1907,7 @@ class ForceLinkParametersGeoReplication(_serialization.Model):
         self,
         *,
         group_nickname: Optional[str] = None,
-        linked_databases: Optional[List["_models.LinkedDatabase"]] = None,
+        linked_databases: Optional[list["_models.LinkedDatabase"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1370,7 +1941,7 @@ class ForceUnlinkParameters(_serialization.Model):
         "ids": {"key": "ids", "type": "[str]"},
     }
 
-    def __init__(self, *, ids: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, ids: list[str], **kwargs: Any) -> None:
         """
         :keyword ids: The resource IDs of the database resources to be unlinked. Required.
         :paramtype ids: list[str]
@@ -1396,7 +1967,7 @@ class ImportClusterParameters(_serialization.Model):
         "sas_uris": {"key": "sasUris", "type": "[str]"},
     }
 
-    def __init__(self, *, sas_uris: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, sas_uris: list[str], **kwargs: Any) -> None:
         """
         :keyword sas_uris: SAS URIs for the target blobs to import from. Required.
         :paramtype sas_uris: list[str]
@@ -1478,7 +2049,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1658,7 +2229,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Operation"]] = None
+        self.value: Optional[list["_models.Operation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -1877,7 +2448,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.PrivateEndpointConnection]
@@ -1924,14 +2495,14 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -1946,7 +2517,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.redisenterprise.models.PrivateLinkResource]
@@ -2138,7 +2709,7 @@ class SkuDetailsList(_serialization.Model):
         "skus": {"key": "skus", "type": "[SkuDetails]"},
     }
 
-    def __init__(self, *, skus: Optional[List["_models.SkuDetails"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, skus: Optional[list["_models.SkuDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword skus: List of SKUS available to scale up or scale down.
         :paramtype skus: list[~azure.mgmt.redisenterprise.models.SkuDetails]
