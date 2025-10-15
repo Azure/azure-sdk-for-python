@@ -12,7 +12,7 @@ from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenMa
 from azure.ai.evaluation._common.raiclient import MachineLearningServicesClient
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common.utils import is_onedp_project
-from azure.ai.evaluation._common.onedp import AIProjectClient
+from azure.ai.evaluation._common.onedp import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._common import EvaluationServiceOneDPClient
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 import jwt
