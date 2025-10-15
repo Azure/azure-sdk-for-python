@@ -10,7 +10,7 @@ DESCRIPTION:
     .fine_tuning_jobs methods to create, get, list, and cancel fine-tuning jobs.
 
 USAGE:
-    python sample_finetuning_job_async.py
+    python sample_finetuning_supervised_job_async.py
 
     Before running the sample:
 
