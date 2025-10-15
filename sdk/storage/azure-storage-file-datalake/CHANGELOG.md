@@ -1,9 +1,13 @@
 # Release History
 
-## 12.22.0 (2025-10-14)
+## 12.22.0 (2025-10-15)
 
 ### Features Added
 - Stable release of features from 12.22.0b1
+
+### Other Changes
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+and let the `AttributeError` raise directly.
 
 ## 12.21.0 (2025-07-16)
 
