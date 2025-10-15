@@ -25,6 +25,7 @@ from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarg
 from azure.ai.evaluation._aoai.aoai_grader import AzureOpenAIGrader
 
 from opentelemetry import _logs
+from opentelemetry.context import Context
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler, LogRecord
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
@@ -1041,7 +1042,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     eval_run_id: Optional[str] = kwargs.get("_eval_run_id")
     eval_meta_data: Optional[Dict[str, Any]] = kwargs.get("_eval_meta_data")
     _convert_results_to_aoai_evaluation_results(result, LOGGER, eval_id, eval_run_id, evaluators_and_graders, eval_run_summary_dict, eval_meta_data)
-    if app_insights_configuration := kwargs.get("app_insights_configuration"):
+    if app_insights_configuration := kwargs.get("_app_insights_configuration"):
         emit_eval_result_events_to_app_insights(app_insights_configuration, result["evaluation_results_list"])
 
     if output_path:
@@ -1152,10 +1153,7 @@ def _log_events_to_app_insights(
                 log_record = LogRecord(
                     timestamp=time.time_ns(),
                     observed_timestamp=time.time_ns(),
-                    severity_text=None,
-                    severity_number=None,
                     body=EVALUATION_EVENT_NAME,
-                    resource=None,
                     attributes=log_attributes
                 )
                 
@@ -1174,7 +1172,7 @@ def _log_events_to_app_insights(
 def emit_eval_result_events_to_app_insights(app_insights_config: AppInsightsConfig, results: List[Dict]) -> None:
     """
     Emit evaluation result events to App Insights using OpenTelemetry logging.
-    Each result is logged as an independent log record without any trace context.
+    Each result is logged as an independent log record, potentially including trace context.
     
     :param app_insights_config: App Insights configuration containing connection string
     :type app_insights_config: AppInsightsConfig

@@ -132,7 +132,5 @@ class AppInsightsConfig(TypedDict):
     agent_version: NotRequired[str]
     project_id: NotRequired[str]
     run_type: NotRequired[str]
-    response_id: NotRequired[str]
     schedule_type: NotRequired[str]
     run_id: NotRequired[str]
-    response_id: NotRequired[str]
