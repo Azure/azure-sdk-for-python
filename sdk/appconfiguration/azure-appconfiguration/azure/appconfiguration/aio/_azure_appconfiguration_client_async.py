@@ -63,7 +63,7 @@ class AzureAppConfigurationClient:
                 base_url = f"https://{base_url}"
         except AttributeError as exc:
             raise ValueError("Base URL must be a string.") from exc
-        
+
         if not credential:
             raise ValueError("Missing credential")
 
