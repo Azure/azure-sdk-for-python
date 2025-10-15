@@ -10,7 +10,7 @@ from collections.abc import MutableMapping
 import datetime
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
 import urllib.parse
 import uuid
 
@@ -49,7 +49,7 @@ def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -104,7 +104,7 @@ def build_connections_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -128,7 +128,7 @@ def build_sync_evals_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -149,7 +149,7 @@ def build_evaluations_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -173,7 +173,7 @@ def build_evaluations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -193,7 +193,7 @@ def build_evaluations_create_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_evaluations_create_agent_evaluation_request(**kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -236,7 +236,7 @@ def build_evaluations_cancel_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -260,7 +260,7 @@ def build_evaluations_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -284,7 +284,7 @@ def build_evaluations_check_annotation_request(**kwargs: Any) -> HttpRequest:  #
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +304,7 @@ def build_evaluations_submit_annotation_request(**kwargs: Any) -> HttpRequest:  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "text/plain")
 
     # Construct URL
@@ -327,7 +327,7 @@ def build_evaluations_operation_results_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -352,7 +352,7 @@ def build_evaluations_upload_run_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -376,7 +376,7 @@ def build_evaluations_upload_update_run_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -398,12 +398,17 @@ def build_evaluations_upload_update_run_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_list_evaluator_versions_request(  # pylint: disable=name-too-long
-    name: str, *, limit: Optional[int] = None, after: Optional[str] = None, before: Optional[str] = None, **kwargs: Any
+def build_evaluators_list_versions_request(
+    name: str,
+    *,
+    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+    limit: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -415,12 +420,11 @@ def build_evaluators_list_evaluator_versions_request(  # pylint: disable=name-to
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -428,24 +432,27 @@ def build_evaluators_list_evaluator_versions_request(  # pylint: disable=name-to
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_list_versions_request(
-    *, limit: Optional[int] = None, after: Optional[str] = None, before: Optional[str] = None, **kwargs: Any
+def build_evaluators_list_latest_versions_request(  # pylint: disable=name-too-long
+    *,
+    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+    limit: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/evaluators"
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -459,7 +466,7 @@ def build_evaluators_get_evaluator_version_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +493,7 @@ def build_evaluators_delete_evaluator_version_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -513,7 +520,7 @@ def build_evaluators_create_evaluator_version_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -539,7 +546,7 @@ def build_evaluators_update_evaluator_version_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -564,7 +571,7 @@ def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -588,7 +595,7 @@ def build_datasets_list_latest_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -607,7 +614,7 @@ def build_datasets_get_version_request(name: str, version: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -632,7 +639,7 @@ def build_datasets_delete_version_request(name: str, version: str, **kwargs: Any
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -660,7 +667,7 @@ def build_datasets_create_or_update_version_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -690,7 +697,7 @@ def build_datasets_start_pending_upload_version_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -717,7 +724,7 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -742,7 +749,7 @@ def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -766,7 +773,7 @@ def build_indexes_list_latest_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -785,7 +792,7 @@ def build_indexes_get_version_request(name: str, version: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -810,7 +817,7 @@ def build_indexes_delete_version_request(name: str, version: str, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -838,7 +845,7 @@ def build_indexes_create_or_update_version_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -866,7 +873,7 @@ def build_insights_generate_insights_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -895,7 +902,7 @@ def build_insights_get_insight_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -929,7 +936,7 @@ def build_insights_list_insights_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -958,7 +965,7 @@ def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -988,7 +995,7 @@ def build_deployments_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1013,7 +1020,7 @@ def build_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1039,7 +1046,7 @@ def build_red_teams_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1065,7 +1072,7 @@ def build_red_teams_create_run_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1087,7 +1094,7 @@ def build_red_teams_upload_run_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1109,7 +1116,7 @@ def build_red_teams_upload_update_run_request(name: str, **kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1137,7 +1144,7 @@ def build_red_teams_get_jail_break_dataset_with_type_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1169,7 +1176,7 @@ def build_red_teams_get_attack_objectives_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1197,7 +1204,7 @@ def build_red_teams_get_jail_break_dataset_request(**kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1218,7 +1225,7 @@ def build_red_teams_get_template_parameters_with_type_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "text/plain")
 
     # Construct URL
@@ -1242,7 +1249,7 @@ def build_red_teams_get_template_parameters_request(**kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "text/plain")
 
     # Construct URL
@@ -1263,7 +1270,7 @@ def build_red_teams_get_template_parameters_image_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "text/plain")
 
     # Construct URL
@@ -1284,7 +1291,7 @@ def build_red_teams_submit_simulation_request(**kwargs: Any) -> HttpRequest:  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1307,7 +1314,7 @@ def build_red_teams_operation_results_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1331,7 +1338,7 @@ def build_evaluation_taxonomies_get_request(name: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1357,7 +1364,7 @@ def build_evaluation_taxonomies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1382,7 +1389,7 @@ def build_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1409,7 +1416,7 @@ def build_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1438,7 +1445,7 @@ def build_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1464,7 +1471,7 @@ def build_schedules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1488,7 +1495,7 @@ def build_schedules_get_request(id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1512,7 +1519,7 @@ def build_schedules_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1532,7 +1539,7 @@ def build_schedules_create_or_update_request(id: str, **kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1558,7 +1565,7 @@ def build_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs: Any
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1583,7 +1590,7 @@ def build_schedules_list_runs_request(schedule_id: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1615,7 +1622,7 @@ def build_evaluation_results_list_versions_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1654,7 +1661,7 @@ def build_evaluation_results_list_latest_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1683,7 +1690,7 @@ def build_evaluation_results_get_version_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1710,7 +1717,7 @@ def build_evaluation_results_delete_version_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1738,7 +1745,7 @@ def build_evaluation_results_create_or_update_version_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1768,7 +1775,7 @@ def build_evaluation_results_start_pending_upload_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1798,7 +1805,7 @@ def build_evaluation_results_get_credentials_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1819,6 +1826,114 @@ def build_evaluation_results_get_credentials_request(  # pylint: disable=name-to
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_rules_get_request(id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationrules/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationrules/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
+    id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationrules/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_evaluation_rules_list_request(
+    *,
+    action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
+    agent_name: Optional[str] = None,
+    enabled: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationrules"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if action_type is not None:
+        _params["actionType"] = _SERIALIZER.query("action_type", action_type, "str")
+    if agent_name is not None:
+        _params["agentName"] = _SERIALIZER.query("agent_name", agent_name, "str")
+    if enabled is not None:
+        _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class ConnectionsOperations:
@@ -2131,9 +2246,9 @@ class SyncEvalsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def create(self, eval: Union[_models.SyncEvalInput, JSON, IO[bytes]], **kwargs: Any) -> _models.EvalRunOutputItem:
         """Synchronize evaluation runs from connected resources.
@@ -2177,6 +2292,7 @@ class SyncEvalsOperations:
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2225,7 +2341,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
@@ -2295,7 +2411,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.Evaluation"]:
         """List evaluation runs.
@@ -2428,7 +2544,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -2551,7 +2667,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def create_agent_evaluation(
         self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
@@ -2628,7 +2744,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def cancel(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Cancel an evaluation run by name.
@@ -2686,7 +2802,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete an evaluation run by name.
@@ -2744,7 +2860,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def check_annotation(self, **kwargs: Any) -> List[str]:
         """Check annotation supported by the service.
@@ -2852,7 +2968,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def submit_annotation(self, annotation_dto: Union[_models.AnnotationDTO, JSON, IO[bytes]], **kwargs: Any) -> str:
         """Submit the annotation.
@@ -2927,7 +3043,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
         """Poll for the operation results.
@@ -3040,7 +3156,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def upload_run(
         self, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3171,7 +3287,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def upload_update_run(
         self, name: str, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3267,41 +3383,38 @@ class EvaluatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["name", "limit", "after", "before", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "type", "limit", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
-    def list_evaluator_versions(
+    def list_versions(
         self,
         name: str,
         *,
+        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
-        after: Optional[str] = None,
-        before: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.OpenAIPageableListOfEvaluatorVersion:
-        """List all versions of the given Evaluator name.
+    ) -> ItemPaged["_models.EvaluatorVersion"]:
+        """List all versions of the given evaluator.
 
-        :param name: Name of the evaluator. Required.
+        :param name: The name of the resource. Required.
         :type name: str
+        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
+         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         value is None.
+        :paramtype type: str or str or str or str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
         :paramtype limit: int
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, starting with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfEvaluatorVersion. The OpenAIPageableListOfEvaluatorVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIPageableListOfEvaluatorVersion
+        :return: An iterator like instance of EvaluatorVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3310,79 +3423,101 @@ class EvaluatorsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.OpenAIPageableListOfEvaluatorVersion] = kwargs.pop("cls", None)
+                _request = build_evaluators_list_versions_request(
+                    name=name,
+                    type=type,
+                    limit=limit,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_evaluators_list_evaluator_versions_request(
-            name=name,
-            limit=limit,
-            after=after,
-            before=before,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluatorVersion], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfEvaluatorVersion, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["limit", "after", "before", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "type", "limit", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
-    def list_versions(
-        self, *, limit: Optional[int] = None, after: Optional[str] = None, before: Optional[str] = None, **kwargs: Any
-    ) -> _models.OpenAIPageableListOfEvaluatorVersion:
-        """List the latest version of each Evaluator.
+    def list_latest_versions(
+        self,
+        *,
+        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+        limit: Optional[int] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EvaluatorVersion"]:
+        """List the latest version of each evaluator.
 
+        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
+         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         value is None.
+        :paramtype type: str or str or str or str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the default is 20. Default value is None.
         :paramtype limit: int
-        :keyword after: A cursor for use in pagination. after is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, ending with
-         obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the
-         list. Default value is None.
-        :paramtype after: str
-        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
-         in the list. For instance, if you make a list request and receive 100 objects, starting with
-         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
-         the list. Default value is None.
-        :paramtype before: str
-        :return: OpenAIPageableListOfEvaluatorVersion. The OpenAIPageableListOfEvaluatorVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OpenAIPageableListOfEvaluatorVersion
+        :return: An iterator like instance of EvaluatorVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3391,54 +3526,74 @@ class EvaluatorsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        cls: ClsType[_models.OpenAIPageableListOfEvaluatorVersion] = kwargs.pop("cls", None)
+                _request = build_evaluators_list_latest_versions_request(
+                    type=type,
+                    limit=limit,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _request = build_evaluators_list_versions_request(
-            limit=limit,
-            after=after,
-            before=before,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+            return _request
 
-        response = pipeline_response.http_response
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluatorVersion], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.OpenAIPageableListOfEvaluatorVersion, response.json())
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
 
-        return deserialized  # type: ignore
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def get_evaluator_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
@@ -3505,9 +3660,9 @@ class EvaluatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def delete_evaluator_version(  # pylint: disable=inconsistent-return-statements
         self, name: str, version: str, **kwargs: Any
@@ -3564,9 +3719,9 @@ class EvaluatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def create_evaluator_version(self, name: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
@@ -3629,9 +3784,9 @@ class EvaluatorsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def update_evaluator_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Update an existing EvaluatorVersion with the given version id.
@@ -4902,9 +5057,9 @@ class InsightsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
+        method_added_on="2025-11-15-preview",
         params_added_on={
-            "2025-10-15-preview": [
+            "2025-11-15-preview": [
                 "api_version",
                 "repeatability_request_id",
                 "repeatability_first_sent",
@@ -4912,7 +5067,7 @@ class InsightsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-15-preview"],
+        api_versions_list=["2025-11-15-preview"],
     )
     def generate_insights(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
         """Generate Insights.
@@ -4985,11 +5140,11 @@ class InsightsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
+        method_added_on="2025-11-15-preview",
         params_added_on={
-            "2025-10-15-preview": ["api_version", "id", "include_coordinates", "client_request_id", "accept"]
+            "2025-11-15-preview": ["api_version", "id", "include_coordinates", "client_request_id", "accept"]
         },
-        api_versions_list=["2025-10-15-preview"],
+        api_versions_list=["2025-11-15-preview"],
     )
     def get_insight(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
         """Get a specific insight by Id.
@@ -5061,9 +5216,9 @@ class InsightsOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
+        method_added_on="2025-11-15-preview",
         params_added_on={
-            "2025-10-15-preview": [
+            "2025-11-15-preview": [
                 "api_version",
                 "type",
                 "eval_id",
@@ -5074,7 +5229,7 @@ class InsightsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-15-preview"],
+        api_versions_list=["2025-11-15-preview"],
     )
     def list_insights(
         self,
@@ -5388,7 +5543,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -5460,7 +5615,7 @@ class RedTeamsOperations:
         params_added_on={
             "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
         },
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
@@ -5603,7 +5758,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
@@ -5724,7 +5879,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def upload_run(self, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Upload the result to a redteam run.
@@ -5853,7 +6008,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def upload_update_run(
         self, name: str, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
@@ -5933,7 +6088,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset with type.
@@ -6009,7 +6164,7 @@ class RedTeamsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_attack_objectives(
         self,
@@ -6096,7 +6251,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_jail_break_dataset(self, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset.
@@ -6158,7 +6313,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_template_parameters_with_type(self, type: str, **kwargs: Any) -> str:
         """Get template parameters with type.
@@ -6223,7 +6378,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_template_parameters(self, **kwargs: Any) -> str:
         """Get template parameters.
@@ -6285,7 +6440,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "path", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_template_parameters_image(self, *, path: str, **kwargs: Any) -> str:
         """Get the template parameters image.
@@ -6398,7 +6553,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def submit_simulation(
         self, body: Union[_models.SimulationDTO, JSON, IO[bytes]], **kwargs: Any
@@ -6475,7 +6630,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def operation_results(self, operation_id: str, **kwargs: Any) -> _models.ChatCompletions:
         """Poll for the operation results.
@@ -6556,9 +6711,9 @@ class EvaluationTaxonomiesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
         """Get an evaluation run by name.
@@ -6626,11 +6781,11 @@ class EvaluationTaxonomiesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
+        method_added_on="2025-11-15-preview",
         params_added_on={
-            "2025-10-15-preview": ["api_version", "input_name", "input_type", "client_request_id", "accept"]
+            "2025-11-15-preview": ["api_version", "input_name", "input_type", "client_request_id", "accept"]
         },
-        api_versions_list=["2025-10-15-preview"],
+        api_versions_list=["2025-11-15-preview"],
     )
     def list(
         self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
@@ -6723,9 +6878,9 @@ class EvaluationTaxonomiesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete an evaluation taxonomy by name.
@@ -6835,9 +6990,9 @@ class EvaluationTaxonomiesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def create(
         self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
@@ -6969,9 +7124,9 @@ class EvaluationTaxonomiesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def update(
         self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
@@ -7067,9 +7222,9 @@ class SchedulesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a schedule.
@@ -7125,9 +7280,9 @@ class SchedulesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def get(self, id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
@@ -7195,9 +7350,9 @@ class SchedulesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def list(self, **kwargs: Any) -> ItemPaged["_models.Schedule"]:
         """List all schedules.
@@ -7336,9 +7491,9 @@ class SchedulesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "id", "content_type", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def create_or_update(
         self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
@@ -7416,9 +7571,9 @@ class SchedulesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "schedule_id", "run_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "run_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
         """Get a schedule run by id.
@@ -7484,9 +7639,9 @@ class SchedulesOperations:
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-10-15-preview",
-        params_added_on={"2025-10-15-preview": ["api_version", "schedule_id", "accept"]},
-        api_versions_list=["2025-10-15-preview"],
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
     )
     def list_runs(self, schedule_id: str, **kwargs: Any) -> ItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
@@ -7596,7 +7751,7 @@ class EvaluationResultsOperations:
         params_added_on={
             "2025-05-15-preview": ["api_version", "name", "top", "skip", "tags", "list_view_type", "accept"]
         },
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list_versions(
         self,
@@ -7711,7 +7866,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "top", "skip", "tags", "list_view_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list_latest(
         self,
@@ -7822,7 +7977,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluationResult:
         """Get the specific version of the EvaluationResult. The service returns 404 Not Found error if
@@ -7891,7 +8046,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def delete_version(  # pylint: disable=inconsistent-return-statements
         self, name: str, version: str, **kwargs: Any
@@ -8028,7 +8183,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "content_type", "version", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def create_or_update_version(
         self,
@@ -8181,7 +8336,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def start_pending_upload(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
@@ -8330,7 +8485,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-10-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def get_credentials(
         self, name: str, version: str, body: Union[_models.AssetCredentialRequest, JSON, IO[bytes]], **kwargs: Any
@@ -8408,3 +8563,389 @@ class EvaluationResultsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class EvaluationRulesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.ProjectsClient`'s
+        :attr:`evaluation_rules` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
+        """Get an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
+
+        _request = build_evaluation_rules_get_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluation_rules_delete_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    def create_or_update(
+        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def create_or_update(
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Is one of the following types:
+         EvaluationRule, JSON, IO[bytes] Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluation_rule, (IOBase, bytes)):
+            _content = evaluation_rule
+        else:
+            _content = json.dumps(evaluation_rule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluation_rules_create_or_update_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": ["api_version", "action_type", "agent_name", "enabled", "client_request_id", "accept"]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list(
+        self,
+        *,
+        action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
+        agent_name: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EvaluationRule"]:
+        """List all evaluation rules.
+
+        :keyword action_type: Filter by the type of evaluation rule. Known values are:
+         "continuousEvaluation" and "humanEvaluation". Default value is None.
+        :paramtype action_type: str or ~azure.ai.projects.models.EvaluationRuleActionType
+        :keyword agent_name: Filter by the agent name. Default value is None.
+        :paramtype agent_name: str
+        :keyword enabled: Filter by the enabled status. Default value is None.
+        :paramtype enabled: bool
+        :return: An iterator like instance of EvaluationRule
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationRule]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluationRule]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluation_rules_list_request(
+                    action_type=action_type,
+                    agent_name=agent_name,
+                    enabled=enabled,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluationRule], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)

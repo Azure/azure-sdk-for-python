@@ -21,6 +21,7 @@ from .operations import (
     DatasetsOperations,
     DeploymentsOperations,
     EvaluationResultsOperations,
+    EvaluationRulesOperations,
     EvaluationTaxonomiesOperations,
     EvaluationsOperations,
     EvaluatorsOperations,
@@ -62,6 +63,8 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
     :vartype schedules: azure.ai.projects.operations.SchedulesOperations
     :ivar evaluation_results: EvaluationResultsOperations operations
     :vartype evaluation_results: azure.ai.projects.operations.EvaluationResultsOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :param endpoint: Project endpoint. In the form
      "`https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project
      <https://your-ai-services-account-name.services.ai.azure.com/api/projects/_project>`_"
@@ -75,7 +78,7 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2025-10-15-preview". Note that overriding this default value may result in unsupported
+     "2025-11-15-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
@@ -122,6 +125,9 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
         self.evaluation_results = EvaluationResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.evaluation_rules = EvaluationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -158,7 +164,3 @@ class ProjectsClient:  # pylint: disable=too-many-instance-attributes
 
     def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
-
-
-# Backward compatibility alias
-AIProjectClient = ProjectsClient

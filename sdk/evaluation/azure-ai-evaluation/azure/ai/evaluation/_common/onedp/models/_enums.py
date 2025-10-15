@@ -175,6 +175,24 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment"""
 
 
+class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation action."""
+
+    CONTINUOUS_EVALUATION = "continuousEvaluation"
+    """Continuous evaluation."""
+    HUMAN_EVALUATION = "humanEvaluation"
+    """Human evaluation."""
+
+
+class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the evaluation rule event."""
+
+    RESPONSE_COMPLETED = "response.completed"
+    """Response completed."""
+    MANUAL = "manual"
+    """Manual trigger."""
+
+
 class EvaluationTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allowed types of evaluation targets."""
 
